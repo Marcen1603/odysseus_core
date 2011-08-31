@@ -41,8 +41,9 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
 				}
 			}
 		}else{
-			monitoredOps.addAll(target.getRoots());
-			if (!onlyRoots) {
+			if (onlyRoots) {
+				monitoredOps.addAll(target.getRoots());
+			}else{
 				monitoredOps.addAll(target.getPhysicalChilds());
 			}
 		}
