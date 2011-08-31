@@ -47,7 +47,7 @@ public class AvgProcessingTime extends AbstractMonitoringData<Double> implements
 	public void setTarget(IPhysicalOperator target) {
 		super.setTarget(target);
 		target.subscribe(this, POEventType.ProcessInit);
-		target.subscribe(this, POEventType.ProcessDone);
+		target.subscribe(this, POEventType.PushInit);
 	}
 
 	@Override
