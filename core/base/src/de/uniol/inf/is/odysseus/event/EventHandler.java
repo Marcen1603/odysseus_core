@@ -17,12 +17,18 @@ package de.uniol.inf.is.odysseus.event;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class EventHandler implements IEventHandler {
 
 	final Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
 	final ArrayList<IEventListener> genericEventListener = new ArrayList<IEventListener>();
-	
+	final EventDispatcher dispatcher = new EventDispatcher(this);
+
+	public EventHandler() {
+		dispatcher.start();
+	}
+
 	/**
 	 * One listener can have multiple subscriptions to the same event sender and
 	 * the same event type
@@ -74,24 +80,65 @@ public class EventHandler implements IEventHandler {
 	@Override
 	final public void fire(IEvent<?, ?> event) {
 		long curTime = System.nanoTime();
-		synchronized (eventListener) {
-			ArrayList<IEventListener> list = eventListener
-					.get(event.getEventType());
-			if (list != null) {
-				synchronized (list) {
-					for (IEventListener listener : list) {
-						listener.eventOccured(event, curTime);
-					}
-				}
-			}
+		dispatcher.addEvent(event, curTime);
 
-		}
-		synchronized (genericEventListener) {
-			for (IEventListener listener : genericEventListener) {
-				listener.eventOccured(event, curTime);
-			}
-		}
 	}
 
 }
 
+class EventDispatcher extends Thread {
+	Stack<IEvent<?, ?>> eventQueue = new Stack<IEvent<?, ?>>();
+	Stack<Long> eventTimestamps = new Stack<Long>();
+	final EventHandler handler;
+
+	public EventDispatcher(EventHandler handler) {
+		this.handler = handler;
+	}
+
+	public void addEvent(IEvent<?, ?> event, long eventTime) {
+		synchronized (eventQueue) {
+			eventQueue.push(event);
+			eventTimestamps.push(eventTime);
+			eventQueue.notifyAll();
+		}
+	}
+
+	@Override
+	public void run() {
+		IEvent<?, ?> eventToFire = null;
+		Long timeStamp = null;
+		while (!interrupted()) {
+			synchronized (eventQueue) {
+				while (eventQueue.isEmpty()) {
+					try {
+						eventQueue.wait(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				eventToFire = eventQueue.pop();
+				timeStamp = eventTimestamps.pop();
+			}
+
+			//System.err.println("Fire Event ("+timeStamp+") "+eventToFire);
+			
+			synchronized (handler.eventListener) {
+				ArrayList<IEventListener> list = handler.eventListener
+						.get(eventToFire.getEventType());
+				if (list != null) {
+					synchronized (list) {
+						for (IEventListener listener : list) {
+							listener.eventOccured(eventToFire, timeStamp);
+						}
+					}
+				}
+
+			}
+			synchronized (handler.genericEventListener) {
+				for (IEventListener listener : handler.genericEventListener) {
+					listener.eventOccured(eventToFire, timeStamp);
+				}
+			}
+		}
+	}
+}
