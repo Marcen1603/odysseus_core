@@ -1,203 +1,0 @@
-/**
-* JJTree file
-*/
-
-options {
-  JDK_VERSION = "1.5";
-  IGNORE_CASE = true;
-  MULTI = true;
-  VISITOR = true;
-  DEBUG_PARSER = true;
-  DEBUG_TOKEN_MANAGER = false;
-  //  NODE_DEFAULT_VOID=true;
-  JJTREE_OUTPUT_DIRECTORY = "nodes";
-  NODE_PACKAGE = "de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes";
-  //LOOKAHEAD = 2;
-  //FORCE_LA_CHECK = true;
-}
-
-PARSER_BEGIN(MapleResultParser) 
-	package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
-@SuppressWarnings("all")
-	public class MapleResultParser{}
-
-PARSER_END(MapleResultParser)
- 
-SKIP :
-{
-  " "
-| "\t"
-| "\n"
-| "\r"
-/*| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">*/
-}
-
-TOKEN:/* Keywords */
-{
-  < K_AND: "AND" >
-  |< K_MAPLE: "MAPLE">
-  |< K_PIECEWISE: "PIECEWISE" >
-}
-
-TOKEN:{
-  <IDENTIFIER:(<LETTER>)+(<DIGIT>
-  | <LETTER>
-  | <SPECIAL_CHARS>)*>
-  | <#LETTER:["a"-"z", "A"-"Z"]>
-  | <#SPECIAL_CHARS:":"
-  | "_"
-  | ".">
-  | <CHAR_LITERAL:"'"(~["'"])*"'"("'"(~["'"])*"'")*>
-  | <QUOTED_IDENTIFIER:"\""(~["\n", "\r", "\""])*"\"">
-  | <COMPARE_OPERATOR:"="
-  | "<>"
-  | ">"
-  | "<"
-  | "<="
-  | ">=">
-  | <REGEXP: "/" ("^")?(<LETTER> | <DIGIT> | "\\" | "+" | "." | "*" | "?" | "$")+ "/" >
-}
-
-
-TOKEN:/* Numeric Constants */
-{
-  //  <NUMBER:<FLOAT>
-//  | <FLOAT>(["e", "E"](["-", "+"])?<FLOAT>)?>
-//  | <#FLOAT:<INTEGER>
-//  | <INTEGER>("."<INTEGER>)?
-//  | "."<INTEGER>>
-<FLOAT:(<INTEGER>"."(<INTEGER>)?
-  | "."<INTEGER>)>
-  | <INTEGER:(<DIGIT>)+>
-  | <#DIGIT:["0"-"9"]>
- | <IPADDRESS:<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?"."<DIGIT>(<DIGIT>)?(<DIGIT>)?>
-}
-
-ASTMaple Maple():{}{
-	<K_MAPLE> (Solution() | MaplePiecewise())
-	{return jjtThis;}
-}
-
-void MaplePiecewise():{}
-{
-  < K_PIECEWISE >"("ConditionSolution() (LOOKAHEAD("," ConditionSolution())"," ConditionSolution())* ("," Solution())?")"}
-
-void ConditionSolution():{}{
-  Condition() "," Solution()}
-
-void Condition():{}{
-  ComplexCondition() | SimpleCondition()}
-
-void ComplexCondition():{}{
-  < K_AND > "("SimpleCondition()("," SimpleCondition())*")" }
-
-
-
-void SimpleCondition():{}{
-  Expression()CompareOperator()Expression()}
-
-void CompareOperator():{
-  Token t;
-}
-{
-  t = <COMPARE_OPERATOR> {
-    jjtThis.setOperator(t.image);
-  }
-}
-
-void Solution():{}{
-  (LOOKAHEAD(FullSolution()) FullSolution() | /*LOOKAHEAD(SimpleSolution())*/ SimpleSolution()  | EmptySolution() {jjtThis.setEmpty(true);} )}
-
-void SimpleSolution():{}{
-	"{[{" SimpleSolutionContent() "}]}"
-}
-
-void SimpleSolutionContent():{}
-{
-// A solution can be a comparison, an identifiere, if
-// it is valid for all x or nothing if it is valid for no x
-  Expression()CompareOperator()Expression()
-}
-
-void FullSolution():{}{
-	"{[{" Identifier() "}]}"
-}
-
-void EmptySolution():{}{
-	"{}"
-}
-
-void Expression():{
-  String tOp;
-}
-{
-  LOOKAHEAD(SimpleToken()MathOperator())SimpleToken()tOp = MathOperator(){
-    jjtThis.setOperator(tOp);
-  }
-  Expression()
-  | SimpleToken()
-}
-
-void SimpleToken():{}{
-  LOOKAHEAD(Number())Number()
-  | String()
-  /*| LOOKAHEAD(AggregateExpression())AggregateExpression()*/
-  | LOOKAHEAD(FunctionExpression())FunctionExpression()
-  | ("-" {jjtThis.setMinus(true);})? ("("Expression()")" | Identifier()) 
-//TODO DISTINCE Expression
-}
-
-void FunctionExpression():{}{
-  Identifier()#FunctionName "("Expression()")"
-}
-
-String MathOperator()#void :{}{
-  "*"{
-    return "*";
-  }
-  | "+"{
-    return "+";
-  }
-  | "-"{
-    return "-";
-  }
-  | "/"{
-    return "/";
-  }
-  | "^"{
-    return "^";
-  }
-}
-
-void Number():{
-  Token sign = null;
-  Token t;
-}
-{
-  (sign = "-")?
-  (t = <FLOAT>
-  | t = <INTEGER>){
-    jjtThis.setValue(sign != null && sign.image != null ? sign.image + t.image : "" + t.image);
-  }
-}
-
-void String():{
-  Token t;
-}
-{
-  t = <CHAR_LITERAL>{
-    jjtThis.setValue(t.image);
-  }
-}
-
-void Identifier():{
-  Token sign = null;
-  Token t;
-}
-{
- (sign = "-")?
-  t = <IDENTIFIER>{
-    jjtThis.setName((sign != null && sign.image != null ? sign.image : "") + t.image);
-  }
-}
