@@ -12,10 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.mining.distance;
+package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author kolja
  * 
  */
-public interface IClusteringObject<U extends IMetaAttribute> extends IMetaAttributeContainer<U> {
+public interface IClusteringObject<U extends IMetaAttribute,O> extends IMetaAttributeContainer<U>, IMetricFunctionValues<O> {
 
 	/**
 	 * Sets the id of the cluster this object belongs to.
@@ -48,7 +49,7 @@ public interface IClusteringObject<U extends IMetaAttribute> extends IMetaAttrib
 	 * 
 	 * @return the attribute values.
 	 */
-	public Object[] getAttributes();
+	public O[] getAttributes();
 
 	/**
 	 * Returns the attribute values of this object that should be used for the
@@ -57,7 +58,7 @@ public interface IClusteringObject<U extends IMetaAttribute> extends IMetaAttrib
 	 * 
 	 * @return the attribute values used for the clustering process.
 	 */
-	public Object[] getClusterAttributes();
+	public O[] getClusterAttributes();
 
 	/**
 	 * Returns a RelationalTuple representing this object. The tuple contains

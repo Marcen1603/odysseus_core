@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.mining.distance;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 
 /**
  * This interface represents dissimilarity functions to calculate
@@ -24,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
  * @author Kolja Blohm
  *
  */
-public interface IDissimilarity<T extends IMetaAttribute> {
+public interface IDissimilarity<T> {
 
 
 	
@@ -37,5 +36,5 @@ public interface IDissimilarity<T extends IMetaAttribute> {
 	 * @param cluster the AbstractCluster.
 	 * @return the dissimilarity between the cluster and the element.
 	 */
-	public Double getDissimilarity(IClusteringObject<T> element, AbstractCluster<T> cluster);
+	public Double getDissimilarity(IMetricFunctionValues<T> element, IMetricFunctionValues<T> cluster);
 }

@@ -1,24 +1,25 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 /**
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
  * @author Kolja Blohm
  * 
  */
-public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> {
+public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T, Object> {
 
 	private Double threshold;
 
@@ -80,7 +81,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 	 *      int)
 	 */
 	@Override
-	protected void process_next(IClusteringObject<T> tuple, int port) {
+	protected void process_next(IClusteringObject<T, Object> tuple, int port) {
 
 		assignToCluster(tuple);
 
@@ -89,7 +90,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 		transferTuple(tuple);
 		// gibt eine Liste der Cluster auf Port 1 aus
 		transferClusters(clusters);
-	
+
 	}
 
 	/**
@@ -99,12 +100,10 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 	 * @param object
 	 *            the object to cluster.
 	 */
-	private void assignToCluster(IClusteringObject<T> object) {
-
+	private void assignToCluster(IClusteringObject<T, Object> object) {
 		// get the closest cluster
 		LeaderCluster<T> minCluster = getMinCluster(object);
-		if (minCluster == null
-				|| dissimilarity.getDissimilarity(object, minCluster) > threshold) {
+		if (minCluster == null || dissimilarity.getDissimilarity(object, minCluster) > threshold) {
 			// create a new cluster, because the closest one is too far away
 			LeaderCluster<T> cluster = new LeaderCluster<T>(
 					object.getClusterAttributeCount());
@@ -137,7 +136,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T> 
 	 *            the object to find the closest cluster for.
 	 * @return the closest cluster.
 	 */
-	private LeaderCluster<T> getMinCluster(IClusteringObject<T> object) {
+	private LeaderCluster<T> getMinCluster(IMetricFunctionValues<Object> object) {
 
 		return getMinCluster(object, clusters, dissimilarity);
 	}

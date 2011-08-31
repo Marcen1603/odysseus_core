@@ -24,8 +24,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
  * @author Kolja Blohm
  * 
  */
-public class MinkowsiDistance<T extends IMetaAttribute> implements
-		IDissimilarity<T> {
+public class MinkowsiDistance<T extends IMetaAttribute> implements IDissimilarity<T> {
 
 	int p;
 
@@ -48,11 +47,11 @@ public class MinkowsiDistance<T extends IMetaAttribute> implements
 	 * de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster)
 	 */
 	@Override
-	public Double getDissimilarity(IClusteringObject<T> element,
-			AbstractCluster<T> cluster) {
+	public Double getDissimilarity(IMetricFunctionValues<T> element, IMetricFunctionValues<T> cluster) {
 		Double distance = 0D;
-		Object[] elementAttributes = element.getClusterAttributes();
-		Object[] clusterAttributes = cluster.getCenter().getClusterAttributes();
+		Object[] elementAttributes = element.getValues();
+		Object[] clusterAttributes = cluster.getValues();
+		//Object[] clusterAttributes = cluster.getCenter().getClusterAttributes();
 
 		for (int i = 0; i < elementAttributes.length; i++) {
 

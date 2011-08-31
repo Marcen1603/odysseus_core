@@ -12,9 +12,10 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.mining.distance;
+package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Kolja Blohm
  * 
  */
-public abstract class AbstractCluster<T extends IMetaAttribute> {
+public abstract class AbstractCluster<T extends IMetaAttribute, O> implements IMetricFunctionValues<O> {
 
 	protected int id;
 	protected ClusteringFeature clusteringFeature;
@@ -83,7 +84,7 @@ public abstract class AbstractCluster<T extends IMetaAttribute> {
 	 * 
 	 * @return the clusters center.
 	 */
-	public abstract IClusteringObject<T> getCenter();
+	public abstract IClusteringObject<T,O> getCenter();
 
 	/**
 	 * Returns the clusters id.
@@ -99,8 +100,13 @@ public abstract class AbstractCluster<T extends IMetaAttribute> {
 	 * 
 	 * @param element the tuple to add.
 	 */
-	public void addTuple(IClusteringObject<T> element) {
+	public void addTuple(IClusteringObject<T,O> element) {
 		clusteringFeature.add(element.getClusterAttributes());
+	}
+	
+	@Override
+	public O[] getValues() {
+		return getCenter().getClusterAttributes();		
 	}
 
 	/**
@@ -118,7 +124,7 @@ public abstract class AbstractCluster<T extends IMetaAttribute> {
 	 * 
 	 * @param cluster the cluster to add.
 	 */
-	public void addCluster(AbstractCluster<T> cluster) {
+	public void addCluster(AbstractCluster<T,O> cluster) {
 		clusteringFeature.add(cluster.getClusteringFeature());
 	}
 
@@ -127,7 +133,7 @@ public abstract class AbstractCluster<T extends IMetaAttribute> {
 	 * 
 	 * @param copy original cluster to copy.
 	 */
-	public AbstractCluster(AbstractCluster<T> copy) {
+	public AbstractCluster(AbstractCluster<T,O> copy) {
 		this.id = copy.id;
 		this.numberOfAttributes = copy.numberOfAttributes;
 		this.clusteringFeature = copy.clusteringFeature.clone();

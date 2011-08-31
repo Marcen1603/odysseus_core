@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 
 /**
  * This class represents the physical operator for the simple single pass k-meas
@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
  * 
  */
 public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
-		AbstractClusteringPO<T> {
+		AbstractClusteringPO<T, Object> {
 
 	private int clusterCount;
 	private int bufferSize;
-	private ArrayList<IClusteringObject<T>> buffer;
+	private ArrayList<IClusteringObject<T, Object>> buffer;
 	private KMeansClustering<T> kMeans;
 
 	/**
@@ -39,7 +39,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	 * 
 	 * @return the buffer
 	 */
-	public ArrayList<IClusteringObject<T>> getBuffer() {
+	public ArrayList<IClusteringObject<T, Object>> getBuffer() {
 		return buffer;
 	}
 
@@ -56,7 +56,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	 * Creates a new SimpleSinglePassKMeansPO.
 	 */
 	public SimpleSinglePassKMeansPO() {
-		buffer = new ArrayList<IClusteringObject<T>>();
+		buffer = new ArrayList<IClusteringObject<T, Object>>();
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	 */
 	protected SimpleSinglePassKMeansPO(SimpleSinglePassKMeansPO<T> copy) {
 		super(copy);
-		this.buffer = new ArrayList<IClusteringObject<T>>(copy.getBuffer());
+		this.buffer = new ArrayList<IClusteringObject<T, Object>>(copy.getBuffer());
 		this.bufferSize = copy.bufferSize;
 		this.clusterCount = copy.clusterCount;
 	}
@@ -80,7 +80,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	 *      int)
 	 */
 	@Override
-	protected void process_next(IClusteringObject<T> object, int port) {
+	protected void process_next(IClusteringObject<T, Object> object, int port) {
 
 		// adds the object into the buffer
 		buffer.add(object);

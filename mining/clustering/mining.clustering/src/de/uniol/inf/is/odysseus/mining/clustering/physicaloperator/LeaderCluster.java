@@ -15,8 +15,8 @@
 package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.mining.distance.AbstractCluster;
-import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
+import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 
 /**
  * This class represents a cluster for the the leader algorithm implemented in
@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
  * 
  */
 
-public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T> {
+public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T, Object> {
 
-	IClusteringObject<T> leader;
+	IClusteringObject<T, Object> leader;
 
 	/**
 	 * Creates a new LeaderCluster.
@@ -46,7 +46,7 @@ public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T> 
 	 * @see de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster#getCenter()
 	 */
 	@Override
-	public IClusteringObject<T> getCenter() {
+	public IClusteringObject<T, Object> getCenter() {
 		return leader;
 	}
 
@@ -55,7 +55,7 @@ public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T> 
 	 * @see de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster#addTuple(de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject)
 	 */
 	@Override
-	public void addTuple(IClusteringObject<T> element) {
+	public void addTuple(IClusteringObject<T, Object> element) {
 		super.addTuple(element);
 		//sets the first element as this clusters leader
 		if (leader == null) {

@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
 import java.util.ArrayList;
@@ -21,10 +21,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.mining.distance.AbstractCluster;
-import de.uniol.inf.is.odysseus.mining.distance.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
+import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
+import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
 import de.uniol.inf.is.odysseus.mining.distance.IDissimilarity;
-import de.uniol.inf.is.odysseus.mining.distance.RelationalClusteringObject;
+import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
@@ -38,16 +39,15 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Kolja Blohm
  * 
  */
-public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
+public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
 
 	protected int[] restrictList;
 
 	protected final int ELEMENT_PORT = 0;
 	protected final int CLUSTER_PORT = 1;
-	protected IDissimilarity<T> dissimilarity;
+	protected IDissimilarity<O> dissimilarity;
 
-	
 	/**
 	 * Returns the resrictList, a list of indices identifying the positions of
 	 * the attributes in a RelationalTuple that should be used for clustering.
@@ -63,7 +63,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * 
 	 * @return the dissimilarity function.
 	 */
-	public IDissimilarity<T> getDissimilarity() {
+	public IDissimilarity<O> getDissimilarity() {
 		return dissimilarity;
 	}
 
@@ -104,7 +104,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param copy
 	 *            the AbstractClusteringPO to copy.
 	 */
-	public AbstractClusteringPO(AbstractClusteringPO<T> copy) {
+	public AbstractClusteringPO(AbstractClusteringPO<T, O> copy) {
 		super(copy);
 
 		this.restrictList = Arrays.copyOf(copy.getRestrictList(),
@@ -131,7 +131,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param dissimilarity
 	 *            the dissimilarity function.
 	 */
-	public void setDissimilarity(IDissimilarity<T> dissimilarity) {
+	public void setDissimilarity(IDissimilarity<O> dissimilarity) {
 
 		this.dissimilarity = dissimilarity;
 	}
@@ -145,9 +145,8 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 *      int)
 	 */
 	protected void process_next(RelationalTuple<T> object, int port) {
-
-		IClusteringObject<T> tuple = new RelationalClusteringObject<T>(object,
-				restrictList);
+		IClusteringObject<T, Object> tuple = new RelationalClusteringObject<T>(
+				object, restrictList);
 		process_next(tuple, port);
 	}
 
@@ -159,8 +158,8 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param object
 	 *            the object to transfer.
 	 */
-	protected void transferTuple(IClusteringObject<T> object) {
-		
+	protected void transferTuple(IClusteringObject<T, Object> object) {
+
 		transfer(object.getLabeledTuple(), ELEMENT_PORT);
 	}
 
@@ -171,13 +170,14 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param objects
 	 *            list of objects to transfer.
 	 */
-	protected void transferTuples(List<? extends IClusteringObject<T>> objects) {
-		Iterator<? extends IClusteringObject<T>> iter = objects.iterator();
+	protected void transferTuples(
+			List<? extends IClusteringObject<T, O>> objects) {
+		Iterator<? extends IClusteringObject<T, O>> iter = objects.iterator();
 		ArrayList<RelationalTuple<T>> transferList = new ArrayList<RelationalTuple<T>>();
 
 		while (iter.hasNext()) {
 			RelationalTuple<T> tuple = iter.next().getLabeledTuple();
-			
+
 			transferList.add(tuple);
 		}
 		transfer(transferList, ELEMENT_PORT);
@@ -191,7 +191,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param cluster
 	 *            the cluster to transfer.
 	 */
-	protected void transferCluster(AbstractCluster<T> cluster) {
+	protected void transferCluster(AbstractCluster<T, O> cluster) {
 		transfer(cluster.getRelationalCluster(), CLUSTER_PORT);
 	}
 
@@ -202,8 +202,9 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param clusters
 	 *            the list of clusters to transfer.
 	 */
-	protected void transferClusters(List<? extends AbstractCluster<T>> clusters) {
-		Iterator<? extends AbstractCluster<T>> iter = clusters.iterator();
+	protected void transferClusters(
+			List<? extends AbstractCluster<T, O>> clusters) {
+		Iterator<? extends AbstractCluster<T, O>> iter = clusters.iterator();
 		ArrayList<RelationalTuple<T>> list = new ArrayList<RelationalTuple<T>>();
 		while (iter.hasNext()) {
 			list.add(iter.next().getRelationalCluster());
@@ -220,7 +221,8 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 * @param port
 	 *            the port on which the object arrived on.
 	 */
-	protected abstract void process_next(IClusteringObject<T> object, int port);
+	protected abstract void process_next(IClusteringObject<T, Object> object,
+			int port);
 
 	/**
 	 * Finds the closest cluster from a list of clusters for a specific data
@@ -234,9 +236,9 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute> extends
 	 *            the dissimilarity function.
 	 * @return the cluster closest to the specified data point.
 	 */
-	public static <U extends IMetaAttribute, K extends AbstractCluster<U>> K getMinCluster(
-			IClusteringObject<U> tuple, ArrayList<K> clusters,
-			IDissimilarity<U> dissimilarity) {
+	public static <O, U extends IMetaAttribute, K extends IMetricFunctionValues<O>> K getMinCluster(
+			IMetricFunctionValues<O> tuple, ArrayList<K> clusters,
+			IDissimilarity<O> dissimilarity) {
 		K minCluster = null;
 		Double minDistance = 0D;
 		Double distance;

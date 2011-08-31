@@ -1,18 +1,18 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
-package de.uniol.inf.is.odysseus.mining.distance;
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -23,8 +23,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Kolja Blohm
  * 
  */
-public class RelationalClusteringObject<T extends IMetaAttribute> implements
-		IClusteringObject<T> {
+public class RelationalClusteringObject<T extends IMetaAttribute> implements IClusteringObject<T, Object> {
 
 	/**
 	 * 
@@ -76,7 +75,8 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements
 	 * 
 	 * @param restrictedTuple
 	 *            the already restricted RelationalTuple.
-	 * @param clusterid the id of the cluster this object belongs to.
+	 * @param clusterid
+	 *            the id of the cluster this object belongs to.
 	 */
 	public RelationalClusteringObject(RelationalTuple<T> restrictedTuple,
 			int clusterid) {
@@ -163,15 +163,20 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements
 		return restrictedTuple.getAttributeCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#getMetadata()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#getMetadata()
 	 */
 	@Override
 	public final T getMetadata() {
 		return metadata;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -179,12 +184,21 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements
 		return new RelationalClusteringObject<T>(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#setMetadata(de.uniol.inf.is.odysseus.metadata.IMetaAttribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#setMetadata
+	 * (de.uniol.inf.is.odysseus.metadata.IMetaAttribute)
 	 */
 	@Override
 	public void setMetadata(T metadata) {
 		this.metadata = metadata;
+	}
+
+	@Override
+	public Object[] getValues() {
+		return getClusterAttributes();
 	}
 
 }
