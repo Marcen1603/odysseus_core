@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTQuotedIdentifier extends SimpleNode {
   public ASTQuotedIdentifier(int id) {
     super(id);

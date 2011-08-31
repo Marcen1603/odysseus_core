@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 /** Token Manager Error. */
+@SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
 

@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTHiddenMarkovModel extends SimpleNode {
   public ASTHiddenMarkovModel(int id) {
     super(id);

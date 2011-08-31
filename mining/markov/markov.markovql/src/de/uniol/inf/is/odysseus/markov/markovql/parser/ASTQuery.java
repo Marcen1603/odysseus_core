@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTQuery extends SimpleNode {
   public ASTQuery(int id) {
     super(id);

@@ -7,6 +7,7 @@ package de.uniol.inf.is.odysseus.markov.markovql.parser;
    between nodes. */
 
 public
+@SuppressWarnings("all")
 interface Node {
 
   /** This method is called after the node has been made the current

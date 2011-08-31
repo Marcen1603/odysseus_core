@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTStateList extends SimpleNode {
   public ASTStateList(int id) {
     super(id);

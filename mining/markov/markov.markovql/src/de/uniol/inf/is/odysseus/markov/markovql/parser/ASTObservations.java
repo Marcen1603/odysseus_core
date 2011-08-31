@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTObservations extends SimpleNode {
   public ASTObservations(int id) {
     super(id);

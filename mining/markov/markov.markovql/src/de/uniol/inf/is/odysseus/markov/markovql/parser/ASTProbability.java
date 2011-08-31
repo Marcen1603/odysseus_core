@@ -3,6 +3,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 public
+@SuppressWarnings("all")
 class ASTProbability extends SimpleNode {
   public ASTProbability(int id) {
     super(id);
