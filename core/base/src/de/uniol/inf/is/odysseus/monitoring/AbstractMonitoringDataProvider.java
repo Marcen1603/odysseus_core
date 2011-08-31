@@ -78,46 +78,48 @@ public abstract class AbstractMonitoringDataProvider implements
 		return pitem;
 
 	}
+	
+	//@Override
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	private <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
+//			long period) {
+//		String key = getKeyString(type,period);
+//
+//
+//		IMonitoringData<T> item = this.metaDataItem.get(key);
+//		if (item != null) {
+//			return (IPeriodicalMonitoringData) item;
+//		}
+//
+//		item = this.metaDataItem.get(type);
+//		if (item != null && item instanceof IPeriodicalMonitoringData) {
+//			IPeriodicalMonitoringData<T> pitem = null;
+//			pitem = (IPeriodicalMonitoringData<T>) item.clone();
+//			pitem.reset();
+//			this.metaDataItem.put(key, pitem);
+//			pitem.setType(key);
+//
+//			ScheduledFuture future = MonitoringDataScheduler.getInstance()
+//					.scheduleAtFixedRate(pitem, 0, period,
+//							TimeUnit.MILLISECONDS);
+//
+//			// Speichere Item und Future in Scheduler, damit das Item spaeter
+//			// wieder
+//			// angehalten / geloescht werden kann.
+//			MonitoringDataScheduler.getInstance()
+//					.addStartedPeriodicalMetadataItem(pitem, future);
+//			return pitem;
+//
+//		}
+//		throw new IllegalArgumentException("No such Metadataitem");
+//
+//	}
 
 	private String getKeyString(String type, long period){
 		return type + " (p=" + period+" ms)";
 	}
 	
-	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <T> IPeriodicalMonitoringData<T> getMonitoringData(String type,
-			long period) {
-		String key = getKeyString(type,period);
 
-
-		IMonitoringData<T> item = this.metaDataItem.get(key);
-		if (item != null) {
-			return (IPeriodicalMonitoringData) item;
-		}
-
-		item = this.metaDataItem.get(type);
-		if (item != null && item instanceof IPeriodicalMonitoringData) {
-			IPeriodicalMonitoringData<T> pitem = null;
-			pitem = (IPeriodicalMonitoringData<T>) item.clone();
-			pitem.reset();
-			this.metaDataItem.put(key, pitem);
-			pitem.setType(key);
-
-			ScheduledFuture future = MonitoringDataScheduler.getInstance()
-					.scheduleAtFixedRate(pitem, 0, period,
-							TimeUnit.MILLISECONDS);
-
-			// Speichere Item und Future in Scheduler, damit das Item spaeter
-			// wieder
-			// angehalten / geloescht werden kann.
-			MonitoringDataScheduler.getInstance()
-					.addStartedPeriodicalMetadataItem(pitem, future);
-			return pitem;
-
-		}
-		throw new IllegalArgumentException("No such Metadataitem");
-
-	}
 
 	@Override
 	public Collection<String> getProvidedMonitoringData() {

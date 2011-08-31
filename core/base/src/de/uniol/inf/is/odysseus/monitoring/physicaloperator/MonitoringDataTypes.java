@@ -71,11 +71,6 @@ public enum MonitoringDataTypes {
 			getLogger().debug( "Selectivity-MetadataItem created" );
 			return new ClassicSelectivity(source, in);
 			
-		} else if( ELEMENTS_READ.name.equals( type )) {
-			
-			getLogger().debug( "Elementsread-MetadataItem created" );
-			return new ElementsRead(source);
-			
 		} else {
 			getLogger().warn( "Metadatatype " + type + " is unknown!" );
 			return null;
