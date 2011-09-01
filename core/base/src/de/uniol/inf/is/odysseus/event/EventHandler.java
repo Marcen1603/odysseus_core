@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 
@@ -87,8 +88,8 @@ public class EventHandler implements IEventHandler {
 }
 
 class EventDispatcher extends Thread {
-	Stack<IEvent<?, ?>> eventQueue = new Stack<IEvent<?, ?>>();
-	Stack<Long> eventTimestamps = new Stack<Long>();
+	LinkedList<IEvent<?, ?>> eventQueue = new  LinkedList<IEvent<?,?>>();
+	LinkedList<Long> eventTimestamps = new LinkedList<Long>();
 	final EventHandler handler;
 
 	public EventDispatcher(EventHandler handler) {
@@ -97,8 +98,8 @@ class EventDispatcher extends Thread {
 
 	public void addEvent(IEvent<?, ?> event, long eventTime) {
 		synchronized (eventQueue) {
-			eventQueue.push(event);
-			eventTimestamps.push(eventTime);
+			eventQueue.addLast(event);
+			eventTimestamps.addLast(eventTime);
 			eventQueue.notifyAll();
 		}
 	}
@@ -116,8 +117,8 @@ class EventDispatcher extends Thread {
 						e.printStackTrace();
 					}
 				}
-				eventToFire = eventQueue.pop();
-				timeStamp = eventTimestamps.pop();
+				eventToFire = eventQueue.getFirst();
+				timeStamp = eventTimestamps.removeFirst();
 			}
 
 			//System.err.println("Fire Event ("+timeStamp+") "+eventToFire);
