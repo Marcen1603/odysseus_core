@@ -13,7 +13,10 @@ package ReACT;
 
 public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase implements ClientCommunicatorPrx
 {
-    public int
+	
+	private static final long serialVersionUID = 7482031627232136979L;
+
+	public int
     connect(String user, String passwd, boolean steering, boolean capture, boolean scanner, boolean navigation)
     {
         return connect(user, passwd, steering, capture, scanner, navigation, null, false);
@@ -25,7 +28,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return connect(user, passwd, steering, capture, scanner, navigation, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private int
     connect(String user, String passwd, boolean steering, boolean capture, boolean scanner, boolean navigation, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -67,7 +69,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return emergency(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     emergency(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -109,7 +110,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return enableLaserscanner(enablescanner, id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     enableLaserscanner(boolean enablescanner, int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -151,7 +151,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return enableLineFolow(enabled, id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     enableLineFolow(boolean enabled, int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -193,7 +192,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return exit(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     exit(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -235,7 +233,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getCapture(width, height, id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private JPGImage
     getCapture(int width, int height, int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -277,7 +274,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getLaserScannerData(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private ScannerData
     getLaserScannerData(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -319,7 +315,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getMap(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private JPGImage
     getMap(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -361,7 +356,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getMapHeight(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private int
     getMapHeight(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -403,7 +397,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getMapWidth(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private int
     getMapWidth(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -445,7 +438,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return getScooterPos(id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private ScooterPos
     getScooterPos(int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -487,7 +479,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return moveScooter(steerAngle, speed, id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private int
     moveScooter(double steerAngle, double speed, int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -529,7 +520,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return setMaxSpeed(id, maxSpeed, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     setMaxSpeed(int id, float maxSpeed, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -571,7 +561,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return setWaypoint(x, y, id, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     setWaypoint(int x, int y, int id, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -613,7 +602,6 @@ public final class ClientCommunicatorPrxHelper extends Ice.ObjectPrxHelperBase i
         return stopNavigation(id, activated, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean
     stopNavigation(int id, boolean activated, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {

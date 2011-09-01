@@ -16,11 +16,6 @@ package de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplac
 
 import java.util.Collection;
 
-
-/**
- * Places buffers before metadata creation po
- */
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +27,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrategy{
 	         
 	
@@ -50,13 +45,11 @@ public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrate
 		return "Source Buffer Placement";
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IBuffer<?> createNewBuffer() {
 		return new BufferedPipe();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
 		// do nothing.

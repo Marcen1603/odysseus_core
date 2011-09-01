@@ -34,7 +34,7 @@ public class TSlidingElementWindowTIPORule extends AbstractTransformationRule<Wi
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		SlidingElementWindowTIPO windowPO = new SlidingElementWindowTIPO(windowAO);
 		windowPO.setOutputSchema(windowAO.getOutputSchema());

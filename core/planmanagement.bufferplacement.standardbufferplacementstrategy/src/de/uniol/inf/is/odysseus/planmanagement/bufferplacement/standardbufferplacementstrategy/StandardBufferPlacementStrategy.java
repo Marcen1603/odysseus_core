@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
  * @author Jonas Jacobi, Marco Grawunder
  *
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class StandardBufferPlacementStrategy 
 	   extends	AbstractBufferPlacementStrategy {
  
@@ -53,13 +53,11 @@ public class StandardBufferPlacementStrategy
 		return !(sink instanceof MetadataCreationPO);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IBuffer<?> createNewBuffer() {
 		return new BufferedPipe();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
 		// do nothing. It's only a standard placement strategy.

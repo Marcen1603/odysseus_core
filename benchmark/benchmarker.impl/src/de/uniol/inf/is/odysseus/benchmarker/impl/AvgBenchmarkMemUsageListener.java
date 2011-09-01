@@ -78,7 +78,6 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 	private DescriptiveStatistics stats = new DescriptiveStatistics();
 //	private long tmpAgg = 0;
 
-	@SuppressWarnings("unchecked")
 	private void addMemListeners(IPhysicalOperator op) {
 		if ((op instanceof IBuffer || op instanceof JoinTIPO)
 				&& hash.get(op.hashCode()) == null) {

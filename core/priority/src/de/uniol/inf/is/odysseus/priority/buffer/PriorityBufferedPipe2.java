@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-@SuppressWarnings({"rawtypes","unchecked"})
 public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends IPriority>>
 		extends AbstractIterablePipe<T, T> implements IBuffer<T>,
 		IPrioBuffer<T> {

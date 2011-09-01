@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
                       targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/",
                       wsdlLocation = "resources/OdysseusWebService.wsdl",
                       endpointInterface = "de.uniol.inf.is.odysseus.webservice.OdysseusWSPort")
-@SuppressWarnings({"unchecked","rawtypes"})                      
+@SuppressWarnings({})                      
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
 	private static IExecutor executor;

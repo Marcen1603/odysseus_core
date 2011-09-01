@@ -171,7 +171,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			ci.printBundleResource(bundle, resource);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public void printDictionary(Dictionary dic, String title) {
 			ci.printDictionary(dic, title);
@@ -609,7 +608,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(description = "dump physical plan of all registered roots")
 	public void _dumpr(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -642,7 +640,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(parameter = "<query id>", description = "dump the physical plan of a query")
 	public void _dumpp(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -683,7 +680,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(parameter = "<query id>", description = "dump meta data of the query with QUERYID (only if root is a sink)")
 	public void _meta(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -831,7 +827,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(parameter = "<on|off>", description = "turns usage of priorities on|off")
 	public void _usePriorities(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -854,7 +849,6 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		ci.println("priorities are " + (usePriority ? "activated" : "deactivated"));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Help(parameter = "<on|off>", description = "turn usage of object fusion configuration on|off")
 	public void _useObjectFusionConfig(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -1073,8 +1067,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 		}
 	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
 	public void _cyclicQueryFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);

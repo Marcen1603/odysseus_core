@@ -25,7 +25,6 @@ public final class ImageServerPrxHelper extends Ice.ObjectPrxHelperBase implemen
         registerListener(proxy, width, height, quality, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private void
     registerListener(ImageListenerPrx proxy, int width, int height, int quality, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
@@ -67,7 +66,6 @@ public final class ImageServerPrxHelper extends Ice.ObjectPrxHelperBase implemen
         removeListener(proxy, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private void
     removeListener(ImageListenerPrx proxy, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {

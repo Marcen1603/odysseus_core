@@ -149,7 +149,6 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<IPhysicalOperator,ILogicalOperator> createAlternativePlans(
 			IQueryOptimizable sender, IQuery query,

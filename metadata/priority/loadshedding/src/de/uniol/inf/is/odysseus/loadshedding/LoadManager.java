@@ -144,7 +144,7 @@ public class LoadManager {
 		}
 	}	
 	
-	@SuppressWarnings({"rawtypes","unchecked"})
+	@SuppressWarnings({"rawtypes"})
 	public void addLoadShedder(DirectLoadSheddingBuffer shedder) {
 		this.shedders.add(shedder);
 	}

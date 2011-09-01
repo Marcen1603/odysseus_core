@@ -61,7 +61,6 @@ public class ConsoleFunctions {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void dumpPlan(ISource<?> source, int depth, StringBuffer b) {
 		if(source == null) {
 			return;

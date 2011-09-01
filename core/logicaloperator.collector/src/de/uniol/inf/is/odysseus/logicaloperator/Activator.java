@@ -104,7 +104,6 @@ public class Activator implements BundleActivator, BundleListener {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
 				"de.uniol.inf.is.odysseus", "*.class", true);
@@ -143,7 +142,6 @@ public class Activator implements BundleActivator, BundleListener {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void searchBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
 				"/bin/de/uniol/inf/is/odysseus", "*.class",

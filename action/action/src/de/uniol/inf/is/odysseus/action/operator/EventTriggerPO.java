@@ -103,7 +103,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 		return actions;
 	}
 	
-	@SuppressWarnings({"rawtypes","unchecked"})
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
 		//extract parameters

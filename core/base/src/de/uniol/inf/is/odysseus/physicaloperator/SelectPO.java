@@ -134,7 +134,7 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 	}
 	
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public boolean isContainedIn(IPipe<T,T> ip) {
 		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
 			return false;

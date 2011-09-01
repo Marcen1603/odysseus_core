@@ -281,7 +281,7 @@ class TupleHandler extends ClientHandler {
 		super(s, stream, limit, inputFile, cachedValues, accelerationFactor);
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());
@@ -349,7 +349,7 @@ class RawHandler extends ClientHandler {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void run() {
 		System.out.println("|->Connection from " + s.getRemoteSocketAddress());

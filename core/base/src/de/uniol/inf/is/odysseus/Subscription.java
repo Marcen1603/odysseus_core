@@ -92,7 +92,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -100,7 +100,6 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		@SuppressWarnings("unchecked")
 		Subscription other = (Subscription) obj;
 		if (sinkInPort != other.sinkInPort)
 			return false;

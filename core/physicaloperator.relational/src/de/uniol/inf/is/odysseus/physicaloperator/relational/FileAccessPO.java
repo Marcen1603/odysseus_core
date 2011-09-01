@@ -158,7 +158,7 @@ public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> 
 	}
 	
 	@Override
-	@SuppressWarnings({"rawtypes","unchecked"})
+	@SuppressWarnings({"rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof FileAccessPO)) {
 			return false;

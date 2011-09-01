@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@SuppressWarnings("rawtypes")
 public class ByteBufferStreamHandler implements ISinkStreamHandler<ByteBuffer> {
 
 	@SuppressWarnings("unused")
@@ -36,7 +35,6 @@ public class ByteBufferStreamHandler implements ISinkStreamHandler<ByteBuffer> {
 		this.connection = connection;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void transfer(ByteBuffer buffer) throws IOException {
 			if (buffer != null){

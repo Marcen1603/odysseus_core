@@ -59,7 +59,7 @@ public class UnionPO<R extends IMetaAttributeContainer<?>> extends AbstractPipe<
 	}
 	
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof UnionPO)) {
 			return false;

@@ -9,13 +9,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class SparqlParserHelper {
 
 	// ===============================================================================================
@@ -75,17 +73,17 @@ public class SparqlParserHelper {
 	private static IPredicate createJoinPredicate(SDFAttributeList commonVars, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
 		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
-		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
-		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
-		
-		
-		String exprStr = "";
-		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
-			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
-			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
-			exprStr += curLeftAttr.getURI() + " = " + curRightAttr.getURI();
-			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
-		}
+//		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
+//		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
+//		
+//		
+//		String exprStr = "";
+//		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
+//			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
+//			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
+//			exprStr += curLeftAttr.getURI() + " = " + curRightAttr.getURI();			
+//			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+//		}
 		
 		IPredicate retval = null;
 		

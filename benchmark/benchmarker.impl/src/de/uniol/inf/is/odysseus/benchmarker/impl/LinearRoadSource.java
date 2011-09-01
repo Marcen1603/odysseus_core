@@ -54,7 +54,7 @@ public class LinearRoadSource extends
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public boolean hasNext() {
 		if (buffer != null) {
 			return (Integer) buffer.getAttribute(1) * 1000 + time <= System

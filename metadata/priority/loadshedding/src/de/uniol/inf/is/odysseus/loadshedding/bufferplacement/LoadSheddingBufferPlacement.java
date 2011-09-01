@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.Abst
 import de.uniol.inf.is.odysseus.priority.PriorityPO;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class LoadSheddingBufferPlacement extends
 		AbstractBufferPlacementStrategy {
 
@@ -51,7 +51,6 @@ public class LoadSheddingBufferPlacement extends
 				|| childSink.getSubscribedToSource().size() > 1;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected IBuffer<?> createNewBuffer() {
 		if (!placeLoadShedder) {
@@ -61,7 +60,6 @@ public class LoadSheddingBufferPlacement extends
 		return new DirectLoadSheddingBuffer();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void initBuffer(IBuffer buffer) {
 		if (buffer instanceof DirectLoadSheddingBuffer) {

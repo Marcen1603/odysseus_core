@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.CountPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class RelationalCount extends Count<RelationalTuple<?>, RelationalTuple<?>> {
 
 	private static RelationalCount instance;
@@ -35,7 +35,6 @@ public class RelationalCount extends Count<RelationalTuple<?>, RelationalTuple<?
 		return instance;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
 		CountPartialAggregate<RelationalTuple<?>> pa = (CountPartialAggregate<RelationalTuple<?>>) p;

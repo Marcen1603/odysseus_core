@@ -25,7 +25,6 @@ public final class ImageListenerPrxHelper extends Ice.ObjectPrxHelperBase implem
         receive(img, sendTime, __ctx, true);
     }
 
-    @SuppressWarnings("unchecked")
     private void
     receive(JPGImage img, long sendTime, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {

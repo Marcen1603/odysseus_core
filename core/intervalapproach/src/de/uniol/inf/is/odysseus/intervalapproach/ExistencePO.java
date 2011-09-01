@@ -143,7 +143,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"unchecked"})
 	protected void process_next(T object, int port) {
 
 		if (isDone()) {

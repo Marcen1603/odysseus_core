@@ -37,7 +37,7 @@ public class AvgTempMemUsageListener implements IPOEventListener {
 		return stats;
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public synchronized void eventOccured(IEvent<?,?> event, long eventNanoTime) {
 		POEvent poEvent = (POEvent) event;
