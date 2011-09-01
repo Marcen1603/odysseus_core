@@ -1,8 +1,7 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.util;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -19,32 +18,23 @@ public final class EstimatorHelper {
 		try {
 			if (operator.isOpen()) {
 				// directly get the datarate
-				Collection<String> monitoringDataTypes = operator
-						.getProvidedMonitoringData();
-				for (String type : monitoringDataTypes) {
+				IMonitoringData<Double> datarateMonitoringData = operator.getMonitoringData(MonitoringDataTypes.DATARATE.name);
+				if (datarateMonitoringData != null) {
 
-					if (type.contains("datarate")) {
-						IMonitoringData<Double> datarateMonitoringData = operator
-								.getMonitoringData(type);
+					datarate = datarateMonitoringData.getValue(); // tuples / ms
 
-						datarate = datarateMonitoringData.getValue(); // tuples
-																		// per
-																		// ms
+					if (datarate == null)
+						return -1;
 
-						if (datarate == null)
-							return -1;
+					if (Double.isNaN(datarate))
+						return -1;
 
-						if (Double.isNaN(datarate))
-							return -1;
+					if (Math.abs(datarate) < 0.000001)
+						return -1;
 
-						if (Math.abs(datarate) < 0.000001)
-							return -1;
-
-						datarate *= 1000; // tupes per sec
-						break;
-					}
-
+					datarate *= 1000; // tupes per sec
 				}
+
 			}
 		} catch (NullPointerException ex) {
 		}
@@ -52,20 +42,15 @@ public final class EstimatorHelper {
 	}
 
 	public static double getSelectivityMetadata(IPhysicalOperator operator) {
-		double selectivity = -1.0;
+		Double selectivity = -1.0;
 		try {
 			if (operator.isOpen()) {
-				Collection<String> monitoringDataTypes = operator
-						.getProvidedMonitoringData();
-				for (String type : monitoringDataTypes) {
-
-					if (type.contains("selectivity")) {
-						IMonitoringData<Double> selectivityMonitoringData = operator
-								.getMonitoringData(type);
-						selectivity = selectivityMonitoringData.getValue();
-						if (Double.isNaN(selectivity))
-							return -1.0;
-					}
+				IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
+				if( selectivityMonitoringData != null ) {
+					selectivity = selectivityMonitoringData.getValue();
+					if (selectivity == null || Double.isNaN(selectivity))
+						return -1.0;
+					
 				}
 			}
 		} catch (NullPointerException ex) {
@@ -80,10 +65,8 @@ public final class EstimatorHelper {
 			if (operator.isOpen()) {
 
 				// measure directly
-				IMonitoringData<Double> cpuTime = operator
-						.getMonitoringData("avgCPUTime");
-				if (cpuTime != null && cpuTime.getValue() != null
-						&& !Double.isNaN(cpuTime.getValue()))
+				IMonitoringData<Double> cpuTime = operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
+				if (cpuTime != null && cpuTime.getValue() != null && !Double.isNaN(cpuTime.getValue()))
 					time = cpuTime.getValue() / 1000000000.0;
 
 			}

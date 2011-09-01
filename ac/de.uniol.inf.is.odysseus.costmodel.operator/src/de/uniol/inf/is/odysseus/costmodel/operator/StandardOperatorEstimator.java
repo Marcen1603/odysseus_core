@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.costmodel.operator;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -90,54 +90,47 @@ public class StandardOperatorEstimator<T extends IPhysicalOperator> implements I
 		return estimation;
 	}
 
-	public static double getDatarateMetadata(IPhysicalOperator operator) {
-		double datarate = -1;
+	// helpers
+	// same like in EstimatorHelper-class
+	// but using the class would inflict cyclic dependencies...
+	private static double getDatarateMetadata(IPhysicalOperator operator) {
+		Double datarate = new Double(-1);
 		try {
 			if (operator.isOpen()) {
 				// directly get the datarate
-				Collection<String> monitoringDataTypes = operator.getProvidedMonitoringData();
-				for (String type : monitoringDataTypes) {
+				IMonitoringData<Double> datarateMonitoringData = operator.getMonitoringData(MonitoringDataTypes.DATARATE.name);
+				if (datarateMonitoringData != null) {
 
-					if (type.contains("datarate")) {
-						IMonitoringData<Double> datarateMonitoringData = operator.getMonitoringData(type);
+					datarate = datarateMonitoringData.getValue(); // tuples / ms
 
-						datarate = datarateMonitoringData.getValue(); // tuples
-																		// per
-																		// ms
-						if (Double.isNaN(datarate))
-							return -1;
+					if (datarate == null)
+						return -1;
 
-						if (Math.abs(datarate) < 0.000001)
-							return -1;
+					if (Double.isNaN(datarate))
+						return -1;
 
-						datarate *= 1000; // tupes per sec
-						break;
-					}
+					if (Math.abs(datarate) < 0.000001)
+						return -1;
 
+					datarate *= 1000; // tupes per sec
 				}
+
 			}
 		} catch (NullPointerException ex) {
 		}
-
 		return datarate;
 	}
 
-	public static double getSelectivityMetadata(IPhysicalOperator operator) {
-		double selectivity = -1.0;
+	private static double getSelectivityMetadata(IPhysicalOperator operator) {
+		Double selectivity = -1.0;
 		try {
 			if (operator.isOpen()) {
-				Collection<String> monitoringDataTypes = operator.getProvidedMonitoringData();
-				for (String type : monitoringDataTypes) {
-
-					if (type.contains("selectivity")) {
-						IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(type);
-						if (selectivityMonitoringData == null)
-							return -1;
-
-						selectivity = selectivityMonitoringData.getValue();
-						if (Double.isNaN(selectivity))
-							return -1.0;
-					}
+				IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
+				if( selectivityMonitoringData != null ) {
+					selectivity = selectivityMonitoringData.getValue();
+					if (selectivity == null || Double.isNaN(selectivity))
+						return -1.0;
+					
 				}
 			}
 		} catch (NullPointerException ex) {
@@ -145,20 +138,20 @@ public class StandardOperatorEstimator<T extends IPhysicalOperator> implements I
 		return selectivity;
 	}
 
-	// helpers
-	public static double getAvgCPUTimeMetadata(IPhysicalOperator operator) {
+	private static double getAvgCPUTimeMetadata(IPhysicalOperator operator) {
 		double time = -1.0;
 		try {
 			if (operator.isOpen()) {
 
 				// measure directly
-				IMonitoringData<Double> cpuTime = operator.getMonitoringData("avgCPUTime");
+				IMonitoringData<Double> cpuTime = operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
 				if (cpuTime != null && cpuTime.getValue() != null && !Double.isNaN(cpuTime.getValue()))
 					time = cpuTime.getValue() / 1000000000.0;
 
 			}
 		} catch (NullPointerException ex) {
 		}
+
 		return time;
 	}
 }

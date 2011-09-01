@@ -28,7 +28,7 @@ public enum MonitoringDataTypes {
 	PRODUCTIVITY("productivity"), ESTIMATED_PRODUCTIVITY("estimated productivity"),
 	PROCESSING_COST("processing cost"), ESTIMATED_PROCESSING_COST("estimated processing cost"),
 	DATARATE("datarate"), ESTIMATED_DATARATE("estimated datarate"),ELEMENTS_READ("elements read"),
-	AVERAGE_PROCESSING_TIME("average processing time");
+	AVERAGE_PROCESSING_TIME("average processing time"), MEDIAN_PROCESSING_TIME("median_processing_time");
 
 	protected static Logger _logger = null;
 
@@ -70,6 +70,9 @@ public enum MonitoringDataTypes {
 			
 			getLogger().debug( "Selectivity-MetadataItem for "+source+" created" );
 			return new ClassicSelectivity(source, in);
+		} else if( MEDIAN_PROCESSING_TIME.name.equals(type)) {
+			getLogger().debug( "MedianProcessingTime for " + source + " created" );
+			return new MedianProcessingTime(source);
 			
 		} else {
 			getLogger().warn( "Metadatatype " + type + " is unknown!" );

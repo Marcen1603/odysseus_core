@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MedianProcessingTime;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -54,25 +55,15 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 				new PlanMonitor(query, false, false, DATARATE_TYPE, MONITORING_PERIOD_MILLIS));
 		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, 
 				new PlanMonitor(query, false, false, MonitoringDataTypes.SELECTIVITY.name, MONITORING_PERIOD_MILLIS));
-		
+				
 		// own metadata
 		for ( IPhysicalOperator operator : query.getPhysicalChilds() ) {
 			if( operator instanceof ISink) {
-				if( !operator.getProvidedMonitoringData().contains(MedianProcessingTime.METADATA_TYPE_NAME))
-					operator.addMonitoringData(MedianProcessingTime.METADATA_TYPE_NAME, new MedianProcessingTime(operator) );
+				if( operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null)
+					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator) );
 			}
 		}
-//		
-//		// place latency
-//		IPhysicalOperator root = query.getRoots().get(0);
-//		if (root instanceof ISource) {
-//			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
-//			((ISource) root).connectSink(latencyCalc, 0, 0, root.getOutputSchema());
-//		} else {
-//			throw new RuntimeException(
-//					"Cannot connect SLA conformance operator to query root: " + root);
-//		}
-
+		
 	}
 
 }

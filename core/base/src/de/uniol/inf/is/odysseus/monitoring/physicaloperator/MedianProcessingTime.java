@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.costmodel.operator;
+package de.uniol.inf.is.odysseus.monitoring.physicaloperator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 
 public class MedianProcessingTime extends AbstractMonitoringData<Double> implements IPOEventListener {
 
-	public static final String METADATA_TYPE_NAME = "avgCPUTime";
 	private static double granularity;
 	private static final int MAX_DATA = 50;
 	private long start1 = 0;
@@ -36,7 +35,7 @@ public class MedianProcessingTime extends AbstractMonitoringData<Double> impleme
 	private List<Long> sorted = new LinkedList<Long>();
 
 	public MedianProcessingTime(IPhysicalOperator target) {
-		super(target, METADATA_TYPE_NAME);
+		super(target, MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name);
 		setTarget(target);
 	}
 
