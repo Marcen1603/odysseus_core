@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Schnittstelle, welche Algorithmen zur Auswahl eines Vorschlags zur
- * Überlastauflösung aus einer Menge von Vorschlägen auswählen. Die aktuelle
+ * Überlastauflösung aus einer Menge von Vorschlägen repräsentiert. Die aktuelle
  * Implementierung der Schnittstelle lässt sich über den entsprechenden Service
  * ermitteln.
  * 
