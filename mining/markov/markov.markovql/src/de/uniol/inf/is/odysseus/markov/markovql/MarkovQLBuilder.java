@@ -62,13 +62,13 @@ public class MarkovQLBuilder implements BundleActivator, IQueryParser {
 				try {
 					this.parser = new MarkovQLParser(reader);
 				} catch (Error e) {
-					MarkovQLParser.ReInit(reader);
+					parser.ReInit(reader);
 				}
 			} else {
-				MarkovQLParser.ReInit(reader);
+				parser.ReInit(reader);
 			}
 
-			ASTQuery querie = MarkovQLParser.Query();
+			ASTQuery querie = parser.Query();
 			
 			MarkovQLVisitor mqlv = new MarkovQLVisitor(user, dd);
 			mqlv.visit(querie, null);

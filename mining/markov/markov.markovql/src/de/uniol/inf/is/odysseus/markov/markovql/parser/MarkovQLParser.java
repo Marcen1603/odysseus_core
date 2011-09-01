@@ -7,9 +7,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 @SuppressWarnings("all")
 public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstants, MarkovQLParserConstants {/*@bgen(jjtree)*/
-  protected static JJTMarkovQLParserState jjtree = new JJTMarkovQLParserState();
+  protected JJTMarkovQLParserState jjtree = new JJTMarkovQLParserState();
 
-  static final public ASTQuery Query() throws ParseException {
+  final public ASTQuery Query() throws ParseException {
  /*@bgen(jjtree) Query */
   ASTQuery jjtn000 = new ASTQuery(JJTQUERY);
   boolean jjtc000 = true;
@@ -60,7 +60,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     throw new Error("Missing return statement in function");
   }
 
-  static final public void HiddenMarkovModel() throws ParseException {
+  final public void HiddenMarkovModel() throws ParseException {
  /*@bgen(jjtree) HiddenMarkovModel */
   ASTHiddenMarkovModel jjtn000 = new ASTHiddenMarkovModel(JJTHIDDENMARKOVMODEL);
   boolean jjtc000 = true;
@@ -130,7 +130,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void Identifier() throws ParseException {
+  final public void Identifier() throws ParseException {
  /*@bgen(jjtree) Identifier */
         ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
         boolean jjtc000 = true;
@@ -147,7 +147,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void QuotedIdentifier() throws ParseException {
+  final public void QuotedIdentifier() throws ParseException {
  /*@bgen(jjtree) QuotedIdentifier */
   ASTQuotedIdentifier jjtn000 = new ASTQuotedIdentifier(JJTQUOTEDIDENTIFIER);
   boolean jjtc000 = true;
@@ -190,7 +190,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void States() throws ParseException {
+  final public void States() throws ParseException {
  /*@bgen(jjtree) States */
   ASTStates jjtn000 = new ASTStates(JJTSTATES);
   boolean jjtc000 = true;
@@ -222,7 +222,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void Observations() throws ParseException {
+  final public void Observations() throws ParseException {
  /*@bgen(jjtree) Observations */
   ASTObservations jjtn000 = new ASTObservations(JJTOBSERVATIONS);
   boolean jjtc000 = true;
@@ -254,7 +254,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void Transitions() throws ParseException {
+  final public void Transitions() throws ParseException {
  /*@bgen(jjtree) Transitions */
   ASTTransitions jjtn000 = new ASTTransitions(JJTTRANSITIONS);
   boolean jjtc000 = true;
@@ -286,7 +286,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void Emissions() throws ParseException {
+  final public void Emissions() throws ParseException {
  /*@bgen(jjtree) Emissions */
   ASTEmissions jjtn000 = new ASTEmissions(JJTEMISSIONS);
   boolean jjtc000 = true;
@@ -318,7 +318,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void StartProbability() throws ParseException {
+  final public void StartProbability() throws ParseException {
  /*@bgen(jjtree) StartProbability */
   ASTStartProbability jjtn000 = new ASTStartProbability(JJTSTARTPROBABILITY);
   boolean jjtc000 = true;
@@ -350,7 +350,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void ProbabiltyList() throws ParseException {
+  final public void ProbabiltyList() throws ParseException {
  /*@bgen(jjtree) ProbabiltyList */
   ASTProbabiltyList jjtn000 = new ASTProbabiltyList(JJTPROBABILTYLIST);
   boolean jjtc000 = true;
@@ -391,7 +391,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void Probability() throws ParseException {
+  final public void Probability() throws ParseException {
  /*@bgen(jjtree) Probability */
   ASTProbability jjtn000 = new ASTProbability(JJTPROBABILITY);
   boolean jjtc000 = true;
@@ -424,7 +424,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void ProbabilityTransitionList() throws ParseException {
+  final public void ProbabilityTransitionList() throws ParseException {
  /*@bgen(jjtree) ProbabilityTransitionList */
   ASTProbabilityTransitionList jjtn000 = new ASTProbabilityTransitionList(JJTPROBABILITYTRANSITIONLIST);
   boolean jjtc000 = true;
@@ -465,7 +465,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void ProbabilityTransition() throws ParseException {
+  final public void ProbabilityTransition() throws ParseException {
  /*@bgen(jjtree) ProbabilityTransition */
   ASTProbabilityTransition jjtn000 = new ASTProbabilityTransition(JJTPROBABILITYTRANSITION);
   boolean jjtc000 = true;
@@ -495,7 +495,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static final public void StateList() throws ParseException {
+  final public void StateList() throws ParseException {
  /*@bgen(jjtree) StateList */
   ASTStateList jjtn000 = new ASTStateList(JJTSTATELIST);
   boolean jjtc000 = true;
@@ -536,17 +536,16 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     }
   }
 
-  static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
-  static public MarkovQLParserTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public MarkovQLParserTokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[10];
+  public Token jj_nt;
+  private int jj_ntk;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[10];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -566,13 +565,6 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   }
   /** Constructor with InputStream and supplied encoding */
   public MarkovQLParser(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new MarkovQLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -582,11 +574,11 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -598,13 +590,6 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
 
   /** Constructor. */
   public MarkovQLParser(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new MarkovQLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -614,7 +599,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -626,13 +611,6 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
 
   /** Constructor with generated Token Manager. */
   public MarkovQLParser(MarkovQLParserTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -650,7 +628,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -666,7 +644,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -675,7 +653,7 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -684,19 +662,19 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[38];
     if (jj_kind >= 0) {
@@ -730,11 +708,11 @@ public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstan
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
 }
