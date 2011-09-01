@@ -58,8 +58,8 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 		// own metadata
 		for ( IPhysicalOperator operator : query.getPhysicalChilds() ) {
 			if( operator instanceof ISink) {
-				if( !operator.getProvidedMonitoringData().contains(AvgCPUTime.METADATA_TYPE_NAME))
-					operator.addMonitoringData(AvgCPUTime.METADATA_TYPE_NAME, new AvgCPUTime(operator) );
+				if( !operator.getProvidedMonitoringData().contains(MedianProcessingTime.METADATA_TYPE_NAME))
+					operator.addMonitoringData(MedianProcessingTime.METADATA_TYPE_NAME, new MedianProcessingTime(operator) );
 			}
 		}
 //		
