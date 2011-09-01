@@ -19,12 +19,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
+	protected static Logger LOGGER = LoggerFactory.getLogger(AbstractRule.class);
+	
 	private WorkingMemory currentWorkingMemory;
 	private Class<?> condtionClass = null;
 
