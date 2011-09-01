@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
-@SuppressWarnings("all")
 class ASTDetectionMethodSimpleValue extends SimpleNode {
   public ASTDetectionMethodSimpleValue(int id) {
     super(id);

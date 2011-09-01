@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
-@SuppressWarnings("all")
 class ASTCorrectionMethodFunctionStateless extends SimpleNode {
   public ASTCorrectionMethodFunctionStateless(int id) {
     super(id);

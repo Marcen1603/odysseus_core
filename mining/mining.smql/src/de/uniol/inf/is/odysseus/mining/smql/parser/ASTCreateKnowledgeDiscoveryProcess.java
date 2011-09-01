@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.mining.smql.parser;
 
 public
-@SuppressWarnings("all")
 class ASTCreateKnowledgeDiscoveryProcess extends SimpleNode {
   public ASTCreateKnowledgeDiscoveryProcess(int id) {
     super(id);
