@@ -39,9 +39,9 @@ public class SMQLParserService implements IQueryParser {
 			if (parser == null) {
 				parser = new SMQLParser(reader);
 			} else {
-				SMQLParser.ReInit(reader);
+				parser.ReInit(reader);
 			}
-			SimpleNode statement = SMQLParser.Start();
+			SimpleNode statement = parser.Start();
 			StandardSMQLParserVisitor walker = new StandardSMQLParserVisitor(user, dd, languageFeatures);
 			walker.visit(statement, null);
 			walker.print();
