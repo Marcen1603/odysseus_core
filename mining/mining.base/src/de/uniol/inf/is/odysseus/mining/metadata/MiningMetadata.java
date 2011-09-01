@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.mining.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MiningMetadata implements IMiningMetadata {
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
+
+public class MiningMetadata extends TimeInterval implements IMiningMetadata {
 	
 	private static final long serialVersionUID = 2490005020065173048L;
 	private List<String> corrected = new ArrayList<String>();
@@ -54,7 +56,7 @@ public class MiningMetadata implements IMiningMetadata {
 
 		
 	@Override
-	public IMiningMetadata clone(){	
+	public MiningMetadata clone(){	
 		return new MiningMetadata(this);
 	}
 

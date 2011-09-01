@@ -1,8 +1,9 @@
 package de.uniol.inf.is.odysseus.mining.metadata;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 
-public interface IMiningMetadata extends IMetaAttribute{
+public interface IMiningMetadata extends IMetaAttribute, ITimeInterval{
 
 	public boolean isCorrected();
 	public boolean isCorrectedAttribute(String attribute);
