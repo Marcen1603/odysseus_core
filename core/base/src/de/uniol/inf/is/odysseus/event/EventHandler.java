@@ -110,14 +110,14 @@ class EventDispatcher extends Thread {
 		Long timeStamp = null;
 		while (!interrupted()) {
 			synchronized (eventQueue) {
-				while (eventQueue.isEmpty()) {
+				while (eventQueue.isEmpty() && eventTimestamps.isEmpty()) {
 					try {
 						eventQueue.wait(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-				eventToFire = eventQueue.getFirst();
+				eventToFire = eventQueue.removeFirst();
 				timeStamp = eventTimestamps.removeFirst();
 			}
 
