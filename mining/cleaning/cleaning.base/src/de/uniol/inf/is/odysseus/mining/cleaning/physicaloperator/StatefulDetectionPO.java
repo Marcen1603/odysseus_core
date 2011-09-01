@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen Created at: 07.07.2011
  */
-public class StatefulDetectionPO<Meta extends IMiningMetadata & ITimeInterval, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
+public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMetaAttributeContainer<Meta>> extends AbstractDetectionPO<Data, IBinaryDetection<Data>> {
 	
 	//LEFT is data-port and RIGHT is aggregate-port
 	private static final int LEFT = 0;

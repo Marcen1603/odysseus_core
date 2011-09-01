@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful.IBinaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * 
  * @author Dennis Geesen Created at: 11.07.2011
  */
-public class StatefulCorrectionPO<Meta extends IMiningMetadata & ITimeInterval, Data extends IMetaAttributeContainer<Meta>> extends
+public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMetaAttributeContainer<Meta>> extends
 		AbstractCorrectionPO<Data, IBinaryCorrection<Data>> {
 
 	private static final int LEFT = 0;
