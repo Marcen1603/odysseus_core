@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.storing.transform;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseSinkAO;
@@ -24,9 +21,7 @@ import de.uniol.inf.is.odysseus.storing.physicaloperator.DatabaseSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TDatabaseSinkAORule extends AbstractTransformationRule<DatabaseSinkAO>{
-
-	private volatile static Logger LOGGER = LoggerFactory.getLogger(TDatabaseSinkAORule.class);;
+public class TDatabaseSinkAORule extends AbstractTransformationRule<DatabaseSinkAO>{	
 	
 	private boolean saveMetadata = false;
 	

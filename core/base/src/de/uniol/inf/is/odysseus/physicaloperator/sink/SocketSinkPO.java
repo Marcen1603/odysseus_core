@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
@@ -29,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SocketSinkPO extends AbstractSink<Object> {
 
-	static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
+	//static private Logger logger = LoggerFactory.getLogger(SocketSinkPO.class);
 	
 	public List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
 	private SinkConnectionListener listener;

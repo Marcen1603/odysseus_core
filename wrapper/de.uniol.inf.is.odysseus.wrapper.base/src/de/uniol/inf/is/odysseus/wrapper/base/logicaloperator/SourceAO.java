@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
@@ -28,8 +25,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
     /**
      * 
      */
-    private static final long serialVersionUID = 2514000374871326771L;
-    private static Logger LOG = LoggerFactory.getLogger(SourceAO.class);
+    private static final long serialVersionUID = 2514000374871326771L;    
 
     private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
     private final Map<String, String> options = new HashMap<String, String>();
