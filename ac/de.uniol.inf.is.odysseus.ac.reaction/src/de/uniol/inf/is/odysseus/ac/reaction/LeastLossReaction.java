@@ -6,6 +6,16 @@ import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.costmodel.ICost;
 
+/**
+ * Auswahl eines Vorschlags für die Auflösung einer Überlastung.
+ * In dieser Klasse wird genau der Vorschlag ausgewählt, welches
+ * die höchsten Kosten verursacht. Die höchsten Kosten sind noch unter
+ * den Maximalkosten, sodass diese den geringsten Verlust an Leistung
+ * verspricht.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class LeastLossReaction implements IAdmissionReaction {
 
 	@Override
