@@ -18,7 +18,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
@@ -62,7 +62,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 		}
 		// otherwise we use a LeftJoinTISweepArea
 		else{
-			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
+			joinPO.setTransferFunction(new TITransferArea());
 		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
