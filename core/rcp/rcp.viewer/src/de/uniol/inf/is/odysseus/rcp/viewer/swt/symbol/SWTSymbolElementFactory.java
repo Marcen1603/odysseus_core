@@ -129,9 +129,10 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 
 	@Override
 	public IConnectionSymbolElement<C> createForConnection( String type ) {
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		if( "Arrow".equals(type))
-			return new SWTArrowSymbolElement< C >( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
+			return new SWTArrowSymbolElement< C >( display.getSystemColor( SWT.COLOR_BLACK ));
 		
-		return new SWTLineConnectionSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ) );
+		return new SWTLineConnectionSymbolElement<C>( display.getSystemColor( SWT.COLOR_BLACK ) );
 	}
 }
