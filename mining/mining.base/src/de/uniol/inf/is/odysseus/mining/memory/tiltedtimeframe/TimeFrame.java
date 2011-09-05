@@ -14,11 +14,34 @@
   */
 
 package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
+
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 01.09.2011
  */
-public class TimeFrame {
+public class TimeFrame<T> {
 
+	private ISnapshot<T> snapshot;	
+	
+	public TimeFrame(ISnapshot<T> snapshot){
+		this.snapshot = snapshot;
+	}
+	
+	public ISnapshot<T> getSnapshot() {
+		return snapshot;
+	}
+
+	public void setSnapshot(ISnapshot<T> snapshot) {
+		this.snapshot = snapshot;
+	}
+		
+	@Override
+	public String toString() {
+		String str = "["+this.snapshot+"]";
+		return str;
+	}
+	
 }

@@ -15,45 +15,77 @@
 
 package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
-import java.util.ArrayList;
-
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
-import de.uniol.inf.is.odysseus.mining.memory.ITimeCapsule;
+
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 01.09.2011
+ * Created at: 02.09.2011
  */
-public class TiltedTimeFrame<T> implements ITimeCapsule<T>{
+public class TiltedTimeFrame<S> {
 
-	private ArrayList<TimeFrame> frames = new ArrayList<TimeFrame>();
-	private ISnapshotMergeFunction<T> snapshotMergeFunction;
-	private ITimeFrameModel timeFrameModel;
-	
-	public TiltedTimeFrame(ISnapshotMergeFunction<T> mergeFunction, ITimeFrameModel timeFrameModel){
-		this.snapshotMergeFunction=mergeFunction;
-		this.timeFrameModel = timeFrameModel;
+	private TimeFrame<S> normalTimeFrame;
+	private TimeFrame<S> bufferTimeFrame;
+
+	public TiltedTimeFrame(TimeFrame<S> buffer){
+		this.bufferTimeFrame = buffer;
 	}
 	
-	@Override
-	public int store(ISnapshot<T> snapshot) {
-		// TODO Auto-generated method stub
-		return 0;
+	public TiltedTimeFrame(TimeFrame<S> normal, TimeFrame<S> buffer){
+		this.setNormalTimeFrame(normal);
+		this.setBufferTimeFrame(buffer);
 	}
 
-	@Override
-	public T retrieve(int frame) {
-		// TODO Auto-generated method stub
-		return null;
+	public TimeFrame<S> getBufferTimeFrame() {
+		return bufferTimeFrame;
 	}
 
-	@Override
-	public T retrieve(PointInTime timestamp) {
-		// TODO Auto-generated method stub
-		return null;
+	public void setBufferTimeFrame(TimeFrame<S> bufferTimeFrame) {
+		this.bufferTimeFrame = bufferTimeFrame;
 	}
 
+	public TimeFrame<S> getNormalTimeFrame() {
+		return normalTimeFrame;
+	}
+
+	public void setNormalTimeFrame(TimeFrame<S> normalTimeFrame) {
+		this.normalTimeFrame = normalTimeFrame;
+	}
+	
+	public TimeFrame<S> insert(TimeFrame<S> toInsert, ISnapshotMergeFunction<S> mergeFunction){
+		if(this.isNormalEmpty()){
+			this.setNormalTimeFrame(toInsert);
+			return null;
+		}else{
+			if(this.isBufferEmpty()){
+				this.setBufferTimeFrame(this.normalTimeFrame);
+				this.setNormalTimeFrame(toInsert);
+				return null;
+			}else{
+				TimeFrame<S> merged = TimeFrameMergeFunction.merge(this.normalTimeFrame, this.bufferTimeFrame, mergeFunction);
+				this.normalTimeFrame = toInsert;
+				this.bufferTimeFrame = null;
+				return merged;
+			}
+		}
+	}
+	
+	
+	public boolean isBufferEmpty(){
+		return (this.bufferTimeFrame==null);
+	}
+	
+	public boolean isNormalEmpty(){
+		return (this.normalTimeFrame == null);
+	}
+	
+	public boolean isEmpty(){
+		return (isNormalEmpty() && isBufferEmpty());
+	}
+	
+	@Override
+	public String toString() {
+		return "Normal: "+getNormalTimeFrame()+" | Buffer: "+getBufferTimeFrame();
+	}
 }

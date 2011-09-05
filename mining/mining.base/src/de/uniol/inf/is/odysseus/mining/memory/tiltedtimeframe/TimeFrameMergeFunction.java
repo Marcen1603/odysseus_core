@@ -12,15 +12,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.mining.memory;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
-public interface ITimeCapsule<T> {
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 
-	public void store(ISnapshot<T> snapshot);
-	
-	public T retrieve(int frame);
-	
-	public T retrieve(PointInTime timestamp);
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 02.09.2011
+ */
+public class TimeFrameMergeFunction<T> {
+
+	public static <T> TimeFrame<T> merge(TimeFrame<T> one, TimeFrame<T> two, ISnapshotMergeFunction<T> mergeFunction){
+		ISnapshot<T> merged = mergeFunction.merge(one.getSnapshot(), two.getSnapshot());
+		TimeFrame<T> mergedTimeFrame = new TimeFrame<T>(merged);				
+		return mergedTimeFrame;
+	}
 }

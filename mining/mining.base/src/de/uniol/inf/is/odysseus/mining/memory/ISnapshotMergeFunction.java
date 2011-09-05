@@ -14,13 +14,15 @@
   */
 
 package de.uniol.inf.is.odysseus.mining.memory;
+
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 01.09.2011
  */
-public interface ISnapshotMergeFunction<V> {
+public interface ISnapshotMergeFunction<T> {
 
-	public V merge(V itemOne, V itemTwo);
+	public ISnapshot<T> merge(ISnapshot<T> left, ISnapshot<T> right);
 	
 }

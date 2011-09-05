@@ -12,15 +12,33 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.mining.memory;
+
+package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 
-public interface ITimeCapsule<T> {
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 02.09.2011
+ */
+public class SimpleSnapshot implements ISnapshot<String> {
 
-	public void store(ISnapshot<T> snapshot);
+	private String value;
+
+	public SimpleSnapshot(String data){
+		this.value = data;
+	}
 	
-	public T retrieve(int frame);
-	
-	public T retrieve(PointInTime timestamp);
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {	
+		return value;
+	}
+
 }

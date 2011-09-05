@@ -18,6 +18,5 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public interface ISnapshot<T> {
 
-	public T getValue();
-	public PointInTime getPointInTime();
+	public T getValue();	
 }
