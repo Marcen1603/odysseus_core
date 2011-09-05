@@ -49,6 +49,10 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
             name="Flush OperatorBreak">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
+            name="Refresh Graph Outline">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -177,6 +181,10 @@
                </reference>
             </or>
          </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.RefreshGraphOutlineCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline">
       </handler>
    </extension>
    <extension
@@ -308,6 +316,17 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
                label="Remove"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
          </command>
       </menuContribution>
    </extension>
