@@ -275,7 +275,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected boolean isDone() {
 		try {
 			if (getSubscribedToSource(0).isDone()) {
-				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
+				return getSubscribedToSource(1).isDone() && areas[0].isEmpty();
 			} else {
 				return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 			}
