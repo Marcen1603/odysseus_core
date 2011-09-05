@@ -174,10 +174,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-		if(this.hashCode() == 28556972){
-			int i = 0;
-			i++;
-		}
 		
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
@@ -274,10 +270,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	@Override
 	protected boolean isDone() {
 		try {
+			
 			if (getSubscribedToSource(0).isDone()) {
-				return getSubscribedToSource(1).isDone() && areas[0].isEmpty();
+				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 			} else {
-				return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+				return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
