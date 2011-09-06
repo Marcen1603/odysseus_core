@@ -15,6 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 
 
@@ -23,13 +24,13 @@ import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
  * @author Dennis Geesen
  * Created at: 02.09.2011
  */
-public class TiltedTimeFrame<S> {
+public class TiltedTimeFrame<S extends ISnapshot> {
 
 	private TimeFrame<S> normalTimeFrame;
 	private TimeFrame<S> bufferTimeFrame;
 
-	public TiltedTimeFrame(TimeFrame<S> buffer){
-		this.bufferTimeFrame = buffer;
+	public TiltedTimeFrame(TimeFrame<S> normalFrame){
+		this.normalTimeFrame = normalFrame;
 	}
 	
 	public TiltedTimeFrame(TimeFrame<S> normal, TimeFrame<S> buffer){
@@ -86,6 +87,6 @@ public class TiltedTimeFrame<S> {
 	
 	@Override
 	public String toString() {
-		return "Normal: "+getNormalTimeFrame()+" | Buffer: "+getBufferTimeFrame();
+		return "Normal: "+getNormalTimeFrame()+"\nBuffer: "+getBufferTimeFrame();
 	}
 }

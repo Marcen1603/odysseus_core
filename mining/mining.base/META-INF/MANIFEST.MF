@@ -22,6 +22,8 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework;version="1.3.0"
 Export-Package: de.uniol.inf.is.odysseus.mining,
  de.uniol.inf.is.odysseus.mining.distance,
+ de.uniol.inf.is.odysseus.mining.memory,
+ de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe,
  de.uniol.inf.is.odysseus.mining.metadata,
  de.uniol.inf.is.odysseus.mining.model
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml

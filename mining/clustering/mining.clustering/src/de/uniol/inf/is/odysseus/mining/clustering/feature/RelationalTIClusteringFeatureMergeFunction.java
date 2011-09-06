@@ -13,34 +13,22 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
+package de.uniol.inf.is.odysseus.mining.clustering.feature;
 
-import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 01.09.2011
+ * Created at: 06.09.2011
  */
-public class TimeFrame<T extends ISnapshot> {
+public class RelationalTIClusteringFeatureMergeFunction<M extends ITimeInterval> implements ISnapshotMergeFunction<ClusteringFeature<RelationalTuple<ITimeInterval>>> {
 
-	private T snapshot;	
-	
-	public TimeFrame(T snapshot){
-		this.snapshot = snapshot;
-	}
-	
-	public T getSnapshot() {
-		return snapshot;
-	}
-
-	public void setSnapshot(T snapshot) {
-		this.snapshot = snapshot;
-	}
-		
 	@Override
-	public String toString() {		
-		return this.snapshot.toString();
+	public ClusteringFeature<RelationalTuple<ITimeInterval>> merge(ClusteringFeature<RelationalTuple<ITimeInterval>> left, ClusteringFeature<RelationalTuple<ITimeInterval>> right) {
+		return left.merge(right);		
 	}
-	
+
 }

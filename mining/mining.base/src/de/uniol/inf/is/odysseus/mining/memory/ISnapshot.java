@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.mining.memory;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
-public interface ISnapshot<T> {
-
-	public T getValue();	
+public interface ISnapshot {	
 }

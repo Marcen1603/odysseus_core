@@ -20,15 +20,14 @@ package de.uniol.inf.is.odysseus.mining.memory;
  * 
  * @author Dennis Geesen Created at: 05.09.2011
  */
-public abstract class AbstractSnapshotSimpleContainer<T> implements ISnapshot<T> {
+public abstract class AbstractSnapshotSimpleContainer<T> implements ISnapshot {
 
 	private T value;
 	
 	public AbstractSnapshotSimpleContainer(T value){
 		this.value = value;
 	}
-	
-	@Override
+		
 	public T getValue() {
 		return value;
 	}

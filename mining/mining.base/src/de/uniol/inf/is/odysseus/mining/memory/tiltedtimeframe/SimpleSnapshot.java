@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 
 /**
@@ -23,15 +22,14 @@ import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
  * @author Dennis Geesen
  * Created at: 02.09.2011
  */
-public class SimpleSnapshot implements ISnapshot<String> {
+public class SimpleSnapshot implements ISnapshot {
 
 	private String value;
 
 	public SimpleSnapshot(String data){
 		this.value = data;
 	}
-	
-	@Override
+		
 	public String getValue() {
 		return value;
 	}

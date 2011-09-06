@@ -21,8 +21,8 @@ package de.uniol.inf.is.odysseus.mining.memory;
  * @author Dennis Geesen
  * Created at: 01.09.2011
  */
-public interface ISnapshotMergeFunction<T> {
+public interface ISnapshotMergeFunction<T extends ISnapshot> {
 
-	public ISnapshot<T> merge(ISnapshot<T> left, ISnapshot<T> right);
+	public T merge(T left, T right);
 	
 }

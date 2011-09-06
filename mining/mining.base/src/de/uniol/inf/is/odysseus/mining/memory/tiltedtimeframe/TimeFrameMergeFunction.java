@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
  * @author Dennis Geesen
  * Created at: 02.09.2011
  */
-public class TimeFrameMergeFunction<T> {
+public class TimeFrameMergeFunction {
 
-	public static <T> TimeFrame<T> merge(TimeFrame<T> one, TimeFrame<T> two, ISnapshotMergeFunction<T> mergeFunction){
-		ISnapshot<T> merged = mergeFunction.merge(one.getSnapshot(), two.getSnapshot());
+	public static <T extends ISnapshot> TimeFrame<T> merge(TimeFrame<T> one, TimeFrame<T> two, ISnapshotMergeFunction<T> mergeFunction){
+		T merged = mergeFunction.merge(one.getSnapshot(), two.getSnapshot());
 		TimeFrame<T> mergedTimeFrame = new TimeFrame<T>(merged);				
 		return mergedTimeFrame;
 	}

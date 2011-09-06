@@ -17,23 +17,16 @@ package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.ITimeCapsule;
-import de.uniol.inf.is.odysseus.mining.memory.relational.RelationalTISnapshot;
-import de.uniol.inf.is.odysseus.mining.memory.relational.RelationalTISnapshotMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 
  * @author Dennis Geesen Created at: 01.09.2011
  */
-public class TiltedTimeWindow<T> implements ITimeCapsule<T> {
+public class TiltedTimeWindow<T extends ISnapshot> implements ITimeCapsule<T> {
 
 	private LinkedList<TiltedTimeFrame<T>> frames = new LinkedList<TiltedTimeFrame<T>>();
 	private ISnapshotMergeFunction<T> datamergeFunction;
@@ -42,31 +35,8 @@ public class TiltedTimeWindow<T> implements ITimeCapsule<T> {
 		this.datamergeFunction = mergeFunction;
 	}
 
-	public static void main(String[] args) {
-		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute attributeID = new SDFAttribute("id", SDFDatatype.INTEGER);
-		schema.add(attributeID);
-		SDFAttribute attributeName = new SDFAttribute("name", SDFDatatype.STRING);
-		schema.add(attributeName);
-
-		ISnapshotMergeFunction<RelationalTuple<ITimeInterval>> datamergeFunction = new RelationalTISnapshotMergeFunction(schema.size());
-		TiltedTimeWindow<RelationalTuple<ITimeInterval>> window = new TiltedTimeWindow<RelationalTuple<ITimeInterval>>(datamergeFunction);
-
-		for (int i = 1; i <= 10; i++) {
-			RelationalTuple<ITimeInterval> example = new RelationalTuple<ITimeInterval>(schema.size());
-			example.setAttribute(0, i);
-			example.setAttribute(1, "Item " + i);
-			RelationalTISnapshot d = new RelationalTISnapshot(example);
-			System.out.println("Inserting: " + d);
-			window.store(d);
-		}
-
-		System.out.println(window.toString());
-
-	}
-
 	@Override
-	public void store(ISnapshot<T> snapshot) {
+	public void store(T snapshot) {
 		TimeFrame<T> newFrame = new TimeFrame<T>(snapshot);
 		insert(newFrame, 0);
 
