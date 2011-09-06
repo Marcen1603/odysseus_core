@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTInvisibleSymbolEle
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectivitySymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTTextSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
@@ -76,6 +77,9 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		if( type.equals( "selectivity" ))
 			element = new SWTSelectivitySymbolElement<C>();
 		
+		if( type.equals( "text" ))
+			element = new SWTTextSymbolElement<C>(getColorFromParams(params));
+
 		if (element == null ) {
 			element = new SWTRectSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
 			logger.warn( "Symboltype '" + type + "' not known!" );

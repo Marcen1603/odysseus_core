@@ -98,7 +98,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 	public void createPartControl(Composite parent) {
 
 		Composite canvasComposite = new Composite(parent, SWT.BORDER);
-		canvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		canvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
 		canvasComposite.setLayout(new FillLayout());
 
 		renderManager = new SWTRenderManager<IPhysicalOperator>(canvasComposite, new SugiyamaPositioner(SYMBOL_FACTORY));

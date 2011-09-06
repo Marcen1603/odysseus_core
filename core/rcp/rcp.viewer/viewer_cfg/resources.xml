@@ -51,5 +51,6 @@
 	<Image source="viewer_cfg/temporaryDataBouncerPO.png" name="bouncerPO" />
 	<Image source="viewer_cfg/distanceObjectSelectorPO.png" name="distanceObjectSelectorPO" />
 	
+	<Image source="viewer_cfg/emptyPO.png" name="emptyPO" />
 </Resources>
 
