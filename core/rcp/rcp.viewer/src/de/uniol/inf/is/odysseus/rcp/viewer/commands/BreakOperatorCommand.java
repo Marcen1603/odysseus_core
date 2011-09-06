@@ -9,11 +9,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreakManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
@@ -55,6 +57,14 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 						final ISource<?> src = (ISource<?>) operator;
 						ob = new OperatorBreak(src);
 						OperatorBreakManager.getInstance().add(ob);
+						
+						// View anzeigen
+						try {
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(OdysseusRCPViewerPlugIn.OPERATOR_BREAK_VIEW_ID);
+						} catch (PartInitException e) {
+							e.printStackTrace();
+						}
+						
 					} else {
 						MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
 						box.setMessage("Only sources can be breaked");
