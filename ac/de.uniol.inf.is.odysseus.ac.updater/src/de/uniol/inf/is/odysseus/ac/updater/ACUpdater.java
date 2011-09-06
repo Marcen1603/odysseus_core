@@ -59,7 +59,7 @@ public class ACUpdater extends Thread {
 			while (isRunning) {
 
 				ac.updateEstimations();
-				System.out.println(ac.getActualCost());
+//				System.out.println(ac.getActualCost());
 				
 //				steps++;
 //				if( steps >= STEPS_BEFORE_INSERT ) {
