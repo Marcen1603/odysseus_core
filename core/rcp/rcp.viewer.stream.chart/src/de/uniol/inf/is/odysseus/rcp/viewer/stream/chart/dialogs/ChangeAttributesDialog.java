@@ -94,7 +94,6 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		int i = 0;
 		for (IViewableAttribute a : this.changeable.getViewableAttributes()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Button check = new Button(table, SWT.CHECK);
@@ -119,7 +118,6 @@ public class ChangeAttributesDialog<T> extends TitleAreaDialog {
 			tbl_editor.minimumWidth = check.getSize().y;
 			tbl_editor.setEditor(check, item, 1);
 			item.setText(0, a.toString());
-			i++;
 		}
 
 		return parent;

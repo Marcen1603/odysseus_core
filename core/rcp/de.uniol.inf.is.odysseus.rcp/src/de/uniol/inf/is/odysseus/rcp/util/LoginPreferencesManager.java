@@ -27,6 +27,7 @@ public class LoginPreferencesManager {
 	private Preferences prefs;
 	private Preferences loginPrefs;
 	
+	@SuppressWarnings("deprecation")
 	private LoginPreferencesManager() {
 		prefs = new ConfigurationScope().getNode(OdysseusRCPPlugIn.PLUGIN_ID);
 		loginPrefs = prefs.node("login");

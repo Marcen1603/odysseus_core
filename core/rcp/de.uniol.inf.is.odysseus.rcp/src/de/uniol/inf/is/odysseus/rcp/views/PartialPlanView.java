@@ -145,6 +145,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 
 		Thread t = new Thread(new Runnable() {
 
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void run() {
 				ServiceTracker execTracker = new ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(), IExecutor.class.getName(), null);
