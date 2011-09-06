@@ -57,6 +57,7 @@ public class DefaultGraphView<C> implements IGraphView<C> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void removeViewedNode( INodeView<C> node ) {
 		if( nodes.contains( node  )) {

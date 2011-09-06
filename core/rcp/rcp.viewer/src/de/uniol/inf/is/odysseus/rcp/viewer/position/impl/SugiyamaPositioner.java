@@ -56,6 +56,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 	}
 	
 	// die Parameter width und height werden hier nicht verwendet
+	@SuppressWarnings("unchecked")
 	@Override
 	public void positionize( IGraphView<IPhysicalOperator> graph, int width, int height ) {
 		

@@ -116,6 +116,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void removeNode( INodeModel< C > node ) {
 		nodes.remove( node );
