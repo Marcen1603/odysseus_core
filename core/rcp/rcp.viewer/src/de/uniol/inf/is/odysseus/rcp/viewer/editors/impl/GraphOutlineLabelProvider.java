@@ -122,8 +122,16 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		if (element != null && element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
 			final String type = monData.getType();
-			final String value = monData.getValue() != null ? monData.getValue().toString() : "null";
-			return type + " = " + value;
+			
+			final Object value = monData.getValue();
+			String valueString = "";
+			if( value instanceof Double ) {
+				Double d = (Double)value;
+				valueString = String.format("%-8.6f", d);
+			} else {
+				valueString = value != null ? value.toString() : "null";
+			}
+			return type + " = " + valueString;
 		}
 		
 		if (element != null && element instanceof OwnerWrapper){
