@@ -7,12 +7,33 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
+/**
+ * Diese Klasse bietet statische Methoden an, um zu einem gegebenen physischen
+ * Operator verschiedenen Metadaten liefern zu können. Es ist nicht möglich, zu
+ * dieser Klasse eine Instanz zu erzeugen.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public final class EstimatorHelper {
 
+	// privater Konstruktor
 	private EstimatorHelper() {
 
 	}
 
+	/**
+	 * Liefert das Metadatum "datarate" zum gegebenen physischen Operator zurück
+	 * (in Tupel pro Sekunde). Falls das Metadatum nichr vorhanden ist, oder
+	 * dessen Rückgabewert NaN oder <code>null</code> ist, wird -1
+	 * zurückgegeben.
+	 * 
+	 * @param operator
+	 *            Physischer Operator, dessen Datenrate zurückgegeben werden
+	 *            soll.
+	 * @return Datenrate des physischen Operators, oder -1, falls das Metadatum
+	 *         nicht existiert oder (noch) ungültig ist
+	 */
 	public static double getDatarateMetadata(IPhysicalOperator operator) {
 		Double datarate = new Double(-1);
 		try {
@@ -41,16 +62,27 @@ public final class EstimatorHelper {
 		return datarate;
 	}
 
+	/**
+	 * Liefert das Metadatum "selectivity" zum gegebenen physischen Operator
+	 * zurück. Falls das Metadatum nichr vorhanden ist, oder dessen Rückgabewert
+	 * NaN oder <code>null</code> ist, wird -1 zurückgegeben.
+	 * 
+	 * @param operator
+	 *            Physischer Operator, dessen Selektivität zurückgegeben werden
+	 *            soll.
+	 * @return Selektivität des physischen Operators, oder -1, falls das
+	 *         Metadatum nicht existiert oder (noch) ungültig ist
+	 */
 	public static double getSelectivityMetadata(IPhysicalOperator operator) {
 		Double selectivity = -1.0;
 		try {
 			if (operator.isOpen()) {
 				IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
-				if( selectivityMonitoringData != null ) {
+				if (selectivityMonitoringData != null) {
 					selectivity = selectivityMonitoringData.getValue();
 					if (selectivity == null || Double.isNaN(selectivity))
 						return -1.0;
-					
+
 				}
 			}
 		} catch (NullPointerException ex) {
@@ -58,8 +90,20 @@ public final class EstimatorHelper {
 		return selectivity;
 	}
 
-	// helpers
-	public static double getAvgCPUTimeMetadata(IPhysicalOperator operator) {
+	/**
+	 * Liefert das Metadatum "median_processing_time" zum gegebenen physischen
+	 * Operator zurück (in Sekunden). Falls das Metadatum nichr vorhanden ist,
+	 * oder dessen Rückgabewert NaN oder <code>null</code> ist, wird -1
+	 * zurückgegeben.
+	 * 
+	 * @param operator
+	 *            Physischer Operator, dessen Prozessorzeit zurückgegeben werden
+	 *            soll.
+	 * @return Median der Prozessorzeiten des physischen Operators, oder -1,
+	 *         falls das Metadatum nicht existiert oder (noch) ungültig ist
+	 */
+
+	public static double getMedianCPUTimeMetadata(IPhysicalOperator operator) {
 		double time = -1.0;
 		try {
 			if (operator.isOpen()) {
@@ -76,6 +120,15 @@ public final class EstimatorHelper {
 		return time;
 	}
 
+	/**
+	 * Schätzt die ungefähre Größe eines Tupels auf Grundlage des Schemas ab (in
+	 * Bytes).
+	 * 
+	 * @param schema
+	 *            Schema der Tupel, dessen Speichergröße abgeschätzt werden
+	 *            soll.
+	 * @return Größe der Tupel in Bytes
+	 */
 	public static int sizeInBytes(SDFAttributeList schema) {
 		if (schema == null)
 			return 0;

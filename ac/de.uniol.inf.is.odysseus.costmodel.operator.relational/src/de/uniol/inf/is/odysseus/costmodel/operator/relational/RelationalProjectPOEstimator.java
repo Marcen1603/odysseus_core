@@ -56,7 +56,7 @@ public class RelationalProjectPOEstimator implements IOperatorEstimator<Relation
 
 		/** 4. DetailCost **/
 		// TODO: Memorycost
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if (cpu < 0.0) 
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * lastOpEstimation.getDataStream().getDataRate();

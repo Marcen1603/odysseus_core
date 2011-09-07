@@ -112,7 +112,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 
 		
 		/** 4. DetailCost **/
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if (cpu < 0.0) {
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * ( c0.getDataRate() + c1.getDataRate() );
@@ -218,7 +218,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 //		estimation.setDataStream(new DataStream(instance, dataRate >= 0 ? dataRate : dataRate2, intervalLength));
 
 		/** 4. DetailCost **/
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if (cpu < 0.0) {
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName() + "_Cross") * ( c0.getDataRate() + c1.getDataRate() );

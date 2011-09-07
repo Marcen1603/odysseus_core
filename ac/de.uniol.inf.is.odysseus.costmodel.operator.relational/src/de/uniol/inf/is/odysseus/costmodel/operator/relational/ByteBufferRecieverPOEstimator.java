@@ -56,7 +56,7 @@ public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<ByteBuf
 		estimation.setDataStream(new DataStream(instance, datarate, 1.0));
 		
 		/** 4. DetailCost **/
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%-20.10f\n", cpu);
 		double cpuCost = 0.0;
 		if( cpu < 0.0 )

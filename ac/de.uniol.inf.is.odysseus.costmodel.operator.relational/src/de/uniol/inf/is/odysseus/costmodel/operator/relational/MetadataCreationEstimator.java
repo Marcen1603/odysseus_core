@@ -32,7 +32,7 @@ public class MetadataCreationEstimator implements IOperatorEstimator<MetadataCre
 		OperatorEstimation estimation = std.estimateOperator(instance, prevOperators, baseHistograms);
 		
 		IDataStream c = prevOperators.get(0).getDataStream();
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if( cpu < 0.0 )
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * c.getDataRate();

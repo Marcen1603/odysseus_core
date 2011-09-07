@@ -131,7 +131,7 @@ public class UnionPOEstimator implements IOperatorEstimator<UnionPO> {
 		int sizeOfTuple = EstimatorHelper.sizeInBytes(instance.getOutputSchema());
 		double mem = (maxRate / minRate) * sizeOfTuple;
 
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%8.6f\n", cpu);
 		double cpuCost = 0.0;
 		if (cpu < 0.0)

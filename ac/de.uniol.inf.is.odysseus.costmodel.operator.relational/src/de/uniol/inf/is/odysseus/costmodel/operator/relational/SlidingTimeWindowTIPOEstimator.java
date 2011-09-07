@@ -50,7 +50,7 @@ public class SlidingTimeWindowTIPOEstimator implements IOperatorEstimator<Slidin
 		/** 4. DetailCost **/
 		// TODO: Memorycost
 		// TODO: Memorycost
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%8.6f\n", cpu);
 		double cpuCost = 0.0;
 		if (cpu < 0.0)

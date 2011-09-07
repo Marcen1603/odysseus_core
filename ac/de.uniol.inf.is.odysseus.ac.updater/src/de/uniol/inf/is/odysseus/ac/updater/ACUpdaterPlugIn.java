@@ -33,7 +33,7 @@ public class ACUpdaterPlugIn implements BundleActivator {
 		updater = new ACUpdater( adc );
 		
 		if( executor != null )
-			updater.startRunning(executor);
+			updater.startRunning();
 	}
 	
 	public void unbindAdmissionControl( IAdmissionControl adc ) {
@@ -53,7 +53,7 @@ public class ACUpdaterPlugIn implements BundleActivator {
 		executor = e;
 		
 		if( admissionControl != null ) {
-			updater.startRunning(executor);
+			updater.startRunning();
 		}
 	}
 	

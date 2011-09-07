@@ -51,7 +51,7 @@ public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWith
 		
 		/** 4. DetailCost **/
 		// TODO: Mem
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%-8.6f\n", cpu);
 		double cpuCost = 0.0;
 		if( cpu < 0.0 )

@@ -23,7 +23,13 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
-public class PredicateSelectivityHelper {
+/**
+ * Hilfsklasse, um die Selektivität zu einem gegebenen Prädikat mit gegebenen 
+ * Histogrammen zu ermitteln.
+ * 
+ * @author Timo Michelsen
+ * 
+ */public class PredicateSelectivityHelper {
 
 	private static final Double STD_SELECTIVITY = 0.5;
 	
@@ -36,6 +42,7 @@ public class PredicateSelectivityHelper {
 		return _logger;
 	}
 
+	// interne Klasse
 	private class HistogramPair {
 		public IHistogram first;
 		public IHistogram second;
@@ -46,6 +53,7 @@ public class PredicateSelectivityHelper {
 		}
 	}
 
+	// interne Klasse
 	private class HistogramValuePair {
 		public IHistogram histogram;
 		public Double value;
@@ -59,11 +67,24 @@ public class PredicateSelectivityHelper {
 	private IPredicate<?> predicate;
 	private List<Map<SDFAttribute, IHistogram>> histograms;
 
+	/**
+	 * Konstruktor. Erstellt eine neue {@link PredicateSelectivityHelper}-Instanz. Dabei werden die
+	 * Histogramme sowie das zu untersuchende Prädikat übergeben.
+	 * 
+	 * @param predicate Prädikat
+	 * @param histograms Histogramme, die nach dem Prädikat angepasst werden sollen.
+	 */
 	public PredicateSelectivityHelper(IPredicate<?> predicate, List<Map<SDFAttribute, IHistogram>> histograms) {
 		this.predicate = predicate;
 		this.histograms = histograms;
 	}
 
+	/**
+	 * Liefert die Selektivität auf Basis der im Kosntruktor übergebenen Histogramme
+	 * in Abhängigkeit zum gegebenen Prädikat.
+	 * 
+	 * @return Selektivität
+	 */
 	public double getSelectivity() {
 
 		try {

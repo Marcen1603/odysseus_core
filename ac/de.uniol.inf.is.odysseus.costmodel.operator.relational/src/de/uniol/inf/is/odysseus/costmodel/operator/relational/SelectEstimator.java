@@ -93,7 +93,7 @@ public class SelectEstimator implements IOperatorEstimator<SelectPO> {
 //		estimation.setDataStream(new DataStream(instance, datarate < 0.0 ? datarate2 : datarate, c.getIntervalLength()));
 
 		/** 4. DetailCost **/
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if( cpu < 0.0 )
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * c.getDataRate();

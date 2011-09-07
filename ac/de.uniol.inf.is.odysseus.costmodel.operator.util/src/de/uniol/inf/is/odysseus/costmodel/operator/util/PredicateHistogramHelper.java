@@ -25,6 +25,12 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
+/**
+ * Hilfsklasse um gegebene Histogramme nach einem gegebenen Prädikat anzupassen.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public class PredicateHistogramHelper {
 
 	private static Logger _logger = null;
@@ -35,7 +41,8 @@ public class PredicateHistogramHelper {
 		}
 		return _logger;
 	}
-
+	
+	// interne Klasse
 	private class HistAttrValue {
 		public IHistogram histogram;
 		public SDFAttribute attribute;
@@ -48,6 +55,7 @@ public class PredicateHistogramHelper {
 		}
 	}
 
+	// interne Klasse
 	private class TwoHistAttr {
 		public IHistogram histogram1;
 		public IHistogram histogram2;
@@ -65,11 +73,24 @@ public class PredicateHistogramHelper {
 	private IPredicate<?> predicate;
 	private List<Map<SDFAttribute, IHistogram>> histograms;
 
+	/**
+	 * Konstruktor. Erstellt eine neue {@link PredicateHistogramHelper}-Instanz. Dabei werden die
+	 * Histogramme sowie das zu untersuchende Prädikat übergeben.
+	 * 
+	 * @param predicate Prädikat
+	 * @param histograms Histogramme, die nach dem Prädikat angepasst werden sollen.
+	 */
 	public PredicateHistogramHelper(IPredicate<?> predicate, List<Map<SDFAttribute, IHistogram>> histograms) {
 		this.predicate = predicate;
 		this.histograms = histograms;
 	}
 
+	/**
+	 * Erstellt neue Histogramme auf Basis der im Kosntruktor übergebenen Histogramme
+	 * in Abhängigkeit zum gegebenen Prädikat.
+	 * 
+	 * @return Angepasste Histogramme
+	 */
 	public Map<SDFAttribute, IHistogram> getHistograms() {
 
 		// merge histograms in one map
@@ -84,14 +105,16 @@ public class PredicateHistogramHelper {
 		}
 
 		try {
-			Map<SDFAttribute, IHistogram> sel = evaluatePredicate(predicate, histograms);
-			
-			if( sel != null ) {
-				for( SDFAttribute attr : sel.keySet() ) {
-					histograms.put(attr, sel.get(attr));
+			// correct Histograms
+			Map<SDFAttribute, IHistogram> result = evaluatePredicate(predicate, histograms);
+
+			// replace old histograms with the new histograms
+			if (result != null) {
+				for (SDFAttribute attr : result.keySet()) {
+					histograms.put(attr, result.get(attr));
 				}
-			}				
-			
+			}
+
 			return histograms;
 
 		} catch (Exception ex) {
@@ -195,19 +218,19 @@ public class PredicateHistogramHelper {
 			}
 		}
 
-		if( right != null ) {
+		if (right != null) {
 			for (SDFAttribute attribute : right.keySet()) {
-	
+
 				if (result.containsKey(attribute)) {
 					getLogger().debug("Merging two histograms of " + attribute);
-	
+
 					// merge both histograms
 					IHistogram histLeft = result.get(attribute);
 					IHistogram histRight = right.get(attribute);
-	
+
 					IHistogram leftRelative = histLeft.toRelative();
 					IHistogram rightRelative = histRight.toRelative();
-	
+
 					IHistogram histMoreIntervals = null;
 					IHistogram histLessIntervals = null;
 					if (leftRelative.getIntervalCount() > rightRelative.getIntervalCount()) {
@@ -217,7 +240,7 @@ public class PredicateHistogramHelper {
 						histMoreIntervals = rightRelative;
 						histLessIntervals = leftRelative;
 					}
-	
+
 					double[] borders = histMoreIntervals.getIntervalBorders();
 					IHistogram histResultRelative = histMoreIntervals.clone();
 					for (int i = 0; i < borders.length - 1; i++) {
@@ -225,7 +248,7 @@ public class PredicateHistogramHelper {
 						double prob2 = histLessIntervals.getOccurenceRange(borders[i], borders[i + 1]);
 						histResultRelative.setOccurences(i, prob1 * prob2);
 					}
-	
+
 					double valueCount = Math.max(histLeft.getValueCount(), histRight.getValueCount());
 					result.put(attribute, histResultRelative.normalize().toAbsolute(valueCount));
 				} else {
@@ -233,7 +256,7 @@ public class PredicateHistogramHelper {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -299,32 +322,31 @@ public class PredicateHistogramHelper {
 			// Calculate new histograms
 			IHistogram hist1Relative = tha.histogram1.toRelative();
 			IHistogram hist2Relative = tha.histogram2.toRelative();
-			
+
 			IHistogram biggerHist = null;
 			IHistogram smallerHist = null;
-			if( hist1Relative.getIntervalCount() > 
-				hist2Relative.getIntervalCount()) {
+			if (hist1Relative.getIntervalCount() > hist2Relative.getIntervalCount()) {
 				biggerHist = hist1Relative;
 				smallerHist = hist2Relative;
 			} else {
 				biggerHist = hist2Relative;
 				smallerHist = hist1Relative;
 			}
-			
+
 			double[] borders = biggerHist.getIntervalBorders();
 			IHistogram histResult = biggerHist.clone();
-			for( int i = 0; i < borders.length - 1; i++ ) {
+			for (int i = 0; i < borders.length - 1; i++) {
 				double intervalStart = borders[i];
 				double intervalEnd = borders[i + 1];
-				
+
 				double prob1 = biggerHist.getOccurences(intervalStart);
 				double prob2 = smallerHist.getOccurenceRange(intervalStart, intervalEnd);
 				double result = prob1 * prob2;
 
 				histResult.setOccurences(i, result); // set value in
-													 // histogram
+														// histogram
 			}
-			
+
 			// make absolute again
 			IHistogram hist1Result = histResult.normalize().toAbsolute(tha.histogram1.getValueCount());
 			IHistogram hist2Result = histResult.normalize().toAbsolute(tha.histogram2.getValueCount());

@@ -45,7 +45,7 @@ public class P2PSinkEstimator implements IOperatorEstimator<P2PSinkPO> {
 
 		/** 4. DetailCost **/
 		// TODO: Memorycost
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 		double cpuCost = 0.0;
 		if (cpu < 0.0) 
 			cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * datarate;

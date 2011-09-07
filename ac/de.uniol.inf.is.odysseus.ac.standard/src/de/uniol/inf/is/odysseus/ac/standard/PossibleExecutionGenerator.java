@@ -13,6 +13,14 @@ import de.uniol.inf.is.odysseus.costmodel.ICost;
 import de.uniol.inf.is.odysseus.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
+/**
+ * Standardimplementierung von {@link IPossibleExecutionGenerator}.
+ * Erstellt aus der Menge aller Anfragen eine Liste möglicher Anfragekombinationen
+ * nach Brute-Force. 
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
 	private static Logger _logger = null;
@@ -44,6 +52,7 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 			return poss;
 		}
 		
+		// only one query?
 		StandardAC stdAC = (StandardAC)ac;
 		ICostModel cm = stdAC.getSelectedCostModelInstance();
 		if( queryCosts.size() == 1 ) {
@@ -52,6 +61,8 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 			return poss;
 		}
 
+		// generate exactly one possible execution
+		// brute-force too load-heavy
 		List<IQuery> runningQueries = new ArrayList<IQuery>();
 		List<IQuery> stoppingQueries = new ArrayList<IQuery>();
 		ICost actSum = cm.getZeroCost();
@@ -68,8 +79,8 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 		
 		poss.add(new StandardPossibleExecution(runningQueries, stoppingQueries, actSum));
 				
-		// TOOO HEAVY
-//		// generate combinations
+		// TOOO HEAVY:
+//		// generate all combinations
 //		List<IQuery> queries = new ArrayList<IQuery>(queryCosts.keySet());
 //		List<List<IQuery>> solutions = powerset(queries);
 //

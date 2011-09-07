@@ -12,44 +12,62 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 
+/**
+ * Singleton-Klasse, welcher die Aufgabe hat, die Verarbeitungszeiten der
+ * physischen Operatoren persistent auf der Festplatte zu speichern, beim
+ * Starten zu laden und anderen Klassen zur Verfügung zu stellen.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public class CPURateSaver {
 
 	private static CPURateSaver instance = null;
 	private static final String FILENAME = "ac_cpurates.conf";
-	
+
 	private Map<String, Double> cpuRates = new HashMap<String, Double>();
-	
-	private CPURateSaver() {}
-	
+
+	private CPURateSaver() {
+	}
+
+	/**
+	 * Liefert die einzige Instanz der Klasse {@link CPURateSaver}.
+	 * 
+	 * @return Einzige Instanz
+	 */
 	public static CPURateSaver getInstance() {
-		if( instance == null ) 
+		if (instance == null)
 			instance = new CPURateSaver();
 		return instance;
 	}
-	
+
+	/**
+	 * Läd alle Verarbeitungszeiten aus der Konfigurationsdatei. Existiert die
+	 * Daten nicht, wird sie erstellt.
+	 */
 	public void load() {
 		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
-//		System.out.println("Loading CPURates from " + filename);
-		
+		// System.out.println("Loading CPURates from " + filename);
+
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
-			
+
 			String line = br.readLine();
-			while( line != null ) {
-				
+			while (line != null) {
+
 				String[] parts = line.split("\\=");
-				
+
 				Double d = new Double(parts[1]);
 				cpuRates.put(parts[0], d);
-//				System.out.println("CPURate of " + parts[0] + ":" + d);
-				
+				// System.out.println("CPURate of " + parts[0] + ":" + d);
+
 				line = br.readLine();
 			}
-		} catch( FileNotFoundException ex ) {
+		} catch (FileNotFoundException ex) {
 			File file = new File(filename);
 			try {
 				file.createNewFile();
-//				System.out.println("New cfg-File created: " + filename);
+				// System.out.println("New cfg-File created: " + filename);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -57,34 +75,61 @@ public class CPURateSaver {
 			e.printStackTrace();
 		}
 	}
-	
-	public void set( String streamName, double cpurate ) {
-		cpuRates.put(streamName, new Double(cpurate));
-				
-//		System.out.println("Setting cpurate of " + streamName + " to " + cpurate);
+
+	/**
+	 * Setzt die Verarbeitungszeit für den gegebenen Operatornamen auf den
+	 * gegebenen Wert. Beim nächsten Speichern wird dieser persistent
+	 * festgehalten. Existierte zuvor kein Wert für diesen Operator, wird ein
+	 * neuer Eintrag angelegt.
+	 * 
+	 * @param opName
+	 *            Name/Typ des Operators, dessen Verarbeitungszeit gesetzt
+	 *            werden soll.
+	 * @param cpurate
+	 *            Neue Verarbeitungszeit.
+	 */
+	public void set(String opName, double cpurate) {
+		cpuRates.put(opName, new Double(cpurate));
+
+		// System.out.println("Setting cpurate of " + streamName + " to " +
+		// cpurate);
 	}
-	
-	public double get( String streamName ) {
-		if( !cpuRates.containsKey(streamName))
-			return 0.00005;
-		
-		return cpuRates.get(streamName);
+
+	/**
+	 * Liefert die gespeicherte Verarbeitungszeit für den gegebenen
+	 * Operatornamen. Es sollte sichergestellt werden, dass zuvor
+	 * <code>load()</code> aufgerufen wurde, sodass die Werte aus der
+	 * Konfigurationsdatei verfügbar sind. Ist zu einem Operatornamen kein Wert
+	 * gespeichert, wir der empirische Wert 0.00005 zurückgegeben.
+	 * 
+	 * @param opName
+	 *            Operatorname/Typ, dessen Verarbeitungszeit zurückgegeben
+	 *            werden soll
+	 * 
+	 * @return Gespeicherte Verarbeitungszeit des gegebenen Operators
+	 */
+	public double get(String opName) {
+		if (!cpuRates.containsKey(opName))
+			return 0.00005; // empiric
+
+		return cpuRates.get(opName);
 	}
-	
+
+	/**
+	 * Speichert alle hinterlegten Verarbeitungszeiten in der
+	 * Konfigurationsdatei.
+	 */
 	public void save() {
 		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
-//		System.out.println("Saving cpurates in " + filename);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
-			
-			for( String str : cpuRates.keySet()) {
+
+			for (String str : cpuRates.keySet()) {
 				Double rate = cpuRates.get(str);
 				bw.write(str + "=" + rate + "\n");
 				bw.flush();
-				
-//				System.out.println("Writing " + str + "=" + rate);
 			}
-			
+
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();

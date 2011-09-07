@@ -120,7 +120,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 
 		
 		/** 4. DetailCost **/
-		double cpu = EstimatorHelper.getAvgCPUTimeMetadata(instance);
+		double cpu = EstimatorHelper.getMedianCPUTimeMetadata(instance);
 //		System.out.format("%-8.6f\n", cpu);
 		double cpuCost = 0.0;
 		if( cpu < 0.0 ) {

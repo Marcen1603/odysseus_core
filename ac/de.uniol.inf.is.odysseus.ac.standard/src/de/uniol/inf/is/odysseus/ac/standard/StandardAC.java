@@ -22,10 +22,18 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
+/**
+ * Standardimplementierung der Admission Control auf Basis von
+ * {@link IAdmissionControl}. Verwaltet alle bekannten Kostenmodelle und setzt
+ * sie bei Bedarf ein.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public class StandardAC implements IAdmissionControl, IPlanModificationListener {
 
 	private static final long ESTIMATION_TOO_OLD = 3000; // ms
-	
+
 	private Map<String, ICostModel> costModels;
 	private ICostModel selectedCostModel;
 	private IExecutor executor;
@@ -49,29 +57,30 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 		return _logger;
 	}
-	
+
 	@Override
 	public ICost getCost(IQuery query) {
 		return queryCosts.get(query);
 	}
 
+	@Override
 	public synchronized boolean canStartQuery(IQuery query) {
 
 		if (runningQueryCosts.containsKey(query))
 			return true;
-		
+
 		ICost queryCost = null;
-		if( queryCosts.containsKey(query)) {
+		if (queryCosts.containsKey(query)) {
 			Long lastTime = timestamps.get(query);
-			
+
 			// last estimation too long before?
-			if( System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD) {
+			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD) {
 				queryCost = estimateCost(getAllOperators(query), false);
 				timestamps.put(query, System.currentTimeMillis());
 			} else {
 				queryCost = queryCosts.get(query);
 			}
-			
+
 		} else {
 			queryCost = estimateCost(getAllOperators(query), false);
 			queryCosts.put(query, queryCost);
@@ -115,18 +124,18 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 			// find first active owner
 			IQuery query = null;
-			for( IOperatorOwner owner : owners ) {
-				IQuery q = (IQuery)owner;
-				if( q.isOpened()) {
+			for (IOperatorOwner owner : owners) {
+				IQuery q = (IQuery) owner;
+				if (q.isOpened()) {
 					query = q;
 					break;
 				}
 			}
-			
+
 			// operator not started?
-			if( query == null )
+			if (query == null)
 				continue;
-			
+
 			if (map.containsKey(query)) {
 				ICost cost = map.get(query);
 				ICost newCost = cost.merge(actCost.getCostOfOperator(op));
@@ -137,10 +146,10 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 		runningQueryCosts.putAll(map);
 		queryCosts.putAll(map);
-		
-		for( IQuery query : runningQueryCosts.keySet() ) 
+
+		for (IQuery query : runningQueryCosts.keySet())
 			timestamps.put(query, System.currentTimeMillis());
-		
+
 		// check, if system-load is too heavy
 		getLogger().debug("Cost of execution plan : " + actCost);
 		int cmp = actCost.compareTo(maxCost);
@@ -159,9 +168,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		for (IQuery query : executor.getQueries())
 			for (IPhysicalOperator op : query.getPhysicalChilds())
-				if (!operators.contains(op) && 
-					!op.getClass().getSimpleName().contains("DataSourceObserverSink") &&
-					op.getOwner().contains(query))
+				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query))
 					operators.add(op);
 
 		return operators;
@@ -171,9 +178,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 		// filter
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
-			if (!operators.contains(operator) && 
-				!operator.getClass().getSimpleName().contains("DataSourceObserverSink") && 
-				operator.getOwner().contains(query))
+			if (!operators.contains(operator) && !operator.getClass().getSimpleName().contains("DataSourceObserverSink") && operator.getOwner().contains(query))
 				operators.add(operator);
 		}
 		return operators;
@@ -205,6 +210,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return selectedCostModel.getClass().getSimpleName();
 	}
 
+	/**
+	 * Paket-bekannte Methode, um das ausgewählte Kostenmodell als
+	 * {@link ICostModel}-Instanz zurückzugeben. Wird aktuell nur von
+	 * {@link PossibleExecutionGenerator} verwendet.
+	 * 
+	 * @return Aktuell verwendetes Kostenmodell
+	 */
 	ICostModel getSelectedCostModelInstance() {
 		return selectedCostModel;
 	}
@@ -241,7 +253,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			if (!runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.put(query, queryCost);
 			}
-//			updateEstimations();
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
 			getLogger().debug("Query " + query + " stopped");
@@ -249,8 +260,6 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			if (runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.remove(query);
 			}
-
-//			updateEstimations();
 		}
 	}
 
@@ -261,12 +270,18 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			ICost queryCost = costModel.estimateCost(operators, onUpdate);
 			return queryCost;
 		} else {
-
 			throw new RuntimeException(" No CostModel selected");
 		}
-
 	}
 
+	/**
+	 * Wird aufgerufen, wenn im OSGi-Framework ein Kostenmodell registriert
+	 * wird. Ist dies das erste bekannte Kostenmodell, wird es automatisch
+	 * ausgewählt und vortan für Kostenschätzungen verwendet.
+	 * 
+	 * @param costModel
+	 *            Neues Kostenmodell
+	 */
 	public void bindCostModel(ICostModel costModel) {
 		getCostModels().put(costModel.getClass().getSimpleName(), costModel);
 		getLogger().debug("Costmodel bound: " + costModel.getClass().getSimpleName());
@@ -276,6 +291,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
+	/**
+	 * Wird aufgerufen, wenn im OSGi-Framework ein Kostenmodell deregistriert
+	 * wird.
+	 * 
+	 * @param costModel
+	 *            Das entfernte Kostenmodell
+	 */
 	public void unbindCostModel(ICostModel costModel) {
 		getCostModels().remove(costModel.getClass().getSimpleName());
 
@@ -288,6 +310,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return costModels;
 	}
 
+	/**
+	 * Wird aufgerufen, wenn im OSGi-Framework einen {@link IExecutor}
+	 * registriert wird. Für die Admission Control wird genau ein {@link IExecutor}
+	 * benötigt.
+	 * 
+	 * @param executor Neuer {@link IExecutor}
+	 */
 	public void bindExecutor(IExecutor executor) {
 		this.executor = executor;
 
@@ -296,6 +325,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		getLogger().debug("Executor bound");
 	}
 
+	/**
+	 * Wird aufgerufen, wenn im OSGi-Framework der {@link IExecutor}
+	 * deregistriert wird.
+	 * 
+	 * @param executor Zu entfernender {@link IExecutor}
+	 */
 	public void unbindExecutor(IExecutor executor) {
 		if (executor == this.executor) {
 			this.executor.removePlanModificationListener(this);
@@ -305,6 +340,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
+	/**
+	 * Liefert den aktuell registrierten Executor oder <code>null</code>.
+	 * 
+	 * @return Registrierter Executor oder <code>null</code>, falls kein
+	 * {@link IExecutor} registriert wurde.
+	 */
 	public IExecutor getExecutor() {
 		return this.executor;
 	}
@@ -333,6 +374,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		}
 	}
 
+	// Feuert das Overload-Event an alle registrierten Listener
+	// der Admission Control
 	private void fireOverloadEvent() {
 		synchronized (listeners) {
 			for (IAdmissionListener listener : listeners) {
@@ -351,7 +394,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	public List<IPossibleExecution> getPossibleExecutions() {
 		// generate possible executions
 		List<IPossibleExecution> executions = generator.getPossibleExecutions(this, runningQueryCosts, maxCost);
-		
+
 		return executions;
 	}
 
