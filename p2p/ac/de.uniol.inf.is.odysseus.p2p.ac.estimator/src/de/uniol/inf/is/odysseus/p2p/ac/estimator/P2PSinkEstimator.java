@@ -14,6 +14,12 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PSinkPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
+/**
+ * Operator-Schätzer für den physischen Operator {@link P2PSinkPO}.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class P2PSinkEstimator implements IOperatorEstimator<P2PSinkPO> {
 

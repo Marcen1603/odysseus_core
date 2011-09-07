@@ -6,6 +6,14 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.p2p.ac.bidselection.IP2PBidSelector;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Bid;
 
+/**
+ * Standardimplementierung der Schnittstelle {@link IP2PBidSelector}. Es wird
+ * das Gebot mit dem niedrigsten Gebot ausgewählt. Dieser Selector sollte nur im
+ * Zusammenhang mit StandardP2PGenerator verwendet werden.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public class StandardP2PBidSelector implements IP2PBidSelector {
 
 	@Override
@@ -14,7 +22,7 @@ public class StandardP2PBidSelector implements IP2PBidSelector {
 		List<Bid> validBids = new ArrayList<Bid>();
 		for (Bid b : bids) {
 			Double bidValue = Double.valueOf(b.getBid());
-			
+
 			if (bidValue >= 0.0) {
 				validBids.add(b);
 			}
@@ -23,16 +31,16 @@ public class StandardP2PBidSelector implements IP2PBidSelector {
 		if (!validBids.isEmpty()) {
 			double lowestBidValue = Double.MAX_VALUE;
 			Bid lowestBid = null;
-			for( Bid b : validBids ) {
+			for (Bid b : validBids) {
 				Double val = Double.valueOf(b.getBid());
-				if( val < lowestBidValue ) {
+				if (val < lowestBidValue) {
 					lowestBidValue = val;
 					lowestBid = b;
 				}
 			}
-			
+
 			return lowestBid;
-			
+
 		} else {
 			return null;
 		}
