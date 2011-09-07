@@ -2,29 +2,159 @@ package de.uniol.inf.is.odysseus.costmodel.operator.datasrc;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
+/**
+ * Repräsentiert ein Histogramm.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public interface IHistogram extends Cloneable {
 
+	/**
+	 * Liefert das Attribut zum Histogramm
+	 * 
+	 * @return Attribut zum Histogramm
+	 */
 	public SDFAttribute getAttribute();
-	public void setAttribute( SDFAttribute attribute );
-	
+
+	/**
+	 * Setzt das Attribut, welches zum Histogramm gehören soll.
+	 * 
+	 * @param attribute
+	 *            Attribut
+	 */
+	public void setAttribute(SDFAttribute attribute);
+
+	/**
+	 * Liefert den minimalen Attributwert
+	 * 
+	 * @return Minimaler Attributwert
+	 */
 	public double getMinimum();
+
+	/**
+	 * Liefert den maximalen Attributwert
+	 * 
+	 * @return Maximaler Attributwert
+	 */
 	public double getMaximum();
+
+	/**
+	 * Liefert die Häufigkeit zu einem gegebenen Attributwert.
+	 * 
+	 * @param value
+	 *            Attributwert
+	 * @return Häufigkeit
+	 */
 	public double getOccurences(double value);
-	public double getOccurenceRange( double from, double to );
-	
+
+	/**
+	 * Liefert die Häufigkeit zu einem Attributwertebereich
+	 * 
+	 * @param from
+	 *            Minimaler Wert des Attributwertebereichs
+	 * @param to
+	 *            Maximaler Wert des Attributwertebereichs
+	 * @return Summe der Häufigkeiten im Attributwertebereich
+	 */
+	public double getOccurenceRange(double from, double to);
+
+	/**
+	 * Liefert die Anzahl aller Attributwerte (d.h. die Summe aller
+	 * Häufigkeiten)
+	 * 
+	 * @return Anzahl der Attributwerte (Summe der Häufigkeiten)
+	 */
 	public double getValueCount();
+
+	/**
+	 * Liefert die Zahl der Intervalle
+	 * 
+	 * @return Zahl der Intervalle
+	 */
 	public int getIntervalCount();
+
+	/**
+	 * Liefert die Intervallgrenzen
+	 * 
+	 * @return Intervallgrenzen
+	 */
 	public double[] getIntervalBorders();
+
+	/**
+	 * Liefert eine Liste aller Häufigkeiten
+	 * 
+	 * @return Liste aller Häufigkeiten
+	 */
 	public double[] getAllOccurences();
-	
+
+	/**
+	 * Erstellt eine Kopie des Histogramms als neue Instanz
+	 * 
+	 * @return Neue Instanz des gleichen Histogramms
+	 */
 	public IHistogram clone();
-	
-	public IHistogram cutLower( double value );
-	public IHistogram cutHigher( double value );
+
+	/**
+	 * Setzt alle Häufigkeiten unterhalb des gegebenen Attributwertes auf 0.
+	 * Evtl. werden anteilig Häufigkeiten verringert.
+	 * 
+	 * @param value
+	 *            Attributwert als obere Grenze der Kürzung
+	 * @return Verändertes Histogramm
+	 */
+	public IHistogram cutLower(double value);
+
+	/**
+	 * Setzt alle Häufigkeiten oberhalb des gegebenen Attributwertes auf 0.
+	 * Evtl. werden anteilig Häufigkeiten verringert.
+	 * 
+	 * @param value
+	 *            Attributwert als untere Grenze des Kürzung
+	 * @return Verändertes Histogramm
+	 */
+	public IHistogram cutHigher(double value);
+
+	/**
+	 * Erstellt ein relatives Histogramm.
+	 * 
+	 * @return Relatives Histogramm
+	 */
 	public IHistogram toRelative();
-	public IHistogram toAbsolute( double countNum );
+
+	/**
+	 * Erstellt ein absolutes Histogramm mit der gegebenen Summe aller
+	 * Häufigkeiten
+	 * 
+	 * @param countNum
+	 *            Neue Summe aller Häufigkeiten
+	 * @return Absolutes Histogramm
+	 */
+	public IHistogram toAbsolute(double countNum);
+
+	/**
+	 * Gibt zurück, ob das Histogramm relativ ist.
+	 * 
+	 * @return <code>true</code>, falls das Histogramm relativ ist, sonst
+	 *         <code>false</code>
+	 */
 	public boolean isRelative();
+
+	/**
+	 * Normalisiert das Histogramm. Nur für relative Histogramme verfügbar. Die
+	 * relativen Häufigkeiten werden so angepasst, dass ihre Summe 1 ergibt.
+	 * 
+	 * @return Angepasstes relatives Histogramm, dessen Summe 1 ergibt.
+	 */
 	public IHistogram normalize();
-	
-	public void setOccurences( int intervalIndex, double occs );
+
+	/**
+	 * Setzt die Häufigkeit eines Intervalls auf den gegebenen Wert
+	 * 
+	 * @param intervalIndex
+	 *            Index des Intervalls, dessen Häufigkeit gesetzt werden soll
+	 * @param occs
+	 *            Neue Häufigkeit des Intervalls
+	 */
+	public void setOccurences(int intervalIndex, double occs);
 }

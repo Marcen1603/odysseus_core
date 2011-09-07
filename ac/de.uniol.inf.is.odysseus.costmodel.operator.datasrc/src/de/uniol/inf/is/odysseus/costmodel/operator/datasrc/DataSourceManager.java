@@ -24,6 +24,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
+/**
+ * Verwaltet die Beobachtung der Datenquellen. Dabei handelt es sich um eine
+ * Singleton-Klasse. Sie liefert zu gegebenen Attribute die Histogramme.
+ * 
+ * @author Timo Michelsen
+ * 
+ */
 public class DataSourceManager {
 
 	private static Logger _logger = null;
@@ -60,12 +67,23 @@ public class DataSourceManager {
 
 	}
 
+	/**
+	 * Liefert die einzige Instanz dieser Klasse.
+	 * 
+	 * @return Einzige Instanz der Klasse
+	 */
 	public static DataSourceManager getInstance() {
 		if (instance == null)
 			instance = new DataSourceManager();
 		return instance;
 	}
 
+	/**
+	 * Fügt eine neue Datenquelle hinzu, die beobachtet werden soll
+	 * 
+	 * @param src
+	 *            Neue zu beobachtende Datenquelle
+	 */
 	public void addSource(ISource<?> src) {
 		if (!sources.containsKey(src)) {
 			SourceInfo info = new SourceInfo(src);
@@ -90,17 +108,17 @@ public class DataSourceManager {
 					waitingAttributes.remove(a);
 				}
 			}
-			
+
 			// cached attribute with temporary attributeobservers
 			// to connect to this new source?
-			for( SDFAttribute attribute : src.getOutputSchema() ) {
-				if( attributes.containsKey(attribute)) {
+			for (SDFAttribute attribute : src.getOutputSchema()) {
+				if (attributes.containsKey(attribute)) {
 					AttributeObserver observer = attributes.get(attribute);
-					if( !observer.hasSink() )
+					if (!observer.hasSink())
 						observer.setSink(info.observer);
 				}
 			}
-			
+
 		} else {
 			SourceInfo info = sources.get(src);
 			info.queriesUsed++;
@@ -109,6 +127,12 @@ public class DataSourceManager {
 		}
 	}
 
+	/**
+	 * Entfernt eine Datenquelle von der Beobachtung
+	 * 
+	 * @param src
+	 *            Zu entfernende Datenquelle
+	 */
 	public void removeSource(ISource<?> src) {
 		if (sources.containsKey(src)) {
 			SourceInfo srcInfo = sources.get(src);
@@ -132,6 +156,14 @@ public class DataSourceManager {
 		}
 	}
 
+	/**
+	 * Liefert zum gegebenen Attribut ein Histogramm.
+	 * 
+	 * @param attribute
+	 *            Attribut, dessen Histogramm benötigt wird
+	 * @return Histogramm des Attribut. Liefert <code>null</code>, falls noch
+	 *         kein Histogramm erstellt werden konnte
+	 */
 	public IHistogram getHistogram(SDFAttribute attribute) {
 
 		if (attributes.containsKey(attribute)) {
@@ -146,10 +178,10 @@ public class DataSourceManager {
 			AttributeObserver observer = new AttributeObserver(attribute);
 			attributes.put(attribute, observer);
 			getLogger().debug("Created temporary attributeObserver for " + attribute);
-			
+
 			for (Double d : values)
 				observer.streamElementRecieved(null, d, 0);
-					
+
 			return observer.getHistogram();
 
 		} else {
@@ -161,6 +193,11 @@ public class DataSourceManager {
 		return null;
 	}
 
+	/**
+	 * Liefert die Menge aktuell beobachteter Datenquellen
+	 * 
+	 * @return Menge der Datenquellen, die aktuell beobachtet werden.
+	 */
 	public Set<ISource<?>> getSources() {
 		return sources.keySet();
 	}
@@ -204,6 +241,10 @@ public class DataSourceManager {
 		return null;
 	}
 
+	/**
+	 * Speichert die aktuellen Histogramme aller Histogramme in einer
+	 * Konfigurationsdatei.
+	 */
 	public void save() {
 		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
 		System.out.println("Writing file " + filename);
@@ -216,7 +257,7 @@ public class DataSourceManager {
 
 				AttributeObserver observer = attributes.get(attribute);
 				Collection<Double> values = observer.getValues();
-				
+
 				System.out.println(" Count: " + values.size());
 
 				bw.write(attribute.toString() + "\n");
@@ -225,25 +266,25 @@ public class DataSourceManager {
 					bw.write(String.valueOf(v) + "\n");
 				}
 				bw.flush();
-				
+
 			}
-			
-			for( String attrName : cachedAttributes.keySet() ) {
-				
+
+			for (String attrName : cachedAttributes.keySet()) {
+
 				boolean found = false;
-				for(SDFAttribute attr : attributes.keySet()) {
-					if(attr.toString().equals(attrName)) {
+				for (SDFAttribute attr : attributes.keySet()) {
+					if (attr.toString().equals(attrName)) {
 						found = true;
 						break;
 					}
 				}
-				if( found )
+				if (found)
 					continue;
-				
+
 				System.out.print("Writing cached values of " + attrName);
 
 				Collection<Double> values = cachedAttributes.get(attrName);
-				
+
 				System.out.println(" Count: " + values.size());
 
 				bw.write(attrName + "\n");
@@ -263,10 +304,13 @@ public class DataSourceManager {
 					System.out.println("Finished");
 				} catch (IOException e) {
 					e.printStackTrace();
-				}		
+				}
 		}
 	}
 
+	/**
+	 * Läd alle Histogramme aus der Konfigurationsdatei.
+	 */
 	public void load() {
 		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
 		System.out.println("Reading file " + filename);
@@ -275,29 +319,29 @@ public class DataSourceManager {
 		try {
 			bw = new BufferedReader(new FileReader(filename));
 
-			while( true ) {
+			while (true) {
 				String attribute = bw.readLine();
 				if (attribute == null)
 					return;
 				System.out.print("Reading values of " + attribute);
-	
+
 				String count = bw.readLine();
 				System.out.println(" Count: " + count);
 				if (count == null)
 					return;
 				int size = Integer.valueOf(count);
-	
+
 				List<Double> values = new ArrayList<Double>(size);
 				for (int i = 0; i < size; i++) {
 					String valueString = bw.readLine();
-					if( valueString != null ) { 
+					if (valueString != null) {
 						Double d = Double.valueOf(valueString);
 						values.add(d);
 					} else {
 						return;
 					}
 				}
-				
+
 				cachedAttributes.put(attribute, values);
 			}
 
