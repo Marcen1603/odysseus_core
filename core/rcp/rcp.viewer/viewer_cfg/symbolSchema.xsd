@@ -36,7 +36,7 @@
 	<xs:element name="Symbols">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Symbol" type="Symbol" maxOccurs="unbounded"/>
+				<xs:element name="Symbol" type="Symbol" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="Default" type="Default"/>
 			</xs:sequence>
 		</xs:complexType>
