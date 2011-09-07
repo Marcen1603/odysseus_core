@@ -11,6 +11,16 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
+/**
+ * Standardoperatorschätzer. Wird eingesetzt, wenn ein Operator abgeschätzt werden soll,
+ * zu dem kein konkreter Schätzer existiert. Dort werden Histogramme nicht angepasst,
+ * die Selektivität ist 1, die Datenrate bleibt unverändert und die Kosten werden
+ * aus den Standardkosten ermittelt. 
+ * 
+ * @author Timo Michelsen
+ *
+ * @param <T> Typ des Operators für den StandardSchätzers
+ */
 public class StandardOperatorEstimator<T extends IPhysicalOperator> implements IOperatorEstimator<T> {
 
 	@SuppressWarnings("unchecked")

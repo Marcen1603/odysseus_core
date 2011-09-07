@@ -9,14 +9,33 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 
+/**
+ * Hilfsklasse, um einen physischen Operatorplan
+ * systematisch von Quelle bis Senke zu durchlaufen.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class GraphWalker {
 
 	private final List<IPhysicalOperator> operators;
 	
+	/**
+	 * Konstruktor. Erstellt eine neue {@link GraphWalker}-Instanz. Ihr wird eine
+	 * Liste aller zu besuchender Operatoren mitgegeben.
+	 * @param operators
+	 */
 	public GraphWalker(List<IPhysicalOperator> operators) {
 		this.operators = operators;
 	}
 	
+	/**
+	 * Durchläuft alle im Konstruktor gegebenen physischen Operatoren.
+	 * Zu jedem Operator wird die gegebene {@link IOperatorWalker}-Instanz
+	 * aufgerufen.
+	 * 
+	 * @param visitor Visitor, welcher bei jedem physischen Operator aufgerufen wird
+	 */
 	@SuppressWarnings("unchecked")
 	public void walk( IOperatorWalker visitor ) {
 		

@@ -5,6 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 
+/**
+ * Singleton-Klasse zur Konfiguration des Kostenmodells nach Operatoreigenschaften.
+ * Verwendet {@link OdysseusDefaults}.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class OperatorCostModelCfg {
 
 	private static Logger _logger = null;
@@ -18,6 +25,11 @@ public class OperatorCostModelCfg {
 
 	private static OperatorCostModelCfg instance;
 
+	/**
+	 * Liefert die einzige Instanz dieser Klasse.
+	 * 
+	 * @return Instanz der Klasse
+	 */
 	public static OperatorCostModelCfg getInstance() {
 		if (instance == null)
 			instance = new OperatorCostModelCfg();
@@ -34,6 +46,9 @@ public class OperatorCostModelCfg {
 	private double memHeadroom;
 	private double cpuHeadroom;
 	
+	// Privater Konstruktor
+	// Ermittelt alle Einstellungen. Falls nicht vorhanden,
+	// werden Standardwerte gesetzt.
 	private OperatorCostModelCfg() {
 		stdMemCost = toDouble( OdysseusDefaults.get("ac_standardMemCost"), STD_MEM_COST);
 		stdCpuCost = toDouble( OdysseusDefaults.get("ac_standardCpuCost"), STD_CPU_COST);
@@ -60,22 +75,43 @@ public class OperatorCostModelCfg {
 		}		
 	}
 	
+	/**
+	 * Liefert den Standardwert für Speicherkosten
+	 * 
+	 * @return Standardwert für Speicherkosten
+	 */
 	public double getStandardMemCost() {
 		return stdMemCost;
 	}
 	
+	/**
+	 * Liefert den Standardwert für Prozessorkosten
+	 * 
+	 * @return Standardwert für Prozessorkosten
+	 */
 	public double getStandardCpuCost() {
 		return stdCpuCost;
 	}
 	
+	/**
+	 * Liefert den Headroom bzgl. Speicherkosten
+	 * 
+	 * @return Headroom bzgl. Speicherkosten
+	 */
 	public double getMemHeadroom() {
 		return memHeadroom;
 	}
 	
+	/**
+	 * Liefert den Headroom bzgl. Prozessorkosten
+	 * 
+	 * @return Headroom bzgl Prozessorkosten
+	 */
 	public double getCpuHeadroom() {
 		return cpuHeadroom;
 	}
 
+	// wandelt einen String in ein Double um, falls möglich
 	private Double toDouble(String value, double std) {
 		try {
 			if (value == null)

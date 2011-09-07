@@ -37,12 +37,25 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 	public void stop(BundleContext bundleContext) throws Exception {
 	}
 
+	/**
+	 * Wird aufgerufen, wenn ein Operatorschätzer registriert wird (von OSGi-
+	 * Framework)
+	 * 
+	 * @param estimator
+	 *            Neuer Operatorschätzer
+	 */
 	public void bindOperatorEstimator(IOperatorEstimator<?> estimator) {
 		OperatorEstimatorFactory.getInstance().register(estimator);
 
 		getLogger().debug("Bound OperatorEstimator " + estimator.getClass().getSimpleName() + " for Operator " + estimator.getOperatorClass().getSimpleName());
 	}
 
+	/**
+	 * Wird aufgerufen, wenn ein Operatorschätzer im OSGi-Framework
+	 * deregistriert wurde
+	 * 
+	 * @param estimator Entfernter Operatorschätzer
+	 */
 	public void unbindOperatorEstimator(IOperatorEstimator<?> estimator) {
 		OperatorEstimatorFactory.getInstance().unregister(estimator);
 
@@ -51,19 +64,20 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 
 	@Override
 	public void run(IQuery query, OptimizationConfiguration parameter) {
-		query.addPlanMonitor(DATARATE_TYPE, 
-				new PlanMonitor(query, false, false, DATARATE_TYPE, MONITORING_PERIOD_MILLIS));
-		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, 
-				new PlanMonitor(query, false, false, MonitoringDataTypes.SELECTIVITY.name, MONITORING_PERIOD_MILLIS));
-				
+		// Bei jeder neuen Anfrage werden "datarate", "selectivity" und
+		// "median_processing_time" an alle Operatoren gehängt.
+		
+		query.addPlanMonitor(DATARATE_TYPE, new PlanMonitor(query, false, false, DATARATE_TYPE, MONITORING_PERIOD_MILLIS));
+		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, new PlanMonitor(query, false, false, MonitoringDataTypes.SELECTIVITY.name, MONITORING_PERIOD_MILLIS));
+
 		// own metadata
-		for ( IPhysicalOperator operator : query.getPhysicalChilds() ) {
-			if( operator instanceof ISink) {
-				if( operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null)
-					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator) );
+		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
+			if (operator instanceof ISink) {
+				if (operator.getMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name) == null)
+					operator.addMonitoringData(MonitoringDataTypes.MEDIAN_PROCESSING_TIME.name, new MedianProcessingTime(operator));
 			}
 		}
-		
+
 	}
 
 }

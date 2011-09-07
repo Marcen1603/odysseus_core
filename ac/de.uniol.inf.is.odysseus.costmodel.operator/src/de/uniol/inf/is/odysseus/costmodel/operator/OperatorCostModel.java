@@ -27,6 +27,12 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
+/**
+ * Repräsentiert das Kostenmodell nach Operatoreigenschaften.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class OperatorCostModel implements ICostModel {
 
 	private static Logger _logger = null;
@@ -43,6 +49,9 @@ public class OperatorCostModel implements ICostModel {
 	private final int processorCount;
 	private final long memory;
 
+	/**
+	 * Standardkonstruktor.
+	 */
 	public OperatorCostModel() {
 		Runtime runtime = Runtime.getRuntime();
 		processorCount = runtime.availableProcessors();
@@ -136,10 +145,6 @@ public class OperatorCostModel implements ICostModel {
 
 		});
 
-		// if (getLogger().isDebugEnabled()) {
-		// getLogger().debug("Estimation results");
-		// }
-
 		// aggregate costs
 		AggregatedCost aggCost = operatorAggregator.aggregate(estimatedOperators);
 
@@ -168,6 +173,7 @@ public class OperatorCostModel implements ICostModel {
 		return new OperatorCost(0, 0);
 	}
 
+	// holt eine Liste der Histogramme der Attribute, die in der Anfrage verarbeitet werden
 	private Map<SDFAttribute, IHistogram> getBaseHistograms(List<IPhysicalOperator> physicalOperators) {
 		Map<SDFAttribute, IHistogram> histograms = new HashMap<SDFAttribute, IHistogram>();
 
@@ -236,7 +242,8 @@ public class OperatorCostModel implements ICostModel {
 
 		return histograms;
 	}
-
+	
+	// sucht aus einem prädikat alle Attribute raus
 	private void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
 		if (predicate instanceof IRelationalPredicate) {
 			IRelationalPredicate pred = (IRelationalPredicate) predicate;
