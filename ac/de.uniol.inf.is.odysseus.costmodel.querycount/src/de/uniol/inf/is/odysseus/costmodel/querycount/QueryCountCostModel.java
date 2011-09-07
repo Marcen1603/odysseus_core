@@ -6,6 +6,12 @@ import de.uniol.inf.is.odysseus.costmodel.ICost;
 import de.uniol.inf.is.odysseus.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
+/**
+ * Repräsentiert das Kostenmodell nach Anfragezahl.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class QueryCountCostModel implements ICostModel {
 
 	@Override
