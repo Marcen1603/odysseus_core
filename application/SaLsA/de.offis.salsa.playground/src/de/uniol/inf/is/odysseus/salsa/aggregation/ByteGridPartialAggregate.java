@@ -5,29 +5,30 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GridPartialAggregate<T> implements IPartialAggregate<T> {
-    private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
+public class ByteGridPartialAggregate<T> implements IPartialAggregate<T> {
+    private final static byte FREE = (byte)0x0;
+    private final static byte UNKNOWN = (byte) 0xFF;
+    private final static byte OBSTACLE = (byte) 0x64;
 
-    private Double[][] grid;
+    private Byte[][] grid;
 
-    public GridPartialAggregate(Double[][] grid) {
+    public ByteGridPartialAggregate(Byte[][] grid) {
         this.grid = grid;
     }
 
-    public GridPartialAggregate(GridPartialAggregate<T> gridPartialAggregate) {
+    public ByteGridPartialAggregate(ByteGridPartialAggregate<T> gridPartialAggregate) {
         this.grid = gridPartialAggregate.grid;
     }
 
-    public Double[][] getGrid() {
+    public Byte[][] getGrid() {
         return grid;
     }
 
-    public void merge(Double[][] grid) {
+    public void merge(Byte[][] grid) {
         for (int i = 0; i < this.grid.length; i++) {
             for (int j = 0; j < this.grid[i].length; j++) {
                 if ((i < grid.length) && (j < grid[i].length)) {
+                  //FIXME Implement DST
                     if (this.grid[i][j] == UNKNOWN) {
                         this.grid[i][j] = grid[i][j];
                     }
@@ -35,10 +36,10 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
                         this.grid[i][j] = OBSTACLE;
                     }
                     else if ((this.grid[i][j] == FREE) && (grid[i][j] == OBSTACLE)) {
-                        this.grid[i][j] = 0.5;
+                        this.grid[i][j] = OBSTACLE;
                     }
                     else if ((this.grid[i][j] == OBSTACLE) && (grid[i][j] == FREE)) {
-                        this.grid[i][j] = 0.5;
+                        this.grid[i][j] = OBSTACLE;
                     }
                     else if ((this.grid[i][j] == FREE) && (grid[i][j] == FREE)) {
                         this.grid[i][j] = FREE;
@@ -50,13 +51,13 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 
     @Override
     public String toString() {
-        StringBuffer ret = new StringBuffer("GridPartialAggregate (").append(hashCode())
+        StringBuffer ret = new StringBuffer("ByteGridPartialAggregate (").append(hashCode())
                 .append(")").append(grid);
         return ret.toString();
     }
 
     @Override
-    public GridPartialAggregate<T> clone() {
-        return new GridPartialAggregate<T>(this);
+    public ByteGridPartialAggregate<T> clone() {
+        return new ByteGridPartialAggregate<T>(this);
     }
 }

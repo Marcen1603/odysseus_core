@@ -12,6 +12,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SalsaQueryBuildConfiguration implements IQueryBuildConfiguration {
     private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 

@@ -13,8 +13,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToGrid extends AbstractFunction<Double[][]> {
-
+public class ToBooleanGrid extends AbstractFunction<Boolean[][]> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -32,9 +31,8 @@ public class ToGrid extends AbstractFunction<Double[][]> {
                 SDFDatatype.INTEGER
             }
     };
-    private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
+    private final static boolean FREE = false;
+    private final static boolean OBSTACLE = true;
 
     @Override
     public int getArity() {
@@ -60,11 +58,11 @@ public class ToGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public String getSymbol() {
-        return "ToGrid";
+        return "ToBinaryGrid";
     }
 
     @Override
-    public Double[][] getValue() {
+    public Boolean[][] getValue() {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
@@ -73,9 +71,9 @@ public class ToGrid extends AbstractFunction<Double[][]> {
         final Double cellsize = this.getInputValue(5);
 
         // FIXME check for real size of grid
-        Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
-        for (Double[] cells : grid) {
-            Arrays.fill(cells, UNKNOWN);
+        Boolean[][] grid = new Boolean[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
+        for (Boolean[] cells : grid) {
+            Arrays.fill(cells, FREE);
         }
 
         int gridMinX = (int) Math.ceil(width / cellsize);
@@ -97,84 +95,75 @@ public class ToGrid extends AbstractFunction<Double[][]> {
             }
 
         }
-        if (tmp != null) {
-            for (int i = 1; i < coordinates.length; i++) {
-                Coordinate coordinate = coordinates[i];
-                // Check for valid coordinate in the grid area
-                if ((isInGrid(x, y, width, height, coordinate))
-                        && (isInGrid(x, y, width, height, tmp))) {
-                    if (coordinate.distance(tmp) > cellsize / 2) {
-                        polygonCoordinates.add(coordinate);
-                        int minX = (int) Math.min(tmp.x, coordinate.x);
-                        int maxX = (int) Math.max(tmp.x, coordinate.x);
-                        int minY = (int) Math.min(tmp.y, coordinate.y);
-                        int maxY = (int) Math.max(tmp.y, coordinate.y);
+        for (int i = 1; i < coordinates.length; i++) {
+            Coordinate coordinate = coordinates[i];
+            // Check for valid coordinate in the grid area
+            if ((isInGrid(x, y, width, height, coordinate)) && (isInGrid(x, y, width, height, tmp))) {
+                if (coordinate.distance(tmp) > cellsize / 2) {
+                    polygonCoordinates.add(coordinate);
+                    int minX = (int) Math.min(tmp.x, coordinate.x);
+                    int maxX = (int) Math.max(tmp.x, coordinate.x);
+                    int minY = (int) Math.min(tmp.y, coordinate.y);
+                    int maxY = (int) Math.max(tmp.y, coordinate.y);
 
-                        minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
-                        maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
-                        minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
-                        maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
-                        boolean foundStart = false;
-                        boolean foundEnd = false;
+                    minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
+                    maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
+                    minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
+                    maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
+                    boolean foundStart = false;
+                    boolean foundEnd = false;
 
-                        for (int j = minX; j < maxX; j += cellsize) {
-                            for (int k = minY; k < maxY; k += cellsize) {
-                                if ((j < x + width) && (k < y + height)) {
-                                    boolean foundIntersection = false;
+                    for (int j = minX; j < maxX; j += cellsize) {
+                        for (int k = minY; k < maxY; k += cellsize) {
+                            boolean foundIntersection = false;
 
-                                    // Check if the last tmp coordinate is in this grid cell
-                                    if ((!foundStart) && (isInGridCell(j, k, cellsize, tmp))) {
-                                        foundStart = true;
-                                        foundIntersection = true;
-                                    }
-                                    // Check if the current coordinate is in the grid cell
-                                    else if ((!foundEnd)
-                                            && (isInGridCell(j, k, cellsize, coordinate))) {
-                                        foundEnd = true;
-                                        foundIntersection = true;
-                                    }
-                                    // Check for an intersection between this grid cell and the
-                                    // segment
-                                    // formed by the last tmp coordinate and the current coordinate
-                                    else if (intersects(j, k, cellsize, tmp, coordinate)) {
-                                        foundIntersection = true;
-                                    }
+                            // Check if the last tmp coordinate is in this grid cell
+                            if ((!foundStart) && (isInGridCell(j, k, cellsize, tmp))) {
+                                foundStart = true;
+                                foundIntersection = true;
+                            }
+                            // Check if the current coordinate is in the grid cell
+                            else if ((!foundEnd) && (isInGridCell(j, k, cellsize, coordinate))) {
+                                foundEnd = true;
+                                foundIntersection = true;
+                            }
+                            // Check for an intersection between this grid cell and the segment
+                            // formed by the last tmp coordinate and the current coordinate
+                            else if (intersects(j, k, cellsize, tmp, coordinate)) {
+                                foundIntersection = true;
+                            }
 
-                                    if (foundIntersection) {
+                            if (foundIntersection) {
+                                int gridX = (int) ((j - x) / cellsize);
+                                int gridY = (int) ((k - y) / cellsize);
 
-                                        int gridX = (int) ((j - x) / cellsize);
-                                        int gridY = (int) ((k - y) / cellsize);
-
-                                        // Form the bounding box for later calculation and mark the
-                                        // grid
-                                        // cell
-                                        gridMinX = Math.min(gridMinX, gridX);
-                                        gridMaxX = Math.max(gridMaxX, gridX);
-                                        gridMinY = Math.min(gridMinY, gridY);
-                                        gridMaxY = Math.max(gridMaxY, gridY);
-                                        grid[gridX][gridY] = OBSTACLE;
-                                    }
-                                }
+                                // Form the bounding box for later calculation and mark the grid
+                                // cell
+                                gridMinX = Math.min(gridMinX, gridX);
+                                gridMaxX = Math.max(gridMaxX, gridX);
+                                gridMinY = Math.min(gridMinY, gridY);
+                                gridMaxY = Math.max(gridMaxY, gridY);
+                                grid[gridX][gridY] = OBSTACLE;
                             }
                         }
-                        tmp = coordinate;
-
                     }
-                }
-                else {
                     tmp = coordinate;
+
                 }
             }
-            // Mark all cells inside the polygon that are not marked as an obstacle as free
-            Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
-            for (int i = gridMinX; i < gridMaxX; i++) {
-                for (int j = gridMinY; j < gridMaxY; j++) {
-                    if (grid[i][j] < 0.0) {
-                        Coordinate cell = new Coordinate(x + i * cellsize + cellsize / 2, y + j
-                                * cellsize + cellsize / 2);
-                        if (isInPolygon(cell, convexHull)) {
-                            grid[i][j] = FREE;
-                        }
+            else {
+                tmp = coordinate;
+            }
+        }
+        // Mark all cells inside the polygon that are not marked as free as an obstacle
+        Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
+        for (int i = gridMinX; i < gridMaxX; i++) {
+            for (int j = gridMinY; j < gridMaxY; j++) {
+                if (grid[i][j] == FREE) {
+                    Coordinate cell = new Coordinate(x + i * cellsize + cellsize / 2, y + j
+                            * cellsize + cellsize / 2);
+                    if (isInPolygon(cell, convexHull)) {
+                        grid[i][j] = OBSTACLE;
                     }
                 }
             }
@@ -184,7 +173,7 @@ public class ToGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.MATRIX_BOOLEAN;
     }
 
     /**

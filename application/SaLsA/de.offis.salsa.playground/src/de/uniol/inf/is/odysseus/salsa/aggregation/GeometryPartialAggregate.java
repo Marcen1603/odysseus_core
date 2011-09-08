@@ -16,6 +16,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterable<T> {
     private static final double BUFFER = 100.0;
     // final List<T> notMElems;

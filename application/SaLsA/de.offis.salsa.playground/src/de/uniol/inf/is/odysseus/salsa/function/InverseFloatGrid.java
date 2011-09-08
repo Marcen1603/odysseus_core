@@ -6,15 +6,15 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class InverseGrid extends AbstractFunction<Double[][]> {
+public class InverseFloatGrid  extends AbstractFunction<Float[][]> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
-            SDFDatatype.MATRIX_DOUBLE
+            SDFDatatype.MATRIX_FLOAT
         }
     };
-    private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
+    private final static double FREE = 0.0f;
+    private final static double UNKNOWN = -1.0f;
+    private final static double OBSTACLE = 1.0f;
 
     @Override
     public int getArity() {
@@ -37,12 +37,12 @@ public class InverseGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public String getSymbol() {
-        return "InverseGrid";
+        return "InverseFloatGrid";
     }
 
     @Override
-    public Double[][] getValue() {
-        final Double[][] grid = this.getInputValue(0);
+    public Float[][] getValue() {
+        final Float[][] grid = this.getInputValue(0);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] >= FREE) {
@@ -55,6 +55,7 @@ public class InverseGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.MATRIX_FLOAT;
     }
+
 }

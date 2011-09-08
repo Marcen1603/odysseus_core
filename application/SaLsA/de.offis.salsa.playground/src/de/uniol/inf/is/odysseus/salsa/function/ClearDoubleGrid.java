@@ -3,7 +3,10 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class ClearGrid extends AbstractFunction<Double[][]> {
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
+public class ClearDoubleGrid extends AbstractFunction<Double[][]> {
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                 SDFDatatype.MATRIX_DOUBLE
@@ -36,7 +39,7 @@ public class ClearGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public String getSymbol() {
-        return "ClearGrid";
+        return "ClearDoubleGrid";
     }
 
     @Override

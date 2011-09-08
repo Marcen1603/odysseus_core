@@ -7,18 +7,26 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
-import de.uniol.inf.is.odysseus.salsa.function.ClearGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ClearBooleanGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ClearByteGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ClearDoubleGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ClearFloatGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
-import de.uniol.inf.is.odysseus.salsa.function.InverseGrid;
+import de.uniol.inf.is.odysseus.salsa.function.InverseBooleanGrid;
+import de.uniol.inf.is.odysseus.salsa.function.InverseByteGrid;
+import de.uniol.inf.is.odysseus.salsa.function.InverseDoubleGrid;
+import de.uniol.inf.is.odysseus.salsa.function.InverseFloatGrid;
 import de.uniol.inf.is.odysseus.salsa.function.IsGridFree;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
-import de.uniol.inf.is.odysseus.salsa.function.ToBinaryGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ToBooleanGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ToByteGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ToDoubleGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ToFloatGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -49,12 +57,20 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new MergeGeometries());
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
-            MEP.registerFunction(new ToGrid());
-            MEP.registerFunction(new ToBinaryGrid());
-            MEP.registerFunction(new InverseGrid());
+            MEP.registerFunction(new ToDoubleGrid());
+            MEP.registerFunction(new ToFloatGrid());
+            MEP.registerFunction(new ToByteGrid());
+            MEP.registerFunction(new ToBooleanGrid());
+            MEP.registerFunction(new InverseDoubleGrid());
+            MEP.registerFunction(new InverseFloatGrid());
+            MEP.registerFunction(new InverseByteGrid());
+            MEP.registerFunction(new InverseBooleanGrid());
             MEP.registerFunction(new IEPF());
             MEP.registerFunction(new IsGridFree());
-            MEP.registerFunction(new ClearGrid());
+            MEP.registerFunction(new ClearDoubleGrid());
+            MEP.registerFunction(new ClearFloatGrid());
+            MEP.registerFunction(new ClearByteGrid());
+            MEP.registerFunction(new ClearBooleanGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -76,12 +92,20 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("MergeGeometries");
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
-            MEP.unregisterFunction("ToGrid");
-            MEP.unregisterFunction("ToBinaryGrid");
-            MEP.unregisterFunction("InverseGrid");
+            MEP.unregisterFunction("ToDoubleGrid");
+            MEP.unregisterFunction("ToFloatGrid");
+            MEP.unregisterFunction("ToByteGrid");
+            MEP.unregisterFunction("ToBooleanGrid");
+            MEP.unregisterFunction("InverseDoubleGrid");
+            MEP.unregisterFunction("InverseFloatGrid");
+            MEP.unregisterFunction("InverseByteGrid");
+            MEP.unregisterFunction("InverseBooleanGrid");
             MEP.unregisterFunction("IEPF");
             MEP.unregisterFunction("IsGridFree");
-            MEP.unregisterFunction("ClearGrid");
+            MEP.unregisterFunction("ClearDoubleGrid");
+            MEP.unregisterFunction("ClearDoubleGrid");
+            MEP.unregisterFunction("ClearDoubleGrid");
+            MEP.unregisterFunction("ClearDoubleGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
