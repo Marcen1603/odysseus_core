@@ -105,47 +105,37 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 					final ByteBuffer buffer = ByteBuffer
 							.allocateDirect(64 * 1024);
 					int nbytes = 0;
-					int pos = 0;
-					int size = 0;
 
 					while (!Thread.currentThread().isInterrupted()) {
 						while ((nbytes = channel.read(buffer)) > 0) {
-							size += nbytes;
-							for (int i = pos; i < size; i++) {
-								if (i == LENGTH) {
-									buffer.position(i + 1);
-									buffer.flip();
+							int pos = buffer.position();
+							buffer.flip();
+							try {
+								long timestamp = buffer.getLong();
+								int id = buffer.getShort();
+								int x = buffer.getInt();
+								int y = buffer.getInt();
+								float speed = buffer.getFloat();
+								float angle = buffer.getFloat();
+								this.adapter
+										.transfer(sourceSpec, timestamp,
+												new Object[] { id, x, y, speed,
+														angle });
 
-									try {
-										long timestamp = buffer.getLong();
-										int id = buffer.getShort();
-										int x = buffer.getShort();
-										int y = buffer.getShort();
-										float speed = buffer.getFloat();
-										float angle = buffer.getFloat();
-										this.adapter.transfer(sourceSpec,
-												timestamp, new Object[] { id,
-														x, y, speed, angle });
-
-									} catch (final Exception e) {
-										if (CarSourceAdapter.LOG
-												.isDebugEnabled()) {
-											CarSourceAdapter.LOG.debug(
-													e.getMessage(), e);
-											this.dumpPackage(buffer);
-										}
-									}
-									buffer.limit(size);
-
-									buffer.compact();
-									size -= (i + 1);
-									pos = 0;
-									i = 0;
+							} catch (final Exception e) {
+								if (CarSourceAdapter.LOG.isDebugEnabled()) {
+									CarSourceAdapter.LOG.debug(e.getMessage(),
+											e);
+									this.dumpPackage(buffer);
 								}
+								buffer.position(pos);
 							}
-							pos++;
+							if (buffer.hasRemaining()) {
+								buffer.compact();
+							} else {
+								buffer.clear();
+							}
 						}
-
 					}
 
 				} catch (final IOException e) {

@@ -61,10 +61,10 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 					// Cell Size
 					buffer.putInt((Integer) data[6]);
 					// Grid
-					Float[][] grid = (Float[][]) data[7];
-					for (int i = 0; i < grid.length; i++) {
-						for (int j = 0; j < grid[i].length; j++) {
-							buffer.putFloat(grid[i][j]);
+					Byte[][] grid = (Byte[][]) data[7];
+					for (int l = 0; l < grid.length; l++) {
+						for (int w = 0; w < grid[l].length; w++) {
+							buffer.put(grid[l][w]);
 						}
 					}
 					buffer.flip();
