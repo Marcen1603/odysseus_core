@@ -6,6 +6,9 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class RelationalPolygonAggregation
         extends
         AbstractGeometryAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
