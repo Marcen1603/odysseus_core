@@ -39,6 +39,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype STRING = new SDFDatatype("String");
 	public static final SDFDatatype LONG = new SDFDatatype("Long");
 	public static final SDFDatatype INTEGER = new SDFDatatype("Integer");
+	public static final SDFDatatype BYTE = new SDFDatatype("Byte");
 	public static final SDFDatatype FLOAT = new SDFDatatype("Float");
 	public static final SDFDatatype DOUBLE = new SDFDatatype("Double");
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
@@ -82,8 +83,14 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype MV = new SDFDatatype("MV");
 	
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype("MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);	
+	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype MATRIX_BOOLEAN = new SDFDatatype("MatrixBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
 	
 	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	public static final SDFDatatype VECTOR_FLOAT = new SDFDatatype("VectorFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
+	public static final SDFDatatype VECTOR_BYTE = new SDFDatatype("VectorByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype("VectorBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
 	
 	private static final long serialVersionUID = 8585322290347489841L;
 	
