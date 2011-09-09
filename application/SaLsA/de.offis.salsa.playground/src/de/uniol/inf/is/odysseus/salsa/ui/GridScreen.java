@@ -37,7 +37,7 @@ public class GridScreen extends JFrame {
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    public void onGrid(final Double[][] grid) {
+    public void onGrid(final Byte[][] grid) {
         this.map.onGrid(grid);
     }
 }

@@ -32,9 +32,9 @@ public class ToByteGrid extends AbstractFunction<Byte[][]> {
                 SDFDatatype.INTEGER
             }
     };
-    private final static byte FREE = 0x00;
+    private final static byte FREE = (byte) 0x0;
     private final static byte UNKNOWN = (byte) 0xFF;
-    private final static byte OBSTACLE = 0x64;
+    private final static byte OBSTACLE = (byte) 0x64;
 
     @Override
     public int getArity() {

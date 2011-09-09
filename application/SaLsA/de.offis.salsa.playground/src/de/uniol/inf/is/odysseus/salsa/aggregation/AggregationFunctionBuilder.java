@@ -48,13 +48,13 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
         if (key.getName().equalsIgnoreCase(MERGEDOUBLEGRID)) {
             aggFunc = new MergeDoubleGrid(pos);
         }
-        if (key.getName().equalsIgnoreCase(MERGEFLOATGRID)) {
+        else if (key.getName().equalsIgnoreCase(MERGEFLOATGRID)) {
             aggFunc = new MergeFloatGrid(pos);
         }
-        if (key.getName().equalsIgnoreCase(MERGEBYTEGRID)) {
+        else if (key.getName().equalsIgnoreCase(MERGEBYTEGRID)) {
             aggFunc = new MergeByteGrid(pos);
         }
-        if (key.getName().equalsIgnoreCase(MERGEBOOLEANGRID)) {
+        else if (key.getName().equalsIgnoreCase(MERGEBOOLEANGRID)) {
             aggFunc = new MergeBooleanGrid(pos);
         }
         else if (key.getName().equalsIgnoreCase(LAST)) {
@@ -66,11 +66,12 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
         else if (key.getName().equalsIgnoreCase(NTH)) {
             aggFunc = RelationalNth.getInstance(Integer.parseInt(key.getProperty("nth")));
         }
-        else if(key.getName().equalsIgnoreCase(PMERGE)) {
+        else if (key.getName().equalsIgnoreCase(PMERGE)) {
             aggFunc = new RelationalPolygonAggregation(pos);
-        } 
+        }
         else {
-            throw new IllegalArgumentException("No such Aggregatefunction");
+            throw new IllegalArgumentException(String.format("No such Aggregatefunction: %s",
+                    key.getName()));
         }
         return aggFunc;
     }

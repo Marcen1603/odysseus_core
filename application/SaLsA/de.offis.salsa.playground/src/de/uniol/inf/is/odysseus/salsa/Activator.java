@@ -103,9 +103,9 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("IEPF");
             MEP.unregisterFunction("IsGridFree");
             MEP.unregisterFunction("ClearDoubleGrid");
-            MEP.unregisterFunction("ClearDoubleGrid");
-            MEP.unregisterFunction("ClearDoubleGrid");
-            MEP.unregisterFunction("ClearDoubleGrid");
+            MEP.unregisterFunction("ClearFloatGrid");
+            MEP.unregisterFunction("ClearByteGrid");
+            MEP.unregisterFunction("ClearBooleanGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

@@ -18,8 +18,8 @@ public class MergeByteGrid extends AbstractAggregateFunction<RelationalTuple<?>,
 
     @Override
     public IPartialAggregate<RelationalTuple<?>> init(final RelationalTuple<?> in) {
-        final IPartialAggregate<RelationalTuple<?>> grid = new DoubleGridPartialAggregate<RelationalTuple<?>>(
-                (Double[][]) in.getAttribute(attribPos));
+        final IPartialAggregate<RelationalTuple<?>> grid = new ByteGridPartialAggregate<RelationalTuple<?>>(
+                (Byte[][]) in.getAttribute(attribPos));
         return grid;
     }
 
@@ -27,21 +27,21 @@ public class MergeByteGrid extends AbstractAggregateFunction<RelationalTuple<?>,
     public IPartialAggregate<RelationalTuple<?>> merge(
             final IPartialAggregate<RelationalTuple<?>> p, final RelationalTuple<?> toMerge,
             final boolean createNew) {
-        DoubleGridPartialAggregate<RelationalTuple<?>> grid = null;
+        ByteGridPartialAggregate<RelationalTuple<?>> grid = null;
         if (createNew) {
-            grid = new DoubleGridPartialAggregate<RelationalTuple<?>>(
-                    ((DoubleGridPartialAggregate<RelationalTuple<?>>) p).getGrid());
+            grid = new ByteGridPartialAggregate<RelationalTuple<?>>(
+                    ((ByteGridPartialAggregate<RelationalTuple<?>>) p).getGrid());
         }
         else {
-            grid = (DoubleGridPartialAggregate<RelationalTuple<?>>) p;
+            grid = (ByteGridPartialAggregate<RelationalTuple<?>>) p;
         }
-        grid.merge((Double[][]) toMerge.getAttribute(attribPos));
+        grid.merge((Byte[][]) toMerge.getAttribute(attribPos));
         return grid;
     }
 
     @Override
     public RelationalTuple<?> evaluate(final IPartialAggregate<RelationalTuple<?>> p) {
-        final DoubleGridPartialAggregate<RelationalTuple<?>> grid = (DoubleGridPartialAggregate<RelationalTuple<?>>) p;
+        final ByteGridPartialAggregate<RelationalTuple<?>> grid = (ByteGridPartialAggregate<RelationalTuple<?>>) p;
         @SuppressWarnings("rawtypes")
         final RelationalTuple<?> tuple = new RelationalTuple(1);
         tuple.setAttribute(0, grid.getGrid());
