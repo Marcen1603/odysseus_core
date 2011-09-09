@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ByteGridPartialAggregate<T> implements IPartialAggregate<T> {
-    private final static byte FREE = (byte)0x0;
+    private final static byte FREE = (byte) 0x0;
     private final static byte UNKNOWN = (byte) 0xFF;
     private final static byte OBSTACLE = (byte) 0x64;
 
@@ -28,7 +28,7 @@ public class ByteGridPartialAggregate<T> implements IPartialAggregate<T> {
         for (int i = 0; i < this.grid.length; i++) {
             for (int j = 0; j < this.grid[i].length; j++) {
                 if ((i < grid.length) && (j < grid[i].length)) {
-                  //FIXME Implement DST
+                    // FIXME Implement DST
                     if (this.grid[i][j] == UNKNOWN) {
                         this.grid[i][j] = grid[i][j];
                     }
