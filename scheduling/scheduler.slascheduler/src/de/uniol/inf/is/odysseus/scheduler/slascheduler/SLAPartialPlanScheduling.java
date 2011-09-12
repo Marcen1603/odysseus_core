@@ -355,6 +355,8 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 //				this.queue.remove();
 //			}
 			this.numberOfQueueScheds = this.queue.size() / 10;// schedule only 10% of queries
+			if (this.numberOfQueueScheds == 0 && this.queue.size() > 0)
+				this.numberOfQueueScheds = 1;// schedule at least one query if any/home/tommy/msc/evaluation/sim15/info
 		}
 		if (this.numberOfQueueScheds > 0) {
 			next = this.queue.remove().getE1();
