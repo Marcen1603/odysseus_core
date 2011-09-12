@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.collection.Pair;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -97,8 +100,9 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 
 	private IQuerySharing querySharing;
 	
-	private LinkedList<IScheduling> queue;
-
+	private LinkedList<Pair<IScheduling, Double>> queue;
+	private int numberOfQueueScheds = 0;
+	
 	/**
 	 * creates a new sla-based partial plan scheduler
 	 * 
@@ -132,7 +136,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			this.querySharing = null;
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
-		this.queue = new LinkedList<IScheduling>();
+		this.queue = new LinkedList<Pair<IScheduling, Double>>();
 		// init csv logger
 //		SLATestLogger.initCSVLogger("scheduler0", 1000000, 0, "Query", "oc",
 //				"mg", "sf", "prio", "conformance", "service level");
@@ -190,6 +194,90 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		return this.plans.size();
 	}
 
+//	/**
+//	 * returns the next partial plan to schedule represented by an
+//	 * {@link IScheduling}
+//	 */
+//	@Override
+//	public synchronized IScheduling nextPlan() {
+//		OVERHEAD.start();
+//		// check for sla violation and fire events
+//		while (!this.eventQueue.isEmpty()) {
+//			this.fireSLAViolationEvent(this.eventQueue.pop());
+//		}
+//
+//		IScheduling next = null;
+//		double nextPrio = 0;
+//
+////		SLATestLogger.log("Calculating priorities");
+//
+//		for (IScheduling scheduling : this.plans) {
+//			// calculate sla conformance for all queries
+//			// Attention: it is expected that 1 partial plan contains 1 query
+//			IQuery query = scheduling.getPlan().getQueries().get(0);
+//			SLARegistryInfo data = this.registry.getData(query);
+//			if (data != null) {
+//				// first check for sla violation and create event in case of violation
+//				data.getConformance().checkViolation();
+//				if (this.hasNext(data.getBuffers())) {
+//					
+//					SLA sla = query.getSLA();
+//					double conformance = data.getConformance().predictConformance();
+//					// calculate priorities for all partial plans:
+//					// - calculate oc
+//					ICostFunction costFunc = data.getCostFunction();
+//					double oc = costFunc.oc(conformance, sla);
+//
+//					// - calculate mg
+//					double mg = costFunc.mg(conformance, sla);
+//
+//					// - calculate sf
+//					double sf = data.getStarvationFreedom().sf(this.getDecaySF());
+//
+//					// - calculate prio
+//					double prio = this.prioFunction.calcPriority(oc, mg, sf);
+//
+////					SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
+////							prio, conformance, ((QuadraticCFLatency) costFunc)
+////									.getCurrentServiceLevelIndex(conformance, sla));
+//
+//					// select plan with highest priority
+//					if (prio > nextPrio) {
+//						next = scheduling;
+//						nextPrio = prio;
+//					}
+//
+//					if (this.querySharing != null) {
+//						this.querySharing.setPriority(scheduling, prio);
+//					}
+//				}
+//			}
+//
+//		}
+//
+//		if (this.querySharing != null) {
+//			// optional: consider effort of query sharing
+//			IScheduling tmpNext = this.querySharing.getNextPlan();
+//			if (tmpNext != null) {
+//				next = tmpNext;
+//			}
+//		}
+//
+////		if (next != null)
+////			SLATestLogger.log("["
+////					+ SLATestLogger.formatNanoTime(System.nanoTime())
+////					+ "] Scheduling query "
+////					+ next.getPlan().getQueries().get(0).getID());
+//		// set tmestamp of last execution
+//		if (next != null) {
+//			SLARegistryInfo data = this.registry.getData(next.getPlan().getQueries().get(0));
+//			data.setLastExecTimeStamp(System.currentTimeMillis());
+//		}
+//		
+//		OVERHEAD.stop();
+//		return next;
+//	}
+	
 	/**
 	 * returns the next partial plan to schedule represented by an
 	 * {@link IScheduling}
@@ -201,55 +289,78 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 		while (!this.eventQueue.isEmpty()) {
 			this.fireSLAViolationEvent(this.eventQueue.pop());
 		}
-
 		IScheduling next = null;
-		double nextPrio = 0;
+		
+		if (this.numberOfQueueScheds <= 0) {
+			this.queue.clear();
+			for (IScheduling scheduling : this.plans) {
+				// calculate sla conformance for all queries
+				// Attention: it is expected that 1 partial plan contains 1 query
+				IQuery query = scheduling.getPlan().getQueries().get(0);
+				SLARegistryInfo data = this.registry.getData(query);
+				if (data != null) {
+					// first check for sla violation and create event in case of violation
+					data.getConformance().checkViolation();
+					if (this.hasNext(data.getBuffers())) {
+						
+						SLA sla = query.getSLA();
+						double conformance = data.getConformance().predictConformance();
+						// calculate priorities for all partial plans:
+						// - calculate oc
+						ICostFunction costFunc = data.getCostFunction();
+						double oc = costFunc.oc(conformance, sla);
 
-//		SLATestLogger.log("Calculating priorities");
+						// - calculate mg
+						double mg = costFunc.mg(conformance, sla);
 
-		for (IScheduling scheduling : this.plans) {
-			// calculate sla conformance for all queries
-			// Attention: it is expected that 1 partial plan contains 1 query
-			IQuery query = scheduling.getPlan().getQueries().get(0);
-			SLARegistryInfo data = this.registry.getData(query);
-			if (data != null) {
-				// first check for sla violation and create event in case of violation
-				data.getConformance().checkViolation();
-				if (this.hasNext(data.getBuffers())) {
-					
-					SLA sla = query.getSLA();
-					double conformance = data.getConformance().predictConformance();
-					// calculate priorities for all partial plans:
-					// - calculate oc
-					ICostFunction costFunc = data.getCostFunction();
-					double oc = costFunc.oc(conformance, sla);
+						// - calculate sf
+						double sf = data.getStarvationFreedom().sf(this.getDecaySF());
 
-					// - calculate mg
-					double mg = costFunc.mg(conformance, sla);
+						// - calculate prio
+						double prio = this.prioFunction.calcPriority(oc, mg, sf);
 
-					// - calculate sf
-					double sf = data.getStarvationFreedom().sf(this.getDecaySF());
+//						SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
+//								prio, conformance, ((QuadraticCFLatency) costFunc)
+//										.getCurrentServiceLevelIndex(conformance, sla));
 
-					// - calculate prio
-					double prio = this.prioFunction.calcPriority(oc, mg, sf);
+						// add plan to queue
+						this.queue.add(new Pair<IScheduling, Double>(scheduling, prio));
 
-//					SLATestLogger.logCSV("scheduler"+query.getID(), query.getID(), oc, mg, sf,
-//							prio, conformance, ((QuadraticCFLatency) costFunc)
-//									.getCurrentServiceLevelIndex(conformance, sla));
-
-					// select plan with highest priority
-					if (prio > nextPrio) {
-						next = scheduling;
-						nextPrio = prio;
-					}
-
-					if (this.querySharing != null) {
-						this.querySharing.setPriority(scheduling, prio);
+						if (this.querySharing != null) {
+							this.querySharing.setPriority(scheduling, prio);
+						}
 					}
 				}
 			}
+			Comparator<Pair<IScheduling, Double>> comp = new Comparator<Pair<IScheduling,Double>>() {
 
+				@Override
+				public int compare(Pair<IScheduling, Double> o1,
+						Pair<IScheduling, Double> o2) {
+					if (o1.getE2() > o2.getE2()) {
+						return -1;
+					} else if (o1.getE2() < o2.getE2()) {
+						return 1;
+					}
+					
+					return 0;
+				}
+			};
+			Collections.sort(this.queue, comp);
+//			for (Pair<IScheduling, Double> e: this.queue) {
+//				System.out.println(e.getE2());
+//			}
+//			System.out.println("*****************");
+//			for (int i = 0; i < this.queue.size() - 10; i++) {
+//				this.queue.remove();
+//			}
+			this.numberOfQueueScheds = this.queue.size() / 10;// schedule only 10% of queries
 		}
+		if (this.numberOfQueueScheds > 0) {
+			next = this.queue.remove().getE1();
+			this.numberOfQueueScheds--;
+		}
+		
 
 		if (this.querySharing != null) {
 			// optional: consider effort of query sharing
