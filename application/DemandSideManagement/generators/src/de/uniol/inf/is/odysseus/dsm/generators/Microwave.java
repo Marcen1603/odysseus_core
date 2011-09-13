@@ -41,7 +41,6 @@ public class Microwave extends StreamClientHandler{
 	
 	Calendar calendar = Calendar.getInstance();
 	
-	private long timestamp;
 	private int randomRuntimes;
 	private double ampere = 4.35;
 	private double volt = 230.0;
@@ -55,8 +54,7 @@ public class Microwave extends StreamClientHandler{
 
 	@Override
 	public void init() {
-		calendar.set(2011, 0, 1, 11, 59, 0);
-		timestamp = calendar.getTimeInMillis();
+		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 		randomRuntimes = (int) (Math.random()*runtimesMax+1);
 		randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
@@ -77,35 +75,21 @@ public class Microwave extends StreamClientHandler{
 		DataTuple tuple = new DataTuple();
 		newDay();
 		
-		if (timestamp >= randomStart[interval] && timestamp <= randomStart[interval]+(runtime*3600000)){
-			tuple.addLong(timestamp);
+		if (SimulationClock.getInstance().getTime() >= randomStart[interval] && SimulationClock.getInstance().getTime() <= randomStart[interval]+(runtime*3600000)){
+			tuple.addLong(SimulationClock.getInstance().getTime());
 			tuple.addString("Washing Machine");
 			tuple.addInteger(1);
 			tuple.addDouble(volt);
 			tuple.addDouble(ampere);
-			
-			//DEBUG TUPEL
-			tuple.addLong(randomStart[interval]);
-			tuple.addInteger(randomRuntimes);
-			calendar.setTimeInMillis(timestamp);
-			tuple.addInteger(calendar.get(Calendar.HOUR_OF_DAY));
-			timestamp += 1000 * 100; //Test
 		} else {
-			if (timestamp >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
+			if (SimulationClock.getInstance().getTime() >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
 				interval++;
 			}
-			tuple.addLong(timestamp);
+			tuple.addLong(SimulationClock.getInstance().getTime());
 			tuple.addString("Washing Machine");
 			tuple.addInteger(1);
 			tuple.addDouble(0);
 			tuple.addDouble(0);
-			
-			//DEBUG TUPEL
-			tuple.addLong(randomStart[interval]);
-			tuple.addInteger(randomRuntimes);
-			calendar.setTimeInMillis(timestamp);
-			tuple.addInteger(calendar.get(Calendar.HOUR_OF_DAY));
-			timestamp += 100000; //1000
 		}
 		
 		try {
@@ -119,7 +103,7 @@ public class Microwave extends StreamClientHandler{
 	}
 	
 	private boolean newDay(){
-		calendar.setTimeInMillis(timestamp);
+		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		if (currentDay == calendar.get(Calendar.DAY_OF_MONTH)){
 			return false;
 		} else {

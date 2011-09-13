@@ -38,15 +38,12 @@ public class Fridge extends StreamClientHandler{
 	 * Watt = V * A = 35,83 W
 	 */
 	
-	private long timestamp;
 	private double ampere = 0.156;
 	private double volt = 230.0;
 
 	@Override
 	public void init() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2011, 0, 1, 0, 0, 0);
-		timestamp = calendar.getTimeInMillis();
+
 	}
 	
 	@Override
@@ -58,13 +55,12 @@ public class Fridge extends StreamClientHandler{
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
 		
-		tuple.addLong(timestamp);
+		tuple.addLong(SimulationClock.getInstance().getTime());
 		tuple.addString("Fridge");
 		tuple.addInteger(1);
 		tuple.addDouble(volt);
 		tuple.addDouble(ampere);
-		
-		timestamp += 1000 * 100; //Test
+
 		
 		try {
 			Thread.sleep(100);
