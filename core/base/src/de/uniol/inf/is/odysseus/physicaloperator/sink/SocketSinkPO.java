@@ -87,7 +87,8 @@ public class SocketSinkPO extends AbstractSink<Object> {
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		throw new RuntimeException("process punctuation not implemented");
+		// IGNORE
+		//throw new RuntimeException("process punctuation not implemented");
 		// TODO: How to implement punctuations? New Concepts on client side needed to detect punctuations 
 	}
 
