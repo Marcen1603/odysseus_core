@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.dsm.generators;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.generator.DataTuple;
@@ -39,6 +38,8 @@ public class Fridge extends StreamClientHandler{
 	 */
 	
 	private double ampere = 0.156;
+	private double a = -0.25;
+	private double varAmpere;
 	private double volt = 230.0;
 
 	@Override
@@ -59,7 +60,12 @@ public class Fridge extends StreamClientHandler{
 		tuple.addString("Fridge");
 		tuple.addInteger(1);
 		tuple.addDouble(volt);
-		tuple.addDouble(ampere);
+    	varAmpere = (Math.sin( 2*Math.PI * a ) + 1)*ampere;
+    	if (varAmpere < 0.01) {
+    		varAmpere = 0.01;
+    	}
+    	a += 0.01;
+		tuple.addDouble(varAmpere);
 
 		
 		try {
