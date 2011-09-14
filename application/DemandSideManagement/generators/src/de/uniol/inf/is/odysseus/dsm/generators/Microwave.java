@@ -34,34 +34,46 @@ public class Microwave extends StreamClientHandler{
 	 * Durchschnittswerte Mikrowelle
 	 * Verbrauch : 0,05 kWh
 	 * Laufzeit: 3 Minuten
-	 * Volt: 230 V
-	 * Ampere: 4,35 A
-	 * Watt = V * A = 1000 W
+	 * Watt = 1000 W
+	 * StartUp = false
 	 */
 	
 	Calendar calendar = Calendar.getInstance();
-	
+	private long timestamp;
 	private int randomRuntimes;
-	private double ampere = 4.35;
-	private double volt = 230.0;
-	private double runtime = 0.05;
-	private int runtimesMax = 2;
-	private long [] randomStart = new long[runtimesMax];
+	private long currentDay;
 	private int interval = 0;
+	
+	private double maxWatt = 1000.0;
+	private double runtime = 0.05;
+	private int rMin = 0;
+	private int rMax = 2;
+	private long [] randomStart = new long[rMax];
 	private int startMin = 12;
 	private int startMax = 19;
-	private long currentDay;
+	private double startUpTime = 0.0;
+	private String name = "Microwave";
+	private int roomId = 1;
+	
+	public Microwave(){
+	}
+	
+	public Microwave(Microwave microwave) {
+
+	}
 
 	@Override
 	public void init() {
 		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-		randomRuntimes = (int) (Math.random()*runtimesMax+1);
-		randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
-		for(int i = 1; i < randomRuntimes; i++){
-			calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
-			int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-			randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+		randomRuntimes = getRandomNumber(rMin,rMax);
+		if (randomRuntimes > 0){
+			randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+			for(int i = 1; i < randomRuntimes; i++){
+				calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
+				int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
+				randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+			}
 		}
 	}
 	
@@ -73,22 +85,28 @@ public class Microwave extends StreamClientHandler{
 	@Override
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
-		newDay();
+		timestamp = SimulationClock.getInstance().getTime();
+		newDay(timestamp);
 		
-		if (SimulationClock.getInstance().getTime() >= randomStart[interval] && SimulationClock.getInstance().getTime() <= randomStart[interval]+(runtime*3600000)){
-			tuple.addLong(SimulationClock.getInstance().getTime());
-			tuple.addString("Washing Machine");
-			tuple.addInteger(1);
-			tuple.addDouble(volt);
-			tuple.addDouble(ampere);
-		} else {
-			if (SimulationClock.getInstance().getTime() >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
-				interval++;
+		if (randomRuntimes > 0){
+			if (timestamp >= randomStart[interval] && timestamp <= randomStart[interval]+(runtime*3600000)){
+				tuple.addLong(timestamp);
+				tuple.addString(name);
+				tuple.addInteger(roomId);
+				tuple.addDouble(getMeteredValue(timestamp));
+			} else {
+				if (timestamp >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
+					interval++;
+				}
+				tuple.addLong(timestamp);
+				tuple.addString(name);
+				tuple.addInteger(roomId);
+				tuple.addDouble(0);
 			}
-			tuple.addLong(SimulationClock.getInstance().getTime());
-			tuple.addString("Washing Machine");
-			tuple.addInteger(1);
-			tuple.addDouble(0);
+		} else {
+			tuple.addLong(timestamp);
+			tuple.addString(name);
+			tuple.addInteger(roomId);
 			tuple.addDouble(0);
 		}
 		
@@ -102,18 +120,20 @@ public class Microwave extends StreamClientHandler{
 		return list;
 	}
 	
-	private boolean newDay(){
-		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
+	private boolean newDay(long ts){
+		calendar.setTimeInMillis(ts);
 		if (currentDay == calendar.get(Calendar.DAY_OF_MONTH)){
 			return false;
 		} else {
 			currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-			randomRuntimes = (int) (Math.random()*runtimesMax+1);
-			randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
-			for(int i = 1; i < randomRuntimes; i++){
-				calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
-				int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-				randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+			randomRuntimes = getRandomNumber(rMin, rMax);
+			if (randomRuntimes > 0){
+				randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+				for(int i = 1; i < randomRuntimes; i++){
+					calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
+					int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
+					randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+				}
 			}
 			interval = 0;
 			return true;
@@ -136,10 +156,28 @@ public class Microwave extends StreamClientHandler{
 		
 		return start;
 	}
+
+	private double getMeteredValue(long ts){
+		double mTime = ts - randomStart[interval];
+		double a;
+		double g;
+		
+		if(mTime >= 0 && mTime < startUpTime){
+			a = ((1 / startUpTime) * mTime);
+			g = Math.sin( Math.PI/2 * a ); 
+    		return g * maxWatt;
+		} else {
+			return maxWatt;  //TODO: Schwankungen
+		}
+	}
 	
-	@Override
-	public StreamClientHandler clone() {
-		throw new RuntimeException("CLONE NOT IMPLEMENTED!!");
+	public int getRandomNumber(int min, int max){
+	    Random random = new Random();
+	    return random.nextInt(max - min + 1) + min;
 	}
 
+	@Override
+	public StreamClientHandler clone() {
+		return new Microwave(this);
+	}
 }

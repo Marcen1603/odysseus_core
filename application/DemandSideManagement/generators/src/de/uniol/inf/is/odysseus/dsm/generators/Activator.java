@@ -21,7 +21,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;	
 		
 		System.out.println("Starting fridge server...");
-		StreamServer fridgeServer = new StreamServer(54321, new Fridge());
+		StreamServer fridgeServer = new StreamServer(54321, new Fridge(100.0));
 		fridgeServer.start();
 		
 		System.out.println("Starting washing machine server...");

@@ -34,38 +34,47 @@ public class WashingMachine extends StreamClientHandler{
 	 * Durchschnittswerte Waschmaschine
 	 * Verbrauch : 1,15 kWh
 	 * Laufzeit: 45 Minuten
-	 * Volt: 230 V
-	 * Ampere: 5 A
-	 * Watt = V * A = 1150 W
-	 */
-	
-	/*
-	 * TODO: Soll das Gerät heute überhaupt starten?
+	 * Watt = 1150 W
+	 * StartUp = true
 	 */
 	
 	Calendar calendar = Calendar.getInstance();
-	
+	private long timestamp;
 	private int randomRuntimes;
-	private double ampere = 5.0;
-	private double volt = 230.0;
-	private double runtime = 0.75;
-	private int runtimesMax = 3;
-	private long [] randomStart = new long[runtimesMax];
+	private long currentDay;
 	private int interval = 0;
+	
+	private double maxWatt = 1150.0;
+	private double runtime = 0.75;
+	private int rMin = 5;
+	private int rMax = 5;
+	private long [] randomStart = new long[rMax];
 	private int startMin = 12;
 	private int startMax = 18;
-	private long currentDay;
+	private double startUpTime = 60000.0;
+	private String name = "WashingMachine";
+	private int roomId = 1;
+	
+	public WashingMachine(){
+		
+	}
+
+	public WashingMachine(WashingMachine washingMachine) {
+		
+	}
 
 	@Override
 	public void init() {
 		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-		randomRuntimes = (int) (Math.random()*runtimesMax+1);
-		randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
-		for(int i = 1; i < randomRuntimes; i++){
-			calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
-			int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-			randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+		randomRuntimes = getRandomNumber(rMin,rMax);
+		if (randomRuntimes > 0){
+			randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+			for(int i = 1; i < randomRuntimes; i++){
+				calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
+				int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
+				randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+			}
 		}
 	}
 	
@@ -77,23 +86,41 @@ public class WashingMachine extends StreamClientHandler{
 	@Override
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
-		newDay();
+		timestamp = SimulationClock.getInstance().getTime();
+		newDay(timestamp);
 		
-		if (SimulationClock.getInstance().getTime() >= randomStart[interval] && SimulationClock.getInstance().getTime() <= randomStart[interval]+(runtime*3600000)){
-			tuple.addLong(SimulationClock.getInstance().getTime());
-			tuple.addString("Washing Machine");
-			tuple.addInteger(1);
-			tuple.addDouble(volt);
-			tuple.addDouble(ampere);
-		} else {
-			if (SimulationClock.getInstance().getTime() >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
-				interval++;
+		if (randomRuntimes > 0){
+			if (timestamp >= randomStart[interval] && timestamp <= randomStart[interval]+(runtime*3600000)){
+				tuple.addLong(timestamp);
+				tuple.addString(name);
+				tuple.addInteger(roomId);
+				tuple.addDouble(getMeteredValue(timestamp));
+				
+				tuple.addInteger(randomRuntimes);
+				tuple.addLong(randomStart[interval]);
+				tuple.addInteger(interval);
+			} else {
+				if (timestamp >= randomStart[interval]+(runtime*3600000) && interval < randomRuntimes - 1){
+					interval++;
+				}
+				tuple.addLong(timestamp);
+				tuple.addString(name);
+				tuple.addInteger(roomId);
+				tuple.addDouble(0);
+				
+				tuple.addInteger(randomRuntimes);
+				tuple.addLong(randomStart[interval]);
+				tuple.addInteger(interval);
 			}
-			tuple.addLong(SimulationClock.getInstance().getTime());
-			tuple.addString("Washing Machine");
-			tuple.addInteger(1);
+		} else {
+			tuple.addLong(timestamp);
+			tuple.addString(name);
+			tuple.addInteger(roomId);
 			tuple.addDouble(0);
-			tuple.addDouble(0);
+			
+			tuple.addInteger(randomRuntimes);
+			tuple.addLong(0);
+			tuple.addInteger(interval);
 		}
 		
 		try {
@@ -106,18 +133,20 @@ public class WashingMachine extends StreamClientHandler{
 		return list;
 	}
 	
-	private boolean newDay(){
-		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
+	private boolean newDay(long ts){
+		calendar.setTimeInMillis(ts);
 		if (currentDay == calendar.get(Calendar.DAY_OF_MONTH)){
 			return false;
 		} else {
 			currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-			randomRuntimes = (int) (Math.random()*runtimesMax+1);
-			randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
-			for(int i = 1; i < randomRuntimes; i++){
-				calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
-				int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-				randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+			randomRuntimes = getRandomNumber(rMin, rMax);
+			if (randomRuntimes > 0){
+				randomStart[0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+				for(int i = 1; i < randomRuntimes; i++){
+					calendar.setTimeInMillis((long) (randomStart[i-1]+(runtime*3600000)));
+					int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
+					randomStart[i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+				}
 			}
 			interval = 0;
 			return true;
@@ -140,10 +169,29 @@ public class WashingMachine extends StreamClientHandler{
 		
 		return start;
 	}
+	
+	private double getMeteredValue(long ts){
+		double mTime = ts - randomStart[interval];
+		double a;
+		double g;
+		
+		if(mTime >= 0 && mTime < startUpTime){
+			a = ((1 / startUpTime) * mTime);
+			g = Math.sin( Math.PI/2 * a ); 
+    		return g * maxWatt;
+		} else {
+			return maxWatt;  //TODO: Schwankungen
+		}
+	}
+	
+	public int getRandomNumber(int min, int max){
+	    Random random = new Random();
+	    return random.nextInt(max - min + 1) + min;
+	}
 
 	@Override
 	public StreamClientHandler clone() {
-		throw new RuntimeException("CLONE NOT IMPLEMENTED!!");
+		return new WashingMachine(this);
 	}
-	
+
 }

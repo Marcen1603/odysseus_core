@@ -28,14 +28,13 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
  * @author Daniel Weinberg
  * Created at: 07.09.2011
  */
-public class Fridge extends StreamClientHandler{
+public class Buzzer extends StreamClientHandler{
 
 	/*
-	 * Durchschnittswerte Kühlschrank
-	 * Verbrauch : 0,86 kWh
-	 * Laufzeit: 30 Minuten
-	 * Watt = 100 W
-	 * StartUp = true
+	 * Durchschnittswerte Radiowecker
+	 * Laufzeit: 24 Stunden
+	 * Watt = 5 W
+	 * StartUp = false
 	 */
 	
 	Calendar calendar = Calendar.getInstance();
@@ -44,23 +43,23 @@ public class Fridge extends StreamClientHandler{
 	private long currentDay;
 	private int interval = 0;
 	
-	private double maxWatt;
-	private double runtime = 0.5;
-	private int rMin = 10;
-	private int rMax = 15;
+	private double maxWatt = 5;
+	private double runtime = 24;
+	private int rMin = 1;
+	private int rMax = 1;
 	private long [] randomStart = new long[rMax];
-	private int startMin = 6;
+	private int startMin = 0;
 	private int startMax = 24;
-	private double startUpTime = 60000.0;
-	private String name = "Fridge";
+	private double startUpTime = 0;
+	private String name = "Buzzer";
 	private int roomId = 1;
 	
-	public Fridge(double watt){
-		this.maxWatt = watt;
+	public Buzzer(){
+		
 	}
 	
-	public Fridge(Fridge fridge) {
-		this.maxWatt = fridge.maxWatt;
+	public Buzzer(Buzzer buzzer) {
+		
 	}
 
 	@Override
@@ -151,7 +150,7 @@ public class Fridge extends StreamClientHandler{
 			g = Math.sin( Math.PI/2 * a ); 
     		return g * maxWatt;
 		} else {
-			return maxWatt;  //TODO: Schwankungen + Nachtkühlung
+			return maxWatt;  //TODO: Schwankungen
 		}
 	}
 	
@@ -179,7 +178,7 @@ public class Fridge extends StreamClientHandler{
 	
 	@Override
 	public StreamClientHandler clone() {
-		return new Fridge(this);
+		return new Buzzer(this);
 	}
 
 }
