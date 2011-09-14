@@ -119,4 +119,9 @@ public class AdultTrainDataProvider extends StreamClientHandler{
 		}	
 		
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new AdultTrainDataProvider();
+	}
 }

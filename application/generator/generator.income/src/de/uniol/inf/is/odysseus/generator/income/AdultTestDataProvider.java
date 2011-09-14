@@ -112,6 +112,11 @@ public class AdultTestDataProvider extends StreamClientHandler {
 		}	
 		
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new AdultTestDataProvider();
+	}
 
 
 }

@@ -100,5 +100,10 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 		list.add(tuple);
 		return list;
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new SyntheticClusterProvider();
+	}
 
 }

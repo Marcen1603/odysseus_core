@@ -21,15 +21,15 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;	
 		
 		System.out.println("Starting fridge server...");
-		StreamServer fridgeServer = new StreamServer(54321, Fridge.class);
+		StreamServer fridgeServer = new StreamServer(54321, new Fridge());
 		fridgeServer.start();
 		
 		System.out.println("Starting washing machine server...");
-		StreamServer washingMachineServer = new StreamServer(54322, WashingMachine.class);
+		StreamServer washingMachineServer = new StreamServer(54322, new WashingMachine());
 		washingMachineServer.start();
 		
 		System.out.println("Starting microwave server...");
-		StreamServer microwaveServer = new StreamServer(54323, Microwave.class);
+		StreamServer microwaveServer = new StreamServer(54323, new Microwave());
 		microwaveServer.start();
 	}
 

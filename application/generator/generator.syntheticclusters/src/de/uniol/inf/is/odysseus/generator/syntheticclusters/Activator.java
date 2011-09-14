@@ -33,7 +33,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, SyntheticClusterProvider.class);
+		StreamServer server = new StreamServer(54321, new SyntheticClusterProvider());
 		server.start();
 	}
 

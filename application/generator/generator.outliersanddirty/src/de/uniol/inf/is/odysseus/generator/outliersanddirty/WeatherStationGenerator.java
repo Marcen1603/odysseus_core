@@ -118,5 +118,10 @@ public class WeatherStationGenerator extends StreamClientHandler {
 	public void close() {		
 
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new WeatherStationGenerator();
+	}
 
 }

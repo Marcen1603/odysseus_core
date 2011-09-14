@@ -97,4 +97,9 @@ public class FrequentItemProvider extends StreamClientHandler {
 		}
 	}
 
+	@Override
+	public StreamClientHandler clone() {
+		return new FrequentItemProvider();
+	}
+	
 }

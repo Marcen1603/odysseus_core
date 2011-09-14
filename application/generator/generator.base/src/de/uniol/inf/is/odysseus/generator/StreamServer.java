@@ -22,11 +22,11 @@ import java.nio.channels.ServerSocketChannel;
 public class StreamServer extends Thread {
     
     private ServerSocket socket;        
-    private Class<StreamClientHandler> streamClientHandler;
+    private StreamClientHandler streamClientHandler;
 
-    @SuppressWarnings("unchecked")
-	public StreamServer(int port, Class<?> streamClientHandler) throws Exception {    	
-    	this.streamClientHandler = (Class<StreamClientHandler>)streamClientHandler;
+ 
+	public StreamServer(int port, StreamClientHandler streamClientHandler) throws Exception {    	
+    	this.streamClientHandler = streamClientHandler;
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
         socket = serverChannel.socket();
         socket.bind(new InetSocketAddress(port));
@@ -42,7 +42,7 @@ public class StreamServer extends Thread {
             	System.out.println("Waiting for connection...");
                 connection = socket.accept();
                 System.out.println("New connection from "+connection.getInetAddress());
-                StreamClientHandler streamClient = this.streamClientHandler.newInstance();
+                StreamClientHandler streamClient = this.streamClientHandler.clone();
                 streamClient.setConnection(connection);
                 streamClient.start();
             } catch (Exception ex) {

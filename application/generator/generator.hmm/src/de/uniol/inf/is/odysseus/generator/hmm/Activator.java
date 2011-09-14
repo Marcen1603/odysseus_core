@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		System.out.println("Starting HMM test server...");
-		StreamServer testServer = new StreamServer(54321, HMMGenerator.class);
+		StreamServer testServer = new StreamServer(54321, new HMMGenerator());
 		testServer.start();
 	}
 

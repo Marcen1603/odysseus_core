@@ -42,6 +42,14 @@ public class Fridge extends StreamClientHandler{
 	private double varAmpere;
 	private double volt = 230.0;
 
+	
+	public Fridge(){		
+	}
+	
+	public Fridge(Fridge fridge) {
+		// TODO
+	}
+
 	@Override
 	public void init() {
 
@@ -76,6 +84,12 @@ public class Fridge extends StreamClientHandler{
 		List<DataTuple> list = new ArrayList<DataTuple>();
 		list.add(tuple);
 		return list;
+	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		// So kann das einfach umgesetzt werden
+		return new Fridge(this);
 	}
 
 }

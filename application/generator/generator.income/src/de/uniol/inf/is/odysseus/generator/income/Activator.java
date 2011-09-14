@@ -34,10 +34,10 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		System.out.println("Starting test server...");
-		StreamServer testServer = new StreamServer(54321, AdultTestDataProvider.class);
+		StreamServer testServer = new StreamServer(54321, new AdultTestDataProvider());
 		testServer.start();
 		System.out.println("Starting train server...");
-		StreamServer trainServer = new StreamServer(54322, AdultTrainDataProvider.class);
+		StreamServer trainServer = new StreamServer(54322, new AdultTrainDataProvider());
 		trainServer.start();
 	}
 

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
 public class BankDataProvider extends StreamClientHandler {
 
 	public static void main(String[] args) throws Exception {
-		StreamServer server = new StreamServer(54321, BankDataProvider.class);
+		StreamServer server = new StreamServer(54321, new BankDataProvider());
 		server.start();
 	}
  
@@ -102,6 +102,11 @@ public class BankDataProvider extends StreamClientHandler {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new BankDataProvider();
 	}
 
 }

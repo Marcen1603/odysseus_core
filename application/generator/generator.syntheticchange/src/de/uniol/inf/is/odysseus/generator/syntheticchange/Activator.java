@@ -34,7 +34,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, ChangeDataProvider.class);
+		StreamServer server = new StreamServer(54321, new ChangeDataProvider());
 		server.start();
 	}
 

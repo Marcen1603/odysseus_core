@@ -20,11 +20,11 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		System.out.println("Starting A-Generator server...");
-		StreamServer windServer = new StreamServer(54321, ISKlausurGeneratorA.class);
+		StreamServer windServer = new StreamServer(54321, new ISKlausurGeneratorA());
 		windServer.start();
 		
 		System.out.println("Starting B-Generator server...");
-		StreamServer weatherServer = new StreamServer(54322, ISKlausurGeneratorB.class);
+		StreamServer weatherServer = new StreamServer(54322, new ISKlausurGeneratorB());
 		weatherServer.start();
 	}
 

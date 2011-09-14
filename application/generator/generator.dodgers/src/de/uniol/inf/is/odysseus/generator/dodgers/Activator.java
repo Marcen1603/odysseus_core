@@ -35,7 +35,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, DodgersDataProvider.class);
+		StreamServer server = new StreamServer(54321, new DodgersDataProvider());
 		server.start();
 	}
 

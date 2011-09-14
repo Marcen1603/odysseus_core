@@ -65,5 +65,10 @@ public class ISKlausurGeneratorB  extends StreamClientHandler{
 		list.add(tuple);
 		return list;
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new ISKlausurGeneratorB();
+	}
 
 }

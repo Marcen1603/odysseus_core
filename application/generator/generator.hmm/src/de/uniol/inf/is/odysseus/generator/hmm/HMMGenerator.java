@@ -47,5 +47,10 @@ public class HMMGenerator extends StreamClientHandler {
 	public void close() {		
 
 	}
+	
+	@Override
+	public StreamClientHandler clone() {
+		return new HMMGenerator();
+	}
 
 }

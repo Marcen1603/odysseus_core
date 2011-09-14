@@ -110,4 +110,8 @@ public class WindGenerator extends StreamClientHandler{
 		
 	}
 
+	@Override
+	public StreamClientHandler clone() {
+		return new WindGenerator();
+	}
 }

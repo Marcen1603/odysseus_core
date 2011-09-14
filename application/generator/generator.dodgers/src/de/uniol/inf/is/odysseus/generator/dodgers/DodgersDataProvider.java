@@ -83,4 +83,9 @@ public class DodgersDataProvider extends StreamClientHandler {
 		}		
 	}	
 	
+	@Override
+	public StreamClientHandler clone() {
+		return new DodgersDataProvider();
+	}
+	
 }

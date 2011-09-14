@@ -21,11 +21,11 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		
 		System.out.println("Starting Wind Generator server...");
-		StreamServer windServer = new StreamServer(54321, WindGenerator.class);
+		StreamServer windServer = new StreamServer(54321, new WindGenerator());
 		windServer.start();
 		
 		System.out.println("Starting Weatherstation Generator server...");
-		StreamServer weatherServer = new StreamServer(54322, WeatherStationGenerator.class);
+		StreamServer weatherServer = new StreamServer(54322, new WeatherStationGenerator());
 		weatherServer.start();
 	}
 

@@ -74,4 +74,9 @@ public class ChangeDataProvider  extends StreamClientHandler{
 	public void close() {			
 	}
 	
+	@Override
+	public StreamClientHandler clone() {
+		return new ChangeDataProvider();
+	}
+	
 }

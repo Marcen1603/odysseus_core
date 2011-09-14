@@ -141,4 +141,9 @@ public class WashingMachine extends StreamClientHandler{
 		return start;
 	}
 
+	@Override
+	public StreamClientHandler clone() {
+		throw new RuntimeException("CLONE NOT IMPLEMENTED!!");
+	}
+	
 }
