@@ -18,19 +18,12 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;	
+		Activator.context = bundleContext;
 		
 		System.out.println("Starting fridge server...");
-		StreamServer fridgeServer = new StreamServer(54321, new Fridge(100.0));
+		StreamServer fridgeServer = new StreamServer(54321, new Appliance("fridge", 100, 30, 30, 0.1, 2, 10, 10, 15, 6, 24, 60000, 1));
 		fridgeServer.start();
 		
-		System.out.println("Starting washing machine server...");
-		StreamServer washingMachineServer = new StreamServer(54322, new WashingMachine());
-		washingMachineServer.start();
-		
-		System.out.println("Starting microwave server...");
-		StreamServer microwaveServer = new StreamServer(54323, new Microwave());
-		microwaveServer.start();
 	}
 
 	/*
