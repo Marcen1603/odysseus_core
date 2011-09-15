@@ -28,55 +28,73 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
  * @author Daniel Weinberg
  * Created at: 07.09.2011
  */
-public class Fridge extends StreamClientHandler{
-
-	/*
-	 * Durchschnittswerte Kühlschrank
-	 * Verbrauch : 0,86 kWh
-	 * Laufzeit: 30 Minuten
-	 * Watt = 100 W
-	 * StartUp = true
-	 */
+public class Appliance extends StreamClientHandler{
 	
 	Calendar calendar = Calendar.getInstance();
 	private long timestamp;
 	private int randomRuntimes;
 	private long currentDay;
 	private int interval = 0;
+	private long [][] randomTimes;
 	
-	private double maxWatt;
-	private int rMin = 10;
-	private int rMax = 15;
-	private long [][] randomStart = new long[2][rMax];
-	private int startMin = 6; // in Stunden
-	private int startMax = 24; // in Stunden
-	private double startUpTime = 60000.0; // in ms
-	private String name = "Fridge";
-	private int roomId = 1;
-	private int runtimeMin = 30; // in Minuten
-	private int runtimeMax = 30; // in Minuten
 	
-	public Fridge(double watt){
-		this.maxWatt = watt;
+	private double watt;
+	private int rMin; //min Starts pro Tag
+	private int rMax; //max Starts pro Tag
+	private int startMin; // in Stunden
+	private int startMax; // in Stunden
+	private double startUpTime; // in ms
+	private String name;
+	private int roomId;
+	private int runtimeMin; // in Minuten
+	private int runtimeMax; // in Minuten
+	private double iRange;
+	private double iLength;
+	
+	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, double speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
+		this.name = name;
+		this.watt = watt;
+		this.runtimeMin = runtimeMin;
+		this.runtimeMax = runtimeMax;
+		this.iRange = iRange;
+		this.iLength = iLength * speed;
+		this.rMin = rMin;
+		this.rMax = rMax;
+		this.startMin = startMin;
+		this.startMax = startMax;
+		this.startUpTime = startUpTime;
+		this.roomId = roomId;
 	}
 	
-	public Fridge(Fridge fridge) {
-		this.maxWatt = fridge.maxWatt;
+	public Appliance(Appliance appliance) {
+		this.name = appliance.name;
+		this.watt = appliance.watt;
+		this.runtimeMin = appliance.runtimeMin;
+		this.runtimeMax = appliance.runtimeMax;
+		this.iRange = appliance.iRange;
+		this.iLength = appliance.iLength;
+		this.rMin = appliance.rMin;
+		this.rMax = appliance.rMax;
+		this.startMin = appliance.startMin;
+		this.startMax = appliance.startMax;
+		this.startUpTime = appliance.startUpTime;
+		this.roomId = appliance.roomId;
 	}
 
 	@Override
 	public void init() {
+		randomTimes = new long[2][rMax];
 		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-		randomRuntimes = getRandomIntNumber(rMin,rMax);
+		randomRuntimes = getRandomNumber(rMin,rMax);
 		if (randomRuntimes > 0){
-			randomStart[1][0] = (long) getRandomIntNumber(runtimeMin, runtimeMax);
-			randomStart[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+			randomTimes[1][0] = (long) getRandomNumber(runtimeMin, runtimeMax);
+			randomTimes[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
 			for(int i = 1; i < randomRuntimes; i++){
-				calendar.setTimeInMillis((long) (randomStart[0][i-1]+(randomStart[1][i-1]*60000)));
+				calendar.setTimeInMillis((long) (randomTimes[0][i-1]+(randomTimes[1][i-1]*60000)));
 				int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-				randomStart[0][i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
-				randomStart[1][i] = (long) getRandomIntNumber(runtimeMin, runtimeMax);
+				randomTimes[0][i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+				randomTimes[1][i] = (long) getRandomNumber(runtimeMin, runtimeMax);
 			}
 		}
 	}
@@ -93,13 +111,13 @@ public class Fridge extends StreamClientHandler{
 		newDay(timestamp);
 		
 		if (randomRuntimes > 0){		
-			if (timestamp >= randomStart[0][interval] && timestamp <= randomStart[0][interval]+(randomStart[1][interval]*60000)){
+			if (timestamp >= randomTimes[0][interval] && timestamp <= randomTimes[0][interval]+(randomTimes[1][interval]*60000)){
 				tuple.addLong(timestamp);
 				tuple.addString(name);
 				tuple.addInteger(roomId);
 				tuple.addDouble(getMeteredValue(timestamp));
 			} else {
-				if (timestamp >= randomStart[0][interval]+(randomStart[1][interval]*60000) && interval < randomRuntimes - 1){
+				if (timestamp >= randomTimes[0][interval]+(randomTimes[1][interval]*60000) && interval < randomRuntimes - 1){
 					interval++;
 				}
 				tuple.addLong(timestamp);
@@ -130,15 +148,15 @@ public class Fridge extends StreamClientHandler{
 			return false;
 		} else {
 			currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-			randomRuntimes = getRandomIntNumber(rMin, rMax);
+			randomRuntimes = getRandomNumber(rMin, rMax);
 			if (randomRuntimes > 0){
-				randomStart[1][0] = (long) getRandomIntNumber(runtimeMin, runtimeMax);
-				randomStart[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
+				randomTimes[1][0] = (long) getRandomNumber(runtimeMin, runtimeMax);
+				randomTimes[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
 				for(int i = 1; i < randomRuntimes; i++){
-					calendar.setTimeInMillis((long) (randomStart[0][i-1]+(randomStart[1][i-1]*60000)));
+					calendar.setTimeInMillis((long) (randomTimes[0][i-1]+(randomTimes[1][i-1]*60000)));
 					int tmpStartMin = calendar.get(Calendar.HOUR_OF_DAY);
-					randomStart[0][i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
-					randomStart[1][i] = (long) getRandomIntNumber(runtimeMin, runtimeMax);
+					randomTimes[0][i] = getRandomStart(tmpStartMin, (((startMax - tmpStartMin)/(randomRuntimes-i))+tmpStartMin));
+					randomTimes[1][i] = (long) getRandomNumber(runtimeMin, runtimeMax);
 				}
 			}
 			interval = 0;
@@ -147,23 +165,23 @@ public class Fridge extends StreamClientHandler{
 	}
 	
 	private double getMeteredValue(long ts){
-		double mTime = ts - randomStart[0][interval];
+		double mTime = ts - randomTimes[0][interval];
 		double a;
 		double g;
 		
 		if(mTime >= 0 && mTime < startUpTime){
 			a = ((1 / startUpTime) * mTime);
 			g = Math.sin( Math.PI/2 * a ); 
-    		return g * maxWatt;
+    		return g * watt;
 		} else {
-			g = 0.1 * Math.sin( Math.PI/(2*10) * (mTime/1000) ) + 1;
-			return g * maxWatt;
+			g = iRange * Math.sin( Math.PI/(iLength) * (mTime/1000) ) + 1;
+			return g * watt;
 		}
 	}
 	
-	public int getRandomIntNumber(int runtimeMin, int runtimeMax){
+	public int getRandomNumber(int min, int max){
 	    Random random = new Random();
-	    return random.nextInt(runtimeMax - runtimeMin + 1) + runtimeMin;
+	    return random.nextInt(max - min + 1) + min;
 	}
 	
 	private Long getRandomStart(int min, int max){
@@ -185,7 +203,7 @@ public class Fridge extends StreamClientHandler{
 	
 	@Override
 	public StreamClientHandler clone() {
-		return new Fridge(this);
+		return new Appliance(this);
 	}
 
 }

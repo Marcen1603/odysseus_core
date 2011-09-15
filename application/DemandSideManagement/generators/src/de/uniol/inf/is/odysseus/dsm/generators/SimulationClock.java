@@ -34,4 +34,8 @@ public class SimulationClock {
 	public long getTime(){
 		return ((System.currentTimeMillis()-start)*speed)+start;
 	}
+	
+	public void setSpeed(int speed){
+		this.speed = speed;
+	}
 }
