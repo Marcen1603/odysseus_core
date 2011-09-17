@@ -50,14 +50,16 @@ public class Appliance extends StreamClientHandler{
 	private int runtimeMax; // in Minuten
 	private double iRange;
 	private double iLength;
+	private int speed;
 	
-	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, double speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
+	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
 		this.name = name;
 		this.watt = watt;
 		this.runtimeMin = runtimeMin;
 		this.runtimeMax = runtimeMax;
 		this.iRange = iRange;
-		this.iLength = iLength * speed;
+		this.iLength = iLength * 10;
+		this.speed = speed;
 		this.rMin = rMin;
 		this.rMax = rMax;
 		this.startMin = startMin;
@@ -73,6 +75,7 @@ public class Appliance extends StreamClientHandler{
 		this.runtimeMax = appliance.runtimeMax;
 		this.iRange = appliance.iRange;
 		this.iLength = appliance.iLength;
+		this.speed = appliance.speed;
 		this.rMin = appliance.rMin;
 		this.rMax = appliance.rMax;
 		this.startMin = appliance.startMin;

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.dsm.generators;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.xml.stream.XMLInputFactory;
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-
+	
 	static BundleContext getContext() {
 		return context;
 	}
@@ -27,15 +28,16 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		
-		FileInputStream in = new FileInputStream("cfg/cfg.xml");
+		URL fileURL = bundleContext.getBundle().getEntry("cfg/cfg.xml");
+		InputStream inputStream = fileURL.openConnection().getInputStream();
 		XMLInputFactory factory = XMLInputFactory.newInstance();
-		XMLStreamReader parser = factory.createXMLStreamReader(in);
+		XMLStreamReader parser = factory.createXMLStreamReader(inputStream);
 		ArrayList<StreamServer> serverBuffer = new ArrayList<StreamServer>();
 		int speed = 10;
 		int port = 54321;
 		
 		
-		while( parser.hasNext() ) {
+		while(parser.hasNext()) {
 		    int event = parser.next();
 		    switch (event) {
 		        case XMLStreamConstants.END_DOCUMENT:

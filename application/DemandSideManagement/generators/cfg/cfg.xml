@@ -20,4 +20,175 @@
 		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
 		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
 	</household>
+	<household id="2">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="3">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="4">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="5">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="6">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="7">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="8">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="9">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
+	<household id="10">
+		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
+		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="24" startUpTime="0" roomId="4"/>
+		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>
+		<appliance name="microwave" watt="1000" runtimeMin="3" runtimeMax="3" iRange="0.01" iLength="2" rMin="0" rMax="2" startMin="12" startMax="19" startUpTime="0" roomId="2"/>
+		<appliance name="pc" watt="99" runtimeMin="60" runtimeMax="240" iRange="0.25" iLength="2" rMin="0" rMax="2" startMin="6" startMax="19" startUpTime="0" roomId="6"/>
+		<appliance name="television" watt="94" runtimeMin="60" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="16" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="electricCooker" watt="1500" runtimeMin="60" runtimeMax="120" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="oven" watt="2000" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="15" startUpTime="600000" roomId="2"/>
+		<appliance name="hairDryer" watt="1850" runtimeMin="5" runtimeMax="10" iRange="0.1" iLength="2" rMin="0" rMax="2" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="vaccumCleaner" watt="1600" runtimeMin="15" runtimeMax="30" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="12" startMax="19" startUpTime="0" roomId="3"/>
+		<appliance name="washingMachine" watt="1150" runtimeMin="45" runtimeMax="45" iRange="0.2" iLength="2" rMin="0" rMax="1" startMin="12" startMax="18" startUpTime="60000" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="10" runtimeMax="60" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="1"/>
+		<appliance name="lamp" watt="60" runtimeMin="180" runtimeMax="240" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="15" startMax="16" startUpTime="0" roomId="2"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="60" iRange="0.1" iLength="2" rMin="2" rMax="4" startMin="6" startMax="22" startUpTime="0" roomId="3"/>
+		<appliance name="lamp" watt="60" runtimeMin="15" runtimeMax="45" iRange="0.1" iLength="2" rMin="1" rMax="1" startMin="6" startMax="9" startUpTime="0" roomId="4"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="90" iRange="0.1" iLength="2" rMin="1" rMax="2" startMin="18" startMax="22" startUpTime="0" roomId="5"/>
+		<appliance name="lamp" watt="60" runtimeMin="30" runtimeMax="45" iRange="0.1" iLength="2" rMin="0" rMax="1" startMin="18" startMax="20" startUpTime="0" roomId="6"/>
+	</household>
 </configuration>
