@@ -51,6 +51,8 @@ public class Appliance extends StreamClientHandler{
 	private double iRange;
 	private double iLength;
 	private int speed;
+	private double measuredWatt = 0;
+	private long measureTimestamp;
 	
 	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
 		this.name = name;
@@ -119,6 +121,7 @@ public class Appliance extends StreamClientHandler{
 				tuple.addString(name);
 				tuple.addInteger(roomId);
 				tuple.addDouble(getMeteredValue(timestamp));
+				tuple.addDouble(getMeteredConsumption(timestamp));
 			} else {
 				if (timestamp >= randomTimes[0][interval]+(randomTimes[1][interval]*60000) && interval < randomRuntimes - 1){
 					interval++;
@@ -127,11 +130,13 @@ public class Appliance extends StreamClientHandler{
 				tuple.addString(name);
 				tuple.addInteger(roomId);
 				tuple.addDouble(0);
+				tuple.addDouble(0);
 			}
 		} else {
 			tuple.addLong(timestamp);
 			tuple.addString(name);
 			tuple.addInteger(roomId);
+			tuple.addDouble(0);
 			tuple.addDouble(0);
 		}
 		
@@ -179,6 +184,33 @@ public class Appliance extends StreamClientHandler{
 		} else {
 			g = iRange * Math.sin( Math.PI/(iLength) * (mTime/1000) ) + 1;
 			return g * watt;
+		}
+	}
+	
+	private double getMeteredConsumption(long ts){
+		double mTime = ts - randomTimes[0][interval];
+		double a;
+		double g;
+		double returnValue;
+		long mIntervall;
+			if(measureTimestamp > 0){
+				mIntervall = ts - measureTimestamp;
+			} else {
+				mIntervall = 0;
+			}
+		measureTimestamp = ts;
+		
+		if(mTime >= 0 && mTime < startUpTime){
+			a = ((1 / startUpTime) * mTime);
+			g = Math.sin( Math.PI/2 * a );
+			returnValue = measuredWatt * mIntervall;
+			measuredWatt = g * watt;
+    		return returnValue;
+		} else {
+			g = iRange * Math.sin( Math.PI/(iLength) * (mTime/1000) ) + 1;
+			returnValue = measuredWatt * mIntervall;
+			measuredWatt = g * watt;
+    		return returnValue;
 		}
 	}
 	
