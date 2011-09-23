@@ -99,26 +99,26 @@ public class DataDictionary implements IDataDictionary {
 			/**
 			 * fill in the built-in datatypes
 			 */
-			datatypes.put(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
-			datatypes.put(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
-			datatypes.put(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
-			datatypes.put(SDFDatatype.END_TIMESTAMP.getURI(), SDFDatatype.END_TIMESTAMP);
-			datatypes.put(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
-			datatypes.put(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
-			datatypes.put(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-			datatypes.put(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL);
-			datatypes.put(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL_LINE);
-			datatypes.put(SDFDatatype.SPATIAL_MULTI_LINE.getURI(), SDFDatatype.SPATIAL_MULTI_LINE);
-			datatypes.put(SDFDatatype.SPATIAL_MULTI_POINT.getURI(), SDFDatatype.SPATIAL_MULTI_POINT);
-			datatypes.put(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(), SDFDatatype.SPATIAL_MULTI_POLYGON);
-			datatypes.put(SDFDatatype.SPATIAL_POINT.getURI(), SDFDatatype.SPATIAL_POINT);
-			datatypes.put(SDFDatatype.SPATIAL_POLYGON.getURI(), SDFDatatype.SPATIAL_POLYGON);
-			datatypes.put(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
-			datatypes.put(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
-			datatypes.put(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
-			datatypes.put(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-			datatypes.put(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
-			datatypes.put(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
+			
+			addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
+			addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
+			addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
+			addDatatype(SDFDatatype.END_TIMESTAMP.getURI(), SDFDatatype.END_TIMESTAMP);
+			addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
+			addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
+			addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);			
+			addDatatype(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL_LINE);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_LINE.getURI(), SDFDatatype.SPATIAL_MULTI_LINE);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_POINT.getURI(), SDFDatatype.SPATIAL_MULTI_POINT);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(), SDFDatatype.SPATIAL_MULTI_POLYGON);
+			addDatatype(SDFDatatype.SPATIAL_POINT.getURI(), SDFDatatype.SPATIAL_POINT);
+			addDatatype(SDFDatatype.SPATIAL_POLYGON.getURI(), SDFDatatype.SPATIAL_POLYGON);
+			addDatatype(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
+			addDatatype(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
+			addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
+			addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
+			addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
+			addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -425,8 +425,8 @@ public class DataDictionary implements IDataDictionary {
 	// ----------------------------------------------------------------------------
 	
 	@Override
-	public void addDatatype(String name, SDFDatatype dt){
-		if(!this.datatypes.containsKey(name)){
+	public void addDatatype(String name, SDFDatatype dt){		
+		if(!this.datatypes.containsKey(name.toLowerCase())){
 			this.datatypes.put(name.toLowerCase(), dt);
 		}
 		else{
@@ -436,8 +436,8 @@ public class DataDictionary implements IDataDictionary {
 	
 	@Override
 	public SDFDatatype getDatatype(String dtName){
-		if(this.datatypes.containsKey(dtName)){
-			return this.datatypes.get(dtName);
+		if(this.datatypes.containsKey(dtName.toLowerCase())){
+			return this.datatypes.get(dtName.toLowerCase());
 		}
 		else{
 			throw new IllegalArgumentException("No such datatype: " + dtName);
@@ -446,7 +446,7 @@ public class DataDictionary implements IDataDictionary {
 	
 	@Override
 	public boolean existsDatatype(String dtName){
-		return this.datatypes.containsKey(dtName);
+		return this.datatypes.containsKey(dtName.toLowerCase());
 	}
 
 	// ----------------------------------------------------------------------------

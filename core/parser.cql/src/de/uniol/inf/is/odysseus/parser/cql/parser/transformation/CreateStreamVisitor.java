@@ -190,6 +190,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		// we allow user defined types, so check
 		// whether the defined type exists or not
+		
 		if (this.dd.existsDatatype(astAttrType.getType())) {
 
 			attribute.setDatatype(this.dd.getDatatype(astAttrType.getType()));
@@ -200,6 +201,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				attribute.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
 
 			}
+		}else{
+			throw new RuntimeException("illigal datatype:"+astAttrType.getType());
 		}
 		this.attributes.add(attribute);
 		return data;
