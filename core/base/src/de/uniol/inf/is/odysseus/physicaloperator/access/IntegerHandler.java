@@ -25,6 +25,7 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 		types.add("Integer");
 		types.add("Byte");
 		types.add("Short");
+		types.add("Boolean");
 	}
 	
 	@Override
