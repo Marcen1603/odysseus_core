@@ -27,6 +27,7 @@ import javax.xml.ws.Endpoint;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
  */
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
-@XmlSeeAlso({ SensorSchema.class, SensorAttribute.class })
+@XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorRegistryService extends WebserviceServer {
 
 	private static final String TRANSFORMATION_CONFIGURATION = "Standard";
