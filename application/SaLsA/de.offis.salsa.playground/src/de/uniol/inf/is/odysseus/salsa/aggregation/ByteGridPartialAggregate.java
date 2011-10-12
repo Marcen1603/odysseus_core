@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ByteGridPartialAggregate<T> implements IPartialAggregate<T> {
-    private final static byte FREE = (byte) 0x0;
+    private final static byte FREE = (byte) 0x00;
     private final static byte UNKNOWN = (byte) 0xFF;
     private final static byte OBSTACLE = (byte) 0x64;
 
