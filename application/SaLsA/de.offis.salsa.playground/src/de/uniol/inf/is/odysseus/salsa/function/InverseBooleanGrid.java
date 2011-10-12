@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class InverseBooleanGrid extends AbstractFunction<Boolean[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3199124231579198761L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
             SDFDatatype.MATRIX_BOOLEAN

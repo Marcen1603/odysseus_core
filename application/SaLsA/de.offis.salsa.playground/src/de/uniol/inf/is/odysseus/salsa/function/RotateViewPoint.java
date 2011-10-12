@@ -10,6 +10,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class RotateViewPoint extends AbstractFunction<Geometry> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6834872922674099184L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,

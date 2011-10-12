@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class MoveViewPoint extends AbstractFunction<Geometry> {
 
-    @Override
-    public int getArity() {
-        return 3;
-    }
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8906668468905044717L;
 
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
@@ -27,6 +27,11 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
                 SDFDatatype.DOUBLE
             }
     };
+
+    @Override
+    public int getArity() {
+        return 3;
+    }
 
     @Override
     public SDFDatatype[] getAcceptedTypes(final int argPos) {

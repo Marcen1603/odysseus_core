@@ -10,6 +10,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class IsPedestrian extends AbstractFunction<Boolean> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 572304260665128827L;
+
     private static Logger LOG = LoggerFactory.getLogger(IsPedestrian.class);
 
     public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {

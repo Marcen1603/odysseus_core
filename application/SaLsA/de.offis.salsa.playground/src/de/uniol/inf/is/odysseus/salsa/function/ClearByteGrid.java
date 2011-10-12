@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ClearByteGrid extends AbstractFunction<Byte[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6276355544794895058L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                 SDFDatatype.MATRIX_BYTE

@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class InverseDoubleGrid  extends AbstractFunction<Double[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6682089158563417930L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
             SDFDatatype.MATRIX_DOUBLE

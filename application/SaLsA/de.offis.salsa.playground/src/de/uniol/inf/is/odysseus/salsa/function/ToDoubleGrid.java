@@ -15,6 +15,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ToDoubleGrid extends AbstractFunction<Double[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8606524441544525424L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -70,10 +74,10 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = this.getInputValue(5);
+        final Double cellsize = ((Double) this.getInputValue(5)) / 10;
 
         // FIXME check for real size of grid
-        Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
+        final Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
         for (Double[] cells : grid) {
             Arrays.fill(cells, UNKNOWN);
         }

@@ -4,18 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
@@ -52,54 +55,64 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 	}
 
 	class CarServer implements Runnable {
-		private ServerSocket serverSocket = null;
-		private SourceSpec source;
-		private CarSourceAdapter adapter;
+		private ServerSocketChannel serverSocketChannel = null;
+		private final SourceSpec source;
+		private final CarSourceAdapter adapter;
+		private int port;
 
 		public CarServer(final SourceSpec source,
 				final CarSourceAdapter adapter, final int port) {
-			try {
-				this.serverSocket = new ServerSocket(port);
-			} catch (final IOException e) {
-				CarSourceAdapter.LOG.error(e.getMessage(), e);
-			}
+			this.port = port;
+			this.source = source;
+			this.adapter = adapter;
 		}
 
 		@Override
 		public void run() {
-			final List<Thread> processingThreads = new ArrayList<Thread>();
-			while (!Thread.currentThread().isInterrupted()) {
-				Socket socket;
-				try {
-					socket = this.serverSocket.accept();
-					final CarProcessor processor = new CarProcessor(
-							this.source, socket, this.adapter);
-					final Thread processingThread = new Thread(processor);
-					processingThreads.add(processingThread);
-					processingThread.start();
-				} catch (final IOException e) {
-					CarSourceAdapter.LOG.error(e.getMessage(), e);
+			try {
+				this.serverSocketChannel = ServerSocketChannel.open();
+				final InetSocketAddress address = new InetSocketAddress(
+						this.port);
+				this.serverSocketChannel.socket().bind(address);
+
+				final List<Thread> processingThreads = new ArrayList<Thread>();
+				while (!Thread.currentThread().isInterrupted()) {
+					SocketChannel socket;
+					try {
+						socket = this.serverSocketChannel.accept();
+						final CarProcessor processor = new CarProcessor(
+								this.source, socket, this.adapter);
+						final Thread processingThread = new Thread(processor);
+						processingThreads.add(processingThread);
+						processingThread.start();
+					} catch (final IOException e) {
+						CarSourceAdapter.LOG.error(e.getMessage(), e);
+					}
 				}
-			}
-			for (final Thread processingThread : processingThreads) {
-				processingThread.interrupt();
+				for (final Thread processingThread : processingThreads) {
+					processingThread.interrupt();
+				}
+			} catch (final Exception e) {
+				if (CarSourceAdapter.LOG.isDebugEnabled()) {
+					CarSourceAdapter.LOG.debug(e.getMessage(), e);
+				}
 			}
 		}
 
 		class CarProcessor implements Runnable {
-			private final Socket server;
+			private final SocketChannel channel;
 			private final CarSourceAdapter adapter;
-			private SourceSpec sourceSpec;
+			private final SourceSpec sourceSpec;
 
-			public CarProcessor(final SourceSpec source, final Socket server,
-					final CarSourceAdapter adapter) {
-				this.server = server;
+			public CarProcessor(final SourceSpec source,
+					final SocketChannel channel, final CarSourceAdapter adapter) {
+				this.channel = channel;
 				this.adapter = adapter;
+				this.sourceSpec = source;
 			}
 
 			@Override
 			public void run() {
-				SocketChannel channel = this.server.getChannel();
 				try {
 
 					final ByteBuffer buffer = ByteBuffer
@@ -107,33 +120,48 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 					int nbytes = 0;
 
 					while (!Thread.currentThread().isInterrupted()) {
-						while ((nbytes = channel.read(buffer)) > 0) {
-							int pos = buffer.position();
-							buffer.flip();
-							try {
-								long timestamp = buffer.getLong();
-								int id = buffer.getShort();
-								int x = buffer.getInt();
-								int y = buffer.getInt();
-								float speed = buffer.getFloat();
-								float angle = buffer.getFloat();
-								this.adapter
-										.transfer(sourceSpec, timestamp,
-												new Object[] { id, x, y, speed,
-														angle });
+						if (channel.isOpen()) {
+							while ((nbytes = channel.read(buffer)) > 0) {
+								int pos = buffer.position();
+								buffer.flip();
+								try {
+									int year = buffer.getChar();
+									int month = buffer.get();
+									int day = buffer.get();
+									int hour = buffer.get();
+									int minute = buffer.get();
+									int second = buffer.get();
+									int millisecond = buffer.get();
+									Calendar calendar = Calendar.getInstance();
+									calendar.clear();
+									calendar.set(year, month - 1, day, hour,
+											minute, second);
+									calendar.add(Calendar.MILLISECOND,
+											millisecond * 10);
+									long timestamp = calendar.getTimeInMillis();
+									int id = buffer.getShort();
+									int x = buffer.getInt();
+									int y = buffer.getInt();
+									float speed = buffer.getFloat();
+									float angle = buffer.getFloat();
+									this.adapter.transfer(this.sourceSpec,
+											timestamp, new Object[] { id,
+													new Coordinate(x, y),
+													speed, angle });
 
-							} catch (final Exception e) {
-								if (CarSourceAdapter.LOG.isDebugEnabled()) {
-									CarSourceAdapter.LOG.debug(e.getMessage(),
-											e);
-									this.dumpPackage(buffer);
+								} catch (final Exception e) {
+									if (CarSourceAdapter.LOG.isDebugEnabled()) {
+										CarSourceAdapter.LOG.debug(
+												e.getMessage(), e);
+										this.dumpPackage(buffer);
+									}
+									buffer.position(pos);
 								}
-								buffer.position(pos);
-							}
-							if (buffer.hasRemaining()) {
-								buffer.compact();
-							} else {
-								buffer.clear();
+								if (buffer.hasRemaining()) {
+									buffer.compact();
+								} else {
+									buffer.clear();
+								}
 							}
 						}
 					}

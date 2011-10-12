@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class InverseFloatGrid  extends AbstractFunction<Float[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4573210956880331758L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
             SDFDatatype.MATRIX_FLOAT

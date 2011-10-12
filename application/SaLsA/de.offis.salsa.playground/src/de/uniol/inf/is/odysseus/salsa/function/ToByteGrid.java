@@ -15,6 +15,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ToByteGrid extends AbstractFunction<Byte[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5318197177659509484L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -32,7 +36,7 @@ public class ToByteGrid extends AbstractFunction<Byte[][]> {
                 SDFDatatype.INTEGER
             }
     };
-    private final static byte FREE = (byte) 0x0;
+    private final static byte FREE = (byte) 0x00;
     private final static byte UNKNOWN = (byte) 0xFF;
     private final static byte OBSTACLE = (byte) 0x64;
 
@@ -70,7 +74,7 @@ public class ToByteGrid extends AbstractFunction<Byte[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = this.getInputValue(5);
+        final Double cellsize = (Double) this.getInputValue(5) / 10;
 
         // FIXME check for real size of grid
         Byte[][] grid = new Byte[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];

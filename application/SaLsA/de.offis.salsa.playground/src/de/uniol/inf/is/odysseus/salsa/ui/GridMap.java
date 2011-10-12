@@ -21,9 +21,9 @@ public class GridMap extends JPanel {
 
     public void onGrid(Byte[][] grid) {
         this.grids.add(grid);
-       // if (this.grids.size() > 100) {
+    //    if (this.grids.size() > 100) {
             this.repaint();
-       // }
+     //   }
     }
 
     @Override
@@ -44,9 +44,14 @@ public class GridMap extends JPanel {
                         // else {
                         // graphics.setColor(new Color(51, (int) (254 * grid[i][j]), 204));
                         // }
+                        try {
                         graphics.setColor(new Color(grid[i][j] & 0xFF, grid[i][j] & 0xFF,
                                 grid[i][j] & 0xFF));
                         graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("Value: "+ grid[i][j]);
+                        }
                     }
                 }
                 break;

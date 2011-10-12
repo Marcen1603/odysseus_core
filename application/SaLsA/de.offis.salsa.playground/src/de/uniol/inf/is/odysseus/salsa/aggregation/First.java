@@ -29,5 +29,4 @@ abstract public class First<R, W> extends AbstractAggregateFunction<R, W> {
         }
         return pa;
     }
-
 }

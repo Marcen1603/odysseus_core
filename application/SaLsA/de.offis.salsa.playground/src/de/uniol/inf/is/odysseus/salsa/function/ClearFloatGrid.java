@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ClearFloatGrid extends AbstractFunction<Float[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3472068441371230697L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                 SDFDatatype.MATRIX_DOUBLE,SDFDatatype.MATRIX_FLOAT

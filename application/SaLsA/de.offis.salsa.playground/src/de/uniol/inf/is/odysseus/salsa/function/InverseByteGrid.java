@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class InverseByteGrid extends AbstractFunction<Byte[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5355953671617367915L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
             SDFDatatype.MATRIX_BYTE

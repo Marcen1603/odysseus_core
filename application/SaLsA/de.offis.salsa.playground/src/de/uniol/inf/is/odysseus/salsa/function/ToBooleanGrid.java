@@ -14,6 +14,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ToBooleanGrid extends AbstractFunction<Boolean[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4412668331583193686L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -68,7 +72,7 @@ public class ToBooleanGrid extends AbstractFunction<Boolean[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = this.getInputValue(5);
+        final Double cellsize = (Double)this.getInputValue(5)/10;
 
         // FIXME check for real size of grid
         Boolean[][] grid = new Boolean[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];

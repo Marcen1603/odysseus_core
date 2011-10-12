@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ClearBooleanGrid extends AbstractFunction<Boolean[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4671931088592907112L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                 SDFDatatype.MATRIX_BOOLEAN

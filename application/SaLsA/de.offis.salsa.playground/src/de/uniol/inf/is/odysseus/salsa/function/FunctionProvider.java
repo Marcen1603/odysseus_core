@@ -35,6 +35,10 @@ public class FunctionProvider implements IFunctionProvider {
         functions.add(new ClearFloatGrid());
         functions.add(new ClearByteGrid());
         functions.add(new ClearBooleanGrid());
+        functions.add(new SubDoubleGrid());
+        functions.add(new SubByteGrid());
+        functions.add(new SubFloatGrid());
+        functions.add(new SubBooleanGrid());
         return functions;
     }
 }

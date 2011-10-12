@@ -15,6 +15,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ToFloatGrid extends AbstractFunction<Float[][]> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6306002128677126801L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -70,7 +74,7 @@ public class ToFloatGrid extends AbstractFunction<Float[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = this.getInputValue(5);
+        final Double cellsize = (Double)this.getInputValue(5)/10;
 
         Float[][] grid = new Float[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
         for (Float[] cells : grid) {

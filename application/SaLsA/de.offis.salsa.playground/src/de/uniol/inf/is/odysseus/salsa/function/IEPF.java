@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -27,14 +24,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  * @param <IMetadata>
  */
 public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4973220087210280849L;
     private final GeometryFactory geometryFactory = new GeometryFactory();
-    private static Logger LOG = LoggerFactory.getLogger(IEPF.class);
 
-    public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
-        SDFDatatype.SPATIAL_MULTI_POINT
-    };
-    public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
-        SDFDatatype.DOUBLE
+    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+            {
+                SDFDatatype.SPATIAL_MULTI_POINT
+            }, {
+                SDFDatatype.DOUBLE
+            }
     };
 
     @Override
@@ -52,13 +53,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
                     + " argument(s): A matrix and a threashold.");
         }
         else {
-            switch (argPos) {
-                case 0:
-                    return ExtractSegments.accTypes0; // Coordinate[].class;
-                case 1:
-                default:
-                    return ExtractSegments.accTypes1;
-            }
+            return accTypes[argPos];
         }
     }
 

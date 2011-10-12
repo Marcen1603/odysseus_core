@@ -4,6 +4,10 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class IsGridFree extends AbstractFunction<Boolean> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5768528294591995540L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                 SDFDatatype.MATRIX_DOUBLE
@@ -18,8 +22,6 @@ public class IsGridFree extends AbstractFunction<Boolean> {
             }
     };
     private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
 
     @Override
     public int getArity() {

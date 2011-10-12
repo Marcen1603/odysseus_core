@@ -23,6 +23,10 @@ import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
+import de.uniol.inf.is.odysseus.salsa.function.SubBooleanGrid;
+import de.uniol.inf.is.odysseus.salsa.function.SubByteGrid;
+import de.uniol.inf.is.odysseus.salsa.function.SubDoubleGrid;
+import de.uniol.inf.is.odysseus.salsa.function.SubFloatGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ToBooleanGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ToByteGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ToDoubleGrid;
@@ -71,6 +75,10 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new ClearFloatGrid());
             MEP.registerFunction(new ClearByteGrid());
             MEP.registerFunction(new ClearBooleanGrid());
+            MEP.registerFunction(new SubDoubleGrid());
+            MEP.registerFunction(new SubByteGrid());
+            MEP.registerFunction(new SubFloatGrid());
+            MEP.registerFunction(new SubBooleanGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -106,6 +114,10 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("ClearFloatGrid");
             MEP.unregisterFunction("ClearByteGrid");
             MEP.unregisterFunction("ClearBooleanGrid");
+            MEP.unregisterFunction("SubDoubleGrid");
+            MEP.unregisterFunction("SubByteGrid");
+            MEP.unregisterFunction("SubFloatGrid");
+            MEP.unregisterFunction("SubBooleanGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
