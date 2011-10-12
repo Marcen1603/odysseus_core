@@ -71,8 +71,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected SDFAttributeList outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
-	private int otherport = 0;
-
 	@Override
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
@@ -190,7 +188,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			getLogger().error("process next called on non opened operator "+this+" with "+object+" from "+port);
 			return;
 		}
-		otherport = port ^ 1;
+		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		synchronized (this.areas[otherport]) {
 			areas[otherport].purgeElements(object, order);
