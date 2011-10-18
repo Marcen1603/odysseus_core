@@ -74,7 +74,7 @@ public class ToFloatGrid extends AbstractFunction<Float[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = (Double)this.getInputValue(5)/10;
+        final Double cellsize = (Double)this.getInputValue(5);
 
         Float[][] grid = new Float[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
         for (Float[] cells : grid) {

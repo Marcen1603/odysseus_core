@@ -72,7 +72,7 @@ public class ToBooleanGrid extends AbstractFunction<Boolean[][]> {
         final Double y = (Double) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
         final Double height = (Double) this.getInputValue(4);
-        final Double cellsize = (Double)this.getInputValue(5)/10;
+        final Double cellsize = (Double)this.getInputValue(5);
 
         // FIXME check for real size of grid
         Boolean[][] grid = new Boolean[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];

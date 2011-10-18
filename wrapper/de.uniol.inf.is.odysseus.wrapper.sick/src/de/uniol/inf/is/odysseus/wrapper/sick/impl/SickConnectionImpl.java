@@ -44,7 +44,7 @@ public class SickConnectionImpl implements SickConnection {
             this.port = port;
             this.connection = connection;
             this.recordInterval = recordInterval;
-            this.recordEnd = System.currentTimeMillis() + Long.MAX_VALUE;
+            this.recordEnd = System.currentTimeMillis() + recordInterval;
             if (recordInterval > 0l) {
                 this.record = true;
             }

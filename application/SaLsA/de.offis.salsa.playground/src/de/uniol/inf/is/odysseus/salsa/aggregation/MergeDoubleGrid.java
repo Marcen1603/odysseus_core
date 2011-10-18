@@ -12,7 +12,7 @@ public class MergeDoubleGrid extends AbstractAggregateFunction<RelationalTuple<?
     private final int attribPos;
 
     public MergeDoubleGrid(int[] pos) {
-        super("MergeGrid");
+        super("MergeDoubleGrid");
         this.attribPos = pos[0];
     }
 

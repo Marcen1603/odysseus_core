@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
-    private final Queue<Byte[][]> grids = new ConcurrentLinkedQueue<Byte[][]>();
+    private final Queue<Double[][]> grids = new ConcurrentLinkedQueue<Double[][]>();
     private GridScreen screen = new GridScreen();
     private final SDFAttributeList schema;
     private final Thread painter = new Thread() {
@@ -22,7 +22,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                Byte[][] grid;
+                Double[][] grid;
                 while ((grid = VisualGridSinkPO.this.grids.poll()) != null) {
                     VisualGridSinkPO.this.screen.onGrid(grid);
                 }
@@ -50,7 +50,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Object object, final int port, final boolean isReadOnly) {
-        this.grids.offer((Byte[][]) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
+        this.grids.offer((Double[][]) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
     }
 
     @Override
