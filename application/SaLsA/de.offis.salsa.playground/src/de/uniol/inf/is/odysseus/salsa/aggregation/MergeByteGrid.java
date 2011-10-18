@@ -12,7 +12,7 @@ public class MergeByteGrid extends AbstractAggregateFunction<RelationalTuple<?>,
     private final int attribPos;
 
     public MergeByteGrid(int[] pos) {
-        super("MergeGrid");
+        super("MergeByteGrid");
         this.attribPos = pos[0];
     }
 

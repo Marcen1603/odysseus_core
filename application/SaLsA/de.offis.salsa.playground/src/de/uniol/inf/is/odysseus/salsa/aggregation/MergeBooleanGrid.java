@@ -12,7 +12,7 @@ public class MergeBooleanGrid extends AbstractAggregateFunction<RelationalTuple<
     private final int attribPos;
 
     public MergeBooleanGrid(int[] pos) {
-        super("MergeGrid");
+        super("MergeBooleanGrid");
         this.attribPos = pos[0];
     }
 
