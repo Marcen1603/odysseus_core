@@ -90,7 +90,8 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 		this.nodePositioner = nodePositioner;
 		comp.setLayout(new FillLayout());
 		this.canvas = new Composite(comp, SWT.BORDER | SWT.DOUBLE_BUFFERED);
-		this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		//this.canvas.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		this.canvas.setBackground(Display.findDisplay(Thread.currentThread()).getSystemColor(SWT.COLOR_WHITE));
 		this.canvas.setSize(1000, 1000);
 
 		nodeSelector.addSelectListener(this);
