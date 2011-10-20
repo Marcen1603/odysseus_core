@@ -16,5 +16,3 @@ Bundle-ClassPath:  .,
  derbytools.jar,
  derby.jar
 Export-Package: de.uniol.inf.is.odysseus.derby
-Require-Bundle: de.uniol.inf.is.odysseus.storing.jdbc;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.storing;bundle-version="1.1.2"
