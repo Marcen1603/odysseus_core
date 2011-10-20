@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.sink.database.transform;
 
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -41,7 +40,7 @@ public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<Databa
 		ISink<?> sinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
 
 		if (sinkPO == null) {
-			sinkPO = new DatabaseSinkPO(operator.getSinkName(), operator.getDatabasetype(), operator.getHost(), operator.getPort(), operator.getDatabasename(), operator.getTablename(), operator.getUser(), operator.getPassword());			
+			sinkPO = new DatabaseSinkPO(operator.getSinkName(), operator.getDatabasetype(), operator.getHost(), operator.getPort(), operator.getDatabasename(), operator.getTablename(), operator.getUser(), operator.getPassword(), operator.isDrop(), operator.isTruncate());			
 			sinkPO.setOutputSchema(operator.getOutputSchema());
 			WrapperPlanFactory.putSink(operator.getSinkName(), sinkPO);
 		}

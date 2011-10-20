@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.sink.database.cql;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSink;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSinkOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTJdbcIdentifier;
 import de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -37,25 +37,41 @@ public class DatabaseVisitor extends CQLParser {
 
 		String databasetype = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String databasename = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		String tablename = ((ASTIdentifier) node.jjtGetChild(2)).getName();
+		int offset = 0;
+		boolean drop = false;
+		boolean truncate = false;
+		if(node.jjtGetChild(2) instanceof ASTDatabaseSinkOptions){
+			offset = 1;
+			ASTDatabaseSinkOptions options = (ASTDatabaseSinkOptions)node.jjtGetChild(2);
+			String value = (String)options.jjtGetValue();
+			if(value.trim().toUpperCase().equals("DROP")){
+				drop = true;
+			}
+			if(value.trim().toUpperCase().equals("TRUNCATE")){
+				truncate = true;
+			}
+			
+		}
+		
+		String tablename = ((ASTIdentifier) node.jjtGetChild(2+offset)).getName();
 		String user = "";
 		String pass = "";
 		String host = "localhost";
 		int port = -1;
-		if (node.jjtGetNumChildren() > 3) {
-			if (node.jjtGetChild(3) instanceof ASTHost) {
-				host = ((ASTHost)node.jjtGetChild(3)).getValue();
-				port = ((ASTInteger) node.jjtGetChild(4)).getValue().intValue();
-				if (node.jjtGetNumChildren() > 6) {
-					user = ((ASTIdentifier) node.jjtGetChild(5)).getName();
-					pass = ((ASTIdentifier) node.jjtGetChild(6)).getName();
+		if (node.jjtGetNumChildren() > (3+offset)) {
+			if (node.jjtGetChild(3+offset) instanceof ASTHost) {
+				host = ((ASTHost)node.jjtGetChild(3+offset)).getValue();
+				port = ((ASTInteger) node.jjtGetChild(4+offset)).getValue().intValue();
+				if (node.jjtGetNumChildren() > (6+offset)) {
+					user = ((ASTIdentifier) node.jjtGetChild(5+offset)).getName();
+					pass = ((ASTIdentifier) node.jjtGetChild(6+offset)).getName();
 				}
 			} else {
 				user = ((ASTIdentifier) node.jjtGetChild(3)).getName();
 				pass = ((ASTIdentifier) node.jjtGetChild(4)).getName();
 			}
 		}				
-		DatabaseSinkAO sinkAO = new DatabaseSinkAO(name, databasetype, host, port, databasename, tablename, user, pass);
+		DatabaseSinkAO sinkAO = new DatabaseSinkAO(name, databasetype, host, port, databasename, tablename, user, pass, drop, truncate);
 		return sinkAO;
 	}
 

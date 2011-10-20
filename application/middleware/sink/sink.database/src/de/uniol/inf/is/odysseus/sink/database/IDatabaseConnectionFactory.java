@@ -29,5 +29,6 @@ public interface IDatabaseConnectionFactory {
 	
 	public Connection createConnection(String server, int port, String database, String user, String password) throws SQLException;
 	public void createTable(Connection con, String tablename, SDFAttributeList schema);
+	public boolean tableExists(Connection connection, String tablename);
 
 }

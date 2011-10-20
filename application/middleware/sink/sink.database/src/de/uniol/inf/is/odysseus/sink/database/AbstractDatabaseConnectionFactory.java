@@ -15,6 +15,10 @@
 
 package de.uniol.inf.is.odysseus.sink.database;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -28,6 +32,21 @@ public abstract class AbstractDatabaseConnectionFactory implements IDatabaseConn
 		connectionProps.put("user", userName);
 		connectionProps.put("password", password);
 		return connectionProps;
+	}
+	
+	public boolean tableExists(Connection connection, String tablename) {
+		try {			
+			DatabaseMetaData meta = connection.getMetaData();
+			ResultSet res = meta.getTables(null, null, null, new String[]{"TABLE"});
+			while(res.next()){
+				if(res.getString("TABLE_NAME").equals(tablename)){
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			return false;
+		}
 	}
 
 }

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.sink.database.physicaloperator;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +41,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>> {
 
-	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class);
 	private Connection connection;
 	private PreparedStatement preparedStatement;
@@ -50,7 +50,6 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	};
 
 	private Map<SDFDatatype, DatabaseType> datatypeMappings = new HashMap<SDFDatatype, DatabaseType>();
-	
 
 	private int counter = 1;
 	private long summe = 0L;
@@ -62,9 +61,10 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	private String server;
 	private String name;
 	private String tablename;
-	
+	private boolean truncate;
+	private boolean drop;
 
-	public DatabaseSinkPO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass) {
+	public DatabaseSinkPO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass, boolean drop, boolean truncate) {
 		initMappings();
 		this.name = name;
 		this.dbms = databasetype.toLowerCase();
@@ -74,8 +74,9 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		this.database = databasename;
 		this.tablename = tablename;
 		this.port = port;
-		
-		
+		this.truncate = truncate;
+		this.drop = drop;
+
 	}
 
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
@@ -88,6 +89,8 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		this.database = databaseSinkPO.database;
 		this.tablename = databaseSinkPO.tablename;
 		this.port = databaseSinkPO.port;
+		this.drop = databaseSinkPO.drop;
+		this.truncate = databaseSinkPO.truncate;
 	}
 
 	private void initMappings() {
@@ -102,7 +105,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		this.datatypeMappings.put(SDFDatatype.TIMESTAMP, DatabaseType.Long);
 		this.datatypeMappings.put(SDFDatatype.DOUBLE, DatabaseType.Double);
 
-	}	
+	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -110,12 +113,18 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		try {
 			IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getInstance().getFactory(this.dbms);
 			this.connection = factory.createConnection(this.server, this.port, this.database, this.user, this.password);
-			// Class.forName("com.mysql.jdbc.Driver");
-			// this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/odysseustest", "odysseus", "ithaka");
-			// Class.forName("oracle.jdbc.OracleDriver");
-			// this.connection =
-			// DriverManager.getConnection("jdbc:oracle:thin:@134.106.56.69:1521/p2new.offis.de",
-			// "geesen", "odysseus");
+			if (!factory.tableExists(connection, tablename)) {
+				factory.createTable(connection, tablename, getOutputSchema());
+			} else {
+				if (this.drop) {
+					dropTable();
+					factory.createTable(connection, tablename, getOutputSchema());
+				}else{
+					if(this.truncate){
+						truncateTable();
+					}
+				}
+			}
 			this.preparedStatement = this.connection.prepareStatement(createPreparedStatement());
 			this.connection.setAutoCommit(false);
 			this.counter = 0;
@@ -125,9 +134,29 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		}
 	}
 
+	private void dropTable() {
+		Statement stmt;
+		try {
+			stmt = this.connection.createStatement();
+			stmt.executeUpdate("DROP TABLE " + tablename);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void truncateTable() {
+		Statement stmt;
+		try {
+			stmt = this.connection.createStatement();
+			stmt.executeUpdate("TRUNCATE TABLE " + tablename);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private String createPreparedStatement() {
-		//String s = "INSERT INTO  \"GEESEN\".\"testtable\" VALUES(";
-		String s = "INSERT INTO "+this.tablename+" VALUES(";
+		// String s = "INSERT INTO  \"GEESEN\".\"testtable\" VALUES(";
+		String s = "INSERT INTO " + this.tablename + " VALUES(";
 		int count = super.getOutputSchema().size();
 		String sep = "";
 		for (int i = 0; i < count; i++) {
@@ -190,7 +219,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 			if ((counter % 10) == 0) {
 				int count = this.preparedStatement.executeBatch().length;
 				this.connection.commit();
-				logger.debug("Inserted "+count+" rows in database");
+				logger.debug("Inserted " + count + " rows in database");
 			}
 			calcLatency(tuple);
 			// logger.debug("Inserted "+count+" rows in database");
