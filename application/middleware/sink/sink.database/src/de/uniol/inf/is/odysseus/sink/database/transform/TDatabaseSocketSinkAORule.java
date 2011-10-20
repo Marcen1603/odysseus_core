@@ -15,14 +15,12 @@
 
 package de.uniol.inf.is.odysseus.sink.database.transform;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.sink.database.physicaloperator.DatabaseSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -31,40 +29,34 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Dennis Geesen Created at: 22.08.2011
  */
-public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> {
+public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<DatabaseSinkAO> {
 
 	@Override
 	public int getPriority() {
-		return 5;
+		return 0;
 	}
 
 	@Override
-	public void execute(SocketSinkAO operator, TransformationConfiguration config) {
-		ISink<?> socketSinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
+	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
+		ISink<?> sinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
 
-		if (socketSinkPO == null) {
-			socketSinkPO = new DatabaseSinkPO("odysseustest");
-			socketSinkPO.setOutputSchema(operator.getOutputSchema());
-			WrapperPlanFactory.putSink(operator.getSinkName(), socketSinkPO);
+		if (sinkPO == null) {
+			sinkPO = new DatabaseSinkPO(operator.getSinkName(), operator.getDatabasetype(), operator.getHost(), operator.getPort(), operator.getDatabasename(), operator.getTablename(), operator.getUser(), operator.getPassword());			
+			sinkPO.setOutputSchema(operator.getOutputSchema());
+			WrapperPlanFactory.putSink(operator.getSinkName(), sinkPO);
 		}
-
-		// replace(operator, socketSinkPO, config);
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, socketSinkPO, true);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(operator);
-		insert(socketSinkPO);
+		replace(operator, sinkPO, config);		
+		retract(operator);		
 	}
 
 	@Override
-	public boolean isExecutable(SocketSinkAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet() && operator.getSinkType().equalsIgnoreCase("dbinsert");
+	public boolean isExecutable(DatabaseSinkAO operator, TransformationConfiguration config) {
+		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "SocketSinkAO -> SocketSinkPO (Database)";
+		return "DatabaseSinkAO -> DatabaseSinkPO";
 	}
 
 	@Override
@@ -74,7 +66,7 @@ public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<Socket
 
 	@Override
 	public Class<?> getConditionClass() {
-		return SocketSinkAO.class;
+		return DatabaseSinkAO.class;
 	}
 
 }

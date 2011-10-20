@@ -26,3 +26,8 @@ Service-Component: OSGI-INF/TransformRuleProviderService.xml
 Bundle-ClassPath: mysql-connector-java-5.1.15-bin.jar,
  .,
  ojdbc6.jar
+Export-Package: de.uniol.inf.is.odysseus.sink.database,
+ de.uniol.inf.is.odysseus.sink.database.cql,
+ de.uniol.inf.is.odysseus.sink.database.logicaloperator,
+ de.uniol.inf.is.odysseus.sink.database.physicaloperator,
+ de.uniol.inf.is.odysseus.sink.database.transform

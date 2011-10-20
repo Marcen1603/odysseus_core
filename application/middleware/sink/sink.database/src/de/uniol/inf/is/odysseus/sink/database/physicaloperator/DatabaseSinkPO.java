@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.sink.database.physicaloperator;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -30,6 +29,8 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -40,30 +41,58 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>> {
 
 	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class); 
+	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class);
 	private Connection connection;
 	private PreparedStatement preparedStatement;
-	private enum DatabaseType { Integer, String, Float, Long, Double, Boolean};
+
+	private enum DatabaseType {
+		Integer, String, Float, Long, Double, Boolean
+	};
+
 	private Map<SDFDatatype, DatabaseType> datatypeMappings = new HashMap<SDFDatatype, DatabaseType>();
-	private String tablename="\"GEESEN\".\"testtable\"";
 	
-	
+
 	private int counter = 1;
 	private long summe = 0L;
+	private String dbms;
+	private String password;
+	private String user;
+	private String database;
+	private int port;
+	private String server;
+	private String name;
+	private String tablename;
 	
-	public DatabaseSinkPO(String databasename) {
+
+	public DatabaseSinkPO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass) {
 		initMappings();
+		this.name = name;
+		this.dbms = databasetype.toLowerCase();
+		this.server = host;
+		this.user = user;
+		this.password = pass;
+		this.database = databasename;
+		this.tablename = tablename;
+		this.port = port;
+		
+		
 	}
 
-	
 	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
 		this.initMappings();
+		this.name = databaseSinkPO.name;
+		this.dbms = databaseSinkPO.dbms;
+		this.server = databaseSinkPO.server;
+		this.user = databaseSinkPO.user;
+		this.password = databaseSinkPO.password;
+		this.database = databaseSinkPO.database;
+		this.tablename = databaseSinkPO.tablename;
+		this.port = databaseSinkPO.port;
 	}
 
-
-	private void initMappings(){
+	private void initMappings() {
 		this.datatypeMappings.put(SDFDatatype.INTEGER, DatabaseType.Integer);
-		this.datatypeMappings.put(SDFDatatype.BOOLEAN, DatabaseType.Boolean);		
+		this.datatypeMappings.put(SDFDatatype.BOOLEAN, DatabaseType.Boolean);
 		this.datatypeMappings.put(SDFDatatype.END_TIMESTAMP, DatabaseType.Long);
 		this.datatypeMappings.put(SDFDatatype.FLOAT, DatabaseType.Float);
 		this.datatypeMappings.put(SDFDatatype.LONG, DatabaseType.Long);
@@ -72,49 +101,33 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		this.datatypeMappings.put(SDFDatatype.STRING, DatabaseType.String);
 		this.datatypeMappings.put(SDFDatatype.TIMESTAMP, DatabaseType.Long);
 		this.datatypeMappings.put(SDFDatatype.DOUBLE, DatabaseType.Double);
-		
-	}
-	
-	
-	private void createTable(){
-		String statement = "CREATE TABLE "+this.tablename+"(";
-		
-		
-//		CREATE TABLE "GEESEN"."testtable" 
-//		   (	"timestamp" NUMBER(*,0), 
-//			"name" VARCHAR2(255), 
-//			"id" NUMBER(*,0), 
-//			"xvalue" FLOAT(126), 
-//			"yvalue" FLOAT(126), 
-//			"number" NUMBER, 
-//			"meta_start" NUMBER, 
-//			"meta_end" NUMBER
-//		   ) SEGMENT CREATION IMMEDIATE 
-//		  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
-//		  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-//		  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-//		  TABLESPACE "USERS";
-	}
-	
+
+	}	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		try {
-			//Class.forName("com.mysql.jdbc.Driver");
-			//this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/odysseustest", "odysseus", "ithaka");
-			Class.forName("oracle.jdbc.OracleDriver");
-			this.connection = DriverManager.getConnection("jdbc:oracle:thin:@134.106.56.69:1521/p2new.offis.de", "geesen", "odysseus");
+			IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getInstance().getFactory(this.dbms);
+			this.connection = factory.createConnection(this.server, this.port, this.database, this.user, this.password);
+			// Class.forName("com.mysql.jdbc.Driver");
+			// this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/odysseustest", "odysseus", "ithaka");
+			// Class.forName("oracle.jdbc.OracleDriver");
+			// this.connection =
+			// DriverManager.getConnection("jdbc:oracle:thin:@134.106.56.69:1521/p2new.offis.de",
+			// "geesen", "odysseus");
 			this.preparedStatement = this.connection.prepareStatement(createPreparedStatement());
 			this.connection.setAutoCommit(false);
 			this.counter = 0;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new OpenFailedException(e);		
+			throw new OpenFailedException(e);
 		}
 	}
 
 	private String createPreparedStatement() {
-		String s = "INSERT INTO  \"GEESEN\".\"testtable\" VALUES(";
+		//String s = "INSERT INTO  \"GEESEN\".\"testtable\" VALUES(";
+		String s = "INSERT INTO "+this.tablename+" VALUES(";
 		int count = super.getOutputSchema().size();
 		String sep = "";
 		for (int i = 0; i < count; i++) {
@@ -126,61 +139,61 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {	
+	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
-	private void calcLatency(RelationalTuple<ITimeInterval> tuple){
+	private void calcLatency(RelationalTuple<ITimeInterval> tuple) {
 		long start = tuple.getAttribute(0);
 		long diff = System.currentTimeMillis() - start;
-		summe = summe+diff;
-		if((counter%1000)==0){
-			System.out.println("Bei "+counter+" Elementen:");
-			System.out.println(" - Total: "+summe);
-			System.out.println(" - Avg: "+((double)summe/(double)counter));
+		summe = summe + diff;
+		if ((counter % 1000) == 0) {
+			System.out.println("Bei " + counter + " Elementen:");
+			System.out.println(" - Total: " + summe);
+			System.out.println(" - Avg: " + ((double) summe / (double) counter));
 		}
-		
+
 	}
-	
+
 	@Override
 	protected void process_next(RelationalTuple<ITimeInterval> tuple, int port, boolean isReadOnly) {
 		try {
 			int i = 0;
-				
+
 			for (SDFAttribute attribute : this.getOutputSchema()) {
 				SDFDatatype datatype = attribute.getDatatype();
 				Object attributeValue = tuple.getAttribute(i);
 				DatabaseType mapping = this.datatypeMappings.get(datatype);
 				switch (mapping) {
 				case Boolean:
-					this.preparedStatement.setBoolean(i+1, (Boolean) attributeValue);
+					this.preparedStatement.setBoolean(i + 1, (Boolean) attributeValue);
 					break;
 				case Integer:
-					this.preparedStatement.setInt(i+1, (Integer) attributeValue);
+					this.preparedStatement.setInt(i + 1, (Integer) attributeValue);
 					break;
 				case Double:
-					this.preparedStatement.setDouble(i+1, (Double) attributeValue);
+					this.preparedStatement.setDouble(i + 1, (Double) attributeValue);
 					break;
 				case Float:
-					this.preparedStatement.setFloat(i+1, (Float) attributeValue);
+					this.preparedStatement.setFloat(i + 1, (Float) attributeValue);
 					break;
 				case Long:
-					this.preparedStatement.setLong(i+1, (Long) attributeValue);
+					this.preparedStatement.setLong(i + 1, (Long) attributeValue);
 					break;
 				case String:
-					this.preparedStatement.setString(i+1, (String) attributeValue);
-					break;				
-				}				
+					this.preparedStatement.setString(i + 1, (String) attributeValue);
+					break;
+				}
 				i++;
 			}
-			this.preparedStatement.addBatch();			
+			this.preparedStatement.addBatch();
 			counter++;
-			if((counter%10)==0){
+			if ((counter % 10) == 0) {
 				int count = this.preparedStatement.executeBatch().length;
 				this.connection.commit();
-				//logger.debug("Inserted "+count+" rows in database");
+				logger.debug("Inserted "+count+" rows in database");
 			}
-			calcLatency(tuple);			
-		//	logger.debug("Inserted "+count+" rows in database");
+			calcLatency(tuple);
+			// logger.debug("Inserted "+count+" rows in database");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
