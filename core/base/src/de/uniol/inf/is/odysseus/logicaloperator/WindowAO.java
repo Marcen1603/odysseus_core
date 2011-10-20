@@ -68,6 +68,7 @@ public class WindowAO extends UnaryLogicalOp {
 		super(windowPO);
 		this.windowSize = windowPO.windowSize;
 		this.windowAdvance = windowPO.windowAdvance;
+		this.windowSlide = windowPO.windowSlide;
 		this.partitionedBy = windowPO.partitionedBy;
 		this.windowType = windowPO.windowType;
 	}
