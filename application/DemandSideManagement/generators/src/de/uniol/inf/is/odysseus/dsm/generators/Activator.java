@@ -28,7 +28,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		
-		URL fileURL = bundleContext.getBundle().getEntry("cfg/cfg.xml");
+		URL fileURL = bundleContext.getBundle().getEntry("cfg/singleHousehold.xml");
 		InputStream inputStream = fileURL.openConnection().getInputStream();
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader parser = factory.createXMLStreamReader(inputStream);
