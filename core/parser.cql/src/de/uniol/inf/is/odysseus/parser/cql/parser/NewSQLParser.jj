@@ -424,7 +424,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) DatabaseSink */
   try {
-/*@egen*/  Identifier() < K_DATABASE > Identifier() < K_TABLE > Identifier() [< K_AT > Host() ":" Integer()] [ < K_WITH > <K_USER > Identifier() < K_PASSWORD > Identifier() ]/*@bgen(jjtree)*/
+/*@egen*/  Identifier() < K_DATABASE > Identifier() [DatabaseSinkOptions()] < K_TABLE > Identifier()  [< K_AT > Host() ":" Integer()] [ < K_WITH > <K_USER > Identifier() < K_PASSWORD > Identifier() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -444,6 +444,28 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
+/*@egen*/}void DatabaseSinkOptions():{/*@bgen(jjtree) DatabaseSinkOptions */
+  ASTDatabaseSinkOptions jjtn000 = new ASTDatabaseSinkOptions(JJTDATABASESINKOPTIONS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/  Token value;  }{/*@bgen(jjtree) DatabaseSinkOptions */
+        try {
+/*@egen*/		value = < K_DROP >/*@bgen(jjtree)*/
+        {
+          jjtree.closeNodeScope(jjtn000, true);
+          jjtc000 = false;
+        }
+/*@egen*/  	{    	jjtn000.jjtSetValue(value.image);  	}	|  	value = < K_TRUNCATE >/*@bgen(jjtree)*/
+        {
+          jjtree.closeNodeScope(jjtn000, true);
+          jjtc000 = false;
+        }
+/*@egen*/  	{	  	jjtn000.jjtSetValue(value.image);  	}/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
 /*@egen*/}void CreateFromDatabase() :{/*@bgen(jjtree) CreateFromDatabase */
   ASTCreateFromDatabase jjtn000 = new ASTCreateFromDatabase(JJTCREATEFROMDATABASE);
   boolean jjtc000 = true;

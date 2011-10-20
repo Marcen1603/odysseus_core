@@ -794,4 +794,10 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTDatabaseSinkOptions node, Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

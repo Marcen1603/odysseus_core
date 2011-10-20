@@ -720,4 +720,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTDatabaseSink node, Object data) {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTDatabaseSinkOptions node, Object data) {
+		return pvisit(node);
+	}
 }
