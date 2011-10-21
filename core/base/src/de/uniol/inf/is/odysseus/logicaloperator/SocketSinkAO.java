@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 @LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1)
@@ -8,11 +12,11 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4250341797170265988L;
 
-	final int sinkPort;
-	final String sinkType;
+	private int sinkPort;
+	private String sinkType;
 
-	final private boolean loginNeeded;
-	final String sinkName;
+	private boolean loginNeeded = false;
+	private String sinkName;
 	
 	public SocketSinkAO(int sinkPort, String sinkType, boolean loginNeeded, String name){
 		this.sinkPort = sinkPort;
@@ -29,6 +33,11 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkName = socketSinkAO.sinkName;
 	}
 
+	@Parameter(type = IntegerParameter.class, optional = false)
+	public void setSinkPort(int sinkPort){
+		this.sinkPort = sinkPort;
+	}
+	
 	public int getSinkPort() {
 		return sinkPort;
 	}
@@ -54,5 +63,19 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	public String getSinkName() {
 		return sinkName;
 	}
+	
+	@Parameter(name = "SINKNAME", type = StringParameter.class, optional = true)
+	public void setSinkName(String sinkName){
+		this.sinkName = sinkName;
+	}
 
+	@Parameter(name = "SINKTYPE", type = StringParameter.class, optional = false)
+	public void setSinkType(String sinkType) {
+		this.sinkType = sinkType;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true)
+	public void setLoginNeeded(boolean loginNeeded) {
+		this.loginNeeded = loginNeeded;
+	}
 }
