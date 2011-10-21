@@ -25,6 +25,9 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkName = name;
 	}
 	
+	public SocketSinkAO(){
+	}
+	
 	public SocketSinkAO(SocketSinkAO socketSinkAO) {
 		super(socketSinkAO);
 		this.sinkPort = socketSinkAO.sinkPort;
