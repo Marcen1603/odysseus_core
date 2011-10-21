@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventHandler;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
@@ -242,6 +243,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_next(T object, int port, boolean isReadOnly);
+	public abstract void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE

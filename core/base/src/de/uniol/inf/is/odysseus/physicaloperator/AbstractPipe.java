@@ -42,6 +42,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		protected void process_next(R object, int port, boolean exclusive) {
 			AbstractPipe.this.delegatedProcess(object, port, exclusive);
 		}
+		
+		@Override
+		public void processPunctuation(PointInTime timestamp, int port) {
+			AbstractPipe.this.delegatedProcessPunctuation(timestamp, port);			
+		}
 
 		@Override
 		protected void process_open() throws OpenFailedException {
@@ -62,10 +67,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public AbstractSink<R> clone() {
 			throw new RuntimeException("Clone Not Supported");
 		}
-
-		@Override
-		public void processPunctuation(PointInTime timestamp, int port) {
-		}
 		
 		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
@@ -76,7 +77,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
 		}
-
+		
 	};
 
 	final protected DelegateSink delegateSink = new DelegateSink();	
@@ -179,6 +180,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	private void delegatedProcess(R object, int port, boolean exclusive) {
 		process_next(cloneIfNessessary(object, exclusive, port), port);
 	}
+	
+	private void delegatedProcessPunctuation(PointInTime timestamp, int port){
+		processPunctuation(timestamp, port);
+	}
 
 	@Override
 	public void process(Collection<? extends R> object, int port,
@@ -187,6 +192,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	abstract protected void process_next(R object, int port);
+	abstract public void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
