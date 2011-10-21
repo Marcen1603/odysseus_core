@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
  * This is the physical sliding delta window po. It returns elements after a
  * period of time (delta) and is blocking all the other time.
  * 
- * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
+ * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>, Marco Grawunder
  */
 public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<R> {
@@ -97,12 +97,22 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	@SuppressWarnings("unchecked")
 	@Override
 	public void process_next(R object, int port) {
-		long t_s = object.getMetadata().getStart().getMainPoint();
+		process(object.getMetadata().getStart());
+
+		this.sa.insert(object);
+
+		while (!this.deliveryList.isEmpty()) {
+			this.transfer((R) this.deliveryList.removeFirst());
+		}
+	}
+
+	private void process(PointInTime point) {
 		long delta = this.windowAdvance;
 		long winSize = this.windowSize;
+		long pointInTime = point.getMainPoint();
 		// first check if elements have to be removed and/or delivered
-		if ((t_s / delta) >= this.slideNo) {
-			this.slideNo = t_s / delta;
+		if ((pointInTime / delta) >= this.slideNo) {
+			this.slideNo = pointInTime / delta;
 
 			// return all elements with a start timestamp
 			// (t_s/delta) * delta - winsize <= start timestamp < (t_s/ delta) *
@@ -140,15 +150,14 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 
 			this.sa.purgeElementsBefore(p_remove);
 		}
-
-		this.sa.insert(object);
-
-		while (!this.deliveryList.isEmpty()) {
-			this.transfer((R) this.deliveryList.removeFirst());
-		}
 	}
 
 	@Override
 	public void process_close() {
+	}
+	
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		process(timestamp);
 	}
 }
