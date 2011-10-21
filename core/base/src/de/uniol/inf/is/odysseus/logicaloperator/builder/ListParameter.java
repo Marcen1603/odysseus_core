@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
@@ -61,6 +62,11 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 	public void setAttributeResolver(IAttributeResolver resolver) {
 		super.setAttributeResolver(resolver);
 		singleParameter.setAttributeResolver(resolver);
+	}
+	
+
+	public IParameter<T> getSingleParameter() {
+		return singleParameter;
 	}
 
 }

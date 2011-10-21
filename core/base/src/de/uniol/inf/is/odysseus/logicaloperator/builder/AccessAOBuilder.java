@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
@@ -102,5 +103,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	
 	public AccessAOBuilder cleanCopy() {
 		return new AccessAOBuilder();
+	}
+	
+	@Override
+	public void setDataDictionary(IDataDictionary dataDictionary) {
+		((CreateSDFAttributeParameter)((attributes).getSingleParameter())).setDataDictionary(dataDictionary);
+		super.setDataDictionary(dataDictionary);
 	}
 }
