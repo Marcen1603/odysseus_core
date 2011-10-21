@@ -12,10 +12,10 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4250341797170265988L;
 
-	private int sinkPort;
+	private Integer sinkPort;
 	private String sinkType;
 
-	private boolean loginNeeded = false;
+	private Boolean loginNeeded = false;
 	private String sinkName;
 	
 	public SocketSinkAO(int sinkPort, String sinkType, boolean loginNeeded, String name){
@@ -33,7 +33,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkName = socketSinkAO.sinkName;
 	}
 
-	@Parameter(type = IntegerParameter.class, optional = false)
+	@Parameter(name="SINKPORT",type = IntegerParameter.class, optional = false)
 	public void setSinkPort(int sinkPort){
 		this.sinkPort = sinkPort;
 	}
@@ -74,7 +74,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkType = sinkType;
 	}
 	
-	@Parameter(type = BooleanParameter.class, optional = true)
+	@Parameter(name="LOGINNEEDED", type = BooleanParameter.class, optional = true)
 	public void setLoginNeeded(boolean loginNeeded) {
 		this.loginNeeded = loginNeeded;
 	}
