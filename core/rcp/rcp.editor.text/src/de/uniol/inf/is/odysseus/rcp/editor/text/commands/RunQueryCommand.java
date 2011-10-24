@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.editor.text.commands;
 
 import java.io.BufferedReader;
@@ -37,6 +37,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
@@ -57,24 +58,24 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			Object obj = structuredSelection.getFirstElement();
 
 			if (obj instanceof IFile) {
-				run((IFile)obj);
+				run((IFile) obj);
 				return null;
-			} 
+			}
 		}
-		
+
 		// Check if we have an active Editor
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
-		if( part instanceof OdysseusScriptEditor ) {
-			OdysseusScriptEditor editor = (OdysseusScriptEditor)part;
-			FileEditorInput input = (FileEditorInput)editor.getEditorInput();
+		if (part instanceof OdysseusScriptEditor) {
+			OdysseusScriptEditor editor = (OdysseusScriptEditor) part;
+			FileEditorInput input = (FileEditorInput) editor.getEditorInput();
 			run(input.getFile());
 			return null;
 		}
-		
+
 		return null;
 	}
-	
-	private void run( IFile queryFile ) {
+
+	private void run(IFile queryFile) {
 		try {
 			// Datei öffnen
 			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
@@ -82,24 +83,25 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
 			// Datei einlesen
 			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader br = new BufferedReader( new InputStreamReader(queryFile.getContents()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
 			String line = br.readLine();
-			while( line != null ) {
+			while (line != null) {
 				lines.add(line);
 				line = br.readLine();
 			}
 			br.close();
-			
+
 			execute(lines.toArray(new String[lines.size()]));
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			new ExceptionWindow(ex);
 		}
 	}
-	
+
 	public void execute(final String[] text) {
-		// Dieser Teil geschieht asynchron zum UIThread und wird als Job ausgeführt
+		// Dieser Teil geschieht asynchron zum UIThread und wird als Job
+		// ausgeführt
 		// Job-Mechanismus wird von RCP gestellt.
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
@@ -108,42 +110,48 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 					// Befehle holen
 					final List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text, user);
-					
+
 					// Erst Text testen
 					monitor.beginTask("Executing Commands", statements.size() * 2);
 					monitor.subTask("Validating");
-					
+
 					Map<String, Object> variables = new HashMap<String, Object>();
-					for( PreParserStatement stmt : statements ) {
+					for (PreParserStatement stmt : statements) {
 						stmt.validate(variables, user);
 						monitor.worked(1);
-						
+
 						// Wollte der Nutzer abbrechen?
-						if( monitor.isCanceled()) 
+						if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
 					}
-					
+
 					// Dann ausführen
 					variables = new HashMap<String, Object>();
 					int counter = 1;
-					for( PreParserStatement stmt : statements ) {
-						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")" );
+					for (PreParserStatement stmt : statements) {
+						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")");
 						stmt.execute(variables, user);
 						monitor.worked(1);
 						counter++;
 					}
+					// monitor.done();
+				} catch (QueryTextParseException ex) {
+					if (ex.getCause() != null && ex.getCause().getCause() != null) {
+						if (ex.getCause().getCause() instanceof QueryParseException) {
+							QueryParseException qpe = (QueryParseException) ex.getCause().getCause();
+							return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Can't parse query", qpe);
+						}
+					}
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Can't execute query", ex);
+				} finally {
 					monitor.done();
-				} catch( QueryTextParseException ex ) {
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Cant execute query", ex );
 				}
-				
+
 				return Status.OK_STATUS;
 			}
 		};
 		job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgelöst hat
 		job.schedule(); // dieser Job soll nun ausgeführt werden
 	}
-	
-	
-	
+
 }
