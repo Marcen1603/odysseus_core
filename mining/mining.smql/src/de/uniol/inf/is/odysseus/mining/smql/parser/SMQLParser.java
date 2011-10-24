@@ -4,9 +4,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 @ SuppressWarnings("all") public class SMQLParser/*@bgen(jjtree)*/implements SMQLParserTreeConstants, SMQLParserConstants {/*@bgen(jjtree)*/
-  protected static JJTSMQLParserState jjtree = new JJTSMQLParserState();
+  protected JJTSMQLParserState jjtree = new JJTSMQLParserState();
 
-  static final public SimpleNode Start() throws ParseException {
+  final public SimpleNode Start() throws ParseException {
  /*@bgen(jjtree) Start */
   ASTStart jjtn000 = new ASTStart(JJTSTART);
   boolean jjtc000 = true;
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String Identifier() throws ParseException {
+  final public String Identifier() throws ParseException {
  /*@bgen(jjtree) Identifier */
   ASTIdentifier jjtn000 = new ASTIdentifier(JJTIDENTIFIER);
   boolean jjtc000 = true;
@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public Long Integer() throws ParseException {
+  final public Long Integer() throws ParseException {
  /*@bgen(jjtree) Integer */
   ASTInteger jjtn000 = new ASTInteger(JJTINTEGER);
   boolean jjtc000 = true;
@@ -76,7 +76,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public Float Float() throws ParseException {
+  final public Float Float() throws ParseException {
  /*@bgen(jjtree) Float */
   ASTFloat jjtn000 = new ASTFloat(JJTFLOAT);
   boolean jjtc000 = true;
@@ -95,7 +95,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public void Number() throws ParseException {
+  final public void Number() throws ParseException {
  /*@bgen(jjtree) Number */
   ASTNumber jjtn000 = new ASTNumber(JJTNUMBER);
   boolean jjtc000 = true;
@@ -134,7 +134,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CreateKnowledgeDiscoveryProcess() throws ParseException {
+  final public void CreateKnowledgeDiscoveryProcess() throws ParseException {
  /*@bgen(jjtree) CreateKnowledgeDiscoveryProcess */
   ASTCreateKnowledgeDiscoveryProcess jjtn000 = new ASTCreateKnowledgeDiscoveryProcess(JJTCREATEKNOWLEDGEDISCOVERYPROCESS);
   boolean jjtc000 = true;
@@ -169,7 +169,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void ProcessPhases() throws ParseException {
+  final public void ProcessPhases() throws ParseException {
  /*@bgen(jjtree) ProcessPhases */
   ASTProcessPhases jjtn000 = new ASTProcessPhases(JJTPROCESSPHASES);
   boolean jjtc000 = true;
@@ -208,7 +208,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CleanPhase() throws ParseException {
+  final public void CleanPhase() throws ParseException {
  /*@bgen(jjtree) CleanPhase */
   ASTCleanPhase jjtn000 = new ASTCleanPhase(JJTCLEANPHASE);
   boolean jjtc000 = true;
@@ -240,7 +240,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void OutlierDetections() throws ParseException {
+  final public void OutlierDetections() throws ParseException {
  /*@bgen(jjtree) OutlierDetections */
   ASTOutlierDetections jjtn000 = new ASTOutlierDetections(JJTOUTLIERDETECTIONS);
   boolean jjtc000 = true;
@@ -279,7 +279,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void OutlierDetection() throws ParseException {
+  final public void OutlierDetection() throws ParseException {
  /*@bgen(jjtree) OutlierDetection */
   ASTOutlierDetection jjtn000 = new ASTOutlierDetection(JJTOUTLIERDETECTION);
   boolean jjtc000 = true;
@@ -313,7 +313,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethod() throws ParseException {
+  final public void DetectionMethod() throws ParseException {
  /*@bgen(jjtree) DetectionMethod */
   ASTDetectionMethod jjtn000 = new ASTDetectionMethod(JJTDETECTIONMETHOD);
   boolean jjtc000 = true;
@@ -362,7 +362,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodStateless() throws ParseException {
+  final public void DetectionMethodStateless() throws ParseException {
  /*@bgen(jjtree) DetectionMethodStateless */
   ASTDetectionMethodStateless jjtn000 = new ASTDetectionMethodStateless(JJTDETECTIONMETHODSTATELESS);
   boolean jjtc000 = true;
@@ -401,7 +401,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodStateful() throws ParseException {
+  final public void DetectionMethodStateful() throws ParseException {
  /*@bgen(jjtree) DetectionMethodStateful */
   ASTDetectionMethodStateful jjtn000 = new ASTDetectionMethodStateful(JJTDETECTIONMETHODSTATEFUL);
   boolean jjtc000 = true;
@@ -444,7 +444,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodOutOfRange() throws ParseException {
+  final public void DetectionMethodOutOfRange() throws ParseException {
  /*@bgen(jjtree) DetectionMethodOutOfRange */
   ASTDetectionMethodOutOfRange jjtn000 = new ASTDetectionMethodOutOfRange(JJTDETECTIONMETHODOUTOFRANGE);
   boolean jjtc000 = true;
@@ -483,7 +483,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodSimpleValue() throws ParseException {
+  final public void DetectionMethodSimpleValue() throws ParseException {
  /*@bgen(jjtree) DetectionMethodSimpleValue */
   ASTDetectionMethodSimpleValue jjtn000 = new ASTDetectionMethodSimpleValue(JJTDETECTIONMETHODSIMPLEVALUE);
   boolean jjtc000 = true;
@@ -512,7 +512,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodSigmaRule() throws ParseException {
+  final public void DetectionMethodSigmaRule() throws ParseException {
  /*@bgen(jjtree) DetectionMethodSigmaRule */
   ASTDetectionMethodSigmaRule jjtn000 = new ASTDetectionMethodSigmaRule(JJTDETECTIONMETHODSIGMARULE);
   boolean jjtc000 = true;
@@ -541,7 +541,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodSimplePredicate() throws ParseException {
+  final public void DetectionMethodSimplePredicate() throws ParseException {
  /*@bgen(jjtree) DetectionMethodSimplePredicate */
   ASTDetectionMethodSimplePredicate jjtn000 = new ASTDetectionMethodSimplePredicate(JJTDETECTIONMETHODSIMPLEPREDICATE);
   boolean jjtc000 = true;
@@ -570,7 +570,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodFunction() throws ParseException {
+  final public void DetectionMethodFunction() throws ParseException {
  /*@bgen(jjtree) DetectionMethodFunction */
   ASTDetectionMethodFunction jjtn000 = new ASTDetectionMethodFunction(JJTDETECTIONMETHODFUNCTION);
   boolean jjtc000 = true;
@@ -599,7 +599,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void DetectionMethodOutOfDomain() throws ParseException {
+  final public void DetectionMethodOutOfDomain() throws ParseException {
  /*@bgen(jjtree) DetectionMethodOutOfDomain */
   ASTDetectionMethodOutOfDomain jjtn000 = new ASTDetectionMethodOutOfDomain(JJTDETECTIONMETHODOUTOFDOMAIN);
   boolean jjtc000 = true;
@@ -632,7 +632,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void ParameterList() throws ParseException {
+  final public void ParameterList() throws ParseException {
  /*@bgen(jjtree) ParameterList */
   ASTParameterList jjtn000 = new ASTParameterList(JJTPARAMETERLIST);
   boolean jjtc000 = true;
@@ -675,7 +675,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void Parameter() throws ParseException {
+  final public void Parameter() throws ParseException {
  /*@bgen(jjtree) Parameter */
   ASTParameter jjtn000 = new ASTParameter(JJTPARAMETER);
   boolean jjtc000 = true;
@@ -717,7 +717,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethod() throws ParseException {
+  final public void CorrectionMethod() throws ParseException {
  /*@bgen(jjtree) CorrectionMethod */
   ASTCorrectionMethod jjtn000 = new ASTCorrectionMethod(JJTCORRECTIONMETHOD);
   boolean jjtc000 = true;
@@ -758,7 +758,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodDiscard() throws ParseException {
+  final public void CorrectionMethodDiscard() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodDiscard */
   ASTCorrectionMethodDiscard jjtn000 = new ASTCorrectionMethodDiscard(JJTCORRECTIONMETHODDISCARD);
   boolean jjtc000 = true;
@@ -772,7 +772,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodFunction() throws ParseException {
+  final public void CorrectionMethodFunction() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodFunction */
   ASTCorrectionMethodFunction jjtn000 = new ASTCorrectionMethodFunction(JJTCORRECTIONMETHODFUNCTION);
   boolean jjtc000 = true;
@@ -814,7 +814,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodFunctionStateless() throws ParseException {
+  final public void CorrectionMethodFunctionStateless() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodFunctionStateless */
   ASTCorrectionMethodFunctionStateless jjtn000 = new ASTCorrectionMethodFunctionStateless(JJTCORRECTIONMETHODFUNCTIONSTATELESS);
   boolean jjtc000 = true;
@@ -842,7 +842,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodFunctionStateful() throws ParseException {
+  final public void CorrectionMethodFunctionStateful() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodFunctionStateful */
   ASTCorrectionMethodFunctionStateful jjtn000 = new ASTCorrectionMethodFunctionStateful(JJTCORRECTIONMETHODFUNCTIONSTATEFUL);
   boolean jjtc000 = true;
@@ -882,7 +882,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodMaxValue() throws ParseException {
+  final public void CorrectionMethodMaxValue() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodMaxValue */
   ASTCorrectionMethodMaxValue jjtn000 = new ASTCorrectionMethodMaxValue(JJTCORRECTIONMETHODMAXVALUE);
   boolean jjtc000 = true;
@@ -897,7 +897,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodMinValue() throws ParseException {
+  final public void CorrectionMethodMinValue() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodMinValue */
   ASTCorrectionMethodMinValue jjtn000 = new ASTCorrectionMethodMinValue(JJTCORRECTIONMETHODMINVALUE);
   boolean jjtc000 = true;
@@ -912,7 +912,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void CorrectionMethodSimpleValue() throws ParseException {
+  final public void CorrectionMethodSimpleValue() throws ParseException {
  /*@bgen(jjtree) CorrectionMethodSimpleValue */
   ASTCorrectionMethodSimpleValue jjtn000 = new ASTCorrectionMethodSimpleValue(JJTCORRECTIONMETHODSIMPLEVALUE);
   boolean jjtc000 = true;
@@ -941,13 +941,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public void Window() throws ParseException {
+  final public void Window() throws ParseException {
     jj_consume_token(71);
     StreamSQLWindow();
     jj_consume_token(72);
   }
 
-  static final public void StreamSQLWindow() throws ParseException {
+  final public void StreamSQLWindow() throws ParseException {
  /*@bgen(jjtree) StreamSQLWindow */
   ASTStreamSQLWindow jjtn000 = new ASTStreamSQLWindow(JJTSTREAMSQLWINDOW);
   boolean jjtc000 = true;
@@ -1026,7 +1026,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static final public Long Slide() throws ParseException {
+  final public Long Slide() throws ParseException {
   Long value;
     jj_consume_token(K_SLIDE);
     value = Time();
@@ -1034,7 +1034,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public Long Time() throws ParseException {
+  final public Long Time() throws ParseException {
   Long value;
     value = Integer();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1078,7 +1078,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     throw new Error("Missing return statement in function");
   }
 
-  static final public void Percent() throws ParseException {
+  final public void Percent() throws ParseException {
  /*@bgen(jjtree) Percent */
   ASTPercent jjtn000 = new ASTPercent(JJTPERCENT);
   boolean jjtc000 = true;
@@ -1092,35 +1092,30 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     }
   }
 
-  static private boolean jj_2_1(int xla) {
+  private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_12() {
+  private boolean jj_3R_12() {
     if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 
-  static private boolean jj_3R_5() {
+  private boolean jj_3R_5() {
     if (jj_3R_9()) return true;
     return false;
   }
 
-  static private boolean jj_3R_10() {
+  private boolean jj_3R_10() {
     if (jj_scan_token(K_SIGMA)) return true;
     if (jj_3R_12()) return true;
     return false;
   }
 
-  static private boolean jj_3R_4() {
+  private boolean jj_3R_4() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_5()) {
@@ -1134,52 +1129,56 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     return false;
   }
 
-  static private boolean jj_3R_8() {
+  private boolean jj_3R_8() {
     if (jj_scan_token(71)) return true;
     return false;
   }
 
-  static private boolean jj_3R_13() {
+  private boolean jj_3R_13() {
     if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
-  static private boolean jj_3R_11() {
+  private boolean jj_3R_11() {
     if (jj_scan_token(K_FUNCTION)) return true;
     if (jj_3R_13()) return true;
     return false;
   }
 
-  static private boolean jj_3R_9() {
+  private boolean jj_3R_9() {
     if (jj_scan_token(K_OUT)) return true;
     if (jj_scan_token(K_OF)) return true;
     if (jj_scan_token(K_RANGE)) return true;
     return false;
   }
 
-  static private boolean jj_3R_7() {
+  private boolean jj_3R_7() {
     if (jj_3R_11()) return true;
     return false;
   }
 
-  static private boolean jj_3R_6() {
+  private boolean jj_3R_6() {
     if (jj_3R_10()) return true;
     return false;
   }
 
-  static private boolean jj_initialized_once = false;
+  private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
-  static public SMQLParserTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public SMQLParserTokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
-  static private int jj_la;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[19];
+  public Token jj_nt;
+  private int jj_ntk;
+  private Token jj_scanpos, jj_lastpos;
+  private int jj_la;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[19];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1197,9 +1196,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
    private static void jj_la1_init_2() {
       jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x10,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
-  static private boolean jj_rescan = false;
-  static private int jj_gc = 0;
+  final private JJCalls[] jj_2_rtns = new JJCalls[1];
+  private boolean jj_rescan = false;
+  private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public SMQLParser(java.io.InputStream stream) {
@@ -1207,13 +1206,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
   /** Constructor with InputStream and supplied encoding */
   public SMQLParser(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new SMQLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -1224,11 +1216,11 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -1241,13 +1233,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
   /** Constructor. */
   public SMQLParser(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new SMQLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -1258,7 +1243,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -1271,13 +1256,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
   /** Constructor with generated Token Manager. */
   public SMQLParser(SMQLParserTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -1297,7 +1275,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -1322,8 +1300,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   static private final class LookaheadSuccess extends java.lang.Error { }
-  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static private boolean jj_scan_token(int kind) {
+  final private LookaheadSuccess jj_ls = new LookaheadSuccess();
+  private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -1346,7 +1324,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -1355,7 +1333,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -1364,20 +1342,20 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
-  static private int[] jj_lasttokens = new int[100];
-  static private int jj_endpos;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
+  private int[] jj_lasttokens = new int[100];
+  private int jj_endpos;
 
-  static private void jj_add_error_token(int kind, int pos) {
+  private void jj_add_error_token(int kind, int pos) {
     if (pos >= 100) return;
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
@@ -1403,7 +1381,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[73];
     if (jj_kind >= 0) {
@@ -1443,14 +1421,14 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
-  static private void jj_rescan_token() {
+  private void jj_rescan_token() {
     jj_rescan = true;
     for (int i = 0; i < 1; i++) {
     try {
@@ -1469,7 +1447,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowType;
     jj_rescan = false;
   }
 
-  static private void jj_save(int index, int xla) {
+  private void jj_save(int index, int xla) {
     JJCalls p = jj_2_rtns[index];
     while (p.gen > jj_gen) {
       if (p.next == null) { p = p.next = new JJCalls(); break; }
