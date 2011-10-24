@@ -377,7 +377,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			e.printStackTrace();
 			throw new QueryAddException(e);
 		} finally {
-			getLogger().info("Adding Queries. " + query + "for user " + user.getUsername() + " done.");
+			getLogger().info("Adding Queries. " + query + " for user " + user.getUsername() + " done.");
 
 		}
 	}
