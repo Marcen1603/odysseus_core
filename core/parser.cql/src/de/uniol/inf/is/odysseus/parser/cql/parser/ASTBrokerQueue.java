@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public
 @SuppressWarnings("all")
 class ASTBrokerQueue extends SimpleNode {
@@ -15,7 +17,7 @@ class ASTBrokerQueue extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
 }

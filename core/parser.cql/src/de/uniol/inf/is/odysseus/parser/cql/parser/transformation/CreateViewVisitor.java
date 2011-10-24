@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -37,7 +38,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object visit(ASTCreateViewStatement node, Object data) {
+	public Object visit(ASTCreateViewStatement node, Object data) throws QueryParseException {
 		ASTIdentifier nameNode = (ASTIdentifier) node.jjtGetChild(0);
 		String viewName = nameNode.getName();
 		

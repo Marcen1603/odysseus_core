@@ -16,6 +16,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY= */
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class ASTSpatialCompareOperator extends SimpleNode {
 	String operator;
 
@@ -44,9 +46,10 @@ public class ASTSpatialCompareOperator extends SimpleNode {
   }
 
 
-  /** Accept the visitor. **/
+  /** Accept the visitor. 
+ * @throws QueryParseException **/
   @Override
-public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
   

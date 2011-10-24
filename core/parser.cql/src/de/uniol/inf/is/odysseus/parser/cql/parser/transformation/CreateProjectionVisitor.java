@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -74,7 +75,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	// TODO kompletten visitor draus machen, ohne diese methode
 	public AbstractLogicalOperator createProjection(
 			ASTSelectStatement statement, ILogicalOperator top,
-			AttributeResolver attributeResolver) {
+			AttributeResolver attributeResolver) throws QueryParseException {
 		this.top = top;
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);
 		this.attributeResolver = attributeResolver;
@@ -107,7 +108,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 								.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						throw new RuntimeException(
+						throw new QueryParseException(
 								"Invalid use of multivariate projection -- Missing plug-in!!!.");
 					}
 					IVisitor v = VisitorFactory.getInstance().getVisitor(
@@ -146,7 +147,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSelectAll node, Object data) {
+	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		outputSchema = top.getOutputSchema();
 		for (SDFAttribute attribute : top.getOutputSchema()) {
 			SDFAttribute SDFAttribute = (SDFAttribute) attribute;
@@ -162,13 +163,13 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTRenamedExpression aliasExpression, Object data) {
+	public Object visit(ASTRenamedExpression aliasExpression, Object data) throws QueryParseException {
 		ASTExpression curNode = (ASTExpression) aliasExpression.jjtGetChild(0);
 		return curNode.jjtAccept(this, null);
 	}
 
 	@Override
-	public Object visit(ASTExpression expression, Object data) {
+	public Object visit(ASTExpression expression, Object data) throws QueryParseException {
 		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression
 				.jjtGetParent();
 		Node node = getNode(expression);
@@ -209,31 +210,31 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTIdentifier node, Object data) {
+	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
 		return this.attributeResolver.getAttribute(node.getName());
 	}
 
 	@Override
-	public Object visit(ASTAggregateExpression node, Object data) {
+	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
 		String name = node.jjtGetChild(1).toString();		
 		String aggregateName = node.jjtGetChild(0).toString();		
 		return this.attributeResolver.getAggregateAttribute(name, aggregateName);
 	}
 
 	@Override
-	public Object visit(ASTProjectionMatrix node, Object data) {
+	public Object visit(ASTProjectionMatrix node, Object data) throws QueryParseException {
 		this.projectionMatrix = (double[][]) node.childrenAccept(this, null);
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTProjectionVector node, Object data) {
+	public Object visit(ASTProjectionVector node, Object data) throws QueryParseException {
 		this.projectionVector = ((double[][]) node.childrenAccept(this, null))[0];
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTMatrixExpression matrixExpr, Object data) {
+	public Object visit(ASTMatrixExpression matrixExpr, Object data) throws QueryParseException {
 		ArrayList<?> rows = matrixExpr.getMatrix();
 		projectionMatrix = new double[rows.size()][((ArrayList<?>) rows.get(0))
 				.size()];

@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -29,9 +30,10 @@ public class ASTTimedTuples extends SimpleNode {
 		super(p, id);
 	}
 
-	/** Accept the visitor. * */
+	/** Accept the visitor. * 
+	 * @throws QueryParseException */
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 

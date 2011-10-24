@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -43,11 +44,11 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTGroupByClause node, Object data) {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
 			Node curChild = node.jjtGetChild(i);
 			if (!isAttributeValid(curChild)) {
-				throw new RuntimeException("invalid Attribute: " + curChild + " in GROUP BY clause");
+				throw new QueryParseException("invalid Attribute: " + curChild + " in GROUP BY clause");
 			}
 		}
 		return data;
@@ -58,7 +59,7 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 	 * ignore source nodes, because they can contain subqueries and we don't
 	 * want to check their attributes
 	 */
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return data;
 	}
 
@@ -68,31 +69,31 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTHavingClause node, Object data) {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data) {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		if (childNode instanceof ASTIdentifier && !isAttributeValid(childNode)) {
-			throw new RuntimeException("invalid Attribute: " + childNode);
+			throw new QueryParseException("invalid Attribute: " + childNode);
 		}
 		if (childNode instanceof ASTAggregateExpression && !isAttributeValid(childNode.jjtGetChild(1))) {
-			throw new RuntimeException("invalid Attribute: " + childNode);
+			throw new QueryParseException("invalid Attribute: " + childNode);
 		}
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) {
+	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
 
 		// wie Subselect ignorieren
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data) {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		if (!(node.jjtGetChild(0) instanceof ASTSelectAll)) {
 			for (int i = 0; i < node.jjtGetNumChildren(); i++) {
 				// selectClause -> renamedExpression ?
@@ -111,7 +112,7 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 					if (part.length == 2 && part[1].equals("*")) {
 						ILogicalOperator source = this.attributeResolver.getSource(part[0]);
 						if (source == null) {
-							throw new RuntimeException("invalid Attribute: " + childNode);
+							throw new QueryParseException("invalid Attribute: " + childNode);
 						} else {
 
 							for (int id = 0; id < source.getOutputSchema().size(); id++) {

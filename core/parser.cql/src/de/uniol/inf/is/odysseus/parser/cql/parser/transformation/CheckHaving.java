@@ -25,27 +25,28 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 public class CheckHaving extends AbstractDefaultVisitor {
 	private class CollectAggregations extends AbstractDefaultVisitor {
 		@Override
-		public Object visit(ASTExpression node, Object data) {
+		public Object visit(ASTExpression node, Object data) throws QueryParseException {
 			return node.childrenAccept(this, data);
 		}
 
 		@Override
-		public Object visit(ASTSimpleToken node, Object data) {
+		public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 			return node.childrenAccept(this, data);
 		}
 		
 		@Override
-		public Object visit(ASTFunctionExpression node, Object data) {
+		public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
 			return node.childrenAccept(this, data);
 		}
 
 		@Override
-		public Object visit(ASTAggregateExpression node, Object data) {
+		public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
 			aggregations.add(getName(node, attributeResolver));
 			return data;
 		}
@@ -65,17 +66,17 @@ public class CheckHaving extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTFromClause node, Object data) {
+	public Object visit(ASTFromClause node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data) {
+	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data) {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		// collect all aggregations defined in the SELECT clause
 		this.aggregations = new HashSet<String>();
 		CollectAggregations collect  = new CollectAggregations();
@@ -83,7 +84,7 @@ public class CheckHaving extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTHavingClause node, Object data) {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		isInHaving = true;
 		node.childrenAccept(this, data);
 		isInHaving = false;
@@ -91,7 +92,7 @@ public class CheckHaving extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data) {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		// only check SimpleToken nodes when they are inside
 		// a HAVING clause
 		if (!isInHaving) {
@@ -103,7 +104,7 @@ public class CheckHaving extends AbstractDefaultVisitor {
 		if (child instanceof ASTAggregateExpression) {
 			if (!this.aggregations.contains(getName(
 					(ASTAggregateExpression) child, this.attributeResolver))) {
-				throw new RuntimeException(
+				throw new QueryParseException(
 						"invalid identifier in HAVING clause: " + child);
 			}
 		}

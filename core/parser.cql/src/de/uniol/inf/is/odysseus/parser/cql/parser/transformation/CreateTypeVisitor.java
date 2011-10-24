@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -45,7 +46,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	}
 	
 	@Override
-	public Object visit(ASTCreateType node, Object data) {
+	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
 		attributes = new SDFAttributeList();
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
@@ -57,32 +58,32 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	}
 	
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data) {
+	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
 		node.childrenAccept(this, data); // each single attribute definition
 		// check attributes for consistency
 		boolean hasEndTimestamp = false, hasStartTimestamp = false;
 		for (SDFAttribute attr : this.attributes) {
 			if (attr.getDatatype().isStartTimestamp()) {
 				if (hasStartTimestamp) {
-					throw new RuntimeException("multiple definitions of StartTimestamp attribute not allowed");
+					throw new QueryParseException("multiple definitions of StartTimestamp attribute not allowed");
 				}
 				hasStartTimestamp = true;
 			}
 			if (attr.getDatatype().isEndTimestamp()) {
 				if (hasEndTimestamp) {
-					throw new RuntimeException("multiple definitions of EndTimestamp attribute not allowed");
+					throw new QueryParseException("multiple definitions of EndTimestamp attribute not allowed");
 				}
 				hasEndTimestamp = true;
 			}
 			if (Collections.frequency(this.attributes, attr) > 1) {
-				throw new RuntimeException("ambiguous attribute definition: " + attr.toString());
+				throw new QueryParseException("ambiguous attribute definition: " + attr.toString());
 			}
 		}
 		return null;
 	}
 	
 	@Override
-	public Object visit(ASTAttributeDefinition node, Object data) {
+	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
@@ -104,7 +105,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		}
 		// the corresponding type (used as type for an attribute of this newly defined type) has not been defined
 		else{
-			throw new RuntimeException("Type " + astAttrType.getType() + " has not been defined.");
+			throw new QueryParseException("Type " + astAttrType.getType() + " has not been defined.");
 		}
 		
 		this.attributes.add(attribute);

@@ -19,6 +19,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class ASTCSVSource extends SimpleNode {
 
 	private URL url;
@@ -31,9 +33,10 @@ public class ASTCSVSource extends SimpleNode {
 		super(p, id);
 	}
 
-	/** Accept the visitor. **/
+	/** Accept the visitor. 
+	 * @throws QueryParseException **/
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 

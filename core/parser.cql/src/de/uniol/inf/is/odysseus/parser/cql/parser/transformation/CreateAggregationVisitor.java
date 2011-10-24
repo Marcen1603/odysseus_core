@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
@@ -69,22 +70,22 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTExpression node, Object data) {
+	public Object visit(ASTExpression node, Object data) throws QueryParseException {
 		return node.childrenAccept(this, data);
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data) {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		return node.childrenAccept(this, data);
 	}
 
 	@Override
-	public Object visit(ASTFunctionExpression node, Object data) {
+	public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
 		return node.childrenAccept(this, data);
 	}
 
 	@Override
-	public Object visit(ASTAggregateExpression aggrNode, Object data) {
+	public Object visit(ASTAggregateExpression aggrNode, Object data) throws QueryParseException {
 		AggregateFunction function = aggrNode.getFunction();
 		String attributeName = aggrNode.getAttributeName();
 		SDFAttribute attribute = this.attributeResolver
@@ -99,7 +100,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTIdentifier node, Object data) {
+	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
 		SDFAttribute attribute = this.attributeResolver.getAttribute(node
 				.getName());
 		if (attribute == null) {
@@ -111,12 +112,12 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTAS node, Object data) {
+	public Object visit(ASTAS node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data) {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		node.childrenAccept(this, data);
 		return ao;
 	}
@@ -159,23 +160,23 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 //	}
 
 	@Override
-	public Object visit(ASTGroupByClause node, Object data) {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		this.hasGrouping = true;
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTHavingClause node, Object data) {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		select = new SelectAO();
 		select.subscribeToSource(ao,0,0,ao.getOutputSchema());
 		IPredicate<RelationalTuple<?>> predicate;

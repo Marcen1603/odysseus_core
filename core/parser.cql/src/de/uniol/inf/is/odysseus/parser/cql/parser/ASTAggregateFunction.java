@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 
 public class ASTAggregateFunction extends SimpleNode {
 
@@ -30,9 +31,10 @@ public class ASTAggregateFunction extends SimpleNode {
 		super(p, id);
 	}
 
-	/** Accept the visitor. * */
+	/** Accept the visitor. * 
+	 * @throws QueryParseException */
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 

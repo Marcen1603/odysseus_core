@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.io.StringReader;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	private int indent = 0;
@@ -28,7 +30,7 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		return sb.toString();
 	}
 
-	private Object pvisit(SimpleNode node) {
+	private Object pvisit(SimpleNode node) throws QueryParseException {
 		System.out.println(indentString() + node);
 		++indent;
 		node.childrenAccept(this, null);
@@ -37,109 +39,109 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(SimpleNode node, Object data) {
+	public Object visit(SimpleNode node, Object data) throws QueryParseException {
 		// return pvisit(node);
 		return null;
 	}
 
-	public Object visit(ASTSQLStatement node, Object data) {
+	public Object visit(ASTSQLStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data) {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTFromClause node, Object data) {
+	public Object visit(ASTFromClause node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data) {
+	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTGroupByClause node, Object data) {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTHavingClause node, Object data) {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTPredicate node, Object data) {
+	public Object visit(ASTPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSimplePredicate node, Object data) {
+	public Object visit(ASTSimplePredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTExpression node, Object data) {
+	public Object visit(ASTExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data) {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAggregateExpression node, Object data) {
+	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAggregateFunction node, Object data) {
+	public Object visit(ASTAggregateFunction node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDistinctExpression node, Object data) {
+	public Object visit(ASTDistinctExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAS node, Object data) {
+	public Object visit(ASTAS node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
-	public Object visit(ASTWindow node, Object data) {
+	public Object visit(ASTWindow node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
-	public Object visit(ASTRange node, Object data) {
+	public Object visit(ASTRange node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
-	public Object visit(ASTRows node, Object data) {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTIdentifier node, Object data) {
+	public Object visit(ASTRows node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTInteger node, Object data) {
+	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTNumber node, Object data) {
+	public Object visit(ASTInteger node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCompareOperator node, Object data) {
+	public Object visit(ASTNumber node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTCompareOperator node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
@@ -154,512 +156,514 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 					new NewSQLParserDumpVisitor(), null);
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (QueryParseException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public Object visit(ASTSetOperator node, Object data) {
+	public Object visit(ASTSetOperator node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTStatement node, Object data) {
+	public Object visit(ASTStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRenamedExpression node, Object data) {
+	public Object visit(ASTRenamedExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTFunctionExpression node, Object data) {
+	public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTString node, Object data) {
+	public Object visit(ASTString node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAdvance node, Object data) {
+	public Object visit(ASTAdvance node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlide node, Object data) {
+	public Object visit(ASTSlide node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTQuantificationPredicate node, Object data) {
+	public Object visit(ASTQuantificationPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAnyPredicate node, Object data) {
+	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAllPredicate node, Object data) {
+	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTInPredicate node, Object data) {
+	public Object visit(ASTInPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTExists node, Object data) {
+	public Object visit(ASTExists node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTTuple node, Object data) {
+	public Object visit(ASTTuple node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTTupleSet node, Object data) {
+	public Object visit(ASTTupleSet node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTQuantificationOperator node, Object data) {
+	public Object visit(ASTQuantificationOperator node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTPartition node, Object data) {
+	public Object visit(ASTPartition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTStreamSQLWindow node, Object data) {
+	public Object visit(ASTStreamSQLWindow node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTOrPredicate node, Object data) {
+	public Object visit(ASTOrPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAndPredicate node, Object data) {
+	public Object visit(ASTAndPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTNotPredicate node, Object data) {
+	public Object visit(ASTNotPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTPriorizedStatement node, Object data) {
+	public Object visit(ASTPriorizedStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTComplexSelectStatement node, Object data) {
+	public Object visit(ASTComplexSelectStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSelectStatement node, Object data) {
+	public Object visit(ASTSelectStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateStatement node, Object data) {
+	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data) {
+	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinition node, Object data) {
+	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTTimedTuples node, Object data) {
+	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTTimedTuple node, Object data) {
+	public Object visit(ASTTimedTuple node, Object data) throws QueryParseException {
 
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTTimeInterval node, Object data) {
+	public Object visit(ASTTimeInterval node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSimpleTuple node, Object data) {
+	public Object visit(ASTSimpleTuple node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAttributeType node, Object data) {
+	public Object visit(ASTAttributeType node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTPriority node, Object data) {
+	public Object visit(ASTPriority node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTElementPriorities node, Object data) {
+	public Object visit(ASTElementPriorities node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTElementPriority node, Object data) {
+	public Object visit(ASTElementPriority node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDefaultPriority node, Object data) {
+	public Object visit(ASTDefaultPriority node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSocket node, Object data) {
+	public Object visit(ASTSocket node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTHost node, Object data) {
+	public Object visit(ASTHost node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTChannel node, Object data) {
+	public Object visit(ASTChannel node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSpatialCompareOperator node, Object data) {
+	public Object visit(ASTSpatialCompareOperator node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCovarianceRow node, Object data) {
+	public Object visit(ASTCovarianceRow node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTMatrixExpression node, Object data) {
+	public Object visit(ASTMatrixExpression node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTProbabilityPredicate node, Object data) {
+	public Object visit(ASTProbabilityPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 //	@Override
-//	public Object visit(ASTDateFormat node, Object data) {
+//	public Object visit(ASTDateFormat node, Object data) throws QueryParseException {
 //		return pvisit(node);
 //	}
 
 //	@Override
-//	public Object visit(ASTSpatialPredicate node, Object data) {
+//	public Object visit(ASTSpatialPredicate node, Object data) throws QueryParseException {
 //		return pvisit(node);
 //	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBasicPredicate node, Object data) {
+	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTProjectionMatrix node, Object data) {
+	public Object visit(ASTProjectionMatrix node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTProjectionVector node, Object data) {
+	public Object visit(ASTProjectionVector node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSelectAll node, Object data) {
+	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTFunctionName node, Object data) {
+	public Object visit(ASTFunctionName node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTOSGI node, Object data) {
+	public Object visit(ASTOSGI node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCSVSource node, Object data) {
+	public Object visit(ASTCSVSource node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSilab node, Object data) {
+	public Object visit(ASTSilab node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDBExecuteStatement node, Object data) {
+	public Object visit(ASTDBExecuteStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabase node, Object data) {
+	public Object visit(ASTDatabase node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSQL node, Object data) {
+	public Object visit(ASTSQL node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) {
+	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseOptions node, Object data) {
+	public Object visit(ASTDatabaseOptions node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateBroker node, Object data) {		
+	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {		
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data) {
+	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data) {
+	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDateFormat node, Object data) {
+	public Object visit(ASTDateFormat node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBrokerAsSource node, Object data) {
+	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBrokerSimpleSource node, Object data) {
+	public Object visit(ASTBrokerSimpleSource node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTBrokerQueue node, Object data) {
+	public Object visit(ASTBrokerQueue node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTMetric node, Object data) {
+	public Object visit(ASTMetric node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateSensor node, Object data) {
+	public Object visit(ASTCreateSensor node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTORSchemaDefinition node, Object data) {
+	public Object visit(ASTORSchemaDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRecordDefinition node, Object data) {
+	public Object visit(ASTRecordDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRecordEntryDefinition node, Object data) {
+	public Object visit(ASTRecordEntryDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTListDefinition node, Object data) {
+	public Object visit(ASTListDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAttrDefinition node, Object data) {
+	public Object visit(ASTAttrDefinition node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateViewStatement node, Object data) {
+	public Object visit(ASTCreateViewStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateUserStatement node, Object data) {
+	public Object visit(ASTCreateUserStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAlterUserStatement node, Object data) {
+	public Object visit(ASTAlterUserStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDropStreamStatement node, Object data) {
+	public Object visit(ASTDropStreamStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDropViewStatement node, Object data) {
+	public Object visit(ASTDropViewStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateTenantStatement node, Object data) {
+	public Object visit(ASTCreateTenantStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAddUserToTenantStatement node, Object data) {
+	public Object visit(ASTAddUserToTenantStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) {
+	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateSLAStatement node, Object data) {
+	public Object visit(ASTCreateSLAStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTPercentileConstraint node, Object data) {
+	public Object visit(ASTPercentileConstraint node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}	
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data) {
+	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTJdbcIdentifier node, Object data) {
+	public Object visit(ASTJdbcIdentifier node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseTimeSensitiv node, Object data) {	
+	public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws QueryParseException {	
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTInsertIntoStatement node, Object data) {
+	public Object visit(ASTInsertIntoStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSaveMetaData node, Object data) {
+	public Object visit(ASTSaveMetaData node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseTableOptions node, Object data) {
+	public Object visit(ASTDatabaseTableOptions node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseCreateOption node, Object data) {
+	public Object visit(ASTDatabaseCreateOption node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseTruncateOption node, Object data) {
+	public Object visit(ASTDatabaseTruncateOption node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTIfNotExists node, Object data) {
+	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDropUserStatement node, Object data) {
+	public Object visit(ASTDropUserStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateRoleStatement node, Object data) {
+	public Object visit(ASTCreateRoleStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDropRoleStatement node, Object data) {
+	public Object visit(ASTDropRoleStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTGrantStatement node, Object data) {
+	public Object visit(ASTGrantStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRevokeStatement node, Object data) {
+	public Object visit(ASTRevokeStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTIdentifierList node, Object data) {
+	public Object visit(ASTIdentifierList node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTGrantRoleStatement node, Object data) {
+	public Object visit(ASTGrantRoleStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTRevokeRoleStatement node, Object data) {
+	public Object visit(ASTRevokeRoleStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTMVCovarianceRow node, Object data) {
+	public Object visit(ASTMVCovarianceRow node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
@@ -667,62 +671,62 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	 * @see de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType, java.lang.Object)
 	 */
 	@Override
-	public Object visit(ASTCreateType node, Object data) {
+	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlaMetricDef node, Object data) {
+	public Object visit(ASTSlaMetricDef node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlaScopeDef node, Object data) {
+	public Object visit(ASTSlaScopeDef node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlaWindowDef node, Object data) {
+	public Object visit(ASTSlaWindowDef node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlaServiceLevelDef node, Object data) {
+	public Object visit(ASTSlaServiceLevelDef node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTSlaPenaltyDef node, Object data) {
+	public Object visit(ASTSlaPenaltyDef node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTCreateSinkStatement node, Object data) {
+	public Object visit(ASTCreateSinkStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTStreamToStatement node, Object data) {
+	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTLoginPassword node, Object data) {
+	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTAutoReconnect node, Object data) {
+	public Object visit(ASTAutoReconnect node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSink node, Object data) {
+	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSinkOptions node, Object data) {
+	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 }

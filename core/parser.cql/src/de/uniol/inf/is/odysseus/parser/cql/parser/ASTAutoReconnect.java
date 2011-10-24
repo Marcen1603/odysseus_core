@@ -14,8 +14,8 @@ class ASTAutoReconnect extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=332392bca028ad6829263a77d7f2dabd (do not edit this line) */
+/* JavaCC - OriginalChecksum=97e0a490359bf9d65a9f61d706e6c465 (do not edit this line) */

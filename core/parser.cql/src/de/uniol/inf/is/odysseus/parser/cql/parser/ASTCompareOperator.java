@@ -16,6 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class ASTCompareOperator extends SimpleNode {
 	String operator;
 
@@ -45,7 +47,7 @@ public class ASTCompareOperator extends SimpleNode {
 
 	/** Accept the visitor. * */
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 

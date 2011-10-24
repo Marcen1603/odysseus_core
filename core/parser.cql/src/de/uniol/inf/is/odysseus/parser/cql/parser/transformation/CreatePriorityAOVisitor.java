@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDefaultPriority;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriority;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
@@ -51,7 +52,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTElementPriorities node, Object data) {
+	public Object visit(ASTElementPriorities node, Object data) throws QueryParseException {
 		PriorityAO<RelationalTuple<? extends IPriority>> ao = new PriorityAO<RelationalTuple<? extends IPriority>>();
 		top.subscribeSink(ao, 0, 0, top.getOutputSchema());
 		node.childrenAccept(this, ao);
@@ -61,7 +62,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object visit(ASTElementPriority node, Object data) {
+	public Object visit(ASTElementPriority node, Object data) throws QueryParseException {
 		PriorityAO<RelationalTuple<IPriority>> ao = (PriorityAO<RelationalTuple<IPriority>>) data;
 
 		IPredicate<RelationalTuple<?>> predicate;
@@ -77,7 +78,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
 	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
-	public Object visit(ASTDefaultPriority node, Object data) {
+	public Object visit(ASTDefaultPriority node, Object data) throws QueryParseException {
 		((PriorityAO<RelationalTuple>) data).setDefaultPriority(node
 				.getPriority());
 		return data;

@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -67,7 +68,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		SDFSource source = dd.createSDFSource(sourceString);
@@ -81,7 +82,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			relationalStreamingSource(node, source, sourceString);
 			return null;
 		} else {
-			throw new RuntimeException("unknown type of source '"
+			throw new QueryParseException("unknown type of source '"
 					+ source.getSourceType() + "' for source: " + sourceString);
 		}
 
@@ -237,7 +238,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	// }
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
 				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
@@ -274,7 +275,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) {
+	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
 		Class<?> dbClass;
 		try {
 			dbClass = Class
@@ -293,13 +294,13 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			this.attributeResolver.addSource(dbVisitor.getAlias(), dbOp);
 
 		} catch (Exception e) {
-			throw new RuntimeException("missing database plugin for cql parser");
+			throw new QueryParseException("missing database plugin for cql parser");
 		}
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data) {
+	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		try {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
@@ -319,18 +320,18 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);
 		} catch (ClassNotFoundException ex) {
-			throw new RuntimeException(
+			throw new QueryParseException(
 					"Brokerplugin is missing in CQL parser.", ex.getCause());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException(
+			throw new QueryParseException(
 					"Error while accessing broker as source.", e.getCause());
 		}
 
 		return null;
 	}
 
-	private Object brokerStreamingSource(ASTSimpleSource node, Object data) {
+	private Object brokerStreamingSource(ASTSimpleSource node, Object data) throws QueryParseException {
 		try {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
@@ -349,10 +350,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			String name = ident.getName();
 			this.attributeResolver.addSource(name, sourceOp);
 		} catch (ClassNotFoundException ex) {
-			throw new RuntimeException(
+			throw new QueryParseException(
 					"Brokerplugin is missing in CQL parser.", ex.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException(
+			throw new QueryParseException(
 					"Error while creating broker as source.", e.getCause());
 		}
 

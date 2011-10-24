@@ -16,6 +16,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY= */
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class SimpleNode implements Node {
   protected Node parent;
   protected Node[] children;
@@ -70,14 +72,16 @@ public int jjtGetNumChildren() {
   public void jjtSetValue(Object value) { this.value = value; }
   public Object jjtGetValue() { return value; }
 
-  /** Accept the visitor. **/
+  /** Accept the visitor. 
+ * @throws QueryParseException **/
   @Override
-public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
 
-  /** Accept the visitor. **/
-  public Object childrenAccept(NewSQLParserVisitor visitor, Object data) {
+  /** Accept the visitor. 
+ * @throws QueryParseException **/
+  public Object childrenAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         data = children[i].jjtAccept(visitor, data);

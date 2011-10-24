@@ -16,6 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class ASTAttributeDefinition extends SimpleNode {
   public ASTAttributeDefinition(int id) {
     super(id);
@@ -26,9 +28,10 @@ public class ASTAttributeDefinition extends SimpleNode {
   }
 
 
-  /** Accept the visitor. **/
+  /** Accept the visitor. 
+ * @throws QueryParseException **/
   @Override
-public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
 }

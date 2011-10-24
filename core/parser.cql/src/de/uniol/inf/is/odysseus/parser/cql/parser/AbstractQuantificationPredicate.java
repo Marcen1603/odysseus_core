@@ -16,6 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 
 public abstract class AbstractQuantificationPredicate extends AbstractPredicate implements
 		IExistencePredicate {
@@ -29,9 +31,10 @@ public abstract class AbstractQuantificationPredicate extends AbstractPredicate 
 		super(p, id);
 	}
 
-	/** Accept the visitor. * */
+	/** Accept the visitor. * 
+	 * @throws QueryParseException */
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 

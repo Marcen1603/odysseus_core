@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
@@ -38,7 +39,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	private boolean hasGrouping;
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data) {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		hasAggregates = false;
 		hasGrouping = false;
 		this.checkGroupingAttributes = new HashSet<SDFAttribute>();
@@ -50,13 +51,13 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTAggregateExpression node, Object data) {
+	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
 		hasAggregates = true;
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data) {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		Node child = node.jjtGetChild(0);
 		if (child instanceof ASTIdentifier) {
 			checkGroupingAttributes.add(this.attributeResolver
@@ -68,7 +69,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTGroupByClause node, Object data) {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		this.hasGrouping = true;
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
 			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i))
@@ -82,12 +83,12 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data) {
+	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return data;
 	}
 

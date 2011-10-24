@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -84,12 +85,12 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSubselect node, Object data) {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return createJoin(node.getAlias(), data);
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data) {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		if (node.hasAlias()) {
 			name = node.getAlias();
@@ -99,12 +100,12 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 	
 	@Override
-	public Object visit(ASTGroupByClause node, Object data) {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		return data;
 	}
 	
 	@Override
-	public Object visit(ASTHavingClause node, Object data) {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		//don't visit having clause and ensure that the correct return value is returned.
 		//TODO inside the having clause some astelements can return null on visit instead of data
 		//as this is consistent in the abstractdefaultvisitor
@@ -112,11 +113,11 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTElementPriorities node, Object data) {
+	public Object visit(ASTElementPriorities node, Object data) throws QueryParseException {
 		return data;
 	}
 
-	private Object createJoin(String alias, Object data) {
+	private Object createJoin(String alias, Object data) throws QueryParseException {
 		final ILogicalOperator source = this.attributeResolver
 				.getSource(alias);
 
@@ -133,7 +134,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data) {
+	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
 		ASTPredicate wherePredicate = (ASTPredicate) node.jjtGetChild(0);
 		IPredicate<RelationalTuple<?>> predicate;
@@ -190,7 +191,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AbstractLogicalOperator createQuantificationPlan(
 			AbstractLogicalOperator curInputAO,
-			IPredicate<RelationalTuple<?>> pred) {
+			IPredicate<RelationalTuple<?>> pred) throws QueryParseException {
 		if (pred instanceof ComplexPredicate) {
 			AbstractLogicalOperator left = createQuantificationPlan(curInputAO,
 					((ComplexPredicate) pred).getLeft());
@@ -275,7 +276,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTAllPredicate node, Object data) {
+	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node
 				.isNegatived() ? ExistenceAO.Type.EXISTS
 				: ExistenceAO.Type.NOT_EXISTS);
@@ -302,7 +303,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return buffer.toString();
 	}
 
-	private AbstractLogicalOperator subquery(ASTComplexSelectStatement query) {
+	private AbstractLogicalOperator subquery(ASTComplexSelectStatement query) throws QueryParseException {
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
 		v.setDataDictionary(dataDictionary);
@@ -310,14 +311,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTAnyPredicate node, Object data) {
+	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node
 				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
 	}
 
 	private ExistenceAO createExistenceAO(IExistencePredicate node,
-			AbstractLogicalOperator inputAO, Type type) {
+			AbstractLogicalOperator inputAO, Type type) throws QueryParseException {
 		ExistenceAO existsAO = new ExistenceAO();
 
 		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
@@ -345,7 +346,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTExists node, Object data) {
+	public Object visit(ASTExists node, Object data) throws QueryParseException {
 		AbstractLogicalOperator inputAO = (AbstractLogicalOperator) data;
 		ExistenceAO existsAO = new ExistenceAO();
 		existsAO.subscribeToSource(inputAO, BinaryLogicalOp.LEFT, 0, inputAO
@@ -358,14 +359,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTInPredicate node, Object data) {
+	public Object visit(ASTInPredicate node, Object data) throws QueryParseException {
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node
 				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
 	}
 	
 	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) {
+	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
 		try {
 			Class<?> dbClass = Class
 					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
@@ -374,14 +375,14 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			return dbVisitor.visit(node, data);
 
 		} catch (Exception e) {
-			throw new RuntimeException("missing database plugin for cql parser");
+			throw new QueryParseException("missing database plugin for cql parser");
 		}
 
 
 	}
 	
 	@Override	
-	public Object visit(ASTBrokerSource node, Object data) {
+	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		// same thing like simple-source
 		Node child = node.jjtGetChild(0);
 		ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren()-1);

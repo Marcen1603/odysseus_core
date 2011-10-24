@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -93,7 +94,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	ILogicalOperator operator;
 
 	@Override
-	public Object visit(ASTCreateStatement node, Object data) {
+	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
 		attributes = new SDFAttributeList();
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		node.jjtGetChild(1).jjtAccept(this, data);
@@ -110,7 +111,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTTimedTuples node, Object data) {
+	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
 		FixedSetAccessAO newPO = new FixedSetAccessAO(dd.createSDFSource(name), node.getTuples(attributes));
 		newPO.setOutputSchema(attributes);
 		dd.setStream(name, newPO, caller);
@@ -118,7 +119,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTPriorizedStatement node, Object data) {
+	public Object visit(ASTPriorizedStatement node, Object data) throws QueryParseException {
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
@@ -126,12 +127,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		SDFAttributeList otherAttributes = operator.getOutputSchema();
 
 		if (otherAttributes.size() != this.attributes.size()) {
-			throw new RuntimeException("Query output does not match specified schema for: " + name);
+			throw new QueryParseException("Query output does not match specified schema for: " + name);
 		}
 		ListIterator<SDFAttribute> li = otherAttributes.listIterator();
 		for (SDFAttribute attr : this.attributes) {
 			if (!((SDFAttribute) li.next()).getAttributeName().equals(((SDFAttribute) attr).getAttributeName())) {
-				throw new RuntimeException("Query output does not match specified schema for: " + name);
+				throw new QueryParseException("Query output does not match specified schema for: " + name);
 			}
 		}
 
@@ -158,32 +159,32 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data) {
+	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
 		node.childrenAccept(this, data);
 		// check attributes for consistency
 		boolean hasEndTimestamp = false, hasStartTimestamp = false;
 		for (SDFAttribute attr : this.attributes) {
 			if (attr.getDatatype().equals("StartTimestamp")) {
 				if (hasStartTimestamp) {
-					throw new RuntimeException("multiple definitions of StartTimestamp attribute not allowed");
+					throw new QueryParseException("multiple definitions of StartTimestamp attribute not allowed");
 				}
 				hasStartTimestamp = true;
 			}
 			if (attr.getDatatype().equals("EndTimestamp")) {
 				if (hasEndTimestamp) {
-					throw new RuntimeException("multiple definitions of EndTimestamp attribute not allowed");
+					throw new QueryParseException("multiple definitions of EndTimestamp attribute not allowed");
 				}
 				hasEndTimestamp = true;
 			}
 			if (Collections.frequency(this.attributes, attr) > 1) {
-				throw new RuntimeException("ambiguous attribute definition: " + attr.toString());
+				throw new QueryParseException("ambiguous attribute definition: " + attr.toString());
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinition node, Object data) {
+	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
@@ -202,14 +203,14 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 			}
 		}else{
-			throw new RuntimeException("illigal datatype:"+astAttrType.getType());
+			throw new QueryParseException("illigal datatype:"+astAttrType.getType());
 		}
 		this.attributes.add(attribute);
 		return data;
 	}
 
 	@Override
-	public Object visit(ASTSocket node, Object data) {
+	public Object visit(ASTSocket node, Object data) throws QueryParseException {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		int port = -1;
 		if (node.jjtGetNumChildren() >= 2) {
@@ -244,7 +245,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTChannel node, Object data) {
+	public Object visit(ASTChannel node, Object data) throws QueryParseException {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		boolean autoReconnect = hasAutoReconnect(node);
 		int port = -1;		
@@ -278,7 +279,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTLoginPassword node, Object data) {
+	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
 		String user = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 
@@ -288,7 +289,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTSilab node, Object data) {
+	public Object visit(ASTSilab node, Object data) throws QueryParseException {
 		try {
 			Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.SILABVisitor");
 		} catch (ClassNotFoundException e) {
@@ -301,7 +302,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data) {
+	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
@@ -316,9 +317,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			ao.setOutputSchema(this.attributes);
 			return addTimestampAO((ILogicalOperator) ao);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Storing plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Storing plugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new RuntimeException("Error while parsing the create from database clause", e.getCause());
+			throw new QueryParseException("Error while parsing the create from database clause", e.getCause());
 		}
 	}
 }

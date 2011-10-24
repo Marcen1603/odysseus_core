@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 
 @SuppressWarnings("all")
@@ -68,9 +69,10 @@ public class ASTAttributeType extends SimpleNode {
 		super(p, id);
 	}
 
-	/** Accept the visitor. * */
+	/** Accept the visitor. * 
+	 * @throws QueryParseException */
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 }

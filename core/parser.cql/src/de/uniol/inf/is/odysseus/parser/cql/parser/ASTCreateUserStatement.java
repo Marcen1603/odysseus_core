@@ -16,6 +16,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+
 public class ASTCreateUserStatement extends SimpleNode {
 
 	String password;
@@ -37,9 +39,10 @@ public class ASTCreateUserStatement extends SimpleNode {
 		super(p, id);
 	}
 
-	/** Accept the visitor. **/
+	/** Accept the visitor. 
+	 * @throws QueryParseException **/
 	@Override
-	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) {
+	public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
 		return visitor.visit(this, data);
 	}
 }
