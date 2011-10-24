@@ -134,7 +134,6 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					}
 					monitor.done();
 				} catch( QueryTextParseException ex ) {
-					ex.printStackTrace();
 					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Cant execute query", ex );
 				}
 				
