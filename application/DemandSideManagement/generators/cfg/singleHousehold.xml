@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
+	<priceModel port="54320" levels="4">
+		<price start="0" end="6" value="17"/>
+		<price start="6" end="12" value="22"/>
+		<price start="12" end="18" value="23"/>
+		<price start="18" end="24" value="22"/>
+	</priceModel>
 	<general speed="10" startport="54321"/>
-	<household>
+	<household id="1" evuId="1">
 		<appliance name="fridge" watt="100" runtimeMin="30" runtimeMax="30" iRange="0.1" iLength="2" rMin="10" rMax="18" startMin="0" startMax="23" startUpTime="60000" roomId="2"/>
 		<appliance name="buzzer" watt="5" runtimeMin="1440" runtimeMax="1440" iRange="0.01" iLength="2" rMin="1" rMax="1" startMin="0" startMax="0" startUpTime="0" roomId="4"/>
 		<appliance name="dishwasher" watt="450" runtimeMin="120" runtimeMax="120" iRange="0.5" iLength="2" rMin="0" rMax="1" startMin="12" startMax="16" startUpTime="60000" roomId="2"/>

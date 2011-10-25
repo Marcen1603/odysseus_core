@@ -54,7 +54,12 @@ public class Appliance extends StreamClientHandler{
 	private double measuredWatt = 0;
 	private long measureTimestamp;
 	
-	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
+	private int id;
+	private int evuId;
+	
+	public Appliance(int id, int evuId, String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
+		this.id = id;
+		this.evuId = evuId;
 		this.name = name;
 		this.watt = watt;
 		this.runtimeMin = runtimeMin;
@@ -71,6 +76,8 @@ public class Appliance extends StreamClientHandler{
 	}
 	
 	public Appliance(Appliance appliance) {
+		this.id = appliance.id;
+		this.evuId = appliance.evuId;
 		this.name = appliance.name;
 		this.watt = appliance.watt;
 		this.runtimeMin = appliance.runtimeMin;
@@ -119,6 +126,8 @@ public class Appliance extends StreamClientHandler{
 			if (timestamp >= randomTimes[0][interval] && timestamp <= randomTimes[0][interval]+(randomTimes[1][interval]*60000)){
 				tuple.addLong(timestamp);
 				tuple.addString(name);
+				tuple.addInteger(id);
+				tuple.addInteger(evuId);
 				tuple.addInteger(roomId);
 				tuple.addDouble(getMeteredValue(timestamp));
 				tuple.addDouble(getMeteredConsumption(timestamp));
@@ -128,6 +137,8 @@ public class Appliance extends StreamClientHandler{
 				}
 				tuple.addLong(timestamp);
 				tuple.addString(name);
+				tuple.addInteger(id);
+				tuple.addInteger(evuId);
 				tuple.addInteger(roomId);
 				tuple.addDouble(0);
 				tuple.addDouble(0);
@@ -135,6 +146,8 @@ public class Appliance extends StreamClientHandler{
 		} else {
 			tuple.addLong(timestamp);
 			tuple.addString(name);
+			tuple.addInteger(id);
+			tuple.addInteger(evuId);
 			tuple.addInteger(roomId);
 			tuple.addDouble(0);
 			tuple.addDouble(0);

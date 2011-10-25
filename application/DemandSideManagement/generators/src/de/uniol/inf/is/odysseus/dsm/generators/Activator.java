@@ -33,8 +33,13 @@ public class Activator implements BundleActivator {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader parser = factory.createXMLStreamReader(inputStream);
 		ArrayList<StreamServer> serverBuffer = new ArrayList<StreamServer>();
-		int speed = 10;
-		int port = 54321;
+		int[][] priceModel = null;
+		int speed = 0;
+		int port = 0;
+		int pricePort = 0;
+		int id = 0;
+		int evuId = 0;
+		int j = 0;
 		
 		
 		while(parser.hasNext()) {
@@ -53,26 +58,61 @@ public class Activator implements BundleActivator {
 				            	port = Integer.parseInt(parser.getAttributeValue(i));
 				            }
 		        		}
-		    		} else if (parser.getLocalName() == "appliance"){
+		        	} else if (parser.getLocalName() == "household"){
+		        		for( int i = 0; i < parser.getAttributeCount(); i++ ){
+		        			if (parser.getAttributeLocalName(i) == "id") {
+		        				id = Integer.parseInt(parser.getAttributeValue(i));
+				            } else if (parser.getAttributeLocalName(i) == "evuId") {
+				            	evuId = Integer.parseInt(parser.getAttributeValue(i));
+				            }
+		        		}
+		        	} else if (parser.getLocalName() == "appliance"){
 		    			ArrayList<String> buffer = new ArrayList<String>();
 		        		for( int i = 0; i < parser.getAttributeCount(); i++ ){
 				               buffer.add(parser.getAttributeValue(i));
 			        	}
-		        		serverBuffer.add(new StreamServer(port, new Appliance(buffer.get(0), Double.parseDouble(buffer.get(1)), Integer.parseInt(buffer.get(2)), Integer.parseInt(buffer.get(3)),
+		        		serverBuffer.add(new StreamServer(port, new Appliance(id, evuId, buffer.get(0), Double.parseDouble(buffer.get(1)), Integer.parseInt(buffer.get(2)), Integer.parseInt(buffer.get(3)),
 		        						Double.parseDouble(buffer.get(4)), Double.parseDouble(buffer.get(5)), speed, Integer.parseInt(buffer.get(6)), Integer.parseInt(buffer.get(7)), Integer.parseInt(buffer.get(8)),
 		        						Integer.parseInt(buffer.get(9)), Double.parseDouble(buffer.get(10)), Integer.parseInt(buffer.get(11)))));
 		        		port++;
-		        	}
-		        break;
+		        		
+		        	} else if (parser.getLocalName() == "priceModel"){
+			        	for( int i = 0; i < parser.getAttributeCount(); i++ ){
+			        		if (parser.getAttributeLocalName(i) == "port") {
+			        			pricePort = Integer.parseInt(parser.getAttributeValue(i));
+			        		} else if (parser.getAttributeLocalName(i) == "levels"){
+			        			priceModel = new int[Integer.parseInt(parser.getAttributeValue(i))][3];
+			        		}
+			        	}
+		    		} else if (parser.getLocalName() == "price"){
+		    			for( int i = 0; i < parser.getAttributeCount(); i++ ){
+		    				if (parser.getAttributeLocalName(i) == "start") {
+		    					priceModel[j][i] = Integer.parseInt(parser.getAttributeValue(i));
+		    				} else if (parser.getAttributeLocalName(i) == "end") {
+		    					priceModel[j][i] = Integer.parseInt(parser.getAttributeValue(i));
+		    				} else {
+		    					priceModel[j][i] = Integer.parseInt(parser.getAttributeValue(i));
+		    				}
+		    			}
+		    			j++;
+		    		}
+		        	break;
 		        default:
 		            break;
 		    }
 		}
 		
-		for(int i = 0; i<serverBuffer.size(); i++){
+		StreamServer server = new StreamServer(pricePort, new PriceProvider(priceModel));
+		server.start();
+		
+		Thread.sleep(100);
+		
+		for(int i = 0; i < serverBuffer.size(); i++){
 			serverBuffer.get(i).start();
 			Thread.sleep(100);
 		}
+		
+		
 	}
 
 	/*
