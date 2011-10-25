@@ -19,10 +19,12 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /**
@@ -54,12 +56,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
 			return getDataDictionary().getViewOrStream(sourceName, getCaller());
 		}
-		AccessAO ao = createNewAccessAO(sourceName);
+		ILogicalOperator ao = createNewAccessAO(sourceName);
 
 		return ao;
 	}
 
-	private AccessAO createNewAccessAO(String sourceName) {
+	private ILogicalOperator createNewAccessAO(String sourceName) {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
 		SDFEntity sdfEntity = new SDFEntity(sourceName);
 		List<SDFAttribute> attributeList = attributes.getValue();
@@ -74,9 +76,26 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		ao.setHost(host.getValue());
 		ao.setPort(port.getValue());
 		ao.setOutputSchema(schema);
-		return ao;
+		ILogicalOperator op = addTimestampAO(ao);
+		return op;
 	}
 
+	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+		TimestampAO timestampAO = new TimestampAO();
+		for (SDFAttribute attr : operator.getOutputSchema()) {
+			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+				timestampAO.setStartTimestamp(attr);
+			}
+
+			if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
+				timestampAO.setEndTimestamp(attr);
+			}
+		}
+
+		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		return timestampAO;
+	}
+	
 	@Override
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
