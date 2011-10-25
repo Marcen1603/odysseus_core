@@ -44,9 +44,9 @@ public class Variable implements IExpression<Object> {
 	}
 
 	public void bind(Object value) {
-		if (value instanceof Number) {
-			value = ((Number) value).doubleValue();
-		}
+//		if (value instanceof Number) {
+//			value = ((Number) value).doubleValue();
+//		}
 		this.value = value;
 	}
 
