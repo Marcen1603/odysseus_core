@@ -40,7 +40,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		Display.getDefault().syncExec(new Runnable() {
+		Display.findDisplay(Thread.currentThread()).asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 				IWorkbenchPage page = window.getActivePage();
