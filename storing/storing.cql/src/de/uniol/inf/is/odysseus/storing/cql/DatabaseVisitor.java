@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInsertIntoStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTJdbcIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSaveMetaData;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.storing.DatabaseService;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseAccessAO;
@@ -111,7 +112,7 @@ public class DatabaseVisitor{
 		return new SDFSource(sourceName, "databaseReading");
 	}
 
-	public Object visit(ASTInsertIntoStatement node, Object data) {		
+	public Object visit(ASTInsertIntoStatement node, Object data) throws QueryParseException {		
 		boolean create 			= false;
 		boolean truncate		= false;	
 		boolean ifnotexists		= false;
