@@ -18,7 +18,11 @@ public class StoringActivator implements BundleActivator{
 	@Override
 	public void start(BundleContext context) throws Exception {
 		StoringActivator.LOGGER.info("Startup Storing Bundle.");
-		File file = new File(OdysseusDefaults.get("storing_database"));
+		String storingDB = OdysseusDefaults.get("storing_database");
+		if (storingDB == null){
+			throw new RuntimeException("Storing not correctly defined. Missing Entry storing_database in odysseus.properties. Terminating");
+		}
+		File file = new File(storingDB);
 		if (!file.exists()) {
 			StoringActivator.LOGGER.error(String.format("File does not exist: %s !", file.toString()));
 		} else {
