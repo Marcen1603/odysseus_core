@@ -347,6 +347,11 @@
                style="push">
          </command>
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand"
+               label="Show Query Plan"
+               style="push">
+         </command>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
                icon="icons/refresh.gif"
                label="Refresh"
