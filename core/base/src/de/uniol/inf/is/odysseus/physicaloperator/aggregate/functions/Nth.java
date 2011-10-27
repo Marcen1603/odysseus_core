@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.aggregation;
+package de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;

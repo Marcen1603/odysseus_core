@@ -25,7 +25,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalAggregateFunctionBuilder implements
 		IAggregateFunctionBuilder {
-
+	
+    private final static String LAST = "LAST";
+    private final static String FIRST = "FIRST";
+    private final static String NTH = "NTH";
+    
 	private static Collection<String> names = new LinkedList<String>();
 	{
 		names.add("AVG");
@@ -37,6 +41,9 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add("STDDEV");
 		names.add("BEAN");
 		names.add("SCRIPT");
+        names.add(LAST);
+        names.add(FIRST);
+        names.add(NTH);
 	}
 	
 	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
@@ -60,6 +67,13 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = new AggregationBean(pos, key.getProperty("resource"));
 		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
 			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
+		} else if (key.getName().equalsIgnoreCase(LAST)) {
+			aggFunc = RelationalLast.getInstance();
+		} else if (key.getName().equalsIgnoreCase(FIRST)) {
+			aggFunc = RelationalFirst.getInstance();
+		} else if (key.getName().equalsIgnoreCase(NTH)) {
+			aggFunc = RelationalNth.getInstance(Integer.parseInt(key
+					.getProperty("nth")));
 		} else {
 			throw new IllegalArgumentException("No such Aggregatefunction");
 		}

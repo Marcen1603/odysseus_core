@@ -60,6 +60,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TLeftJoinTIPOAddMetadataMergeRule());
 		rules.add(new TLeftJoinAOSetSARule());
 		
+		rules.add(new TPunctuationAORule());
+		
 		return rules;
 	}
 

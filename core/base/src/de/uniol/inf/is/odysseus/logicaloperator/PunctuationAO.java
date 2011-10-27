@@ -1,9 +1,7 @@
-package de.uniol.inf.is.odysseus.salsa.logicaloperator;
+package de.uniol.inf.is.odysseus.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
