@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement,
@@ -21,18 +22,23 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.windows,
  de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.usermanagement.client,
  de.uniol.inf.is.odysseus.util,
  org.eclipse.core.resources,
  org.eclipse.jface.text,
+ org.eclipse.jface.text.contentassist,
  org.eclipse.jface.text.presentation,
  org.eclipse.jface.text.rules,
  org.eclipse.jface.text.source,
  org.eclipse.ui.editors.text,
  org.eclipse.ui.part,
  org.eclipse.ui.texteditor,
- org.eclipse.ui.views.contentoutline
+ org.eclipse.ui.views.contentoutline,
+ org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text
 Service-Component: OSGI-INF/Executor.xml
 

@@ -18,6 +18,9 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -161,5 +164,15 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 			};
 		}
 		return wordDetector;
+	}
+	
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		ContentAssistant ca = new ContentAssistant();
+		IContentAssistProcessor cp = new OdysseusScriptCompletionProcessor();
+		ca.setContentAssistProcessor(cp, IDocument.DEFAULT_CONTENT_TYPE);
+		ca.enableAutoActivation(true);
+		ca.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+		return ca;
 	}
 }
