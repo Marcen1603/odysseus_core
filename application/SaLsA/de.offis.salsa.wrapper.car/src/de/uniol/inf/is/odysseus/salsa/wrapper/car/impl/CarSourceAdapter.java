@@ -147,7 +147,9 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 									int minute = buffer.get();
 									int second = buffer.get();
 									int millisecond = buffer.get();
-									Calendar calendar = Calendar.getInstance();
+									Calendar calendar = Calendar
+											.getInstance(TimeZone
+													.getTimeZone("UTC"));
 									calendar.clear();
 									calendar.set(year, month - 1, day, hour,
 											minute, second);
@@ -173,11 +175,11 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 									}
 									buffer.position(pos);
 								}
-//								if (buffer.hasRemaining()) {
-//									buffer.compact();
-//								} else {
-									buffer.clear();
-//								}
+								// if (buffer.hasRemaining()) {
+								// buffer.compact();
+								// } else {
+								buffer.clear();
+								// }
 							}
 						}
 					}

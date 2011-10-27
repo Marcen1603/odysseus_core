@@ -85,10 +85,9 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 					Object[] event = messageQueue.take();
 					long timestamp = (Long) event[0];
 					Object[] data = (Object[]) event[1];
-					Calendar calendar = Calendar.getInstance();
+					Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 					calendar.clear();
 					calendar.setTimeInMillis(timestamp);
-					calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						buffer.putChar((char) calendar.get(Calendar.YEAR));
 						buffer.put((byte) (calendar.get(Calendar.MONTH) + 1));
@@ -102,7 +101,7 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 						// Position
 						Coordinate position = (Coordinate) data[1];
 						// Grid
-						//Byte[][] grid = (Byte[][]) data[3];
+						Byte[][] grid = (Byte[][]) data[3];
 
 						// Cellsize
 						Double cellsize = (Double) data[2];
@@ -113,33 +112,33 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 						buffer.putShort((short) globalX);
 						// Y Position
 						buffer.putShort((short) globalY);
-//						// Grid Length
-//						buffer.putShort((short) grid.length);
-//						// Grid Width
-//						buffer.putShort((short) grid[0].length);
-//						// Grid Height
-//						buffer.putShort((short) 1);
-//						// Cell Size
-//						buffer.putInt(cellsize.intValue());
-//
-//						for (int l = 0; l < grid.length; l++) {
-//							for (int w = 0; w < grid[l].length; w++) {
-//								if (grid[l][w] == 0.0) {
-//									buffer.put((byte) 0x00);
-//								} else if (grid[l][w] < 0.0) {
-//									buffer.put((byte) 0xFF);
-//								} else {
-//									buffer.put((byte) 0x64);
-//								}
-//							}
-//						}
+						// Grid Length
+						buffer.putShort((short) grid.length);
+						// Grid Width
+						buffer.putShort((short) grid[0].length);
+						// Grid Height
+						buffer.putShort((short) 1);
+						// Cell Size
+						buffer.putInt(cellsize.intValue());
+
+						for (int l = 0; l < grid.length; l++) {
+							for (int w = 0; w < grid[l].length; w++) {
+								if (grid[l][w] == 0.0) {
+									buffer.put((byte) 0x00);
+								} else if (grid[l][w] < 0.0) {
+									buffer.put((byte) 0xFF);
+								} else {
+									buffer.put((byte) 0x64);
+								}
+							}
+						}
 						buffer.flip();
-					//	this.channel.write(buffer);
-//						if (buffer.hasRemaining()) {
-//							buffer.compact();
-//						} else {
+						this.channel.write(buffer);
+						if (buffer.hasRemaining()) {
+							buffer.compact();
+						} else {
 							buffer.clear();
-//						}
+						}
 					} catch (Exception e) {
 						buffer.clear();
 					}
