@@ -251,6 +251,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
             name="Login User">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
+            name="Refresh Sinks View">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -365,6 +370,17 @@
                commandId="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
                label="Change User..."
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SinkView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
          </command>
       </menuContribution>
    </extension>
