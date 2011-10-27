@@ -31,3 +31,4 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql,
 Service-Component: OSGI-INF/component.xml
 Require-Bundle: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach
+Bundle-ActivationPolicy: lazy

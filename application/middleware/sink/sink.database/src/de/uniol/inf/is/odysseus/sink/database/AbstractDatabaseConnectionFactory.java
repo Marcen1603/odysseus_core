@@ -19,7 +19,14 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
+import  org.slf4j.Logger;
+
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 
@@ -27,23 +34,58 @@ import java.util.Properties;
  */
 public abstract class AbstractDatabaseConnectionFactory implements IDatabaseConnectionFactory {
 
+	
+	private static Logger logger = LoggerFactory.getLogger(AbstractDatabaseConnectionFactory.class);
+	protected abstract Map<SDFDatatype, String> getDatatypeMappings();
+
+	protected String getSQLDatatype(SDFDatatype dt) {
+		return getDatatypeMappings().get(dt);
+	}
+
 	protected static Properties getCredentials(String userName, String password) {
 		Properties connectionProps = new Properties();
 		connectionProps.put("user", userName);
 		connectionProps.put("password", password);
 		return connectionProps;
 	}
-	
+
 	public boolean tableExists(Connection connection, String tablename) {
-		try {			
+		try {
 			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet res = meta.getTables(null, null, null, new String[]{"TABLE"});
-			while(res.next()){
-				if(res.getString("TABLE_NAME").equals(tablename)){
+			ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
+			while (res.next()) {
+				if (res.getString("TABLE_NAME").equals(tablename)) {
 					return true;
 				}
 			}
 			return false;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
+	public boolean equalSchemas(Connection connection, String tablename, SDFAttributeList schema) {
+		try {
+			DatabaseMetaData meta = connection.getMetaData();
+			int i = 0;
+			ResultSet rsColumns = meta.getColumns(null, null, tablename, null);						
+			while (rsColumns.next()) {
+				if(i>=schema.size()){
+					// unterschiedliche anzahl
+					return false;
+				}				
+				String dbType = rsColumns.getString("TYPE_NAME");
+				String expectedType = getSQLDatatype(schema.get(i).getDatatype());
+				
+				if(!dbType.equalsIgnoreCase(expectedType)){
+					logger.error("Expected types for stream and database are not equal for");
+					logger.error("- database: "+dbType+" <--> local: "+expectedType);
+					logger.error("- database: "+rsColumns.getShort("COLUMN_NAME")+" <--> local: "+schema.get(i).getAttributeName());
+					return false;
+				}
+				i++;
+			}
+			return true;
 		} catch (SQLException e) {
 			return false;
 		}

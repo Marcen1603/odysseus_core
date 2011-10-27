@@ -19,8 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +29,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary.DatabaseType;
 import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -45,11 +44,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	private Connection connection;
 	private PreparedStatement preparedStatement;
 
-	private enum DatabaseType {
-		Integer, String, Float, Long, Double, Boolean
-	};
-
-	private Map<SDFDatatype, DatabaseType> datatypeMappings = new HashMap<SDFDatatype, DatabaseType>();
+	
 
 	private int counter = 1;
 	private long summe = 0L;
@@ -64,8 +59,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	private boolean truncate;
 	private boolean drop;
 
-	public DatabaseSinkPO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass, boolean drop, boolean truncate) {
-		initMappings();
+	public DatabaseSinkPO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass, boolean drop, boolean truncate) {		
 		this.name = name;
 		this.dbms = databasetype.toLowerCase();
 		this.server = host;
@@ -79,8 +73,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 
 	}
 
-	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
-		this.initMappings();
+	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {		
 		this.name = databaseSinkPO.name;
 		this.dbms = databaseSinkPO.dbms;
 		this.server = databaseSinkPO.server;
@@ -93,19 +86,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 		this.truncate = databaseSinkPO.truncate;
 	}
 
-	private void initMappings() {
-		this.datatypeMappings.put(SDFDatatype.INTEGER, DatabaseType.Integer);
-		this.datatypeMappings.put(SDFDatatype.BOOLEAN, DatabaseType.Boolean);
-		this.datatypeMappings.put(SDFDatatype.END_TIMESTAMP, DatabaseType.Long);
-		this.datatypeMappings.put(SDFDatatype.FLOAT, DatabaseType.Float);
-		this.datatypeMappings.put(SDFDatatype.LONG, DatabaseType.Long);
-		this.datatypeMappings.put(SDFDatatype.POINT_IN_TIME, DatabaseType.Long);
-		this.datatypeMappings.put(SDFDatatype.START_TIMESTAMP, DatabaseType.Long);
-		this.datatypeMappings.put(SDFDatatype.STRING, DatabaseType.String);
-		this.datatypeMappings.put(SDFDatatype.TIMESTAMP, DatabaseType.Long);
-		this.datatypeMappings.put(SDFDatatype.DOUBLE, DatabaseType.Double);
-
-	}
+	
 
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -191,7 +172,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 			for (SDFAttribute attribute : this.getOutputSchema()) {
 				SDFDatatype datatype = attribute.getDatatype();
 				Object attributeValue = tuple.getAttribute(i);
-				DatabaseType mapping = this.datatypeMappings.get(datatype);
+				DatabaseType mapping = DatabaseConnectionDictionary.getInstance().getDatabaseType(datatype);
 				switch (mapping) {
 				case Boolean:
 					this.preparedStatement.setBoolean(i + 1, (Boolean) attributeValue);

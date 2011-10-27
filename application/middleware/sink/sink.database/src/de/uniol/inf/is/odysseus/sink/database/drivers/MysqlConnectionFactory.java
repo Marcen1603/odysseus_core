@@ -20,6 +20,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.sink.database.AbstractDatabaseConnectionFactory;
@@ -69,7 +70,7 @@ public class MysqlConnectionFactory extends AbstractDatabaseConnectionFactory {
 	
 
 	private void initMappings() {
-		this.datatypeMappings.put(SDFDatatype.INTEGER, "INTEGER");
+		this.datatypeMappings.put(SDFDatatype.INTEGER, "INT");
 		this.datatypeMappings.put(SDFDatatype.BOOLEAN, "BOOL");
 		this.datatypeMappings.put(SDFDatatype.END_TIMESTAMP, "BIGINT");
 		this.datatypeMappings.put(SDFDatatype.FLOAT, "FLOAT");
@@ -78,7 +79,13 @@ public class MysqlConnectionFactory extends AbstractDatabaseConnectionFactory {
 		this.datatypeMappings.put(SDFDatatype.START_TIMESTAMP, "BIGINT");
 		this.datatypeMappings.put(SDFDatatype.STRING, "VARCHAR(254)");
 		this.datatypeMappings.put(SDFDatatype.TIMESTAMP, "BIGINT");
-		this.datatypeMappings.put(SDFDatatype.DOUBLE, "DOUBLE PRECISION");
+		this.datatypeMappings.put(SDFDatatype.DOUBLE, "DOUBLE");
 	}
+
+	@Override
+	protected Map<SDFDatatype, String> getDatatypeMappings() {
+		return this.datatypeMappings;
+	}
+	
 
 }

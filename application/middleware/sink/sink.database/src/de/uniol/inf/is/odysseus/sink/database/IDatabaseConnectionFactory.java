@@ -17,8 +17,11 @@ package de.uniol.inf.is.odysseus.sink.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 
@@ -30,5 +33,6 @@ public interface IDatabaseConnectionFactory {
 	public Connection createConnection(String server, int port, String database, String user, String password) throws SQLException;
 	public void createTable(Connection con, String tablename, SDFAttributeList schema);
 	public boolean tableExists(Connection connection, String tablename);
+	public boolean equalSchemas(Connection connection, String tablename, SDFAttributeList schema);	
 
 }

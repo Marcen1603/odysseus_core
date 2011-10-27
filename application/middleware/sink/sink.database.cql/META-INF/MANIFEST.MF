@@ -5,4 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.sink.database.cql
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.parser.cql;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.sink.database.logicaloperator
+Import-Package: de.uniol.inf.is.odysseus.sink.database,
+ de.uniol.inf.is.odysseus.sink.database.logicaloperator
+Export-Package: de.uniol.inf.is.odysseus.sink.database.cql

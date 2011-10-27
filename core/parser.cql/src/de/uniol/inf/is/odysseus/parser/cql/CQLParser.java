@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.parser.cql;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,6 +90,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			instance = new CQLParser();
 		}
 		return instance;
+	}
+	
+	protected IDataDictionary getDataDictionary(){
+		return this.dataDictionary;
 	}
 
 	@Override
@@ -254,7 +259,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			prioVisitor.visit(statement, null);
 			top = prioVisitor.getTopOperator();
 			return top;
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
 	}
@@ -686,7 +691,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			return plans;
 		} catch (ClassNotFoundException e) {
 			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			throw new QueryParseException("Error while parsing CREATE BROKER statement", e.getCause());
 		}
 	}
@@ -1222,12 +1227,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
 		String sinkName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTSelectStatement statement = (ASTSelectStatement) node.jjtGetChild(1);
-		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
-		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);
+		ILogicalOperator top = (ILogicalOperator) visit(statement, data);	
+		
+		
+		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);		
 		// Append plan to input and update subscriptions
 		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName);
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
+		//if database -> be sure, that the schemas are equal
+		if(sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO")){			
+			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
+		}
 
 		Query query = new Query();
 		query.setParserId(getLanguage());
@@ -1272,7 +1283,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
 		String sinkName = (String) data;
-		AbstractLogicalOperator sink;
+		AbstractLogicalOperator sink = (AbstractLogicalOperator) invokeDatabaseVisitor(ASTDatabaseSink.class, node, data);
+		ILogicalOperator transformMeta = new TimestampToPayloadAO();
+		sink.subscribeToSource(transformMeta, 0, 0, null);
+		dataDictionary.addSink(sinkName, sink);
+		return null;
+	}
+	
+	
+	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException{
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.sink.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
@@ -1280,18 +1299,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			m.invoke(v, caller);
 			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dataDictionary);
-			m = visitor.getDeclaredMethod("visit", ASTDatabaseSink.class, Object.class);
-			sink = (AbstractLogicalOperator) m.invoke(v, node, data);
+			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
+			return (AbstractLogicalOperator) m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
 			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {
-			throw new QueryParseException("Error while parsing the insert into database clause", e);
-		}
-
-		ILogicalOperator transformMeta = new TimestampToPayloadAO();
-		sink.subscribeToSource(transformMeta, 0, 0, null);
-		dataDictionary.addSink(sinkName, sink);
-		return null;
+		} catch (NoSuchMethodException e) {
+			throw new QueryParseException("Method in database plugin is missing.", e.getCause());
+		} catch (SecurityException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (IllegalAccessException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (IllegalArgumentException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (InvocationTargetException e) {
+			throw new QueryParseException(e.getTargetException().getLocalizedMessage());		
+		} catch (InstantiationException e) {
+			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
+		} 
 	}
 
 	@Override
