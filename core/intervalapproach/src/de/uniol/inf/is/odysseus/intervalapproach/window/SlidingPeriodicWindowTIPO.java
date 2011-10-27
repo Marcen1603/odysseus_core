@@ -117,12 +117,12 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			PointInTime p_end = new PointInTime(this.slideNo * delta);
 			
 			// 1. Remove all Elements that are not within the window size!
-			while(inputBuffer.getFirst().getMetadata().getStart().before(p_start)){
+			while(!inputBuffer.isEmpty() && inputBuffer.getFirst().getMetadata().getStart().before(p_start)){
 				inputBuffer.removeFirst();
 			}
 			
 			// 2. all Elemente before p_end need to be processed
-			while(inputBuffer.getFirst().getMetadata().getStart().before(p_end)){
+			while(!inputBuffer.isEmpty() && inputBuffer.getFirst().getMetadata().getStart().before(p_end)){
 				R elem = (R) inputBuffer.removeFirst();
 				elem.getMetadata().setStart(p_start);
 				elem.getMetadata().setEnd(p_end);
