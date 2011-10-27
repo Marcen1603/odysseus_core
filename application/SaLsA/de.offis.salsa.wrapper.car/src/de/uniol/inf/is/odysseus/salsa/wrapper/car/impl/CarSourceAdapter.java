@@ -6,14 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,12 +108,22 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 			private final SocketChannel channel;
 			private final CarSourceAdapter adapter;
 			private final SourceSpec sourceSpec;
+			private FileChannel logChannel;
+			private CharBuffer charBuffer = CharBuffer.allocate(64 * 1024);
+			private final CharsetEncoder encoder;
 
 			public CarProcessor(final SourceSpec source,
 					final SocketChannel channel, final CarSourceAdapter adapter) {
 				this.channel = channel;
 				this.adapter = adapter;
 				this.sourceSpec = source;
+				Charset charset = Charset.defaultCharset();
+				encoder = charset.newEncoder();
+				try {
+					openLog();
+				} catch (FileNotFoundException e) {
+					CarSourceAdapter.LOG.debug(e.getMessage(), e);
+				}
 			}
 
 			@Override
@@ -139,7 +154,7 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 									calendar.add(Calendar.MILLISECOND,
 											millisecond * 10);
 									long timestamp = calendar.getTimeInMillis();
-									int id = buffer.getShort();
+									int id = (int) buffer.getShort();
 									int x = buffer.getInt();
 									int y = buffer.getInt();
 									float speed = buffer.getFloat();
@@ -148,7 +163,8 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 											timestamp, new Object[] { id,
 													new Coordinate(x, y),
 													speed, angle });
-
+									this.writeLog(id, new Coordinate(x, y),
+											speed, angle, timestamp);
 								} catch (final Exception e) {
 									if (CarSourceAdapter.LOG.isDebugEnabled()) {
 										CarSourceAdapter.LOG.debug(
@@ -157,11 +173,11 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 									}
 									buffer.position(pos);
 								}
-								if (buffer.hasRemaining()) {
-									buffer.compact();
-								} else {
+//								if (buffer.hasRemaining()) {
+//									buffer.compact();
+//								} else {
 									buffer.clear();
-								}
+//								}
 							}
 						}
 					}
@@ -184,6 +200,55 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 					} catch (final IOException e) {
 						CarSourceAdapter.LOG.error(e.getMessage(), e);
 					}
+				}
+			}
+
+			public void writeLog(int id, Coordinate coordinate, float speed,
+					float angle, final long timestamp) {
+				if ((logChannel != null) && (logChannel.isOpen())) {
+					charBuffer.append(timestamp + ",");
+					charBuffer.append(coordinate.x + ",");
+					charBuffer.append(coordinate.y + ",");
+					charBuffer.append(speed + ",");
+					charBuffer.append(angle + "\n");
+					charBuffer.flip();
+					ByteBuffer buffer = null;
+					try {
+						buffer = encoder.encode(charBuffer);
+						logChannel.write(buffer);
+					} catch (CharacterCodingException e) {
+						CarSourceAdapter.LOG.error(e.getMessage(), e);
+					} catch (final IOException e) {
+						CarSourceAdapter.LOG.error(e.getMessage(), e);
+					}
+					if (charBuffer.hasRemaining()) {
+						charBuffer.compact();
+					} else {
+						charBuffer.clear();
+					}
+				}
+			}
+
+			public void openLog() throws FileNotFoundException {
+				final File debug = new File("Car-"
+						+ Calendar.getInstance().getTime() + ".csv");
+				final FileOutputStream out = new FileOutputStream(debug, true);
+				this.logChannel = out.getChannel();
+				charBuffer.append("Timestamp,X,Y,Speed,Angle\n");
+				charBuffer.flip();
+				ByteBuffer buffer = null;
+				try {
+					buffer = encoder.encode(charBuffer);
+					logChannel.write(buffer);
+				} catch (CharacterCodingException e) {
+					CarSourceAdapter.LOG.error(e.getMessage(), e);
+				} catch (final IOException e) {
+					CarSourceAdapter.LOG.error(e.getMessage(), e);
+				}
+				if (charBuffer.hasRemaining()) {
+					charBuffer.compact();
+				} else {
+					charBuffer.clear();
 				}
 			}
 		}

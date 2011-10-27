@@ -16,14 +16,14 @@ public class GridMap extends JPanel {
      * 
      */
     private static final long serialVersionUID = 8285127861043019769L;
-    private static final int SCALE = 10;
-    private final List<Double[][]> grids = new CopyOnWriteArrayList<Double[][]>();
+    private static final int SCALE = 20;
+    private final List<Byte[][]> grids = new CopyOnWriteArrayList<Byte[][]>();
 
-    public void onGrid(Double[][] grid) {
+    public void onGrid(Byte[][] grid) {
         this.grids.add(grid);
-        if (this.grids.size() > 10) {
+  //      if (this.grids.size() > 10) {
             this.repaint();
-        }
+    //    }
     }
 
     @Override
@@ -31,19 +31,19 @@ public class GridMap extends JPanel {
         if (grids.size() > 0) {
             graphics.setColor(Color.BLACK);
             graphics.fillRect(0, 0, 1000, 1000);
-            for (final Double[][] grid : this.grids) {
+            for (final Byte[][] grid : this.grids) {
                 for (int i = 0; i < grid.length; i++) {
                     for (int j = 0; j < grid[i].length; j++) {
-                        if (grid[i][j] < 0.0) {
-                            graphics.setColor(new Color(204, 51, 51));
-                        }
-                        else {
-                            graphics.setColor(new Color(51, (int) (254 * grid[i][j]), 204));
-                        }
+                        // if (grid[i][j] < 0.0) {
+                        // graphics.setColor(new Color(204, 51, 51));
+                        // }
+                        // else {
+                        // graphics.setColor(new Color(51, (int) (254 * grid[i][j]), 204));
+                        // }
 
-                        // graphics.setColor(new Color(grid[i][j] & 0xFF, grid[i][j] & 0xFF,
-                        // grid[i][j] & 0xFF));
-                        graphics.fillRect(SCALE * i, SCALE * j, SCALE, SCALE);
+                        graphics.setColor(new Color(grid[i][j] & 0xFF, grid[i][j] & 0xFF,
+                                grid[i][j] & 0xFF));
+                        graphics.fillRect(i * SCALE, 1000 - j * SCALE, SCALE, SCALE);
 
                     }
                 }

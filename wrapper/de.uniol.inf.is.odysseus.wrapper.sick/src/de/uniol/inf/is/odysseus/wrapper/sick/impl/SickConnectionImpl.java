@@ -264,7 +264,7 @@ public class SickConnectionImpl implements SickConnection {
                                 try {
                                     this.onMessage(
                                             charBuffer.subSequence(1, charBuffer.length() - 1)
-                                                    .toString(), System.currentTimeMillis());
+                                                    .toString(), System.currentTimeMillis()-7200000);
                                 }
                                 catch (final Exception e) {
                                     if (SickConnectionImpl.LOG.isDebugEnabled()) {

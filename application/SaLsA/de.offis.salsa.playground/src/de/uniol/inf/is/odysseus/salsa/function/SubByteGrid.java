@@ -57,7 +57,7 @@ public class SubByteGrid extends AbstractFunction<Byte[][]> {
     @Override
     public Byte[][] getValue() {
         final Byte[][] grid = (Byte[][]) this.getInputValue(0);
-        final Double cellsize = (Double) this.getInputValue(1) / 10;
+        final Double cellsize = (Double) this.getInputValue(1);
         final Coordinate point = (Coordinate) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
 

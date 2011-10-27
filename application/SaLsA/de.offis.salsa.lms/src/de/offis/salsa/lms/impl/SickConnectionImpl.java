@@ -324,7 +324,7 @@ public class SickConnectionImpl implements SickConnection {
 	private static final String RSSI1 = "RSSI1";
 	private static final String RSSI2 = "RSSI2";
 	private FileChannel channel;
-	private CharBuffer charBuffer = CharBuffer.allocate(64*1024);
+	private CharBuffer charBuffer = CharBuffer.allocate(64 * 1024);
 	private SickConnectionHandler handler = null;
 	private final String host;
 	private final CharsetEncoder encoder;
@@ -373,24 +373,32 @@ public class SickConnectionImpl implements SickConnection {
 			charBuffer.append(measurement.getMeasurementFrequency() + ",");
 			charBuffer.append("[");
 			for (int i = 0; i < measurement.getSamples().length; i++) {
-				if (i != 0) {
-					charBuffer.append(";");
+				if ((measurement.getSamples()[i].getDist1Vector()[0] > 0.0)
+						|| (measurement.getSamples()[i].getDist1Vector()[1] > 0.0)) {
+					if (i != 0) {
+						charBuffer.append(";");
+					}
+					charBuffer.append(measurement.getSamples()[i]
+							.getDist1Vector()[0]
+							+ "|"
+							+ measurement.getSamples()[i].getDist1Vector()[1]
+							+ "|" + measurement.getSamples()[i].getRssi1());
 				}
-				charBuffer.append("("
-						+ measurement.getSamples()[i].getDist1Vector()[0] + "|"
-						+ measurement.getSamples()[i].getDist1Vector()[1] + "|"
-						+ measurement.getSamples()[i].getRssi1() + ")");
 			}
 			charBuffer.append("]");
 			charBuffer.append(",[");
 			for (int i = 0; i < measurement.getSamples().length; i++) {
-				if (i != 0) {
-					charBuffer.append(";");
+				if ((measurement.getSamples()[i].getDist2Vector()[0] > 0.0)
+						|| (measurement.getSamples()[i].getDist2Vector()[1] > 0.0)) {
+					if (i != 0) {
+						charBuffer.append(";");
+					}
+					charBuffer.append(measurement.getSamples()[i]
+							.getDist2Vector()[0]
+							+ "|"
+							+ measurement.getSamples()[i].getDist2Vector()[1]
+							+ "|" + measurement.getSamples()[i].getRssi2());
 				}
-				charBuffer.append("("
-						+ measurement.getSamples()[i].getDist2Vector()[0] + "|"
-						+ measurement.getSamples()[i].getDist2Vector()[1] + "|"
-						+ measurement.getSamples()[i].getRssi2() + ")");
 			}
 			charBuffer.append("]\n");
 			charBuffer.flip();
@@ -417,7 +425,8 @@ public class SickConnectionImpl implements SickConnection {
 				+ Calendar.getInstance().getTime() + ".csv");
 		final FileOutputStream out = new FileOutputStream(debug, true);
 		this.channel = out.getChannel();
-		charBuffer.append("Timestamp,DeviceNumber,SerialNumber,DeviceStatus,MessageCounter,ScanCounter,PowerUpDuration,TransmissionDuration,ScanningFrequency,MeasurementFrequency,MeasuredData1,MeasuredData2\n");
+		charBuffer
+				.append("Timestamp,DeviceNumber,SerialNumber,DeviceStatus,MessageCounter,ScanCounter,PowerUpDuration,TransmissionDuration,ScanningFrequency,MeasurementFrequency,MeasuredData1,MeasuredData2\n");
 		charBuffer.flip();
 		ByteBuffer buffer = null;
 		try {

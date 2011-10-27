@@ -23,21 +23,22 @@ public class GridScreen extends JFrame {
         this.map = new GridMap();
 
         this.setContentPane(this.map);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.map.setLayout(new GridLayout(1, 1));
         this.map.setVisible(true);
         this.map.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.map.setAlignmentY(Component.CENTER_ALIGNMENT);
         this.map.setPreferredSize(new Dimension(GridScreen.WIDTH + this.map.getX(),
                GridScreen.HEIGHT + this.map.getX()));
+        this.map.setDoubleBuffered(true);
         this.setTitle("Scan");
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
+        
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    public void onGrid(final Double[][] grid) {
+    public void onGrid(final Byte[][] grid) {
         this.map.onGrid(grid);
     }
 }

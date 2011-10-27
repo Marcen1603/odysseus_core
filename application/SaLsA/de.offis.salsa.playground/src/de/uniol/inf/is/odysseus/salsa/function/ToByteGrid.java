@@ -114,10 +114,18 @@ public class ToByteGrid extends AbstractFunction<Byte[][]> {
                         int minY = (int) Math.min(tmp.y, coordinate.y);
                         int maxY = (int) Math.max(tmp.y, coordinate.y);
 
-                        minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
-                        maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
-                        minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
-                        maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
+                        if ((minX % cellsize) > 0) {
+                            minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
+                        }
+                        if ((maxX % cellsize) > 0) {
+                            maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
+                        }
+                        if ((minY % cellsize) > 0) {
+                            minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
+                        }
+                        if ((maxY % cellsize) > 0) {
+                            maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
+                        }
                         boolean foundStart = false;
                         boolean foundEnd = false;
 

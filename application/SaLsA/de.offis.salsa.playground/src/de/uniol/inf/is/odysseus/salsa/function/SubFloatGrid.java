@@ -57,7 +57,7 @@ public class SubFloatGrid extends AbstractFunction<Float[][]> {
     @Override
     public Float[][] getValue() {
         final Float[][] grid = (Float[][]) this.getInputValue(0);
-        final Double cellsize = (Double) this.getInputValue(1) / 10;
+        final Double cellsize = (Double) this.getInputValue(1);
         final Coordinate point = (Coordinate) this.getInputValue(2);
         final Double width = (Double) this.getInputValue(3);
 
