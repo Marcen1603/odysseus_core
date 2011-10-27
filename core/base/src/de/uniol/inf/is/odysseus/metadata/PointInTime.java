@@ -24,29 +24,32 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 
 	private static final long serialVersionUID = -350811211489411617L;
 
-	long point;
+	final long point;
 
-	boolean isInfinite = false;
+	final boolean isInfinite;
 
 	static volatile PointInTime infinityValue = null;
 	private static final PointInTime zeroTime = new PointInTime(0);
 
 	public PointInTime(long point) {
 		this.point = point;
+		this.isInfinite = false;
 	}
 	
 	public PointInTime(Number point){
 		this.point = point.longValue();
+		this.isInfinite = false;
 	}
 
 	public PointInTime() {
 		isInfinite = true;
+		point = -1;
 	}
 
-	public PointInTime(PointInTime time) {
-		this.point = time.point;
-		this.isInfinite = time.isInfinite;
-	}
+//	public PointInTime(PointInTime time) {
+//		this.point = time.point;
+//		this.isInfinite = time.isInfinite;
+//	}
 
 	public boolean isInfinite() {
 		return isInfinite;
@@ -63,20 +66,20 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		return infinityValue;
 	}
 
-	public void setMainPoint(long point) {
-		this.point = point;
-		this.isInfinite = false;
-	}
-
-	public void setInfinite() {
-		this.isInfinite = true;
-	}
-
-
-	public void setPoint(long mainPoint) {
-		this.point = mainPoint;
-		this.isInfinite = false;
-	}
+//	public void setMainPoint(long point) {
+//		this.point = point;
+//		this.isInfinite = false;
+//	}
+//
+//	public void setInfinite() {
+//		this.isInfinite = true;
+//	}
+//
+//
+//	public void setPoint(long mainPoint) {
+//		this.point = mainPoint;
+//		this.isInfinite = false;
+//	}
 
 	public long getMainPoint() {
 		return this.point;
@@ -203,8 +206,8 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 
 	@Override
 	public PointInTime clone() {
-		return new PointInTime(this);
-
+		// PointInTime is immutable
+		return this; 
 	}
 
 	public PointInTime minus(PointInTime time) {

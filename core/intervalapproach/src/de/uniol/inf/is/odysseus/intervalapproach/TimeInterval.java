@@ -58,13 +58,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	
 	public TimeInterval(TimeInterval original) {
 		PointInTime start = original.getStart().clone();
-		if (original.getStart().isInfinite()) {
-			start.setInfinite();
-		}
 		PointInTime end = original.getEnd().clone();
-		if (original.getEnd().isInfinite()) {
-			end.setInfinite();
-		}
 		init(start, end);
 	}
 
@@ -323,41 +317,37 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		
 		if(minuend.getStart().equals(subtrahend.getStart())) {
 			if(subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(
-						new PointInTime(subtrahend.getEnd()),
-						new PointInTime(minuend.getEnd())						
-				));					
+				difference.add(new TimeInterval(subtrahend.getEnd(),
+						minuend.getEnd())						
+				);					
 				return difference;
 			} else {
-				difference.add(new TimeInterval(
-						new PointInTime(minuend.getEnd()),
-						new PointInTime(subtrahend.getEnd())
-				));		
+				difference.add(new TimeInterval(minuend.getEnd(),
+						subtrahend.getEnd())
+				);		
 				return difference;
 			}
 		}
 		
 		if(minuend.getStart().before(subtrahend.getStart())) {
 			if(subtrahend.getEnd().before(minuend.getEnd())) {
+				difference.add(new TimeInterval(minuend.getStart(),
+						subtrahend.getStart())
+				);	
 				difference.add(new TimeInterval(
-						new PointInTime(minuend.getStart()),
-						new PointInTime(subtrahend.getStart())
-				));	
-				difference.add(new TimeInterval(
-						new PointInTime(subtrahend.getEnd()),
-						new PointInTime(minuend.getEnd())
-				));	
+						subtrahend.getEnd(),
+						minuend.getEnd())
+				);	
 				return difference;
 			} if(minuend.getEnd().before(subtrahend.getEnd())) {
-				difference.add(new TimeInterval(
-						new PointInTime(minuend.getStart()),
-						new PointInTime(subtrahend.getStart())
+				difference.add(new TimeInterval(minuend.getStart(),
+						subtrahend.getStart()
 				));			
 				return difference;
 			} else {
 				difference.add(new TimeInterval(
-						new PointInTime(minuend.getStart()),
-						new PointInTime(subtrahend.getStart())
+						minuend.getStart(),
+						subtrahend.getStart()
 				));		
 				return difference;
 			}
@@ -366,24 +356,24 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		if(subtrahend.getStart().before(minuend.getStart())) {
 			if(minuend.getEnd().before(subtrahend.getEnd())) {
 				difference.add(new TimeInterval(
-						new PointInTime(subtrahend.getStart()),
-						new PointInTime(minuend.getStart())
+						subtrahend.getStart(),
+						minuend.getStart()
 				));		
 				difference.add(new TimeInterval(
-						new PointInTime(minuend.getEnd()),
-						new PointInTime(subtrahend.getEnd())
+						minuend.getEnd(),
+						subtrahend.getEnd()
 				));		
 				return difference;
 			} if(subtrahend.getEnd().before(minuend.getEnd())) {
 				difference.add(new TimeInterval(
-						new PointInTime(subtrahend.getStart()),
-						new PointInTime(minuend.getStart())
+						subtrahend.getStart(),
+						minuend.getStart()
 				));					
 				return difference;
 			} else {
 				difference.add(new TimeInterval(
-						new PointInTime(subtrahend.getStart()),
-						new PointInTime(minuend.getStart())
+						subtrahend.getStart(),
+						minuend.getStart()
 				));			
 				return difference;
 			}			
