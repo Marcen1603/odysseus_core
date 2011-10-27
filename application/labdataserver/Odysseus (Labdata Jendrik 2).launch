@@ -7,23 +7,22 @@
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Odysseus (Labdata Jendrik 2)"/>
+<booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
 <booleanAttribute key="includeOptional" value="false"/>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
 <mapEntry key="labdata_cfg" value="labdata_cfg/labdataserver2.ini"/>
 </mapAttribute>
-<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
-</listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console -debug"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Diss\OdysseusOSGi\or\resources"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <booleanAttribute key="show_selected_only" value="false"/>
-<stringAttribute key="target_bundles" value="org.eclipse.equinox.common@2:true,org.eclipse.osgi.services@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.osgi@-1:true"/>
+<stringAttribute key="target_bundles" value="org.eclipse.equinox.common@2:true,org.eclipse.equinox.preferences@default:default,org.eclipse.osgi.services@default:default,org.eclipse.osgi@-1:true"/>
 <booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="log4jproperties@default:false,com.springsource.org.apache.log4j@default:default,com.springsource.slf4j.log4j@default:false,JepModified@default:default,de.uniol.inf.is.odysseus.base@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,com.Ostermillerutils.csvparser@default:default,com.maplesoft@default:default,de.uniol.inf.is.odysseus.intervalapproach@default:default,de.uniol.inf.is.odysseus.labdataserver@default:default,de.uniol.inf.is.odysseus.logicaloperator.relational@default:default,de.uniol.inf.is.odysseus.parser.cql@default:default,Commons.Math@default:default,com.springsource.slf4j.api@default:default"/>
+<stringAttribute key="workspace_bundles" value="Commons.Math@default:default,com.Ostermillerutils.csvparser@default:default,com.springsource.org.apache.log4j@default:default,com.springsource.slf4j.api@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.intervalapproach@default:default,de.uniol.inf.is.odysseus.labdataserver@default:default,de.uniol.inf.is.odysseus.logicaloperator.relational@default:default,de.uniol.inf.is.odysseus.parser.cql@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,log4jproperties@default:false"/>
 </launchConfiguration>
