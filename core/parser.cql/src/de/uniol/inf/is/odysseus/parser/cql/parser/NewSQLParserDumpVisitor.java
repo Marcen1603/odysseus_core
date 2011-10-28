@@ -40,13 +40,8 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(SimpleNode node, Object data) throws QueryParseException {
-		// return pvisit(node);
 		return null;
-	}
-
-	public Object visit(ASTSQLStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
+	}	
 
 	@Override
 	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
@@ -430,32 +425,7 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTSilab node, Object data) throws QueryParseException {
 		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDBExecuteStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDatabase node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTSQL node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDatabaseOptions node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
+	}	
 
 	@Override
 	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {		
@@ -580,45 +550,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTJdbcIdentifier node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
+	}	
 
 	@Override
 	public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws QueryParseException {	
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTInsertIntoStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTSaveMetaData node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDatabaseTableOptions node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDatabaseCreateOption node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTDatabaseTruncateOption node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 

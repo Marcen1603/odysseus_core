@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTElementPriorities;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
@@ -363,22 +362,6 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node
 				.isNegatived() ? ExistenceAO.Type.NOT_EXISTS
 				: ExistenceAO.Type.EXISTS);
-	}
-	
-	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
-		try {
-			Class<?> dbClass = Class
-					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
-			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
-					.newInstance();
-			return dbVisitor.visit(node, data);
-
-		} catch (Exception e) {
-			throw new QueryParseException("missing database plugin for cql parser");
-		}
-
-
 	}
 	
 	@Override	

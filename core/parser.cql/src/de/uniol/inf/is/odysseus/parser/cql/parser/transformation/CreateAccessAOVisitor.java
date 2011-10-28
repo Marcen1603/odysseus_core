@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDBSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
@@ -272,32 +271,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			attributes.add(newAttribute);
 		}
 		return attributes;
-	}
-
-	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
-		Class<?> dbClass;
-		try {
-			dbClass = Class
-					.forName("de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateDatabaseAOVisitor");
-			IDatabaseAOVisitor dbVisitor = (IDatabaseAOVisitor) dbClass
-					.newInstance();
-			
-			Method m = dbClass.getDeclaredMethod("setUser", User.class);
-			m.invoke(dbVisitor, caller);
-			m = dbClass.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-			m.invoke(dbVisitor, dd);
-
-			
-			AbstractLogicalOperator dbOp = (AbstractLogicalOperator) dbVisitor
-					.visit(node, data);
-			this.attributeResolver.addSource(dbVisitor.getAlias(), dbOp);
-
-		} catch (Exception e) {
-			throw new QueryParseException("missing database plugin for cql parser");
-		}
-		return null;
-	}
+	}	
 
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {

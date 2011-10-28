@@ -463,39 +463,8 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTSilab node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public Object visit(ASTDBExecuteStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDatabase node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTSQL node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDBSelectStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDatabaseOptions node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	}		
 
 	@Override
 	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {
@@ -534,85 +503,72 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateSensor node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTORSchemaDefinition node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTORSchemaDefinition node, Object data) throws QueryParseException {		
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTRecordDefinition node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTRecordEntryDefinition node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTListDefinition node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTAttrDefinition node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateUserStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTAlterUserStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDropStreamStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTDropStreamStatement node, Object data) throws QueryParseException {		
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropViewStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateTenantStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTAddUserToTenantStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -629,93 +585,50 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		return null;
-	}
-
-	@Override
-	public Object visit(ASTJdbcIdentifier node, Object data) throws QueryParseException {
-		return null;
-	}
+	}	
 
 	@Override
 	public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws QueryParseException {
 		return null;
 	}
-
-	@Override
-	public Object visit(ASTInsertIntoStatement node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTSaveMetaData node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDatabaseTableOptions node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDatabaseCreateOption node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTDatabaseTruncateOption node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
-		return null;
-	}
-
+	
 	@Override
 	public Object visit(ASTDropUserStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateRoleStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropRoleStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTGrantStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTRevokeStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTRevokeStatement node, Object data) throws QueryParseException {	
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTIdentifierList node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTGrantRoleStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTRevokeRoleStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -733,55 +646,46 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	 */
 	@Override
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSlaMetricDef node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTSlaMetricDef node, Object data) throws QueryParseException {		
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTSlaScopeDef node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTSlaWindowDef node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTSlaServiceLevelDef node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSlaPenaltyDef node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTSlaPenaltyDef node, Object data) throws QueryParseException {		
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateSinkStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -792,13 +696,11 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
