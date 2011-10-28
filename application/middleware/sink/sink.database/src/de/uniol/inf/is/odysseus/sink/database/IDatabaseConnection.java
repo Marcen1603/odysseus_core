@@ -15,14 +15,21 @@
 
 package de.uniol.inf.is.odysseus.sink.database;
 
-import java.sql.SQLException;
+import java.sql.Connection;
+
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 20.10.2011
+ * Created at: 28.10.2011
  */
-public interface IDatabaseConnectionFactory {
-	
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) throws SQLException;	
+public interface IDatabaseConnection {
+
+	public void createTable(String tablename, SDFAttributeList schema);
+	public void truncateTable(String tablename);
+	public void dropTable(String tablename);
+	public boolean tableExists(String tablename);
+	public boolean equalSchemas(String tablename, SDFAttributeList schema);	
+	public Connection getConnection();	
 }

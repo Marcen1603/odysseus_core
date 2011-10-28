@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.sink.database;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.sink.database.drivers.MysqlConnectionFactory;
+import de.uniol.inf.is.odysseus.sink.database.drivers.MySQLConnectionFactory;
 
 public class Activator implements BundleActivator {
 
@@ -19,7 +19,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		DatabaseConnectionDictionary.getInstance().addFactory("mysql", new MysqlConnectionFactory());
+		DatabaseConnectionDictionary.getInstance().addFactory("mysql", new MySQLConnectionFactory());
 	}
 
 	/*

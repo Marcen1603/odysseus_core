@@ -51,6 +51,8 @@ public class DatabaseConnectionDictionary {
 
 	private HashMap<String, IDatabaseConnectionFactory> factories = new HashMap<String, IDatabaseConnectionFactory>();
 	private Map<SDFDatatype, DatabaseType> datatypeMappings = new HashMap<SDFDatatype, DatabaseType>();
+	private Map<String, IDatabaseConnection> connections = new HashMap<String, IDatabaseConnection>();
+	private List<IDatabaseConnectionDictionaryListener> listeners = new ArrayList<IDatabaseConnectionDictionaryListener>();
 	
 	private void initMappings() {
 		this.datatypeMappings.put(SDFDatatype.INTEGER, DatabaseType.Integer);
@@ -79,7 +81,7 @@ public class DatabaseConnectionDictionary {
 		}
 		return dts;
 	}
-	
+			
 	public Map<SDFDatatype, DatabaseType> getDatatypeMappings() {
 		return datatypeMappings;
 	}
@@ -92,9 +94,44 @@ public class DatabaseConnectionDictionary {
 	public void addFactory(String dbms, IDatabaseConnectionFactory factory) {
 		dbms = dbms.toUpperCase();
 		this.factories.put(dbms, factory);
+		this.fireChangeEvent();
 	}
 	
 	public Set<String> getConnectionFactoryNames(){
 		return this.factories.keySet();
+	}
+
+	public Map<String, IDatabaseConnection> getConnections() {
+		return connections;
+	}
+
+	public void addConnection(String name, IDatabaseConnection connection){		
+		name = name.toUpperCase();
+		this.connections.put(name, connection);
+		this.fireChangeEvent();
+	}
+	
+	public boolean isConnectionExisting(String name){
+		name = name.toUpperCase();
+		return this.connections.containsKey(name);
+	}
+	
+	public IDatabaseConnection getDatabaseConnection(String name){
+		name = name.toUpperCase();
+		return this.connections.get(name);
+	}
+	
+	public void addListener(IDatabaseConnectionDictionaryListener listener){
+		this.listeners .add(listener);
+	}
+	
+	public void removeListener(IDatabaseConnectionDictionaryListener listener){
+		this.listeners.remove(listener);
+	}
+	
+	private void fireChangeEvent(){
+		for(IDatabaseConnectionDictionaryListener listener : this.listeners){
+			listener.databaseConnectionDictionaryChanged();
+		}
 	}
 }

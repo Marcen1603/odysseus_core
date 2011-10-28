@@ -40,7 +40,7 @@ public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<Databa
 		ISink<?> sinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
 
 		if (sinkPO == null) {
-			sinkPO = new DatabaseSinkPO(operator.getSinkName(), operator.getDatabasetype(), operator.getHost(), operator.getPort(), operator.getDatabasename(), operator.getTablename(), operator.getUser(), operator.getPassword(), operator.isDrop(), operator.isTruncate());			
+			sinkPO = new DatabaseSinkPO(operator.getConnectionName(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
 			sinkPO.setOutputSchema(operator.getOutputSchema());
 			WrapperPlanFactory.putSink(operator.getSinkName(), sinkPO);
 		}

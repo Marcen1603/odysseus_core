@@ -703,4 +703,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {	
+		return null;
+	}
 }

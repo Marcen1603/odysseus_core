@@ -26,43 +26,30 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class DatabaseSinkAO extends AbstractLogicalOperator{
 	
 	private static final long serialVersionUID = -6513851256783092870L;
-	private String name;
-	private String databasetype;
-	private String host;
-	private int port;
+	
 	private String tablename;
-	private String user;
-	private String password;
-	private String databasename;
+	private String connectionName;
+	private String sinkName;
 	private boolean truncate;
 	private boolean drop;
 	
+	
 
 	
-	public DatabaseSinkAO(String name, String databasetype, String host, int port, String databasename, String tablename, String user, String pass, boolean drop, boolean truncate) {
+	public DatabaseSinkAO(String sinkName, String connectionName, String tablename, boolean drop, boolean truncate) {
 		super();
-		this.name = name;
-		this.databasetype = databasetype;		
-		this.host = host;
-		this.port = port;
-		this.databasename = databasename;				
-		this.tablename = tablename;
-		this.user = user;
-		this.password = pass;
+		this.sinkName = sinkName;
+		this.connectionName = connectionName;
+		this.tablename = tablename;		
 		this.drop = drop;
 		this.truncate = truncate;
 	}
 
 	public DatabaseSinkAO(DatabaseSinkAO old) {
-		super(old);
-		this.name = old.name;
-		this.databasetype = old.databasetype;
-		this.host = old.host;
-		this.port = old.port;
+		super(old);		
+		this.sinkName = old.getSinkName();
 		this.tablename = old.tablename;
-		this.databasename = old.databasename;		
-		this.user = old.user;
-		this.password = old.password;
+		this.connectionName = old.connectionName;
 		this.drop = old.drop;
 		this.truncate = old.truncate;
 	}
@@ -77,70 +64,15 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 		return new DatabaseSinkAO(this);
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDatabasetype() {
-		return databasetype;
-	}
-
-	public void setDatabasetype(String databasetype) {
-		this.databasetype = databasetype;
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
+	
 	public String getTablename() {
-		return tablename;
+		return this.tablename;
 	}
 
-	public void setTablename(String tablename) {
-		this.tablename = tablename;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public String getConnectionName(){
+		return this.connectionName;
 	}
 	
-	public String getSinkName(){
-		return this.name;
-	}
-	
-	public String getDatabasename(){
-		return this.databasename;
-	}
-
 	public boolean isDrop() {
 		return this.drop;
 	}
@@ -148,5 +80,9 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 	public boolean isTruncate(){
 		return this.truncate;
 	}
+
+	public String getSinkName() {
+		return sinkName;
+	}	
 
 }

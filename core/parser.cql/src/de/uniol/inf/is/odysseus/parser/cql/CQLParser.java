@@ -1165,14 +1165,19 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
-		String sinkName = (String) data;
-		AbstractLogicalOperator sink = (AbstractLogicalOperator) invokeDatabaseVisitor(ASTDatabaseSink.class, node, data);
-		ILogicalOperator transformMeta = new TimestampToPayloadAO();
-		sink.subscribeToSource(transformMeta, 0, 0, null);
-		dataDictionary.addSink(sinkName, sink);
-		return null;
+		return invokeDatabaseVisitor(ASTDatabaseSink.class, node, data);
+	}	
+
+	@Override
+	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {		
+		return invokeDatabaseVisitor(ASTDatabaseSinkOptions.class, node, data);				
 	}
 
+	@Override
+	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {
+		return invokeDatabaseVisitor(ASTCreateDatabaseConnection.class, node, data);
+	}
+	
 	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.sink.database.cql.DatabaseVisitor");
@@ -1198,11 +1203,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		} catch (InstantiationException e) {
 			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
 		}
-	}
-
-	@Override
-	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {
-		return null;
 	}
 
 }
