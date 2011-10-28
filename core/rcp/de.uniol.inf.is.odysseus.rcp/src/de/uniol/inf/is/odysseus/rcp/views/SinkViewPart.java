@@ -113,4 +113,9 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 
 	}
 
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		refresh();		
+	}
+
 }

@@ -52,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
@@ -265,5 +266,10 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 				setDirty(true);
 		}
 		
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		fullBuild();		
 	}
 }

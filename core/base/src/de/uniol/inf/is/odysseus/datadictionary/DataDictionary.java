@@ -137,7 +137,7 @@ public class DataDictionary implements IDataDictionary {
 			try {
 				this.entityMap.put(uri, entity);
 				this.entityFromUser.put(uri, user);
-
+				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -236,6 +236,7 @@ public class DataDictionary implements IDataDictionary {
 
 				this.viewDefinitions.put(viewname, topOperator);
 				viewOrStreamFromUser.put(viewname, caller);
+				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -269,12 +270,14 @@ public class DataDictionary implements IDataDictionary {
 			op = viewDefinitions.remove(viewname);
 			if (op != null) {
 				viewOrStreamFromUser.remove(viewname);
-			}
+			}			
 		} catch (StoreException e) {
 			throw new RuntimeException(e);
 		}
-		if (op != null)
+		if (op != null){
 			fireRemoveEvent(viewname, op);
+			fireDataDictionaryChangedEvent();
+		}
 		return op;
 	}
 
@@ -311,6 +314,7 @@ public class DataDictionary implements IDataDictionary {
 				throw new RuntimeException(e);
 			}
 			fireAddEvent(streamname, plan);
+			fireDataDictionaryChangedEvent();
 		} else {
 			throw new HasNoPermissionException("User " + caller.getUsername()
 					+ " has no permission to set a new view.");
@@ -428,6 +432,7 @@ public class DataDictionary implements IDataDictionary {
 	public void addDatatype(String name, SDFDatatype dt){		
 		if(!this.datatypes.containsKey(name.toLowerCase())){
 			this.datatypes.put(name.toLowerCase(), dt);
+			fireDataDictionaryChangedEvent();
 		}
 		else{
 			throw new IllegalArgumentException("Type '" + name + "' already exists.");
@@ -457,6 +462,7 @@ public class DataDictionary implements IDataDictionary {
 	public void addSink(String sinkname, ILogicalOperator sink){
 		if (!this.sinkDefinitions.containsKey(sinkname)){
 			this.sinkDefinitions.put(sinkname, sink);
+			fireDataDictionaryChangedEvent();
 		}else{
 			throw new IllegalArgumentException("Sink name already used");
 		}
@@ -642,6 +648,11 @@ public class DataDictionary implements IDataDictionary {
 		return this.sinkDefinitions.entrySet();
 	}
 	
+	private void fireDataDictionaryChangedEvent(){
+		for(IDataDictionaryListener listener : listeners){
+			listener.dataDictionaryChanged(this);
+		}
+	}
 	
 
 }

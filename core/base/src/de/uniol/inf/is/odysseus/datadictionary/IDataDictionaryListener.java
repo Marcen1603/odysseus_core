@@ -21,4 +21,6 @@ public interface IDataDictionaryListener {
 	public void addedViewDefinition( DataDictionary sender, String name, ILogicalOperator op );
 	public void removedViewDefinition( DataDictionary sender, String name, ILogicalOperator op );
 	
+	public void dataDictionaryChanged(IDataDictionary sender);
+	
 }

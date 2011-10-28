@@ -116,5 +116,10 @@ public class SourcesViewPart extends ViewPart implements
 		refresh();		
 	}
 
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		refresh();
+	}
+
 
 }

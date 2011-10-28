@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
@@ -258,5 +259,10 @@ public class ParameterView extends ViewPart implements IViewPart, ISelectionList
 	@Override
 	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		updateParameterEditors(true);
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		updateParameterEditors(true);		
 	}
 }

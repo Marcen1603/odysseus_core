@@ -26,4 +26,8 @@ public class DataDictionaryAdapter implements IDataDictionaryListener {
 	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 	}
 
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {			
+	}
+
 }
