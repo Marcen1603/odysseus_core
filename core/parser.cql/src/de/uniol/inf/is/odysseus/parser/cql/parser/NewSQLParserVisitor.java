@@ -5,12 +5,6 @@ public interface NewSQLParserVisitor
 {
   public Object visit(SimpleNode node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDBExecuteStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDatabase node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDBSelectStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDatabaseOptions node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTAS node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTSQL node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTPriorizedStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTStreamToStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTComplexSelectStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -21,15 +15,9 @@ public interface NewSQLParserVisitor
   public Object visit(ASTCreateSinkStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDatabaseSink node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDatabaseSinkOptions node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+  public Object visit(ASTCreateDatabaseConnection node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCreateFromDatabase node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTJdbcIdentifier node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTInsertIntoStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDatabaseTableOptions node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDatabaseCreateOption node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTDatabaseTruncateOption node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTIfNotExists node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTSaveMetaData node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCreateViewStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCreateSensor node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTORSchemaDefinition node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -63,6 +51,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTHavingClause node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSelectAll node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTRenamedExpression node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+  public Object visit(ASTAS node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTMatrixExpression node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTPredicate node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSimplePredicate node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -133,4 +122,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=7dd62265b12b4b498d1627e97d0647e0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=75f60c97ea1e2e5ba610e3ae39f36c0d (do not edit this line) */
