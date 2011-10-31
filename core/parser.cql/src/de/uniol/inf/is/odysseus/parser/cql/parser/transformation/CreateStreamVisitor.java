@@ -14,12 +14,14 @@
  */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
@@ -191,7 +193,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		// we allow user defined types, so check
 		// whether the defined type exists or not
-		
+
 		if (this.dd.existsDatatype(astAttrType.getType())) {
 
 			attribute.setDatatype(this.dd.getDatatype(astAttrType.getType()));
@@ -202,8 +204,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				attribute.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
 
 			}
-		}else{
-			throw new QueryParseException("illigal datatype:"+astAttrType.getType());
+		} else {
+			throw new QueryParseException("illigal datatype:" + astAttrType.getType());
 		}
 		this.attributes.add(attribute);
 		return data;
@@ -248,10 +250,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTChannel node, Object data) throws QueryParseException {
 		String host = ((ASTHost) node.jjtGetChild(0)).getValue();
 		boolean autoReconnect = hasAutoReconnect(node);
-		int port = -1;		
+		int port = -1;
 		if (node.jjtGetNumChildren() >= 2) {
-			if (node.jjtGetChild(1) instanceof ASTInteger) {				
-				port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();			
+			if (node.jjtGetChild(1) instanceof ASTInteger) {
+				port = ((ASTInteger) node.jjtGetChild(1)).getValue().intValue();
 			}
 
 		} else {
@@ -270,8 +272,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	}
 
 	private boolean hasAutoReconnect(ASTChannel node) {
-		for(int i=0;i<node.jjtGetNumChildren();i++){
-			if(node.jjtGetChild(i) instanceof ASTAutoReconnect){
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			if (node.jjtGetChild(i) instanceof ASTAutoReconnect) {
 				return true;
 			}
 		}
@@ -303,23 +305,36 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
+		OutputSchemaSettable ao = (OutputSchemaSettable) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, data);
+		ao.setOutputSchema(this.attributes);
+		return addTimestampAO((ILogicalOperator) ao);
+	}
+
+	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
 		try {
-			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.storing.cql.DatabaseVisitor");
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(v, caller);
 			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dd);
-			m = visitor.getDeclaredMethod("setName", String.class);
-			m.invoke(v, name);
-			m = visitor.getDeclaredMethod("visit", ASTCreateFromDatabase.class, Object.class);
-			OutputSchemaSettable ao = (OutputSchemaSettable) m.invoke(v, node, data);
-			ao.setOutputSchema(this.attributes);
-			return addTimestampAO((ILogicalOperator) ao);
+			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
+			return (AbstractLogicalOperator) m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException("Storing plugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {
-			throw new QueryParseException("Error while parsing the create from database clause", e.getCause());
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (NoSuchMethodException e) {
+			throw new QueryParseException("Method in database plugin is missing.", e.getCause());
+		} catch (SecurityException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (IllegalAccessException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (IllegalArgumentException e) {
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
+		} catch (InvocationTargetException e) {
+			throw new QueryParseException(e.getTargetException().getLocalizedMessage());
+		} catch (InstantiationException e) {
+			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
 		}
 	}
+
 }

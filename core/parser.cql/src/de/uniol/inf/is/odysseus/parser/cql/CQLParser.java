@@ -1120,7 +1120,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		// if database -> be sure, that the schemas are equal
-		if (sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO")) {
+		if (sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO")) {
 			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
 		}
 
@@ -1180,7 +1180,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	
 	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
 		try {
-			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.sink.database.cql.DatabaseVisitor");
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", User.class);
 			m.invoke(v, caller);

@@ -321,7 +321,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateFromDatabase */
   try {
-/*@egen*/  < K_DATABASE > < K_USE > < K_TABLE > Identifier() [ DatabaseTimeSensitiv() ]/*@bgen(jjtree)*/
+/*@egen*/  < K_DATABASE > Identifier() < K_TABLE > Identifier() [ DatabaseTimeSensitiv() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
