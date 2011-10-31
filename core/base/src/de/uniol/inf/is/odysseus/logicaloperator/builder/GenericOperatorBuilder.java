@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
@@ -107,11 +108,14 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 			if (isValid) {
 				this.operator = op;
 			} else {
+				this.addErrors(((AbstractLogicalOperator)op).getErrors());
 				op.unsubscribeFromAllSources();
 				this.operator = null;
 			}
 			return isValid;
 		} catch (Exception e) {
+			// TODO: REMOVE
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}

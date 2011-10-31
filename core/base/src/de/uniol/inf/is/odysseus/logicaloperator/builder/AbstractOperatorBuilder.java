@@ -76,6 +76,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	protected void addError(Exception e) {
 		this.errors.add(e);
 	}
+	
+	protected void addErrors(List<Exception> errors) {
+		this.errors.addAll(errors);
+	}
 
 	@Override
 	public List<Exception> getErrors() {
@@ -165,8 +169,15 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	@Override
 	final public ILogicalOperator createOperator() {
+		String newline = System.getProperty("line.separator");
+
 		if (!validate()) {
-			throw new RuntimeException("validation error");
+			StringBuffer messages = new StringBuffer();
+			for (Exception e2:getErrors()){
+				messages.append(e2.getMessage()).append(newline);
+			}
+			System.err.println("Validation Error "+messages.toString());
+			throw new RuntimeException("Validation Error "+messages.toString());
 		}
 
 		ILogicalOperator op = createOperatorInternal();
