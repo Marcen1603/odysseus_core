@@ -136,6 +136,10 @@ public class WindowAO extends UnaryLogicalOp {
 						"can't use partition in time window"));
 				return false;
 			}
+			if (this.windowSlide > 0 && this.windowAdvance > 0){
+				addError(new IllegalParameterException("can't use slide and advance at the same time"));
+				return false;
+			}
 			return true;
 		case TUPLE:
 			if (this.windowSlide != -1) {
