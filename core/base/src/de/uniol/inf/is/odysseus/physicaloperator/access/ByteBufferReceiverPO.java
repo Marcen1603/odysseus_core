@@ -35,7 +35,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		return _logger;
 	}
 
-	private IObjectHandler<W> handler;
+	private IObjectHandler<W> objectHandler;
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
@@ -49,7 +49,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 
 	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
 		super();
-		this.handler = handler;
+		this.objectHandler = handler;
 		router = Router.getInstance();
 		router.addConnectionListener(this);
 		this.host = host;
@@ -62,7 +62,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 	@SuppressWarnings("unchecked")
 	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
-		handler = (IObjectHandler<W>) byteBufferReceiverPO.handler.clone();
+		objectHandler = (IObjectHandler<W>) byteBufferReceiverPO.objectHandler.clone();
 		size = byteBufferReceiverPO.size;
 		currentSize = byteBufferReceiverPO.currentSize;
 		router = byteBufferReceiverPO.router;
@@ -87,7 +87,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 			try {
 				sizeBuffer.clear();
 				size = -1;
-				handler.clear();
+				objectHandler.clear();
 				router.connectToServer(this, host, port);
 				opened = true;
 			} catch (Exception e) {
@@ -105,7 +105,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 				router.disconnectFromServer(this);
 				sizeBuffer.clear();
 				size = -1;
-				handler.clear();
+				objectHandler.clear();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -118,18 +118,14 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 	}
 
 	@Override
-	public void process(ByteBuffer buffer) {
+	public synchronized void process(ByteBuffer buffer) {
 		if (opened) {
 			try {
 				while (buffer.remaining() > 0) {
-
-					// logger.debug("size "+size+" remaining "+buffer.remaining()+" currentSize "+currentSize);
-
-					// ACHTUNG! ES KANN SEIN, DASS "SIZE" NOCH NICHT VOLLSTÄNDIG
-					// ÜBERTRAGEN IST
-					// Neues Object?
-					// TODO: Reihenfolge mit der die Size kodiert wird
-					// festlegen!!!
+					
+					// size ist dann ungleich -1 wenn die vollständige 
+					// Größeninformation übertragen wird
+					// Ansonsten schon mal soweit einlesen
 					if (size == -1) {
 						while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
 							sizeBuffer.put(buffer.get());
@@ -138,7 +134,6 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 						if (sizeBuffer.position() == 4) {
 							sizeBuffer.flip();
 							size = sizeBuffer.getInt();
-							// logger.debug("NEW OBJEKT STARTED WITH SIZE "+size);
 						}
 					}
 					// Es kann auch direkt nach der size noch was im Puffer
@@ -148,14 +143,15 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 						// Ist das was dazukommt kleiner als die finale Größe?
 						if (currentSize + buffer.remaining() < size) {
 							currentSize = currentSize + buffer.remaining();
-							handler.put(buffer);
+							objectHandler.put(buffer);
 						} else {
 							// Splitten (wir sind mitten in einem Objekt
 							// 1. alles bis zur Grenze dem Handler übergeben
 							// logger.debug(" "+(size-currentSize));
-							handler.put(buffer, size - currentSize);
+							objectHandler.put(buffer, size - currentSize);
 							// 2. das fertige Objekt weiterleiten
 							transfer();
+							// Dann in der While-Schleife weiterverarbeiten
 						}
 					}
 				}
@@ -198,7 +194,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 
 		W toTrans = null;
 		try {
-			toTrans = handler.create();
+			toTrans = objectHandler.create();
 		} catch (Exception e) {
 			getLogger().error(e.getMessage() + ". Terminating Processing ...");
 			e.printStackTrace();
@@ -236,7 +232,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		}
 		@SuppressWarnings("rawtypes")
 		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
-		if (this.handler.equals(bbrpo.handler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
+		if (this.objectHandler.equals(bbrpo.objectHandler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
 			return true;
 		}
 		return false;
