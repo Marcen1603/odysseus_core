@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SqrtValue;
 import de.uniol.inf.is.odysseus.mep.functions.SquareValue;
+import de.uniol.inf.is.odysseus.mep.functions.ToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.ToNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UnaryMinusOperator;
@@ -117,6 +118,7 @@ public class MEP {
 		registerFunction(new SinusFunction());
 		registerFunction(new CosinusFunction());
 		registerFunction(new ToNumberFunction());
+		registerFunction(new ToLongFunction());
 		registerFunction(new ToStringFunction());
 		registerFunction(new RandomFunction());
 
