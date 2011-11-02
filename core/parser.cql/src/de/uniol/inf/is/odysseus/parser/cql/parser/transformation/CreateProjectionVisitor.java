@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFunctionExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTNumber;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionMatrix;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
@@ -44,6 +45,7 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -63,19 +65,17 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	double[][] projectionMatrix = null;
 
 	double[] projectionVector = null;
-	
-	//private User user;
+
+	// private User user;
 	private IDataDictionary dd;
 
-	public CreateProjectionVisitor(User user, IDataDictionary dd){
-//		this.user = user;
+	public CreateProjectionVisitor(User user, IDataDictionary dd) {
+		// this.user = user;
 		this.dd = dd;
 	}
-	
+
 	// TODO kompletten visitor draus machen, ohne diese methode
-	public AbstractLogicalOperator createProjection(
-			ASTSelectStatement statement, ILogicalOperator top,
-			AttributeResolver attributeResolver) throws QueryParseException {
+	public AbstractLogicalOperator createProjection(ASTSelectStatement statement, ILogicalOperator top, AttributeResolver attributeResolver) throws QueryParseException {
 		this.top = top;
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);
 		this.attributeResolver = attributeResolver;
@@ -104,23 +104,19 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 					// TODO: Behandlung, wenn kein Visitor gefunden wird
 					try {
-						Class
-								.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
+						Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						throw new QueryParseException(
-								"Invalid use of multivariate projection -- Missing plug-in!!!.");
+						throw new QueryParseException("Invalid use of multivariate projection -- Missing plug-in!!!.");
 					}
-					IVisitor v = VisitorFactory.getInstance().getVisitor(
-							"ProbabilityPredicate");
+					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
 					top = (ILogicalOperator) v.visit(null, null, this);
 				}
 				((OutputSchemaSettable) top).setOutputSchema(outputSchema);
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(top, inputSchema);
-				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(
-						outputSchema.size());
+				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(outputSchema.size());
 
 				Iterator<SDFExpression> exprIt = this.expressions.iterator();
 				for (SDFAttribute attr : outputSchema) {
@@ -137,7 +133,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				map.setExpressions(outputExpressions);
 				top = map;
 			}
-			
+
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(top, top.getOutputSchema());
@@ -170,8 +166,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTExpression expression, Object data) throws QueryParseException {
-		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression
-				.jjtGetParent();
+		ASTRenamedExpression aliasExpression = (ASTRenamedExpression) expression.jjtGetParent();
 		Node node = getNode(expression);
 
 		// node is null, if the expression is something more complex
@@ -179,17 +174,22 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		// Identifier and AggregateExpressions can be used in a simple
 		// projection that just returns a subset of its inputs. Everything
 		// else needs to be calculated in a Map operator.
-		if (node == null || node instanceof ASTFunctionExpression) {
+		if (node == null || node instanceof ASTFunctionExpression || node instanceof ASTNumber) {
 			if (!aliasExpression.hasAlias()) {
-				throw new IllegalArgumentException(
-						"Missing alias identifier in SELECT-clause for expression "
-								+ expression.toString());
+				throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + expression.toString());
 			}
-			expressions.add(new SDFExpression(null, expression.toString(),
-					this.attributeResolver));
-			SDFAttribute attribute = new SDFAttribute(null, aliasExpression
-					.getAlias());
-			attribute.setDatatype(this.dd.getDatatype("Double"));
+			expressions.add(new SDFExpression(null, expression.toString(), this.attributeResolver));
+			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias());
+			if (node instanceof ASTNumber) {
+				ASTNumber number = (ASTNumber) node;
+				if (number.getValue().contains(".")) {
+					attribute.setDatatype(SDFDatatype.DOUBLE);
+				} else {
+					attribute.setDatatype(SDFDatatype.LONG);
+				}
+			} else {
+				attribute.setDatatype(SDFDatatype.DOUBLE);
+			}
 			outputSchema.add(attribute);
 			aliasSchema.add(attribute);
 		} else {
@@ -216,8 +216,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
-		String name = node.jjtGetChild(1).toString();		
-		String aggregateName = node.jjtGetChild(0).toString();		
+		String name = node.jjtGetChild(1).toString();
+		String aggregateName = node.jjtGetChild(0).toString();
 		return this.attributeResolver.getAggregateAttribute(name, aggregateName);
 	}
 
@@ -236,12 +236,10 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTMatrixExpression matrixExpr, Object data) throws QueryParseException {
 		ArrayList<?> rows = matrixExpr.getMatrix();
-		projectionMatrix = new double[rows.size()][((ArrayList<?>) rows.get(0))
-				.size()];
+		projectionMatrix = new double[rows.size()][((ArrayList<?>) rows.get(0)).size()];
 		for (int u = 0; u < rows.size(); u++) {
 			for (int v = 0; v < ((ArrayList<?>) rows.get(u)).size(); v++) {
-				projectionMatrix[u][v] = (Double) ((ArrayList<?>) rows.get(u))
-						.get(v);
+				projectionMatrix[u][v] = (Double) ((ArrayList<?>) rows.get(u)).get(v);
 			}
 		}
 		return projectionMatrix;
@@ -253,8 +251,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private void checkAttributes(SDFAttributeList outputSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
-				throw new IllegalArgumentException("ambigious attribute: "
-						+ attribute);
+				throw new IllegalArgumentException("ambigious attribute: " + attribute);
 			}
 		}
 	}
