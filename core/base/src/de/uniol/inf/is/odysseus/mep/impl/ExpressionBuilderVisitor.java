@@ -55,7 +55,23 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
 	@Override
 	public Object visit(ASTConstant node, Object data) {
-		return new Constant<Object>(node.getValue(), SDFDatatype.OBJECT);
+		SDFDatatype type = SDFDatatype.OBJECT;
+		if(node.getValue() instanceof Double){			
+			type = SDFDatatype.DOUBLE;
+		}
+		if(node.getValue() instanceof Integer){
+			type = SDFDatatype.INTEGER;
+		}
+		if(node.getValue() instanceof Boolean){
+			type = SDFDatatype.BOOLEAN;
+		}
+		if(node.getValue() instanceof Long){
+			type = SDFDatatype.LONG;
+		}
+		if(node.getValue() instanceof String){
+			type = SDFDatatype.STRING;
+		}
+		return new Constant<Object>(node.getValue(), type);
 	}
 
 	@Override
