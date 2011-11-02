@@ -16,6 +16,10 @@
 package de.uniol.inf.is.odysseus.database.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**
@@ -23,6 +27,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen
  * Created at: 20.10.2011
  */
+@LogicalOperator(name = "DATABASESINK", minInputPorts = 1, maxInputPorts = 1)
 public class DatabaseSinkAO extends AbstractLogicalOperator{
 	
 	private static final long serialVersionUID = -6513851256783092870L;
@@ -33,7 +38,9 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 	private boolean truncate;
 	private boolean drop;
 	
-	
+	public DatabaseSinkAO(){
+		super();
+	}
 
 	
 	public DatabaseSinkAO(String sinkName, String connectionName, String tablename, boolean drop, boolean truncate) {
@@ -83,6 +90,33 @@ public class DatabaseSinkAO extends AbstractLogicalOperator{
 
 	public String getSinkName() {
 		return sinkName;
+	}
+
+	@Parameter(name = "TABLE", type = StringParameter.class, optional = false)
+	public void setTablename(String tablename) {
+		this.tablename = tablename;
+	}
+
+	@Parameter(name = "CONNECTION", type = StringParameter.class, optional = false)
+	public void setConnectionName(String connectionName) {
+		this.connectionName = connectionName;
+	}
+
+	@Parameter(name = "SINKNAME", type = StringParameter.class, optional = false)
+	public void setSinkName(String sinkName) {
+		this.sinkName = sinkName;
+	}
+
+	@Parameter(name = "TRUNCATE", type = BooleanParameter.class, optional = true)
+	public void setTruncate(boolean truncate) {
+		this.truncate = truncate;
+	}
+
+	@Parameter(name = "DROP", type = BooleanParameter.class, optional = true)
+	public void setDrop(boolean drop) {
+		this.drop = drop;
 	}	
+	
+	
 
 }
