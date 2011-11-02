@@ -13,7 +13,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.sink.database.logicaloperator;
+package de.uniol.inf.is.odysseus.database.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;

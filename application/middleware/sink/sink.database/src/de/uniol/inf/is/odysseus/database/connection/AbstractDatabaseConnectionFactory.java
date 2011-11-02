@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.sink.database;
+package de.uniol.inf.is.odysseus.database.connection;
 
 import java.util.Properties;
 

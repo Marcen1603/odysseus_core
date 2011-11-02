@@ -1,4 +1,4 @@
-/** Copyright 2011 The Odysseus Team
+/** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -12,14 +12,21 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
+package de.uniol.inf.is.odysseus.database.transform;
 
-package de.uniol.inf.is.odysseus.sink.database;
-/**
- * 
- * @author Dennis Geesen
- * Created at: 28.10.2011
- */
-public interface IDatabaseConnectionDictionaryListener {
+import java.util.ArrayList;
+import java.util.List;
 
-		public void databaseConnectionDictionaryChanged();
+import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
+
+public class RuleProvider implements ITransformRuleProvider{
+
+	@Override
+	public List<IRule<?, ?>> getRules() {
+		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
+		rules.add(new TDatabaseSocketSinkAORule());		
+		return rules;
+	}
+
 }

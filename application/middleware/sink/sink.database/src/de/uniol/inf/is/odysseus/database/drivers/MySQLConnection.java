@@ -13,13 +13,13 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.sink.database.drivers;
+package de.uniol.inf.is.odysseus.database.drivers;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import de.uniol.inf.is.odysseus.sink.database.AbstractDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnection;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;

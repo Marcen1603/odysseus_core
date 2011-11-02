@@ -1,13 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Database
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.sink.database;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.sink.database.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.database.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.logicaloperator,
+ de.uniol.inf.is.odysseus.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.physicaloperator.access,
@@ -17,6 +18,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
+ de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
@@ -26,8 +28,7 @@ Service-Component: OSGI-INF/TransformRuleProviderService.xml
 Bundle-ClassPath: mysql-connector-java-5.1.15-bin.jar,
  .,
  ojdbc6.jar
-Export-Package: de.uniol.inf.is.odysseus.sink.database,
- de.uniol.inf.is.odysseus.sink.database.cql,
- de.uniol.inf.is.odysseus.sink.database.logicaloperator,
- de.uniol.inf.is.odysseus.sink.database.physicaloperator,
- de.uniol.inf.is.odysseus.sink.database.transform
+Export-Package: de.uniol.inf.is.odysseus.database.connection,
+ de.uniol.inf.is.odysseus.database.logicaloperator,
+ de.uniol.inf.is.odysseus.database.physicaloperator,
+ de.uniol.inf.is.odysseus.database.transform

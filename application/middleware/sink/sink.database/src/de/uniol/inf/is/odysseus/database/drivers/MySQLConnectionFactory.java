@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.sink.database.drivers;
+package de.uniol.inf.is.odysseus.database.drivers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import de.uniol.inf.is.odysseus.sink.database.AbstractDatabaseConnectionFactory;
-import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 /**
  * 

@@ -1,9 +1,10 @@
-package de.uniol.inf.is.odysseus.sink.database;
+package de.uniol.inf.is.odysseus.database;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.sink.database.drivers.MySQLConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
 
 public class Activator implements BundleActivator {
 

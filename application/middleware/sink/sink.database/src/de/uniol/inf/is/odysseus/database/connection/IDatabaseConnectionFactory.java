@@ -13,12 +13,16 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.sink.database.cql;
+package de.uniol.inf.is.odysseus.database.connection;
+
+import java.sql.SQLException;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 20.10.2011
  */
-public class DatabaseCQLVisitor {
-
+public interface IDatabaseConnectionFactory {
+	
+	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) throws SQLException;	
 }

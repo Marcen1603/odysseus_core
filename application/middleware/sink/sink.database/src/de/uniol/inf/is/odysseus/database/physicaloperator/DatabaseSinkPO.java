@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.sink.database.physicaloperator;
+package de.uniol.inf.is.odysseus.database.physicaloperator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,14 +22,14 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary.DatabaseType;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary;
-import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary.DatabaseType;
-import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 

@@ -13,16 +13,13 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.sink.database;
-
-import java.sql.SQLException;
-
+package de.uniol.inf.is.odysseus.database.connection;
 /**
  * 
  * @author Dennis Geesen
- * Created at: 20.10.2011
+ * Created at: 28.10.2011
  */
-public interface IDatabaseConnectionFactory {
-	
-	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) throws SQLException;	
+public interface IDatabaseConnectionDictionaryListener {
+
+		public void databaseConnectionDictionaryChanged();
 }

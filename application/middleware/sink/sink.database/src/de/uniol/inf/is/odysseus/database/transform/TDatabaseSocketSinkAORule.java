@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.sink.database.transform;
+package de.uniol.inf.is.odysseus.database.transform;
 
+import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
+import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSinkPO;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO;
-import de.uniol.inf.is.odysseus.sink.database.physicaloperator.DatabaseSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

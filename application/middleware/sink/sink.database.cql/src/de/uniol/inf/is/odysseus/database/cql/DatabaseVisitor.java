@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.sink.database.cql;
+package de.uniol.inf.is.odysseus.database.cql;
 
 import java.sql.SQLException;
 
@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateDatabaseConnection;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSinkOptions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
@@ -29,10 +30,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTStreamToStatement;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.sink.database.DatabaseConnectionDictionary;
-import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.sink.database.IDatabaseConnectionFactory;
-import de.uniol.inf.is.odysseus.sink.database.logicaloperator.DatabaseSinkAO;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
+import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseAccessAO;
+import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -50,6 +52,32 @@ public class DatabaseVisitor extends CQLParser {
 	@Override
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		super.setDataDictionary(dataDictionary);
+	}
+
+	@Override
+	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
+		DatabaseAccessAO access = null;
+
+//		if (node.jjtGetNumChildren() > 1) {
+//			if (node.jjtGetChild(0) instanceof ASTJdbcIdentifier) {
+//				String jdbc = ((ASTJdbcIdentifier) node.jjtGetChild(0)).getConnection();
+//				String name = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+//				boolean sensitiv = false;
+//				if (node.jjtGetNumChildren() == 3) {
+//					sensitiv = true;
+//				}
+//				access = getAccessAOForJDBC(jdbc, name, sensitiv);
+//			} else {
+//				String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+//				access = getAccessAOForDefault(name, true);
+//			}
+//		} else {
+//			String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+//			access = getAccessAOForDefault(name, false);
+//		}
+//		dd.setStream(name, access, caller);
+		return access;
+
 	}
 
 	@Override
