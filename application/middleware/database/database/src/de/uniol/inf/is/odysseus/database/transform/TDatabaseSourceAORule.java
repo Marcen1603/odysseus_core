@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Dennis Geesen Created at: 22.08.2011
  */
-public class TDatabaseDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSourceAO> {
+public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSourceAO> {
 
 	@Override
 	public int getPriority() {
@@ -40,7 +40,7 @@ public class TDatabaseDatabaseSourceAORule extends AbstractTransformationRule<Da
 		String accessPOName = accessAO.getSource().getURI(false);	
 		ISource<?> accessPO = null;		
 		if (WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null) {
-			accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.isTimesensitiv());
+			accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.isTimesensitiv(), accessAO.getWaitMillis());
 			accessPO.setOutputSchema(accessAO.getOutputSchema());
 			WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
 		} else {

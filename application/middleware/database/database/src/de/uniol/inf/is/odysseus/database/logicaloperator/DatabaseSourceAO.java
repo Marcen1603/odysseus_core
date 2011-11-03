@@ -41,12 +41,14 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	private IDatabaseConnection connection;
 
 	private String tablename;
+	private long waitMillis;
 
-	public DatabaseSourceAO(SDFSource source, IDatabaseConnection connection, String tablename, boolean timesensitiv) {
+	public DatabaseSourceAO(SDFSource source, IDatabaseConnection connection, String tablename, boolean timesensitiv, long waitMillis) {
 		this.source = source;
 		this.connection = connection;
 		this.tablename = tablename;
 		this.timesensitiv = timesensitiv;
+		this.waitMillis = waitMillis;
 
 	}
 
@@ -55,6 +57,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 		this.connection = original.connection;
 		this.timesensitiv = original.timesensitiv;
 		this.tablename = original.tablename;
+		this.waitMillis = original.waitMillis;
 	}
 
 	@Override
@@ -98,9 +101,8 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 
 	}
 
-	public Object getConnectionName() {
-		// TODO Auto-generated method stub
-		return null;
+	public long getWaitMillis(){
+		return this.waitMillis;
 	}
 
 }

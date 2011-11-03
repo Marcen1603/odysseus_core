@@ -26,7 +26,7 @@ public class RuleProvider implements ITransformRuleProvider{
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TDatabaseDatabaseSinkAORule());	
-		rules.add(new TDatabaseDatabaseSourceAORule());
+		rules.add(new TDatabaseSourceAORule());
 		return rules;
 	}
 

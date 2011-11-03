@@ -41,12 +41,14 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 	private Connection jdbcConnection;
 	private PreparedStatement preparedStatement;
 	private TransferThread thread;
+	private long waitTimeMillis;
 
-	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, boolean timesensitive) {
+	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, boolean timesensitive, long waitTimeMillis) {
 		super();
 		this.tablename = tableName;
 		this.connection = connection;
 		this.timesensitive = timesensitive;
+		this.waitTimeMillis  = waitTimeMillis;
 	}
 
 	public DatabaseSourcePO(DatabaseSourcePO databaseSourcePO) {
@@ -54,6 +56,7 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 		this.connection = databaseSourcePO.connection;
 		this.tablename = databaseSourcePO.tablename;
 		this.timesensitive = databaseSourcePO.timesensitive;
+		this.waitTimeMillis = databaseSourcePO.waitTimeMillis;
 	}
 
 	@Override
@@ -99,7 +102,10 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 
 		@Override
 		public void run() {
-			super.run();
+			super.run();					
+			if(waitTimeMillis==0){
+				waitTimeMillis = 10;
+			}
 			try {
 				ResultSet rs = preparedStatement.executeQuery();
 				int count = rs.getMetaData().getColumnCount();
@@ -111,7 +117,7 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 					RelationalTuple<?> t = new RelationalTuple<IMetaAttribute>(attributes.toArray());
 					transfer(t);
 					attributes.clear();
-					sleep(10);
+					sleep(waitTimeMillis);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

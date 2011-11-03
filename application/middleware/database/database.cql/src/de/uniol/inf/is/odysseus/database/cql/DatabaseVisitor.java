@@ -25,10 +25,12 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseSinkOptions;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDatabaseTimeSensitiv;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTStreamToStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTime;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -60,7 +62,18 @@ public class DatabaseVisitor extends CQLParser {
 		String name = (String)data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		boolean isTimeSensitive = (node.jjtGetNumChildren() > 2);
+		boolean isTimeSensitive = false;
+		long waitMillis = 0L;
+		if(node.jjtGetNumChildren()>2){
+			if(node.jjtGetChild(2) instanceof ASTDatabaseTimeSensitiv){
+				isTimeSensitive = true;
+			}
+			if(node.jjtGetChild(2) instanceof ASTTime){
+				ASTTime time = (ASTTime)node.jjtGetChild(2);
+				String value = time.jjtGetValue().toString();
+				waitMillis = Long.parseLong(value);
+			}
+		}		
 
 		IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
 		if(connection == null){
@@ -70,7 +83,7 @@ public class DatabaseVisitor extends CQLParser {
 			throw new QueryParseException("Table \""+tableName+"\" does not exist!");
 		}
 		
-		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive);		
+		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive, waitMillis);		
 		getDataDictionary().setStream(name, source, getCaller());
 		return source;		
 
