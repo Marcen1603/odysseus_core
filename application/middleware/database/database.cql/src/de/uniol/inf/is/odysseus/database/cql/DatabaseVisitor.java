@@ -33,8 +33,9 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
-import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseAccessAO;
+import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -56,27 +57,22 @@ public class DatabaseVisitor extends CQLParser {
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
-		DatabaseAccessAO access = null;
+		String name = (String)data;
+		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		boolean isTimeSensitive = (node.jjtGetNumChildren() > 2);
 
-//		if (node.jjtGetNumChildren() > 1) {
-//			if (node.jjtGetChild(0) instanceof ASTJdbcIdentifier) {
-//				String jdbc = ((ASTJdbcIdentifier) node.jjtGetChild(0)).getConnection();
-//				String name = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-//				boolean sensitiv = false;
-//				if (node.jjtGetNumChildren() == 3) {
-//					sensitiv = true;
-//				}
-//				access = getAccessAOForJDBC(jdbc, name, sensitiv);
-//			} else {
-//				String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-//				access = getAccessAOForDefault(name, true);
-//			}
-//		} else {
-//			String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-//			access = getAccessAOForDefault(name, false);
-//		}
-//		dd.setStream(name, access, caller);
-		return access;
+		IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
+		if(connection == null){
+			throw new QueryParseException("No connection with name \""+connectionName+"\" found. You have to create one first");
+		}
+		if(!connection.tableExists(tableName)){
+			throw new QueryParseException("Table \""+tableName+"\" does not exist!");
+		}
+		
+		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive);		
+		getDataDictionary().setStream(name, source, getCaller());
+		return source;		
 
 	}
 

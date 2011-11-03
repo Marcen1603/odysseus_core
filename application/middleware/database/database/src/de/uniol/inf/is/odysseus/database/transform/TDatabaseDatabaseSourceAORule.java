@@ -15,10 +15,10 @@
 
 package de.uniol.inf.is.odysseus.database.transform;
 
-import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
-import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSinkPO;
+import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
+import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSourcePO;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Dennis Geesen Created at: 22.08.2011
  */
-public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<DatabaseSinkAO> {
+public class TDatabaseDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSourceAO> {
 
 	@Override
 	public int getPriority() {
@@ -36,36 +36,40 @@ public class TDatabaseSocketSinkAORule extends AbstractTransformationRule<Databa
 	}
 
 	@Override
-	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
-		ISink<?> sinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
-
-		if (sinkPO == null) {
-			sinkPO = new DatabaseSinkPO(operator.getConnectionName(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
-			sinkPO.setOutputSchema(operator.getOutputSchema());
-			WrapperPlanFactory.putSink(operator.getSinkName(), sinkPO);
+	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) {
+		String accessPOName = accessAO.getSource().getURI(false);	
+		ISource<?> accessPO = null;		
+		if (WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null) {
+			accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.isTimesensitiv());
+			accessPO.setOutputSchema(accessAO.getOutputSchema());
+			WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		} else {
+			accessPO = WrapperPlanFactory.getAccessPlan(accessPOName);
 		}
-		replace(operator, sinkPO, config);		
-		retract(operator);		
+
+		replace(accessAO, accessPO, config);
+		insert(accessPO);
+		retract(accessAO);
 	}
 
 	@Override
-	public boolean isExecutable(DatabaseSinkAO operator, TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+	public boolean isExecutable(DatabaseSourceAO operator, TransformationConfiguration config) {
+		return true;
 	}
 
 	@Override
 	public String getName() {
-		return "DatabaseSinkAO -> DatabaseSinkPO";
+		return "DatabaseSourceAO -> DatabaseSourcePO";
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 	@Override
 	public Class<?> getConditionClass() {
-		return DatabaseSinkAO.class;
+		return DatabaseSourceAO.class;
 	}
 
 }

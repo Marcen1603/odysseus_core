@@ -305,7 +305,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
-		OutputSchemaSettable ao = (OutputSchemaSettable) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, data);
+		OutputSchemaSettable ao = (OutputSchemaSettable) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
 		ao.setOutputSchema(this.attributes);
 		return addTimestampAO((ILogicalOperator) ao);
 	}

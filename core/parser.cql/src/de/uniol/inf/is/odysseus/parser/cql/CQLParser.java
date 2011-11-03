@@ -94,6 +94,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	protected IDataDictionary getDataDictionary() {
 		return this.dataDictionary;
 	}
+	
+	protected User getCaller(){
+		return this.caller;
+	}
 
 	@Override
 	public String getLanguage() {

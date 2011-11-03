@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Dennis Geesen Created at: 28.10.2011
  */
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASESOURCE")
-public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputSchemaSettable {
+public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
 	
 	
 
@@ -42,7 +42,7 @@ public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputS
 
 	private String tablename;
 
-	public DatabaseAccessAO(SDFSource source, IDatabaseConnection connection, String tablename, boolean timesensitiv) {
+	public DatabaseSourceAO(SDFSource source, IDatabaseConnection connection, String tablename, boolean timesensitiv) {
 		this.source = source;
 		this.connection = connection;
 		this.tablename = tablename;
@@ -50,7 +50,7 @@ public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputS
 
 	}
 
-	public DatabaseAccessAO(DatabaseAccessAO original) {
+	public DatabaseSourceAO(DatabaseSourceAO original) {
 		this.source = original.source;
 		this.connection = original.connection;
 		this.timesensitiv = original.timesensitiv;
@@ -66,13 +66,13 @@ public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputS
 		return connection;
 	}
 
-	public String getTablename() {
+	public String getTableName() {
 		return tablename;
 	}
 	
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new DatabaseAccessAO(this);
+		return new DatabaseSourceAO(this);
 	}
 
 	@Override
@@ -97,4 +97,10 @@ public class DatabaseAccessAO extends AbstractLogicalOperator implements OutputS
 		}
 
 	}
+
+	public Object getConnectionName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
