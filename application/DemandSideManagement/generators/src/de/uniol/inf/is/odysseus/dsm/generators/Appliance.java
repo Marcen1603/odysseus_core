@@ -126,9 +126,9 @@ public class Appliance extends StreamClientHandler{
 			if (timestamp >= randomTimes[0][interval] && timestamp <= randomTimes[0][interval]+(randomTimes[1][interval]*60000)){
 				tuple.addLong(timestamp);
 				tuple.addString(name);
-				tuple.addInteger(id);
-				tuple.addInteger(evuId);
-				tuple.addInteger(roomId);
+//				tuple.addInteger(id);
+//				tuple.addInteger(evuId);
+//				tuple.addInteger(roomId);
 				tuple.addDouble(getMeteredValue(timestamp));
 				tuple.addDouble(getMeteredConsumption(timestamp));
 			} else {
@@ -137,18 +137,18 @@ public class Appliance extends StreamClientHandler{
 				}
 				tuple.addLong(timestamp);
 				tuple.addString(name);
-				tuple.addInteger(id);
-				tuple.addInteger(evuId);
-				tuple.addInteger(roomId);
+//				tuple.addInteger(id);
+//				tuple.addInteger(evuId);
+//				tuple.addInteger(roomId);
 				tuple.addDouble(0);
 				tuple.addDouble(0);
 			}
 		} else {
 			tuple.addLong(timestamp);
 			tuple.addString(name);
-			tuple.addInteger(id);
-			tuple.addInteger(evuId);
-			tuple.addInteger(roomId);
+//			tuple.addInteger(id);
+//			tuple.addInteger(evuId);
+//			tuple.addInteger(roomId);
 			tuple.addDouble(0);
 			tuple.addDouble(0);
 		}

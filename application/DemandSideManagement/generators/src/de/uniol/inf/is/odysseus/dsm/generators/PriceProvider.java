@@ -83,7 +83,7 @@ public class PriceProvider extends StreamClientHandler{
     			if(j == 3){
     				priceNext = priceModel[0][2];
     			} else {
-    				priceNext = priceModel[j][2];
+    				priceNext = priceModel[j+1][2];
     			}
     		}
     	}
