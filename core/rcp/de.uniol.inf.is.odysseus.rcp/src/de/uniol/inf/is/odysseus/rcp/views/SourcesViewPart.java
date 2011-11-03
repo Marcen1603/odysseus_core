@@ -1,23 +1,25 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.views;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -30,8 +32,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class SourcesViewPart extends ViewPart implements
-		IDataDictionaryListener, IUserManagementListener {
+public class SourcesViewPart extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
 	private TreeViewer viewer;
 
@@ -42,14 +43,20 @@ public class SourcesViewPart extends ViewPart implements
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
-				| SWT.SINGLE));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE));
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
 		getDataDictionary().addListener(this);
 		UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
+
+		// Contextmenu
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		// Set the MenuManager
+		getTreeViewer().getControl().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, getTreeViewer());
 	}
 
 	@Override
@@ -73,9 +80,7 @@ public class SourcesViewPart extends ViewPart implements
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(
-							getDataDictionary().getStreamsAndViews(
-									GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
+					getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?
@@ -88,21 +93,18 @@ public class SourcesViewPart extends ViewPart implements
 	public IDataDictionary getDataDictionary() {
 		return GlobalState.getActiveDatadictionary();
 	}
-	
 
 	protected void setTreeViewer(TreeViewer viewer) {
 		this.viewer = viewer;
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
@@ -113,13 +115,12 @@ public class SourcesViewPart extends ViewPart implements
 
 	@Override
 	public void roleChangedEvent() {
-		refresh();		
+		refresh();
 	}
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		refresh();
 	}
-
 
 }

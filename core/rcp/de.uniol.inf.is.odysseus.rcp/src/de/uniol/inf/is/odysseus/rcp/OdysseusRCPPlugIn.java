@@ -66,6 +66,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 	
 	public static final String RCP_USER_TOKEN = "RCP";
 
+	public static final String SOURCES_NAME_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.parameters.SourceNameParameter";
+
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
 	

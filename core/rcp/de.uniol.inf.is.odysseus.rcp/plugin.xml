@@ -227,6 +227,16 @@
          </commandParameter>
       </command>
       <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RestartQueryCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RestartQueryCommand"
+            name="Restart Query">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryIDParameter"
+               name="QueryID Parameter"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
             name="Stop Query">
@@ -255,6 +265,21 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
             name="Refresh Sinks View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
+            name="Drop Source">
+         <commandParameter
+               id="de.uniol.inf.is.odysseus.rcp.parameters.SourceNameParameter"
+               name="Source Name"
+               optional="false">
+         </commandParameter>
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropSinkCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropSink"
+            name="Drop Sink">
       </command>
    </extension>
    <extension
@@ -325,11 +350,19 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
+               icon="icons/control_play_blue.png"
                label="Start Query"
                style="push">
          </command>
          <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RestartQueryCommand"
+               icon="icons/control_repeat_blue.png"
+               label="Restart Query"
+               style="push">
+         </command>
+         <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand"
+               icon="icons/control_stop_blue.png"
                label="Stop Query"
                style="push">
          </command>
@@ -339,6 +372,7 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
+               icon="icons/delete.png"
                label="Remove Query"
                style="push">
          </command>
@@ -348,11 +382,13 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand"
+               icon="icons/page_white_text.png"
                label="Copy Querytext"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand"
+               icon="icons/graph.jpg"
                label="Show Query Plan"
                style="push">
          </command>
@@ -381,6 +417,28 @@
                label="Refresh"
                style="push"
                tooltip="Refresh">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
+               icon="icons/delete.png"
+               label="Drop Source"
+               style="push"
+               tooltip="Drop the source">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.SinkView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropSink"
+               icon="icons/delete.png"
+               label="Drop Sink"
+               style="push"
+               tooltip="Drops selected sink">
          </command>
       </menuContribution>
    </extension>

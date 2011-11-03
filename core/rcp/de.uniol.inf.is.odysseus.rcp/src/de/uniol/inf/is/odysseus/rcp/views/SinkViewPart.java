@@ -15,10 +15,12 @@
 
 package de.uniol.inf.is.odysseus.rcp.views;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -60,7 +62,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 			public void run() {
 				try {
 					getTreeViewer().setInput(getDataDictionary().getSinks(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
-					//getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
+					// getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?
@@ -111,11 +113,18 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 		UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
+		// Contextmenu
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		// Set the MenuManager
+		getTreeViewer().getControl().setMenu(contextMenu);
+		getSite().registerContextMenu(menuManager, getTreeViewer());
+
 	}
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
-		refresh();		
+		refresh();
 	}
 
 }
