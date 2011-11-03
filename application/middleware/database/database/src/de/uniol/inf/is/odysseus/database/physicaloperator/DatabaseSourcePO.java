@@ -96,31 +96,29 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 	}
 
 	private class TransferThread extends Thread {
-		
+
 		@Override
 		public void run() {
 			super.run();
-			while (!interrupted()) {
-				try {
-					ResultSet rs = preparedStatement.executeQuery();
-					int count = rs.getMetaData().getColumnCount();
-					List<Object> attributes = new ArrayList<Object>();
-					while (rs.next()) {
-						for (int i = 1; i <= count; i++) {
-							attributes.add(rs.getObject(i));
-						}
-						RelationalTuple<?> t = new RelationalTuple<IMetaAttribute>(attributes.toArray());
-						transfer(t);
-						attributes.clear();
-						sleep(1000);
+			try {
+				ResultSet rs = preparedStatement.executeQuery();
+				int count = rs.getMetaData().getColumnCount();
+				List<Object> attributes = new ArrayList<Object>();
+				while (rs.next() && !interrupted()) {
+					for (int i = 1; i <= count; i++) {
+						attributes.add(rs.getObject(i));
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					interrupt();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					return;
+					RelationalTuple<?> t = new RelationalTuple<IMetaAttribute>(attributes.toArray());
+					transfer(t);
+					attributes.clear();
+					sleep(10);
 				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				interrupt();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return;
 			}
 		}
 	}
