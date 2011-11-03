@@ -20,6 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.SDFExpressionParameter;
+import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -55,8 +56,20 @@ public class MapAO extends UnaryLogicalOp {
 				if (expr.isOnlyAttribute()) {
 					attr = new SDFAttribute(expr.getSingleAttribute());
 				} else {
-					attr = new SDFAttribute(expr.getMEPExpression().toString());
-					attr.setDatatype(expr.getMEPExpression().getReturnType());
+					IExpression<?> mepExpression = expr.getMEPExpression();
+					String exprString = mepExpression.toString();
+					attr = new SDFAttribute(exprString);
+					// If expression is an attribute use this data type
+					List<SDFAttribute> inAttribs = expr.getAllAttributes();
+					for (SDFAttribute attribute : inAttribs) {
+						if (attribute.getURI().equals(exprString)) {
+							attr.setDatatype(attribute.getDatatype());
+						}
+					}
+					// else use the expression data type
+					if (attr.getDatatype() == null) {
+						attr.setDatatype(mepExpression.getReturnType());
+					}
 				}
 				outputSchema.add(attr);
 
