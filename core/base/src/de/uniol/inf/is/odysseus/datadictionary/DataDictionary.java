@@ -653,6 +653,13 @@ public class DataDictionary implements IDataDictionary {
 			listener.dataDictionaryChanged(this);
 		}
 	}
+
+	@Override
+	public ILogicalOperator removeSink(String name) {
+		ILogicalOperator op = this.sinkDefinitions.remove(name);
+		fireDataDictionaryChangedEvent();
+		return op;
+	}
 	
 
 }

@@ -74,6 +74,8 @@ public interface IDataDictionary {
 
 	
 	public ILogicalOperator removeViewOrStream(String viewname, User caller);
+	
+	public ILogicalOperator removeSink(String name);
 
 	// no restric
 	public boolean containsViewOrStream(String viewName, User user);
