@@ -669,4 +669,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTTime node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
 }

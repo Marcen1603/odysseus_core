@@ -1209,4 +1209,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
+	@Override
+	public Object visit(ASTTime node, Object data) throws QueryParseException {		
+		return null;
+	}
+
 }

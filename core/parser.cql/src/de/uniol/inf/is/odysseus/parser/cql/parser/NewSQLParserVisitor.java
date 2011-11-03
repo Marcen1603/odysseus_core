@@ -70,6 +70,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTElementPriority node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDefaultPriority node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTTuple node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+  public Object visit(ASTTime node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTTupleSet node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTQuantificationOperator node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTExpression node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -122,4 +123,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=75f60c97ea1e2e5ba610e3ae39f36c0d (do not edit this line) */
+/* JavaCC - OriginalChecksum=4e65b093c689fa5debc7a675f85ff39e (do not edit this line) */
