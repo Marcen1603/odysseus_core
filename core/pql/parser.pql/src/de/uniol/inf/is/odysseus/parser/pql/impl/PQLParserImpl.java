@@ -243,7 +243,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
       entity.setAttributes(op.getOutputSchema());
       dd.addSourceType(nameStr, "RelationalStreaming");
       dd.addEntity(nameStr, entity, getUser());
-      dd.setStream(nameStr, op, user);
+      //dd.setStream(nameStr, op, user);
+      dd.setView(nameStr, op, user);
       //get access operator for view, so other operators don't get subscribed
       //to top operator of the view
       op = dd.getViewOrStream(nameStr, getUser());
