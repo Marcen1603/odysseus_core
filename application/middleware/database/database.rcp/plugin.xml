@@ -4,35 +4,14 @@
 
    <extension
          point="org.eclipse.ui.views">
-      <category
-            name="Odysseus"
-            id="de.uniol.inf.is.odysseus.database.rcp">
-      </category>
       <view
-            name="Database Connections View"
-            icon="icons/sample.gif"
-            category="de.uniol.inf.is.odysseus.database.rcp"
+            category="Odysseus"
             class="de.uniol.inf.is.odysseus.database.rcp.views.DatabaseConnectionsView"
-            id="de.uniol.inf.is.odysseus.database.rcp.views.DatabaseConnectionsView">
+            icon="icons/database.png"
+            id="de.uniol.inf.is.odysseus.database.rcp.views.DatabaseConnectionsView"
+            name="Database Connections"
+            restorable="true">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="de.uniol.inf.is.odysseus.database.rcp.views.DatabaseConnectionsView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension>
 
 </plugin>

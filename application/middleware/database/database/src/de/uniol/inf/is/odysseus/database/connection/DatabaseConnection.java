@@ -120,7 +120,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 			ResultSet rs = meta.getColumns(null, null, tablename, null);
 			while (rs.next()) {
 				String name = rs.getString("COLUMN_NAME");
-				SDFDatatype dt = getSDFDatatype(rs.getInt("DATA_TYPE"));
+				SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
 				SDFAttribute a = new SDFAttribute(name, dt);
 				schema.add(a);
 			}
@@ -128,11 +128,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 			e.printStackTrace();
 		}
 		return schema;
-	}
-
-	private SDFDatatype getSDFDatatype(int type) {
-		return SDFDatatype.STRING;
-	}
+	}	
 
 	public boolean equalSchemas(String tablename, SDFAttributeList schema) {
 		try {
