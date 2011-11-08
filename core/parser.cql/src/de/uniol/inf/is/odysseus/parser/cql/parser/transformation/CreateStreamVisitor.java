@@ -209,7 +209,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains);
 			}
 			
-			if (attribute.getDatatype().isMeasurementValue()
+			if (attribType.isMeasurementValue()
 					&& astAttrType.jjtGetNumChildren() > 0) {
 				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));	
 			}
