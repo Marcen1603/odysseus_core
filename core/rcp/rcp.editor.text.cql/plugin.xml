@@ -302,6 +302,18 @@
          <keyword
                name="PENALTY">
          </keyword>
+         <keyword
+               name="USER">
+         </keyword>
+         <keyword
+               name="CONNECTION">
+         </keyword>
+         <keyword
+               name="PASSWORD">
+         </keyword>
+         <keyword
+               name="AT">
+         </keyword>
       </group>
    </extension>
 
