@@ -1344,31 +1344,6 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		// in each case the input datatype is string
 		SDFAttribute attribute = new SDFAttribute(null, funcName, SDFDatatype.STRING);
 		
-		
-		
-//		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);
-//		if (attribute == null) {
-//			SDFDatatype datatype = this.attributeResolver.getAttribute(
-//					attributeName).getDatatype();
-//			if (!isNumerical(datatype) && !function.getName().equalsIgnoreCase("COUNT")) {
-//				throw new IllegalArgumentException("function '"
-//						+ function.toString()
-//						+ "' can't be used on non scalar types");
-//			}
-//			attribute = new SDFAttribute(null, funcName);
-//			if (function.getName().equalsIgnoreCase("AVG")) {
-//				attribute.setDatatype(SDFDatatypeFactory.getDatatype("Double"));
-//			} else if (function.getName().equalsIgnoreCase("COUNT")) {
-//				attribute
-//						.setDatatype(SDFDatatypeFactory.getDatatype("Integer"));
-//			} else {
-//				// datatype equals datatype of input attribute
-//				// for other functions
-//				attribute.setDatatype(datatype);
-//			}
-//
-//			this.attributeResolver.addAttribute(attribute);
-//		}
 		return attribute;
 	}
 	

@@ -151,12 +151,6 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		return attribute;
 	}
 
-//	private boolean isNumerical(SDFDatatype datatype) {
-//		// TODO oder sollte der check ueber die dtconstraints laufen?
-//		return datatype == this.dd.getDatatype("Double")
-//				|| datatype == this.dd.getDatatype("Integer")
-//				|| datatype == this.dd.getDatatype("Long");
-//	}
 
 	@Override
 	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
