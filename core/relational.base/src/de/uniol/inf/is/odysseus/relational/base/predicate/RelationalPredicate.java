@@ -580,7 +580,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 					expressionStack.push(curExpression.toFunction()
 							.getArgument(1));
 				} else {
-					SDFExpression expr = new SDFExpression("", curExpression,
+					SDFExpression expr = new SDFExpression(curExpression,
 							expression.getAttributeResolver());
 					result.add(new RelationalPredicate(expr));
 				}

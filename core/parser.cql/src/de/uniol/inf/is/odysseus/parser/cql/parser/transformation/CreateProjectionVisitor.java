@@ -117,21 +117,26 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(top, inputSchema);
-				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(outputSchema.size());
-
-				Iterator<SDFExpression> exprIt = this.expressions.iterator();
-				for (SDFAttribute attr : outputSchema) {
-					if (inputSchema.contains(attr)) {
-						outputExpressions.add(new SDFExpression(attr));
-					} else {
-						// mathematical expressions were added in the order of
-						// their occurence, so whenever an outputattribute is
-						// not found in the inputschema we add the next
-						// expression to the output
-						outputExpressions.add(exprIt.next());
-					}
-				}
+				
+				
+				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(expressions);
 				map.setExpressions(outputExpressions);
+				
+				//
+//				Iterator<SDFExpression> exprIt = this.expressions.iterator();
+//				
+//				for (SDFAttribute attr : outputSchema) {
+//					if (inputSchema.contains(attr)) {
+//						outputExpressions.add(new SDFExpression(attr));
+//					} else {
+//						// mathematical expressions were added in the order of
+//						// their occurence, so whenever an outputattribute is
+//						// not found in the inputschema we add the next
+//						// expression to the output
+//						outputExpressions.add(exprIt.next());
+//					}
+//				}
+//				map.setExpressions(outputExpressions);
 				top = map;
 			}
 

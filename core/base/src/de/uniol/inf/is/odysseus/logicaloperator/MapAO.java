@@ -54,32 +54,33 @@ public class MapAO extends UnaryLogicalOp {
 		if (expressions != null) {
 			for (SDFExpression expr : expressions) {
 				SDFAttribute attr = null;
-				if (expr.isOnlyAttribute()) {
-					attr = new SDFAttribute(expr.getSingleAttribute());
+
+				IExpression<?> mepExpression = expr.getMEPExpression();
+				String exprString = mepExpression.toString();
+				// Variable could be source.name oder name, we are looking for
+				// name!
+				String[] split = SDFElement.splitURI(exprString);
+				final SDFElement elem;
+				if (split[1] != null && split[1].length() > 0) {
+					elem = new SDFElement(split[0], split[1]);
 				} else {
-					IExpression<?> mepExpression = expr.getMEPExpression();
-					String exprString = mepExpression.toString();
-					// Variable could be source.name oder name, we are looking for name!
-					String[] split = SDFElement.splitURI(exprString);
-					final SDFElement elem;
-					if (split[1] != null && split[1].length() > 0){
-						elem = new SDFElement(split[0],split[1]);
-					}else{
-						elem = new SDFElement(null, split[0]);
-					}
-					 
-					// If expression is an attribute use this data type
-					List<SDFAttribute> inAttribs = expr.getAllAttributes();
-					for (SDFAttribute attribute : inAttribs) {
-						if (attribute.equalsCQL(elem)) {
-							attr = new SDFAttribute(null,exprString, attribute.getDatatype());
-						}
-					}
-					// else use the expression data type
-					if (attr == null) {
-						attr = new SDFAttribute(null,exprString, mepExpression.getReturnType());
+					elem = new SDFElement(null, split[0]);
+				}
+
+				// If expression is an attribute use this data type
+				List<SDFAttribute> inAttribs = expr.getAllAttributes();
+				for (SDFAttribute attribute : inAttribs) {
+					if (attribute.equalsCQL(elem)) {
+						attr = new SDFAttribute(null, exprString,
+								attribute.getDatatype());
 					}
 				}
+				// else use the expression data type
+				if (attr == null) {
+					attr = new SDFAttribute(null, exprString,
+							mepExpression.getReturnType());
+				}
+
 				outputSchema.add(attr);
 
 				// Alles Quatsch :-)

@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
@@ -57,26 +57,8 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	private int[] attributePositions;
 
-	private SDFAttribute attribute;
-	private boolean isOnlyAttribute = false;
-
 	private IAttributeResolver attributeResolver;
 
-	// TODO alles schon im parser aufloesen und variable/attribut bindings
-	// erstellen
-	public SDFExpression(SDFAttribute attribute) {
-		isOnlyAttribute = true;
-		init(attribute);
-	}
-
-	public boolean isOnlyAttribute() {
-		return isOnlyAttribute;
-	}
-
-	public SDFAttribute getSingleAttribute() {
-		return attribute;
-	}
-	
 	/**
 	 * @param URI
 	 * @param value
@@ -86,16 +68,13 @@ public class SDFExpression implements Serializable, IClone {
 	public SDFExpression(String URI, String value,
 			IAttributeResolver attributeResolver)
 			throws SDFExpressionParseException {
-		init(value, attributeResolver);
+		init(null, value, attributeResolver);
 	}
 
 	public SDFExpression(SDFExpression expression)
 			throws SDFExpressionParseException {
-		if (expression.attribute == null) {
-			init(expression.expression, expression.attributeResolver);
-		} else {
-			init(expression.attribute);
-		}
+		init(expression.expression, expression.expressionString , expression.attributeResolver);
+
 		if (expression.attributePositions != null) {
 			this.attributePositions = new int[expression.attributePositions.length];
 			for (int i = 0; i < expression.attributePositions.length; i++) {
@@ -104,76 +83,55 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
-	public SDFExpression(String string, IExpression<?> expression,
+	public SDFExpression(IExpression<?> expression,
 			IAttributeResolver attributeResolver) {
-		init(expression, attributeResolver);
+		init(expression,null, attributeResolver);
 	}
 
-	private void init(IExpression<?> expression,
+	private void init(IExpression<?> expre, String value,
 			IAttributeResolver attributeResolver) {
-		// TODO: Unschoen: Doppelter Code ... (in zwei init-Methoden)
-		this.expressionString = expression.toString();
+		if (expre != null) {
+			this.expression = expre;
+			this.expressionString = expression.toString();
+		} else {
+			expressionString = value.trim();
+		}
 		this.varCounter = 0;
 		this.variableArrayList = new ArrayList<Variable>();
 		this.attributes = new ArrayList<SDFAttribute>();
-		this.attribute = null;
 		this.attributeResolver = attributeResolver.clone();
-		this.expression = expression;
-	
-		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
-		initVariables(expression.getVariables(),
-				aliasToAggregationAttributeMapping);
 
-		if (expression instanceof Constant) {
-			setValue(expression.getValue());
+		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
+
+		if (expression == null){
+			String result = substituteAggregations(this.expressionString,
+					aliasToAggregationAttributeMapping);
+
+			try {
+				this.expression = MEP.parse(result);
+				expressionString = expressionString.toString();
+			} catch (Throwable e) {
+				System.err.println("Expr: " + this.expressionString);
+				throw new SDFExpressionParseException(e);
+			}
 		}
 		
-	}
-
-	private void init(SDFAttribute attribute) {
-		this.attribute = attribute;
-		this.attributes = new ArrayList<SDFAttribute>(1);
-		this.attributes.add(attribute);
-		// TODO: Hier wird noch die Punkt-Notation ben�tigt?
-		this.expressionString = attribute.toPointString();
-	}
-
-	private void init(String value, IAttributeResolver attributeResolver)
-			throws SDFExpressionParseException {
-		this.expressionString = value.trim();
-		this.varCounter = 0;
-		this.variableArrayList = new ArrayList<Variable>();
-		this.attributes = new ArrayList<SDFAttribute>();
-		this.attribute = null;
-		this.attributeResolver = attributeResolver.clone();
-
-		Map<String, String> aliasToAggregationAttributeMapping = new HashMap<String, String>();
-		String result = substituteAggregations(this.expressionString,
+		initVariables(this.expression.getVariables(),
 				aliasToAggregationAttributeMapping);
 
-		try {
-			expression = MEP.parse(result);
-		} catch (Throwable e) {
-			System.err.println("Expr: " + this.expressionString);
-			throw new SDFExpressionParseException(e);
-		}
-
-		initVariables(expression.getVariables(),
-				aliasToAggregationAttributeMapping);
-
-		if (expression instanceof Constant) {
+		if (this.expression instanceof Constant) {
 			setValue(expression.getValue());
 		}
+
 	}
 
-
-	
 	private String substituteAggregations(String value,
 			Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{
-			Pattern pattern = AggregateFunctionBuilderRegistry.getAggregatePattern();
-			if( pattern == null ) 
+			Pattern pattern = AggregateFunctionBuilderRegistry
+					.getAggregatePattern();
+			if (pattern == null)
 				return value;
 			Matcher m2 = pattern.matcher(value);
 			Map<String, String> aliasMappings = new HashMap<String, String>();
@@ -215,9 +173,11 @@ public class SDFExpression implements Serializable, IClone {
 			if (inverseAliasMappings.containsKey(name)) {
 				name = inverseAliasMappings.get(name);
 			}
-			SDFAttribute curAttribute = this.attributeResolver.getAttribute(name);
-			if (curAttribute == null && name == "t"){
-				this.attributes.add(new SDFAttribute(null, "t", SDFDatatype.OBJECT));
+			SDFAttribute curAttribute = this.attributeResolver
+					.getAttribute(name);
+			if (curAttribute == null && name == "t") {
+				this.attributes.add(new SDFAttribute(null, "t",
+						SDFDatatype.OBJECT));
 			} else {
 				this.attributes.add(curAttribute);
 			}
@@ -238,8 +198,6 @@ public class SDFExpression implements Serializable, IClone {
 		return this.attributePositions;
 	}
 
-
-	
 	public SDFDatatype getType() {
 		return this.expression.getReturnType();
 	}
@@ -272,10 +230,6 @@ public class SDFExpression implements Serializable, IClone {
 			return;
 		}
 
-		if (attribute != null) {
-			setValue(values[0]);
-			return;
-		}
 
 		if (values.length != variableArrayList.size()) {
 			throw new IllegalArgumentException(
@@ -288,8 +242,8 @@ public class SDFExpression implements Serializable, IClone {
 
 		setValue(expression.getValue());
 	}
-	
-	public ArrayList<Variable> getVariables(){
+
+	public ArrayList<Variable> getVariables() {
 		return this.variableArrayList;
 	}
 
@@ -297,8 +251,6 @@ public class SDFExpression implements Serializable, IClone {
 	public int hashCode() {
 		final int prime = 19;
 		int result = 1;
-		result = prime * result
-				+ ((attribute == null) ? 0 : attribute.hashCode());
 		result = prime
 				* result
 				+ ((expressionString == null) ? 0 : expressionString.hashCode());
@@ -314,11 +266,7 @@ public class SDFExpression implements Serializable, IClone {
 		if (getClass() != obj.getClass())
 			return false;
 		SDFExpression other = (SDFExpression) obj;
-		if (attribute == null) {
-			if (other.attribute != null)
-				return false;
-		} else if (!attribute.equals(other.attribute))
-			return false;
+
 		if (expressionString == null) {
 			if (other.expressionString != null)
 				return false;
@@ -332,13 +280,11 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	/**
-	 * This method is need to be able to
-	 * determine which kind of SweepArea has
-	 * to be used in a join. For this, we check whether
-	 * this expression contains other operators
-	 * than == or not.
+	 * This method is need to be able to determine which kind of SweepArea has
+	 * to be used in a join. For this, we check whether this expression contains
+	 * other operators than == or not.
 	 */
-	public IExpression<?> getMEPExpression(){
+	public IExpression<?> getMEPExpression() {
 		return this.expression;
 	}
 
