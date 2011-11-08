@@ -59,33 +59,33 @@ public class DatabaseVisitor extends CQLParser {
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
-		String name = (String)data;
+		String name = (String) data;
 		String connectionName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String tableName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		boolean isTimeSensitive = false;
 		long waitMillis = 0L;
-		if(node.jjtGetNumChildren()>2){
-			if(node.jjtGetChild(2) instanceof ASTDatabaseTimeSensitiv){
+		if (node.jjtGetNumChildren() > 2) {
+			if (node.jjtGetChild(2) instanceof ASTDatabaseTimeSensitiv) {
 				isTimeSensitive = true;
 			}
-			if(node.jjtGetChild(2) instanceof ASTTime){
-				ASTTime time = (ASTTime)node.jjtGetChild(2);
+			if (node.jjtGetChild(2) instanceof ASTTime) {
+				ASTTime time = (ASTTime) node.jjtGetChild(2);
 				String value = time.jjtGetValue().toString();
 				waitMillis = Long.parseLong(value);
 			}
-		}		
+		}
 
 		IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(connectionName);
-		if(connection == null){
-			throw new QueryParseException("No connection with name \""+connectionName+"\" found. You have to create one first");
+		if (connection == null) {
+			throw new QueryParseException("No connection with name \"" + connectionName + "\" found. You have to create one first");
 		}
-		if(!connection.tableExists(tableName)){
-			throw new QueryParseException("Table \""+tableName+"\" does not exist!");
+		if (!connection.tableExists(tableName)) {
+			throw new QueryParseException("Table \"" + tableName + "\" does not exist!");
 		}
-		
-		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive, waitMillis);		
+
+		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive, waitMillis);
 		getDataDictionary().setStream(name, source, getCaller());
-		return source;		
+		return source;
 
 	}
 
@@ -124,8 +124,13 @@ public class DatabaseVisitor extends CQLParser {
 		String name = sink.getConnectionName();
 		SDFAttributeList schema = sink.getOutputSchema();
 		IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(name);
-		if (!con.equalSchemas(sink.getTablename(), schema)) {
-			throw new QueryParseException("Columns between database and datastream are not equal!");
+		if(con==null){
+			throw new QueryParseException("There is no connection with name \""+name+"\"");
+		}
+		if (!sink.isDrop()) {
+			if (!con.equalSchemas(sink.getTablename(), schema)) {
+				throw new QueryParseException("Columns between database and datastream are not equal!");
+			}
 		}
 		return null;
 	}
