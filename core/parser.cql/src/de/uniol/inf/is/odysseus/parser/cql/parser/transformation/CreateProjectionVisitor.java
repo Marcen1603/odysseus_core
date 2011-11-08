@@ -150,7 +150,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			SDFAttribute attr = (SDFAttribute) attribute;
 			if (attr.getSourceName() != null) {
 				// Create new Attribute without sourcepart
-				SDFAttribute newAttribute = attr.clone(attr.getAttributeName());
+				SDFAttribute newAttribute = attr.clone(null, attr.getAttributeName());
 				aliasSchema.add(newAttribute);
 			} else {
 				aliasSchema.add(attr);
@@ -199,7 +199,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			SDFAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
 				// copy other attributes like datatypes
-				aliasAttribute = attribute.clone(aliasExpression.getAlias());
+				aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
 //				aliasAttribute.setSourceName("");
 //				aliasAttribute.setAttributeName(aliasExpression.getAlias());
 			} else {

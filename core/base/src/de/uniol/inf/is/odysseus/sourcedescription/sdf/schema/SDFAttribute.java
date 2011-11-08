@@ -254,9 +254,6 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return new SDFAttribute(newSourceName, newAttributeName, this);
 	}
 
-	public SDFAttribute clone(String newAttributeName) {
-		return new SDFAttribute(newAttributeName, this);
-	}
 
 	@Override
 	public int compareTo(SDFAttribute o) {
