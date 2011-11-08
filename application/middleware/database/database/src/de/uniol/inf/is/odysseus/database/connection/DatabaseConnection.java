@@ -121,7 +121,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 			while (rs.next()) {
 				String name = rs.getString("COLUMN_NAME");
 				SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
-				SDFAttribute a = new SDFAttribute(name, dt);
+				SDFAttribute a = new SDFAttribute(null,name, dt);
 				schema.add(a);
 			}
 		} catch (SQLException e) {
