@@ -38,8 +38,7 @@ public class SchemaParameterEditor extends AbstractTableButtonListParameterEdito
 	
 	@Override
 	protected SDFAttribute createNewDataRow() {
-		SDFAttribute attr = new SDFAttribute("attribute");
-		attr.setDatatype(SDFDatatype.INTEGER);
+		SDFAttribute attr = new SDFAttribute(null,"attribute", SDFDatatype.INTEGER);
 		return attr;
 	}
 	
@@ -63,7 +62,8 @@ public class SchemaParameterEditor extends AbstractTableButtonListParameterEdito
 		list.add(new TextEditingColumnDefinition<SDFAttribute>("Name") {
 			@Override
 			protected void setValue(SDFAttribute element, String value) {
-				element.setAttributeName(value);
+				//element.setAttributeName(value);
+				throw new RuntimeException("Currently not implemented!");
 			}
 
 			@Override
@@ -76,7 +76,9 @@ public class SchemaParameterEditor extends AbstractTableButtonListParameterEdito
 
 			@Override
 			protected void setValue(SDFAttribute element, String value) {
-				element.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(value));
+				//element.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(value));
+				// TODO: Das Setzen des Datentypen muss verzögert erfolgen, da der Datatype nun
+				// immutable ist
 			}
 
 			@Override

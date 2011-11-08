@@ -5,6 +5,7 @@ import com.hp.hpl.jena.graph.Triple;
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class BasicTripleSelectionAO extends SelectAO {
 
@@ -19,13 +20,13 @@ public class BasicTripleSelectionAO extends SelectAO {
 	public void calcOutElements(){
 		SDFAttributeList l = new SDFAttributeList();
 		if (triple.getSubject().isVariable()){
-			l.add(new SDFAttribute(this.hashCode()+"#"+triple.getSubject().getName()));
+			l.add(new SDFAttribute(null,this.hashCode()+"#"+triple.getSubject().getName(), SDFDatatype.STRING));
 		}
 		if (triple.getPredicate().isVariable()){
-			l.add(new SDFAttribute(this.hashCode()+"#"+triple.getPredicate().getName()));
+			l.add(new SDFAttribute(null,this.hashCode()+"#"+triple.getPredicate().getName(), SDFDatatype.STRING));
 		}
 		if (triple.getObject().isVariable()){
-			l.add(new SDFAttribute(this.hashCode()+"#"+triple.getObject().getName()));
+			l.add(new SDFAttribute(null,this.hashCode()+"#"+triple.getObject().getName(), SDFDatatype.STRING));
 		}
 		if (getInputAO() != null && getInputSchema() != null){
 			l.addAll(getInputSchema());

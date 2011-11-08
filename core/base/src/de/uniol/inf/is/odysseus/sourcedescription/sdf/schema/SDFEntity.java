@@ -31,7 +31,7 @@ public class SDFEntity extends SDFSchemaElement {
     private ArrayList<SDFEntity> subClassOf = new ArrayList<SDFEntity>();
 
 	public SDFEntity(String URI) {
-		super(URI);
+		super(URI, (SDFDatatype)null);
 	}
 
 	public SDFEntity(SDFEntity sdfEntity) {

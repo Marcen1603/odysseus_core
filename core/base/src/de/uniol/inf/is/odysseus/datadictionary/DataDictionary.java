@@ -450,6 +450,11 @@ public class DataDictionary implements IDataDictionary {
 	}
 	
 	@Override
+	public Set<String> getDatatypes(){
+		return this.datatypes.keySet();
+	}
+	
+	@Override
 	public boolean existsDatatype(String dtName){
 		return this.datatypes.containsKey(dtName.toLowerCase());
 	}

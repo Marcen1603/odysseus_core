@@ -67,6 +67,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	double[] projectionVector = null;
 
 	// private User user;
+	@SuppressWarnings("unused")
 	private IDataDictionary dd;
 
 	public CreateProjectionVisitor(User user, IDataDictionary dd) {
@@ -146,13 +147,13 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		outputSchema = top.getOutputSchema();
 		for (SDFAttribute attribute : top.getOutputSchema()) {
-			SDFAttribute SDFAttribute = (SDFAttribute) attribute;
-			if (SDFAttribute.getSourceName() != null) {
-				SDFAttribute newAttribute = SDFAttribute.clone();
-				newAttribute.setSourceName(null);
+			SDFAttribute attr = (SDFAttribute) attribute;
+			if (attr.getSourceName() != null) {
+				// Create new Attribute without sourcepart
+				SDFAttribute newAttribute = attr.clone(attr.getAttributeName());
 				aliasSchema.add(newAttribute);
 			} else {
-				aliasSchema.add(SDFAttribute);
+				aliasSchema.add(attr);
 			}
 		}
 		return null;
@@ -179,16 +180,16 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + expression.toString());
 			}
 			expressions.add(new SDFExpression(null, expression.toString(), this.attributeResolver));
-			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias());
+			SDFAttribute attribute = null;
 			if (node instanceof ASTNumber) {
 				ASTNumber number = (ASTNumber) node;
 				if (number.getValue().contains(".")) {
-					attribute.setDatatype(SDFDatatype.DOUBLE);
+					attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.DOUBLE);
 				} else {
-					attribute.setDatatype(SDFDatatype.LONG);
+					attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.LONG);
 				}
 			} else {
-				attribute.setDatatype(SDFDatatype.DOUBLE);
+				attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.DOUBLE);
 			}
 			outputSchema.add(attribute);
 			aliasSchema.add(attribute);
@@ -198,9 +199,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			SDFAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
 				// copy other attributes like datatypes
-				aliasAttribute = attribute.clone();
-				aliasAttribute.setSourceName("");
-				aliasAttribute.setAttributeName(aliasExpression.getAlias());
+				aliasAttribute = attribute.clone(aliasExpression.getAlias());
+//				aliasAttribute.setSourceName("");
+//				aliasAttribute.setAttributeName(aliasExpression.getAlias());
 			} else {
 				aliasAttribute = attribute;
 			}

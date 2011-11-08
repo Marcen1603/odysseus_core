@@ -52,43 +52,26 @@ public class SDFAttribute extends SDFSchemaElement implements
 
 	private static final long serialVersionUID = -5128455072793206061L;
 
-	/**
-	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
-	 * AttributeName must not contain "." (i.e. the String after the last "." is
-	 * used as AttributeName
-	 * 
-	 * @param sourceAndAttributeName
-	 */
-	public SDFAttribute(String sourceAndAttributeName) {
-		super();
-		initAttribute(sourceAndAttributeName);
-	}
+//	/**
+//	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
+//	 * AttributeName must not contain "." (i.e. the String after the last "." is
+//	 * used as AttributeName
+//	 * 
+//	 * @param sourceAndAttributeName
+//	 */
+//	public SDFAttribute(String sourceAndAttributeName) {
+//		super();
+//		initAttribute(sourceAndAttributeName);
+//	}
 	
-	/**
-	 * Creates a new SDFAttribute with name <code>attrName</code> and 
-	 * datatype <code>dt</code>
-	 */
-	public SDFAttribute(String attrName, SDFDatatype dt){
-		super();
-		initAttribute(attrName);
-		this.setDatatype(dt);
-	}
-
-	/**
-	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
-	 * AttributeName must not contain "." (i.e. the String after the last "." is
-	 * used as AttributeName Each SDFAttribute can have SubAttributes (to allow
-	 * NF2-Attributes)
-	 * 
-	 * @param sourceAndAttributeName
-	 * @param subattributes
-	 */
-	public SDFAttribute(String sourceAndAttributeName,
-			SDFAttributeList subattributes) {
-		super();
-		initAttribute(sourceAndAttributeName);
-//		this.subattributes = subattributes;
-	}
+//	/**
+//	 * Creates a new SDFAttribute with name <code>attrName</code> and 
+//	 * datatype <code>dt</code>
+//	 */
+//	public SDFAttribute(String attrName, SDFDatatype dt){
+//		super(attrName, dt);
+//		//initAttribute(attrName);
+//	}
 
 	/**
 	 * Creates a new SDFAttribute from sourceName and AttributeName
@@ -96,10 +79,8 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * @param sourceName
 	 * @param attributeName
 	 */
-	public SDFAttribute(String sourceName, String attributeName) {
-		super();
-		setSourceName(sourceName);
-		setAttributeName(attributeName);
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype dt) {
+		super(sourceName,attributeName, dt);
 	}
 
 	/**
@@ -109,123 +90,33 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 */
 	public SDFAttribute(SDFAttribute attribute) {
 		super(attribute);
-//		this.subattributes = attribute.subattributes == null ? null
-//				: attribute.subattributes.clone();
 	}
-
-	/**
-	 * Methode to share code between constructors
-	 * 
-	 * @param sourceAndAttributeName
-	 */
-	private void initAttribute(String sourceAndAttributeName) {
-		int pointPos = sourceAndAttributeName.lastIndexOf(".");
-		if (pointPos > 0) {
-			setSourceName(sourceAndAttributeName.substring(0, pointPos));
-			setAttributeName(sourceAndAttributeName.substring(pointPos + 1));
-		} else {
-			setSourceName(null);
-			setAttributeName(sourceAndAttributeName);
-		}
+	
+	public SDFAttribute(String newName, SDFAttribute sdfAttribute) {
+		super(newName, sdfAttribute);
+	}
+	
+	public SDFAttribute(String newSourceName, String newAttributeName, SDFAttribute sdfAttribute) {
+		super(newSourceName, newAttributeName, sdfAttribute);
 	}
 
 //	/**
-//	 * Adds a new Subattribute to the end of the current subattribute list
+//	 * Methode to share code between constructors
 //	 * 
-//	 * @param subAttr
+//	 * @param sourceAndAttributeName
 //	 */
-//	public void addSubattribute(SDFAttribute subAttr) {
-//		if (this.subattributes == null) {
-//			this.subattributes = new SDFAttributeList();
+//	private void initAttribute(String sourceAndAttributeName) {
+//		int pointPos = sourceAndAttributeName.lastIndexOf(".");
+//		if (pointPos > 0) {
+//			setSourceName(sourceAndAttributeName.substring(0, pointPos));
+//			setAttributeName(sourceAndAttributeName.substring(pointPos + 1));
+//		} else {
+//			setSourceName(null);
+//			setAttributeName(sourceAndAttributeName);
 //		}
-//
-//		this.subattributes.add(subAttr);
 //	}
 
-	// Diese Methode macht so keinen Sinn!
-	// /**
-	// * Overwrites oder sets a Subattribute to Position pos in subattribute
-	// list
-	// *
-	// * @param pos
-	// * @param subAttr
-	// */
-	// public void addSubattribute(int pos, SDFAttribute subAttr){
-	// if(this.subattributes == null){
-	// this.subattributes = new SDFAttributeList();
-	// }
-	//		
-	// if(pos > this.subattributes.size()){
-	// throw new
-	// RuntimeException("Not enough subattributes avaiable. Cannot add new subattribute at position "
-	// + pos);
-	// }
-	// this.subattributes.add(pos, subAttr);
-	// }
 
-//	/**
-//	 * Removes subattribute
-//	 */
-//	public boolean removeSubattribute(SDFAttribute subAttr) {
-//		if (this.subattributes == null) {
-//			return false;
-//		}
-//
-//		return this.subattributes.remove(subAttr);
-//	}
-
-//	/**
-//	 * removes Subattribute at position pos
-//	 * 
-//	 * @param pos
-//	 * @return
-//	 */
-//	public boolean removeSubattribute(int pos) {
-//		if (this.subattributes == null) {
-//			return false;
-//		}
-//
-//		return this.subattributes.remove(pos) != null;
-//	}
-
-//	/**
-//	 * Use a list von Attributes as subattributes
-//	 * 
-//	 * @param subAttrs
-//	 */
-//	public void setSubattributes(SDFAttributeList subAttrs) {
-//		this.subattributes = subAttrs;
-//	}
-
-//	/**
-//	 * Return amount of subattributes
-//	 */
-//
-//	public int getAmountOfSubattributes() {
-//		if (this.subattributes == null)
-//			return 0;
-//
-//		return this.subattributes.size();
-//	}
-
-//	/**
-//	 * Remove all subattributes
-//	 */
-//	public void clearSubattributes() {
-//		this.subattributes = new SDFAttributeList();
-//	}
-
-//	public int getSubattributeCount() {
-//		return this.subattributes.size();
-//	}
-
-//	public SDFAttribute getSubattribute(int index) {
-//		return this.subattributes.get(index);
-//	}
-
-//	public SDFAttributeList getSubattributes() {
-//		return this.subattributes;
-//	}
 
 	/**
 	 * Get Sourcename-Part of the Attribute
@@ -236,24 +127,24 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getURIWithoutQualName();
 	}
 
-	/**
-	 * Set Sourcename-Part of the Attribute
-	 * 
-	 * @param sourceName
-	 */
-
-	public void setSourceName(String sourceName) {
-		setURIWithoutQualName(sourceName);
-	}
-
-	/**
-	 * Sets AttributeName part
-	 * 
-	 * @param attributeName
-	 */
-	public void setAttributeName(String attributeName) {
-		setQualName(attributeName);
-	}
+//	/**
+//	 * Set Sourcename-Part of the Attribute
+//	 * 
+//	 * @param sourceName
+//	 */
+//
+//	public void setSourceName(String sourceName) {
+//		setURIWithoutQualName(sourceName);
+//	}
+//
+//	/**
+//	 * Sets AttributeName part
+//	 * 
+//	 * @param attributeName
+//	 */
+//	public void setAttributeName(String attributeName) {
+//		setQualName(attributeName);
+//	}
 
 	/**
 	 * Returns the name of the attribute without source information. To get the
@@ -356,7 +247,15 @@ public class SDFAttribute extends SDFSchemaElement implements
 
 	@Override
 	public SDFAttribute clone() {
-		return new SDFAttribute(this);
+		return this;
+	}
+
+	public SDFAttribute clone(String newSourceName, String newAttributeName) {
+		return new SDFAttribute(newSourceName, newAttributeName, this);
+	}
+
+	public SDFAttribute clone(String newAttributeName) {
+		return new SDFAttribute(newAttributeName, this);
 	}
 
 	@Override

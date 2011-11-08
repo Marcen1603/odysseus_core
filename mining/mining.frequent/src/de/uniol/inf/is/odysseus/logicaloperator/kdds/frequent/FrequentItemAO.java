@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 @LogicalOperator(name = "FREQUENT_ITEM", minInputPorts = 1, maxInputPorts = 1)
@@ -76,8 +77,7 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 			for (SDFAttribute c : this.choosenAttributes) {
 				list.add(c.clone());
 			}
-			SDFAttribute a = new SDFAttribute("itemcount");
-			a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Integer"));
+			SDFAttribute a = new SDFAttribute(null,"itemcount", SDFDatatype.INTEGER);
 			list.add(a);
 			this.outputschema = list;
 			recalc = false;

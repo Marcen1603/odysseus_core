@@ -108,6 +108,7 @@ public interface IDataDictionary {
 	public void addDatatype(String name, SDFDatatype dt);
 	
 	public SDFDatatype getDatatype(String name);
+	public Set<String> getDatatypes();
 	
 	public boolean existsDatatype(String dtName);
 

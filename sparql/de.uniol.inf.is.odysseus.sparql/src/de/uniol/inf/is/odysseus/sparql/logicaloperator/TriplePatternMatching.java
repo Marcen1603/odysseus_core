@@ -146,18 +146,15 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 	private SDFAttributeList calcOutputSchema(){
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		if (triple.getSubject().isVariable()){
-			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName());
-			subject.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(),GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(subject);
 		}
 		if (triple.getPredicate().isVariable()){
-			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple.getPredicate().getName());
-			predicate.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple.getPredicate().getName(),GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(predicate);
 		}
 		if (triple.getObject().isVariable()){
-			SDFAttribute object  = new SDFAttribute(this.sourceName, triple.getObject().getName());
-			object.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+			SDFAttribute object  = new SDFAttribute(this.sourceName, triple.getObject().getName(),GlobalState.getActiveDatadictionary().getDatatype("String"));
 			outputSchema.add(object);
 		}
 // Wozu braucht man das?
@@ -168,8 +165,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		// adding the graphVar
 		if(this.graphVar != null && this.stream_name != null){
 			boolean alreadyAdded = false;
-			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName());
-			graphVarAtt.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName(),GlobalState.getActiveDatadictionary().getDatatype("String"));
 			for(SDFAttribute a : outputSchema){
 				if(a.getQualName().equals(graphVarAtt.getQualName())){
 					alreadyAdded = true;

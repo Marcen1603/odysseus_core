@@ -266,8 +266,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			ILogicalOperator access) {
 		SDFAttributeList attributes = new SDFAttributeList();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			SDFAttribute newAttribute = (SDFAttribute) attribute.clone();
-			newAttribute.setSourceName(alias);
+			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,attribute.getAttributeName());
+			//newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
 		return attributes;

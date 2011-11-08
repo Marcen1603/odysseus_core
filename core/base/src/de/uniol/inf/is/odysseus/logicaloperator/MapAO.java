@@ -58,17 +58,16 @@ public class MapAO extends UnaryLogicalOp {
 				} else {
 					IExpression<?> mepExpression = expr.getMEPExpression();
 					String exprString = mepExpression.toString();
-					attr = new SDFAttribute(exprString);
 					// If expression is an attribute use this data type
 					List<SDFAttribute> inAttribs = expr.getAllAttributes();
 					for (SDFAttribute attribute : inAttribs) {
 						if (attribute.getURI().equals(exprString)) {
-							attr.setDatatype(attribute.getDatatype());
+							attr = new SDFAttribute(null,exprString, attribute.getDatatype());
 						}
 					}
 					// else use the expression data type
-					if (attr.getDatatype() == null) {
-						attr.setDatatype(mepExpression.getReturnType());
+					if (attr == null) {
+						attr = new SDFAttribute(null,exprString, mepExpression.getReturnType());
 					}
 				}
 				outputSchema.add(attr);

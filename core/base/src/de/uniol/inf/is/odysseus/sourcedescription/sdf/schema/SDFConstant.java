@@ -26,9 +26,8 @@ public abstract class SDFConstant extends SDFSchemaElement {
 	protected Double doubleValue;
 
 	public SDFConstant(String URI, String value, SDFDatatype type) {
-		super(URI);
+		super(URI, type);
 		this.value = value;
-		this.setDatatype(type);
 	}
 
 	public abstract boolean isString();

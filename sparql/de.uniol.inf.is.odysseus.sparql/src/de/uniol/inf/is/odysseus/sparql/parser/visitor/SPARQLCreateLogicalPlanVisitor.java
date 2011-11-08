@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeReso
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
@@ -1250,16 +1251,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		// the schema
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		
-		SDFAttribute subject = new SDFAttribute(streamName + ".subject");
-		subject.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+		SDFAttribute subject = new SDFAttribute(null,streamName + ".subject", SDFDatatype.STRING);
 		outputSchema.add(subject);
 		
-		SDFAttribute predicate = new SDFAttribute(streamName + ".predicate");
-		predicate.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+		SDFAttribute predicate = new SDFAttribute(null,streamName + ".predicate", SDFDatatype.STRING);
 		outputSchema.add(predicate);
 		
-		SDFAttribute object = new SDFAttribute(streamName + ".object");
-		object.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
+		SDFAttribute object = new SDFAttribute(null,streamName + ".object", SDFDatatype.STRING);
 		outputSchema.add(object);
 		
 		AccessAO accAO = null;
@@ -1344,10 +1342,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		String funcName = function.toString() + "(" + attributeName + ")";
 		
 		// in each case the input datatype is string
-		SDFAttribute attribute = new SDFAttribute(null, funcName);
+		SDFAttribute attribute = new SDFAttribute(null, funcName, SDFDatatype.STRING);
 		
-		// in each case the output datatype is string
-		attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("String"));
 		
 		
 //		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);

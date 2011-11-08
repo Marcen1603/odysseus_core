@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Freedm
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.LastNSampling;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class HistogramTypeEvaluation {
 
@@ -40,7 +41,7 @@ public class HistogramTypeEvaluation {
 		increasing = gen.getIncreasingStream(0, 100, 2000);
 		normalized = gen.getNormalDistributedStream(0, 100, 2000);
 		jumping = gen.getJumpingStream(0, 100, 2000);
-		SDFAttribute attribute = new SDFAttribute("src:example");
+		SDFAttribute attribute = new SDFAttribute(null,"src:example",SDFDatatype.DOUBLE);
 
 		// Create Histograms
 		

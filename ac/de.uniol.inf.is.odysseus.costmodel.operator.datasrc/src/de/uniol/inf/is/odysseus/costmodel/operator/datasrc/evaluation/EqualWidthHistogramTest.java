@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Freedm
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.LastNSampling;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class EqualWidthHistogramTest {
 
@@ -16,7 +17,7 @@ public class EqualWidthHistogramTest {
 		DataStreamGenerator gen = new DataStreamGenerator();
 		
 		List<Double> increasing = gen.getIncreasingStream(0, 100, 1000);
-		SDFAttribute attribute = new SDFAttribute("example:attribute");
+		SDFAttribute attribute = new SDFAttribute(null,"example:attribute", SDFDatatype.DOUBLE);
 		
 		IHistogramFactory factory = new EqualWidthHistogramFactory( attribute, new LastNSampling(1000), new FreedmanDiaconisRule() );
 		for( double d : increasing ) 

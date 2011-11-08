@@ -47,24 +47,24 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static final SDFDatatype SPATIAL_POINT = new SDFDatatype("SpatialPoint", SDFDatatype.KindOfDatatype.BEAN, 
 			new SDFAttributeList(
-					new SDFAttribute("x", SDFDatatype.DOUBLE),
-					new SDFAttribute("y", SDFDatatype.DOUBLE),
-					new SDFAttribute("z", SDFDatatype.DOUBLE)));
+					new SDFAttribute(null,"x", SDFDatatype.DOUBLE),
+					new SDFAttribute(null,"y", SDFDatatype.DOUBLE),
+					new SDFAttribute(null,"z", SDFDatatype.DOUBLE)));
 	
 	public static final SDFDatatype SPATIAL_MULTI_POINT = new SDFDatatype("SpatialMultiPoint", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_POINT);
 	
 	
 	public static final SDFDatatype SPATIAL_LINE = new SDFDatatype("SpatialLine", SDFDatatype.KindOfDatatype.BEAN,
 			new SDFAttributeList(
-					new SDFAttribute("start", SDFDatatype.SPATIAL_POINT),
-					new SDFAttribute("end", SDFDatatype.SPATIAL_POINT)));
+					new SDFAttribute(null,"start", SDFDatatype.SPATIAL_POINT),
+					new SDFAttribute(null,"end", SDFDatatype.SPATIAL_POINT)));
 	
 	public static final SDFDatatype SPATIAL_MULTI_LINE = new SDFDatatype("SpatialMultiLine", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_LINE);
 	
 	
 	public static final SDFDatatype SPATIAL_POLYGON = new SDFDatatype("SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
 			new SDFAttributeList(
-					new SDFAttribute("points", SDFDatatype.SPATIAL_MULTI_POINT)));
+					new SDFAttribute(null,"points", SDFDatatype.SPATIAL_MULTI_POINT)));
 	
 	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype("SpatialMultiPolygon", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_POLYGON);
 	

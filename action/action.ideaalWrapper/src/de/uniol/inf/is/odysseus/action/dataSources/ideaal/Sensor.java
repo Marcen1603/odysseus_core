@@ -91,8 +91,7 @@ public enum Sensor {
 			};
 			
 			for (int i=0; i<identifiers.length; i++){
-				SDFAttribute attribute = new SDFAttribute(identifiers[i]);
-				attribute.setDatatype(types[i]);
+				SDFAttribute attribute = new SDFAttribute(null,identifiers[i], types[i]);
 				schema.add(attribute);
 			}
 			Sensor.schema.put(Sensor.BedBalance, schema);
@@ -101,8 +100,7 @@ public enum Sensor {
 			schema = new SDFAttributeList();
 			
 			for (int i=0; i<3; i++){
-				SDFAttribute attribute = new SDFAttribute(identifiers[i]);
-				attribute.setDatatype(types[i]);
+				SDFAttribute attribute = new SDFAttribute(null,identifiers[i], types[i]);
 				schema.add(attribute);
 			}
 			

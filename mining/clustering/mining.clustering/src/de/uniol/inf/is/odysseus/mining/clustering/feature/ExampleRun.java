@@ -31,9 +31,9 @@ public class ExampleRun {
 
 	public static void main(String[] args) {
 		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute attributeID = new SDFAttribute("id", SDFDatatype.INTEGER);
+		SDFAttribute attributeID = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
 		schema.add(attributeID);
-		SDFAttribute attributeName = new SDFAttribute("name", SDFDatatype.STRING);
+		SDFAttribute attributeName = new SDFAttribute(null,"name", SDFDatatype.STRING);
 		schema.add(attributeName);
 
 		ISnapshotMergeFunction<ClusteringFeature<RelationalTuple<ITimeInterval>>> datamergeFunction = new RelationalTIClusteringFeatureMergeFunction<ITimeInterval>();

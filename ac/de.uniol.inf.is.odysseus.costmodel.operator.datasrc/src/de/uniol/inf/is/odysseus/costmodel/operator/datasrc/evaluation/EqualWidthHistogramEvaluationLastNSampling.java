@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Freedm
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.LastNSampling;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class EqualWidthHistogramEvaluationLastNSampling {
 
@@ -20,7 +21,7 @@ public class EqualWidthHistogramEvaluationLastNSampling {
 		List<Double> normalValues = gen.getNormalDistributedStream(0, 100, 10000);
 		List<Double> normalIncreasedValues = gen.getJumpingStream(0, 100, 10000);
 		
-		SDFAttribute attr = new SDFAttribute("example:double");
+		SDFAttribute attr = new SDFAttribute(null,"example:double", SDFDatatype.DOUBLE);
 
 		/**
 		 *  Equal Distributed Values

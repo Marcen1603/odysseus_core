@@ -38,9 +38,7 @@ public class CreateSDFAttributeParameter extends
 			throw new IllegalArgumentException(
 					"Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
 		}
-		SDFAttribute attribute = new SDFAttribute(list.get(0));
-		SDFDatatype dataType = dd.getDatatype(list.get(1)); 
-		attribute.setDatatype(dataType);
+		SDFAttribute attribute = new SDFAttribute(null,list.get(0), dd.getDatatype(list.get(1)));
 		setValue(attribute);
 	}
 

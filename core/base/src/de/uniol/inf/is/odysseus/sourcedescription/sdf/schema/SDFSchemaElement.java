@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.Collection;
@@ -24,16 +24,18 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 public abstract class SDFSchemaElement extends SDFElement {
 
 	private static final long serialVersionUID = -6044873167369148445L;
-	private SDFDatatype datatype = null;
-    private Map<String, SDFDatatypeConstraint> dtConstraints = new HashMap<String, SDFDatatypeConstraint>();
-    private SDFUnit unit = null;
+	final private SDFDatatype datatype;
+	private Map<String, SDFDatatypeConstraint> dtConstraints = new HashMap<String, SDFDatatypeConstraint>();
+	private SDFUnit unit = null;
 
-    protected SDFSchemaElement(){
-    	super();
-    }
-    
-	public SDFSchemaElement(String URI) {
+	public SDFSchemaElement(String sourceName, String name, SDFDatatype datatype) {
+		super(sourceName,name);
+		this.datatype = datatype;
+	}
+
+	public SDFSchemaElement(String URI, SDFDatatype datatype) {
 		super(URI);
+		this.datatype = datatype;
 	}
 	
 	public SDFSchemaElement(SDFSchemaElement copy) {
@@ -43,38 +45,43 @@ public abstract class SDFSchemaElement extends SDFElement {
 		this.unit = copy.unit;
 	}
 
-    public void setDatatype(SDFDatatype datatype) {
-        this.datatype = datatype;
-    }
-    public SDFDatatype getDatatype() {
-        return datatype;
-    }
-    public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
-        this.dtConstraints.put(uri, dtConstraint);
-    }
-    public SDFDatatypeConstraint getDtConstraint(String uri) {
-        return dtConstraints.get(uri);
-    }
-    public Collection<SDFDatatypeConstraint> getDtConstraints() {
-        return dtConstraints.values();
-    }
-    public void setUnit(SDFUnit unit) {
-        this.unit = unit;
-    }
-    public SDFUnit getUnit() {
-        return unit;
-    }
+	public SDFSchemaElement(String newName, SDFSchemaElement sdfAttribute) {
+		super(newName);
+		this.datatype = sdfAttribute.datatype;
+		this.dtConstraints = sdfAttribute.dtConstraints;
+		this.unit = sdfAttribute.unit;		
+	}
+	
+	public SDFSchemaElement(String newSourceName, String newName, SDFSchemaElement sdfAttribute) {
+		super(newSourceName, newName);
+		this.datatype = sdfAttribute.datatype;
+		this.dtConstraints = sdfAttribute.dtConstraints;
+		this.unit = sdfAttribute.unit;		
+	}
 
-//	@Override
-//	public String toString() {
-//		StringBuffer ret = new StringBuffer(super.toString());
-////		if (getDatatype() != null)
-////			ret.append(" : " + this.getDatatype().toString());
-////		if (this.getDtConstraint() != null)
-////			ret.append("/" + this.getDtConstraint().toString());
-////		if (this.getUnit() != null)
-////			ret.append(" --> " + this.getUnit().toString());
-//		return ret.toString();
-//	}
+	public SDFDatatype getDatatype() {
+		return datatype;
+	}
+
+	public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
+		this.dtConstraints.put(uri, dtConstraint);
+	}
+
+	public SDFDatatypeConstraint getDtConstraint(String uri) {
+		return dtConstraints.get(uri);
+	}
+
+	public Collection<SDFDatatypeConstraint> getDtConstraints() {
+		return dtConstraints.values();
+	}
+
+	public void setUnit(SDFUnit unit) {
+		this.unit = unit;
+	}
+
+	public SDFUnit getUnit() {
+		return unit;
+	}
+
 
 }

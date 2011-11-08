@@ -62,9 +62,9 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 		Iterator<SDFAttribute> it = inputSchema.iterator();
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.
-			SDFAttribute attribute = it.next().clone();
-			attribute.setAttributeName(str);
-			attribute.setSourceName(null);
+			SDFAttribute attribute = it.next().clone(null,str);
+//			attribute.setAttributeName(str);
+//			attribute.setSourceName(null);
 			this.outputSchema.add(attribute);
 		}
 	}

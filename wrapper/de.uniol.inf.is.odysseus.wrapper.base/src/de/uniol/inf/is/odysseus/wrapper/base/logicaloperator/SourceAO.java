@@ -102,8 +102,7 @@ public class SourceAO extends AbstractLogicalOperator implements OutputSchemaSet
         final SDFAttributeList schema = new SDFAttributeList();
         for (final String item : schemaAttributes) {
             final String[] schemaInformation = item.split(":");
-            final SDFAttribute attribute = new SDFAttribute(null, schemaInformation[0]);
-            attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(
+            final SDFAttribute attribute = new SDFAttribute(null, schemaInformation[0],GlobalState.getActiveDatadictionary().getDatatype(
                     schemaInformation[1]));
             schema.add(attribute);
         }

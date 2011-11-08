@@ -106,10 +106,11 @@ public class AggregateAO extends UnaryLogicalOp {
 		if (groupingAttributes.contains(attribute)) {
 			return;
 		}
-		groupingAttributes.add(attribute);
-		getOutputSchema().add(attribute);
+		SDFAttribute toAdd = attribute.clone();
+		groupingAttributes.add(toAdd);
+		getOutputSchema().add(toAdd);
 	}
-
+	
 	public void addGroupingAttributes(SDFAttributeList attributes) {
 		for (SDFAttribute a : attributes) {
 			addGroupingAttribute(a);

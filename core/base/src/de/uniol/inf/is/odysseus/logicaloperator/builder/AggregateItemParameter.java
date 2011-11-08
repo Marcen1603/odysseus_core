@@ -43,88 +43,88 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
         String attributeStr = value.get(1);
         SDFAttribute attribute = getAttributeResolver().getAttribute(attributeStr);
         String outputName = value.get(2);
-        SDFAttribute outAttr = new SDFAttribute(outputName);
+        SDFAttribute outAttr = null;
 
         if (value.size() == 4) {
             String outputType = value.get(3);
             // Check for available SDFDatatypes
             // TODO Implement easy lookup table/dictionary for registered aggregation functions
             if (outputType.equalsIgnoreCase(SDFDatatype.OBJECT.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.OBJECT);
+            	outAttr = new SDFAttribute(null, outputName, SDFDatatype.OBJECT);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.STRING.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.STRING);
+            	outAttr = new SDFAttribute(null, outputName, SDFDatatype.STRING);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.LONG.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.LONG);
+            	outAttr = new SDFAttribute(null, outputName, SDFDatatype.LONG);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.INTEGER.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.INTEGER);
+            	outAttr = new SDFAttribute(null, outputName, SDFDatatype.INTEGER);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.FLOAT.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.FLOAT);
+            	outAttr = new SDFAttribute(null, outputName, SDFDatatype.FLOAT);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.DOUBLE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.DOUBLE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.DOUBLE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.DATE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.DATE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.DATE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.BOOLEAN.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.BOOLEAN);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.BOOLEAN);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_POINT.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_POINT);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_POINT);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_MULTI_POINT.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_MULTI_POINT);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_MULTI_POINT);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_LINE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_LINE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_LINE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_MULTI_LINE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_MULTI_LINE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_MULTI_LINE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_POLYGON.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_POLYGON);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_POLYGON);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL_MULTI_POLYGON.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL_MULTI_POLYGON);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.SPATIAL.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.SPATIAL);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.SPATIAL);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.START_TIMESTAMP.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.START_TIMESTAMP);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.START_TIMESTAMP);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.END_TIMESTAMP.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.END_TIMESTAMP);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.END_TIMESTAMP);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.TIMESTAMP.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.TIMESTAMP);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.TIMESTAMP);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.POINT_IN_TIME.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.POINT_IN_TIME);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.POINT_IN_TIME);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.MV.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.MV);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.MV);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.MATRIX_DOUBLE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.MATRIX_DOUBLE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.MATRIX_DOUBLE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.VECTOR_DOUBLE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.VECTOR_DOUBLE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.VECTOR_DOUBLE);
             }
             else if (outputType.equalsIgnoreCase(SDFDatatype.TUPLE.getQualName())) {
-                outAttr.setDatatype(SDFDatatype.TUPLE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.TUPLE);
             }
             else {
-                outAttr.setDatatype(SDFDatatype.DOUBLE);
+            	outAttr = new SDFAttribute(null,outputName, SDFDatatype.DOUBLE);
             }
         }
         else {
             // Fallback to old DOUBLE value for aggregation results
-            outAttr.setDatatype(SDFDatatype.DOUBLE);
+        	outAttr = new SDFAttribute(null,outputName, SDFDatatype.DOUBLE);
         }
         setValue(new AggregateItem(funcStr, attribute, outAttr));
     }

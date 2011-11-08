@@ -188,7 +188,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
+		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
 
 		// we allow user defined types, so check
@@ -196,7 +196,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		if (this.dd.existsDatatype(astAttrType.getType())) {
 
-			attribute.setDatatype(this.dd.getDatatype(astAttrType.getType()));
+			attribute = new SDFAttribute(this.name, attrName, this.dd.getDatatype(astAttrType.getType()));
 			if (attribute.getDatatype().isDate()) {
 				attribute.addDtConstraint("format", astAttrType.getDateFormat());
 			}

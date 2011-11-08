@@ -24,7 +24,7 @@ public class SDFDatatypeConstraint extends SDFSchemaElement {
 	private String cType = null;
 	
 	public SDFDatatypeConstraint(String URI, String cType) {
-		super(URI);
+		super(URI, (SDFDatatype)null);
 		this.cType = cType;
 	}
 

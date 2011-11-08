@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf;
 
 import java.io.Serializable;
@@ -31,16 +31,38 @@ public abstract class SDFElement implements Serializable, IClone {
 	/**
 	 * @uml.property name="qualName"
 	 */
-	private String qualName = null;
+	final private String qualName;
 
-	private String uRIWithoutQualName = null;
+	final private String uRIWithoutQualName;
 
-	protected SDFElement() {
-
-	}
+	// protected SDFElement() {
+	//
+	// }
 
 	public SDFElement(String URI) {
-		init(URI);
+		if (URI != null) {
+			int sharpPos = URI.indexOf("#"); // primary qualifier if present
+			if (sharpPos > 0) {
+				this.qualName = URI.substring(sharpPos + 1);
+				this.uRIWithoutQualName = URI.substring(0, sharpPos);
+			} else {
+				sharpPos = URI.indexOf("."); // secondary qualifier if present
+				if (sharpPos > 0) {
+					this.qualName = URI.substring(sharpPos + 1);
+					this.uRIWithoutQualName = URI.substring(0, sharpPos);
+				} else {
+					this.uRIWithoutQualName = URI;
+					this.qualName = null;
+				}
+			}
+		} else{
+			throw new IllegalArgumentException("URI cannot be null");
+		}
+	}
+	
+	public SDFElement(String uRIWithoutQualName, String qualName){
+		this.qualName = qualName;
+		this.uRIWithoutQualName = uRIWithoutQualName;
 	}
 
 	public SDFElement(SDFElement copy) {
@@ -52,31 +74,22 @@ public abstract class SDFElement implements Serializable, IClone {
 	 * Initialisieren der Teilkomponenten der URI.
 	 */
 	protected void init(String URI) {
-		if (URI != null) {
-			int sharpPos = URI.indexOf("#");
-			if (sharpPos > 0) {
-				this.qualName = URI.substring(sharpPos + 1);
-				this.uRIWithoutQualName = URI.substring(0, sharpPos);
-			}else{
-				this.uRIWithoutQualName = URI;
-			}
-			
-		}
+
 	}
 
 	public String getURI(boolean prettyPrint) {
 		return getURI(uRIWithoutQualName, qualName, prettyPrint, null);
 	}
-	
+
 	protected String getURI(boolean prettyPrint, String seperator) {
 		return getURI(uRIWithoutQualName, qualName, prettyPrint, seperator);
 	}
-	
 
 	/**
-	 * Build an URI from these parts
-	 * if one part is empty, show only the other one
-	 * if substSDFNamespace is true substitute long URIs with short default namespace names
+	 * Build an URI from these parts if one part is empty, show only the other
+	 * one if substSDFNamespace is true substitute long URIs with short default
+	 * namespace names
+	 * 
 	 * @param uRIWithoutQualName
 	 * @param qualName
 	 * @param substSDFNamespace
@@ -84,27 +97,27 @@ public abstract class SDFElement implements Serializable, IClone {
 	 */
 	private String getURI(String uRIWithoutQualName, String qualName,
 			boolean substSDFNamespace, String defaultSperator) {
-		String sep = defaultSperator==null?"#":defaultSperator;
+		String sep = defaultSperator == null ? "#" : defaultSperator;
 		StringBuffer ret = new StringBuffer();
 
 		if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0) {
 			// in each call substSDFNamespace is false, so we don't need this
 			// code any more.
-//			if (substSDFNamespace) {
-//				String namespaceName = SDF
-//						.getNamespaceForUri(uRIWithoutQualName);
-//				if (namespaceName != null) {
-//					ret.append(namespaceName); 
-//				}
-//			} else {
-				ret.append(uRIWithoutQualName);
-//			}
-		} 
-		if (qualName != null){
-			if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0){
-				if (substSDFNamespace){
+			// if (substSDFNamespace) {
+			// String namespaceName = SDF
+			// .getNamespaceForUri(uRIWithoutQualName);
+			// if (namespaceName != null) {
+			// ret.append(namespaceName);
+			// }
+			// } else {
+			ret.append(uRIWithoutQualName);
+			// }
+		}
+		if (qualName != null) {
+			if (uRIWithoutQualName != null && uRIWithoutQualName.length() > 0) {
+				if (substSDFNamespace) {
 					ret.append(":");
-				}else{
+				} else {
 					ret.append(sep);
 				}
 			}
@@ -124,17 +137,17 @@ public abstract class SDFElement implements Serializable, IClone {
 		return qualName;
 	}
 
-	protected void setQualName(String name) {
-		this.qualName = name;
-	}
+//	protected void setQualName(String name) {
+//		this.qualName = name;
+//	}
 
 	public String getURIWithoutQualName() {
 		return uRIWithoutQualName;
 	}
 
-	protected void setURIWithoutQualName(String name) {
-		uRIWithoutQualName = name;
-	}
+//	protected void setURIWithoutQualName(String name) {
+//		uRIWithoutQualName = name;
+//	}
 
 	@Override
 	public String toString() {
@@ -184,7 +197,7 @@ public abstract class SDFElement implements Serializable, IClone {
 			return false;
 		return true;
 	}
-	
+
 	abstract public SDFElement clone();
 
 }

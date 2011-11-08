@@ -1930,9 +1930,8 @@ public class SaseAST extends TreeParser {
                         	e = new RelationalMEPOutputSchemeEntry(CepVariable.getStringFor(op, a, i, a
                         			+ "." + path));
                         	scheme.append(e);
-                        	SDFAttribute attr = new SDFAttribute(e.getLabel());
                         	// TODO: Set correct Datatypes
-                        	attr.setDatatype(new SDFDatatype("String"));
+                        	SDFAttribute attr = new SDFAttribute(null,e.getLabel(), SDFDatatype.STRING);
                         	attrList.add(attr);
                         }
                         cepAo.getStateMachine().setOutputScheme(scheme);

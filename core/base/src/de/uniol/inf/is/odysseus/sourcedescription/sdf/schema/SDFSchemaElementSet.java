@@ -33,18 +33,18 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
     protected List<T> elements = new ArrayList<T>();
 
 	public SDFSchemaElementSet(String URI) {
-		super(URI);
+		super(URI, (SDFDatatype)null);
 	}
 
 	public SDFSchemaElementSet() {
-		super("TemporaryElement" + System.currentTimeMillis());
+		super("TemporaryElement" + System.currentTimeMillis(), (SDFDatatype)null);
 	}
 
 	/**
      * @param attributes1
      */    
 	public SDFSchemaElementSet(SDFSchemaElementSet<T> newElements) {
-        super("TemporaryElement" + System.currentTimeMillis());
+        super("TemporaryElement" + System.currentTimeMillis(), (SDFDatatype)null);
         elements.addAll(newElements);
     }
 	

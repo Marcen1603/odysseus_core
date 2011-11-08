@@ -36,8 +36,7 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 			for(Method m : metaClass.getMethods()){
 				SDFDatatype returnSDFType = getAccordingSDFDataType(m.getReturnType());
 				if((m.getParameterTypes().length==0) && (returnSDFType!=null)){
-					SDFAttribute a = new SDFAttribute(metaClass.getName(), m.getName());
-					a.setDatatype(returnSDFType);
+					SDFAttribute a = new SDFAttribute(metaClass.getName(), m.getName(), returnSDFType);
 					list.add(a);
 				}
 			}

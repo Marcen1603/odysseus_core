@@ -128,7 +128,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		SDFAttribute attribute = dar.getAttribute(attributeName);
 		
 		for(int i=0;i<detection.getAggregateAttributes().size();i++){
-			SDFAttribute aggAttribute = new SDFAttribute(detection.getAggregationAttribute(i), SDFDatatype.DOUBLE);
+			SDFAttribute aggAttribute = new SDFAttribute(null,detection.getAggregationAttribute(i), SDFDatatype.DOUBLE);
 			aggregate.addAggregation(attribute, detection.getAggregateFunctions().get(i), aggAttribute);
 		}
 				

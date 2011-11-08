@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IInter
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.ISampling;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.LastNSampling;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class EqualDepthHistogramCutTest {
 
@@ -18,7 +19,7 @@ public class EqualDepthHistogramCutTest {
 		DataStreamGenerator gen = new DataStreamGenerator();
 		List<Double> values = gen.getNormalDistributedStream(0, 100, 2000);
 		
-		SDFAttribute attribute = new SDFAttribute("example:value");
+		SDFAttribute attribute = new SDFAttribute(null,"example:value", SDFDatatype.DOUBLE);
 		ISampling sampling = new LastNSampling(2000);
 		IIntervalCountEstimator estimator = new FreedmanDiaconisRule();
 		

@@ -23,7 +23,7 @@ public class SDFMetaAttribute extends SDFAttribute {
 	
 	
 	public SDFMetaAttribute(Class<? extends IMetaAttribute> metaAttributeClass) {
-		super(metaAttributeClass.getName());	
+		super(null,metaAttributeClass.getName(), SDFDatatype.OBJECT);	
 		this.theclass = metaAttributeClass;
 	}
 

@@ -20,6 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class TestProducerAO extends AbstractLogicalOperator {
@@ -38,8 +39,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	
 	public TestProducerAO() {
 		this.outputSchema = new SDFAttributeList();
-		SDFAttribute a = new SDFAttribute("Dummy");
-		a.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
+		SDFAttribute a = new SDFAttribute(null,"Dummy", SDFDatatype.LONG);
 		outputSchema.add(a);
 	}
 

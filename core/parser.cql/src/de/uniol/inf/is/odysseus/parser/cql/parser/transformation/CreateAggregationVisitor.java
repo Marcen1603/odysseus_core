@@ -135,16 +135,15 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 						+ function.toString()
 						+ "' can't be used on non scalar types");
 			}
-			attribute = new SDFAttribute(null, funcName);
+			
 			if (function.getName().equalsIgnoreCase("AVG")) {
-				attribute.setDatatype(this.dd.getDatatype("Double"));
+				attribute = new SDFAttribute(null, funcName, SDFDatatype.DOUBLE);
 			} else if (function.getName().equalsIgnoreCase("COUNT")) {
-				attribute
-						.setDatatype(this.dd.getDatatype("Integer"));
+				attribute = new SDFAttribute(null, funcName, SDFDatatype.INTEGER);
 			} else {
 				// datatype equals datatype of input attribute
 				// for other functions
-				attribute.setDatatype(datatype);
+				attribute = new SDFAttribute(null, funcName,datatype);
 			}
 
 			this.attributeResolver.addAttribute(attribute);
