@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
@@ -51,6 +53,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
@@ -190,19 +194,24 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
+		Map<String, SDFDatatypeConstraint> dtConstrains = new HashMap<String, SDFDatatypeConstraint>();
 
+		
 		// we allow user defined types, so check
 		// whether the defined type exists or not
 
 		if (this.dd.existsDatatype(astAttrType.getType())) {
 
-			attribute = new SDFAttribute(this.name, attrName, this.dd.getDatatype(astAttrType.getType()));
-			if (attribute.getDatatype().isDate()) {
-				attribute.addDtConstraint("format", astAttrType.getDateFormat());
+			SDFDatatype attribType = this.dd.getDatatype(astAttrType.getType());
+			
+			if (attribType.isDate()) {
+				dtConstrains.put("format", astAttrType.getDateFormat());
+				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains);
 			}
-			if (attribute.getDatatype().isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {
-				attribute.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
-
+			
+			if (attribute.getDatatype().isMeasurementValue()
+					&& astAttrType.jjtGetNumChildren() > 0) {
+				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));	
 			}
 		} else {
 			throw new QueryParseException("illigal datatype:" + astAttrType.getType());

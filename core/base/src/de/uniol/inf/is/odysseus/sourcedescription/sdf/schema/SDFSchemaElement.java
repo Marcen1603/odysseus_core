@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
@@ -25,17 +24,27 @@ public abstract class SDFSchemaElement extends SDFElement {
 
 	private static final long serialVersionUID = -6044873167369148445L;
 	final private SDFDatatype datatype;
-	private Map<String, SDFDatatypeConstraint> dtConstraints = new HashMap<String, SDFDatatypeConstraint>();
-	private SDFUnit unit = null;
+	final private Map<String, SDFDatatypeConstraint> dtConstraints;
+	final private SDFUnit unit;
 
+	
+	
 	public SDFSchemaElement(String sourceName, String name, SDFDatatype datatype) {
-		super(sourceName,name);
-		this.datatype = datatype;
+		this(sourceName,name,datatype,null, null);
 	}
 
+	public SDFSchemaElement(String sourceName, String name, SDFDatatype datatype, SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstraints) {
+		super(sourceName,name);
+		this.datatype = datatype;
+		this.unit = unit;
+		this.dtConstraints = dtConstraints;
+	}
+	
 	public SDFSchemaElement(String URI, SDFDatatype datatype) {
 		super(URI);
 		this.datatype = datatype;
+		unit = null;
+		this.dtConstraints = null;
 	}
 	
 	public SDFSchemaElement(SDFSchemaElement copy) {
@@ -63,9 +72,9 @@ public abstract class SDFSchemaElement extends SDFElement {
 		return datatype;
 	}
 
-	public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
-		this.dtConstraints.put(uri, dtConstraint);
-	}
+//	public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
+//		this.dtConstraints.put(uri, dtConstraint);
+//	}
 
 	public SDFDatatypeConstraint getDtConstraint(String uri) {
 		return dtConstraints.get(uri);
@@ -73,10 +82,6 @@ public abstract class SDFSchemaElement extends SDFElement {
 
 	public Collection<SDFDatatypeConstraint> getDtConstraints() {
 		return dtConstraints.values();
-	}
-
-	public void setUnit(SDFUnit unit) {
-		this.unit = unit;
 	}
 
 	public SDFUnit getUnit() {

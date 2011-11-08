@@ -16,9 +16,11 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 /**
  * This class represents Attributes. Each Attribute can have two parts: A global
@@ -35,43 +37,11 @@ public class SDFAttribute extends SDFSchemaElement implements
 		Comparable<SDFAttribute>, Serializable, IClone {
 
 	/**
-	 * An attribute consists of two parts, the sourceName and the attributeName
-	 */
-	// private String sourceName;
-	// private String attributeName;
-
-//	/**
-//	 * For NF2 we need subattributes
-//	 */
-//	private SDFAttributeList subattributes = new SDFAttributeList();
-
-	/**
 	 * used for measurement values
 	 */
 	private List<?> covariance;
 
 	private static final long serialVersionUID = -5128455072793206061L;
-
-//	/**
-//	 * Creates a new SDFAttribute from a String "SourceName.AttributeName" where
-//	 * AttributeName must not contain "." (i.e. the String after the last "." is
-//	 * used as AttributeName
-//	 * 
-//	 * @param sourceAndAttributeName
-//	 */
-//	public SDFAttribute(String sourceAndAttributeName) {
-//		super();
-//		initAttribute(sourceAndAttributeName);
-//	}
-	
-//	/**
-//	 * Creates a new SDFAttribute with name <code>attrName</code> and 
-//	 * datatype <code>dt</code>
-//	 */
-//	public SDFAttribute(String attrName, SDFDatatype dt){
-//		super(attrName, dt);
-//		//initAttribute(attrName);
-//	}
 
 	/**
 	 * Creates a new SDFAttribute from sourceName and AttributeName
@@ -100,23 +70,17 @@ public class SDFAttribute extends SDFSchemaElement implements
 		super(newSourceName, newAttributeName, sdfAttribute);
 	}
 
-//	/**
-//	 * Methode to share code between constructors
-//	 * 
-//	 * @param sourceAndAttributeName
-//	 */
-//	private void initAttribute(String sourceAndAttributeName) {
-//		int pointPos = sourceAndAttributeName.lastIndexOf(".");
-//		if (pointPos > 0) {
-//			setSourceName(sourceAndAttributeName.substring(0, pointPos));
-//			setAttributeName(sourceAndAttributeName.substring(pointPos + 1));
-//		} else {
-//			setSourceName(null);
-//			setAttributeName(sourceAndAttributeName);
-//		}
-//	}
+	public SDFAttribute(String name, String attrName, SDFDatatype datatype,
+			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstrains) {
+		super(name, attrName, datatype, unit, dtConstrains);
+	}
 
-
+	public SDFAttribute(String name, String attrName, SDFDatatype attribType,
+			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstrains,
+			List<?> covariance) {
+		super(name, attrName, attribType, unit, dtConstrains);
+		this.covariance = covariance;
+	}
 
 	/**
 	 * Get Sourcename-Part of the Attribute
@@ -127,24 +91,6 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getURIWithoutQualName();
 	}
 
-//	/**
-//	 * Set Sourcename-Part of the Attribute
-//	 * 
-//	 * @param sourceName
-//	 */
-//
-//	public void setSourceName(String sourceName) {
-//		setURIWithoutQualName(sourceName);
-//	}
-//
-//	/**
-//	 * Sets AttributeName part
-//	 * 
-//	 * @param attributeName
-//	 */
-//	public void setAttributeName(String attributeName) {
-//		setQualName(attributeName);
-//	}
 
 	/**
 	 * Returns the name of the attribute without source information. To get the
@@ -157,9 +103,9 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getQualName();
 	}
 
-	public void setCovariance(List<?> cov) {
-		this.covariance = cov;
-	}
+//	public void setCovariance(List<?> cov) {
+//		this.covariance = cov;
+//	}
 
 	public List<?> getCovariance() {
 		return this.covariance;
