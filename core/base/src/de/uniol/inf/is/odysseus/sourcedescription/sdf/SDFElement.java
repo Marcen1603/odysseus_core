@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.IClone;
 /**
  * @author Marco Grawunder
  */
-public abstract class SDFElement implements Serializable, IClone {
+public class SDFElement implements Serializable, IClone {
 
 	/**
 	 * 
@@ -32,32 +32,12 @@ public abstract class SDFElement implements Serializable, IClone {
 	 * @uml.property name="qualName"
 	 */
 	final private String qualName;
-
 	final private String uRIWithoutQualName;
 
-	// protected SDFElement() {
-	//
-	// }
-
 	public SDFElement(String URI) {
-		if (URI != null) {
-			int sharpPos = URI.indexOf("#"); // primary qualifier if present
-			if (sharpPos > 0) {
-				this.qualName = URI.substring(sharpPos + 1);
-				this.uRIWithoutQualName = URI.substring(0, sharpPos);
-			} else {
-				sharpPos = URI.indexOf("."); // secondary qualifier if present
-				if (sharpPos > 0) {
-					this.qualName = URI.substring(sharpPos + 1);
-					this.uRIWithoutQualName = URI.substring(0, sharpPos);
-				} else {
-					this.uRIWithoutQualName = URI;
-					this.qualName = null;
-				}
-			}
-		} else{
-			throw new IllegalArgumentException("URI cannot be null");
-		}
+		String[] split = splitURI(URI);
+		uRIWithoutQualName = split[0];
+		qualName = split[1];
 	}
 	
 	public SDFElement(String uRIWithoutQualName, String qualName){
@@ -198,6 +178,31 @@ public abstract class SDFElement implements Serializable, IClone {
 		return true;
 	}
 
-	abstract public SDFElement clone();
-
+	public SDFElement clone(){
+		return this;
+	}
+	
+	public static String[] splitURI(String URI){
+		String[] ret = new String[2];
+	
+		if (URI != null) {
+			int sharpPos = URI.indexOf("#"); // primary qualifier if present
+			if (sharpPos > 0) {
+				ret[1] = URI.substring(sharpPos + 1);
+				ret[0] = URI.substring(0, sharpPos);
+			} else {
+				sharpPos = URI.indexOf("."); // secondary qualifier if present
+				if (sharpPos > 0) {
+					ret[1] = URI.substring(sharpPos + 1);
+					ret[0] = URI.substring(0, sharpPos);
+				} else {
+					ret[0] = URI;
+					ret[1] = null;
+				}
+			}
+		} else{
+			throw new IllegalArgumentException("URI cannot be null");
+		}
+		return ret;
+	}
 }

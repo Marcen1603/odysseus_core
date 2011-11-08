@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.mep.IExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
@@ -58,10 +59,19 @@ public class MapAO extends UnaryLogicalOp {
 				} else {
 					IExpression<?> mepExpression = expr.getMEPExpression();
 					String exprString = mepExpression.toString();
+					// Variable could be source.name oder name, we are looking for name!
+					String[] split = SDFElement.splitURI(exprString);
+					final SDFElement elem;
+					if (split[1] != null && split[1].length() > 0){
+						elem = new SDFElement(split[0],split[1]);
+					}else{
+						elem = new SDFElement(null, split[0]);
+					}
+					 
 					// If expression is an attribute use this data type
 					List<SDFAttribute> inAttribs = expr.getAllAttributes();
 					for (SDFAttribute attribute : inAttribs) {
-						if (attribute.getURI().equals(exprString)) {
+						if (attribute.equalsCQL(elem)) {
 							attr = new SDFAttribute(null,exprString, attribute.getDatatype());
 						}
 					}

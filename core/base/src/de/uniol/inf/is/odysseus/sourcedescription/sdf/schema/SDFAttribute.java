@@ -62,10 +62,6 @@ public class SDFAttribute extends SDFSchemaElement implements
 		super(attribute);
 	}
 	
-	public SDFAttribute(String newName, SDFAttribute sdfAttribute) {
-		super(newName, sdfAttribute);
-	}
-	
 	public SDFAttribute(String newSourceName, String newAttributeName, SDFAttribute sdfAttribute) {
 		super(newSourceName, newAttributeName, sdfAttribute);
 	}
@@ -119,16 +115,16 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * @param attr
 	 * @return true if attributeNames/sourceNames are equal
 	 */
-	public boolean equalsCQL(SDFAttribute attr) {
+	public boolean equalsCQL(SDFElement attr) {
 		// TODO: WOFUER DER AUSKOMMENTIERTE CODE? damit kann es sein, dass
 		// sourcename mit attributename verglichen wird ...
-		if (this.getSourceName() != null && attr.getSourceName() != null) {
-			if (!this.getSourceName().equals(attr.getSourceName())) {
+		if (this.getURIWithoutQualName() != null && attr.getURIWithoutQualName() != null) {
+			if (!this.getSourceName().equals(attr.getURIWithoutQualName())) {
 				return false;
 			}
 			// return this.getAttributeName().equals(attr.getAttributeName());
 		}
-		return this.getAttributeName().equals(attr.getAttributeName());
+		return this.getAttributeName().equals(attr.getQualName());
 		// else {
 		// 
 		// // Combinations
@@ -242,5 +238,8 @@ public class SDFAttribute extends SDFSchemaElement implements
 	public String toPointString() {
 		return getPointURI();
 	}
+
+
+
 
 }
