@@ -52,6 +52,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	private String tablename;
 	private boolean truncate;
 	private boolean drop;
+	private volatile boolean opened = false;
 
 	public DatabaseSinkPO(String connectionName,String tablename, boolean drop, boolean truncate) {		
 		this.connctionName = connectionName;
@@ -91,10 +92,13 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 			this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
 			this.jdbcConnection.setAutoCommit(false);
 			this.counter = 0;
+			opened = true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			opened = false;
 			throw new OpenFailedException(e);
 		}
+		
 	}
 
 	private void dropTable() {
@@ -136,6 +140,10 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 
 	@Override
 	protected void process_next(RelationalTuple<ITimeInterval> tuple, int port, boolean isReadOnly) {
+		if(!opened){
+			System.err.println("Error: not connected to database");
+			return;
+		}
 		try {
 			int i = 0;
 

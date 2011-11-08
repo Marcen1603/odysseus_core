@@ -15,27 +15,29 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
-import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
-
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 28.10.2011
+ * Created at: 08.11.2011
  */
-public interface IDatabaseConnection {
+public class DatatypeMapping {
 
-	public void createTable(String tablename, SDFAttributeList schema);
-	public void truncateTable(String tablename);
-	public void dropTable(String tablename);
-	public boolean tableExists(String tablename);
-	public boolean equalSchemas(String tablename, SDFAttributeList schema);	
-	public Connection getConnection();	
-	public Map<String, String> getInformation();	
-	public List<String> getTables();
-	public List<String> getSchemas();
-	public SDFAttributeList getSchema(String tablename);
+	private SDFDatatype sdfDatatype;
+	private int jdbcDatatype;
+	
+	public DatatypeMapping(SDFDatatype sdfdatatype, int jdbcdatatype){
+		this.sdfDatatype = sdfdatatype;
+		this.jdbcDatatype = jdbcdatatype;
+	}
+
+	public SDFDatatype getSDFDatatype() {
+		return sdfDatatype;
+	}	
+
+	public int getJDBCDatatype() {
+		return jdbcDatatype;
+	}
+	
 }

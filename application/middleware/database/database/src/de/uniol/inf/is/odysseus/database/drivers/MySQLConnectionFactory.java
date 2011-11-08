@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.database.connection.AbstractDatabaseConnectionFactory;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
 /**
@@ -34,7 +35,7 @@ public class MySQLConnectionFactory extends AbstractDatabaseConnectionFactory {
 		Properties connectionProps = getCredentials(user, password);
 		String connString = "jdbc:mysql://" + server + ":" + port + "/" + database;
 		Connection con = DriverManager.getConnection(connString, connectionProps);
-		return new MySQLConnection(con);
+		return new DatabaseConnection(con);
 	}
 
 }
