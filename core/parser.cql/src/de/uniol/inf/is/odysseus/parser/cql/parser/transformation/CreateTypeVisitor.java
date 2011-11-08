@@ -101,12 +101,14 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 			
 			if (attribType.isDate()) {
 				dtConstrains.put("format", astAttrType.getDateFormat());
-				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains);
 			}
 			
 			if (attribType.isMeasurementValue()
 					&& astAttrType.jjtGetNumChildren() > 0) {
 				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));	
+			}
+			if (attribute == null){
+				attribute = new SDFAttribute(this.name, attrName,attribType, null, dtConstrains);
 			}
 		}
 		// the corresponding type (used as type for an attribute of this newly defined type) has not been defined
