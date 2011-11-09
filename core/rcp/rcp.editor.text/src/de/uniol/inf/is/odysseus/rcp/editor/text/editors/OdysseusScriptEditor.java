@@ -14,11 +14,18 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
+import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 
+	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets";
+	public final static String EDITOR_MATCHING_BRACKETS_COLOR= "matchingBracketsColor";
+	
 	private ColorManager colorManager = new ColorManager();
 	private OdysseusScriptContentOutlinePage outlinePage;
 
@@ -49,5 +56,17 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 			return outlinePage;
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	@Override
+	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {	
+		super.configureSourceViewerDecorationSupport(support);
+		char[] matchChars = {'(', ')', '[', ']', '{', '}'}; 
+		ICharacterPairMatcher matcher = new DefaultCharacterPairMatcher(matchChars);
+		support.setCharacterPairMatcher(matcher);
+		support.setMatchingCharacterPainterPreferenceKeys(EDITOR_MATCHING_BRACKETS, EDITOR_MATCHING_BRACKETS_COLOR);
+		IPreferenceStore store = getPreferenceStore();
+		store.setDefault("matchingBrackets", true);
+		store.setDefault("matchingBracketsColor", "128,128,128");
 	}
 }
