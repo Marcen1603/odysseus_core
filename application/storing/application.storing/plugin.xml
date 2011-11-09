@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Recording"
+            icon="icons/control-pause-record.png"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView"
+            id="de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordingCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
+            name="Start Recording">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
+            name="Pause Recording">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
+            name="Stop Recording">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
+            name="Start Playing Record">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
+            name="Pause Playing">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
+            name="Stop Playing Record">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
+               icon="icons/control-record.png"
+               label="Start Recording"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
+               icon="icons/control-pause-record.png"
+               label="Pause Recording"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
+               icon="icons/control-stop-record.png"
+               label="Stop Recording"
+               style="push">
+         </command>
+         <separator
+               name="Separator"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
+               icon="icons/control.png"
+               label="Start Playing Record"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
+               icon="icons/control-pause.png"
+               label="Pause Playing Record"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
+               icon="icons/control-stop-square.png"
+               label="Stop Playing Record"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
+               icon="icons/control-record.png"
+               label="Start Recording"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
+               icon="icons/control-pause-record.png"
+               label="Pause Recording"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
+               icon="icons/control-stop-record.png"
+               label="Stop Recording"
+               style="push">
+         </command>
+         <separator
+               name="Separator"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
+               icon="icons/control.png"
+               label="Start Playing Record"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
+               icon="icons/control-pause.png"
+               label="Pause Playing Record"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
+               icon="icons/control-stop-square.png"
+               label="Stop Playing Record"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
