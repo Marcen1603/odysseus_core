@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -28,6 +30,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	
 	private ColorManager colorManager = new ColorManager();
 	private OdysseusScriptContentOutlinePage outlinePage;
+	private OdysseusOccurrencesUpdater occurrencesUpdater;
 
 	public OdysseusScriptEditor() {
 		super();
@@ -38,9 +41,27 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor {
 	protected void internal_init() {
 		configureInsertMode(SMART_INSERT, false);
 		setDocumentProvider(new OdysseusScriptDocumentProvider());
-		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(colorManager));
+		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(colorManager, this));			
 	}
+	
+	
+	@Override
+	public void createPartControl(Composite parent) {	
+		super.createPartControl(parent);
+		
+		this.occurrencesUpdater = new OdysseusOccurrencesUpdater(this);		
+		((IPostSelectionProvider)getSelectionProvider()).addPostSelectionChangedListener(this.occurrencesUpdater);
+	}
+	
+	
 
+	public void setModel(){
+		if(this.occurrencesUpdater!=null){
+			this.occurrencesUpdater.update(getSourceViewer());
+		}
+		this.outlinePage.setInput(getDocumentProvider().getDocument(getEditorInput()).get());
+	}
+	
 	@Override
 	public void dispose() {
 		colorManager.dispose();

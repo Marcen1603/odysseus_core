@@ -21,6 +21,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public class OdysseusScriptContentOutlinePage extends ContentOutlinePage {
 
 	private String queryText;
+	private TreeViewer treeViewer;
 	
 	public OdysseusScriptContentOutlinePage( String queryText ) {
 		super();
@@ -31,11 +32,15 @@ public class OdysseusScriptContentOutlinePage extends ContentOutlinePage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		
-		TreeViewer treeViewer = getTreeViewer();
+		treeViewer = getTreeViewer();
 		
 		treeViewer.setContentProvider(new OdysseusScriptContentProvider());
 		treeViewer.setLabelProvider(new OdysseusScriptLabelProvider());
 		treeViewer.addSelectionChangedListener(this);
+		treeViewer.setInput(new StringTreeRoot(queryText));
+	}
+	
+	public void setInput(String queryText){
 		treeViewer.setInput(new StringTreeRoot(queryText));
 	}
 }

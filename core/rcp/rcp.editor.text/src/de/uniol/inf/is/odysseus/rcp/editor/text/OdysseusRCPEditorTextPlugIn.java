@@ -29,6 +29,8 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public static final String KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.editor.Keyword";
 	public static final String QUERY_TEXT_EXTENSION = "qry";
 	public static final String ODYSSEUS_SCRIPT_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.editor.OdysseusScriptEditor";
+	
+	public static final String ODYSSEUS_ANNOTATION_HIGHLIGHTING = "de.uniol.inf.is.odysseus.rcp.editor.highlightannotation";
 
 	// The shared instance
 	private static OdysseusRCPEditorTextPlugIn plugin;

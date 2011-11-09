@@ -314,6 +314,18 @@
          <keyword
                name="AT">
          </keyword>
+         <keyword
+               name="TABLE">
+         </keyword>
+         <keyword
+               name="DROP">
+         </keyword>
+         <keyword
+               name="TRUNCATE">
+         </keyword>
+         <keyword
+               name="SINK">
+         </keyword>
       </group>
    </extension>
 

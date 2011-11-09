@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.editors;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -23,6 +24,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -49,9 +52,11 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	private IWhitespaceDetector whitespaceDetector;
 	private IWordDetector wordDetector;
 	private ColorManager colorManager;
+	private OdysseusScriptEditor editor;
 
-	public OdysseusScriptViewerConfiguration(ColorManager colorManager) {
+	public OdysseusScriptViewerConfiguration(ColorManager colorManager, OdysseusScriptEditor editor) {
 		this.colorManager = colorManager;
+		this.editor = editor;
 	}
 
 	@Override
@@ -80,14 +85,33 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		return scanner;
 	}
 
+//	@Override
+//	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+//		IReconciler reconciler = super.getReconciler(sourceViewer);
+//		this.editor.setModel();
+//		return reconciler;
+//	}
+
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		OdysseusScriptReconcilerStrategy strategy = new OdysseusScriptReconcilerStrategy(this.editor);
+		MonoReconciler reconciler = new MonoReconciler(strategy, false);
+		reconciler.setProgressMonitor(new NullProgressMonitor());
+		reconciler.setDelay(500);
+		return reconciler;
+	}
+
 	protected IRule[] getRules() {
 		IToken parameter = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_RED), false);
 		IToken comment = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN), false);
-		IToken replacement = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW), false);
+		IToken replacement = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA), false);
 		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
-
+		IToken strings = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE), false);
+		
 		ArrayList<IRule> rules = new ArrayList<IRule>();
 
+		// Strings
+		rules.add(new SingleLineRule("'", "'", strings));
+		
 		// PreParserKeywords
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, false);
 		for (String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
@@ -96,21 +120,17 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 
 		for (String s : QueryTextParser.getStaticWords()) {
 			wr.addWord(s, parameter);
-		}		
+		}
 		rules.add(wr);
 
 		// Replacements
-		rules.add(new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
-
+		rules.add(new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));		
+		
 		// Extensions
 		WordRule r = new WordRule(getWordDetector(), def, true);
 		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
 
-			int red = KeywordRegistry.getInstance().getGroupColorR(grp);
-			int green = KeywordRegistry.getInstance().getGroupColorG(grp);
-			int blue = KeywordRegistry.getInstance().getGroupColorB(grp);
-
-			IToken wordToken = createToken(colorManager.get(red, green, blue), true);
+			IToken wordToken = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE), true);
 
 			for (String word : KeywordRegistry.getInstance().getKeywords(grp)) {
 				r.addWord(word, wordToken);
@@ -165,7 +185,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		}
 		return wordDetector;
 	}
-	
+
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant ca = new ContentAssistant();
