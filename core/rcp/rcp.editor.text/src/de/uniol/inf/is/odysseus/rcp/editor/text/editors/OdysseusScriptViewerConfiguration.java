@@ -103,7 +103,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		rules.add(new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
 
 		// Extensions
-		WordRule r = new WordRule(getWordDetector(), def, false);
+		WordRule r = new WordRule(getWordDetector(), def, true);
 		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
 
 			int red = KeywordRegistry.getInstance().getGroupColorR(grp);
