@@ -165,7 +165,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 	}
 
 	private void reconnect() {
-		if (this.autoReconnect) {			
+		if (this.opened && this.autoReconnect) {			
 			if(waitingForNextReconnect<0){
 				waitingForNextReconnect = 0;
 			}
