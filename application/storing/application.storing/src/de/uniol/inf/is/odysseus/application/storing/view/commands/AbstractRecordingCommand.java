@@ -15,27 +15,27 @@
 
 package de.uniol.inf.is.odysseus.application.storing.view.commands;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-
-import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
-import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * 
- * @author Dennis Geesen Created at: 09.11.2011
+ * @author Dennis Geesen Created at: 10.11.2011
  */
-public class StartRecordingCommand extends AbstractRecordingCommand{
+public abstract class AbstractRecordingCommand extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Object selected = super.getCurrentSelection(event);
-		if(selected instanceof RecordEntry){
-			RecordEntry record = (RecordEntry)selected;					
-			RecordingController.getInstance().startRecording(record.getName());
-		}else{
+	public Object getCurrentSelection(ExecutionEvent event) {
+		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+		if (selection == null)
 			return null;
-		}		
+
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structSelection = (IStructuredSelection) selection;
+			return structSelection.getFirstElement();
+		}
 		return null;
 	}
 

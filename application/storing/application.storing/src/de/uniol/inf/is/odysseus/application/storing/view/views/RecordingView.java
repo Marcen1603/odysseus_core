@@ -1,15 +1,18 @@
 package de.uniol.inf.is.odysseus.application.storing.view.views;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.application.storing.controller.IRecordingListener;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 
-public class RecordingView extends ViewPart {
+
+public class RecordingView extends ViewPart implements IRecordingListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -40,14 +43,12 @@ public class RecordingView extends ViewPart {
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
+		getSite().setSelectionProvider(getTreeViewer());
+		RecordingController.getInstance().addListener(this);
 	}
 
 	private TableViewer getTreeViewer() {
 		return this.viewer;
-	}
-
-	private void showMessage(String message) {
-		MessageDialog.openInformation(viewer.getControl().getShell(), "Recording", message);
 	}
 
 	/**
@@ -55,5 +56,31 @@ public class RecordingView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	@Override
+	public void dispose() {
+		RecordingController.getInstance().removeListener(this);
+		super.dispose();
+	}
+	
+	
+	private void refresh() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					viewer.refresh(); 
+				} catch (Exception e) {
+					viewer.setInput("Refresh failed");					
+				}
+			}
+
+		});
+		
+	}
+	@Override
+	public void recordingChanged() {
+		refresh();		
 	}
 }

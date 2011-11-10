@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -44,21 +46,20 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public class StartNewRecordingDialog extends TitleAreaDialog {
 	private Text nameOfTheRecordingBox;
+	private Text tableNameBox;
 	private Combo comboDropDownStreams;
-	private Combo comboDropDownSinks;
 	private Combo comboDropDownDatabases;
-	private String input;
+	private String recordingName;
 	private IDataDictionary dataDictionary;
 	private User user;
 	private String fromStream;
-	private String toStream;
 	private String databaseConnection;
-
-	
+	private String tableName;
+	private Button sameAsRecording;
 
 	public StartNewRecordingDialog(Shell parentShell, IDataDictionary dd, User user) {
 		super(parentShell);
-		this.dataDictionary = dd;		
+		this.dataDictionary = dd;
 		this.user = user;
 	}
 
@@ -88,35 +89,54 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		Label label1 = new Label(parent, SWT.NONE);
 		label1.setText("Recording name:");
 
-		
 		nameOfTheRecordingBox = new Text(parent, SWT.BORDER);
 		nameOfTheRecordingBox.setLayoutData(gridData);
-		
 
 		Label label2 = new Label(parent, SWT.NONE);
 		label2.setText("From stream:");
-		
+
 		comboDropDownStreams = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for(Entry<String, ILogicalOperator> e : this.dataDictionary.getStreamsAndViews(user)){
+		for (Entry<String, ILogicalOperator> e : this.dataDictionary.getStreamsAndViews(user)) {
 			comboDropDownStreams.add(e.getKey());
 		}
-		
+
 		Label label3 = new Label(parent, SWT.NONE);
-		label3.setText("To sink:");
-		
-		comboDropDownSinks = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);		
-		for(Entry<String, ILogicalOperator> e : this.dataDictionary.getSinks(user)){
-			comboDropDownSinks.add(e.getKey());
-		}
-		
-		
-		Label label4 = new Label(parent, SWT.NONE);
-		label4.setText("Use Database:");
-		
+		label3.setText("Use Database:");
+
 		comboDropDownDatabases = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for(String s : DatabaseConnectionDictionary.getInstance().getConnections().keySet()){
+		for (String s : DatabaseConnectionDictionary.getInstance().getConnections().keySet()) {
 			comboDropDownDatabases.add(s);
 		}
+
+		Label label4 = new Label(parent, SWT.NONE);
+		label4.setText("Write into table:");
+
+		sameAsRecording = new Button(parent, SWT.CHECK);
+		sameAsRecording.setText("Same as recording Name");
+		sameAsRecording.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (e.getSource() instanceof Button) {
+					if (sameAsRecording.getSelection()) {
+						tableNameBox.setEnabled(false);
+						tableNameBox.setText(nameOfTheRecordingBox.getText());
+					} else {
+						tableNameBox.setEnabled(true);
+					}
+				}
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		new Label(parent, SWT.NONE);
+
+		tableNameBox = new Text(parent, SWT.BORDER);
+		tableNameBox.setLayoutData(gridData);
 
 		return parent;
 	}
@@ -128,10 +148,13 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	}
 
 	private void saveInput() {
-		this.input = nameOfTheRecordingBox.getText();
+		this.recordingName = nameOfTheRecordingBox.getText();
 		this.fromStream = comboDropDownStreams.getText();
-		this.toStream = comboDropDownSinks.getText();
+		this.tableName = tableNameBox.getText();
 		this.databaseConnection = comboDropDownDatabases.getText();
+		if (this.sameAsRecording.getSelection()) {
+			this.tableName = nameOfTheRecordingBox.getText();
+		}
 	}
 
 	@Override
@@ -190,7 +213,39 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 			setErrorMessage("Please maintain the name");
 			valid = false;
 		}
+		if (sameAsRecording.getSelection() && !validTableName(nameOfTheRecordingBox.getText())) {
+			setErrorMessage("Table name may only consist of digits, letters and has to start with a letter!");
+			valid = false;
+		}
+		if (!sameAsRecording.getSelection() && !validTableName(tableNameBox.getText())) {
+			setErrorMessage("Table name may only consist of digits, letters and has to start with a letter!");
+			valid = false;
+		}
+		if (comboDropDownDatabases.getSelectionIndex() == -1) {
+			setErrorMessage("Please select a database connection");
+			valid = false;
+		}
+		if (comboDropDownStreams.getSelectionIndex() == -1) {
+			setErrorMessage("Please select a stream");
+			valid = false;
+		}
+		if(RecordingController.getInstance().getRecords().keySet().contains(nameOfTheRecordingBox.getText())){
+			setErrorMessage("A recording with that name already exist!");
+			valid = false;
+		}
 		return valid;
+	}
+
+	private boolean validTableName(String name){	
+		if(!Character.isLetter(name.charAt(0))){
+			return false;
+		}
+		for(char c : name.toCharArray()){
+			if(!Character.isDigit(c) && !Character.isLetter(c)){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -198,36 +253,20 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		return true;
 	}
 
-	public String getInput() {
-		return input;
+	public String getRecordingName() {
+		return recordingName;
 	}
 
-	public void setInput(String input) {
-		this.input = input;
-	}
-	
 	public String getFromStream() {
 		return fromStream;
 	}
 
-	public void setFromStream(String fromStream) {
-		this.fromStream = fromStream;
-	}
-
-	public String getToStream() {
-		return toStream;
-	}
-
-	public void setToStream(String toStream) {
-		this.toStream = toStream;
+	public String getTableName() {
+		return tableName;
 	}
 
 	public String getDatabaseConnection() {
 		return databaseConnection;
-	}
-
-	public void setDatabaseConnection(String databaseConnection) {
-		this.databaseConnection = databaseConnection;
 	}
 
 }

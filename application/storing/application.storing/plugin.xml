@@ -44,12 +44,26 @@
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
             name="Stop Playing Record">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
+            name="Create Recording">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
+               icon="icons/plus.png"
+               style="push">
+         </command>
+         <separator
+               name="separator1"
+               visible="true">
+         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
                icon="icons/control-record.png"
@@ -94,6 +108,15 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
+               icon="icons/plus.png"
+               style="push">
+         </command>
+         <separator
+               name="separator1"
+               visible="true">
+         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
                icon="icons/control-record.png"

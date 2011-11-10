@@ -12,6 +12,8 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.application.storing"; //$NON-NLS-1$
 
+	public static final String SINK_NAME_PREFIX = "RECORDING";
+	
 	// The shared instance
 	private static Activator plugin;
 	

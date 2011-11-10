@@ -15,8 +15,13 @@
 
 package de.uniol.inf.is.odysseus.application.storing.view.views;
 
+import java.util.Map;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 
 /**
  * 
@@ -30,6 +35,7 @@ public class ViewContentProvider implements IStructuredContentProvider {
 	}
 
 	public Object[] getElements(Object parent) {
-		return new String[] { "One", "Two", "Three" };
+		Map<String, RecordEntry> records = RecordingController.getInstance().getRecords();		
+		return records.values().toArray();
 	}
 }
