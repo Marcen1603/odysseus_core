@@ -82,6 +82,9 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static final SDFDatatype MV = new SDFDatatype("MV");
 	
+
+
+	
 	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
 	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype("MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);	
 	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
@@ -91,6 +94,13 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype VECTOR_FLOAT = new SDFDatatype("VectorFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
 	public static final SDFDatatype VECTOR_BYTE = new SDFDatatype("VectorByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype("VectorBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
+	
+	
+	public static final SDFDatatype GRID_DOUBLE = new SDFDatatype("Grid",
+			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList(
+					new SDFAttribute("origin", SDFDatatype.SPATIAL_POINT),
+					new SDFAttribute("cellsize", SDFDatatype.DOUBLE),
+					new SDFAttribute("grid", SDFDatatype.MATRIX_DOUBLE)));
 	
 	private static final long serialVersionUID = 8585322290347489841L;
 	
