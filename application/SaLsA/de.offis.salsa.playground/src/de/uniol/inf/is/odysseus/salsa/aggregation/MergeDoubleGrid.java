@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.salsa.aggregation;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -19,7 +20,7 @@ public class MergeDoubleGrid extends AbstractAggregateFunction<RelationalTuple<?
     @Override
     public IPartialAggregate<RelationalTuple<?>> init(final RelationalTuple<?> in) {
         final IPartialAggregate<RelationalTuple<?>> grid = new DoubleGridPartialAggregate<RelationalTuple<?>>(
-                (Double[][]) in.getAttribute(attribPos));
+                (Grid2D) in.getAttribute(attribPos));
         return grid;
     }
 
@@ -35,7 +36,7 @@ public class MergeDoubleGrid extends AbstractAggregateFunction<RelationalTuple<?
         else {
             grid = (DoubleGridPartialAggregate<RelationalTuple<?>>) p;
         }
-        grid.merge((Double[][]) toMerge.getAttribute(attribPos));
+        grid.merge((Grid2D) toMerge.getAttribute(attribPos));
         return grid;
     }
 
