@@ -1,19 +1,20 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class InverseDoubleGrid  extends AbstractFunction<Double[][]> {
+public class InverseDoubleGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
     private static final long serialVersionUID = 6682089158563417930L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
-            SDFDatatype.MATRIX_DOUBLE
+            SDFDatatype.GRID_DOUBLE
         }
     };
     private final static double FREE = 0.0;
@@ -45,12 +46,12 @@ public class InverseDoubleGrid  extends AbstractFunction<Double[][]> {
     }
 
     @Override
-    public Double[][] getValue() {
-        final Double[][] grid = this.getInputValue(0);
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] >= FREE) {
-                    grid[i][j] = Math.abs(grid[i][j] - 1);
+    public Grid2D getValue() {
+        final Grid2D grid = this.getInputValue(0);
+        for (int i = 0; i < grid.grid.length; i++) {
+            for (int j = 0; j < grid.grid[i].length; j++) {
+                if (grid.get(i, j) >= FREE) {
+                    grid.set(i, j, Math.abs(grid.get(i, j) - 1));
                 }
             }
         }
@@ -59,7 +60,7 @@ public class InverseDoubleGrid  extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.GRID_DOUBLE;
     }
 
 }

@@ -3,19 +3,20 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SubDoubleGrid extends AbstractFunction<Double[][]> {
+public class SubDoubleGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
     private static final long serialVersionUID = -6671876863268014302L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                SDFDatatype.MATRIX_DOUBLE
+                SDFDatatype.GRID_DOUBLE
             },
             {
                 SDFDatatype.INTEGER
@@ -54,38 +55,36 @@ public class SubDoubleGrid extends AbstractFunction<Double[][]> {
     }
 
     @Override
-    public Double[][] getValue() {
-        final Double[][] grid = (Double[][]) this.getInputValue(0);
-        final Double cellsize = (Double) this.getInputValue(1);
-        final Coordinate point = (Coordinate) this.getInputValue(2);
-        final Double width = (Double) this.getInputValue(3);
+    public Grid2D getValue() {
+        final Grid2D grid = (Grid2D) this.getInputValue(0);
+        final Coordinate point = (Coordinate) this.getInputValue(1);
+        final Double width = (Double) this.getInputValue(2);
+        final Double height = (Double) this.getInputValue(3);
 
-        final int positionX = (int) Math.ceil(point.x / cellsize);
-        final int positionY = (int) Math.ceil(point.y / cellsize);
+        final int positionX = (int) Math.ceil((point.x - grid.origin.x) / grid.cellsize);
+        final int positionY = (int) Math.ceil((point.y - grid.origin.y) / grid.cellsize);
+
         int startX = (int) Math.max(positionX - width / 2, 0);
-        int startY = (int) Math.max(positionY - width / 2, 0);
-        final int endX = (int) Math.min(startX + width, grid.length);
-        final int endY = (int) Math.min(startY + width, grid[0].length);
-        final Double[][] subgrid;
+        int startY = (int) Math.max(positionY - height / 2, 0);
+        final int endX = (int) Math.min(startX + width, grid.grid.length);
+        final int endY = (int) Math.min(startY + height, grid.grid[0].length);
+
         if ((startX >= endX) && (startY >= endY)) {
-            subgrid = new Double[1][1];
             startX = endX - 1;
             startY = endY - 1;
         }
         else if (startX >= endX) {
-            subgrid = new Double[1][endY - startY];
             startX = endX - 1;
         }
         else if (startY >= endY) {
-            subgrid = new Double[endX - startX][1];
             startY = endY - 1;
         }
-        else {
-            subgrid = new Double[endX - startX][endY - startY];
-        }
+        final Grid2D subgrid = new Grid2D(new Coordinate(grid.origin.x + grid.cellsize * startX,
+                grid.origin.y + grid.cellsize * startY), endX * grid.cellsize,
+                endY * grid.cellsize, grid.cellsize);
         for (int i = startX; i < endX; i++) {
             for (int j = startY; j < endY; j++) {
-                subgrid[i - startX][j - startY] = grid[i][j];
+                subgrid.set(i - startX, j - startY, grid.get(i, j));
             }
         }
         return subgrid;
@@ -93,6 +92,6 @@ public class SubDoubleGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.GRID_DOUBLE;
     }
 }

@@ -7,7 +7,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class MergeFloatGrid extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+public class MergeFloatGrid extends
+        AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
 
     private final int attribPos;
 
@@ -18,8 +19,8 @@ public class MergeFloatGrid extends AbstractAggregateFunction<RelationalTuple<?>
 
     @Override
     public IPartialAggregate<RelationalTuple<?>> init(final RelationalTuple<?> in) {
-        final IPartialAggregate<RelationalTuple<?>> grid = new DoubleGridPartialAggregate<RelationalTuple<?>>(
-                (Double[][]) in.getAttribute(attribPos));
+        final IPartialAggregate<RelationalTuple<?>> grid = new FloatGridPartialAggregate<RelationalTuple<?>>(
+                (Float[][]) in.getAttribute(attribPos));
         return grid;
     }
 
@@ -27,21 +28,21 @@ public class MergeFloatGrid extends AbstractAggregateFunction<RelationalTuple<?>
     public IPartialAggregate<RelationalTuple<?>> merge(
             final IPartialAggregate<RelationalTuple<?>> p, final RelationalTuple<?> toMerge,
             final boolean createNew) {
-        DoubleGridPartialAggregate<RelationalTuple<?>> grid = null;
+        FloatGridPartialAggregate<RelationalTuple<?>> grid = null;
         if (createNew) {
-            grid = new DoubleGridPartialAggregate<RelationalTuple<?>>(
-                    ((DoubleGridPartialAggregate<RelationalTuple<?>>) p).getGrid());
+            grid = new FloatGridPartialAggregate<RelationalTuple<?>>(
+                    ((FloatGridPartialAggregate<RelationalTuple<?>>) p).getGrid());
         }
         else {
-            grid = (DoubleGridPartialAggregate<RelationalTuple<?>>) p;
+            grid = (FloatGridPartialAggregate<RelationalTuple<?>>) p;
         }
-        grid.merge((Double[][]) toMerge.getAttribute(attribPos));
+        grid.merge((Float[][]) toMerge.getAttribute(attribPos));
         return grid;
     }
 
     @Override
     public RelationalTuple<?> evaluate(final IPartialAggregate<RelationalTuple<?>> p) {
-        final DoubleGridPartialAggregate<RelationalTuple<?>> grid = (DoubleGridPartialAggregate<RelationalTuple<?>>) p;
+        final FloatGridPartialAggregate<RelationalTuple<?>> grid = (FloatGridPartialAggregate<RelationalTuple<?>>) p;
         @SuppressWarnings("rawtypes")
         final RelationalTuple<?> tuple = new RelationalTuple(1);
         tuple.setAttribute(0, grid.getGrid());

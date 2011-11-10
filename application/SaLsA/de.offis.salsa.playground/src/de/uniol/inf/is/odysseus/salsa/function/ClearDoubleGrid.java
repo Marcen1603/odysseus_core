@@ -1,21 +1,22 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ClearDoubleGrid extends AbstractFunction<Double[][]> {
+public class ClearDoubleGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
     private static final long serialVersionUID = 558853050550138757L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                SDFDatatype.MATRIX_DOUBLE
+                SDFDatatype.GRID_DOUBLE
             }, {
-                SDFDatatype.MATRIX_DOUBLE
+                SDFDatatype.GRID_DOUBLE
             }
     };
     private final static double FREE = 0.0;
@@ -47,14 +48,14 @@ public class ClearDoubleGrid extends AbstractFunction<Double[][]> {
     }
 
     @Override
-    public Double[][] getValue() {
-        final Double[][] base = this.getInputValue(0);
-        final Double[][] grid = this.getInputValue(1);
+    public Grid2D getValue() {
+        final Grid2D base = this.getInputValue(0);
+        final Grid2D grid = this.getInputValue(1);
 
-        for (int i = 0; i < base.length; i++) {
-            for (int j = 0; j < base[i].length; j++) {
-                if ((grid[i][j] >= FREE) && (base[i][j] == OBSTACLE)) {
-                    base[i][j] = FREE;
+        for (int i = 0; i < base.grid.length; i++) {
+            for (int j = 0; j < base.grid[i].length; j++) {
+                if ((grid.get(i, j) >= FREE) && (base.get(i, j) == OBSTACLE)) {
+                    base.set(i, j, FREE);
                 }
             }
         }
@@ -63,7 +64,7 @@ public class ClearDoubleGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.GRID_DOUBLE;
     }
 
 }

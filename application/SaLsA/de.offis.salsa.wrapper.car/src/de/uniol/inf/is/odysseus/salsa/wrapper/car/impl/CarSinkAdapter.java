@@ -19,12 +19,16 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
 
 public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 	private static Logger LOG = LoggerFactory.getLogger(CarSinkAdapter.class);
+	private final static double FREE = 0.0;
+	private final static double UNKNOWN = -1.0;
+	private final static double OBSTACLE = 1.0;
 	private final BlockingQueue<Object[]> messageQueue = new LinkedBlockingQueue<Object[]>();
 	private final Map<SinkSpec, Thread> connectionThreads = new HashMap<SinkSpec, Thread>();
 
@@ -85,7 +89,8 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 					Object[] event = messageQueue.take();
 					long timestamp = (Long) event[0];
 					Object[] data = (Object[]) event[1];
-					Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+					Calendar calendar = Calendar.getInstance(TimeZone
+							.getTimeZone("UTC"));
 					calendar.clear();
 					calendar.setTimeInMillis(timestamp);
 					try {
@@ -101,31 +106,28 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 						// Position
 						Coordinate position = (Coordinate) data[1];
 						// Grid
-						Byte[][] grid = (Byte[][]) data[3];
+						Grid2D grid = (Grid2D) data[3];
 
-						// Cellsize
-						Double cellsize = (Double) data[2];
-
-						int globalX = (int) (position.x / (cellsize.intValue() / 10));
-						int globalY = (int) (position.y / (cellsize.intValue() / 10));
+						int globalX = (int) (position.x / (grid.cellsize / 10));
+						int globalY = (int) (position.y / (grid.cellsize / 10));
 						// X Position
 						buffer.putShort((short) globalX);
 						// Y Position
 						buffer.putShort((short) globalY);
 						// Grid Length
-						buffer.putShort((short) grid.length);
+						buffer.putShort((short) grid.grid.length);
 						// Grid Width
-						buffer.putShort((short) grid[0].length);
+						buffer.putShort((short) grid.grid[0].length);
 						// Grid Height
 						buffer.putShort((short) 1);
 						// Cell Size
-						buffer.putInt(cellsize.intValue());
+						buffer.putInt((int) grid.cellsize);
 
-						for (int l = 0; l < grid.length; l++) {
-							for (int w = 0; w < grid[l].length; w++) {
-								if (grid[l][w] == 0.0) {
+						for (int l = 0; l < grid.grid.length; l++) {
+							for (int w = 0; w < grid.grid[l].length; w++) {
+								if (grid.get(l, w) == FREE) {
 									buffer.put((byte) 0x00);
-								} else if (grid[l][w] < 0.0) {
+								} else if (grid.get(l, w) < FREE) {
 									buffer.put((byte) 0xFF);
 								} else {
 									buffer.put((byte) 0x64);

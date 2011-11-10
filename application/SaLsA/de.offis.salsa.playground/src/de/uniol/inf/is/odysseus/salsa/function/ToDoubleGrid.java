@@ -1,20 +1,21 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.salsa.common.GridUtil;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToDoubleGrid extends AbstractFunction<Double[][]> {
+public class ToDoubleGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
@@ -68,23 +69,24 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
     }
 
     @Override
-    public Double[][] getValue() {
+    public Grid2D getValue() {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
-        final Double width = (Double) this.getInputValue(3);
-        final Double height = (Double) this.getInputValue(4);
+        Double width = (Double) this.getInputValue(3);
+        Double height = (Double) this.getInputValue(4);
         final Double cellsize = ((Double) this.getInputValue(5));
 
-        // FIXME check for real size of grid
-        final Double[][] grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1];
-        for (Double[] cells : grid) {
-            Arrays.fill(cells, UNKNOWN);
-        }
+        width = Math.ceil(width / cellsize) * cellsize;
+        height = Math.ceil(height / cellsize) * cellsize;
 
-        int gridMinX = (int) Math.ceil(width / cellsize);
+        final Grid2D grid = new Grid2D(new Coordinate(x, y), width, height, cellsize);
+        // Fill the grid with UNKNWON
+        grid.fill(UNKNOWN);
+
+        int gridMinX = (int) (width / cellsize);
         int gridMaxX = 0;
-        int gridMinY = (int) Math.ceil(height / cellsize);
+        int gridMinY = (int) (height / cellsize);
         int gridMaxY = 0;
         Coordinate[] coordinates = geometry.getCoordinates();
 
@@ -99,8 +101,8 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
                 polygonCoordinates.add(coordinates[i]);
                 break;
             }
-
         }
+
         if (tmp != null) {
             for (int i = 1; i < coordinates.length; i++) {
                 Coordinate coordinate = coordinates[i];
@@ -113,11 +115,18 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
                         int maxX = (int) Math.max(tmp.x, coordinate.x);
                         int minY = (int) Math.min(tmp.y, coordinate.y);
                         int maxY = (int) Math.max(tmp.y, coordinate.y);
-
-                        minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
-                        maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
-                        minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
-                        maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
+                        if (minX > 0) {
+                            minX = minX - (int) (cellsize - Math.abs(minX % cellsize));
+                        }
+                        if (maxX > 0) {
+                            maxX = maxX + (int) (cellsize - Math.abs(maxX % cellsize));
+                        }
+                        if (minY > 0) {
+                            minY = minY - (int) (cellsize - Math.abs(minY % cellsize));
+                        }
+                        if (maxY > 0) {
+                            maxY = maxY + (int) (cellsize - Math.abs(maxY % cellsize));
+                        }
                         boolean foundStart = false;
                         boolean foundEnd = false;
 
@@ -157,7 +166,9 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
                                         gridMaxX = Math.max(gridMaxX, gridX);
                                         gridMinY = Math.min(gridMinY, gridY);
                                         gridMaxY = Math.max(gridMaxY, gridY);
-                                        grid[gridX][gridY] = OBSTACLE;
+                                        if (coordinate.distance(tmp) <= cellsize) {
+                                            grid.set(gridX, gridY, OBSTACLE);
+                                        }
                                     }
                                 }
                             }
@@ -174,11 +185,11 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
             Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
             for (int i = gridMinX; i < gridMaxX; i++) {
                 for (int j = gridMinY; j < gridMaxY; j++) {
-                    if (grid[i][j] < 0.0) {
+                    if (grid.get(i, j) < 0.0) {
                         Coordinate cell = new Coordinate(x + i * cellsize + cellsize / 2, y + j
                                 * cellsize + cellsize / 2);
                         if (GridUtil.isInPolygon(cell, convexHull)) {
-                            grid[i][j] = FREE;
+                            grid.set(i, j, FREE);
                         }
                     }
                 }
@@ -189,6 +200,6 @@ public class ToDoubleGrid extends AbstractFunction<Double[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_DOUBLE;
+        return SDFDatatype.GRID_DOUBLE;
     }
 }
