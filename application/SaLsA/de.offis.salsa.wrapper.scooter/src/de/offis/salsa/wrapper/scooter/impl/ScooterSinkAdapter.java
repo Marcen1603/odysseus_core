@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import GridPublishSubscribe.GridStruct;
 import GridPublishSubscribe.GridSubscriberPrx;
-import GridPublishSubscribe.GridSubscriberPrxHelper;
 import GridPublishSubscribe._GridPublisherDisp;
 import Ice.Communicator;
 import Ice.Current;
