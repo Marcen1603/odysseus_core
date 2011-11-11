@@ -404,4 +404,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		setMessageSender(new JxtaMessageSender());
 	}
 
+	@Override
+	protected void afterQueryRemoval(String queryId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

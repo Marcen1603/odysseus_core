@@ -354,4 +354,10 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		setMessageSender(new JxtaMessageSender());
 	}
 
+	@Override
+	protected void afterQueryRemoval(String queryId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

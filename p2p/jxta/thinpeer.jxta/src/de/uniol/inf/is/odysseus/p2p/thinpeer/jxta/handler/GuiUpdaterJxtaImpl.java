@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
+
+// TODO: Diese Klasse vollständig entfernen!
+
 public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 
 	// Wie oft wird die GUI aktualisiert

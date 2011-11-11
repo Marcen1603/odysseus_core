@@ -94,9 +94,9 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 				((P2PQueryJxtaImpl) getQuery())
 						.setAdminPeerPipe(((BidJxtaImpl) bid)
 								.getResponseSocket());
-				thinPeerJxtaImpl.addAdminPeer(getQuery().getId(),
+				thinPeerJxtaImpl.adminPeerFound(getQuery().getId(),
 						bid.getPeerId());
-				thinPeerJxtaImpl.addStatus(getQuery().getId(),
+				thinPeerJxtaImpl.log(getQuery().getId(),
 						getQuery().getStatus().toString());
 				// Send deny message to other peers? 
 				List<Bid> denyList = new ArrayList<Bid>(biddings);

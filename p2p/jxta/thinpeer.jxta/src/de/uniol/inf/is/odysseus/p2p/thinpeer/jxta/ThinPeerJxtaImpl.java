@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta;
 
 import java.io.File;
@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.swing.DefaultListModel;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -75,8 +73,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
 		// TODO: Nutzer auslesen
-		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
-		GlobalState.setActiveDatadictionary(null);
+		
+		// This is just a hack and need to be removed!!
+		if (GlobalState.getActiveUser("") == null) {
+			GlobalState.setActiveUser("", UserManagement.getInstance()
+					.getSuperUser());
+			GlobalState.setActiveDatadictionary(null);
+		}
 	}
 
 	public DiscoveryService getDiscoveryService() {
@@ -92,11 +95,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 		String configFile = System.getenv("PeerConfig");
 		JxtaConfiguration configuration = null;
-		
-		if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0){
-			configFile = OdysseusDefaults.getHomeDir()+"/"+System.getenv("PeerConfigFile");
+
+		if (configFile == null && System.getenv("PeerConfigFile") != null
+				&& System.getenv("PeerConfigFile").length() > 0) {
+			configFile = OdysseusDefaults.getHomeDir() + "/"
+					+ System.getenv("PeerConfigFile");
 		}
-		
+
 		// If no file given try first Odysseus-Home
 		if (configFile == null || configFile.trim().length() == 0) {
 			configFile = OdysseusDefaults.getHomeDir() + "/ThinPeer1Config.xml";
@@ -122,7 +127,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				throw new RuntimeException("Could not inint Thin Peer");
 			}
 		}
-		
+
 		setName(configuration.getName());
 
 		System.setProperty("net.jxta.logging.Logging",
@@ -241,7 +246,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	}
 
 	@Override
-	public void publishQuerySpezification(String query, String language, User user) {
+	public void publishQuerySpezification(String query, String language,
+			User user) {
 		queryPublisher.publishQuerySpezification(idGenerator.generateId(),
 				query, language, user);
 	}
@@ -328,6 +334,5 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	public void initMessageSender() {
 		setMessageSender(new JxtaMessageSender());
 	}
-
 
 }

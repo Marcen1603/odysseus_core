@@ -61,6 +61,9 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 //	}
 
 	private void startGui() {
+		
+		// TODO: Change Handling of GUI --> GUI starts Peer!
+		
 		window = new MainWindow(this, this.getName());
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
@@ -160,15 +163,16 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 	// ---------------------------------------------------------
 	
 	
-	public void addAdminPeer(String queryId, String peerId) {
+	public void adminPeerFound(String queryId, String peerId) {
 		window.addAdminPeer(queryId, peerId);
 	}
 	
-	public void addStatus(String queryId, String status) {
+	public void log(String queryId, String status) {
 		window.addStatus(queryId, status);
 	}
 	
-	public void removeTab(String queryId) {
+	@Override
+	protected void afterQueryRemoval(String queryId) {
 		window.removeTab(queryId);
 	}
 	

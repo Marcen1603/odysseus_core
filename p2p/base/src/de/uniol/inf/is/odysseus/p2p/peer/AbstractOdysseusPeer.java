@@ -238,6 +238,7 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	public void removeQuery(String queryId) {
 		synchronized (queryList) {
 			queryList.remove(queryId);
+			afterQueryRemoval(queryId);
 		}
 	}
 
@@ -271,4 +272,6 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	protected abstract void afterQueryRemoval(String queryId);
 }

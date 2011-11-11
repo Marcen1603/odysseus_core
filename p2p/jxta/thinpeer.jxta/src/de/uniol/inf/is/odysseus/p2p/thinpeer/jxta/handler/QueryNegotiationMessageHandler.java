@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.gui.ErrorPopup;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 
 public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
@@ -64,16 +63,14 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 			String queryId = MessageTool.getMessageElementAsString(
 					"UnknownSource", "query", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
-			thinPeerJxtaImpl.removeTab(queryId);
-			new ErrorPopup("Error in query translation.");
+			throw new RuntimeException("Error in query translation.");
 		}
 
 		if (action.equals(OdysseusQueryAction.queryFailed)) {
 			String queryId = MessageTool.getMessageElementAsString(
 					"QueryFailed", "queryId", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
-			thinPeerJxtaImpl.removeTab(queryId);
-			new ErrorPopup(
+			throw new RuntimeException(
 					"<html>Error in query distribution<br />Not enough bids.</html>");
 		}
 	}
