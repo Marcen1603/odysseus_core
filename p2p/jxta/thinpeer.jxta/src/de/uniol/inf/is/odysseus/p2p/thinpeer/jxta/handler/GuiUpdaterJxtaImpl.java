@@ -68,7 +68,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 				model.addElement(((ExtendedPeerAdvertisement) thinPeerJxtaImpl
 						.getAdminPeers().get(s)).getPeerName().substring(19));
 			}
-			thinPeerJxtaImpl.getGui().getAdminPeers().setModel(model);
+			thinPeerJxtaImpl.setAdminPeersModel(model);
 		}
 	}
 
@@ -78,7 +78,7 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 			for (SourceAdvertisement s : thinPeerJxtaImpl.getSources()) {
 				model.addElement(s.getSourceName()+" from "+ s.getPeerID()+"");
 			}
-			thinPeerJxtaImpl.getGui().getSources().setModel(model);
+			thinPeerJxtaImpl.setSourcesModel(model);
 		}
 	}
 

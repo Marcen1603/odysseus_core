@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
+
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
@@ -326,5 +328,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	public void initMessageSender() {
 		setMessageSender(new JxtaMessageSender());
 	}
+
 
 }

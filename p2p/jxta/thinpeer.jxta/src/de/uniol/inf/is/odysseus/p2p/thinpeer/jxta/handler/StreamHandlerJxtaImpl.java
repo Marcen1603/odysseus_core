@@ -86,8 +86,8 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				// e.printStackTrace();
 			}
 			// Empfangene Daten der Gui hinzufuegen
-			if (!thinPeerJxtaImpl.getGui().isEnabled())
-				thinPeerJxtaImpl.getGui().setEnabled(true);
+			if (!thinPeerJxtaImpl.isEnabled())
+				thinPeerJxtaImpl.setEnabled(true);
 			log.addResult(queryId, o);
 		}
 

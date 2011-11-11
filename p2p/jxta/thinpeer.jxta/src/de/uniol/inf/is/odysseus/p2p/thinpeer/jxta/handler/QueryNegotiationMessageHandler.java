@@ -64,7 +64,7 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 			String queryId = MessageTool.getMessageElementAsString(
 					"UnknownSource", "query", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
-			thinPeerJxtaImpl.getGui().removeTab(queryId);
+			thinPeerJxtaImpl.removeTab(queryId);
 			new ErrorPopup("Error in query translation.");
 		}
 
@@ -72,7 +72,7 @@ public class QueryNegotiationMessageHandler extends AbstractJxtaMessageHandler {
 			String queryId = MessageTool.getMessageElementAsString(
 					"QueryFailed", "queryId", (Message) msg);
 			thinPeerJxtaImpl.removeQuery(queryId);
-			thinPeerJxtaImpl.getGui().removeTab(queryId);
+			thinPeerJxtaImpl.removeTab(queryId);
 			new ErrorPopup(
 					"<html>Error in query distribution<br />Not enough bids.</html>");
 		}

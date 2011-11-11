@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer;
 
 import java.util.HashMap;
 
+import javax.swing.DefaultListModel;
+
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
@@ -31,7 +33,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
 	private Thread socketListenerThread;
-	private MainWindow gui;
+	private MainWindow window;
 	protected IGuiUpdater guiUpdater;
 	protected IAdministrationPeerListener administrationPeerListener;
 	private Thread administrationPeerListenerThread;
@@ -54,15 +56,15 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 		this.adminPeers = adminPeers;
 	}
 
-	public MainWindow getGui() {
-		return gui;
-	}
+//	public MainWindow getGui() {
+//		return gui;
+//	}
 
 	private void startGui() {
-		gui = new MainWindow(this, this.getName());
-		gui.setLocationRelativeTo(null);
-		gui.setVisible(true);
-		((Log)getLog()).setWindow(getGui());
+		window = new MainWindow(this, this.getName());
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+		((Log)getLog()).setWindow(window);
 		Thread t = new Thread(guiUpdater);
 		t.start();
 	}
@@ -151,4 +153,40 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer {
 
 	public abstract void sendQuerySpezificationToAdminPeer(String query,
 			String language, String adminPeer, String adminPeerName);
+
+	
+	// ---------------------------------------------------------
+	// Temporary delegates to remove GUI-Dependencies
+	// ---------------------------------------------------------
+	
+	
+	public void addAdminPeer(String queryId, String peerId) {
+		window.addAdminPeer(queryId, peerId);
+	}
+	
+	public void addStatus(String queryId, String status) {
+		window.addStatus(queryId, status);
+	}
+	
+	public void removeTab(String queryId) {
+		window.removeTab(queryId);
+	}
+	
+	public boolean isEnabled() {
+		return window.isEnabled();
+	}
+	
+	public void setEnabled(boolean b) {
+		window.setEnabled(b);
+	}
+
+	public void setAdminPeersModel(DefaultListModel model) {
+		window.getAdminPeers().setModel(model);
+	}
+
+	public void setSourcesModel(DefaultListModel model) {
+		window.getSources().setModel(model);
+	}
+
+
 }
