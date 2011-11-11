@@ -151,11 +151,11 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
 		for (SDFAttribute attr : this.attributes) {
-			if (attr.getDatatype().getURI().equals("StartTimestamp")) {
+			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
 				timestampAO.setStartTimestamp(attr);
 			}
 
-			if (attr.getDatatype().getURI().equals("EndTimestamp")) {
+			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
 				timestampAO.setEndTimestamp(attr);
 			}
 		}
@@ -170,13 +170,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		// check attributes for consistency
 		boolean hasEndTimestamp = false, hasStartTimestamp = false;
 		for (SDFAttribute attr : this.attributes) {
-			if (attr.getDatatype().equals("StartTimestamp")) {
+			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
 				if (hasStartTimestamp) {
 					throw new QueryParseException("multiple definitions of StartTimestamp attribute not allowed");
 				}
 				hasStartTimestamp = true;
 			}
-			if (attr.getDatatype().equals("EndTimestamp")) {
+			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
 				if (hasEndTimestamp) {
 					throw new QueryParseException("multiple definitions of EndTimestamp attribute not allowed");
 				}
