@@ -77,6 +77,16 @@ public class WrapperPlanFactory {
 			}
 		}
 	}
+	
+	public static void removeClosedSinks(){
+		Iterator<Entry<String, ISink<?>>> it = sinks.entrySet().iterator();
+		while(it.hasNext()){
+			Entry<String, ISink<?>> curEntry = it.next();
+			if(!curEntry.getValue().hasOwner()){
+				it.remove();
+			}
+		}
+	}
 
 	public static ISink<?> getSink(String sinkName) {
 		return sinks.get(sinkName);
