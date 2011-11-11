@@ -475,6 +475,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
 				WrapperPlanFactory.removeClosedSources();
+				WrapperPlanFactory.removeClosedSinks();
 				getLogger().debug("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				this.reloadLog.removeQuery(queryToRemove.getQueryText());
