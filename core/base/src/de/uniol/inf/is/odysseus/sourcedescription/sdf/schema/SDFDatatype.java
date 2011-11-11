@@ -98,9 +98,9 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	public static final SDFDatatype GRID_DOUBLE = new SDFDatatype("Grid",
 			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList(
-					new SDFAttribute("origin", SDFDatatype.SPATIAL_POINT),
-					new SDFAttribute("cellsize", SDFDatatype.DOUBLE),
-					new SDFAttribute("grid", SDFDatatype.MATRIX_DOUBLE)));
+					new SDFAttribute(null,"origin", SDFDatatype.SPATIAL_POINT),
+					new SDFAttribute(null,"cellsize", SDFDatatype.DOUBLE),
+					new SDFAttribute(null,"grid", SDFDatatype.MATRIX_DOUBLE)));
 	
 	private static final long serialVersionUID = 8585322290347489841L;
 	
