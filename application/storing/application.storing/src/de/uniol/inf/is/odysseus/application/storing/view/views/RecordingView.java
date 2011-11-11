@@ -1,23 +1,38 @@
 package de.uniol.inf.is.odysseus.application.storing.view.views;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.IEvaluationService;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.IRecordingListener;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 
 
-public class RecordingView extends ViewPart implements IRecordingListener {
+public class RecordingView extends ViewPart implements IRecordingListener, ISelectionChangedListener {
 
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "de.uniol.inf.is.odysseus.application.storing.view.views.RecordingView";
+	
+	public static final String PROPERTY_NAMESPACE = "de.uniol.inf.is.odysseus.application.storing.view.views";
+
+	
+	public static final String PROPERTY_IS_RECORDING_STARTABLE = "isRecordingStartable";
+	public static final String PROPERTY_IS_RECORDING_STOPPABLE= "isRecordingStoppable";
+	public static final String PROPERTY_IS_RECORDING_PAUSABLE = "isRecordingPauseable";
+	public static final String PROPERTY_IS_DELETABLE = "isDeleteable";
+	public static final String PROPERTY_IS_PLAYING_STARTABLE = "isPlayingStartable";
+	public static final String PROPERTY_IS_PLAYING_PAUSABLE = "isPlayingPauseable";
+	public static final String PROPERTY_IS_PLAYING_STOPPABLE = "isPlayingStoppable";
 
 	private TableViewer viewer;
 
@@ -45,9 +60,10 @@ public class RecordingView extends ViewPart implements IRecordingListener {
 		getSite().registerContextMenu(menuManager, getTreeViewer());
 		getSite().setSelectionProvider(getTreeViewer());
 		RecordingController.getInstance().addListener(this);
+		getSite().getSelectionProvider().addSelectionChangedListener(this);
 	}
 
-	private TableViewer getTreeViewer() {
+	public TableViewer getTreeViewer() {
 		return this.viewer;
 	}
 
@@ -61,6 +77,7 @@ public class RecordingView extends ViewPart implements IRecordingListener {
 	@Override
 	public void dispose() {
 		RecordingController.getInstance().removeListener(this);
+		RecordingController.getInstance().dispose();
 		super.dispose();
 	}
 	
@@ -71,6 +88,17 @@ public class RecordingView extends ViewPart implements IRecordingListener {
 			public void run() {
 				try {
 					viewer.refresh(); 
+					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					IEvaluationService evaluationService = (IEvaluationService) window.getService(IEvaluationService.class);
+					if (evaluationService != null) {
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_DELETABLE);
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_RECORDING_PAUSABLE);	
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_RECORDING_STARTABLE);	
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_RECORDING_STOPPABLE);
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_PLAYING_PAUSABLE);
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_PLAYING_STARTABLE);
+						evaluationService.requestEvaluation(PROPERTY_NAMESPACE + "." + PROPERTY_IS_PLAYING_STOPPABLE);
+					}
 				} catch (Exception e) {
 					viewer.setInput("Refresh failed");					
 				}
@@ -81,6 +109,11 @@ public class RecordingView extends ViewPart implements IRecordingListener {
 	}
 	@Override
 	public void recordingChanged() {
+		refresh();		
+	}
+
+	@Override
+	public void selectionChanged(SelectionChangedEvent event) {
 		refresh();		
 	}
 }

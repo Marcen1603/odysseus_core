@@ -21,6 +21,8 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,12 +32,15 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.usermanagement.User;
@@ -56,6 +61,12 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	private String databaseConnection;
 	private String tableName;
 	private Button sameAsRecording;
+	private Button dropTableBefore;
+	private Button truncateTableBefore;
+	private Button appendTableButton;
+	private boolean dropTable;
+	private boolean truncateTable;
+	private boolean appendTable;
 
 	public StartNewRecordingDialog(Shell parentShell, IDataDictionary dd, User user) {
 		super(parentShell);
@@ -91,6 +102,14 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 
 		nameOfTheRecordingBox = new Text(parent, SWT.BORDER);
 		nameOfTheRecordingBox.setLayoutData(gridData);
+		nameOfTheRecordingBox.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tableNameBox.setText(nameOfTheRecordingBox.getText());
+
+			}
+		});
 
 		Label label2 = new Label(parent, SWT.NONE);
 		label2.setText("From stream:");
@@ -113,6 +132,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 
 		sameAsRecording = new Button(parent, SWT.CHECK);
 		sameAsRecording.setText("Same as recording Name");
+		sameAsRecording.setSelection(true);
 		sameAsRecording.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -137,6 +157,19 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 
 		tableNameBox = new Text(parent, SWT.BORDER);
 		tableNameBox.setLayoutData(gridData);
+		tableNameBox.setEnabled(false);
+
+		appendTableButton = new Button(parent, SWT.RADIO);
+		appendTableButton.setText("Append to table");
+		appendTableButton.setSelection(true);
+
+		new Label(parent, SWT.NONE);
+
+		dropTableBefore = new Button(parent, SWT.RADIO);
+		dropTableBefore.setText("Drop the table before");
+
+		truncateTableBefore = new Button(parent, SWT.RADIO);
+		truncateTableBefore.setText("Truncate (clear) table before");
 
 		return parent;
 	}
@@ -155,6 +188,9 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		if (this.sameAsRecording.getSelection()) {
 			this.tableName = nameOfTheRecordingBox.getText();
 		}
+		this.dropTable = dropTableBefore.getSelection();
+		this.truncateTable = truncateTableBefore.getSelection();
+		this.appendTable = appendTableButton.getSelection();
 	}
 
 	@Override
@@ -229,19 +265,49 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 			setErrorMessage("Please select a stream");
 			valid = false;
 		}
-		if(RecordingController.getInstance().getRecords().keySet().contains(nameOfTheRecordingBox.getText())){
+		if (RecordingController.getInstance().getRecords().keySet().contains(nameOfTheRecordingBox.getText())) {
 			setErrorMessage("A recording with that name already exist!");
 			valid = false;
+		}
+		if (comboDropDownDatabases.getSelectionIndex() != -1) {
+			String db = comboDropDownDatabases.getItem(comboDropDownDatabases.getSelectionIndex());
+			IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(db);
+			String currentTableName = tableNameBox.getText();
+			if (sameAsRecording.getSelection()) {
+				currentTableName = nameOfTheRecordingBox.getText();
+			}
+			if (con.tableExists(currentTableName)) {
+				MessageBox mbox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				mbox.setText("Warning: There is already a table with that name!");
+				String message = "";
+				if(this.appendTableButton.getSelection()){
+					message= "New data will be appended to the existing table!";
+				}
+				if(this.dropTableBefore.getSelection()){
+					message= "The table is going to be dropped so that everything will be lost!";
+					message= message+"\nThe table is dropped on each new recording!";
+				}
+				if(this.truncateTableBefore.getSelection()){
+					message= "The table will be truncated so that everything will be lost!";
+					message= message+"\nThe table is truncated on each new recording!";
+				}
+				mbox.setMessage(message+"\n\nProceed?"); 
+				if (mbox.open() == SWT.NO) {
+					setErrorMessage("Cancelled by user! Choose another option!");
+					valid = false;
+				}
+				
+			}
 		}
 		return valid;
 	}
 
-	private boolean validTableName(String name){	
-		if(!Character.isLetter(name.charAt(0))){
+	private boolean validTableName(String name) {
+		if (!Character.isLetter(name.charAt(0))) {
 			return false;
 		}
-		for(char c : name.toCharArray()){
-			if(!Character.isDigit(c) && !Character.isLetter(c)){
+		for (char c : name.toCharArray()) {
+			if (!Character.isDigit(c) && !Character.isLetter(c)) {
 				return false;
 			}
 		}
@@ -267,6 +333,18 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 
 	public String getDatabaseConnection() {
 		return databaseConnection;
+	}
+
+	public boolean isDropTable() {
+		return dropTable;
+	}
+
+	public boolean isTruncateTable() {
+		return truncateTable;
+	}
+
+	public boolean isAppendTable() {
+		return appendTable;
 	}
 
 }

@@ -58,6 +58,8 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 			mb.open();
 			return null;
 		}
+		
+	
 
 		StartNewRecordingDialog dialog = new StartNewRecordingDialog(shell, dd, user);
 		int ergebnis = dialog.open();

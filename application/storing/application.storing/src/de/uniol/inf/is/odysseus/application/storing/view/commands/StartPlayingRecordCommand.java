@@ -15,22 +15,28 @@
 
 package de.uniol.inf.is.odysseus.application.storing.view.commands;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import de.uniol.inf.is.odysseus.application.storing.controller.PlayRecordController;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 09.11.2011
  */
-public class StartPlayingRecordCommand extends AbstractHandler {
+public class StartPlayingRecordCommand extends AbstractRecordingCommand{
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		PlayRecordController.getInstance().startPlaying();
+		Object selected = super.getCurrentSelection(event);
+		if(selected instanceof RecordEntry){
+			RecordEntry record = (RecordEntry)selected;					
+			RecordingController.getInstance().startPlaying(record.getName());
+		}else{
+			return null;
+		}		
 		return null;
 	}
 

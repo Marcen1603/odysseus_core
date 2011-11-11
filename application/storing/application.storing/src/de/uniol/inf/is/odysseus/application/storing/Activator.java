@@ -14,6 +14,7 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String SINK_NAME_PREFIX = "RECORDING";
 	
+	
 	// The shared instance
 	private static Activator plugin;
 	
@@ -29,14 +30,14 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
+		plugin = this;		
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext context) throws Exception {
+	public void stop(BundleContext context) throws Exception {		
 		plugin = null;
 		super.stop(context);
 	}

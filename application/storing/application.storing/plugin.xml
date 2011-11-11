@@ -15,32 +15,26 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordingCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
             name="Start Recording">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
             name="Pause Recording">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
             name="Stop Recording">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
             name="Start Playing Record">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
             name="Pause Playing">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
             name="Stop Playing Record">
       </command>
@@ -158,6 +152,77 @@
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="de.uniol.inf.is.odysseus.application.storing.view.views.RecordingPropertyTester"
+            id="de.uniol.inf.is.odysseus.application.storing.view.views.RecordingPropertyTester"
+            namespace="de.uniol.inf.is.odysseus.application.storing.view.views"
+            properties="isRecordingStartable,isRecordingStoppable,isRecordingPauseable,isDeleteable,isPlayingStartable,isPlayingPauseable,isPlayingStoppable"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordingCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartRecordCommand"
+            helpContextId="h">
+         <enabledWhen>
+            <test
+                  forcePluginActivation="true"
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isRecordingStartable">
+            </test>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PauseRecordingCommand">
+         <enabledWhen>
+            <test
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isRecordingPauseable">
+            </test>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopRecordingCommand">
+         <enabledWhen>
+            <test
+                  forcePluginActivation="true"
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isRecordingStoppable">
+            </test></enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StartPlayingRecordCommand">
+         <enabledWhen>
+            <test
+                  forcePluginActivation="true"
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isPlayingStartable">
+            </test>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand">
+         <enabledWhen>
+            <test
+                  forcePluginActivation="true"
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isPlayingStoppable">
+            </test>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.PausePlayingRecordCommand">
+         <enabledWhen>
+            <test
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isPlayingPauseable">
+            </test>
+         </enabledWhen>
+      </handler>
    </extension>
 
 </plugin>

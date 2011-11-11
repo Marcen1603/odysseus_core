@@ -15,13 +15,17 @@
 
 package de.uniol.inf.is.odysseus.application.storing.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.application.storing.Activator;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.PlayingState;
+import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.State;
+import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -41,8 +45,15 @@ public class RecordingController {
 
 	private static RecordingController instance = null;
 
-	private RecordingController() {
+	private RecordingStore recordingStore;
 
+	private RecordingController() {
+		try {
+			this.recordingStore = new RecordingStore();
+			this.recordings.putAll(this.recordingStore.getMap());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static synchronized RecordingController getInstance() {
@@ -55,6 +66,14 @@ public class RecordingController {
 	public void startRecording(String recordingName) {
 		RecordEntry record = recordings.get(recordingName);
 		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+
+		try {
+			deployQueries(record);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
 		for (IQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().startQuery(q.getID(), user);
@@ -62,10 +81,11 @@ public class RecordingController {
 				e.printStackTrace();
 			}
 		}
+		record.setState(State.Started);
 		fireChangedEvent();
 
 	}
-	
+
 	public void pauseRecording(String recordingName) {
 		RecordEntry record = this.recordings.get(recordingName);
 		User caller = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
@@ -76,10 +96,9 @@ public class RecordingController {
 				e.printStackTrace();
 			}
 		}
+		record.setState(State.Paused);
 		fireChangedEvent();
 	}
-
-	
 
 	public void stopRecording(String name) {
 		RecordEntry record = recordings.get(name);
@@ -100,37 +119,36 @@ public class RecordingController {
 		}
 		IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		dd.removeSink(record.getSinkName());
+
+		record.setState(State.Stopped);
 		fireChangedEvent();
 	}
 
+	private void deployQueries(RecordEntry record) throws PlanManagementException {
+		String sinkName = record.getSinkName();
+		String createSink = "CREATE SINK " + sinkName + " TO DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
+		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
+		IDataDictionary dd = GlobalState.getActiveDatadictionary();
+		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		Collection<IQuery> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, dd, "Standard");
+		Collection<IQuery> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, dd, "Standard");
+		record.clearQueries();
+		record.setSinkQueries(sinkQueries);
+		record.setStreamToQueries(streamToQueries);
+	}
 
 	public void createRecording(String recordingName, String databaseConnection, String tableName, String fromStream) {
 		RecordEntry record = new RecordEntry(recordingName, databaseConnection, tableName, fromStream);
-		String sinkName = record.getSinkName();		
-		String createSink = "CREATE SINK " + sinkName + " TO DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
-		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
-		try {
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
-			Collection<IQuery> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, dd, "Standard");
-			Collection<IQuery> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, dd, "Standard");
-			this.recordings.put(record.getName(), record);
-			record.setSinkQueries(sinkQueries);
-			record.setStreamToQueries(streamToQueries);
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
-		}
+		this.recordings.put(record.getName(), record);
+		record.setState(State.Initialized);
 		fireChangedEvent();
 	}
-	
-	
+
 	private void fireChangedEvent() {
 		for (IRecordingListener listener : this.listener) {
 			listener.recordingChanged();
 		}
 	}
-
-	
 
 	public void addListener(IRecordingListener listener) {
 		this.listener.add(listener);
@@ -139,9 +157,50 @@ public class RecordingController {
 	public void removeListener(IRecordingListener listener) {
 		this.listener.remove(listener);
 	}
-	
 
 	public Map<String, RecordEntry> getRecords() {
 		return this.recordings;
+	}
+
+	public void pausePlaying(String name) {
+		RecordEntry record = recordings.get(name);
+
+		record.setPlayingState(PlayingState.Paused);
+		fireChangedEvent();
+	}
+
+	public void stopPlaying(String name) {
+		RecordEntry record = recordings.get(name);
+
+		record.setPlayingState(PlayingState.Stopped);
+		fireChangedEvent();
+	}
+
+	public void startPlaying(String name) {
+		RecordEntry record = recordings.get(name);
+
+		record.setPlayingState(PlayingState.Started);
+		fireChangedEvent();
+	}
+
+	public void dispose() {
+		// stop all
+		for (Entry<String, RecordEntry> e : this.recordings.entrySet()) {
+			if (e.getValue().isStarted() || e.getValue().isPaused()) {
+				e.getValue().setState(State.Stopped);
+			} else {
+				if (e.getValue().isPlayingStarted() || e.getValue().isPlayingPaused()) {
+					e.getValue().setPlayingState(PlayingState.Stopped);
+				}
+			}
+			e.getValue().clearQueries();
+		}
+
+		// save all
+		this.recordingStore.clear();
+		for (RecordEntry record : this.recordings.values()) {
+			this.recordingStore.storeRecordEntry(record);
+		}
+
 	}
 }
