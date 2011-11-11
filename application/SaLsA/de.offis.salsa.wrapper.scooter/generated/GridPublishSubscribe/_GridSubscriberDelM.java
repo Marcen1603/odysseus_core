@@ -23,7 +23,7 @@ package GridPublishSubscribe;
 public final class _GridSubscriberDelM extends Ice._ObjectDelM implements _GridSubscriberDel
 {
     public void
-    _notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx)
+    _notify(GridStruct grid, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         IceInternal.Outgoing __og = __handler.getOutgoing("notify", Ice.OperationMode.Normal, __ctx);
@@ -32,9 +32,6 @@ public final class _GridSubscriberDelM extends Ice._ObjectDelM implements _GridS
             try
             {
                 IceInternal.BasicStream __os = __og.os();
-                __os.writeLong(timestamp);
-                __os.writeDouble(x);
-                __os.writeDouble(y);
                 grid.__write(__os);
             }
             catch(Ice.LocalException __ex)

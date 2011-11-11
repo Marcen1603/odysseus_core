@@ -78,9 +78,9 @@ public abstract class _GridSubscriberDisp extends Ice.ObjectImpl implements Grid
     }
 
     public final void
-    _notify(long timestamp, double x, double y, GridStruct grid)
+    _notify(GridStruct grid)
     {
-        _notify(timestamp, x, y, grid, null);
+        _notify(grid, null);
     }
 
     public static Ice.DispatchStatus
@@ -89,17 +89,11 @@ public abstract class _GridSubscriberDisp extends Ice.ObjectImpl implements Grid
         __checkMode(Ice.OperationMode.Normal, __current.mode);
         IceInternal.BasicStream __is = __inS.is();
         __is.startReadEncaps();
-        long timestamp;
-        timestamp = __is.readLong();
-        double x;
-        x = __is.readDouble();
-        double y;
-        y = __is.readDouble();
         GridStruct grid;
         grid = new GridStruct();
         grid.__read(__is);
         __is.endReadEncaps();
-        __obj._notify(timestamp, x, y, grid, __current);
+        __obj._notify(grid, __current);
         return Ice.DispatchStatus.DispatchOK;
     }
 

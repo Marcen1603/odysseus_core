@@ -22,6 +22,6 @@ package GridPublishSubscribe;
 
 public interface _GridSubscriberDel extends Ice._ObjectDel
 {
-    void _notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx)
+    void _notify(GridStruct grid, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper;
 }

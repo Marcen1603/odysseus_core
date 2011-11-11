@@ -23,19 +23,19 @@ package GridPublishSubscribe;
 public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase implements GridSubscriberPrx
 {
     public void
-    _notify(long timestamp, double x, double y, GridStruct grid)
+    _notify(GridStruct grid)
     {
-        _notify(timestamp, x, y, grid, null, false);
+        _notify(grid, null, false);
     }
 
     public void
-    _notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx)
+    _notify(GridStruct grid, java.util.Map<String, String> __ctx)
     {
-        _notify(timestamp, x, y, grid, __ctx, true);
+        _notify(grid, __ctx, true);
     }
 
     private void
-    _notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, boolean __explicitCtx)
+    _notify(GridStruct grid, java.util.Map<String, String> __ctx, boolean __explicitCtx)
     {
         if(__explicitCtx && __ctx == null)
         {
@@ -49,7 +49,7 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
             {
                 __delBase = __getDelegate(false);
                 _GridSubscriberDel __del = (_GridSubscriberDel)__delBase;
-                __del._notify(timestamp, x, y, grid, __ctx);
+                __del._notify(grid, __ctx);
                 return;
             }
             catch(IceInternal.LocalExceptionWrapper __ex)
@@ -65,46 +65,43 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
 
     private static final String __notify_name = "notify";
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid)
+    public Ice.AsyncResult begin_notify(GridStruct grid)
     {
-        return begin_notify(timestamp, x, y, grid, null, false, null);
+        return begin_notify(grid, null, false, null);
     }
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx)
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx)
     {
-        return begin_notify(timestamp, x, y, grid, __ctx, true, null);
+        return begin_notify(grid, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, Ice.Callback __cb)
+    public Ice.AsyncResult begin_notify(GridStruct grid, Ice.Callback __cb)
     {
-        return begin_notify(timestamp, x, y, grid, null, false, __cb);
+        return begin_notify(grid, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
-        return begin_notify(timestamp, x, y, grid, __ctx, true, __cb);
+        return begin_notify(grid, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, Callback_GridSubscriber_notify __cb)
+    public Ice.AsyncResult begin_notify(GridStruct grid, Callback_GridSubscriber_notify __cb)
     {
-        return begin_notify(timestamp, x, y, grid, null, false, __cb);
+        return begin_notify(grid, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, Callback_GridSubscriber_notify __cb)
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Callback_GridSubscriber_notify __cb)
     {
-        return begin_notify(timestamp, x, y, grid, __ctx, true, __cb);
+        return begin_notify(grid, __ctx, true, __cb);
     }
 
-    private Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
+    private Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, boolean __explicitCtx, IceInternal.CallbackBase __cb)
     {
         IceInternal.OutgoingAsync __result = new IceInternal.OutgoingAsync(this, __notify_name, __cb);
         try
         {
             __result.__prepare(__notify_name, Ice.OperationMode.Normal, __ctx, __explicitCtx);
             IceInternal.BasicStream __os = __result.__os();
-            __os.writeLong(timestamp);
-            __os.writeDouble(x);
-            __os.writeDouble(y);
             grid.__write(__os);
             __os.endWriteEncaps();
             __result.__send(true);

@@ -22,6 +22,12 @@ package GridPublishSubscribe;
 
 public class GridStruct implements java.lang.Cloneable, java.io.Serializable
 {
+    public long timestamp;
+
+    public double x;
+
+    public double y;
+
     public int width;
 
     public int height;
@@ -34,8 +40,11 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
     {
     }
 
-    public GridStruct(int width, int height, double cellsize, byte[] data)
+    public GridStruct(long timestamp, double x, double y, int width, int height, double cellsize, byte[] data)
     {
+        this.timestamp = timestamp;
+        this.x = x;
+        this.y = y;
         this.width = width;
         this.height = height;
         this.cellsize = cellsize;
@@ -60,6 +69,18 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
 
         if(_r != null)
         {
+            if(timestamp != _r.timestamp)
+            {
+                return false;
+            }
+            if(x != _r.x)
+            {
+                return false;
+            }
+            if(y != _r.y)
+            {
+                return false;
+            }
             if(width != _r.width)
             {
                 return false;
@@ -87,6 +108,9 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
     hashCode()
     {
         int __h = 0;
+        __h = 5 * __h + (int)timestamp;
+        __h = 5 * __h + (int)java.lang.Double.doubleToLongBits(x);
+        __h = 5 * __h + (int)java.lang.Double.doubleToLongBits(y);
         __h = 5 * __h + width;
         __h = 5 * __h + height;
         __h = 5 * __h + (int)java.lang.Double.doubleToLongBits(cellsize);
@@ -118,6 +142,9 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
     public void
     __write(IceInternal.BasicStream __os)
     {
+        __os.writeLong(timestamp);
+        __os.writeDouble(x);
+        __os.writeDouble(y);
         __os.writeInt(width);
         __os.writeInt(height);
         __os.writeDouble(cellsize);
@@ -127,6 +154,9 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
     public void
     __read(IceInternal.BasicStream __is)
     {
+        timestamp = __is.readLong();
+        x = __is.readDouble();
+        y = __is.readDouble();
         width = __is.readInt();
         height = __is.readInt();
         cellsize = __is.readDouble();

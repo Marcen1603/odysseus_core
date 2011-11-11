@@ -3,6 +3,9 @@ module GridPublishSubscribe {
 	sequence<byte> GridData;
 
 	struct GridStruct {
+		long timestamp;
+		double x;
+		double y;
 		int width;
 		int height;
 		double cellsize;
@@ -11,7 +14,7 @@ module GridPublishSubscribe {
 
 	interface GridSubscriber
 	{
-		void notify(long timestamp, double x, double y, GridStruct grid);
+		void notify(GridStruct grid);
 	};
 
 	interface GridPublisher

@@ -23,7 +23,7 @@ package GridPublishSubscribe;
 public final class _GridSubscriberDelD extends Ice._ObjectDelD implements _GridSubscriberDel
 {
     public void
-    _notify(final long timestamp, final double x, final double y, final GridStruct grid, java.util.Map<String, String> __ctx)
+    _notify(final GridStruct grid, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
         final Ice.Current __current = new Ice.Current();
@@ -44,7 +44,7 @@ public final class _GridSubscriberDelD extends Ice._ObjectDelD implements _GridS
                     {
                         throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
                     }
-                    __servant._notify(timestamp, x, y, grid, __current);
+                    __servant._notify(grid, __current);
                     return Ice.DispatchStatus.DispatchOK;
                 }
             };

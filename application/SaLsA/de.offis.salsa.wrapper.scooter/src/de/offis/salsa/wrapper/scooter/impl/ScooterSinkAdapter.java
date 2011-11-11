@@ -127,6 +127,9 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 					Grid2D grid = (Grid2D) data[1];
 
 					GridStruct iceGrid = new GridStruct();
+					iceGrid.timestamp = (Long) data[0];
+					iceGrid.x = grid.origin.x * grid.cellsize;
+					iceGrid.y = grid.origin.y * grid.cellsize;
 					iceGrid.cellsize = grid.cellsize;
 					iceGrid.width = grid.grid.length;
 					iceGrid.height = grid.grid[0].length;
@@ -143,9 +146,7 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 						}
 					}
 					for (GridSubscriberPrx listener : listeners) {
-						listener._notify((Long) data[0], grid.origin.x
-								* grid.cellsize, grid.origin.x * grid.cellsize,
-								iceGrid);
+						listener._notify(iceGrid);
 					}
 				}
 				this.objectAdapter.deactivate();

@@ -22,5 +22,5 @@ package GridPublishSubscribe;
 
 public interface _GridSubscriberOperationsNC
 {
-    void _notify(long timestamp, double x, double y, GridStruct grid);
+    void _notify(GridStruct grid);
 }

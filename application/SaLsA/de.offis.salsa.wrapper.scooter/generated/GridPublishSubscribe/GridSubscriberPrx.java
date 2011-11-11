@@ -22,21 +22,21 @@ package GridPublishSubscribe;
 
 public interface GridSubscriberPrx extends Ice.ObjectPrx
 {
-    public void _notify(long timestamp, double x, double y, GridStruct grid);
+    public void _notify(GridStruct grid);
 
-    public void _notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx);
+    public void _notify(GridStruct grid, java.util.Map<String, String> __ctx);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid);
+    public Ice.AsyncResult begin_notify(GridStruct grid);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx);
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, Ice.Callback __cb);
+    public Ice.AsyncResult begin_notify(GridStruct grid, Ice.Callback __cb);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, Ice.Callback __cb);
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Ice.Callback __cb);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, Callback_GridSubscriber_notify __cb);
+    public Ice.AsyncResult begin_notify(GridStruct grid, Callback_GridSubscriber_notify __cb);
 
-    public Ice.AsyncResult begin_notify(long timestamp, double x, double y, GridStruct grid, java.util.Map<String, String> __ctx, Callback_GridSubscriber_notify __cb);
+    public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Callback_GridSubscriber_notify __cb);
 
     public void end_notify(Ice.AsyncResult __result);
 }
