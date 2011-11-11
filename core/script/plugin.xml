@@ -13,7 +13,7 @@
             name="TRANSCFG">
       </PreParserKeyword>
       <PreParserKeyword
-            class="de.uniol.inf.is.odysseus.script.parser.keyword.ExecuteQueryPreParserKeyword"
+            class="de.uniol.inf.is.odysseus.script.parser.keyword.AddQueryPreParserKeyword"
             name="QUERY">
       </PreParserKeyword>
       <PreParserKeyword

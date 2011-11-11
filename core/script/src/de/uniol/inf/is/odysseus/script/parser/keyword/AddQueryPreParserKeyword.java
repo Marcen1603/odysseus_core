@@ -14,39 +14,12 @@
  */
 package de.uniol.inf.is.odysseus.script.parser.keyword;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
-
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class AddQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
-	// Query selbst ausführen...
 	@Override
-	protected Object exec(String parserID, String transCfg, String queryText,
-			User caller, IDataDictionary dd) throws PlanManagementException {
-		parserID = parserID.trim();
-		transCfg = transCfg.trim();
-		queryText = queryText.trim();
-
-		// Query aufsplitten ";"
-		StringTokenizer queriesTokenizer = new StringTokenizer(queryText, ";");
-		Collection<IQuery> queries = new LinkedList<IQuery>();
-		while (queriesTokenizer.hasMoreElements()) {
-			String q = queriesTokenizer.nextToken();
-			if (q.length() > 0) {
-				queries.addAll(ExecutorHandler.getExecutor().addQuery(q,
-						parserID, caller, dd,
-						transCfg));
-			}
-		}
-		
-		return queries;
+	protected boolean startQuery() {
+		return false;
 	}
 
 }
