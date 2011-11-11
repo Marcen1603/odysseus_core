@@ -43,9 +43,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 	public static final String REFRESH_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand";
 	public static final String COLLAPSE_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand";
 	public static final String EXPAND_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand";	
-	public static final String NMQN_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand";
-	public static final String NMSN_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand";
-	public static final String ADD_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand";
+	//public static final String ADD_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand";
 	public static final String REMOVE_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand";
 	public static final String STOP_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand";
 	public static final String START_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand";
@@ -100,9 +98,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
-		
-		QueryHistory.getInstance().save();
-		
+			
 		instance = null;
 	}
 	

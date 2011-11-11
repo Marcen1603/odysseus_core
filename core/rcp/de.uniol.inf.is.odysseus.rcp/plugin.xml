@@ -312,28 +312,6 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="OSGi Commands">
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
-                  label="Fast Query..."
-                  style="push">
-            </command>
-            <separator
-                  name="OSGiCommandsSeparator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
-                  label="Nexmark Example Sources"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
-                  label="Nexmark Example Queries"
-                  style="push">
-            </command>
-         </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
