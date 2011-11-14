@@ -54,8 +54,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -84,6 +84,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
 	private IExecutor executor;
+	private IOdysseusScriptParser scriptParser;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
 	private boolean noMetadataCreation;
@@ -197,9 +198,9 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 				String queryString = query.getE2();
 				if (parserId.equalsIgnoreCase(SCRIPT_PARSER)) {
 					try {
-						QueryTextParser.getInstance().parseAndExecute(
+						scriptParser.parseAndExecute(
 								queryString, user);
-					} catch (QueryTextParseException e) {
+					} catch (OdysseusScriptParseException e) {
 						throw new BenchmarkException(e);
 					}
 				} else {
@@ -328,6 +329,10 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	public void bindExecutor(IExecutor executor) {
 		this.executor = executor;
+	}
+	
+	public void bindOdysseusScript(IOdysseusScriptParser parser){
+		this.scriptParser = parser;
 	}
 
 	@Override

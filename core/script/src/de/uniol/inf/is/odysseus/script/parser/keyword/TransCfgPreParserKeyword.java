@@ -17,14 +17,11 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
- * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. Wenn eine
- * Transformationskonfiguration angegeben wird, muss dieser dem
- * <code>IExecutor</code> bekannt sein.
+ * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. 
  * 
  * @author Timo Michelsen
  * 
@@ -32,18 +29,15 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
 		if (parameter.length() == 0)
-			throw new QueryTextParseException("Parameter needed for #TRANCFG");
+			throw new OdysseusScriptParseException("Parameter needed for #TRANCFG");
 
-		if (!ExecutorHandler.getExecutor().getQueryBuildConfigurationNames().contains(parameter)) {
-			throw new QueryTextParseException("TransformationCfg " + parameter + " not found");
-		}
 		variables.put("TRANSCFG", parameter);
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
 		variables.put("TRANSCFG", parameter);
 		return null;
 	}

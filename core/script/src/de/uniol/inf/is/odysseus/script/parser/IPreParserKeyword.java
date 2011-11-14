@@ -29,6 +29,9 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public interface IPreParserKeyword {
 
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException;
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException;
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException;
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException;
+	void setParser(IOdysseusScriptParser parser);
+	IOdysseusScriptParser getParser();
+	
 }

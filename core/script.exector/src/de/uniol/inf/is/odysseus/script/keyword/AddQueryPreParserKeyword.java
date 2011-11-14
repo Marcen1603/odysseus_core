@@ -12,13 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
-public class ExecuteQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
+
+public class AddQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
 	@Override
 	protected boolean startQuery() {
-		return true;
+		return false;
 	}
 
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser">
+   <implementation class="de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser"/>
+   <reference bind="addKeywordProvider" cardinality="1..n" interface="de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider" name="IPreParserKeywordProvider" policy="dynamic" unbind="removeKeywordProvider"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser"/>
+   </service>
+</scr:component>

@@ -39,11 +39,11 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -109,7 +109,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				try {
 					User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 					// Befehle holen
-					final List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text, user);
+					final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
 
 					// Erst Text testen
 					monitor.beginTask("Executing Commands", statements.size() * 2);
@@ -130,12 +130,12 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					int counter = 1;
 					for (PreParserStatement stmt : statements) {
 						monitor.subTask("Executing (" + counter + " / " + statements.size() + ")");
-						stmt.execute(variables, user);
+						stmt.execute(variables, user, OdysseusRCPEditorTextPlugIn.getScriptParser());
 						monitor.worked(1);
 						counter++;
 					}
 					// monitor.done();
-				} catch (QueryTextParseException ex) {
+				} catch (OdysseusScriptParseException ex) {
 					if (ex.getCause() != null && ex.getCause().getCause() != null) {
 						if (ex.getCause().getCause() instanceof QueryParseException) {
 							QueryParseException qpe = (QueryParseException) ex.getCause().getCause();

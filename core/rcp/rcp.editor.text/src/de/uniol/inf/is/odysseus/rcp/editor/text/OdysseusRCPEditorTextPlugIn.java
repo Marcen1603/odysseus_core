@@ -18,6 +18,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 
 /**
@@ -35,6 +36,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	// The shared instance
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
+	private static IOdysseusScriptParser scriptParser;
 	
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -89,7 +91,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public void unbindExecutor(IExecutor e) {
 		executor = null;
 	}
-
+	
 	/**
 	 * Liefert den aktuellen, vom Declarative Service gelieferten
 	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs könnte
@@ -100,5 +102,22 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	 */
 	public static IExecutor getExecutor() {
 		return executor;
+	}
+	
+	/**
+	 * 
+	 * @param parser
+	 */
+	public void bindScriptParser(IOdysseusScriptParser parser){
+		scriptParser = parser;
+		System.out.println("Script Parser bound");
+	}
+	
+	public void unbindScriptParser(IOdysseusScriptParser parser){
+		scriptParser = null;
+	}
+
+	public static IOdysseusScriptParser getScriptParser() {
+		return scriptParser;
 	}
 }

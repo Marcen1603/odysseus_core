@@ -12,58 +12,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Collection;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractQueryPreParserKeyword extends
-		AbstractPreParserKeyword {
+AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			User caller) throws QueryTextParseException {
+			User caller) throws OdysseusScriptParseException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
-				throw new QueryTextParseException("No executor found");
+				throw new OdysseusScriptParseException("No executor found");
 
 			if (parameter.length() == 0)
-				throw new QueryTextParseException("Encountered empty query");
+				throw new OdysseusScriptParseException("Encountered empty query");
 
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
-				throw new QueryTextParseException("Parser not set");
+				throw new OdysseusScriptParseException("Parser not set");
 			if (!executor.getSupportedQueryParsers().contains(parserID))
-				throw new QueryTextParseException("Parser " + parserID
+				throw new OdysseusScriptParseException("Parser " + parserID
 						+ " not found");
 			String transCfg = (String) variables.get("TRANSCFG");
 			if (transCfg == null)
-				throw new QueryTextParseException(
+				throw new OdysseusScriptParseException(
 						"TransformationConfiguration not set");
 			if (executor.getQueryBuildConfiguration(transCfg) == null)
-				throw new QueryTextParseException(
+				throw new OdysseusScriptParseException(
 						"TransformationConfiguration " + transCfg
 								+ " not found");
 		} catch (Exception ex) {
-			throw new QueryTextParseException(
+			throw new OdysseusScriptParseException(
 					"Unknown Exception during validation a query", ex);
 		}
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			User caller) throws QueryTextParseException {
+			User caller) throws OdysseusScriptParseException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
 
@@ -84,7 +81,7 @@ public abstract class AbstractQueryPreParserKeyword extends
 			
 			return queries;
 		} catch (Exception ex) {
-			throw new QueryTextParseException("Error during executing query",
+			throw new OdysseusScriptParseException("Error during executing query",
 					ex);
 		}
 	}

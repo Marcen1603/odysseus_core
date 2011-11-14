@@ -12,33 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class StartAllClosedQueriesPreParserKeyword extends
-		AbstractPreParserKeyword {
+AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, User caller)
-			throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+			throws OdysseusScriptParseException {
+		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new QueryTextParseException("No executor found");
+			throw new OdysseusScriptParseException("No executor found");
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, User caller)
-			throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+			throws OdysseusScriptParseException {
+		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new QueryTextParseException("No executor found");
+			throw new OdysseusScriptParseException("No executor found");
 		executor.startAllClosedQueries(caller);
 		return null;
 	}

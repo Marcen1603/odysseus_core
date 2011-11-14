@@ -25,11 +25,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 /**
@@ -42,20 +39,12 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String LOG_FILENAME = System.getProperty("user.home") + "/odysseus/reloadlog.store";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
-		if (executor == null) {
-			throw new QueryTextParseException("No executor found");
-		}
-
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
+		
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
-		if (executor == null) {
-			throw new QueryTextParseException("No executor found");
-		}
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
 		logger.debug("Start reloading queries from reload log file...");
 		loadData(caller);
 		logger.debug("Reloading queries from reload log file done.");
@@ -63,6 +52,7 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	private void loadData(User caller) {
+
 		String toParse = "";
 		String newline = System.getProperty("line.separator");
 		try {
@@ -73,14 +63,14 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 				zeile = zeile.trim();
 				if (!zeile.contains("#USER")) {
 					toParse = toParse + newline + zeile;
-				}				
+				}
 			}
-			QueryTextParser.getInstance().parseAndExecute(toParse, caller);
+			getParser().parseAndExecute(toParse, caller);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (QueryTextParseException e) {
+		} catch (OdysseusScriptParseException e) {
 			e.printStackTrace();
 		}
 

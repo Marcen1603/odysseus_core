@@ -20,6 +20,17 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	
+	IOdysseusScriptParser parser;
+	
+	@Override
+	public void setParser(IOdysseusScriptParser parser) {
+		this.parser = parser;
+	}
+	
+	@Override
+	public IOdysseusScriptParser getParser() {
+		return parser;
+	}
 	
 	protected IDataDictionary getDataDictionary() {
 		return GlobalState.getActiveDatadictionary();

@@ -31,12 +31,13 @@ public class PreParserStatement {
 		this.parameter = parameter;
 	}
 	
-	public void validate( Map<String, Object> variables, User caller ) throws QueryTextParseException {
+	public void validate( Map<String, Object> variables, User caller ) throws OdysseusScriptParseException {
 		keyword.validate(variables, parameter, caller);
 	}
 	
-	public Object execute( Map<String, Object> variables, User caller ) throws QueryTextParseException {
-		return keyword.execute(variables, parameter, caller);
+	public void execute( Map<String, Object> variables, User caller, IOdysseusScriptParser parser ) throws OdysseusScriptParseException {
+		keyword.setParser(parser);
+		keyword.execute(variables, parameter, caller);
 	}
 	
 	public String getParameter() {

@@ -9,13 +9,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.physicaloperator,
- de.uniol.inf.is.odysseus.planmanagement,
- de.uniol.inf.is.odysseus.planmanagement.configuration,
- de.uniol.inf.is.odysseus.planmanagement.executor,
- de.uniol.inf.is.odysseus.planmanagement.executor.exception,
- de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
- de.uniol.inf.is.odysseus.planmanagement.query,
- de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.sla,
  de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.usermanagement.client,
@@ -25,4 +18,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Export-Package: de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword
-Service-Component: OSGI-INF/Executor.xml
+Service-Component: OSGI-INF/PreParserKeywordProvider.xml, OSGI-INF/OdysseusScriptParser.xml

@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.script.parser.PreParserKeywordRegistry;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -116,7 +115,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 	
 	private List<String> getScriptKeywords(){
 		List<String> words = new ArrayList<String>();
-		String scriptkeywords[] = PreParserKeywordRegistry.getInstance().getKeywordNames().toArray(new String[] {});
+		String scriptkeywords[] = OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames().toArray(new String[] {});
 		for (int i = 0; i < scriptkeywords.length; i++) {
 			words.add("#" + scriptkeywords[i]);
 		}

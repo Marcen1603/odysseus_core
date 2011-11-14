@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: script exector
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.script.exector
+Bundle-Version: 1.0.0
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.planmanagement,
+ de.uniol.inf.is.odysseus.planmanagement.configuration,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.planmanagement.query,
+ de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client,
+ org.slf4j;version="1.5.6"
+Service-Component: OSGI-INF/Executor.xml, OSGI-INF/PreParserKeywordProvider.xml

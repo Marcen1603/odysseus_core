@@ -46,8 +46,7 @@ import org.eclipse.swt.widgets.Display;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.script.parser.PreParserKeywordRegistry;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration {
 
@@ -114,17 +113,18 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 
 		// PreParserKeywords
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, false);
-		for (String key : PreParserKeywordRegistry.getInstance().getKeywordNames()) {
-			wr.addWord(QueryTextParser.PARAMETER_KEY + key, parameter);
+		for (String key : OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames()) {
+			wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, parameter);
 		}
 
-		for (String s : QueryTextParser.getStaticWords()) {
+		for (String s : OdysseusScriptParser.getStaticWords()) {
 			wr.addWord(s, parameter);
 		}
 		rules.add(wr);
 
 		// Replacements
-		rules.add(new SingleLineRule(QueryTextParser.REPLACEMENT_START_KEY, QueryTextParser.REPLACEMENT_END_KEY, replacement));
+		rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementStartKey()
+				, OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementEndKey(), replacement));
 
 		// Extensions
 		ParserDependentWordRule r = new ParserDependentWordRule(getWordDetector(), def, true);
@@ -150,7 +150,7 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		// rules.add(r);
 
 		// Kommentare
-		rules.add(new SingleLineRule(QueryTextParser.SINGLE_LINE_COMMENT_KEY, "\n", comment, '\\', true));
+		rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn.getScriptParser().getSingleLineCommentKey(), "\n", comment, '\\', true));
 
 		// Whitespace
 		rules.add(new WhitespaceRule(getWhitespaceDetector()));

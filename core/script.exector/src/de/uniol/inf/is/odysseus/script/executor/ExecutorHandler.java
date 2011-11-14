@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.activator;
+package de.uniol.inf.is.odysseus.script.executor;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
@@ -75,4 +75,5 @@ public class ExecutorHandler {
 	public static IExecutor getExecutor() {
 		return executor;
 	}
+	
 }

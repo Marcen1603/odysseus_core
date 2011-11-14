@@ -21,9 +21,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -40,8 +40,8 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 		if( newInput != null ) {
 			input = (StringTreeRoot)newInput;
 			try {
-				replaceLeaf = new ReplacementLeaf(QueryTextParser.getInstance().getReplacements(input.getString()));
-			} catch (QueryTextParseException e) {
+				replaceLeaf = new ReplacementLeaf(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(input.getString()));
+			} catch (OdysseusScriptParseException e) {
 				e.printStackTrace();
 				replaceLeaf = null;
 			}
@@ -63,15 +63,15 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 			try {
 				User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 				ArrayList<Object> list = new ArrayList<Object>();
-				List<PreParserStatement> statements = QueryTextParser.getInstance().parseScript(text, user);
+				List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
 				if( replaceLeaf != null ) {
 					list.add( replaceLeaf );
 					list.addAll(statements);
 					return list.toArray();
 				} else {
-					throw new QueryTextParseException();
+					throw new OdysseusScriptParseException();
 				}
-			} catch (QueryTextParseException e) {
+			} catch (OdysseusScriptParseException e) {
 				e.printStackTrace();
 				return new Object[] { new StringError("Error in Query") };
 			}

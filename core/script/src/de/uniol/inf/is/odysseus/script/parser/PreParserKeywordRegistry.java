@@ -16,13 +16,11 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * Zentrale Registry für die Keywords, die vom PreParser verwendet werden
@@ -38,27 +36,27 @@ import org.eclipse.core.runtime.Platform;
  * @author Timo Michelsen
  * 
  */
-public class PreParserKeywordRegistry {
+class PreParserKeywordRegistry {
 	
 	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.script.parser.PreParserKeyword";
-	private static PreParserKeywordRegistry instance = null;
+//	private static PreParserKeywordRegistry instance = null;
 
 	private Map<String, Class<? extends IPreParserKeyword>> keywords = null;
 
-	private PreParserKeywordRegistry() {
-		loadRegister();
-	}
+//	private PreParserKeywordRegistry() {
+//		loadRegister();
+//	}
 
-	/**
-	 * Liefert die einzige Instanz dieser Klasse.
-	 * 
-	 * @return Einzige Instanz
-	 */
-	public static PreParserKeywordRegistry getInstance() {
-		if (instance == null)
-			instance = new PreParserKeywordRegistry();
-		return instance;
-	}
+//	/**
+//	 * Liefert die einzige Instanz dieser Klasse.
+//	 * 
+//	 * @return Einzige Instanz
+//	 */
+//	public synchronized static PreParserKeywordRegistry getInstance() {
+//		if (instance == null)
+//			instance = new PreParserKeywordRegistry();
+//		return instance;
+//	}
 
 	/**
 	 * Fügt ein neues Schlüsselwort in die Registry ein. Ist das Schlüsselwort
@@ -154,24 +152,24 @@ public class PreParserKeywordRegistry {
 		getKeywords().remove(keyword);
 	}
 
-	/**
-	 * Läd die Registry über Extensionpoints.
-	 * <p>
-	 * Eigene Implementierungen können damit eine alternative Startregistry
-	 * aufbauen. Z.B. eine Registry aus Dateien o. ä. laden.
-	 */
-	protected void loadRegister() {
-		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(PREPARSER_KEYWORD_EXTENSION_ID);
-		for (IConfigurationElement e : config) {
-			try {
-				String name = e.getAttribute("name");
-				IPreParserKeyword keyword = (IPreParserKeyword) e.createExecutableExtension("class");
-				addKeyword(name, keyword.getClass());
-			} catch (CoreException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
+//	/**
+//	 * Läd die Registry über Extensionpoints.
+//	 * <p>
+//	 * Eigene Implementierungen können damit eine alternative Startregistry
+//	 * aufbauen. Z.B. eine Registry aus Dateien o. ä. laden.
+//	 */
+//	protected void loadRegister() {
+//		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(PREPARSER_KEYWORD_EXTENSION_ID);
+//		for (IConfigurationElement e : config) {
+//			try {
+//				String name = e.getAttribute("name");
+//				IPreParserKeyword keyword = (IPreParserKeyword) e.createExecutableExtension("class");
+//				addKeyword(name, keyword.getClass());
+//			} catch (CoreException e1) {
+//				e1.printStackTrace();
+//			}
+//		}
+//	}
 
 	/**
 	 * Liefert die Map mit den Keywords. Falls dieser (noch) <code>null</code>
@@ -198,4 +196,5 @@ public class PreParserKeywordRegistry {
 	public Set<String> getKeywordNames() {
 		return getKeywords().keySet();
 	}
+
 }

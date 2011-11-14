@@ -12,36 +12,34 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.activator.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
+public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, User caller)
-			throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+			throws OdysseusScriptParseException {
+		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new QueryTextParseException("No executor found");
+			throw new OdysseusScriptParseException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		if (params.size() != 2){
-			throw new QueryTextParseException("Illegal Scheduler Definition "+parameter);
+			throw new OdysseusScriptParseException("Illegal Scheduler Definition "+parameter);
 		}
 		if (!(executor.getRegisteredSchedulers().contains(params.get(0)))){
-			throw new QueryTextParseException("Scheduler "+params.get(0)+" not found");			
+			throw new OdysseusScriptParseException("Scheduler "+params.get(0)+" not found");			
 		}
 		if (!(executor.getRegisteredSchedulingStrategies().contains(params.get(1)))){
-			throw new QueryTextParseException("Schedulingstrategy "+params.get(1)+" not found");			
+			throw new OdysseusScriptParseException("Schedulingstrategy "+params.get(1)+" not found");			
 		}
 		
 			
@@ -49,10 +47,10 @@ public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, User caller)
-			throws QueryTextParseException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+			throws OdysseusScriptParseException {
+		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new QueryTextParseException("No executor found");
+			throw new OdysseusScriptParseException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		executor.setScheduler(params.get(0), params.get(1));

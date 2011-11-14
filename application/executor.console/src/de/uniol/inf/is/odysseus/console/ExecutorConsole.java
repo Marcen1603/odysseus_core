@@ -84,8 +84,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParseException;
-import de.uniol.inf.is.odysseus.script.parser.QueryTextParser;
+import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -104,6 +105,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	private static final String MACROS_NODE = "/macros";
 
 	private IExecutor executor;
+	private IOdysseusScriptParser scriptParser;
 
 	private String parser = null;
 
@@ -269,6 +271,10 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	private String outputputFilename;
 
 	private boolean useBrokerConfig = false;
+
+	public void bindScriptParser(IOdysseusScriptParser parser){
+		this.scriptParser = parser;
+	}
 
 	public void bindExecutor(IExecutor executor) {
 		logger.debug("executor gebunden");
@@ -1869,15 +1875,15 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				if (i == 0) {
 					ci.println("parsing and running query :");
 					ci.println(query1);
-					QueryTextParser.getInstance().parseAndExecute(query1, user);
+					scriptParser.parseAndExecute(query1, user);
 				}
 				ci.println("parsing and running query :");
 				ci.println(query2);
-				QueryTextParser.getInstance().parseAndExecute(query2[i], user);
+				scriptParser.parseAndExecute(query2[i], user);
 				ci.println("parsing and running query :");
 				ci.println(query3);
-				QueryTextParser.getInstance().parseAndExecute(query3, user);
-			} catch (QueryTextParseException e) {
+				scriptParser.parseAndExecute(query3, user);
+			} catch (OdysseusScriptParseException e) {
 				e.printStackTrace();
 			}
 			
