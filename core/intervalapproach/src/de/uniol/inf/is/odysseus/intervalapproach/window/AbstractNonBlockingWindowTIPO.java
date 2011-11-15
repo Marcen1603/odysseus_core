@@ -36,7 +36,7 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IMetaAttributeCont
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {
 		ITimeInterval time = object.getMetadata();
 		PointInTime end = this.calcWindowEnd(time);
 		if (end.after(time.getStart())) {

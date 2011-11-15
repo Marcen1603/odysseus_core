@@ -39,7 +39,7 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IMetaAttributeContainer<? e
 		
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval time) {
-		return WindowCalculator.calcSlidingDeltaWindowEnd(time, this.windowAdvance, this.windowSize);
+		return WindowCalculator.calcSlidingDeltaWindowEnd(time.getEnd(), this.windowAdvance, this.windowSize);
 	}
 	
 	@Override
