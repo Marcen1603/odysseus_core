@@ -365,7 +365,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = provider.getKeywords();
 		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()){
 			registry.addKeyword(entry.getKey(), entry.getValue());
-			System.out.println("Added Preparser-Keyword "+entry.getKey());
+			//System.out.println("Added Preparser-Keyword "+entry.getKey());
 		}
 	}
 	
