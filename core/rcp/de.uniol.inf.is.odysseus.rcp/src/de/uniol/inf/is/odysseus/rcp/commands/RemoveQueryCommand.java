@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class RemoveQueryCommand extends AddQueryCommand implements IHandler {
+public class RemoveQueryCommand extends AbstractHandler implements IHandler {
 
 	private Logger logger = LoggerFactory.getLogger(RemoveQueryCommand.class);
 

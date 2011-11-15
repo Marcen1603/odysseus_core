@@ -162,46 +162,6 @@
             name="Collapse Sources View">
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.NMSNCommand"
-            name="NMSN">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.NMQNCommand"
-            name="NMQN">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.AddQueryCommand"
-            name="Add Query">
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.parameters.QueryParameter"
-               name="Query Parameter"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.parameters.ParserParameter"
-               name="Parser Parameter"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.parameters.TransformationConfigurationNameParameter"
-               name="Transformation Configuration Name Parameter"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.parameters.UserNameParameter"
-               name="Username Parameter"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="de.uniol.inf.is.odysseus.rcp.parameters.UserPasswordParameter"
-               name="Userpassword Parameter"
-               optional="false">
-         </commandParameter>
-      </command>
-      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
             name="Remove Query">
