@@ -39,7 +39,7 @@ public class AggregateFunctionBuilderRegistry implements
 	/**
 	 * This methods builds a new Pattern for SDFExpression
 	 */
-	private void buildAggregatePattern() {
+	private synchronized void buildAggregatePattern() {
 
 		if (aggregateFunctionNames.size() > 0) {
 
