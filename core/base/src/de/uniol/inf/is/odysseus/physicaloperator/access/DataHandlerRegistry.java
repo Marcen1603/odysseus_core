@@ -43,8 +43,16 @@ public class DataHandlerRegistry {
 		}
 	}
 	
-	public static void removeDataHandler(String dataType){
-		dataHandlers.remove(dataType);
+//	public static void removeDataHandler(String dataType){
+//		dataHandlers.remove(dataType);
+//	}
+	
+	public static void removeDataHandler(IAtomicDataHandler handler){
+		for(String type: handler.getSupportedDataTypes()){
+			if(dataHandlers.containsKey(type.toLowerCase())){
+				dataHandlers.remove(type.toLowerCase());
+			}
+		}
 	}
 	
 	public static IAtomicDataHandler getDataHandler(String dataType){
