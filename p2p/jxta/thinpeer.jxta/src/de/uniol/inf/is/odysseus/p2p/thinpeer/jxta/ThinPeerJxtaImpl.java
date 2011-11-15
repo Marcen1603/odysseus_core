@@ -18,9 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -30,6 +27,10 @@ import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
@@ -46,13 +47,16 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.GuiUpdaterJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryNegotiationMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler.QueryPublisherHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.AdministrationPeerListenerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.ISourceDiscovererListener;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class ThinPeerJxtaImpl extends AbstractThinPeer {
+public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministrationPeerListener, ISourceDiscovererListener,  IDiscoveryServiceProvider {
 
 	private DiscoveryService discoveryService;
 
@@ -62,24 +66,17 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	private PeerGroup netPeerGroup;
 
-	private Set<SourceAdvertisement> sources = new HashSet<SourceAdvertisement>();
-
-	@Override
-	public HashMap<String, Object> getAdminPeers() {
-		return adminPeers;
-	}
-
-	ThinPeerJxtaImpl() {
+	public ThinPeerJxtaImpl() {
 		super(new SocketServerListener(), Log.getInstance());
 		getSocketServerListener().setPeer(this);
-		// TODO: Nutzer auslesen
+		new Thread() {
+			
+			@Override
+			public void run() {
+				startPeer();
+			}
+		}.start();
 		
-		// This is just a hack and need to be removed!!
-		if (GlobalState.getActiveUser("") == null) {
-			GlobalState.setActiveUser("", UserManagement.getInstance()
-					.getSuperUser());
-			GlobalState.setActiveDatadictionary(null);
-		}
 	}
 
 	public DiscoveryService getDiscoveryService() {
@@ -252,14 +249,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 				query, language, user);
 	}
 
-	public Set<SourceAdvertisement> getSources() {
-		return sources;
-	}
-
-	public void setSources(Set<SourceAdvertisement> sources) {
-		this.sources = sources;
-	}
-
 	@Override
 	protected void initGuiUpdater() {
 		this.guiUpdater = new GuiUpdaterJxtaImpl(this);
@@ -267,13 +256,13 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 
 	@Override
 	protected void initAdministrationPeerListener() {
-		administrationPeerListener = new AdministrationPeerListenerJxtaImpl(
-				this);
+		administrationPeerDiscoverer = new AdministrationPeerListenerJxtaImpl(
+				this,this);
 	}
 
 	@Override
 	protected void initSourceListener() {
-		sourceListener = new SourceListenerJxtaImpl(this);
+		sourceListener = new SourceListenerJxtaImpl(this,this);
 	}
 
 	@Override
@@ -294,12 +283,6 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 		// this.idGenerator = new RandomIdGenerator();
 		this.idGenerator = new StandardIdGenerator(
 				this.serverResponseAddress.getID() + "");
-	}
-
-	@Override
-	protected void initAdminPeerList() {
-		this.adminPeers = new HashMap<String, Object>();
-
 	}
 
 	private void setServerPipeAdvertisement(
@@ -333,6 +316,29 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer {
 	@Override
 	public void initMessageSender() {
 		setMessageSender(new JxtaMessageSender());
+	}
+
+	@Override
+	public void foundAdminPeers(IExtendedPeerAdvertisement adv) {
+		addOrUpdateAdminPeer(adv);
+	}
+
+	@Override
+	public void foundNewSource(SourceAdvertisement adv) {
+		addOrUpdateSources(adv);
+	}
+	
+	@Override
+	public void addToDD(ISourceAdvertisement adv) {
+		IDataDictionary dd = GlobalState.getActiveDatadictionary();
+		// TODO: Nicht gut so "RCP"
+		User user = GlobalState.getActiveUser("RCP");
+		SDFEntity entity = new SDFEntity(adv.getSourceName());
+		dd.addEntity(adv.getSourceName(), entity, user);
+		
+		AccessAO source = new AccessAO();
+		source.setSource(new SDFSource(adv.getPeerID()+":"+adv.getSourceName(), "P2PSource"));
+		dd.setStream(adv.getSourceName(), source, user);
 	}
 
 }

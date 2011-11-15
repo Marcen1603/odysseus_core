@@ -33,9 +33,10 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ExtendedPeerAdvertisement extends Advertisement implements
-		Serializable, Comparable {
+		Serializable, Comparable, IExtendedPeerAdvertisement {
 
 	/**
 	 * 
@@ -160,6 +161,7 @@ public class ExtendedPeerAdvertisement extends Advertisement implements
 		return false;
 	}
 
+	@Override
 	public String getPeerId() {
 		return peerId;
 	}

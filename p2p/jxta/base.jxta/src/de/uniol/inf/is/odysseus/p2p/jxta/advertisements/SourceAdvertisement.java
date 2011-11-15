@@ -21,6 +21,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 
+import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
+
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Attributable;
@@ -41,8 +43,7 @@ import net.jxta.id.IDFactory;
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class SourceAdvertisement extends Advertisement implements Serializable,
-		 Comparable {
+public class SourceAdvertisement extends Advertisement implements Serializable, ISourceAdvertisement {
 
 	private static final long serialVersionUID = 1L;
 
@@ -239,42 +240,12 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		return fields;
 	}
 
-	@Override
-	public int compareTo(Object other) {
-		return getID().toString().compareTo(other.toString());
-	}
-
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SourceAdvertisement other = (SourceAdvertisement) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 
 	public void setID(ID id) {
 		this.id = (id == null ? null : id);
 	}
 
+	@Override
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -323,6 +294,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 		this.peer = peer;
 	}
 	
+	@Override
 	public String getPeerID() {
 		return peerID;
 	}
@@ -388,6 +360,38 @@ public class SourceAdvertisement extends Advertisement implements Serializable,
 	@Override
 	public SourceAdvertisement clone() {
 		return new SourceAdvertisement(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((peerID == null) ? 0 : peerID.hashCode());
+		result = prime * result
+				+ ((sourceName == null) ? 0 : sourceName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SourceAdvertisement other = (SourceAdvertisement) obj;
+		if (peerID == null) {
+			if (other.peerID != null)
+				return false;
+		} else if (!peerID.equals(other.peerID))
+			return false;
+		if (sourceName == null) {
+			if (other.sourceName != null)
+				return false;
+		} else if (!sourceName.equals(other.sourceName))
+			return false;
+		return true;
 	}
 
 }

@@ -22,44 +22,46 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.IDiscoveryServiceProvider;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerDiscoverer;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
 
 /**
  * Class to find admin peers in network
  * @author  Mart Koehler, Marco Grawunder
  *
  */
-public class AdministrationPeerListenerJxtaImpl implements
-		IAdministrationPeerListener, DiscoveryListener {
+public class AdministrationPeerListenerJxtaImpl implements DiscoveryListener, IAdministrationPeerDiscoverer {
 
 	private int WAIT_TIME = 10000;
 	// Advertisments per Peer
 	private int ADVS_PER_PEER = 6;
 
-	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+	private IDiscoveryServiceProvider discoveryServiceProvider;
+	private IAdministrationPeerListener peerListener;
 
-	public AdministrationPeerListenerJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
-		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
+	public AdministrationPeerListenerJxtaImpl(IAdministrationPeerListener peerListener,
+			IDiscoveryServiceProvider discoveryServiceProvider) {
+		this.peerListener = peerListener;
+		this.discoveryServiceProvider = discoveryServiceProvider;
 	}
 
-	@Override
 	public void run() {
 		while (true) {
 			try {
 				Thread.sleep(WAIT_TIME);
 			} catch (InterruptedException e) {
 			}
-			thinPeerJxtaImpl.getAdminPeers().clear();
+//			discoveryServiceProvider.getAdminPeers().clear();
 			try {
-				thinPeerJxtaImpl.getDiscoveryService()
+				discoveryServiceProvider.getDiscoveryService()
 						.getLocalAdvertisements(DiscoveryService.ADV, "type",
 								"AdministrationPeer");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			thinPeerJxtaImpl.getDiscoveryService()
+			discoveryServiceProvider.getDiscoveryService()
 					.getRemoteAdvertisements(null, DiscoveryService.ADV,
 							"type", "AdministrationPeer", ADVS_PER_PEER, this);
 		}
@@ -76,10 +78,7 @@ public class AdministrationPeerListenerJxtaImpl implements
 					continue;
 				}
 				ExtendedPeerAdvertisement adv = (ExtendedPeerAdvertisement) o;
-				synchronized (thinPeerJxtaImpl.getAdminPeers()) {
-					thinPeerJxtaImpl.getAdminPeers().put(adv.getPeerId(), adv);
-				}
-
+				peerListener.foundAdminPeers(adv);
 			}
 		}
 

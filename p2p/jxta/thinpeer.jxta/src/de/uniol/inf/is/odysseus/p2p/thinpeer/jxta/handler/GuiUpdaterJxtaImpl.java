@@ -65,24 +65,24 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 	}
 
 	public void updateAdminList() {
-		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
-			DefaultListModel model = new DefaultListModel();
-			for (String s : thinPeerJxtaImpl.getAdminPeers().keySet()) {
-				model.addElement(((ExtendedPeerAdvertisement) thinPeerJxtaImpl
-						.getAdminPeers().get(s)).getPeerName().substring(19));
-			}
-			thinPeerJxtaImpl.setAdminPeersModel(model);
-		}
+//		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
+//			DefaultListModel model = new DefaultListModel();
+//			for (String s : thinPeerJxtaImpl.getAdminPeers().keySet()) {
+//				model.addElement(((ExtendedPeerAdvertisement) thinPeerJxtaImpl
+//						.getAdminPeers().get(s)).getPeerName().substring(19));
+//			}
+//			thinPeerJxtaImpl.setAdminPeersModel(model);
+//		}
 	}
 
 	public void updateSourcesList() {
-		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
-			DefaultListModel model = new DefaultListModel();
-			for (SourceAdvertisement s : thinPeerJxtaImpl.getSources()) {
-				model.addElement(s.getSourceName()+" from "+ s.getPeerID()+"");
-			}
-			thinPeerJxtaImpl.setSourcesModel(model);
-		}
+//		synchronized (thinPeerJxtaImpl.getAdminPeers()) {
+//			DefaultListModel model = new DefaultListModel();
+//			for (SourceAdvertisement s : thinPeerJxtaImpl.getSources()) {
+//				model.addElement(s.getSourceName()+" from "+ s.getPeerID()+"");
+//			}
+//			thinPeerJxtaImpl.setSourcesModel(model);
+//		}
 	}
 
 	public int getAllBiddings(P2PQuery query) {
