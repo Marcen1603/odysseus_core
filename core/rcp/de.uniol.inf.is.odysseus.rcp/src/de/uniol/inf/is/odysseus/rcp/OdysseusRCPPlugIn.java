@@ -47,7 +47,6 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public static final String REMOVE_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand";
 	public static final String STOP_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.StopQueryCommand";
 	public static final String START_QUERY_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand";
-	public static final String SHOW_QUERY_DIALOG_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand";
 	public static final String COPY_QUERYTEXT_COMMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.QueryViewCopyCommand";
 	public static final String REFRESH_QUERY_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand";
 

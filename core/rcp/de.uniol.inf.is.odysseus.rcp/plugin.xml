@@ -172,11 +172,6 @@
          </commandParameter>
       </command>
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.ShowQueryDialogCommand"
-            name="Show Query Dialog">
-      </command>
-      <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
             name="Start Query">
