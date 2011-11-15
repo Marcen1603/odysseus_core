@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.views;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
-import org.osgi.util.tracker.ServiceTracker;
+//import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +52,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class QueryView extends ViewPart implements
-		IPlanModificationListener {
+public class QueryView extends ViewPart implements IPlanModificationListener {
 
 	private Logger logger = LoggerFactory.getLogger(QueryView.class);
 	private IExecutor executor;
@@ -310,9 +309,10 @@ public class QueryView extends ViewPart implements
 						.getService(IHandlerService.class);
 
 				try {
-					handlerService.executeCommand(
-							"de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand",
-							null);
+					handlerService
+							.executeCommand(
+									"de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand",
+									null);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -331,26 +331,32 @@ public class QueryView extends ViewPart implements
 
 		Thread t = new Thread(new Runnable() {
 
-			@SuppressWarnings({ "rawtypes", "unchecked" })
+			// @SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public void run() {
-				ServiceTracker execTracker = new ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(),
-						IExecutor.class.getName(), null);
-				execTracker.open();
+				executor = OdysseusRCPPlugIn.getExecutor();
+
+				// ServiceTracker execTracker = new
+				// ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(),
+				// IExecutor.class.getName(), null);
+				// execTracker.open();
 				try {
-					executor = (IExecutor) execTracker.waitForService(0);
+					// executor = (IExecutor) execTracker.waitForService(0);
 					if (executor != null) {
-						addQueries(executor.getPlan().getQueries());
+						if (executor.getPlan() != null) {
+							addQueries(executor.getPlan().getQueries());
+						}
 
 						executor.addPlanModificationListener(QueryView.this);
 					} else {
 						logger.error("cannot get executor service");
 					}
-					execTracker.close();
-				} catch (InterruptedException e) {
-					logger.error("cannot get executor service", e);
+					// execTracker.close();
+					// } catch (InterruptedException e) {
+					// logger.error("cannot get executor service", e);
 				} catch (PlanManagementException e) {
 					logger.error("cannot get queries", e);
+
 				}
 			}
 
