@@ -43,23 +43,25 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
-public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration {
+public class OdysseusScriptViewerConfiguration extends
+		SourceViewerConfiguration {
 
 	private IWhitespaceDetector whitespaceDetector;
 	private IWordDetector wordDetector;
 	private OdysseusScriptEditor editor;
 
-	public OdysseusScriptViewerConfiguration(ColorManager colorManager, OdysseusScriptEditor editor) {
+	public OdysseusScriptViewerConfiguration(ColorManager colorManager,
+			OdysseusScriptEditor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+	public IPresentationReconciler getPresentationReconciler(
+			ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
 		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getScanner());
@@ -78,7 +80,8 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 
 		scanner.setRules(getRules());
 
-		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
+		IToken def = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
 		scanner.setDefaultReturnToken(def);
 
 		return scanner;
@@ -92,7 +95,8 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	// }
 
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		OdysseusScriptReconcilerStrategy strategy = new OdysseusScriptReconcilerStrategy(this.editor);
+		OdysseusScriptReconcilerStrategy strategy = new OdysseusScriptReconcilerStrategy(
+				this.editor);
 		MonoReconciler reconciler = new MonoReconciler(strategy, false);
 		reconciler.setProgressMonitor(new NullProgressMonitor());
 		reconciler.setDelay(500);
@@ -100,11 +104,18 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 	}
 
 	protected IRule[] getRules() {
-		IToken parameter = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_RED), false);
-		IToken comment = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN), false);
-		IToken replacement = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA), false);
-		IToken def = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
-		IToken strings = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE), false);
+		IToken parameter = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_RED), false);
+		IToken comment = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN),
+				false);
+		IToken replacement = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA),
+				false);
+		IToken def = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_BLACK), false);
+		IToken strings = createToken(
+				Display.getCurrent().getSystemColor(SWT.COLOR_BLUE), false);
 
 		ArrayList<IRule> rules = new ArrayList<IRule>();
 
@@ -113,8 +124,12 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 
 		// PreParserKeywords
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, false);
-		for (String key : OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames()) {
-			wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, parameter);
+		if (OdysseusRCPEditorTextPlugIn.getScriptParser() != null) {
+			for (String key : OdysseusRCPEditorTextPlugIn.getScriptParser()
+					.getKeywordNames()) {
+				wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser()
+						.getParameterKey() + key, parameter);
+			}
 		}
 
 		for (String s : OdysseusScriptParser.getStaticWords()) {
@@ -123,13 +138,19 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		rules.add(wr);
 
 		// Replacements
-		rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementStartKey()
-				, OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementEndKey(), replacement));
-
+		if (OdysseusRCPEditorTextPlugIn.getScriptParser() != null) {
+			rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn
+					.getScriptParser().getReplacementStartKey(),
+					OdysseusRCPEditorTextPlugIn.getScriptParser()
+							.getReplacementEndKey(), replacement));
+		}
 		// Extensions
-		ParserDependentWordRule r = new ParserDependentWordRule(getWordDetector(), def, true);
+		ParserDependentWordRule r = new ParserDependentWordRule(
+				getWordDetector(), def, true);
 		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
-			IToken wordToken = createToken(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE), true);
+			IToken wordToken = createToken(
+					Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE),
+					true);
 			for (String word : KeywordRegistry.getInstance().getKeywords(grp)) {
 				r.addWord(word, wordToken, grp);
 			}
@@ -150,8 +171,11 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		// rules.add(r);
 
 		// Kommentare
-		rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn.getScriptParser().getSingleLineCommentKey(), "\n", comment, '\\', true));
-
+		if (OdysseusRCPEditorTextPlugIn.getScriptParser() != null) {
+			rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn
+					.getScriptParser().getSingleLineCommentKey(), "\n",
+					comment, '\\', true));
+		}
 		// Whitespace
 		rules.add(new WhitespaceRule(getWhitespaceDetector()));
 

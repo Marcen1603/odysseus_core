@@ -443,8 +443,11 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	}	
 	
 	
-	private QueryBuildConfiguration buildAndValidateQueryBuildConfigurationFromSettings(String buildConfigurationName){
+	private QueryBuildConfiguration buildAndValidateQueryBuildConfigurationFromSettings(String buildConfigurationName) throws QueryAddException{
 		IQueryBuildConfiguration settings = getQueryBuildConfiguration(buildConfigurationName);
+		if (settings == null){
+			throw new QueryAddException("Transformation Configuration "+buildConfigurationName+" not found");
+		}
 		QueryBuildConfiguration config = new QueryBuildConfiguration(settings.getConfiguration().toArray(new IQueryBuildSetting<?>[0]));
 		config = validateBuildParameters(config);
 		return config;
@@ -847,4 +850,5 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			}
 		}
 	}
+
 }

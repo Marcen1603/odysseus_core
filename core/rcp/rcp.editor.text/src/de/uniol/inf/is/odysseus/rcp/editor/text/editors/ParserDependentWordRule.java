@@ -104,7 +104,8 @@ public class ParserDependentWordRule implements IRule {
 				if (token != null) {
 					String parser = wordAndParser.get(buffer);
 					try {
-						if (OdysseusRCPEditorTextPlugIn.getExecutor().getCompiler() != null &&
+						if (OdysseusRCPEditorTextPlugIn.getExecutor() != null &&
+								OdysseusRCPEditorTextPlugIn.getExecutor().getCompiler() != null &&
 								OdysseusRCPEditorTextPlugIn.getExecutor().getCompiler().getSupportedQueryParser().contains(parser)) {
 							if (scanner instanceof OdysseusRuleBasedScanner) {
 								OdysseusRuleBasedScanner oScanner = (OdysseusRuleBasedScanner) scanner;

@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		IEventListener {

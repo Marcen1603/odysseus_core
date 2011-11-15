@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;

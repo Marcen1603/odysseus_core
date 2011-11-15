@@ -41,18 +41,19 @@ AbstractPreParserExecutorKeyword {
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
 				throw new OdysseusScriptParseException("Parser not set");
-			if (!executor.getSupportedQueryParsers().contains(parserID))
-				throw new OdysseusScriptParseException("Parser " + parserID
-						+ " not found");
+//			if (!executor.getSupportedQueryParsers().contains(parserID))
+//				throw new OdysseusScriptParseException("Parser " + parserID
+//						+ " not found");
 			String transCfg = (String) variables.get("TRANSCFG");
 			if (transCfg == null)
 				throw new OdysseusScriptParseException(
 						"TransformationConfiguration not set");
-			if (executor.getQueryBuildConfiguration(transCfg) == null)
-				throw new OdysseusScriptParseException(
-						"TransformationConfiguration " + transCfg
-								+ " not found");
+//			if (executor.getQueryBuildConfiguration(transCfg) == null)
+//				throw new OdysseusScriptParseException(
+//						"TransformationConfiguration " + transCfg
+//								+ " not found");
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			throw new OdysseusScriptParseException(
 					"Unknown Exception during validation a query", ex);
 		}

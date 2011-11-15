@@ -22,7 +22,7 @@ public class ParserIDKeywordGroup implements IKeywordGroup {
 	@Override
 	public String[] getKeywords() {
 		try {
-			return OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers().toArray(new String[0]);
+			return OdysseusRCPEditorTextPlugIn.getExecutor() != null?OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers().toArray(new String[0]):null;
 		} catch( Exception ex ) {
 			return new String[] { // Notlösung
 				"CQL", "PQL", "PQLHack"	

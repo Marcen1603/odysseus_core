@@ -49,6 +49,9 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
+			if (OdysseusRCPEditorTextPlugIn.getExecutor() == null){
+				return null;
+			}
 			IDocument document = viewer.getDocument();
 			String prefix = lastWord(document, offset);
 			String tokenBefore = tokenBefore(document, offset);

@@ -37,7 +37,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	private static OdysseusRCPEditorTextPlugIn plugin;
 	private static IExecutor executor;
 	private static IOdysseusScriptParser scriptParser;
-	
+		
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -101,6 +101,13 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	 *         <code>null</code>.
 	 */
 	public static IExecutor getExecutor() {
+//		while(executor == null){
+//		 	try {
+//				OdysseusRCPEditorTextPlugIn.class.wait(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		return executor;
 	}
 	
