@@ -36,7 +36,7 @@ public class SlidingTimeWindowTIPO<T extends IMetaAttributeContainer<ITimeInterv
 
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval time) {
-		return WindowCalculator.calcSlidingWindowEnd(time, windowSize);
+		return time.getStart().sum(windowSize);
 	}
 
 	@Override
