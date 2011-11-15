@@ -63,10 +63,13 @@ public class SourcesViewContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if( element instanceof Entry ) 
-			return true;
-		if( element instanceof SDFAttribute )
+		if( element instanceof Entry ){ 
+			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)element;
+			return entry.getValue().getOutputSchema() != null;
+		}
+		if( element instanceof SDFAttribute ){
 			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
+		}
 		return false;
 	}
 
