@@ -39,6 +39,7 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IMetaAttributeContainer<? e
 		
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval time) {		
+		// Hint: This is an integer division!
 		return new PointInTime((time.getStart().getMainPoint() / windowAdvance)
 				* windowAdvance + windowSize);
 	}
