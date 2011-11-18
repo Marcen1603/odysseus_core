@@ -49,11 +49,17 @@ public class ScooterSourceAdapter extends AbstractPushingSourceAdapter
 					.toString();
 			final int port = Integer.parseInt(source.getConfiguration()
 					.get("port").toString());
-			final int ownPort = Integer.parseInt(source.getConfiguration()
-					.get("ownPort").toString());
+			String username = "";
+			String password = "";
+			if (source.getConfiguration().containsKey("username")) {
+				username = source.getConfiguration().get("username").toString();
+			}
+			if (source.getConfiguration().containsKey("password")) {
+				password = source.getConfiguration().get("password").toString();
+			}
 			try {
 				final ICEConnection connection = new ICEConnection(source,
-						host, port, "", "", ownPort, this);
+						host, port, username, password, this);
 				final Thread scooterThread = new Thread(connection);
 				this.scooterThreads.put(source, scooterThread);
 				scooterThread.start();
@@ -71,72 +77,80 @@ public class ScooterSourceAdapter extends AbstractPushingSourceAdapter
 		private static final long serialVersionUID = -1313572970926873682L;
 		private final SourceSpec source;
 		private final ScooterSourceAdapter adapter;
-		private Communicator communicator;
-		private ObjectAdapter objectAdapter;
-		private TelemetriePublisherPrx publisherConnectionObject;
 		private final int maxMessageSize = 10240;
 		private final String proxy;
-		private ObjectPrx subscriberConnectionObject;
 
 		public ICEConnection(final SourceSpec source, final String host,
 				final int port, final String username, final String password,
-				final int ownPort, final ScooterSourceAdapter adapter) {
+				final ScooterSourceAdapter adapter) {
 			this.source = source;
 			this.adapter = adapter;
 			this.proxy = SERVICE + ":" + PROTOCOL + " -h " + host + " -p "
 					+ port;
-			try {
-				ScooterSourceAdapter.LOG.info("Try proxy: {}", this.proxy);
+		}
+
+		@Override
+		public void run() {
+			while (!Thread.currentThread().isInterrupted()) {
 				final Properties props = Util.createProperties();
 				props.setProperty("Ice.MessageSizeMax",
 						Integer.toString(this.maxMessageSize));
 				final InitializationData initializationData = new InitializationData();
 				initializationData.properties = props;
-				this.communicator = Util.initialize(initializationData);
+				Communicator communicator = null;
+				ObjectAdapter objectAdapter = null;
 
-				this.objectAdapter = this.communicator
-						.createObjectAdapterWithEndpoints(OWN_SERVICE, PROTOCOL
-								+ " -h 127.0.0.1 -p " + ownPort);
-				subscriberConnectionObject = this.objectAdapter.add(this, this.communicator
-						.stringToIdentity("TelemetrieSubscriber"));
-			} catch (final Exception e) {
-				ScooterSourceAdapter.LOG.error(e.getMessage(), e);
-			}
-
-		}
-
-		@Override
-		public void run() {
-
-			try {
-				this.objectAdapter.activate();
-				final ObjectPrx base = this.communicator
-						.stringToProxy(this.proxy);
-				if (base != null) {
-					this.publisherConnectionObject = TelemetriePublisherPrxHelper
-							.checkedCast(base);
-					this.publisherConnectionObject.ice_ping();
-					this.publisherConnectionObject.subscribe(TelemetrieSubscriberPrxHelper.checkedCast(subscriberConnectionObject));
-					while (!Thread.currentThread().isInterrupted()) {
-						Thread.sleep((long) 20.0);
-					}
-				}
-				this.objectAdapter.deactivate();
-			} catch (final Exception e) {
-				ScooterSourceAdapter.LOG.error(e.getMessage(), e);
-			} finally {
 				try {
-					if (this.objectAdapter != null) {
-						this.objectAdapter.deactivate();
+					communicator = Util.initialize(initializationData);
+					objectAdapter = communicator
+							.createObjectAdapterWithEndpoints(
+									OWN_SERVICE,
+									PROTOCOL
+											+ " -h 127.0.0.1 -p "
+											+ (1024 + (int) (Math.random() * 1000)));
+					ScooterSourceAdapter.LOG.debug(String.format(
+							"Connecting to ICE endpoint %s",
+							objectAdapter.toString()));
+					ObjectPrx subscriberConnectionObject = objectAdapter.add(
+							this, communicator
+									.stringToIdentity("TelemetrieSubscriber"));
+					objectAdapter.activate();
+					final ObjectPrx base = communicator
+							.stringToProxy(this.proxy);
+					if (base != null) {
+						TelemetriePublisherPrx publisherConnectionObject = TelemetriePublisherPrxHelper
+								.checkedCast(base);
+						publisherConnectionObject.ice_ping();
+						publisherConnectionObject
+								.subscribe(TelemetrieSubscriberPrxHelper
+										.checkedCast(subscriberConnectionObject));
+						while (!Thread.currentThread().isInterrupted()) {
+							Thread.sleep((long) 20.0);
+						}
 					}
+					objectAdapter.deactivate();
 				} catch (final Exception e) {
 					ScooterSourceAdapter.LOG.error(e.getMessage(), e);
-				}
-				try {
-					if (this.communicator != null) {
-						this.communicator.destroy();
+				} finally {
+					try {
+						if (objectAdapter != null) {
+							objectAdapter.deactivate();
+						}
+					} catch (final Exception e) {
+						ScooterSourceAdapter.LOG.error(e.getMessage(), e);
 					}
-				} catch (final Exception e) {
+					try {
+						if (communicator != null) {
+							communicator.destroy();
+						}
+					} catch (final Exception e) {
+						ScooterSourceAdapter.LOG.error(e.getMessage(), e);
+					}
+				}
+				ScooterSourceAdapter.LOG.debug("ICE endpoint disconnected");
+				try {
+					Thread.sleep((long) 1000.0);
+				} catch (InterruptedException e) {
 					ScooterSourceAdapter.LOG.error(e.getMessage(), e);
 				}
 			}

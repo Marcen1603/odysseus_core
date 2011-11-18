@@ -35,4 +35,9 @@ public class Grid2D {
             Arrays.fill(cells, value);
         }
     }
+
+    @Override
+    public String toString() {
+        return "{O: " + origin + ",S: " + cellsize + "}";
+    }
 }

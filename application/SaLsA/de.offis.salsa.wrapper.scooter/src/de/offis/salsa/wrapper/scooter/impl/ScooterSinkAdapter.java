@@ -17,7 +17,6 @@ import Ice.Communicator;
 import Ice.Current;
 import Ice.InitializationData;
 import Ice.ObjectAdapter;
-import Ice.ObjectPrx;
 import Ice.Properties;
 import Ice.Util;
 import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
@@ -32,8 +31,7 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 	private final static double FREE = 0.0;
 	private final static double UNKNOWN = -1.0;
 	private final static double OBSTACLE = 1.0;
-	private static final String SERVICE = "GridAdapter";
-	private static final String OWN_SERVICE = "GridPublisher";
+	private static final String SERVICE = "GridPublisher";
 	private static final String PROTOCOL = "default";
 	private final Map<SinkSpec, Thread> scooterThreads = new HashMap<SinkSpec, Thread>();
 	private final BlockingQueue<Object[]> messageQueue = new LinkedBlockingQueue<Object[]>();
@@ -62,11 +60,18 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 			final String host = sink.getConfiguration().get("host").toString();
 			final int port = Integer.parseInt(sink.getConfiguration()
 					.get("port").toString());
-			final int ownPort = Integer.parseInt(sink.getConfiguration()
-					.get("ownPort").toString());
+			String username = "";
+			String password = "";
+			if (sink.getConfiguration().containsKey("username")) {
+				username = sink.getConfiguration().get("username").toString();
+			}
+			if (sink.getConfiguration().containsKey("password")) {
+				password = sink.getConfiguration().get("password").toString();
+			}
+
 			try {
 				final ICEConnection connection = new ICEConnection(sink, host,
-						port, "", "", ownPort, this);
+						port, username, password, this);
 				final Thread iceThread = new Thread(connection);
 				this.scooterThreads.put(sink, iceThread);
 				iceThread.start();
@@ -82,89 +87,100 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 		 * 
 		 */
 		private static final long serialVersionUID = 7206385627240128444L;
-		private Communicator communicator;
-		private ObjectAdapter objectAdapter;
-		private GridSubscriberPrx connectionObject;
 		private final int maxMessageSize = 10240;
-		private final String proxy;
 		private final List<GridSubscriberPrx> listeners = new CopyOnWriteArrayList<GridSubscriberPrx>();
-		private ObjectPrx publisherConnectionObject;
+		private int port;
 
 		public ICEConnection(final SinkSpec sink, final String host,
 				final int port, final String username, final String password,
-				final int ownPort, final ScooterSinkAdapter adapter) {
-			this.proxy = SERVICE + ":" + PROTOCOL + " -h " + host + " -p "
-					+ port;
-			try {
-				ScooterSinkAdapter.LOG.info("Provide proxy: {}", this.proxy);
+				final ScooterSinkAdapter adapter) {
+			this.port = port;
+		}
+
+		@Override
+		public void run() {
+			while (!Thread.currentThread().isInterrupted()) {
 				final Properties props = Util.createProperties();
 				props.setProperty("Ice.MessageSizeMax",
 						Integer.toString(this.maxMessageSize));
 				final InitializationData initializationData = new InitializationData();
 
 				initializationData.properties = props;
-				this.communicator = Util.initialize(initializationData);
+				Communicator communicator = null;
+				ObjectAdapter objectAdapter = null;
+				try {
 
-				this.objectAdapter = this.communicator
-						.createObjectAdapterWithEndpoints(OWN_SERVICE, PROTOCOL
-								+ " -h 127.0.0.1 -p " + ownPort);
-				publisherConnectionObject = this.objectAdapter.add(this,
-						this.communicator.stringToIdentity("GridPublisher"));
+					communicator = Util.initialize(initializationData);
 
-			} catch (final Exception e) {
-				ScooterSinkAdapter.LOG.error(e.getMessage(), e);
-			}
-		}
+					objectAdapter = communicator
+							.createObjectAdapterWithEndpoints(SERVICE, PROTOCOL
+									+ " -h 127.0.0.1 -p " + port);
+					ScooterSinkAdapter.LOG.debug(String.format(
+							"Creating ICE endpoint %s",
+							objectAdapter.toString()));
+					objectAdapter.add(this,
+							communicator.stringToIdentity("GridPublisher"));
+					objectAdapter.activate();
+					while (!Thread.currentThread().isInterrupted()) {
+						if (ScooterSinkAdapter.this.messageQueue.size() > 5) {
+							ScooterSinkAdapter.LOG
+									.debug(String
+											.format("ICE queue overflow with %s messages ... clearing",
+													ScooterSinkAdapter.this.messageQueue
+															.size()));
+							ScooterSinkAdapter.this.messageQueue.clear();
+						}
+						final Object[] data = ScooterSinkAdapter.this.messageQueue
+								.take();
+						Grid2D grid = (Grid2D) ((Object[]) data[1])[0];
 
-		@Override
-		public void run() {
-
-			try {
-				this.objectAdapter.activate();
-				while (!Thread.currentThread().isInterrupted()) {
-					final Object[] data = ScooterSinkAdapter.this.messageQueue
-							.take();
-					Grid2D grid = (Grid2D) data[1];
-
-					GridStruct iceGrid = new GridStruct();
-					iceGrid.timestamp = (Long) data[0];
-					iceGrid.x = grid.origin.x * grid.cellsize;
-					iceGrid.y = grid.origin.y * grid.cellsize;
-					iceGrid.cellsize = grid.cellsize;
-					iceGrid.width = grid.grid.length;
-					iceGrid.height = grid.grid[0].length;
-					iceGrid.data = new byte[iceGrid.width * iceGrid.height];
-					for (int l = 0; l < grid.grid.length; l++) {
-						for (int w = 0; w < grid.grid[l].length; w++) {
-							if (grid.get(l, w) == FREE) {
-								iceGrid.data[l * w] = (byte) 0x00;
-							} else if (grid.get(l, w) < FREE) {
-								iceGrid.data[l * w] = (byte) 0xFF;
-							} else {
-								iceGrid.data[l * w] = (byte) 0x64;
+						GridStruct iceGrid = new GridStruct();
+						iceGrid.timestamp = (Long) data[0];
+						iceGrid.x = grid.origin.x * grid.cellsize;
+						iceGrid.y = grid.origin.y * grid.cellsize;
+						iceGrid.cellsize = grid.cellsize;
+						iceGrid.width = grid.grid.length;
+						iceGrid.height = grid.grid[0].length;
+						iceGrid.data = new byte[iceGrid.width * iceGrid.height];
+						for (int l = 0; l < grid.grid.length; l++) {
+							for (int w = 0; w < grid.grid[l].length; w++) {
+								int index = l * grid.grid[l].length + w;
+								if (grid.get(l, w) == FREE) {
+									iceGrid.data[index] = (byte) 0x00;
+								} else if (grid.get(l, w) < FREE) {
+									iceGrid.data[index] = (byte) 0xFF;
+								} else {
+									iceGrid.data[index] = (byte) 0x64;
+								}
 							}
 						}
+						for (GridSubscriberPrx listener : listeners) {
+							listener._notify(iceGrid);
+						}
 					}
-					for (GridSubscriberPrx listener : listeners) {
-						listener._notify(iceGrid);
-					}
-				}
-				this.objectAdapter.deactivate();
-			} catch (final Exception e) {
-				ScooterSinkAdapter.LOG.error(e.getMessage(), e);
-			} finally {
-				try {
-					if (this.objectAdapter != null) {
-						this.objectAdapter.deactivate();
-					}
+					objectAdapter.deactivate();
 				} catch (final Exception e) {
 					ScooterSinkAdapter.LOG.error(e.getMessage(), e);
-				}
-				try {
-					if (this.communicator != null) {
-						this.communicator.destroy();
+				} finally {
+					try {
+						if (objectAdapter != null) {
+							objectAdapter.deactivate();
+						}
+					} catch (final Exception e) {
+						ScooterSinkAdapter.LOG.error(e.getMessage(), e);
 					}
-				} catch (final Exception e) {
+					try {
+						if (communicator != null) {
+							communicator.destroy();
+						}
+					} catch (final Exception e) {
+						ScooterSinkAdapter.LOG.error(e.getMessage(), e);
+					}
+				}
+				ScooterSinkAdapter.LOG.debug("ICE endpoint closed");
+				try {
+					Thread.sleep((long) 1000.0);
+				} catch (InterruptedException e) {
 					ScooterSinkAdapter.LOG.error(e.getMessage(), e);
 				}
 			}
