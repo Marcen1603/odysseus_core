@@ -69,14 +69,10 @@ public class SubDoubleGrid extends AbstractFunction<Grid2D> {
         final int endX = (int) Math.min(startX + width, grid.grid.length);
         final int endY = (int) Math.min(startY + height, grid.grid[0].length);
 
-        if ((startX >= endX) && (startY >= endY)) {
-            startX = endX - 1;
-            startY = endY - 1;
-        }
-        else if (startX >= endX) {
+        if (startX >= endX) {
             startX = endX - 1;
         }
-        else if (startY >= endY) {
+        if (startY >= endY) {
             startY = endY - 1;
         }
         final Grid2D subgrid = new Grid2D(new Coordinate(grid.origin.x + grid.cellsize * startX,

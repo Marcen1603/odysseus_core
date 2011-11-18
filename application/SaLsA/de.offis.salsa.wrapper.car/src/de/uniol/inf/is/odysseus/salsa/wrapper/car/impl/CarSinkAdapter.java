@@ -108,8 +108,8 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 						// Grid
 						Grid2D grid = (Grid2D) data[3];
 
-						int globalX = (int) (position.x / (grid.cellsize / 10));
-						int globalY = (int) (position.y / (grid.cellsize / 10));
+						int globalX = (int) (position.x / grid.cellsize);
+						int globalY = (int) (position.y / grid.cellsize);
 						// X Position
 						buffer.putShort((short) globalX);
 						// Y Position
@@ -121,7 +121,7 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 						// Grid Height
 						buffer.putShort((short) 1);
 						// Cell Size
-						buffer.putInt((int) grid.cellsize);
+						buffer.putInt((int) grid.cellsize * 10);
 
 						for (int l = 0; l < grid.grid.length; l++) {
 							for (int w = 0; w < grid.grid[l].length; w++) {
