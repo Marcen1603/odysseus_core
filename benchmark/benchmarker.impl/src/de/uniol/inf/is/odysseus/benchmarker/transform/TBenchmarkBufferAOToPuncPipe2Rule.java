@@ -12,20 +12,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark.transform;
+package de.uniol.inf.is.odysseus.benchmarker.transform;
 
 import java.util.Collection;
-import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.benchmarker.impl.BatchProducer;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchProducerAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.TestBufferedPunctuationPipe;
+import de.uniol.inf.is.odysseus.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TBatchProducerAORule extends AbstractTransformationRule<BatchProducerAO> {
+@SuppressWarnings({"rawtypes"})
+public class TBenchmarkBufferAOToPuncPipe2Rule extends AbstractTransformationRule<BufferAO>{
 
 	@Override
 	public int getPriority() {
@@ -33,32 +33,37 @@ public class TBatchProducerAORule extends AbstractTransformationRule<BatchProduc
 	}
 
 	@Override
-	public void execute(BatchProducerAO algebraOp, TransformationConfiguration trafo) {
-		BatchProducer po = new BatchProducer(algebraOp.getInvertedPriorityRatio());
-		Iterator<Long> it = algebraOp.getFrequencies().iterator();
-		for(Integer size : algebraOp.getElementCounts()) {
-			po.addBatch(size, it.next());
-		}
-		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
+	public void execute(BufferAO operator, TransformationConfiguration config) {
+		TestBufferedPunctuationPipe po = new TestBufferedPunctuationPipe();
+		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}		
-		retract(algebraOp);
-		
+		retract(operator);
 	}
 
 	@Override
-	public boolean isExecutable(BatchProducerAO operator, TransformationConfiguration transformConfig) {
-		return operator.isAllPhysicalInputSet();
+	public boolean isExecutable(BufferAO operator,
+			TransformationConfiguration config) {
+		if(operator.isAllPhysicalInputSet() && operator.getType().equals("Punct2")){
+			return true;
+		}
+		
+		return false;
+		
+		// DRL-Code
+//		trafo : TransformationConfiguration( )
+//		algebraOp : BufferAO(allPhysicalInputSet == true, type == "Punct2")
 	}
 
 	@Override
 	public String getName() {
-		return "BatchProducerAO -> BatchProducer";
+		return "BufferAO -> BufferedPunctuationPipe2";
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.ACCESS;
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+
 }

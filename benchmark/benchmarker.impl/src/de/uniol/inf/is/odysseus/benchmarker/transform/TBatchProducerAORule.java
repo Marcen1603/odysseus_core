@@ -12,20 +12,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark.transform;
+package de.uniol.inf.is.odysseus.benchmarker.transform;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.benchmarker.impl.TestproducerPO;
+import de.uniol.inf.is.odysseus.benchmarker.impl.BatchProducer;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.benchmark.TestProducerAO;
+import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchProducerAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TTestProducerAORule extends AbstractTransformationRule<TestProducerAO> {
+public class TBatchProducerAORule extends AbstractTransformationRule<BatchProducerAO> {
 
 	@Override
 	public int getPriority() {
@@ -33,12 +33,11 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 	}
 
 	@Override
-	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) {
-		TestproducerPO po = new TestproducerPO(algebraOp.getInvertedPriorityRatio());
-		po.setOutputSchema(algebraOp.getOutputSchema());
+	public void execute(BatchProducerAO algebraOp, TransformationConfiguration trafo) {
+		BatchProducer po = new BatchProducer(algebraOp.getInvertedPriorityRatio());
 		Iterator<Long> it = algebraOp.getFrequencies().iterator();
 		for(Integer size : algebraOp.getElementCounts()) {
-			po.addTestPart(size, it.next());
+			po.addBatch(size, it.next());
 		}
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){
@@ -49,18 +48,17 @@ public class TTestProducerAORule extends AbstractTransformationRule<TestProducer
 	}
 
 	@Override
-	public boolean isExecutable(TestProducerAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(BatchProducerAO operator, TransformationConfiguration transformConfig) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "TestProducerAO -> TestProducerPO";
+		return "BatchProducerAO -> BatchProducer";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.ACCESS;
 	}
-
 }

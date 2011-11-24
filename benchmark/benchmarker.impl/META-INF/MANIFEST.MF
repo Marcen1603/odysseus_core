@@ -22,13 +22,18 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.priority;resolution:=optional,
  de.uniol.inf.is.odysseus.priority.buffer,
+ de.uniol.inf.is.odysseus.priority_interval,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.scheduler,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory;version="2.0.0",
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework,
  org.osgi.service.component;version="1.1.0",
  org.osgi.service.framework;version="1.0.0",
@@ -37,7 +42,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.simpleframework.xml.core,
  org.simpleframework.xml.transform,
  org.slf4j;version="1.5.6"
-Service-Component: OSGI-INF/component.xml
+Service-Component: OSGI-INF/component.xml, OSGI-INF/TransformRuleService.xml
 Require-Bundle:  de.uniol.inf.is.odysseus
 Export-Package: de.uniol.inf.is.odysseus.benchmarker.impl,
  de.uniol.inf.is.odysseus.logicaloperator.benchmark

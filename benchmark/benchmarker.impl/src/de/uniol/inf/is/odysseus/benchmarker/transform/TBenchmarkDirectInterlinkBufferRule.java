@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark.transform;
+package de.uniol.inf.is.odysseus.benchmarker.transform;
 
 import java.util.Collection;
 
@@ -20,12 +20,13 @@ import de.uniol.inf.is.odysseus.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"rawtypes"})
-public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
+public class TBenchmarkDirectInterlinkBufferRule extends AbstractTransformationRule<BufferAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,7 +35,7 @@ public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<Buffe
 
 	@Override
 	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
-		BufferedPipe po = new BufferedPipe();
+		BufferedPipe po = new DirectInterlinkBufferedPipe();
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -46,7 +47,7 @@ public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<Buffe
 	@Override
 	public boolean isExecutable(BufferAO operator, TransformationConfiguration transformConfig) {
 		if(operator.isAllPhysicalInputSet()){
-			if(operator.getType().equals("Normal")){
+			if(operator.getType().equals("Direct Interlink")){
 				return true;
 			}
 		}
@@ -55,7 +56,7 @@ public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<Buffe
 
 	@Override
 	public String getName() {
-		return "BufferAO -> BufferedPipe";
+		return "BufferAO -> DirectInterlinkBufferedPipe";
 	}
 	
 	@Override

@@ -12,21 +12,20 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmark.transform;
+package de.uniol.inf.is.odysseus.benchmarker.transform;
 
 import java.util.Collection;
+import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.benchmarker.impl.TestproducerPO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
+import de.uniol.inf.is.odysseus.logicaloperator.benchmark.TestProducerAO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({"rawtypes"})
-public class TBenchmarkDirectInterlinkBufferRule extends AbstractTransformationRule<BufferAO> {
+public class TTestProducerAORule extends AbstractTransformationRule<TestProducerAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,8 +33,13 @@ public class TBenchmarkDirectInterlinkBufferRule extends AbstractTransformationR
 	}
 
 	@Override
-	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
-		BufferedPipe po = new DirectInterlinkBufferedPipe();
+	public void execute(TestProducerAO algebraOp, TransformationConfiguration trafo) {
+		TestproducerPO po = new TestproducerPO(algebraOp.getInvertedPriorityRatio());
+		po.setOutputSchema(algebraOp.getOutputSchema());
+		Iterator<Long> it = algebraOp.getFrequencies().iterator();
+		for(Integer size : algebraOp.getElementCounts()) {
+			po.addTestPart(size, it.next());
+		}
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -45,23 +49,18 @@ public class TBenchmarkDirectInterlinkBufferRule extends AbstractTransformationR
 	}
 
 	@Override
-	public boolean isExecutable(BufferAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet()){
-			if(operator.getType().equals("Direct Interlink")){
-				return true;
-			}
-		}
-		return false;
+	public boolean isExecutable(TestProducerAO operator, TransformationConfiguration transformConfig) {
+		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "BufferAO -> DirectInterlinkBufferedPipe";
+		return "TestProducerAO -> TestProducerPO";
 	}
 	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 }
