@@ -53,6 +53,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		
 		String[] args = (String[]) context.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
 		Args arguments = new Args();
@@ -113,6 +114,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			return -1;
 		}
 
+		Thread.sleep(100000);
 		return IApplication.EXIT_OK;
 	}
 
