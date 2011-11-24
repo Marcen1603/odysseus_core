@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener;
 
 import java.util.Enumeration;
@@ -35,6 +35,9 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezific
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
+import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.UsernameNotExistException;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -55,8 +58,7 @@ public class APQuerySpezificationListenerJxtaImpl implements
 
 	public APQuerySpezificationListenerJxtaImpl(JxtaMessageSender sender,
 			AdministrationPeerJxtaImpl administrationPeerJxtaImpl,
-			IThinPeerBiddingStrategy biddingStrategy,
-			ILogListener log) {
+			IThinPeerBiddingStrategy biddingStrategy, ILogListener log) {
 		this.sender = sender;
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 		this.biddingStrategy = biddingStrategy;
@@ -88,55 +90,68 @@ public class APQuerySpezificationListenerJxtaImpl implements
 		if (en != null) {
 			while (en.hasMoreElements()) {
 				Object temp2 = en.nextElement();
-				try {
-					// Handle only QueryTranslationSpezification that are not
-					// already found
-					if ((temp2 instanceof QueryTranslationSpezification)
-							&& !administrationPeerJxtaImpl
-									.hasQuery(((QueryTranslationSpezification) temp2)
-											.getQueryId())) {
 
-						adv = (QueryTranslationSpezification) temp2;
+				// Handle only QueryTranslationSpezification
+				if (temp2 instanceof QueryTranslationSpezification) {
+					adv = (QueryTranslationSpezification) temp2;
 
-						log.addQuery(adv.getQueryId());
-						log.logAction(adv.getQueryId(), "Found new query");
-						log.logAction(adv.getQueryId(), adv.getQuery());
+					try {
+						// Only those that are not already found
+						if (!administrationPeerJxtaImpl.hasQuery(adv
+								.getQueryId())) {
 
-						PipeAdvertisement pipeAdv = MessageTool
-								.createPipeAdvertisementFromXml(adv
-										.getBiddingPipe());
-						P2PQueryJxtaImpl q = createQuery(adv, pipeAdv);
+							// Logging
+							log.addQuery(adv.getQueryId());
+							log.logAction(adv.getQueryId(), "Found new query");
+							log.logAction(adv.getQueryId(), adv.getQuery());
 
-						if (biddingStrategy.bidding(q)) {
-							PeerAdvertisement peerAdv = administrationPeerJxtaImpl
-									.getNetPeerGroup().getPeerAdvertisement();
+							// Build PipeAdvertisement and Query
+							PipeAdvertisement pipeAdv = MessageTool
+									.createPipeAdvertisementFromXml(adv
+											.getBiddingPipe());
+							P2PQueryJxtaImpl q = createQuery(adv, pipeAdv);
 
-							administrationPeerJxtaImpl.addQuery(q);
+							//
+							int bid = biddingStrategy.bidding(q);
+							if (bid > 0) {
+								PeerAdvertisement peerAdv = administrationPeerJxtaImpl
+										.getNetPeerGroup()
+										.getPeerAdvertisement();
 
-							HashMap<String, Object> messageElements = new HashMap<String, Object>();
-							messageElements.put("queryAction", OdysseusQueryAction.bidding);
+								administrationPeerJxtaImpl.addQuery(q);
 
-							messageElements.put("queryId", q.getId());
-							messageElements.put("responsePipeAdvertisement",
-									administrationPeerJxtaImpl
-											.getServerPipeAdvertisement());
-							messageElements.put("peerAdvertisement", peerAdv);
-							Message response = MessageTool.createOdysseusMessage(
-									OdysseusMessageType.QueryNegotiation, messageElements);
+								HashMap<String, Object> messageElements = new HashMap<String, Object>();
+								messageElements.put("queryAction",
+										OdysseusQueryAction.bidding);
 
-							sender.sendMessage(administrationPeerJxtaImpl
-									.getNetPeerGroup(), response, pipeAdv,10);
-							log.logAction(adv.getQueryId(),
-									"Bidding for query. waiting for response...");
-						} else {
-							log.logAction(adv.getQueryId(),
-									"Not bidding for query");
+								messageElements.put("queryId", q.getId());
+								messageElements.put(
+										"responsePipeAdvertisement",
+										administrationPeerJxtaImpl
+												.getServerPipeAdvertisement());
+								messageElements.put("peerAdvertisement",
+										peerAdv);
+								messageElements.put("bid",bid);
+								Message response = MessageTool
+										.createOdysseusMessage(
+												OdysseusMessageType.QueryNegotiation,
+												messageElements);
+
+								sender.sendMessage(administrationPeerJxtaImpl
+										.getNetPeerGroup(), response, pipeAdv,
+										10);
+								log.logAction(adv.getQueryId(),
+										"Bidding for query with bid="+bid+". Waiting for response...");
+							} else {
+								log.logAction(adv.getQueryId(),
+										"Not bidding for query");
+
+							}
 
 						}
-
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		}
@@ -144,12 +159,16 @@ public class APQuerySpezificationListenerJxtaImpl implements
 	}
 
 	private P2PQueryJxtaImpl createQuery(QueryTranslationSpezification adv,
-			PipeAdvertisement pipeAdv) {
+			PipeAdvertisement pipeAdv) throws UsernameNotExistException {
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
+		User user = UserManagement.getInstance().login(adv.getUserName(),adv.getUserPasswordHash(),true);
+		if (user == null){
+			throw new UsernameNotExistException("User "+adv.getUserName()+" could not be logged in");
+		}
 		q.setId(adv.getQueryId());
 		q.setLanguage(adv.getLanguage());
 		q.setDeclarativeQuery(adv.getQuery());
-		q.setUser(GlobalState.getActiveUser(""));
+		q.setUser(user);
 		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setResponseSocketThinPeer(pipeAdv);
 		return q;

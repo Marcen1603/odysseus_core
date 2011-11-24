@@ -33,6 +33,7 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import de.uniol.inf.is.odysseus.usermanagement.User;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class QueryTranslationSpezification extends Advertisement implements
 		Serializable, Comparable {
@@ -52,10 +53,29 @@ public class QueryTranslationSpezification extends Advertisement implements
 	
 	private String language;
 	
+	private String userName;
+	private String userPasswordHash;
+		
 	public String getLanguage() {
 		return language;
 	}
 
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	
+	public String getUserName() {
+		return userName;
+	}
+	
+	public void setUserPasswordHash(String userPasswordHash) {
+		this.userPasswordHash = userPasswordHash;
+	}
+	
+	public String getUserPasswordHash() {
+		return userPasswordHash;
+	}
+	
 	public void setLanguage(String language) {
 		this.language = language;
 	}
@@ -93,6 +113,9 @@ public class QueryTranslationSpezification extends Advertisement implements
 	private final static String peerTag = "peer";
 	private final static String queryIdTag = "queryId";
 	private final static String languageTag = "language";
+	private final static String userNameTag = "user";
+	private final static String userPasswordTag = "password";
+	
 
 	/**
 	 * Indexable fields. Advertisements must define the indexables, in order to
@@ -178,7 +201,15 @@ public class QueryTranslationSpezification extends Advertisement implements
 			setLanguage(elem.getTextValue());
 			return true;
 		}
-
+		if (elem.getName().equals(userNameTag)){
+			setUserName(elem.getTextValue());
+			return true;
+		}
+		if (elem.getName().equals(userPasswordTag)){
+			setUserPasswordHash(elem.getTextValue());
+			return true;
+		}
+		
 		return false;
 	}
 

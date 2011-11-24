@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler;
 
 import net.jxta.endpoint.Message;
+import de.uniol.inf.is.odysseus.p2p.OdysseusBidAnswer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
@@ -47,7 +48,7 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 		String queryResult = meas(namespace, "result", msg);
 
 		// AdminPeer hat Zuspruch fuer eine Anfrage bekommen.
-		if (queryResult.equals("granted")) {
+		if (queryResult.equals(OdysseusBidAnswer.granted)) {
 			log.logAction(queryId,
 					"Accepted query administration bid. Handle query");
 			P2PQuery q = administrationPeerJxtaImpl.getQuery(queryId);
@@ -61,7 +62,7 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 						"Got bid for unkown query");
 			}
 
-		} else if (queryResult.equals("denied")) {
+		} else if (queryResult.equals(OdysseusBidAnswer.denied)) {
 			log.logAction(queryId,
 					"Denied query administration bid. Remove query");
 			administrationPeerJxtaImpl.removeQuery(queryId);

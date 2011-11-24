@@ -9,7 +9,7 @@ public interface IThinPeer {
 			String language, User user);
 
 	public void sendQuerySpezificationToAdminPeer(String query,
-			String language, String adminPeer, String adminPeerName);
+			String language, String adminPeer, User user);
 
 	public void registerListener(IThinPeerListener thinPeerListener);
 	public void removeListener(IThinPeerListener thinPeerListener);

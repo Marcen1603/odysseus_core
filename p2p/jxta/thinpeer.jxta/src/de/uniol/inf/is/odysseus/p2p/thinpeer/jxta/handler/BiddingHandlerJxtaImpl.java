@@ -17,10 +17,13 @@ package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.p2p.IBid;
+import de.uniol.inf.is.odysseus.p2p.OdysseusBidAnswer;
 import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.P2PQueryJxtaImpl;
@@ -31,7 +34,6 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 
 /** 
@@ -47,30 +49,32 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 	static Logger logger = LoggerFactory
 			.getLogger(BiddingHandlerJxtaImpl.class);
 
-	// Wie oft werden Antworten auf Bewerbungen herausgeschickt
-	private int WAIT_TIME = 10000;
-	private P2PQuery query;
-	private JxtaMessageSender sender;
+	final private int waitTime;
+	final private P2PQuery query;
+	final private JxtaMessageSender sender;
+	final private IBiddingHandlerStrategy strategy;
 
-	private ThinPeerJxtaImpl thinPeerJxtaImpl;
+	final private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
 	public BiddingHandlerJxtaImpl(P2PQuery query, JxtaMessageSender sender,
-			ThinPeerJxtaImpl thinPeerJxtaImpl) {
+			ThinPeerJxtaImpl thinPeerJxtaImpl, int waitTime, IBiddingHandlerStrategy strategy) {
 		this.query = query;
 		this.sender = sender;
 		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
+		this.waitTime = waitTime;
+		this.strategy = strategy;
 	}
 
 	@Override
 	public void run() {
 		try {
-			Thread.sleep(WAIT_TIME);
+			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		if (getQuery().getStatus() == Lifecycle.NEW) {
-			List<Bid> biddings = new ArrayList<Bid>();
+			List<IBid> biddings = new ArrayList<IBid>();
 			P2PQueryJxtaImpl query = ((P2PQueryJxtaImpl) getQuery());
 
 			for (Bid bid : query.getAdminPeerBidding().values()) {
@@ -78,33 +82,33 @@ public class BiddingHandlerJxtaImpl implements IBiddingHandler {
 			}
 
 			if (!biddings.isEmpty()) {
-				IBiddingHandlerStrategy strategy = new BiddingHandlerStrategyStandard();
-				Bid bid = (Bid) strategy.handleBiddings(biddings);
-
-				HashMap<String, Object> messageElements = new HashMap<String, Object>();
-				// Send granted message to peer
-				messageElements.put("queryId", getQuery().getId());
-				messageElements.put("result", "granted");
-				getQuery().setStatus(Lifecycle.GRANTED);
+				Map<String, Object> messageElements = new HashMap<String, Object>();
+				// Determine AdminPeer to handle this query
+				IBid bid = strategy.handleBiddings(biddings);
+				
+				// Send granted message to peer with this bid
+				messageElements.put("queryId", query.getId());
+				messageElements.put("result", OdysseusBidAnswer.granted);
+				query.setStatus(Lifecycle.GRANTED);
 				this.sender.sendMessage(thinPeerJxtaImpl.getNetPeerGroup(),
 						MessageTool.createOdysseusMessage(
 								OdysseusMessageType.BiddingResult,
 								messageElements), ((BidJxtaImpl) bid)
 								.getResponseSocket(), 10);
-				((P2PQueryJxtaImpl) getQuery())
-						.setAdminPeerPipe(((BidJxtaImpl) bid)
+				query.setAdminPeerPipe(((BidJxtaImpl) bid)
 								.getResponseSocket());
-				thinPeerJxtaImpl.adminPeerFound(getQuery().getId(),
+				thinPeerJxtaImpl.adminPeerFound(query.getId(),
 						bid.getPeerId());
-				thinPeerJxtaImpl.log(getQuery().getId(),
-						getQuery().getStatus().toString());
-				// Send deny message to other peers? 
-				List<Bid> denyList = new ArrayList<Bid>(biddings);
+				thinPeerJxtaImpl.log(query.getId(),
+						query.getStatus().toString());
+				
+				// Send deny message to other peers
+				List<IBid> denyList = new ArrayList<IBid>(biddings);
 				denyList.remove(bid);
-				for (Bid b:denyList){
+				for (IBid b:denyList){
 					messageElements.clear();
-					messageElements.put("queryId", getQuery().getId());
-					messageElements.put("result", "denied");
+					messageElements.put("queryId", query.getId());
+					messageElements.put("result", OdysseusBidAnswer.denied);
 					this.sender.sendMessage(thinPeerJxtaImpl.getNetPeerGroup(),
 							MessageTool.createOdysseusMessage(
 									OdysseusMessageType.BiddingResult,

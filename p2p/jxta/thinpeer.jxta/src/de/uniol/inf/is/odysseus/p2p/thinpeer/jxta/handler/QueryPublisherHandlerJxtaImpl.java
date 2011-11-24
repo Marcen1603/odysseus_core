@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -82,16 +83,17 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		thinPeerJxtaImpl.getDiscoveryService().remotePublish(adv, VALID);
 
 		// Start bid response handler
+		// TODO: Make Bidding Strategy Handler configurable
 		IBiddingHandler handler = new BiddingHandlerJxtaImpl(q,
 				(JxtaMessageSender) this.thinPeerJxtaImpl.getMessageSender(),
-				thinPeerJxtaImpl);
+				thinPeerJxtaImpl, 1000, new BiddingHandlerStrategyStandard());
 		Thread t = new Thread(handler);
 		t.start();
 	}
 
 	@Override
 	public void sendQuerySpezificationToAdminPeer(String queryId, String query,
-			String language, String adminPeer) {
+			String language,  User user, String adminPeer) {
 
 		PipeAdvertisement adminPipe = MessageTool
 				.createPipeAdvertisementFromXml(((ExtendedPeerAdvertisement) thinPeerJxtaImpl
@@ -101,7 +103,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
-		q.setUser(GlobalState.getActiveUser(""));
+		q.setUser(user);
 		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setId(queryId);
 		BidJxtaImpl bid = new BidJxtaImpl();

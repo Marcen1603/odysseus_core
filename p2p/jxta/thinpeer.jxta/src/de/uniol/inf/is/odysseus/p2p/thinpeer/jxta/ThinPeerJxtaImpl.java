@@ -272,10 +272,10 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 
 	@Override
 	public void sendQuerySpezificationToAdminPeer(String query,
-			String language, String adminPeer, String adminPeerName) {
+			String language, String adminPeer, User user) {
 		String queryId = idGenerator.generateId();
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
-				language, adminPeer);
+				language, user, adminPeer);
 	}
 
 	@Override

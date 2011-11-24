@@ -21,18 +21,18 @@ public class StandardP2PBidSelector implements IP2PBidSelector {
 		// 1. Are there positiv bids?
 		List<Bid> validBids = new ArrayList<Bid>();
 		for (Bid b : bids) {
-			Double bidValue = Double.valueOf(b.getBid());
+			int bidValue = b.getBidValue();
 
-			if (bidValue >= 0.0) {
+			if (bidValue >= 0) {
 				validBids.add(b);
 			}
 		}
 
 		if (!validBids.isEmpty()) {
-			double lowestBidValue = Double.MAX_VALUE;
+			int lowestBidValue = Integer.MAX_VALUE;
 			Bid lowestBid = null;
 			for (Bid b : validBids) {
-				Double val = Double.valueOf(b.getBid());
+				int val = b.getBidValue();
 				if (val < lowestBidValue) {
 					lowestBidValue = val;
 					lowestBid = b;

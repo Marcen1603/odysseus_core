@@ -14,8 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.strategy;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.p2p.IBid;
+
 public interface IBiddingHandlerStrategy {
 	
-	Object handleBiddings(Object biddings);
+	IBid handleBiddings(List<IBid> biddings);
 	
 }

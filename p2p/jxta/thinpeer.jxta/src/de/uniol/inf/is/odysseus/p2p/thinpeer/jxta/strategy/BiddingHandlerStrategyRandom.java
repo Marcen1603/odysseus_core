@@ -20,12 +20,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.p2p.IBid;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IBiddingHandlerStrategy;
 
-public class BiddingHandlerStrategyStandard implements IBiddingHandlerStrategy {
+public class BiddingHandlerStrategyRandom implements IBiddingHandlerStrategy {
 
 	@Override
 	public IBid handleBiddings(List<IBid> biddings) {
-		// Sort and choose bid with lowest costs
-		Collections.sort(biddings);
+		Collections.shuffle(biddings);
 		return biddings.get(0);
 	}
 }

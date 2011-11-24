@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Random;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
@@ -154,9 +155,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
 	@Override
 	protected void initQuerySpezificationListener() {
-		// TODO: Make the strategy configurable
+		// TODO: Make the strategy and parameter configurable
+		Random rand = new Random(System.currentTimeMillis());
 		this.biddingStrategy = new MaxQueryBiddingStrategyJxtaImpl(
-				this);
+				this, rand.nextInt(10)+1, (rand.nextInt(10)+1)*10);
 		querySpezificationListener = new APQuerySpezificationListenerJxtaImpl(
 				(JxtaMessageSender) getMessageSender(), this,
 				biddingStrategy, Log.getInstance());

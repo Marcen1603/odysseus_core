@@ -21,6 +21,6 @@ public interface IQueryPublisher {
 	void publishQuerySpezification(String queryId, String query, String language, User user);
 	
 	//Anfrage wird nicht ausgeschrieben sondern direkt an einen AdminPeer gesendet.
-	void sendQuerySpezificationToAdminPeer(String queryId, String query, String language, String adminPeer);
+	void sendQuerySpezificationToAdminPeer(String queryId, String query, String language, User user, String adminPeer);
 
 }

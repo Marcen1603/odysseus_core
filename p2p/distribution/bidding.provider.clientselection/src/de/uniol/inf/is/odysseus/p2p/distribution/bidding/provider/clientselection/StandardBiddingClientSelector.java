@@ -86,7 +86,7 @@ public class StandardBiddingClientSelector<C extends IExecutionListenerCallback>
 				Message response = MessageTool.createOdysseusMessage(
 						OdysseusMessageType.BiddingClient, messageElements);
 				log.addEvent(q.getId(),
-						"Sending accept for subplan" + subplan.getId() + " with optimal bid " + optimalBid.getBid());
+						"Sending accept for subplan" + subplan.getId() + " with optimal bid " + optimalBid.getBidValue());
 				// Sende die Zusage
 				MessageTool.sendMessage(PeerGroupTool.getPeerGroup(), opPeer,
 					response,10);

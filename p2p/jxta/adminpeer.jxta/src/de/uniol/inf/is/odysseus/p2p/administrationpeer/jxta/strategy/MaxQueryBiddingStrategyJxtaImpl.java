@@ -23,28 +23,31 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 
 public class MaxQueryBiddingStrategyJxtaImpl implements IThinPeerBiddingStrategy {
-	// Es soll nur geboten werden, wenn die Anzahl an Anfragen die schon
-	// ueberwacht werden und die Anzahl an
-	// Gebote die noch offen sind, kleiner 5 sind.
-	private static int MAX_QUERYS = 10;
+	final private int maxQueries;
+	final private int queryBitFactor;
 	final private IQueryProvider queryProvider;
 	final private List<Lifecycle> interestedLifecycles;
 	
-	public MaxQueryBiddingStrategyJxtaImpl(IQueryProvider queryProvider) {
+	public MaxQueryBiddingStrategyJxtaImpl(IQueryProvider queryProvider, int maxQueries, int queryBitFactor) {
 		this.queryProvider = queryProvider;
 		interestedLifecycles = new ArrayList<Lifecycle>();
 		interestedLifecycles.add(Lifecycle.DISTRIBUTION);
 		interestedLifecycles.add(Lifecycle.RUNNING);
+		this.maxQueries = maxQueries;
+		this.queryBitFactor = queryBitFactor;
 	}
 	
 	@Override
-	public boolean bidding(P2PQuery q) {
+	public int bidding(P2PQuery q) {
 
+			// Simple Algorithmn send 0 if max no of queries reached
 			int i = queryProvider.getQueryCount(interestedLifecycles);
-			if (i >= MAX_QUERYS) {
-				return false;
+			if (i >= maxQueries) {
+				return 0;
 			} else {
-				return true;
+				// The more queries are currently running, the more are the
+				// costs for an additional query
+				return i * queryBitFactor;
 			}
 	}
 

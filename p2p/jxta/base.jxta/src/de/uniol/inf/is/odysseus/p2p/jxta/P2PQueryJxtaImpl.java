@@ -47,8 +47,8 @@ public class P2PQueryJxtaImpl extends P2PQuery{
 	}
 
 
-	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId, String bid){
-		BidJxtaImpl bidElem = new BidJxtaImpl(socket, new Date(), peerId, bid);
+	public void addBidding(PipeAdvertisement socket, String peerId, String subPlanId,  int bidValue){
+		BidJxtaImpl bidElem = new BidJxtaImpl(socket, new Date(), peerId, bidValue);
 		getSubPlans().get(subPlanId).addBit(bidElem);
 	}
 	

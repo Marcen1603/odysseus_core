@@ -32,8 +32,8 @@ public class BidJxtaImpl extends Bid{
 	public BidJxtaImpl(){}
 		
 	public BidJxtaImpl(PipeAdvertisement responseSocket, Date date, String peerId,
-			String bid) {
-		super(date, peerId, bid);
+			int bidValue) {
+		super(date, peerId, bidValue);
 		this.responseSocket = responseSocket;
 	}
 
