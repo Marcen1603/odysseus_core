@@ -36,25 +36,10 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.GenericOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 
-public class Activator implements BundleActivator, BundleListener {
+public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
-	Logger logger = LoggerFactory.getLogger(Activator.class);
+	Logger logger = LoggerFactory.getLogger(LogicalOperatorBuilder.class);
 
-	//
-	// private static final String SPLIT = "SPLIT";
-	// private static final String ACCESS = "ACCESS";
-	// private static final String FILEACCESS = "FILEACCESS";
-	// private static final String SELECT = "SELECT";
-	// private static final String JOIN = "JOIN";
-	// private static final String MAP = "MAP";
-	// private static final String PROJECT = "PROJECT";
-	// private static final String UNION = "UNION";
-	// private static final String RENAME = "RENAME";
-	// private static final String WINDOW = "WINDOW";
-	// private static final String DIFFERENCE = "DIFFERENCE";
-	// private static final String EXISTENCE = "EXISTENCE";
-	// private static final String AGGREGATION = "AGGREGATION";
-	// private static final String FILESINK = "FILESINK";
 
 	private static final Map<String, GenericOperatorBuilder> operatorBuilders = new HashMap<String, GenericOperatorBuilder>();
 
@@ -127,10 +112,15 @@ public class Activator implements BundleActivator, BundleListener {
 	private Class<? extends ILogicalOperator> loadLogicalOperatorClass(
 			Bundle bundle, URL curURL) {
 		String file = curURL.getFile();
+		int start = 0;
 		try {
-			// remove '/bin' and 'class' and change path to package name
-			Class<?> classObject = bundle.loadClass(file.substring(5,
-					file.length() - 6).replace('/', '.'));
+			if (file.startsWith("/bin/")){
+				start = "/bin/".length();
+			}
+			// remove potential '/bin' and 'class' and change path to package name
+			String className = file.substring(start,
+					file.length() - 6).replace('/', '.');
+			Class<?> classObject = bundle.loadClass(className);
 			if (classObject.isAnnotationPresent(LogicalOperator.class)
 					&& ILogicalOperator.class.isAssignableFrom(classObject)) {
 				return (Class<? extends ILogicalOperator>) classObject;
@@ -150,7 +140,12 @@ public class Activator implements BundleActivator, BundleListener {
 		// add logical operators afterwards, because they may need the newly
 		// registered parameters
 		if (entries == null) {
-			return;
+			entries = bundle.findEntries(
+					"/de/uniol/inf/is/odysseus", "*.class",
+					true);
+			if (entries == null){
+				return;
+			}
 		}
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
