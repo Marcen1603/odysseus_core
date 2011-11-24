@@ -43,7 +43,7 @@ public class Activator extends Plugin {
 	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void start(final BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {		
 		super.start(context);
 		plugin = this;
 		Thread t = new Thread(new Runnable() {

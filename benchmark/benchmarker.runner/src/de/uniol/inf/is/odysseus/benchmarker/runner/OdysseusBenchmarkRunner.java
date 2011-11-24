@@ -53,7 +53,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		
+		System.err.println("STARTING "+this);
 		String[] args = (String[]) context.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
 		Args arguments = new Args();
@@ -308,5 +308,9 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		arguments.addBoolean(RESULT_PER_QUERY,
 				" - enable separate measurements for every query");
 		arguments.parse(args);
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }
