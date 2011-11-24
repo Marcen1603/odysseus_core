@@ -32,7 +32,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 */
 	public SLAViolationLogger() {
 		String FILE_NAME = "sla_violations_"
-			+ DateFormat.getDateTimeInstance().format(new Date()) + ".csv";
+			+ DateFormat.getDateTimeInstance().format(new Date()).replace(":", "_") + ".csv";
 		File file = new File(PATH, FILE_NAME);
 		try {
 			this.writer = new FileWriter(file);
