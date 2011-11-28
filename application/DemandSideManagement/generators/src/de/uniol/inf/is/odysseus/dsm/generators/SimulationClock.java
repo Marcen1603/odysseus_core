@@ -20,7 +20,7 @@ public class SimulationClock {
 	private long start;
 	private int speed;
 
-	static SimulationClock instance = new SimulationClock();
+	private static SimulationClock instance = new SimulationClock();
 	
 	private SimulationClock(){
 		start = System.currentTimeMillis();
@@ -37,5 +37,9 @@ public class SimulationClock {
 	
 	public void setSpeed(int speed){
 		this.speed = speed;
+	}
+	
+	public int getSpeed(){
+		return this.speed;
 	}
 }

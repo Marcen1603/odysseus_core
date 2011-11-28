@@ -30,75 +30,80 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
  */
 public class Appliance extends StreamClientHandler{
 	
-	Calendar calendar = Calendar.getInstance();
-	private long timestamp;
-	private int randomRuntimes;
-	private long currentDay;
-	private int interval = 0;
-	private long [][] randomTimes;
+	private Calendar calendar = Calendar.getInstance();
+	private long timestamp; //Zeitstempel
+	private int randomRuntimes; //Starthäufigkeiten am aktuellen Tag
+	private long currentDay; //aktueller Tag
+	private int interval = 0; //aktuelles Intervall der Gerätestarts
+	private long [][] randomTimes; //Startzeitpunkte am aktuellen Tag
 	
-	
-	private double watt;
+	private double watt; //Leistungsaufnahme des Geräts
 	private int rMin; //min Starts pro Tag
 	private int rMax; //max Starts pro Tag
 	private int startMin; // in Stunden
 	private int startMax; // in Stunden
-	private double startUpTime; // in ms
-	private String name;
-	private int roomId;
+	private int startUpTime; // in ms
+	private String name; //Identifikationsname des Geräts
 	private int runtimeMin; // in Minuten
 	private int runtimeMax; // in Minuten
-	private double iRange;
-	private double iLength;
-	private int speed;
-	private double measuredWatt = 0;
-	private long measureTimestamp;
+	private double iRange; //Schwankung
+	private double iLength; //Schankungslänge
+	private double measuredWatt = 0; //Initialer Messwert
+	private long measureTimestamp; //Zeitstempel der letzten Messung
+	private int frequency; //Sendefrequenz
+	private double probability; //Startwahrscheinlichkeit pro Tag
 	
-	private int id;
-	private int evuId;
-	
-	public Appliance(int id, int evuId, String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int speed, int rMin, int rMax, int startMin, int startMax, double startUpTime, int roomId){
-		this.id = id;
-		this.evuId = evuId;
+	/*
+	 * Übergabe der initialen Werte aus der Konfigurationsdatei
+	 */
+	public Appliance(String name, double watt, int runtimeMin, int runtimeMax, double iRange, double iLength, int rMin, int rMax, int frequency, int startMin, int startMax, int startUpTime, double probability){
 		this.name = name;
 		this.watt = watt;
 		this.runtimeMin = runtimeMin;
 		this.runtimeMax = runtimeMax;
 		this.iRange = iRange;
 		this.iLength = iLength * 10;
-		this.speed = speed;
 		this.rMin = rMin;
 		this.rMax = rMax;
 		this.startMin = startMin;
 		this.startMax = startMax;
 		this.startUpTime = startUpTime;
-		this.roomId = roomId;
+		this.frequency = frequency;
+		this.probability = probability;
 	}
 	
-	public Appliance(Appliance appliance) {
-		this.id = appliance.id;
-		this.evuId = appliance.evuId;
+	private Appliance(Appliance appliance) {
 		this.name = appliance.name;
 		this.watt = appliance.watt;
 		this.runtimeMin = appliance.runtimeMin;
 		this.runtimeMax = appliance.runtimeMax;
 		this.iRange = appliance.iRange;
 		this.iLength = appliance.iLength;
-		this.speed = appliance.speed;
 		this.rMin = appliance.rMin;
 		this.rMax = appliance.rMax;
 		this.startMin = appliance.startMin;
 		this.startMax = appliance.startMax;
 		this.startUpTime = appliance.startUpTime;
-		this.roomId = appliance.roomId;
+		this.frequency = appliance.frequency;
+		this.probability = appliance.probability;
 	}
 
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#init()
+	 * 
+	 * Bestimmung der initialen Werte
+	 */
 	@Override
 	public void init() {
 		randomTimes = new long[2][rMax];
 		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
 		currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 		randomRuntimes = getRandomNumber(rMin,rMax);
+		if(getProbability(probability) == false){
+			randomRuntimes = 0;
+		}
 		if (randomRuntimes > 0){
 			randomTimes[1][0] = (long) getRandomNumber(runtimeMin, runtimeMax);
 			randomTimes[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
@@ -116,6 +121,12 @@ public class Appliance extends StreamClientHandler{
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#next()
+	 * 
+	 * Erstellung eines Datentupels
+	 */
 	@Override
 	public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
@@ -126,35 +137,26 @@ public class Appliance extends StreamClientHandler{
 			if (timestamp >= randomTimes[0][interval] && timestamp <= randomTimes[0][interval]+(randomTimes[1][interval]*60000)){
 				tuple.addLong(timestamp);
 				tuple.addString(name);
-//				tuple.addInteger(id);
-//				tuple.addInteger(evuId);
-//				tuple.addInteger(roomId);
 				tuple.addDouble(getMeteredValue(timestamp));
-//				tuple.addDouble(getMeteredConsumption(timestamp));
+				///tuple.addDouble(getMeteredConsumption(timestamp));
 			} else {
 				if (timestamp >= randomTimes[0][interval]+(randomTimes[1][interval]*60000) && interval < randomRuntimes - 1){
 					interval++;
 				}
 				tuple.addLong(timestamp);
 				tuple.addString(name);
-//				tuple.addInteger(id);
-//				tuple.addInteger(evuId);
-//				tuple.addInteger(roomId);
 				tuple.addDouble(0);
-//				tuple.addDouble(0);
+				///tuple.addDouble(0);
 			}
 		} else {
 			tuple.addLong(timestamp);
 			tuple.addString(name);
-//			tuple.addInteger(id);
-//			tuple.addInteger(evuId);
-//			tuple.addInteger(roomId);
 			tuple.addDouble(0);
-//			tuple.addDouble(0);
+			///tuple.addDouble(0);
 		}
 		
 		try {
-			Thread.sleep(100);
+			Thread.sleep(frequency/SimulationClock.getInstance().getSpeed());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -163,6 +165,9 @@ public class Appliance extends StreamClientHandler{
 		return list;
 	}
 	
+	/*
+	 * Testabfrage, ob ein neuer Tag begonnen hat
+	 */
 	private boolean newDay(long ts){
 		calendar.setTimeInMillis(ts);
 		if (currentDay == calendar.get(Calendar.DAY_OF_MONTH)){
@@ -170,6 +175,9 @@ public class Appliance extends StreamClientHandler{
 		} else {
 			currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 			randomRuntimes = getRandomNumber(rMin, rMax);
+			if(getProbability(probability) == false){
+				randomRuntimes = 0;
+			}
 			if (randomRuntimes > 0){
 				randomTimes[1][0] = (long) getRandomNumber(runtimeMin, runtimeMax);
 				randomTimes[0][0] = getRandomStart(startMin, (((startMax - startMin)/randomRuntimes)+startMin));
@@ -185,6 +193,9 @@ public class Appliance extends StreamClientHandler{
 		}
 	}
 	
+	/*
+	 * Ermittlung des Watt-Wertes mit Hilfe einer Sinusfunktion
+	 */
 	private double getMeteredValue(long ts){
 		double mTime = ts - randomTimes[0][interval];
 		double a;
@@ -200,6 +211,10 @@ public class Appliance extends StreamClientHandler{
 		}
 	}
 	
+	/*
+	 * Ermittlung des kWh-Wertes mit Hilfe einer Sinusfunktion
+	 */
+	@SuppressWarnings("unused")
 	private double getMeteredConsumption(long ts){
 		double mTime = ts - randomTimes[0][interval];
 		double a;
@@ -227,11 +242,17 @@ public class Appliance extends StreamClientHandler{
 		}
 	}
 	
-	public int getRandomNumber(int min, int max){
+	/*
+	 * Liefert eine Zufallszahl zwischen min, max
+	 */
+	private int getRandomNumber(int min, int max){
 	    Random random = new Random();
 	    return random.nextInt(max - min + 1) + min;
 	}
 	
+	/*
+	 * Ermittelt einen Startzeitstempel im übergebenen Stundenintervall min, max
+	 */
 	private Long getRandomStart(int min, int max){
 		calendar.set(Calendar.HOUR_OF_DAY, min);
 		calendar.set(Calendar.MINUTE, 0);
@@ -247,6 +268,13 @@ public class Appliance extends StreamClientHandler{
 		long start = (long)(random.nextDouble() * (startMax - startMin)) + startMin; 
 		
 		return start;
+	}
+	
+	/*
+	 * Bestimmt Start mit Hilfe einer übergebenen Wahrscheinlichekeit d
+	 */
+	private boolean getProbability(double d) {
+		return Math.random()<d;
 	}
 	
 	@Override

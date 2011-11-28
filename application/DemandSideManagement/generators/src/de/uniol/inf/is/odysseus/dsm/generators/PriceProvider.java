@@ -9,15 +9,18 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 public class PriceProvider extends StreamClientHandler{
 	
-	Calendar calendar = Calendar.getInstance();
-	int end;
-	int[][] priceModel;
+	private Calendar calendar = Calendar.getInstance();
+	private int end;
+	private int[][] priceModel;
 	
+	/*
+	 * Übergabe der initialen Werte aus der Konfigurationsdatei
+	 */
 	public PriceProvider(int[][] priceModel){
 		this.priceModel = priceModel;
 	}
 	
-	public PriceProvider(PriceProvider priceProvider){
+	private PriceProvider(PriceProvider priceProvider){
 		this.priceModel = priceProvider.priceModel;
 	}
 	
@@ -35,12 +38,15 @@ public class PriceProvider extends StreamClientHandler{
     public List<DataTuple> next() {
 		DataTuple tuple = new DataTuple();
 
-		int[] prices = getPrices(getHour(SimulationClock.getInstance().getTime()));
+		long timestamp = SimulationClock.getInstance().getTime(); //Abfrage der Simulationsuhrzeit
 		
-		tuple.addLong(SimulationClock.getInstance().getTime()); //StartTimestamp
-		tuple.addLong(getTimestamp(end)); //EndTimestamp
-		tuple.addInteger(prices[0]);
-		tuple.addInteger(prices[1]);
+		int[] prices = getPrices(getHour(timestamp)); //Abfrage des Preismodells
+		
+		tuple.addLong(timestamp); //StartTimestamp
+		tuple.addLong(getTimestamp(end, timestamp)); //EndTimestamp
+		tuple.addInteger(prices[0]); //aktueller Preis
+		tuple.addInteger(prices[1]); // nächster Preis
+		
 
 		try {
 			Thread.sleep(100);
@@ -52,8 +58,11 @@ public class PriceProvider extends StreamClientHandler{
 		return list;
 	}
 
-	private Long getTimestamp(int hour) {
-		calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
+	/*
+	 * Bestimmt den Endzeitstempel des aktuellen Preisintervalls
+	 */
+	private Long getTimestamp(int hour, long timestamp) {
+		calendar.setTimeInMillis(timestamp);
 		
 		int year = calendar.get(Calendar.YEAR);
 		int month = calendar.get(Calendar.MONTH);
@@ -70,6 +79,9 @@ public class PriceProvider extends StreamClientHandler{
 		return calendar.getTimeInMillis();
 	}
 
+	/*
+	 * Ermittlung des aktuellen und zukünftigen Preises
+	 */
 	private int[] getPrices(int hour) {
 		int priceNow = 0;
 		int priceNext = 0;
@@ -79,7 +91,7 @@ public class PriceProvider extends StreamClientHandler{
     	for(int j=0; j<4; j++){
     		if(hour >= priceModel[j][0] && hour < priceModel[j][1]){
     			priceNow = priceModel[j][2];
-    			end = priceModel[j][2];
+    			end = priceModel[j][1];
     			if(j == 3){
     				priceNext = priceModel[0][2];
     			} else {
@@ -93,6 +105,10 @@ public class PriceProvider extends StreamClientHandler{
     	
 		return prices;
 	}
+	
+	/*
+	 * Ermittlung der aktuellen Stunde der Simulationsuhr
+	 */
 
 	private int getHour(long timestamp) {
 		calendar.setTimeInMillis(timestamp);

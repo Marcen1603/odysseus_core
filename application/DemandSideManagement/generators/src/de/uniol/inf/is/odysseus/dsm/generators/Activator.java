@@ -24,6 +24,8 @@ public class Activator implements BundleActivator {
 	/*
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 * 
+	 * Laden der Konfigurationsdatei und Starten der Generatoren
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
@@ -37,8 +39,6 @@ public class Activator implements BundleActivator {
 		int speed = 0;
 		int port = 0;
 		int pricePort = 0;
-		int id = 0;
-		int evuId = 0;
 		int j = 0;
 		
 		
@@ -58,22 +58,14 @@ public class Activator implements BundleActivator {
 				            	port = Integer.parseInt(parser.getAttributeValue(i));
 				            }
 		        		}
-		        	} else if (parser.getLocalName() == "household"){
-		        		for( int i = 0; i < parser.getAttributeCount(); i++ ){
-		        			if (parser.getAttributeLocalName(i) == "id") {
-		        				id = Integer.parseInt(parser.getAttributeValue(i));
-				            } else if (parser.getAttributeLocalName(i) == "evuId") {
-				            	evuId = Integer.parseInt(parser.getAttributeValue(i));
-				            }
-		        		}
 		        	} else if (parser.getLocalName() == "appliance"){
 		    			ArrayList<String> buffer = new ArrayList<String>();
 		        		for( int i = 0; i < parser.getAttributeCount(); i++ ){
 				               buffer.add(parser.getAttributeValue(i));
 			        	}
-		        		serverBuffer.add(new StreamServer(port, new Appliance(id, evuId, buffer.get(0), Double.parseDouble(buffer.get(1)), Integer.parseInt(buffer.get(2)), Integer.parseInt(buffer.get(3)),
-		        						Double.parseDouble(buffer.get(4)), Double.parseDouble(buffer.get(5)), speed, Integer.parseInt(buffer.get(6)), Integer.parseInt(buffer.get(7)), Integer.parseInt(buffer.get(8)),
-		        						Integer.parseInt(buffer.get(9)), Double.parseDouble(buffer.get(10)), Integer.parseInt(buffer.get(11)))));
+		        		serverBuffer.add(new StreamServer(port, new Appliance(buffer.get(0), Double.parseDouble(buffer.get(1)), Integer.parseInt(buffer.get(2)), Integer.parseInt(buffer.get(3)),
+		        						Double.parseDouble(buffer.get(4)), Double.parseDouble(buffer.get(5)), Integer.parseInt(buffer.get(6)), Integer.parseInt(buffer.get(7)), Integer.parseInt(buffer.get(8)),
+		        						Integer.parseInt(buffer.get(9)), Integer.parseInt(buffer.get(10)), Integer.parseInt(buffer.get(11)), Double.parseDouble(buffer.get(12)))));
 		        		port++;
 		        		
 		        	} else if (parser.getLocalName() == "priceModel"){
