@@ -20,11 +20,13 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
+	private static Map<String, Object> udfs = new HashMap<String,Object>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
 			User caller, IDataDictionary dataDictionary) {
@@ -93,5 +95,20 @@ public class OperatorBuilderFactory {
 	 */
 	public static Set<String> getPredicateBuilderNames() {
 		return predicateBuilders.keySet();
+	}
+
+	public static void putUdf(String name,
+			@SuppressWarnings("rawtypes") Class<? extends IUserDefinedFunction> classObject) {
+		udfs.put(name, classObject);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static IUserDefinedFunction getUDf(String name) throws InstantiationException, IllegalAccessException{
+		 Class udfClass = (Class) udfs.get(name);
+		 if (udfClass != null){
+			 return (IUserDefinedFunction) udfClass.newInstance();
+		 }else{
+			 return null;
+		 }
 	}
 }
