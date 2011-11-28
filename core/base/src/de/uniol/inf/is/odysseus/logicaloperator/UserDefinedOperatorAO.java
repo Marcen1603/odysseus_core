@@ -48,7 +48,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 		this.operatorClass = operatorClass;
 		try {
 			udf = OperatorBuilderFactory.getUDf(operatorClass);
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
