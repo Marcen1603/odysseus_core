@@ -23,10 +23,14 @@ public class UserDefinedOperatorPO<R,W> extends AbstractPipe<R, W> {
 
 	public void setInitString(String initString) {
 		this.initString = initString;
+		setName(null);
+		setName(getName()+" "+udf+" "+initString);
 	}
 	
 	public void setUdf(IUserDefinedFunction<R, W> udf) {
 		this.udf = udf;
+		setName(null);
+		setName(getName()+" "+udf+" "+initString);
 	}
 	
 	@Override
@@ -53,4 +57,5 @@ public class UserDefinedOperatorPO<R,W> extends AbstractPipe<R, W> {
 		return new UserDefinedOperatorPO<R, W>(this);
 	}
 
+	
 }
