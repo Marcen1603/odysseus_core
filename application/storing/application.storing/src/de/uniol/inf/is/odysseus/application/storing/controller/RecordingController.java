@@ -66,14 +66,14 @@ public class RecordingController {
 	public void startRecording(String recordingName) {
 		RecordEntry record = recordings.get(recordingName);
 		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
-
-		try {
-			deployQueries(record);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
+		if (!record.isPaused()) {
+			try {
+				deployQueries(record);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
 		}
-
 		for (IQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().startQuery(q.getID(), user);
