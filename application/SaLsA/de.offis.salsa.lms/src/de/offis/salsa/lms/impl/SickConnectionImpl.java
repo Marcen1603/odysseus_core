@@ -32,10 +32,10 @@ public class SickConnectionImpl implements SickConnection {
 		private final int port;
 		private SocketChannel channel;
 		private final Charset charset = Charset.forName("ASCII");
-		private final SickConnectionImpl connection;
+		private final SickConnection connection;
 
 		public SickConnectionHandler(final String host, final int port,
-				final SickConnectionImpl connection) {
+				final SickConnection connection) {
 			this.host = host;
 			this.port = port;
 			this.connection = connection;
@@ -343,7 +343,7 @@ public class SickConnectionImpl implements SickConnection {
 	}
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	protected SickConnection clone()  {
 		return new SickConnectionImpl(this);
 	}
 

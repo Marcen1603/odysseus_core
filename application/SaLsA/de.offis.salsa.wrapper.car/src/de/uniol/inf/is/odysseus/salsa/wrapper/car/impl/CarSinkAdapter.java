@@ -94,52 +94,58 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 					calendar.clear();
 					calendar.setTimeInMillis(timestamp);
 					try {
-						buffer.putChar((char) calendar.get(Calendar.YEAR));
-						buffer.put((byte) (calendar.get(Calendar.MONTH) + 1));
-						buffer.put((byte) calendar.get(Calendar.DATE));
-						buffer.put((byte) calendar.get(Calendar.HOUR_OF_DAY));
-						buffer.put((byte) calendar.get(Calendar.MINUTE));
-						buffer.put((byte) calendar.get(Calendar.SECOND));
-						buffer.put((byte) (calendar.get(Calendar.MILLISECOND) / 10));
-						// ID
-						buffer.putShort(((Integer) data[0]).shortValue());
-						// Position
-						Coordinate position = (Coordinate) data[1];
-						// Grid
-						Grid2D grid = (Grid2D) data[3];
+						if (data.length >= 3) {
+							buffer.putChar((char) calendar.get(Calendar.YEAR));
+							buffer.put((byte) (calendar.get(Calendar.MONTH) + 1));
+							buffer.put((byte) calendar.get(Calendar.DATE));
+							buffer.put((byte) calendar
+									.get(Calendar.HOUR_OF_DAY));
+							buffer.put((byte) calendar.get(Calendar.MINUTE));
+							buffer.put((byte) calendar.get(Calendar.SECOND));
+							buffer.put((byte) (calendar
+									.get(Calendar.MILLISECOND) / 10));
+							// ID
+							buffer.putShort(((Integer) data[0]).shortValue());
+							// Position
+							Coordinate position = (Coordinate) data[1];
+							// Grid
+							Grid2D grid = (Grid2D) data[2];
 
-						int globalX = (int) (position.x / grid.cellsize);
-						int globalY = (int) (position.y / grid.cellsize);
-						// X Position
-						buffer.putShort((short) globalX);
-						// Y Position
-						buffer.putShort((short) globalY);
-						// Grid Length
-						buffer.putShort((short) grid.grid.length);
-						// Grid Width
-						buffer.putShort((short) grid.grid[0].length);
-						// Grid Height
-						buffer.putShort((short) 1);
-						// Cell Size
-						buffer.putInt((int) grid.cellsize * 10);
+							int globalX = (int) (position.x / grid.cellsize);
+							int globalY = (int) (position.y / grid.cellsize);
+							// X Position
+							buffer.putShort((short) globalX);
+							// Y Position
+							buffer.putShort((short) globalY);
+							// Grid Length
+							buffer.putShort((short) grid.grid.length);
+							// Grid Width
+							buffer.putShort((short) grid.grid[0].length);
+							// Grid Height
+							buffer.putShort((short) 1);
+							// Cell Size
+							buffer.putInt((int) grid.cellsize * 10);
 
-						for (int l = 0; l < grid.grid.length; l++) {
-							for (int w = 0; w < grid.grid[l].length; w++) {
-								if (grid.get(l, w) == FREE) {
-									buffer.put((byte) 0x00);
-								} else if (grid.get(l, w) < FREE) {
-									buffer.put((byte) 0xFF);
-								} else {
-									buffer.put((byte) 0x64);
+							for (int l = 0; l < grid.grid.length; l++) {
+								for (int w = 0; w < grid.grid[l].length; w++) {
+									if (grid.get(l, w) == FREE) {
+										buffer.put((byte) 0x00);
+									} else if (grid.get(l, w) < FREE) {
+										buffer.put((byte) 0xFF);
+									} else {
+										buffer.put((byte) 0x64);
+									}
 								}
 							}
-						}
-						buffer.flip();
-						this.channel.write(buffer);
-						if (buffer.hasRemaining()) {
-							buffer.compact();
+							buffer.flip();
+							this.channel.write(buffer);
+							if (buffer.hasRemaining()) {
+								buffer.compact();
+							} else {
+								buffer.clear();
+							}
 						} else {
-							buffer.clear();
+							LOG.error("Invalid Parameters in Car-Sink");
 						}
 					} catch (Exception e) {
 						buffer.clear();

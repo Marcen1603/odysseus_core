@@ -173,7 +173,6 @@ public class ToDoubleGrid extends AbstractFunction<Grid2D> {
                             }
                         }
                         tmp = coordinate;
-
                     }
                 }
                 else {

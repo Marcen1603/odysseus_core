@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import de.offis.salsa.lms.impl.SickConnectionImpl;
-
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class Main {
 
 	/**
@@ -47,11 +49,6 @@ public class Main {
 			}
 		} else {
 			System.err.println("Invalid arguments: <Host/IP> <Port>");
-			Date date = new Date();
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-			Calendar calendar2 = Calendar.getInstance();
-			System.out.println(date.getTime()+" "+System.currentTimeMillis()+" "+calendar.getTimeInMillis()+" "+calendar2.getTimeInMillis());
-		System.out.println("Time:"+ calendar.get(Calendar.HOUR_OF_DAY)+" "+calendar2.get(Calendar.HOUR_OF_DAY));
 		}
 	}
 }

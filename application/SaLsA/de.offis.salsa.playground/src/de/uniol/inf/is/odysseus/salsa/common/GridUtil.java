@@ -14,15 +14,15 @@ public final class GridUtil {
      *            The x-coordinate of the grid
      * @param y
      *            The y-coordinate of the grid
-     * @param height
-     *            The height of the grid
      * @param width
      *            The width of the grid
+     * @param height
+     *            The height of the grid
      * @param coordinate
      *            The coordinate to check
      * @return true if the coordinate is in the grid else false
      */
-    public static boolean isInGrid(double x, double y, double height, double width,
+    public static boolean isInGrid(double x, double y, double width, double height,
             Coordinate coordinate) {
         return ((coordinate.x >= x) && (coordinate.x <= x + width) && (coordinate.y >= y) && (coordinate.y <= y
                 + height));

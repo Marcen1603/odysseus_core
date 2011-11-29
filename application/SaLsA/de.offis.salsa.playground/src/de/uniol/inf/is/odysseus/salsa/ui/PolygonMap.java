@@ -47,7 +47,7 @@ public class PolygonMap extends JPanel {
             int index = 0;
             for (final Coordinate coordinate : coordinates) {
                 xPoints[index] = 500 + (int) (coordinate.x / PolygonMap.SCALE);
-                yPoints[index] = 500 + (int) (coordinate.y / PolygonMap.SCALE);
+                yPoints[index] = 500 - (int) (coordinate.y / PolygonMap.SCALE);
                 index++;
             }
             graphics.setColor(Color.WHITE);

@@ -29,6 +29,7 @@ public class SubDoubleGrid extends AbstractFunction<Grid2D> {
                 SDFDatatype.INTEGER
             }
     };
+    private final static double UNKNOWN = -1.0;
 
     @Override
     public int getArity() {
@@ -58,29 +59,29 @@ public class SubDoubleGrid extends AbstractFunction<Grid2D> {
     public Grid2D getValue() {
         final Grid2D grid = (Grid2D) this.getInputValue(0);
         final Coordinate point = (Coordinate) this.getInputValue(1);
-        final Double width = (Double) this.getInputValue(2);
-        final Double height = (Double) this.getInputValue(3);
+        Double width = (Double) this.getInputValue(2);
+        Double height = (Double) this.getInputValue(3);
 
         final int positionX = (int) Math.ceil((point.x - grid.origin.x) / grid.cellsize);
         final int positionY = (int) Math.ceil((point.y - grid.origin.y) / grid.cellsize);
 
-        int startX = (int) Math.max(positionX - width / 2, 0);
-        int startY = (int) Math.max(positionY - height / 2, 0);
-        final int endX = (int) Math.min(startX + width, grid.grid.length);
-        final int endY = (int) Math.min(startY + height, grid.grid[0].length);
+        int startX = (int) (positionX - width / 2);
+        int startY = (int) (positionY - height / 2);
+        final int endX = (int) (startX + width);
+        final int endY = (int) (startY + height);
 
-        if (startX >= endX) {
-            startX = endX - 1;
-        }
-        if (startY >= endY) {
-            startY = endY - 1;
-        }
         final Grid2D subgrid = new Grid2D(new Coordinate(grid.origin.x + grid.cellsize * startX,
-                grid.origin.y + grid.cellsize * startY), endX * grid.cellsize,
-                endY * grid.cellsize, grid.cellsize);
-        for (int i = startX; i < endX; i++) {
-            for (int j = startY; j < endY; j++) {
-                subgrid.set(i - startX, j - startY, grid.get(i, j));
+                grid.origin.y + grid.cellsize * startY), width * grid.cellsize, height
+                * grid.cellsize, grid.cellsize);
+        subgrid.fill(UNKNOWN);
+
+        int startGridX = (int) Math.max(startX, 0);
+        int startGridY = (int) Math.max(startY, 0);
+        int endGridX = (int) Math.min(endX, grid.grid.length);
+        int endGridY = (int) Math.min(endY, grid.grid[0].length);
+        for (int i = startGridX; i < endGridX; i++) {
+            for (int j = startGridY; j < endGridY; j++) {
+                subgrid.set(i - startGridX, j - startGridY, grid.get(i, j));
             }
         }
         return subgrid;

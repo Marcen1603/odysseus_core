@@ -29,8 +29,8 @@ public class Sample {
 	public Coordinate getDist1Vector() {
 		final Coordinate vector = new Coordinate();
 		final double angle = Math.toRadians(this.getAngle());
-		vector.x = this.getDist1() * Math.sin(angle) / 10;
-		vector.y = this.getDist1() * Math.cos(angle) / 10;
+		vector.x = this.getDist1() * Math.cos(angle) / 10;
+		vector.y = this.getDist1() * Math.sin(angle) / 10;
 		return vector;
 	}
 
@@ -41,8 +41,8 @@ public class Sample {
 	public Coordinate getDist2Vector() {
 		final Coordinate vector = new Coordinate();
 		final double angle = Math.toRadians(this.getAngle());
-		vector.x = this.getDist2() * Math.sin(angle) / 10;
-		vector.y = this.getDist2() * Math.cos(angle) / 10;
+		vector.x = this.getDist2() * Math.cos(angle) / 10;
+		vector.y = this.getDist2() * Math.sin(angle) / 10;
 		return vector;
 	}
 
@@ -59,11 +59,11 @@ public class Sample {
 	}
 
 	public double getX() {
-		return this.getDist1() * Math.sin(Math.toRadians(this.getAngle())) / 10;
+		return this.getDist1() * Math.cos(Math.toRadians(this.getAngle())) / 10;
 	}
 
 	public double getY() {
-		return this.getDist1() * Math.cos(Math.toRadians(this.getAngle())) / 10;
+		return this.getDist1() * Math.sin(Math.toRadians(this.getAngle())) / 10;
 	}
 
 	public void setAngle(final double angle) {
