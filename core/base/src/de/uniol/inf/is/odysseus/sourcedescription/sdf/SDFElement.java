@@ -33,21 +33,25 @@ public class SDFElement implements Serializable, IClone {
 	 */
 	final private String qualName;
 	final private String uRIWithoutQualName;
-
+	final private String delimitter;
+	
 	public SDFElement(String URI) {
 		String[] split = splitURI(URI);
 		uRIWithoutQualName = split[0];
 		qualName = split[1];
+		delimitter = split[3];
 	}
 	
 	public SDFElement(String uRIWithoutQualName, String qualName){
 		this.qualName = qualName;
 		this.uRIWithoutQualName = uRIWithoutQualName;
+		this.delimitter = ".";
 	}
 
 	public SDFElement(SDFElement copy) {
 		this.qualName = copy.qualName;
 		this.uRIWithoutQualName = copy.uRIWithoutQualName;
+		this.delimitter = copy.delimitter;
 	}
 
 	/**
@@ -58,7 +62,7 @@ public class SDFElement implements Serializable, IClone {
 	}
 
 	public String getURI(boolean prettyPrint) {
-		return getURI(uRIWithoutQualName, qualName, prettyPrint, null);
+		return getURI(uRIWithoutQualName, qualName, prettyPrint, delimitter);
 	}
 
 	protected String getURI(boolean prettyPrint, String seperator) {
@@ -183,16 +187,18 @@ public class SDFElement implements Serializable, IClone {
 	}
 	
 	public static String[] splitURI(String URI){
-		String[] ret = new String[2];
+		String[] ret = new String[3];
 	
 		if (URI != null) {
-			int sharpPos = URI.indexOf("#"); // primary qualifier if present
+			int sharpPos = URI.lastIndexOf("#"); // primary qualifier if present
 			if (sharpPos > 0) {
 				ret[1] = URI.substring(sharpPos + 1);
 				ret[0] = URI.substring(0, sharpPos);
+				ret[2] = "#";
 			} else {
-				sharpPos = URI.indexOf("."); // secondary qualifier if present
+				sharpPos = URI.lastIndexOf("."); // secondary qualifier if present
 				if (sharpPos > 0) {
+					ret[2] = ".";
 					ret[1] = URI.substring(sharpPos + 1);
 					ret[0] = URI.substring(0, sharpPos);
 				} else {
