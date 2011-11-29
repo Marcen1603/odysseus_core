@@ -87,6 +87,7 @@ public class RecordingView extends ViewPart implements IRecordingListener, ISele
 			@Override
 			public void run() {
 				try {
+					
 					viewer.refresh(); 
 					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					IEvaluationService evaluationService = (IEvaluationService) window.getService(IEvaluationService.class);

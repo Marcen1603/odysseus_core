@@ -52,8 +52,9 @@ public class RecordingPropertyTester extends PropertyTester {
 					if (property.equalsIgnoreCase(RecordingView.PROPERTY_IS_PLAYING_STARTABLE)) {
 						return record.isStopped() && (record.isPlayingPaused() || record.isPlayingStopped());
 					}
-					
-					
+					if(property.equalsIgnoreCase(RecordingView.PROPERTY_IS_DELETABLE)){
+						return (record.isStopped() && record.isPlayingStopped()) || record.isInitialized();
+					}					
 				}
 			}
 		}

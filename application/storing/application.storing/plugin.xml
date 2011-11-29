@@ -43,6 +43,10 @@
             id="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
             name="Create Recording">
       </command>
+      <command
+            id="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand"
+            name="Drop Recording">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -52,6 +56,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
                icon="icons/plus.png"
+               label="Create Recording"
                style="push">
          </command>
          <separator
@@ -96,6 +101,16 @@
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
                icon="icons/control-stop-square.png"
                label="Stop Playing Record"
+               style="push">
+         </command>
+         <separator
+               name="separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand"
+               icon="icons/cross.png"
+               label="Drop Recording"
                style="push">
          </command>
       </menuContribution>
@@ -105,6 +120,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.NewRecordingCommand"
                icon="icons/plus.png"
+               label="Create Recording"
                style="push">
          </command>
          <separator
@@ -149,6 +165,20 @@
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.StopPlayingRecordCommand"
                icon="icons/control-stop-square.png"
                label="Stop Playing Record"
+               style="push">
+         </command>
+         <separator
+               name="separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.command2"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand"
+               icon="icons/cross.png"
+               label="Drop Recording"
                style="push">
          </command>
       </menuContribution>
@@ -220,6 +250,15 @@
          <enabledWhen>
             <test
                   property="de.uniol.inf.is.odysseus.application.storing.view.views.isPlayingPauseable">
+            </test>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand"
+            commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand">
+         <enabledWhen>
+            <test
+                  property="de.uniol.inf.is.odysseus.application.storing.view.views.isDeleteable">
             </test>
          </enabledWhen>
       </handler>

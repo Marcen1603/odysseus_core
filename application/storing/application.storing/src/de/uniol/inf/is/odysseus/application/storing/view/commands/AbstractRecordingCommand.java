@@ -19,6 +19,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
@@ -37,6 +41,24 @@ public abstract class AbstractRecordingCommand extends AbstractHandler {
 			return structSelection.getFirstElement();
 		}
 		return null;
+	}
+
+	protected boolean confirmDialog(String title, String message){
+		return confirmDialog(title, message, SWT.ICON_WARNING);
+	}
+	
+	protected boolean confirmDialog(String title, String message, int icon) {		
+		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		MessageBox mb = new MessageBox(shell, icon | SWT.YES | SWT.NO);
+		mb.setText(title);
+		mb.setMessage(message);
+		int ans = mb.open();
+		boolean answer = false;
+		if (ans == SWT.YES) {
+			answer = true;
+		}
+		return answer;
+
 	}
 
 }

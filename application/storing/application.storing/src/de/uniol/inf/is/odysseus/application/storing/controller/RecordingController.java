@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.PlayingState;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.State;
 import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -135,6 +137,29 @@ public class RecordingController {
 		record.clearQueries();
 		record.setSinkQueries(sinkQueries);
 		record.setStreamToQueries(streamToQueries);
+	}
+	
+	public void dropRecording(String name, boolean dropTable){		
+		RecordEntry record = recordings.get(name);
+		if(!record.isStopped()){
+			stopRecording(name);
+		}
+		if(!record.isPlayingStopped()){
+			stopPlaying(name);
+		}
+		if(dropTable){			
+			IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(record.getDatabaseConnection());
+			if(connection.tableExists(record.getTableName())){
+				connection.dropTable(record.getTableName());
+			}
+		}
+		recordings.remove(name);
+		fireChangedEvent();
+	}
+	
+	private void deployPlayingQueries(RecordEntry record) throws PlanManagementException{
+		
+		
 	}
 
 	public void createRecording(String recordingName, String databaseConnection, String tableName, String fromStream) {
