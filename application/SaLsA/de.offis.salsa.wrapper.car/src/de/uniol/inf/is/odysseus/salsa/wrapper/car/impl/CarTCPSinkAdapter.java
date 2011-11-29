@@ -24,8 +24,8 @@ import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
 
-public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
-	private static Logger LOG = LoggerFactory.getLogger(CarSinkAdapter.class);
+public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
+	private static Logger LOG = LoggerFactory.getLogger(CarTCPSinkAdapter.class);
 	private final static double FREE = 0.0;
 	private final static double UNKNOWN = -1.0;
 	private final static double OBSTACLE = 1.0;
@@ -167,7 +167,7 @@ public class CarSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
 
 	@Override
 	public String getName() {
-		return "SALSA-Car";
+		return "SALSA-Car-TCP";
 	}
 
 	@Override

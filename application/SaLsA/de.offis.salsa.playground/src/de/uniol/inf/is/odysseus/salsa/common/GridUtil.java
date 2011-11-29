@@ -29,6 +29,29 @@ public final class GridUtil {
     }
 
     /**
+     * Checks weather the given {@link Coordinate Coordinates} are in the same grid cell
+     * 
+     * @param x
+     *            The x-coordinate of the grid cell
+     * @param y
+     *            The y-coordinate of the grid cell
+     * @param cellsize
+     *            The size of the grid cell
+     * @param coordinate1
+     *            The first coordinate to check
+     * @param coordinate2
+     *            The second coordinate to check
+     * @return true if the coordinate is in the grid cell else false
+     */
+    public static boolean isInSameGridCell(double x, double y, double cellsize,
+            Coordinate coordinate1, Coordinate coordinate2) {
+        return (Math.ceil((coordinate1.x - x) / cellsize) == Math.ceil((coordinate2.x - x)
+                / cellsize))
+                && (Math.ceil((coordinate1.y - y) / cellsize) == Math.ceil((coordinate2.y - y)
+                        / cellsize));
+    }
+
+    /**
      * Checks weather the given {@link Coordinate} is in the given grid cell
      * 
      * @param x

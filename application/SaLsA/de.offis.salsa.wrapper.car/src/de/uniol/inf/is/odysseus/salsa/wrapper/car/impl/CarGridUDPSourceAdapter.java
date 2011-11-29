@@ -18,14 +18,14 @@ import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
-public class CarGridSourceAdapter extends AbstractPushingSourceAdapter {
+public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 	private static Logger LOG = LoggerFactory
-			.getLogger(CarGridSourceAdapter.class);
+			.getLogger(CarGridUDPSourceAdapter.class);
 	private final Map<SourceSpec, GridConnection> connections = new ConcurrentHashMap<SourceSpec, GridConnection>();
 
 	@Override
 	public String getName() {
-		return "Grid";
+		return "GridUDP";
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class CarGridSourceAdapter extends AbstractPushingSourceAdapter {
 		private final String host;
 		private final int port;
 		private final ByteBuffer buffer;
-		private CarGridSourceAdapter listener;
+		private CarGridUDPSourceAdapter listener;
 		private SourceSpec source;
 
 		public GridConnection(String host, int port) {
@@ -157,7 +157,7 @@ public class CarGridSourceAdapter extends AbstractPushingSourceAdapter {
 		}
 
 		public void setListener(final SourceSpec source,
-				final CarGridSourceAdapter listener) {
+				final CarGridUDPSourceAdapter listener) {
 			this.listener = listener;
 			this.source = source;
 		}

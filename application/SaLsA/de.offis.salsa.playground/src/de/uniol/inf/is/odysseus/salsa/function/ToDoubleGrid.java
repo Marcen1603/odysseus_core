@@ -108,7 +108,7 @@ public class ToDoubleGrid extends AbstractFunction<Grid2D> {
                 // Check for valid coordinate in the grid area
                 if ((GridUtil.isInGrid(x, y, width, height, coordinate))
                         && (GridUtil.isInGrid(x, y, width, height, tmp))) {
-                    if (coordinate.distance(tmp) > cellsize / 2) {
+                    if (!GridUtil.isInSameGridCell(x,y,cellsize,coordinate,tmp)) {
                         polygonCoordinates.add(coordinate);
                         int minX = (int) Math.min(tmp.x, coordinate.x);
                         int maxX = (int) Math.max(tmp.x, coordinate.x);

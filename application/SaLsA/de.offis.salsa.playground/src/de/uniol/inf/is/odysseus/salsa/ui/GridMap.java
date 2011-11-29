@@ -18,14 +18,11 @@ public class GridMap extends JPanel {
      * 
      */
     private static final long serialVersionUID = 8285127861043019769L;
-    private static final int SCALE = 4;
     private final List<Grid2D> grids = new CopyOnWriteArrayList<Grid2D>();
 
     public void onGrid(Grid2D grid) {
         this.grids.add(grid);
-        if (this.grids.size() > 10) {
-            this.repaint();
-        }
+        this.repaint();
     }
 
     @Override
@@ -34,6 +31,7 @@ public class GridMap extends JPanel {
             graphics.setColor(Color.BLACK);
             graphics.fillRect(0, 0, 1000, 1000);
             for (final Grid2D grid : this.grids) {
+                int scale = 1000 / grid.grid.length;
                 for (int i = 0; i < grid.grid.length; i++) {
                     for (int j = 0; j < grid.grid[i].length; j++) {
                         if (grid.get(i, j) < 0.0) {
@@ -45,7 +43,7 @@ public class GridMap extends JPanel {
 
                         // graphics.setColor(new Color(grid[i][j] & 0xFF, grid[i][j] & 0xFF,
                         // grid[i][j] & 0xFF));
-                        graphics.fillRect(i * SCALE, 1000-j * SCALE, SCALE, SCALE);
+                        graphics.fillRect(i * scale, 1000 - j * scale, scale, scale);
                     }
                 }
                 break;
