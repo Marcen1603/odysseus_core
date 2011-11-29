@@ -39,7 +39,7 @@ public class SDFElement implements Serializable, IClone {
 		String[] split = splitURI(URI);
 		uRIWithoutQualName = split[0];
 		qualName = split[1];
-		delimitter = split[3];
+		delimitter = split[2];
 	}
 	
 	public SDFElement(String uRIWithoutQualName, String qualName){
@@ -144,7 +144,7 @@ public class SDFElement implements Serializable, IClone {
 	 * @return
 	 */
 	public String getURI() {
-		return getURI(uRIWithoutQualName, qualName, false, null);
+		return getURI(uRIWithoutQualName, qualName, false, delimitter);
 	}
 
 	@Override
