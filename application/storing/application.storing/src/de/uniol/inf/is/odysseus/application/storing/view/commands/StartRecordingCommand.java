@@ -29,6 +29,7 @@ public class StartRecordingCommand extends AbstractRecordingCommand{
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
 		Object selected = super.getCurrentSelection(event);
 		if(selected instanceof RecordEntry){
 			RecordEntry record = (RecordEntry)selected;					

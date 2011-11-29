@@ -47,9 +47,13 @@ public abstract class AbstractRecordingCommand extends AbstractHandler {
 		return confirmDialog(title, message, SWT.ICON_WARNING);
 	}
 	
+	protected Shell getParentShell() {
+		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
+	}
+	
 	protected boolean confirmDialog(String title, String message, int icon) {		
-		Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-		MessageBox mb = new MessageBox(shell, icon | SWT.YES | SWT.NO);
+		
+		MessageBox mb = new MessageBox(getParentShell(), icon | SWT.YES | SWT.NO);
 		mb.setText(title);
 		mb.setMessage(message);
 		int ans = mb.open();

@@ -17,9 +17,12 @@ package de.uniol.inf.is.odysseus.application.storing.view.commands;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
+import de.uniol.inf.is.odysseus.application.storing.view.dialogs.NewPlayingWizard;
 
 /**
  * 
@@ -32,12 +35,17 @@ public class StartPlayingRecordCommand extends AbstractRecordingCommand{
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Object selected = super.getCurrentSelection(event);
 		if(selected instanceof RecordEntry){
-			RecordEntry record = (RecordEntry)selected;					
+			RecordEntry record = (RecordEntry)selected;			
+			Shell parentShell = getParentShell();
+			WizardDialog wizard = new WizardDialog(parentShell, new NewPlayingWizard());
+			wizard.open();
 			RecordingController.getInstance().startPlaying(record.getName());
 		}else{
 			return null;
 		}		
 		return null;
 	}
+
+	
 
 }
