@@ -519,6 +519,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				throw new RuntimeException("Scheduler not running. Query cannot be started");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			getLogger().warn("Query not started. An Error during optimizing occurd (ID: " + queryID + ").");
 			throw new RuntimeException("Query not started. An Error during optimizing occurd (ID: " + queryID + ").", e);
 		} finally {
