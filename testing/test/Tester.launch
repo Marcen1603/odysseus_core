@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+<setAttribute key="additional_plugins"/>
+<booleanAttribute key="append.args" value="true"/>
+<stringAttribute key="application" value="de.uniol.inf.is.odysseus.test.Tester"/>
+<booleanAttribute key="askclear" value="true"/>
+<booleanAttribute key="automaticAdd" value="false"/>
+<booleanAttribute key="automaticValidate" value="false"/>
+<stringAttribute key="bootstrap" value=""/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="true"/>
+<booleanAttribute key="clearws" value="false"/>
+<booleanAttribute key="clearwslog" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Tester"/>
+<booleanAttribute key="default" value="false"/>
+<stringAttribute key="featureDefaultLocation" value="workspace"/>
+<stringAttribute key="featurePluginResolution" value="workspace"/>
+<booleanAttribute key="includeOptional" value="true"/>
+<stringAttribute key="location" value="${workspace_loc}/../runtime-Tester"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console -debug -consoleLog queries/ system manager"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:de.uniol.inf.is.odysseus.test}"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<stringAttribute key="product" value="org.eclipse.platform.ide"/>
+<setAttribute key="selected_features">
+<setEntry value="org.eclipse.cvs:default"/>
+<setEntry value="org.eclipse.egit.mylyn:default"/>
+<setEntry value="org.eclipse.egit.psf:default"/>
+<setEntry value="org.eclipse.egit:default"/>
+<setEntry value="org.eclipse.epp.mpc:default"/>
+<setEntry value="org.eclipse.epp.package.common.feature:default"/>
+<setEntry value="org.eclipse.epp.package.rcp.feature:default"/>
+<setEntry value="org.eclipse.epp.usagedata.feature:default"/>
+<setEntry value="org.eclipse.equinox.p2.core.feature.source:default"/>
+<setEntry value="org.eclipse.equinox.p2.core.feature:default"/>
+<setEntry value="org.eclipse.equinox.p2.discovery.feature:default"/>
+<setEntry value="org.eclipse.equinox.p2.extras.feature.source:default"/>
+<setEntry value="org.eclipse.equinox.p2.extras.feature:default"/>
+<setEntry value="org.eclipse.equinox.p2.rcp.feature.source:default"/>
+<setEntry value="org.eclipse.equinox.p2.rcp.feature:default"/>
+<setEntry value="org.eclipse.equinox.p2.user.ui.source:default"/>
+<setEntry value="org.eclipse.equinox.p2.user.ui:default"/>
+<setEntry value="org.eclipse.help:default"/>
+<setEntry value="org.eclipse.jdt:default"/>
+<setEntry value="org.eclipse.jgit:default"/>
+<setEntry value="org.eclipse.mylyn.bugzilla_feature:default"/>
+<setEntry value="org.eclipse.mylyn.context_feature:default"/>
+<setEntry value="org.eclipse.mylyn.ide_feature:default"/>
+<setEntry value="org.eclipse.mylyn.java_feature:default"/>
+<setEntry value="org.eclipse.mylyn.pde_feature:default"/>
+<setEntry value="org.eclipse.mylyn.team_feature:default"/>
+<setEntry value="org.eclipse.mylyn.wikitext_feature:default"/>
+<setEntry value="org.eclipse.mylyn_feature:default"/>
+<setEntry value="org.eclipse.pde:default"/>
+<setEntry value="org.eclipse.platform.source:default"/>
+<setEntry value="org.eclipse.platform:default"/>
+<setEntry value="org.eclipse.rap.tooling:default"/>
+<setEntry value="org.eclipse.rcp.source:default"/>
+<setEntry value="org.eclipse.rcp:default"/>
+<setEntry value="org.eclipse.wst.common_core.feature:default"/>
+<setEntry value="org.eclipse.wst.common_ui.feature:default"/>
+<setEntry value="org.eclipse.wst.xml_core.feature:default"/>
+<setEntry value="org.eclipse.wst.xml_ui.feature:default"/>
+<setEntry value="org.eclipse.wst.xml_userdoc.feature:default"/>
+</setAttribute>
+<stringAttribute key="selected_target_plugins" value="com.ibm.icu@default:default,javax.servlet@default:default,org.eclipse.core.commands@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.core.databinding.observable@default:default,org.eclipse.core.databinding.property@default:default,org.eclipse.core.databinding@default:default,org.eclipse.core.expressions@default:default,org.eclipse.core.jobs@default:default,org.eclipse.core.runtime.compatibility.auth@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.runtime@default:true,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.ds@1:true,org.eclipse.equinox.preferences@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.util@default:default,org.eclipse.help@default:default,org.eclipse.jface.databinding@default:default,org.eclipse.jface@default:default,org.eclipse.osgi.services@default:default,org.eclipse.osgi@-1:true,org.eclipse.swt.win32.win32.x86_64@default:false,org.eclipse.swt@default:default,org.eclipse.ui.workbench@default:default,org.eclipse.ui@default:default"/>
+<stringAttribute key="selected_workspace_plugins" value="ANTLR3_3@default:default,Commons.Math@default:default,Jena264@default:default,com.Ostermillerutils.csvparser@default:default,com.springsource.org.apache.log4j@default:default,com.springsource.slf4j.api@default:default,com.springsource.slf4j.bridge@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.cep.metamodel@default:default,de.uniol.inf.is.odysseus.cep.relational@default:default,de.uniol.inf.is.odysseus.cep.sase@default:default,de.uniol.inf.is.odysseus.cep.transform@default:default,de.uniol.inf.is.odysseus.cep@default:default,de.uniol.inf.is.odysseus.database.cql@default:false,de.uniol.inf.is.odysseus.database@default:default,de.uniol.inf.is.odysseus.interval.transform@default:default,de.uniol.inf.is.odysseus.interval_latency@default:default,de.uniol.inf.is.odysseus.interval_latency_priority@default:default,de.uniol.inf.is.odysseus.intervalapproach@default:default,de.uniol.inf.is.odysseus.julproperties@default:false,de.uniol.inf.is.odysseus.latency.transform@default:default,de.uniol.inf.is.odysseus.latency@default:default,de.uniol.inf.is.odysseus.logicaloperator.builder@default:default,de.uniol.inf.is.odysseus.logicaloperator.relational@default:default,de.uniol.inf.is.odysseus.mep.matrix@default:default,de.uniol.inf.is.odysseus.parser.cql@default:default,de.uniol.inf.is.odysseus.parser.pql.relational@default:default,de.uniol.inf.is.odysseus.parser.pql@default:default,de.uniol.inf.is.odysseus.persistentqueries@default:default,de.uniol.inf.is.odysseus.physicaloperator.relational@default:default,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement@default:default,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy@default:default,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy@default:default,de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler@default:default,de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor@default:default,de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer@default:default,de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer@default:default,de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer@default:default,de.uniol.inf.is.odysseus.priority@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.relational.rewrite@default:default,de.uniol.inf.is.odysseus.relational.transform@default:default,de.uniol.inf.is.odysseus.relational_interval.transform@default:default,de.uniol.inf.is.odysseus.relational_interval@default:default,de.uniol.inf.is.odysseus.rewrite@default:default,de.uniol.inf.is.odysseus.ruleengine@default:default,de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager@default:default,de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory@default:default,de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory@default:default,de.uniol.inf.is.odysseus.script.exector@default:default,de.uniol.inf.is.odysseus.script.parser@default:default,de.uniol.inf.is.odysseus.sparql.transform@default:default,de.uniol.inf.is.odysseus.sparql@default:default,de.uniol.inf.is.odysseus.spatial@default:default,de.uniol.inf.is.odysseus.startBundles@default:default,de.uniol.inf.is.odysseus.stdcfg@default:default,de.uniol.inf.is.odysseus.storing.cql@default:false,de.uniol.inf.is.odysseus.storing@default:default,de.uniol.inf.is.odysseus.test@default:default,de.uniol.inf.is.odysseus.transform@default:default,de.uniol.inf.is.odysseus.webservicesclient@default:default,de.uniol.inf.is.odysseus@default:default,java.topological.suite@default:default,javax.transaction@default:false,log4jproperties@default:false,org.apache.commons.collections@default:default,org.apache.cxf@default:default,org.eclipse.persistence.jpa.equinox.weaving@default:false"/>
+<booleanAttribute key="show_selected_only" value="false"/>
+<stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useCustomFeatures" value="false"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<booleanAttribute key="useProduct" value="false"/>
+</launchConfiguration>
