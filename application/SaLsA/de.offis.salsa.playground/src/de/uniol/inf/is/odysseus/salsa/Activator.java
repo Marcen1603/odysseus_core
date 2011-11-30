@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
+import de.uniol.inf.is.odysseus.salsa.function.RotateGrid;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.SubBooleanGrid;
 import de.uniol.inf.is.odysseus.salsa.function.SubByteGrid;
@@ -79,6 +80,7 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new SubByteGrid());
             MEP.registerFunction(new SubFloatGrid());
             MEP.registerFunction(new SubBooleanGrid());
+            MEP.registerFunction(new RotateGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -118,6 +120,7 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("SubByteGrid");
             MEP.unregisterFunction("SubFloatGrid");
             MEP.unregisterFunction("SubBooleanGrid");
+            MEP.unregisterFunction("RotateGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

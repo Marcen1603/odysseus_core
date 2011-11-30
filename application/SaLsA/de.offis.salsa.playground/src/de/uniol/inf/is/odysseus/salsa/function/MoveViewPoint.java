@@ -1,7 +1,12 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -15,7 +20,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
      * 
      */
     private static final long serialVersionUID = -8906668468905044717L;
-
+    private final GeometryFactory geometryFactory = new GeometryFactory();
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
@@ -57,11 +62,13 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
+        final List<Point> coordinates = new ArrayList<Point>(geometry.getCoordinates().length);
+
         for (final Coordinate coordinate : geometry.getCoordinates()) {
-            coordinate.x = coordinate.x - x;
-            coordinate.y = coordinate.y - y;
+            coordinates.add(this.geometryFactory.createPoint(new Coordinate(coordinate.x - x,
+                    coordinate.y - y)));
         }
-        return geometry;
+        return this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {}));
     }
 
     @Override
