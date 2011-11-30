@@ -48,8 +48,10 @@ import de.uniol.inf.is.odysseus.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.SqrtValue;
 import de.uniol.inf.is.odysseus.mep.functions.SquareValue;
+import de.uniol.inf.is.odysseus.mep.functions.ToDegrees;
 import de.uniol.inf.is.odysseus.mep.functions.ToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.ToNumberFunction;
+import de.uniol.inf.is.odysseus.mep.functions.ToRadians;
 import de.uniol.inf.is.odysseus.mep.functions.ToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
@@ -125,6 +127,9 @@ public class MEP {
 		registerFunction(new GetAbsoluteValue());
 		registerFunction(new SquareValue());
 		registerFunction(new SqrtValue());
+		
+		registerFunction(new ToRadians());
+		registerFunction(new ToDegrees());
 	}
 
 	public static void registerFunction(IFunction<?> function) {
