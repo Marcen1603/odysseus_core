@@ -10,10 +10,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public interface IOdysseusScriptParser {
 
 	public void parseAndExecute(String completeText,
-			User caller, ISink defaultSink) throws OdysseusScriptParseException;
+			User caller, ISink<?> defaultSink) throws OdysseusScriptParseException;
 
 	public void execute(List<PreParserStatement> statements,
-			User caller, ISink defaultSink) throws OdysseusScriptParseException;
+			User caller, ISink<?> defaultSink) throws OdysseusScriptParseException;
 
 	public List<PreParserStatement> parseScript(String completeText,
 			User caller) throws OdysseusScriptParseException;

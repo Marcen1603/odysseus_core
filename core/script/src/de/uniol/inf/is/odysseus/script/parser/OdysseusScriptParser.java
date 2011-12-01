@@ -92,8 +92,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute(java.lang.String, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
+
 	@Override
-	public void parseAndExecute(String completeText, User caller, ISink defaultSink) throws OdysseusScriptParseException {
+	public void parseAndExecute(String completeText, User caller, ISink<?> defaultSink) throws OdysseusScriptParseException {
 		execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
@@ -101,7 +102,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(java.util.List, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public void execute(List<PreParserStatement> statements, User caller, ISink defaultSink) throws OdysseusScriptParseException {
+	public void execute(List<PreParserStatement> statements, User caller, ISink<?> defaultSink) throws OdysseusScriptParseException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
 		if (defaultSink != null){
@@ -114,6 +115,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 		// Ausf�hren
 		variables = new HashMap<String, Object>();
+		if (defaultSink != null){
+			variables.put("_defaultSink", defaultSink);
+		}
 		for (PreParserStatement stmt : statements) {
 			stmt.execute(variables, caller, this);
 		}
