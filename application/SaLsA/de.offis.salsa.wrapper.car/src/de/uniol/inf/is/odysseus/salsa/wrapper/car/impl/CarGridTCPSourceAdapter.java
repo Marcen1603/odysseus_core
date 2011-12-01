@@ -21,11 +21,14 @@ import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(CarGridTCPSourceAdapter.class);
+	private final static double FREE = 0.0;
+	private final static double UNKNOWN = -1.0;
+	private final static double OBSTACLE = 1.0;
 	private final Map<SourceSpec, GridConnection> connections = new ConcurrentHashMap<SourceSpec, GridConnection>();
 
 	@Override
 	public String getName() {
-		return "GridTCP";
+		return "Grid-TCP";
 	}
 
 	@Override
@@ -98,21 +101,23 @@ public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 									calendar.add(Calendar.MILLISECOND,
 											millisecond * 10);
 									short id = buffer.getShort();
-									short x = buffer.getShort();
-									short y = buffer.getShort();
+									int x = buffer.getInt();
+									int y = buffer.getInt();
 									short length = buffer.getShort();
 									short width = buffer.getShort();
 									short height = buffer.getShort();
-									int cell = buffer.getInt();
+									int cell = buffer.getInt() / 10;
 
 									Grid2D grid = new Grid2D(new Coordinate(x,
-											y), width, height, cell);
+											y), length * cell, width * cell,
+											cell);
+									// FIXME Use 3D Grid when height>1
 									for (int l = 0; l < length; l++) {
 										for (int w = 0; w < width; w++) {
 											for (int h = 0; h < height; h++) {
 												byte value = buffer.get();
-												if (value > 0x64) {
-													grid.set(l, w, -1.0);
+												if (value > (byte) 0x64) {
+													grid.set(l, w, UNKNOWN);
 												} else {
 													grid.set(l, w, value / 100);
 												}

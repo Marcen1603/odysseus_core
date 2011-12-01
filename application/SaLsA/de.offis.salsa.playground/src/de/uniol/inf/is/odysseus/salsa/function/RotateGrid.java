@@ -67,43 +67,43 @@ public class RotateGrid extends AbstractFunction<Grid2D> {
         Grid2D rotatedGrid = new Grid2D(rotatedOrigin, grid.grid.length * grid.cellsize,
                 grid.grid[0].length * grid.cellsize, grid.cellsize);
         rotatedGrid.fill(UNKNOWN);
-        for (int w = 0; w < rotatedGrid.grid.length; w++) {
-            for (int h = 0; h < rotatedGrid.grid[0].length; h++) {
-                if (rotatedGrid.get(w, h) != OBSTACLE) {
-                    int x = (int) ((w + 0.5 - centerGridX) * cos - (h + 0.5 - centerGridY) * sin + centerGridX);
-                    int y = (int) ((w + 0.5 - centerGridX) * sin + (h + 0.5 - centerGridY) * cos + centerGridY);
-                    int x1 = (int) ((w - centerGridX) * cos - (h - centerGridY) * sin + centerGridX);
-                    int y1 = (int) ((w - centerGridX) * sin + (h - centerGridY) * cos + centerGridY);
-                    int x2 = (int) ((w + 1 - centerGridX) * cos - (h - centerGridY) * sin + centerGridX);
-                    int y2 = (int) ((w + 1 - centerGridX) * sin + (h - centerGridY) * cos + centerGridY);
-                    int x3 = (int) ((w + 1 - centerGridX) * cos - (h + 1 - centerGridY) * sin + centerGridX);
-                    int y3 = (int) ((w + 1 - centerGridX) * sin + (h + 1 - centerGridY) * cos + centerGridY);
-                    int x4 = (int) ((w - centerGridX) * cos - (h + 1 - centerGridY) * sin + centerGridX);
-                    int y4 = (int) ((w - centerGridX) * sin + (h + 1 - centerGridY) * cos + centerGridY);
+        for (int l = 0; l < rotatedGrid.grid.length; l++) {
+            for (int w = 0; w < rotatedGrid.grid[0].length; w++) {
+                if (rotatedGrid.get(l, w) != OBSTACLE) {
+                    int x = (int) ((l + 0.5 - centerGridX) * cos - (w + 0.5 - centerGridY) * sin + centerGridX);
+                    int y = (int) ((l + 0.5 - centerGridX) * sin + (w + 0.5 - centerGridY) * cos + centerGridY);
+                    int x1 = (int) ((l - centerGridX) * cos - (w - centerGridY) * sin + centerGridX);
+                    int y1 = (int) ((l - centerGridX) * sin + (w - centerGridY) * cos + centerGridY);
+                    int x2 = (int) ((l + 1 - centerGridX) * cos - (w - centerGridY) * sin + centerGridX);
+                    int y2 = (int) ((l + 1 - centerGridX) * sin + (w - centerGridY) * cos + centerGridY);
+                    int x3 = (int) ((l + 1 - centerGridX) * cos - (w + 1 - centerGridY) * sin + centerGridX);
+                    int y3 = (int) ((l + 1 - centerGridX) * sin + (w + 1 - centerGridY) * cos + centerGridY);
+                    int x4 = (int) ((l - centerGridX) * cos - (w + 1 - centerGridY) * sin + centerGridX);
+                    int y4 = (int) ((l - centerGridX) * sin + (w + 1 - centerGridY) * cos + centerGridY);
                     if (((x >= 0) && (x < grid.grid.length))
                             && ((y >= 0) && (y < grid.grid[0].length))
-                            && (grid.get(x, y) != UNKNOWN) && (rotatedGrid.get(w, h) != OBSTACLE)) {
-                        rotatedGrid.set(w, h, grid.get(x, y));
+                            && (grid.get(x, y) != UNKNOWN) && (rotatedGrid.get(l, w) != OBSTACLE)) {
+                        rotatedGrid.set(l, w, grid.get(x, y));
                     }
                     if (((x1 >= 0) && (x1 < grid.grid.length))
                             && ((y1 >= 0) && (y1 < grid.grid[0].length))
-                            && (grid.get(x1, y1) != UNKNOWN) && (rotatedGrid.get(w, h) != OBSTACLE)) {
-                        rotatedGrid.set(w, h, grid.get(x1, y1));
+                            && (grid.get(x1, y1) != UNKNOWN) && (rotatedGrid.get(l, w) != OBSTACLE)) {
+                        rotatedGrid.set(l, w, grid.get(x1, y1));
                     }
                     if (((x2 >= 0) && (x2 < grid.grid.length))
                             && ((y2 >= 0) && (y2 < grid.grid[0].length))
-                            && (grid.get(x2, y2) != UNKNOWN) && (rotatedGrid.get(w, h) != OBSTACLE)) {
-                        rotatedGrid.set(w, h, grid.get(x2, y2));
+                            && (grid.get(x2, y2) != UNKNOWN) && (rotatedGrid.get(l, w) != OBSTACLE)) {
+                        rotatedGrid.set(l, w, grid.get(x2, y2));
                     }
                     if (((x3 >= 0) && (x3 < grid.grid.length))
                             && ((y3 >= 0) && (y3 < grid.grid[0].length))
-                            && (grid.get(x3, y3) != UNKNOWN) && (rotatedGrid.get(w, h) != OBSTACLE)) {
-                        rotatedGrid.set(w, h, grid.get(x3, y3));
+                            && (grid.get(x3, y3) != UNKNOWN) && (rotatedGrid.get(l, w) != OBSTACLE)) {
+                        rotatedGrid.set(l, w, grid.get(x3, y3));
                     }
                     if (((x4 >= 0) && (x4 < grid.grid.length))
                             && ((y4 >= 0) && (y4 < grid.grid[0].length))
-                            && (grid.get(x4, y4) != UNKNOWN) && (rotatedGrid.get(w, h) != OBSTACLE)) {
-                        rotatedGrid.set(w, h, grid.get(x4, y4));
+                            && (grid.get(x4, y4) != UNKNOWN) && (rotatedGrid.get(l, w) != OBSTACLE)) {
+                        rotatedGrid.set(l, w, grid.get(x4, y4));
                     }
                 }
             }

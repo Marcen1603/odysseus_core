@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.salsa.wrapper.car.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Calendar;
 import java.util.Map;
@@ -21,11 +23,14 @@ import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(CarGridUDPSourceAdapter.class);
+	private final static double FREE = 0.0;
+	private final static double UNKNOWN = -1.0;
+	private final static double OBSTACLE = 1.0;
 	private final Map<SourceSpec, GridConnection> connections = new ConcurrentHashMap<SourceSpec, GridConnection>();
 
 	@Override
 	public String getName() {
-		return "GridUDP";
+		return "Grid-UDP";
 	}
 
 	@Override
@@ -39,11 +44,9 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 	@Override
 	protected void doInit(SourceSpec source) {
 		if (!connections.containsKey(source)) {
-			final String host = source.getConfiguration().get("host")
-					.toString();
 			final int port = Integer.parseInt(source.getConfiguration()
 					.get("port").toString());
-			final GridConnection connection = new GridConnection(host, port);
+			final GridConnection connection = new GridConnection(port);
 
 			this.connections.put(source, connection);
 			connection.setListener(source, this);
@@ -52,33 +55,31 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 	}
 
 	class GridConnection extends Thread {
-		private final String host;
 		private final int port;
 		private final ByteBuffer buffer;
 		private CarGridUDPSourceAdapter listener;
 		private SourceSpec source;
 
-		public GridConnection(String host, int port) {
-			this.host = host;
+		public GridConnection(int port) {
 			this.port = port;
 			this.buffer = ByteBuffer.allocateDirect(64 * 1024);
 		}
 
 		@Override
 		public void run() {
-			SocketChannel channel = null;
+			DatagramChannel channel = null;
 			try {
 				while (!Thread.currentThread().isInterrupted()) {
 					try {
-						channel = SocketChannel.open();
+						channel = DatagramChannel.open();
 						final InetSocketAddress address = new InetSocketAddress(
-								this.host, this.port);
-						channel.connect(address);
+								this.port);
+						channel.socket().bind(address);
 						channel.configureBlocking(false);
 						while ((!Thread.currentThread().isInterrupted())
 								&& (channel.isOpen())) {
-							int nbytes = 0;
-							while ((nbytes = channel.read(buffer)) > 0) {
+							SocketAddress client = channel.receive(buffer);
+							if (buffer.position() > 28) {
 								int pos = buffer.position();
 								buffer.flip();
 								try {
@@ -98,21 +99,30 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									calendar.add(Calendar.MILLISECOND,
 											millisecond * 10);
 									short id = buffer.getShort();
-									short x = buffer.getShort();
-									short y = buffer.getShort();
+									int x = buffer.getInt();
+									int y = buffer.getInt();
 									short length = buffer.getShort();
 									short width = buffer.getShort();
 									short height = buffer.getShort();
-									int cell = buffer.getInt();
+									int cell = buffer.getInt() / 10;
 
+									buffer.compact();
+									while (buffer.position() < length * width
+											* height) {
+										client = channel.receive(buffer);
+									}
+									pos = buffer.position();
+									buffer.flip();
 									Grid2D grid = new Grid2D(new Coordinate(x,
-											y), width, height, cell);
+											y), length * cell, width * cell,
+											cell);
+									// FIXME Use 3D Grid when height>1
 									for (int l = 0; l < length; l++) {
 										for (int w = 0; w < width; w++) {
 											for (int h = 0; h < height; h++) {
-												byte value = buffer.get();
-												if (value > 0x64) {
-													grid.set(l, w, -1.0);
+												int value = (int) buffer.get() & 0xFF;
+												if (value > 100) {
+													grid.set(l, w, UNKNOWN);
 												} else {
 													grid.set(l, w, value / 100);
 												}
@@ -140,7 +150,6 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 						System.err.println("Connection closed.");
 					}
 					Thread.sleep(1000);
-					System.out.println("Reconnecting...");
 				}
 			} catch (final Exception e) {
 				LOG.error(e.getMessage(), e);

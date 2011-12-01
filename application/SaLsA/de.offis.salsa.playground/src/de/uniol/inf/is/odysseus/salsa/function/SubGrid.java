@@ -3,20 +3,20 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SubByteGrid extends AbstractFunction<Byte[][]> {
-
+public class SubGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
     private static final long serialVersionUID = -6671876863268014302L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                SDFDatatype.MATRIX_BYTE
+                SDFDatatype.GRID_DOUBLE
             },
             {
                 SDFDatatype.INTEGER
@@ -29,6 +29,7 @@ public class SubByteGrid extends AbstractFunction<Byte[][]> {
                 SDFDatatype.INTEGER
             }
     };
+    private final static double UNKNOWN = -1.0;
 
     @Override
     public int getArity() {
@@ -51,42 +52,36 @@ public class SubByteGrid extends AbstractFunction<Byte[][]> {
 
     @Override
     public String getSymbol() {
-        return "SubByteGrid";
+        return "SubGrid";
     }
 
     @Override
-    public Byte[][] getValue() {
-        final Byte[][] grid = (Byte[][]) this.getInputValue(0);
-        final Double cellsize = (Double) this.getInputValue(1);
-        final Coordinate point = (Coordinate) this.getInputValue(2);
-        final Double width = (Double) this.getInputValue(3);
+    public Grid2D getValue() {
+        final Grid2D grid = (Grid2D) this.getInputValue(0);
+        final Coordinate point = (Coordinate) this.getInputValue(1);
+        Double length = (Double) this.getInputValue(2);
+        Double width = (Double) this.getInputValue(3);
 
-        final int positionX = (int) Math.ceil(point.x / cellsize);
-        final int positionY = (int) Math.ceil(point.y / cellsize);
-        int startX = (int) Math.max(positionX - width / 2, 0);
-        int startY = (int) Math.max(positionY - width / 2, 0);
-        final int endX = (int) Math.min(startX + width, grid.length);
-        final int endY = (int) Math.min(startY + width, grid[0].length);
-        final Byte[][] subgrid;
-        if ((startX >= endX) && (startY >= endY)) {
-            subgrid = new Byte[1][1];
-            startX = endX - 1;
-            startY = endY - 1;
-        }
-        else if (startX >= endX) {
-            subgrid = new Byte[1][endY - startY];
-            startX = endX - 1;
-        }
-        else if (startY >= endY) {
-            subgrid = new Byte[endX - startX][1];
-            startY = endY - 1;
-        }
-        else {
-            subgrid = new Byte[endX - startX][endY - startY];
-        }
-        for (int i = startX; i < endX; i++) {
-            for (int j = startY; j < endY; j++) {
-                subgrid[i - startX][j - startY] = grid[i][j];
+        final int positionX = (int) Math.ceil((point.x - grid.origin.x) / grid.cellsize);
+        final int positionY = (int) Math.ceil((point.y - grid.origin.y) / grid.cellsize);
+
+        int startX = (int) (positionX - length / 2);
+        int startY = (int) (positionY - width / 2);
+        final int endX = (int) (startX + length);
+        final int endY = (int) (startY + width);
+
+        final Grid2D subgrid = new Grid2D(new Coordinate(grid.origin.x + grid.cellsize * startX,
+                grid.origin.y + grid.cellsize * startY), length * grid.cellsize, width
+                * grid.cellsize, grid.cellsize);
+        subgrid.fill(UNKNOWN);
+
+        int startGridX = (int) Math.max(startX, 0);
+        int startGridY = (int) Math.max(startY, 0);
+        int endGridX = (int) Math.min(endX, grid.grid.length);
+        int endGridY = (int) Math.min(endY, grid.grid[0].length);
+        for (int l = startGridX; l < endGridX; l++) {
+            for (int w = startGridY; w < endGridY; w++) {
+                subgrid.set(l - startGridX, w - startGridY, grid.get(l, w));
             }
         }
         return subgrid;
@@ -94,7 +89,6 @@ public class SubByteGrid extends AbstractFunction<Byte[][]> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.MATRIX_BYTE;
+        return SDFDatatype.GRID_DOUBLE;
     }
-
 }

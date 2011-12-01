@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToDoubleGrid extends AbstractFunction<Grid2D> {
+public class ToGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
@@ -64,7 +64,7 @@ public class ToDoubleGrid extends AbstractFunction<Grid2D> {
 
     @Override
     public String getSymbol() {
-        return "ToDoubleGrid";
+        return "ToGrid";
     }
 
     @Override

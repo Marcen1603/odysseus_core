@@ -24,8 +24,10 @@ import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
 
-public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapter {
-	private static Logger LOG = LoggerFactory.getLogger(CarTCPSinkAdapter.class);
+public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
+		SinkAdapter {
+	private static Logger LOG = LoggerFactory
+			.getLogger(CarTCPSinkAdapter.class);
 	private final static double FREE = 0.0;
 	private final static double UNKNOWN = -1.0;
 	private final static double OBSTACLE = 1.0;
@@ -59,7 +61,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapte
 						processingThreads.add(processingThread);
 						processingThread.start();
 					} catch (final IOException e) {
-						e.printStackTrace();
+						LOG.error(e.getMessage(), e);
 					}
 
 				}
@@ -68,7 +70,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapte
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -94,7 +96,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapte
 					calendar.clear();
 					calendar.setTimeInMillis(timestamp);
 					try {
-						if (data.length >= 3) {
+						if (data.length >= 2) {
 							buffer.putChar((char) calendar.get(Calendar.YEAR));
 							buffer.put((byte) (calendar.get(Calendar.MONTH) + 1));
 							buffer.put((byte) calendar.get(Calendar.DATE));
@@ -105,18 +107,14 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapte
 							buffer.put((byte) (calendar
 									.get(Calendar.MILLISECOND) / 10));
 							// ID
-							buffer.putShort(((Integer) data[0]).shortValue());
-							// Position
-							Coordinate position = (Coordinate) data[1];
+							buffer.putShort(((Double) data[0]).shortValue());
 							// Grid
-							Grid2D grid = (Grid2D) data[2];
+							Grid2D grid = (Grid2D) data[1];
 
-							int globalX = (int) (position.x / grid.cellsize);
-							int globalY = (int) (position.y / grid.cellsize);
 							// X Position
-							buffer.putShort((short) globalX);
+							buffer.putInt((int) grid.origin.x);
 							// Y Position
-							buffer.putShort((short) globalY);
+							buffer.putInt((int) grid.origin.y);
 							// Grid Length
 							buffer.putShort((short) grid.grid.length);
 							// Grid Width
@@ -148,6 +146,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements SinkAdapte
 							LOG.error("Invalid Parameters in Car-Sink");
 						}
 					} catch (Exception e) {
+						LOG.error(e.getMessage(), e);
 						buffer.clear();
 					}
 				}

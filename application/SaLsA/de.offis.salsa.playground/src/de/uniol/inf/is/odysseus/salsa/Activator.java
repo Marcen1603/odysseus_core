@@ -7,16 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
-import de.uniol.inf.is.odysseus.salsa.function.ClearBooleanGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ClearByteGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ClearDoubleGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ClearFloatGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ClearGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
-import de.uniol.inf.is.odysseus.salsa.function.InverseBooleanGrid;
-import de.uniol.inf.is.odysseus.salsa.function.InverseByteGrid;
-import de.uniol.inf.is.odysseus.salsa.function.InverseDoubleGrid;
-import de.uniol.inf.is.odysseus.salsa.function.InverseFloatGrid;
+import de.uniol.inf.is.odysseus.salsa.function.InverseGrid;
 import de.uniol.inf.is.odysseus.salsa.function.IsGridFree;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
@@ -24,14 +18,8 @@ import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
 import de.uniol.inf.is.odysseus.salsa.function.RotateGrid;
 import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
-import de.uniol.inf.is.odysseus.salsa.function.SubBooleanGrid;
-import de.uniol.inf.is.odysseus.salsa.function.SubByteGrid;
-import de.uniol.inf.is.odysseus.salsa.function.SubDoubleGrid;
-import de.uniol.inf.is.odysseus.salsa.function.SubFloatGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToBooleanGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToByteGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToDoubleGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToFloatGrid;
+import de.uniol.inf.is.odysseus.salsa.function.SubGrid;
+import de.uniol.inf.is.odysseus.salsa.function.ToGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -62,24 +50,12 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new MergeGeometries());
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
-            MEP.registerFunction(new ToDoubleGrid());
-            MEP.registerFunction(new ToFloatGrid());
-            MEP.registerFunction(new ToByteGrid());
-            MEP.registerFunction(new ToBooleanGrid());
-            MEP.registerFunction(new InverseDoubleGrid());
-            MEP.registerFunction(new InverseFloatGrid());
-            MEP.registerFunction(new InverseByteGrid());
-            MEP.registerFunction(new InverseBooleanGrid());
+            MEP.registerFunction(new ToGrid());
+            MEP.registerFunction(new InverseGrid());
             MEP.registerFunction(new IEPF());
             MEP.registerFunction(new IsGridFree());
-            MEP.registerFunction(new ClearDoubleGrid());
-            MEP.registerFunction(new ClearFloatGrid());
-            MEP.registerFunction(new ClearByteGrid());
-            MEP.registerFunction(new ClearBooleanGrid());
-            MEP.registerFunction(new SubDoubleGrid());
-            MEP.registerFunction(new SubByteGrid());
-            MEP.registerFunction(new SubFloatGrid());
-            MEP.registerFunction(new SubBooleanGrid());
+            MEP.registerFunction(new ClearGrid());
+            MEP.registerFunction(new SubGrid());
             MEP.registerFunction(new RotateGrid());
         }
         catch (final Exception e) {
@@ -102,24 +78,12 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("MergeGeometries");
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
-            MEP.unregisterFunction("ToDoubleGrid");
-            MEP.unregisterFunction("ToFloatGrid");
-            MEP.unregisterFunction("ToByteGrid");
-            MEP.unregisterFunction("ToBooleanGrid");
-            MEP.unregisterFunction("InverseDoubleGrid");
-            MEP.unregisterFunction("InverseFloatGrid");
-            MEP.unregisterFunction("InverseByteGrid");
-            MEP.unregisterFunction("InverseBooleanGrid");
+            MEP.unregisterFunction("ToGrid");
+            MEP.unregisterFunction("InverseGrid");
             MEP.unregisterFunction("IEPF");
             MEP.unregisterFunction("IsGridFree");
-            MEP.unregisterFunction("ClearDoubleGrid");
-            MEP.unregisterFunction("ClearFloatGrid");
-            MEP.unregisterFunction("ClearByteGrid");
-            MEP.unregisterFunction("ClearBooleanGrid");
-            MEP.unregisterFunction("SubDoubleGrid");
-            MEP.unregisterFunction("SubByteGrid");
-            MEP.unregisterFunction("SubFloatGrid");
-            MEP.unregisterFunction("SubBooleanGrid");
+            MEP.unregisterFunction("ClearGrid");
+            MEP.unregisterFunction("SubGrid");
             MEP.unregisterFunction("RotateGrid");
         }
         catch (final Exception e) {

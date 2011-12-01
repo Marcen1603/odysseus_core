@@ -30,6 +30,9 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTup
         this.schema = schema;
         this.adapterName = adapterName;
         this.options.putAll(options);
+        if (options.containsKey("name")) {
+        	this.setName(options.get("name"));
+        }
     }
 
     /**
@@ -39,6 +42,9 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTup
         this.schema = po.schema;
         this.adapterName = po.adapterName;
         this.options.putAll(po.options);
+        if (options.containsKey("name")) {
+        	this.setName(options.get("name"));
+        }
     }
 
     @Override

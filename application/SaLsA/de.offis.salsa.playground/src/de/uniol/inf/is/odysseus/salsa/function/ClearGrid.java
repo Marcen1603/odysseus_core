@@ -7,15 +7,17 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class InverseDoubleGrid extends AbstractFunction<Grid2D> {
+public class ClearGrid extends AbstractFunction<Grid2D> {
     /**
      * 
      */
-    private static final long serialVersionUID = 6682089158563417930L;
+    private static final long serialVersionUID = 558853050550138757L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-        {
-            SDFDatatype.GRID_DOUBLE
-        }
+            {
+                SDFDatatype.GRID_DOUBLE
+            }, {
+                SDFDatatype.GRID_DOUBLE
+            }
     };
     private final static double FREE = 0.0;
     private final static double UNKNOWN = -1.0;
@@ -23,7 +25,7 @@ public class InverseDoubleGrid extends AbstractFunction<Grid2D> {
 
     @Override
     public int getArity() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class InverseDoubleGrid extends AbstractFunction<Grid2D> {
         }
         if (argPos > this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument: A grid.");
+                    + " argument(s): Two grids.");
         }
         else {
             return accTypes[argPos];
@@ -42,20 +44,26 @@ public class InverseDoubleGrid extends AbstractFunction<Grid2D> {
 
     @Override
     public String getSymbol() {
-        return "InverseDoubleGrid";
+        return "ClearGrid";
     }
 
     @Override
     public Grid2D getValue() {
-        final Grid2D grid = this.getInputValue(0);
-        for (int i = 0; i < grid.grid.length; i++) {
-            for (int j = 0; j < grid.grid[i].length; j++) {
-                if (grid.get(i, j) >= FREE) {
-                    grid.set(i, j, Math.abs(grid.get(i, j) - 1));
+        final Grid2D base = this.getInputValue(0);
+        final Grid2D grid = this.getInputValue(1);
+
+        int startX = (int) ((grid.origin.x - base.origin.x) / grid.cellsize);
+        int startY = (int) ((grid.origin.y - base.origin.y) / grid.cellsize);
+        int endX = (int) ((grid.origin.x - base.origin.x + grid.grid.length * grid.cellsize) / grid.cellsize);
+        int endY = (int) ((grid.origin.y - base.origin.y + grid.grid[0].length * grid.cellsize) / grid.cellsize);
+        for (int l = startX; l < base.grid.length && l < endX; l++) {
+            for (int w = startY; w < base.grid[l].length && l < endY; w++) {
+                if ((grid.get(l, w) >= FREE) && (base.get(l, w) == OBSTACLE)) {
+                    base.set(l, w, FREE);
                 }
             }
         }
-        return grid;
+        return base;
     }
 
     @Override
