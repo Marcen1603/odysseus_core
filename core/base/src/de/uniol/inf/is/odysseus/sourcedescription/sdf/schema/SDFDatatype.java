@@ -308,6 +308,10 @@ public class SDFDatatype extends SDFElement implements Serializable{
 		return this.getURI().equals(SPATIAL_MULTI_POLYGON.getURI());
 	}
 	
+	public boolean isGrid(){
+		return this.getURI().equals(GRID_DOUBLE.getURI());
+	}
+	
 	public int getSubattributeCount(){
 		if(this.schema == null){
 			return 0;
@@ -403,7 +407,9 @@ public class SDFDatatype extends SDFElement implements Serializable{
 				this.isMultiPolygon() && other.isMultiPolygon()){
 			return true;
 		}
-		
+		else if(this.isGrid() && other.isGrid()) {
+			return true;
+		}
 		return false;
 	}
 	

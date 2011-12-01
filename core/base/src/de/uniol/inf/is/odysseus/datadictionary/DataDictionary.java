@@ -119,6 +119,7 @@ public class DataDictionary implements IDataDictionary {
 			addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
 			addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
 			addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
+			addDatatype(SDFDatatype.GRID_DOUBLE.getURI(), SDFDatatype.GRID_DOUBLE);
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
