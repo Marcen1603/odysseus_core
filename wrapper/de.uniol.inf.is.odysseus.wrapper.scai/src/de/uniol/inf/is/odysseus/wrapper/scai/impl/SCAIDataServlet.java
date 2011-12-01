@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.BundleContext;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SCAIDataServlet extends HttpServlet {
 
 	/**

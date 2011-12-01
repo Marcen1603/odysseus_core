@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.wrapper.scai.Activator;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SCAIHTTPService {
 
 	private static final Logger LOG = LoggerFactory

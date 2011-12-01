@@ -18,6 +18,9 @@ import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 		MeasurementListener {
 	private static final Logger LOG = LoggerFactory

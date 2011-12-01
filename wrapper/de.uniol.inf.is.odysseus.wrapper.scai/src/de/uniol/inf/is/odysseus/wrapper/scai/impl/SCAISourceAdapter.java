@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SCAISourceAdapter extends AbstractPushingSourceAdapter {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SCAISourceAdapter.class);
@@ -38,7 +41,6 @@ public class SCAISourceAdapter extends AbstractPushingSourceAdapter {
 		String domain = source.getConfiguration().get("domain").toString();
 		String name = source.getConfiguration().get("sensor").toString();
 		sources.put(domain + SEPARATOR + name, source);
-
 	}
 
 	public void pushSensorData(String domain, String name,

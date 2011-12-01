@@ -19,6 +19,9 @@ import de.offis.xml.schema.scai20.DataElementValueDescription;
 import de.offis.xml.schema.scai20.SCAIDocument;
 import de.offis.xml.schema.scai20.SensorDataDescription;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class SCAISensorPool {
 
 	private static final Logger LOG = LoggerFactory
