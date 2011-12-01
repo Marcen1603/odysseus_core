@@ -62,6 +62,7 @@ AbstractPreParserExecutorKeyword {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
 			User caller) throws OdysseusScriptParseException {
