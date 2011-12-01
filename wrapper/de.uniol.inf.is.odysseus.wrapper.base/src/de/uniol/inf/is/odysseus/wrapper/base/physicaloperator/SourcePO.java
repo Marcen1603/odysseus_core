@@ -31,6 +31,9 @@ public class SourcePO<T extends IMetaAttribute> extends
         this.schema = schema;
         this.adapterName = adapterName;
         this.options.putAll(options);
+        if (options.containsKey("name")) {
+        	this.setName(options.get("name"));
+        }
     }
 
     /**
@@ -40,6 +43,9 @@ public class SourcePO<T extends IMetaAttribute> extends
         this.schema = po.schema;
         this.adapterName = po.adapterName;
         this.options.putAll(po.options);
+        if (options.containsKey("name")) {
+        	this.setName(options.get("name"));
+        }
     }
 
     /*

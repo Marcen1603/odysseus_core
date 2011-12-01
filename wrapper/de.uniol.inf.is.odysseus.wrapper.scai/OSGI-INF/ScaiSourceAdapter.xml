@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.wrapper.scai">
+   <implementation class="de.uniol.inf.is.odysseus.wrapper.scai.impl.SCAISourceAdapter"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter"/>
+   </service>
+</scr:component>

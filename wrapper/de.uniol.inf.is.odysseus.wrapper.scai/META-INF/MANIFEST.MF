@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Scai
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.scai
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.scai.Activator
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
+ de.uniol.inf.is.odysseus.wrapper.base.model,
+ javax.servlet;version="2.5.0",
+ javax.servlet.http;version="2.5.0",
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.http;version="1.2.1",
+ org.slf4j;version="1.5.6"
+Service-Component: OSGI-INF/ScaiSourceAdapter.xml, OSGI-INF/HTTPService.xml
+Bundle-ClassPath: .,
+ lib/scampi-scai-1.1.jar,
+ lib/xmlbeans-2.4.0.jar
