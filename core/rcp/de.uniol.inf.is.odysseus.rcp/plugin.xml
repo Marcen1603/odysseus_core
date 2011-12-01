@@ -22,15 +22,6 @@
             name="Odysseus">
       </category>
       <view
-            allowMultiple="false"
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView"
-            icon="icons/navigator.gif"
-            id="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView"
-            name="Odysseus Project Navigator"
-            restorable="true">
-      </view>
-      <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.views.SourcesViewPart"
             icon="icons/repository_rep.gif"
@@ -73,18 +64,6 @@
                relationship="right"
                relative="org.eclipse.ui.editorss">
          </view>
-         <view
-               closeable="false"
-               id="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView"
-               minimized="false"
-               moveable="false"
-               ratio="0.30f"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
          <newWizardShortcut
                id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
          </newWizardShortcut>
@@ -103,6 +82,9 @@
                standalone="false"
                visible="true">
          </view>
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
+         </newWizardShortcut>
       </perspectiveExtension>
    </extension>
    <extension
@@ -117,32 +99,6 @@
             id="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             name="Queries">
       </perspective>
-   </extension>
-   <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewer
-            popupMenuId="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView.popup"
-            viewerId="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView">
-      </viewer>
-      <viewerContentBinding
-            viewerId="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView">
-         <includes>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resourceContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.filters.*">
-            </contentExtension>
-         </includes>
-      </viewerContentBinding>
-      <viewerActionBinding
-            viewerId="de.uniol.inf.is.odysseus.rcp.views.OdysseusProjectNavigatorView">
-         <includes>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.*">
-            </actionExtension>
-         </includes>
-      </viewerActionBinding>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -263,10 +219,6 @@
                style="push"
                tooltip="Collapse All">
          </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
       </menuContribution>
       <menuContribution
             allPopups="false"

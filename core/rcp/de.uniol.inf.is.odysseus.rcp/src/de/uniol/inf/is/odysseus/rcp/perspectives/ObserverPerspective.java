@@ -31,6 +31,7 @@ public class ObserverPerspective implements IPerspectiveFactory {
 		layout.addView(IConsoleConstants.ID_CONSOLE_VIEW, IPageLayout.BOTTOM, 0.70f, editorArea);
 		
 		layout.addPerspectiveShortcut(OdysseusRCPPlugIn.OBSERVER_PERSPECTIVE_ID);
+		layout.addNewWizardShortcut("de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard");
 	}
 	
 	
