@@ -27,13 +27,17 @@ public class SCAISourceAdapter extends AbstractPushingSourceAdapter {
 
 	@Override
 	protected void doDestroy(SourceSpec source) {
-		sources.remove(source.getName());
+		String domain = source.getConfiguration().get("domain").toString();
+		String name = source.getConfiguration().get("sensor").toString();
+		sources.remove(domain + SEPARATOR + name);
 
 	}
 
 	@Override
 	protected void doInit(SourceSpec source) {
-		sources.put(source.getName(), source);
+		String domain = source.getConfiguration().get("domain").toString();
+		String name = source.getConfiguration().get("sensor").toString();
+		sources.put(domain + SEPARATOR + name, source);
 
 	}
 
