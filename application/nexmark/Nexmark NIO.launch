@@ -22,7 +22,7 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Xms1000M -Xmx1000M"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Xms2000M -Xmx2000M"/>
 <stringAttribute key="org.ops4j.pax.cursor.logLevel" value="INFO"/>
 <booleanAttribute key="org.ops4j.pax.cursor.overwrite" value="false"/>
 <booleanAttribute key="org.ops4j.pax.cursor.overwriteSystemBundles" value="false"/>

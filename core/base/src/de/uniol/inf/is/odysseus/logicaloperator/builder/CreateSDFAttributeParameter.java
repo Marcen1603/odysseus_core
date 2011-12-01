@@ -18,7 +18,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class CreateSDFAttributeParameter extends
 		AbstractParameter<SDFAttribute> {

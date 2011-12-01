@@ -22,7 +22,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * Enum containing all sensors available at IDEAAL-room
