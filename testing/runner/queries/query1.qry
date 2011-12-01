@@ -6,5 +6,5 @@ ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,e
 
 GRANT READ ON nexmark:person2 TO Public;
 
-#QUERY 
+#RUNQUERY
 SELECT * FROM nexmark:person2

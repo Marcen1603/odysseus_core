@@ -2,14 +2,14 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="de.uniol.inf.is.odysseus.test.Tester"
+         id="TestRunner"
          point="org.eclipse.core.runtime.applications">
       <application
-            cardinality="singleton-global"
-            thread="main"
+            cardinality="1"
+            thread="any"
             visible="true">
          <run
-               class="de.uniol.inf.is.odysseus.test.Tester">
+               class="de.uniol.inf.is.odysseus.test.runner.Tester">
          </run>
       </application>
    </extension>
