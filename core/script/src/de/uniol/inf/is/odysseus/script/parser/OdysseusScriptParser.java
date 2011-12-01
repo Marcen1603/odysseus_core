@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser {
@@ -92,17 +93,20 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute(java.lang.String, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public void parseAndExecute(String completeText, User caller) throws OdysseusScriptParseException {
-		execute(parseScript(completeText, caller), caller);
+	public void parseAndExecute(String completeText, User caller, ISink defaultSink) throws OdysseusScriptParseException {
+		execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(java.util.List, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public void execute(List<PreParserStatement> statements, User caller) throws OdysseusScriptParseException {
+	public void execute(List<PreParserStatement> statements, User caller, ISink defaultSink) throws OdysseusScriptParseException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
+		if (defaultSink != null){
+			variables.put("_defaultSink", defaultSink);
+		}
 		// Validieren
 		for (PreParserStatement stmt : statements) {
 			stmt.validate(variables, caller);

@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
@@ -64,7 +67,9 @@ AbstractPreParserExecutorKeyword {
 			User caller) throws OdysseusScriptParseException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
-
+		ISink defaultSink = variables.get("_defaultSink") != null?(ISink)variables.get("_defaultSink"):null; 
+		
+		
 		try {
 			parserID = parserID.trim();
 			transCfg = transCfg.trim();
@@ -73,6 +78,16 @@ AbstractPreParserExecutorKeyword {
 
 			Collection<IQuery> queries = ExecutorHandler.getExecutor().addQuery(
 					queryText, parserID, caller, dd, transCfg);
+			
+			// Append defaultSink to all queries
+			if (defaultSink != null){
+				for (IQuery q: queries){
+					for (IPhysicalOperator p: q.getRoots()){
+						((ISource)p).subscribeSink(defaultSink, 0, 0, p.getOutputSchema());
+					}
+				}
+				
+			}
 			
 			if (startQuery()) {
 				for (IQuery q : queries) {

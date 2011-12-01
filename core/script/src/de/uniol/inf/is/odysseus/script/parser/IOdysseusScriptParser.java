@@ -4,15 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public interface IOdysseusScriptParser {
 
 	public void parseAndExecute(String completeText,
-			User caller) throws OdysseusScriptParseException;
+			User caller, ISink defaultSink) throws OdysseusScriptParseException;
 
 	public void execute(List<PreParserStatement> statements,
-			User caller) throws OdysseusScriptParseException;
+			User caller, ISink defaultSink) throws OdysseusScriptParseException;
 
 	public List<PreParserStatement> parseScript(String completeText,
 			User caller) throws OdysseusScriptParseException;

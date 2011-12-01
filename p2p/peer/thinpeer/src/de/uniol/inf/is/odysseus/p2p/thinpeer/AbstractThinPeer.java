@@ -138,7 +138,7 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer implements
 	protected abstract void initServerResponseConnection();
 
 	protected void initAdminPeerList() {
-		this.adminPeers = new HashMap<>();
+		this.adminPeers = new HashMap<String, Object>();
 	}
 
 	protected abstract void initIdGenerator();

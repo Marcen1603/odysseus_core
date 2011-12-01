@@ -65,7 +65,7 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 					toParse = toParse + newline + zeile;
 				}
 			}
-			getParser().parseAndExecute(toParse, caller);
+			getParser().parseAndExecute(toParse, caller, null);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

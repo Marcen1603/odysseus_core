@@ -199,7 +199,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 				if (parserId.equalsIgnoreCase(SCRIPT_PARSER)) {
 					try {
 						scriptParser.parseAndExecute(
-								queryString, user);
+								queryString, user, null);
 					} catch (OdysseusScriptParseException e) {
 						throw new BenchmarkException(e);
 					}
