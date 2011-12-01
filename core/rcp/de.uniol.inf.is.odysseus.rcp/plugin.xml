@@ -378,7 +378,7 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            category="/Odysseus"
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
             class="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             icon="icons/OdysseusProjectIcon.png"
@@ -386,6 +386,10 @@
             name="Odysseus Project"
             project="true">
       </wizard>
+      <category
+            id="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            name="Odysseus">
+      </category>
    </extension>
    <extension
          id="OdysseusProjectNature"
