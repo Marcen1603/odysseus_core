@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParser;
 import de.uniol.inf.is.odysseus.sparql.parser.visitor.SPARQLCreateLogicalPlanVisitor;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
-import de.uniol.inf.is.odysseus.webservicesclient.TestClient;
 
 public class SPARQL implements IQueryParser{
 
@@ -65,7 +64,6 @@ public class SPARQL implements IQueryParser{
 	@Override
 	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
 			throws QueryParseException {
-		TestClient.main(null);
 		
 //		this.user = user;
 //		this.dd = dd;
