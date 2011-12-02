@@ -40,14 +40,14 @@ public class Appliance extends StreamClientHandler{
 	private double watt; //Leistungsaufnahme des Geräts
 	private int rMin; //min Starts pro Tag
 	private int rMax; //max Starts pro Tag
-	private int startMin; // in Stunden
-	private int startMax; // in Stunden
-	private int startUpTime; // in ms
+	private int startMin; //Startuhrzeit in Stunden
+	private int startMax; //Enduhrzeit in Stunden
+	private int startUpTime; //Anlaufzeit eines Geräts in ms
 	private String name; //Identifikationsname des Geräts
 	private int runtimeMin; // in Minuten
 	private int runtimeMax; // in Minuten
 	private double iRange; //Schwankung
-	private double iLength; //Schankungslänge
+	private double iLength; //Schwankungslänge
 	private double measuredWatt = 0; //Initialer Messwert
 	private long measureTimestamp; //Zeitstempel der letzten Messung
 	private int frequency; //Sendefrequenz
