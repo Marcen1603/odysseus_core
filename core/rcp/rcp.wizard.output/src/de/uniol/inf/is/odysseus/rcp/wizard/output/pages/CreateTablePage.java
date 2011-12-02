@@ -13,21 +13,21 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
+package de.uniol.inf.is.odysseus.rcp.wizard.output.pages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable10Editor;
 import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizardPage;
+import de.uniol.inf.is.odysseus.rcp.wizard.output.OutputWizard;
 
 /**
  * 
  * @author Dennis Geesen Created at: 29.11.2011
  */
-public class NewPlayingWizardCreateTablePage extends AbstractWizardPage<NewPlayingWizard>  {
+public class CreateTablePage extends AbstractWizardPage<OutputWizard>  {
 
 	private Button createTable10Button;
 	private Button createTable20Button;
@@ -35,8 +35,9 @@ public class NewPlayingWizardCreateTablePage extends AbstractWizardPage<NewPlayi
 	private Button createTableAllButton;
 	private Button createDumpButton;
 
-	protected NewPlayingWizardCreateTablePage() {		
-		setTitle("New Playback");
+	public CreateTablePage(String title) {		
+		super(title);
+		setTitle(title);
 		setMessage("Please choose table type");
 	}
 
@@ -87,7 +88,10 @@ public class NewPlayingWizardCreateTablePage extends AbstractWizardPage<NewPlayi
 
 	@Override
 	public void performNext() {
-		// TODO Auto-generated method stub
+		if(createTable10Button.getSelection()){
+			//StreamTable10Editor view = new StreamTable10Editor();
+			
+		}
 		
 	}
 }

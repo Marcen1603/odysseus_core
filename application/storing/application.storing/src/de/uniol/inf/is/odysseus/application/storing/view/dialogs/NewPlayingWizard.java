@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
 
 import org.eclipse.jface.wizard.IWizardPage;
 
+import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizard;
+
 /**
  * 
  * @author Dennis Geesen
@@ -28,7 +30,6 @@ public class NewPlayingWizard extends AbstractWizard{
 	private IWizardPage createTablePage;
 	private IWizardPage createChartPage;
 	private IWizardPage createSinkPage;
-	private boolean finishable = false;
 	
 	public NewPlayingWizard() {
 		setWindowTitle("Create New Playback");
@@ -48,17 +49,6 @@ public class NewPlayingWizard extends AbstractWizard{
 		
 		createChartPage = new NewPlayingWizardCreateChartPage();
 		addPage(createChartPage);
-	}
-
-	@Override
-	public boolean performFinish() {	
-		
-		return true;
-	}	
-	
-	@Override
-	public boolean canFinish() {
-		return finishable;
 	}
 	
 	
@@ -95,12 +85,10 @@ public class NewPlayingWizard extends AbstractWizard{
 		this.createSinkPage = createSinkPage;
 	}
 
-	public boolean isFinishable() {
-		return finishable;
+	@Override
+	public boolean performFinish() {	
+		return false;
 	}
 
-	public void setFinishable(boolean finishable) {
-		this.finishable = finishable;
-	}
 
 }

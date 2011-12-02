@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Output Wizard
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.wizard.output;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.wizard.output.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.navigator;bundle-version="3.5.100"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.viewer.editors,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts,
+ de.uniol.inf.is.odysseus.rcp.wizard,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.usermanagement,
+ de.uniol.inf.is.odysseus.usermanagement.client

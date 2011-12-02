@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
+package de.uniol.inf.is.odysseus.rcp.wizard;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Event;
@@ -23,10 +23,14 @@ import org.eclipse.swt.widgets.Listener;
  * 
  * @author Dennis Geesen Created at: 29.11.2011
  */
-public abstract class AbstractWizardPage extends WizardPage implements Listener {
+public abstract class AbstractWizardPage<T extends AbstractWizard> extends WizardPage implements Listener {
 
-	protected AbstractWizardPage(String pageName) {
-		super(pageName);
+	protected AbstractWizardPage(){
+		super("");
+	}
+	
+	protected AbstractWizardPage(String title) {
+		super(title);
 	}
 
 	@Override
@@ -44,6 +48,11 @@ public abstract class AbstractWizardPage extends WizardPage implements Listener 
 
 	abstract public boolean canFinish();
 
-	public abstract void performFinish();
+	public abstract void performNext();
+	
+	@SuppressWarnings("unchecked")
+	public T getWizard(){
+		return (T)super.getWizard();
+	}
 
 }

@@ -25,7 +25,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
 public abstract class AbstractCategorySingleValuesChart extends AbstractChart<Double, IMetaAttribute> {
@@ -37,11 +36,7 @@ public abstract class AbstractCategorySingleValuesChart extends AbstractChart<Do
 
 	private int maxAdjustTimes = 10;
 
-	@Override
-	public void init(IPhysicalOperator observingOperator) {
-		super.init(observingOperator);
-	}
-
+	
 	protected CategoryDataset getDataset() {
 		return dcds;
 	}

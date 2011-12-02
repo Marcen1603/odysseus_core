@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
@@ -26,6 +26,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -52,7 +55,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IChartSettingChangeable, IStreamElementListener<Object> {
+
 	public AbstractChart() {
+		// we need this!
 	}
 
 	protected static ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
@@ -61,27 +66,33 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	protected final static Color DEFAULT_BACKGROUND = Color.WHITE;
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
 	protected final static String VIEW_ID_PREFIX = "de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts";
+	private static final String QUERY_FILE_NAME = "QueryFileName";
 
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
 	private IStreamConnection<Object> connection;
 	private ViewSchema<T> viewSchema;
+	private String queryFileName = null;
 
-	
 	private static int currentUniqueSecondIdentifer = 0;
-	public static synchronized String getUniqueSecondIdentifier(String prefix){
+
+	public static synchronized String getUniqueSecondIdentifier(String prefix) {
 		currentUniqueSecondIdentifer++;
-		return prefix+"_"+currentUniqueSecondIdentifer;
-	}
-	
-	
-	public void init(IPhysicalOperator observingOperator) {
-		this.connection = createConnection(observingOperator);
-		init(connection);
+		return prefix + "_" + currentUniqueSecondIdentifer;
 	}
 
-	public IStreamConnection<Object> createConnection(IPhysicalOperator operator) {
+	public void initWithOperator(IPhysicalOperator observingOperator) {
+		this.connection = createConnection(observingOperator);
+		initConnection(connection);
+	}
+		
+
+	@SuppressWarnings("unchecked")
+	private IStreamConnection<Object> createConnection(IPhysicalOperator operator) {
+		if (operator instanceof DefaultStreamConnection<?>) {
+			return (IStreamConnection<Object>) operator;
+		}
 		final Collection<ISource<?>> sources = new ArrayList<ISource<?>>();
 		if (operator instanceof ISource<?>) {
 			sources.add((ISource<?>) operator);
@@ -96,12 +107,12 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		return connection;
 	}
 
-	public void init(IStreamConnection<Object> streamConnection) {
+	private void initConnection(IStreamConnection<Object> streamConnection) {
 		SDFAttributeList initialSchema = extractSchema(streamConnection);
 		SDFMetaAttributeList metaSchema = extractMetaSchema(streamConnection);
-		
+
 		this.viewSchema = new ViewSchema<T>(initialSchema, metaSchema);
-					
+
 		if (validate()) {
 			streamConnection.addStreamElementListener(this);
 			streamConnection.connect();
@@ -109,11 +120,11 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 			init();
 		}
 
-	}	
+	}
 
-	private SDFMetaAttributeList extractMetaSchema(IStreamConnection<Object> streamConnection) {
+	private SDFMetaAttributeList extractMetaSchema(IStreamConnection<?> streamConnection) {
 		SDFMetaAttributeList attributes = new SDFMetaAttributeList();
-		for(ISource<?> source : streamConnection.getSources()){
+		for (ISource<?> source : streamConnection.getSources()) {
 			attributes = SDFMetaAttributeList.union(attributes, source.getMetaAttributeSchema());
 		}
 		return attributes;
@@ -129,7 +140,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	protected void init() {
 
-	}	
+	}
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -137,30 +148,46 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		final RelationalTuple<M> tuple = (RelationalTuple<M>) element;
-		try {			
+		try {
 			List<T> values = this.viewSchema.convertToChoosenFormat(this.viewSchema.convertToViewableFormat(tuple));
-			processElement(values, tuple.getMetadata(), port);			
+			processElement(values, tuple.getMetadata(), port);
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
 		}
 
 	}
 
-	protected abstract void processElement(List<T> tuple, M metadata, int port);	
+	protected abstract void processElement(List<T> tuple, M metadata, int port);
 
 	@Override
 	public void createPartControl(Composite parent) {
 		this.chart = createChart();
 		decorateChart(this.chart);
 		new ChartComposite(parent, SWT.NONE, this.chart, true);
-		// new ChartComposite(parent, SWT.NONE, chart, 2048, 2048, 640, 480,
-		// 2048, 2048, true, true, false, false, true, true);
 		createActions();
-		contributeToActionBars();
+		contributeToActionBars();		
+	}
 
+	
+	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {	
+		super.init(site, memento);
+		if(memento != null){
+			this.queryFileName = memento.getString(QUERY_FILE_NAME);
+			if (this.queryFileName != null && !this.queryFileName.isEmpty()) {
+				List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.queryFileName);
+				this.initWithOperator(sources.get(0));
+			}
+		}
+	}
+	
+	@Override
+	public void saveState(IMemento memento) {			
+		memento.putString(QUERY_FILE_NAME, queryFileName);		
 	}
 
 	private void contributeToActionBars() {
@@ -190,7 +217,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	protected abstract void decorateChart(JFreeChart thechart);
 
 	private SDFAttributeList extractSchema(IStreamConnection<?> streamConnection) {
-		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);		
+		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);
 		return sources[0].getOutputSchema();
 	}
 
@@ -286,26 +313,32 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		} else {
 			return findMethod(otherMethod.name(), Type.SET);
 		}
-	}	
-	
+	}
+
 	@Override
 	public List<IViewableAttribute> getViewableAttributes() {
 		return this.viewSchema.getViewableAttributes();
 	}
-	
+
 	@Override
-	public List<IViewableAttribute> getChoosenAttributes() {		
+	public List<IViewableAttribute> getChoosenAttributes() {
 		return this.viewSchema.getChoosenAttributes();
 	}
-	
+
 	@Override
 	public void setChoosenAttributes(List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.setChoosenAttributes(choosenAttributes);
-		chartSettingsChanged();		
+		chartSettingsChanged();
 	}
-	
+
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
 
-	}	
+	}
+
+	public void setFileName(String queryFile) {
+		this.queryFileName = queryFile;		
+	}
+
+	
 }

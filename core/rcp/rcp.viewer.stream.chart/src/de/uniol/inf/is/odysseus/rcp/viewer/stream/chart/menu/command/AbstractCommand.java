@@ -36,7 +36,7 @@ public abstract class AbstractCommand extends AbstractHandler {
 			String secondaryIdentifierPrefix = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
 			String secondaryIdentifier = AbstractChart.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
 			AbstractChart<?,?> view = (AbstractChart<?,?>)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
-			view.init(observingOperator);
+			view.initWithOperator(observingOperator);
 			return view;
 		} catch (Exception e) {
 			e.printStackTrace();

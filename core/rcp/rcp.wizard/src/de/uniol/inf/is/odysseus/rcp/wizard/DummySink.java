@@ -13,32 +13,32 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
+package de.uniol.inf.is.odysseus.rcp.wizard;
 
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 29.11.2011
+ * Created at: 01.12.2011
  */
-public abstract class AbstractWizard extends Wizard {
+public class DummySink<T> extends AbstractSink<T>{
 
 	@Override
-	public boolean performFinish() {
-		for(IWizardPage page :super.getPages()){
-			if(page instanceof AbstractWizardPage){
-			AbstractWizardPage p = (AbstractWizardPage)page;
-				if(p.isActivePage()){
-					p.performFinish();
-					return true;
-				}
-			}
-		}
-		return false;
+	protected void process_next(T object, int port, boolean isReadOnly) {
+		// intentionally we won't do anything
 	}
-	
-	abstract public void setFinishable(boolean value);	
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		// intentionally we won't do anything
+		
+	}
+
+	@Override
+	public DummySink<T> clone() {
+		return new DummySink<T>();
+	}
 
 }

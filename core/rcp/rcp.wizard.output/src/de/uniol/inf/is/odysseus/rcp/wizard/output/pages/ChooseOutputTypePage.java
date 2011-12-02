@@ -1,43 +1,44 @@
 /** Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 
-package de.uniol.inf.is.odysseus.application.storing.view.dialogs;
+package de.uniol.inf.is.odysseus.rcp.wizard.output.pages;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+
+import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizardPage;
+import de.uniol.inf.is.odysseus.rcp.wizard.output.OutputWizard;
 
 /**
  * 
- * @author Dennis Geesen Created at: 29.11.2011
+ * @author Dennis Geesen
+ * Created at: 01.12.2011
  */
-public class NewPlayingWizardChoosePage extends WizardPage  implements Listener {
-
+public class ChooseOutputTypePage extends AbstractWizardPage<OutputWizard> {
+	
 	private Button createChartButton;
 	private Button createTableButton;
 	private Button createSinkButton;
 
-	protected NewPlayingWizardChoosePage() {
-		super("");
-		setTitle("New Playback");
-		setMessage("Please choose an optione where to stream the data to");
+	public ChooseOutputTypePage(String title) {
+		super(title);
+		setTitle(title);
+		setMessage("Please choose the type of the output");
 	}
 
 	@Override
@@ -59,29 +60,34 @@ public class NewPlayingWizardChoosePage extends WizardPage  implements Listener 
 		createChartButton.addListener(SWT.Selection, this);
 
 		createSinkButton = new Button(composite, SWT.RADIO);
-		createSinkButton.setText("Choose another sink");
+		createSinkButton.setText("Select another sink");
 		createSinkButton.addListener(SWT.Selection, this);
 
 		setControl(composite);
 		setPageComplete(false);
-	}
 
+	}
+	
 	@Override
 	public IWizardPage getNextPage() {
 		if (createTableButton.getSelection()) {
-			return ((NewPlayingWizard) getWizard()).getCreateTablePage();
+			return getWizard().getCreateTablePage();			
 		}
 		if (createChartButton.getSelection()) {
-			return ((NewPlayingWizard) getWizard()).getCreateChartPage();
+			return getWizard().getCreateChartPage();
 		}
 		if (createSinkButton.getSelection()) {
-			return ((NewPlayingWizard) getWizard()).getCreateSinkPage();
+			return getWizard().getCreateSinkPage();
 		}
 		return super.getNextPage();
 	}
 	
-	
-	
+
+	@Override
+	public boolean canFinish() {	
+		return false;
+	}
+
 	@Override
 	public boolean canFlipToNextPage() {
 		if(createChartButton.getSelection() || createSinkButton.getSelection() || createTableButton.getSelection()){
@@ -91,8 +97,7 @@ public class NewPlayingWizardChoosePage extends WizardPage  implements Listener 
 	}
 
 	@Override
-	public void handleEvent(Event event) {
-		getWizard().getContainer().updateButtons();		
+	public void performNext() {
+		
 	}
-
 }
