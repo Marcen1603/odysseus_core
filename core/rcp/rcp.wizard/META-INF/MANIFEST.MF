@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Wizard
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.wizard
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.wizard.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: de.uniol.inf.is.odysseus.rcp.wizard
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.metadata,
+ de.uniol.inf.is.odysseus.physicaloperator,
+ org.eclipse.core.resources,
+ org.slf4j;version="1.5.6"
