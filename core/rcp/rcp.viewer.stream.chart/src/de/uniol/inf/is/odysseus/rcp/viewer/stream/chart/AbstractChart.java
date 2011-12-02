@@ -181,6 +181,9 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 			if (this.queryFileName != null && !this.queryFileName.isEmpty()) {
 				List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.queryFileName);
 				this.initWithOperator(sources.get(0));
+			}else{
+				//no queryfile -> this was a debug-chart that cannot be recreated because the according operator is missing
+				//TODO: we need a possibility to stop the initialization (dispose did not work - causes exceptions)
 			}
 		}
 	}

@@ -233,5 +233,49 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            description="Hidden View Activity"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            name="Hidden View Activity">
+      </activity>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.barchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.areachart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.curvechart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xybarchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xylinechart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.thermometerchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.scatterplotchart">
+      </activityPatternBinding>
+   </extension>
 
 </plugin>
