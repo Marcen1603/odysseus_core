@@ -49,7 +49,7 @@ public class PriceProvider extends StreamClientHandler{
 		
 
 		try {
-			Thread.sleep(100);
+			Thread.sleep(1000/SimulationClock.getInstance().getSpeed());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

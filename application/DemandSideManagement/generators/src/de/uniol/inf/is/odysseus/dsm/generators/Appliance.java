@@ -40,12 +40,12 @@ public class Appliance extends StreamClientHandler{
 	private double watt; //Leistungsaufnahme des Geräts
 	private int rMin; //min Starts pro Tag
 	private int rMax; //max Starts pro Tag
-	private int startMin; //Startuhrzeit in Stunden
-	private int startMax; //Enduhrzeit in Stunden
+	private int startMin; //früheste Startuhrzeit in Stunden an einem Tag
+	private int startMax; //späteste Startuhrzeit in Stunden an einem Tag
 	private int startUpTime; //Anlaufzeit eines Geräts in ms
 	private String name; //Identifikationsname des Geräts
-	private int runtimeMin; // in Minuten
-	private int runtimeMax; // in Minuten
+	private int runtimeMin; //minimale Laufzeit in Minuten
+	private int runtimeMax; //maximale Laufzeit  in Minuten
 	private double iRange; //Schwankung
 	private double iLength; //Schwankungslänge
 	private double measuredWatt = 0; //Initialer Messwert
@@ -62,7 +62,7 @@ public class Appliance extends StreamClientHandler{
 		this.runtimeMin = runtimeMin;
 		this.runtimeMax = runtimeMax;
 		this.iRange = iRange;
-		this.iLength = iLength * 10;
+		this.iLength = iLength;
 		this.rMin = rMin;
 		this.rMax = rMax;
 		this.startMin = startMin;
@@ -135,24 +135,24 @@ public class Appliance extends StreamClientHandler{
 		
 		if (randomRuntimes > 0){		
 			if (timestamp >= randomTimes[0][interval] && timestamp <= randomTimes[0][interval]+(randomTimes[1][interval]*60000)){
-				tuple.addLong(timestamp);
-				tuple.addString(name);
-				tuple.addDouble(getMeteredValue(timestamp));
-				///tuple.addDouble(getMeteredConsumption(timestamp));
+				tuple.addLong(timestamp); //Zeitstempel
+				tuple.addString(name); //Gerätename (ID)
+				tuple.addDouble(getMeteredValue(timestamp)); //Watt-Wert
+				///tuple.addDouble(getMeteredConsumption(timestamp)); //Wattmillisekunden-Wert
 			} else {
 				if (timestamp >= randomTimes[0][interval]+(randomTimes[1][interval]*60000) && interval < randomRuntimes - 1){
 					interval++;
 				}
-				tuple.addLong(timestamp);
-				tuple.addString(name);
-				tuple.addDouble(0);
-				///tuple.addDouble(0);
+				tuple.addLong(timestamp); //Zeitstempel
+				tuple.addString(name); //Gerätename (ID)
+				tuple.addDouble(0); //Watt-Wert
+				///tuple.addDouble(0); //Wattmillisekunden-Wert
 			}
 		} else {
-			tuple.addLong(timestamp);
-			tuple.addString(name);
-			tuple.addDouble(0);
-			///tuple.addDouble(0);
+			tuple.addLong(timestamp); //Zeitstempel
+			tuple.addString(name); //Gerätename (ID)
+			tuple.addDouble(0); //Watt-Wert
+			///tuple.addDouble(0); //Wattmillisekunden-Wert
 		}
 		
 		try {
