@@ -1,0 +1,10 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442 marco test
+
+GRANT READ ON nexmark:bid2 TO Public;
+
+#RUNQUERY
+SELECT * FROM nexmark:bid2

@@ -14,20 +14,20 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class SimpleCompareSink extends AbstractSink<Object> implements ICompareSink{
+public class SimpleCompareSink extends AbstractSink<Object> implements
+		ICompareSink {
 
 	Logger logger = LoggerFactory.getLogger(SimpleCompareSink.class);
-	
+
 	final File compareFile;
-	final private ICompareSinkListener sinkListener; 
+	final private ICompareSinkListener sinkListener;
 	List<String> compareInput = new LinkedList<String>();
-	
-	
+
 	public SimpleCompareSink(File compareFile, ICompareSinkListener sinkListener) {
 		this.compareFile = compareFile;
 		this.sinkListener = sinkListener;
 	}
-	
+
 	public SimpleCompareSink(SimpleCompareSink simpleCompareSink) {
 		this.compareFile = simpleCompareSink.compareFile;
 		this.sinkListener = simpleCompareSink.sinkListener;
@@ -35,41 +35,50 @@ public class SimpleCompareSink extends AbstractSink<Object> implements ICompareS
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		try {
-			logger.debug("Reading Compare File");
-			BufferedReader reader = new BufferedReader(new FileReader(compareFile));
-			String line = null;
-			while ( (line = reader.readLine()) != null){
-				compareInput.add(line.trim());
+		synchronized (compareInput) {
+			try {
+				logger.debug("Reading Compare File " + compareFile);
+				BufferedReader reader = new BufferedReader(new FileReader(
+						compareFile));
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					compareInput.add(line.trim());
+				}
+				logger.debug("Reading Compare File " + compareFile + " done");
+			} catch (IOException e) {
+				throw new OpenFailedException("Cannot read result file "
+						+ e.getMessage());
 			}
-			logger.debug("Reading Compare File done");
-		} catch (IOException e) {
-			throw new OpenFailedException("Cannot read result file "+e.getMessage());
 		}
-		
 	}
-	
+
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
-		System.err.println(".");
-		String line = compareInput.remove(0);
-		String input = object.toString();
-		
-		if (!line.equals(input)){
-			System.err.println(line);
-			System.err.println(input);
-			System.err.println("Difference at "+line.compareTo(input));
-			sinkListener.processingError(line, input);
-		}
-		
-		if (compareInput.isEmpty()){
-			sinkListener.processingDone();
+		if (!isDone()) {
+			synchronized (compareInput) {
+				String line = compareInput.remove(0);
+				String input = object.toString();
+
+				if (!line.equals(input)) {
+					System.err.println(line);
+					System.err.println(input);
+					System.err
+							.println("Difference at " + line.compareTo(input));
+					sinkListener.processingError(line, input);
+				}
+
+				if (compareInput.isEmpty()) {
+					this.done(port);
+					sinkListener.processingDone();
+				}
+
+			}
 		}
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		
+
 	}
 
 	@Override

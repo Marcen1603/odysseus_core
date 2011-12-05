@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.management.RuntimeErrorException;
 
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -39,6 +40,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	private boolean processingDone = false;
 	private String errorText;
 
+	BufferedWriter out = null;
 	
 	public void activate(ComponentContext context){
 		instance = this;
@@ -60,8 +62,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			user = UserManagement.getInstance().login(args[1], args[2],
 					false);
 		}
-		
-		System.out.println(args);
 
 		if (user == null){
 			throw new RuntimeException("No valid user/password");
@@ -75,7 +75,15 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		File f = new File(dir);
 		logger.debug("Looking for files in " + f);
 		File[] fileArray = f.listFiles();
-
+		
+		// Creating resultfile in dir
+		try {
+			out = new BufferedWriter(new FileWriter(dir+"/result"+System.currentTimeMillis()+".log"));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		Map<String, File> queries = new HashMap<String, File>();
 		Map<String, File> results = new HashMap<String, File>();
 
@@ -107,6 +115,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		// TODO: Logging to file
 		for (Entry<String, File> query : queries.entrySet()) {
 			boolean success = true;
+			processingDone = false;
 			try {
 				test(query.getKey(), query.getValue(),
 						results.get(query.getKey()), parser);
@@ -119,7 +128,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 				for (IQuery q : executor.getQueries()) {
 					executor.removeQuery(q.getID(), user);
 				}
-				executor.stopExecution();
 				if (errorText != null) {
 					throw new RuntimeException(errorText);
 				}
@@ -127,22 +135,55 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			} catch (Exception e) {
 				e.printStackTrace();
 				success = false;
-				logger.error("Query " + query.getKey() + " failed! "
-						+ e.getMessage());
+				String text = "Query " + query.getKey() + " failed! "
+						+ e.getMessage();
+				logger.error(text);
+				try {
+					out.write(text+newline);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			} finally {
+
 				if (success) {
 					logger.debug("Query " + query.getKey()
 							+ " successfull");
 				}
 			}
+			// Warten bei Nexmark notwendig damit Daten wieder von vorne losgehen
+			try {
+				logger.debug("Waiting 30 seconds before next run");
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		try {
+			out.flush();
+			out.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			executor.stopExecution();
+		} catch (PlanManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	private void test(String key, File query, File result,
 			IOdysseusScriptParser parser) throws OdysseusScriptParseException,
 			IOException {
-		logger.debug("Testing Query " + key + " from file " + query
-				+ " with results from file " + result);
+		String text ="Testing Query " + key + " from file " + query
+				+ " with results from file " + result+ " --> "; 
+		logger.debug(text);
+		out.write(text);
 		if (result == null) {
 			throw new IllegalArgumentException("No result set found for query "
 					+ key);
@@ -158,18 +199,18 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		}
 
 		parser.parseAndExecute(queryString.toString(), user, compareSink);
-		try {
-			compareSink.open();
-		} catch (OpenFailedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 
 	@Override
 	public synchronized void processingDone() {
 		logger.debug("Query processing done");
+		try {
+			out.write(" ok "+newline);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		processingDone = true;
 		errorText = null;
 		notifyAll();
@@ -177,7 +218,14 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 
 	@Override
 	public synchronized void processingError(String line, String input) {
-		logger.error("Query processing created error " + line + " " + input);
+		String text ="Query processing created error " + line + " " + input;
+		logger.error(text);
+		try {
+			out.write(text+newline);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		processingDone = true;
 		errorText = "Wrong Result input " + input + " was expecting " + line;
 		notifyAll();
