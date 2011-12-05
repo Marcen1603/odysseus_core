@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 class SchedulingExecutor extends Thread {
 
 	static Logger logger = LoggerFactory.getLogger(SchedulingExecutor.class);
-	
+
 	private IPartialPlanScheduling planScheduling;
 	private long timeSlicePerStrategy;
 	private SingleThreadSchedulerWithStrategy caller;
@@ -21,27 +21,27 @@ class SchedulingExecutor extends Thread {
 			long timeSlicePerStrategy,
 			SingleThreadSchedulerWithStrategy caller, int trainsize) {
 		this.planScheduling = planScheduling;
-		if (planScheduling == null){
+		if (planScheduling == null) {
 			throw new IllegalArgumentException("PlanScheduling cannot be null!");
 		}
 		this.timeSlicePerStrategy = timeSlicePerStrategy;
 		this.caller = caller;
 		this.trainsize = trainsize;
 	}
-	
+
 	protected SingleThreadSchedulerWithStrategy getCaller() {
 		return caller;
 	}
 
-	protected synchronized void pause(){
+	protected synchronized void pause() {
 		this.pause = true;
 	}
-	
-	protected synchronized void endPause(){
+
+	protected synchronized void endPause() {
 		this.pause = false;
 		notifyAll();
 	}
-	
+
 	@Override
 	public void run() {
 		logger.debug(" Started ");
@@ -50,7 +50,7 @@ class SchedulingExecutor extends Thread {
 				if (!pause && planScheduling.planCount() > 0) {
 					IScheduling plan = planScheduling.nextPlan();
 					while (plan != null && !isInterrupted() && !pause) {
-//						logger.debug("Process Plan "+plan);
+						// logger.debug("Process Plan "+plan);
 						boolean planDone = false;
 						if (trainsize > 1) {
 							planDone = plan.schedule(timeSlicePerStrategy,
@@ -64,16 +64,18 @@ class SchedulingExecutor extends Thread {
 
 						plan = planScheduling.nextPlan();
 					}
-				}else{
+				} else {
 					synchronized (this) {
-						//logger.debug("Waiting for plans to execute ");
-						wait(1000);						
+						// logger.debug("Waiting for plans to execute ");
+						wait(1000);
 					}
 				}
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
-			caller.exception(new SchedulingException(t));
+			if (!(t instanceof InterruptedException)) {
+				t.printStackTrace();
+				caller.exception(new SchedulingException(t));
+			}
 		}
 		logger.debug(" Terminated ");
 	}
