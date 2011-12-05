@@ -468,9 +468,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		validateUserRight(queryToRemove, caller, ExecutorAction.REMOVE_QUERY);
 		if (queryToRemove != null && getOptimizer() != null) {
 			try {
-				getLogger().info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + ").");
 				executionPlanLock.lock();
-				getLogger().info("Try to aquire executionPlanLock (Currently " + executionPlanLock.getHoldCount() + "). done");
 				setExecutionPlan(getOptimizer().beforeQueryRemove(this, queryToRemove, this.executionPlan));
 				stopQuery(queryToRemove.getID(), caller);
 				getLogger().info("Removing Query " + queryToRemove.getID());
@@ -579,7 +577,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 	@Override
 	public void stopQuery(int queryID, User caller) {
 
-		getLogger().info("Stop a query (ID: " + queryID + ").");
+		getLogger().info("Stopping query (ID: " + queryID + ").");
 
 		IQuery queryToStop = this.plan.getQuery(queryID);
 		validateUserRight(queryToStop, caller, ExecutorAction.STOP_QUERY);
