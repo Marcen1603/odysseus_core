@@ -713,4 +713,18 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTTime node, Object data) throws QueryParseException {		
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTFileSink node, Object data)
+			throws QueryParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTSocketSink node, Object data)
+			throws QueryParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

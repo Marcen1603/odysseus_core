@@ -674,4 +674,16 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTTime node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTFileSink node, Object data)
+			throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTSocketSink node, Object data)
+			throws QueryParseException {
+		return pvisit(node);
+	}
 }
