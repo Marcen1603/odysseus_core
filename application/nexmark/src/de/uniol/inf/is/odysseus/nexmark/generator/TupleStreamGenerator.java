@@ -70,7 +70,7 @@ public class TupleStreamGenerator {
 	 */
 	public TupleStreamGenerator(NEXMarkGeneratorConfiguration configuration,
 			SimpleCalendar calender, boolean deterministic) {
-		logger.debug("New Tuple Stream Generator created");
+		logger.debug("New Tuple Stream Generator created. Deterministic = "+deterministic);
 		this.configuration = configuration;
 		if (deterministic) {
 			rnd = new Random(103984);
@@ -96,27 +96,6 @@ public class TupleStreamGenerator {
 
 		return timeToSend;
 	}
-
-//	private void setAttribute(RelationalTuple<ITimeInterval> tuple, int pos, int value) {
-//		tuple.setAttribute(pos, value);
-//	}
-//
-//	private void setAttribute(RelationalTuple<ITimeInterval> tuple, int pos, double value) {
-//		tuple.setAttribute(pos, value);
-//	}
-//
-//	private void setAttribute(RelationalTuple<ITimeInterval> tuple, int pos, long value) {
-//		tuple.setAttribute(pos, value);
-//	}
-//
-//	private void setAttribute(RelationalTuple<ITimeInterval> tuple, int pos, String value) {
-//		tuple.setAttribute(pos, value);
-//	}
-//
-//	private void setAttribute(RelationalTuple<ITimeInterval> tuple, int pos, CharBuffer value) {
-//		String stringValue = new String(value.array(), 0, value.position());
-//		tuple.setAttribute(pos, stringValue);
-//	}
 
 	/**
 	 * Generiert ein initiales leeres person Tupel mit timestamp 1
