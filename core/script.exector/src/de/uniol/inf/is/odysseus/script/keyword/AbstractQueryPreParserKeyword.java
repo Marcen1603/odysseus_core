@@ -14,7 +14,9 @@
  */
 package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -69,7 +71,8 @@ AbstractPreParserExecutorKeyword {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
 		ISink defaultSink = variables.get("_defaultSink") != null?(ISink)variables.get("_defaultSink"):null; 
-		
+		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		roots.add(defaultSink);
 		
 		try {
 			parserID = parserID.trim();
@@ -81,11 +84,13 @@ AbstractPreParserExecutorKeyword {
 					queryText, parserID, caller, dd, transCfg);
 			
 			// Append defaultSink to all queries
+			// and make it query root
 			if (defaultSink != null){
 				for (IQuery q: queries){
 					for (IPhysicalOperator p: q.getRoots()){
 						((ISource)p).subscribeSink(defaultSink, 0, 0, p.getOutputSchema());
 					}
+					q.setRoots(roots);
 				}
 				
 			}
