@@ -44,7 +44,7 @@ public class TupleStreamGenerator {
 
 	private NEXMarkGeneratorConfiguration configuration;
 
-	private long lastPersonGenerated = -1;
+	private long lastPersonGenerated = 0;
 	private long lastAuctionGenerated = -1;
 	private long lastBidGenerated = -1;
 
