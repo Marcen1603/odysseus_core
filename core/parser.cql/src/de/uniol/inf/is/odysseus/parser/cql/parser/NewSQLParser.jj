@@ -831,7 +831,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Token t;}{/*@bgen(jjtree) FileSource */
   try {
-/*@egen*/  < K_FILE > t = < CHAR_LITERAL > [< K_AS > Identifier() [< K_WITH > < K_METADATA >]]/*@bgen(jjtree)*/
+/*@egen*/  < K_FILE > t = < CHAR_LITERAL > [< K_AS > Identifier()]/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
