@@ -80,6 +80,11 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 		return r;
 	}
 
+	@Override
+	public Object readData(String string) {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
 	 */

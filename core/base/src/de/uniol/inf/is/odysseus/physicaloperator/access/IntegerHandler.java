@@ -39,6 +39,11 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 		//System.out.println("read Int Data: "+i);
 		return i;
 	}
+	
+	@Override
+	public Object readData(String string) {
+		return Integer.parseInt(string);
+	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {

@@ -89,6 +89,11 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 	}
 
 	@Override
+	public Object readData(String string) {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
+	
+	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		byte[] binData = this.writer.write((Geometry)data);
 		byte[] dataAndLength = new byte[binData.length];

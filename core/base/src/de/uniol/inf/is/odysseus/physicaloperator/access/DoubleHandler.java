@@ -35,6 +35,11 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	final public Object readData() throws IOException {
 		return getStream().readDouble();
 	}
+	
+	@Override
+	public Object readData(String string) {
+		return Double.parseDouble(string);
+	}
 
 	@Override
 	public Object readData(ByteBuffer buffer) {

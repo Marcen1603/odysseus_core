@@ -45,6 +45,11 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	}
 
 	@Override
+	public Object readData(String string) {
+		return string;
+	}
+	
+	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		String s = (String) data;
 		//System.out.println("write String Data "+s+" "+s.length());		

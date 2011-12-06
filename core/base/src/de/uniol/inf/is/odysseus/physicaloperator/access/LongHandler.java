@@ -39,6 +39,11 @@ public class LongHandler extends AbstractAtomicDataHandler {
 		//System.out.println("read Long Data: "+l);
 		return l;
 	}
+	
+	@Override
+	public Object readData(String string) {
+		return Long.parseLong(string);
+	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {

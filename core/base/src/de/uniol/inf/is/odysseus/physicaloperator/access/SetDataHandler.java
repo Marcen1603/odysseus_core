@@ -54,6 +54,11 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 		
 		return values;
 	}
+	
+	@Override
+	public Object readData(String string) {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#readData(java.nio.ByteBuffer)

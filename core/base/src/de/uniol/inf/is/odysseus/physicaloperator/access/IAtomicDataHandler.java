@@ -22,6 +22,7 @@ import java.util.List;
 public interface IAtomicDataHandler {
 	public Object readData() throws IOException;
 	public Object readData(ByteBuffer buffer);
+	public Object readData(String string);
 	public void writeData(ByteBuffer buffer, Object data);
 	public void setStream(ObjectInputStream stream);
 	public List<String> getSupportedDataTypes();
