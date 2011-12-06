@@ -81,7 +81,9 @@ public interface IDataDictionary {
 	public boolean containsViewOrStream(String viewName, User user);
 
 	// no restric
-	public User getUserForViewOrStream(String view);
+	//public User getUserForViewOrStream(String view);
+	
+	public User getCreator(String resource);
 
 	/**
 	 * checks if the given user has higher permission as the given action.
@@ -112,7 +114,7 @@ public interface IDataDictionary {
 	
 	public boolean existsDatatype(String dtName);
 
-	void addSink(String sinkname, ILogicalOperator sink);
+	void addSink(String sinkname, ILogicalOperator sink, User caller);
 	
 	public Set<Entry<String, ILogicalOperator>> getSinks(User caller);
 

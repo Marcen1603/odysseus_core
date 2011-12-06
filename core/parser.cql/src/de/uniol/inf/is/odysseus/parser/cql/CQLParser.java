@@ -1417,7 +1417,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		ILogicalOperator sink = new FileSinkAO(filename, type,
 				writeAfterElements, printMetadata);
-		dataDictionary.addSink(sinkName, sink);
+		dataDictionary.addSink(sinkName, sink, caller);
 		return null;
 	}
 
@@ -1435,7 +1435,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				sinkName);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sink.subscribeToSource(transformMeta, 0, 0, null);
-		dataDictionary.addSink(sinkName, sink);
+		dataDictionary.addSink(sinkName, sink, caller);
 		return null;
 	}
 

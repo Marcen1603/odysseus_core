@@ -71,7 +71,7 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			User user = GlobalState.getActiveDatadictionary().getUserForViewOrStream(
+			User user = GlobalState.getActiveDatadictionary().getCreator(
 					entry.getKey());
 			if (user != null) {
 				sb.append(" created by ").append(user.getUsername());

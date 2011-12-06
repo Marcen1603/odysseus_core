@@ -108,6 +108,8 @@ public class OdysseusDefaults {
 				+ "logicalViewDefinitions.store");
 		props.setProperty("sinkDefinitionsFilename", odysseusHome
 				+ "sinkDefinitions.store");
+		props.setProperty("sinkDefinitionsUserFilename", odysseusHome +
+				"sinkDefinitionsUser.store");
 		props.setProperty("entitiesFilename", odysseusHome + "entities.store");
 		props.setProperty("sourceTypeMapFilename", odysseusHome
 				+ "sourceTypeMap.store");

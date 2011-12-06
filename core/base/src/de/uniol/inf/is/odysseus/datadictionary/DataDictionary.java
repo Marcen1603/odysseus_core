@@ -64,6 +64,7 @@ public class DataDictionary implements IDataDictionary {
 	final private IStore<String, SDFDatatype> datatypes;
 	
 	final private IStore<String, ILogicalOperator> sinkDefinitions;
+	final private IStore<String, User> sinkFromUser;
 
 	DataDictionary() {
 		try {
@@ -85,6 +86,7 @@ public class DataDictionary implements IDataDictionary {
 						OdysseusDefaults.get("datatypesFromDatatypesFilename"));
 				sinkDefinitions = new FileStore<String, ILogicalOperator>(
 						OdysseusDefaults.get("sinkDefinitionsFilename"));
+				sinkFromUser = new FileStore<String, User>(OdysseusDefaults.get("sinkDefinitionsUserFilename"));
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, User>();
@@ -94,6 +96,7 @@ public class DataDictionary implements IDataDictionary {
 				sourceTypeMap = new MemoryStore<String, String>();
 				datatypes = new MemoryStore<String, SDFDatatype>();
 				sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
+				sinkFromUser = new MemoryStore<String, User>();
 			}
 			
 			/**
@@ -421,8 +424,13 @@ public class DataDictionary implements IDataDictionary {
 
 	// no restric
 	@Override
-	public User getUserForViewOrStream(String view) {
-		return viewOrStreamFromUser.get(view);
+	public User getCreator(String resource) {
+		User ret = viewOrStreamFromUser.get(resource);
+		if (ret == null){
+			ret = sinkFromUser.get(resource);
+		}
+		return ret;
+		
 	}
 
 	// ----------------------------------------------------------------------------
@@ -465,9 +473,10 @@ public class DataDictionary implements IDataDictionary {
 	// ----------------------------------------------------------------------------
 	
 	@Override
-	public void addSink(String sinkname, ILogicalOperator sink){
+	public void addSink(String sinkname, ILogicalOperator sink, User caller){
 		if (!this.sinkDefinitions.containsKey(sinkname)){
 			this.sinkDefinitions.put(sinkname, sink);
+			this.sinkFromUser.put(sinkname, caller);
 			fireDataDictionaryChangedEvent();
 		}else{
 			throw new IllegalArgumentException("Sink name already used");
@@ -496,6 +505,10 @@ public class DataDictionary implements IDataDictionary {
 	@Override
 	public boolean existsSink(String sinkname){
 		return this.sinkDefinitions.containsKey(sinkname);
+	}
+	
+	public User getUserForSink(String sinkname){
+		return this.sinkFromUser.get(sinkname);
 	}
 	
 	// ----------------------------------------------------------------------------
@@ -571,7 +584,7 @@ public class DataDictionary implements IDataDictionary {
 		if (username != null && !username.isEmpty()) {
 			String user = getUserForEntity(objecturi);
 			if (user == null || user.isEmpty()) {
-				User userObj = getUserForViewOrStream(objecturi);
+				User userObj = getCreator(objecturi);
 				user = userObj != null ? userObj.getUsername() : null;
 			}
 			if (user != null && !user.isEmpty()) {
@@ -597,7 +610,7 @@ public class DataDictionary implements IDataDictionary {
 			return false;
 		}
 		if (!username.isEmpty()) {
-			User user = getUserForViewOrStream(viewname);
+			User user = getCreator(viewname);
 			if (user != null) {
 				if (user.getName().equals(username)) {
 					return true;

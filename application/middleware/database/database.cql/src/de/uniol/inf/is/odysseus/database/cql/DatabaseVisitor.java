@@ -114,7 +114,7 @@ public class DatabaseVisitor extends CQLParser {
 		DatabaseSinkAO sinkAO = new DatabaseSinkAO(sinkName, connectionName, tableName, drop, truncate);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sinkAO.subscribeToSource(transformMeta, 0, 0, null);
-		getDataDictionary().addSink(sinkName, sinkAO);
+		getDataDictionary().addSink(sinkName, sinkAO, getCaller());
 		return null;
 	}
 
