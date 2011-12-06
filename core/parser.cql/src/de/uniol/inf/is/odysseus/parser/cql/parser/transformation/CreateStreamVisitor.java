@@ -287,9 +287,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTFileSource node, Object data)
 			throws QueryParseException {
 		String filename = node.getFilename();
-		FileAccessAO source = new FileAccessAO(new SDFSource(name,"csv"));
+		String type = "csv";
+		if (node.jjtGetNumChildren() > 1){
+			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		}
+		FileAccessAO source = new FileAccessAO(new SDFSource(name,type));
 		source.setPath(filename);
-		source.setFileType("csv");
+		source.setFileType(type);
 		source.setOutputSchema(this.attributes);
 		ILogicalOperator op = addTimestampAO(source);
 		dd.setStream(name, op, caller);
