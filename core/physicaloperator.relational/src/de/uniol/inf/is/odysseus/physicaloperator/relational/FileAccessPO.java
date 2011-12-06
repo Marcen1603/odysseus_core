@@ -29,11 +29,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.physicaloperator.access.SetDataHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
- * @author Kai Pancratz
+ * @author Kai Pancratz, Marco Grawunder
  * 
  */
 
@@ -45,10 +51,11 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	// Definition for the location and the type of file
 	private String path;
 	private String fileType;
-	private long delay;
-
+	
 	private boolean isDone = false;
 	private BufferedReader bf;
+
+	private IAtomicDataHandler[] dataHandlers;
 
 	public FileAccessPO(String path, String fileType) {
 		this.path = path;
@@ -58,7 +65,6 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	public FileAccessPO(String path, String fileType, long delay) {
 		this.path = path;
 		this.fileType = fileType;
-		this.delay = delay;
 	}
 
 	@Override
@@ -84,42 +90,14 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		if (isOpen()) {
 			String line = "";
 			try {
-				/*
-				 * @TODO
-				 * 
-				 * Find a better solution for the delay implementation.
-				 * Do Data Handling with DataHandler
-				 * 
-				 * Thread.sleep(delay);
-				 */
+
 				if (!(line = bf.readLine()).isEmpty()) {
 					String[] splittedLine = line.split(";");
 					Object[] tuple = new Object[splittedLine.length];
 
 					for (int i = 0; i < this.getOutputSchema().size(); i++) {
-						SDFDatatype datatype = this.getOutputSchema()
-								.getAttribute(i).getDatatype();
 
-						if (datatype == SDFDatatype.STRING) {
-							tuple[i] = splittedLine[i];
-						}
-						if (datatype == SDFDatatype.INTEGER) {
-							tuple[i] = Integer.parseInt(splittedLine[i]);
-						}
-						if (datatype == SDFDatatype.LONG
-								|| datatype == SDFDatatype.START_TIMESTAMP
-								|| datatype == SDFDatatype.END_TIMESTAMP) {
-							tuple[i] = Long.parseLong(splittedLine[i]);
-						}
-						if (datatype == SDFDatatype.DOUBLE) {
-							tuple[i] = Double.parseDouble(splittedLine[i]);
-						}
-						if (datatype == SDFDatatype.FLOAT) {
-							tuple[i] = Float.parseFloat(splittedLine[i]);
-						}
-						if (datatype == SDFDatatype.BOOLEAN) {
-							tuple[i] = Boolean.parseBoolean(splittedLine[i]);
-						}
+						tuple[i] = dataHandlers[i].readData(splittedLine[i]);
 
 					}
 					transfer((T) (new RelationalTuple<IMetaAttribute>(tuple)));
@@ -135,6 +113,37 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		}
 	}
 
+	// TODO: Der folgende Code taucht mehrfach auf .. siehe auch RelationalTupleDataHandler
+	private void createDataReader() {
+		SDFAttributeList schema = this.getOutputSchema();
+		this.dataHandlers = new IAtomicDataHandler[schema.size()];
+		int i = 0;
+		for (SDFAttribute attribute : schema) {
+
+			SDFDatatype type = attribute.getDatatype();
+
+			if (type.isBase() || type.isBean()) {
+				SDFDatatype datatype = attribute.getDatatype();
+				String uri = datatype.getURI(false);
+				IAtomicDataHandler handler = DataHandlerRegistry
+						.getDataHandler(uri);
+
+				if (handler == null) {
+					throw new RuntimeException("illegal datatype " + uri);
+				}
+
+				this.dataHandlers[i++] = handler;
+			} else if (type.isTuple()) {
+				RelationalTupleDataHandler handler = new RelationalTupleDataHandler(
+						type.getSubSchema());
+				this.dataHandlers[i++] = handler;
+			} else if (type.isMultiValue()) {
+				SetDataHandler handler = new SetDataHandler(type.getSubType());
+				this.dataHandlers[i++] = handler;
+			}
+		}
+	}
+
 	@Override
 	public boolean isDone() {
 		return isDone;
@@ -142,10 +151,9 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		logger.warn("Delay is deactivated.");
-		logger.warn("Delay is set: " + delay + ".");
 
 		try {
+			createDataReader();
 			// logger.debug(fileType);
 			if (fileType.equalsIgnoreCase("csv")) {
 				File file = new File(path);

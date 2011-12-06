@@ -25,3 +25,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Export-Package: de.uniol.inf.is.odysseus.physicaloperator.relational
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/RelationalAggregateFunctionBuilder.xml
+Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
