@@ -37,7 +37,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTChannel node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTAutoReconnect node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTHost node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTCSVSource node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+  public Object visit(ASTFileSource node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSimpleTuple node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTAttributeType node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTMVCovarianceRow node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -94,7 +94,6 @@ public interface NewSQLParserVisitor
   public Object visit(ASTString node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCompareOperator node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSpatialCompareOperator node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTOSGI node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCreateBroker node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTBrokerSource node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTBrokerAsSource node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -125,4 +124,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=046c4be0cc00f06ff95079c19c4123c9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e99527247d38a4a7c04753bca49fd6d6 (do not edit this line) */

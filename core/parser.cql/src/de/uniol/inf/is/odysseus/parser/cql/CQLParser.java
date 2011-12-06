@@ -18,7 +18,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -272,6 +271,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary);
 		return v.visit(node, data);
+	}
+
+	@Override
+	public Object visit(ASTFileSource node, Object data)
+			throws QueryParseException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -681,17 +687,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTFunctionName node, Object data)
-			throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTOSGI node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTCSVSource node, Object data)
 			throws QueryParseException {
 		return null;
 	}
@@ -1398,16 +1393,30 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTFileSink node, Object data)
 			throws QueryParseException {
-		String sinkName = (String)data;
+		String sinkName = (String) data;
 		String filename = node.getFilename();
 		String type = "STRING";
-		// TODO: Add these Parameters to PQL-Syntax 
-		int writeAfterElements = 1;
-		boolean printMetadata = true;
-		if (node.jjtGetNumChildren() == 2){
-			type = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+		long writeAfterElements = 1;
+		boolean printMetadata = false;
+		if (node.jjtGetNumChildren() >= 1) {
+			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+
+			for (int i = 1; i < node.jjtGetNumChildren(); i++) {
+				if (node.jjtGetChild(i) instanceof ASTIdentifier) {
+					String val = ((ASTIdentifier) node.jjtGetChild(i))
+							.getName();
+					if ("withmeta".equalsIgnoreCase(val)) {
+						printMetadata = true;
+					}
+				} else if (node.jjtGetChild(i) instanceof ASTInteger)
+					writeAfterElements = ((ASTInteger) node.jjtGetChild(i))
+							.getValue();
+			}
+			
 		}
-		ILogicalOperator sink = new FileSinkAO(filename, type, writeAfterElements, printMetadata);
+
+		ILogicalOperator sink = new FileSinkAO(filename, type,
+				writeAfterElements, printMetadata);
 		dataDictionary.addSink(sinkName, sink);
 		return null;
 	}
@@ -1415,7 +1424,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTSocketSink node, Object data)
 			throws QueryParseException {
-		String sinkName = (String)data;
+		String sinkName = (String) data;
 		int port = ((ASTInteger) node.jjtGetChild(0)).getValue().intValue();
 		String sinkType = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		boolean loginNeeded = false;

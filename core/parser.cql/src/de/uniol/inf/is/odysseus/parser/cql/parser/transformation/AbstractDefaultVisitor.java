@@ -452,16 +452,6 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTOSGI node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTCSVSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
 	public Object visit(ASTSilab node, Object data) throws QueryParseException {
 		return null;
 	}		
@@ -723,6 +713,13 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTSocketSink node, Object data)
+			throws QueryParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTFileSource node, Object data)
 			throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;

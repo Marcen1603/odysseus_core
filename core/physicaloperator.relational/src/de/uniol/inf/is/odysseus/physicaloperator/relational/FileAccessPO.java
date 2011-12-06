@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.io.BufferedReader;
@@ -30,21 +30,23 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Kai Pancratz
- *
+ * 
  */
 
-public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> extends AbstractIterableSource<T>{
-	
+public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
+		extends AbstractIterableSource<T> {
+
 	Logger logger = LoggerFactory.getLogger(FileAccessPO.class);
-	
-	//Definition for the location and the type of file
+
+	// Definition for the location and the type of file
 	private String path;
 	private String fileType;
 	private long delay;
-	
+
 	private boolean isDone = false;
 	private BufferedReader bf;
 
@@ -52,19 +54,19 @@ public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> 
 		this.path = path;
 		this.fileType = fileType;
 	}
-	
-	public FileAccessPO(String path, String fileType,long delay) {
+
+	public FileAccessPO(String path, String fileType, long delay) {
 		this.path = path;
 		this.fileType = fileType;
 		this.delay = delay;
 	}
-	
+
 	@Override
-	public boolean hasNext() {
+	public synchronized boolean hasNext() {
 		try {
-			if(bf.ready())
+			if (bf.ready())
 				return true;
-			else{
+			else {
 				propagateDone();
 				return false;
 			}
@@ -78,56 +80,59 @@ public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void transferNext() {
+	public synchronized void transferNext() {
+		if (isOpen()) {
 			String line = "";
-			try{
+			try {
 				/*
-				 * @TODO 
+				 * @TODO
 				 * 
-				 * Find a better solution for the delay implementation. 
+				 * Find a better solution for the delay implementation.
+				 * Do Data Handling with DataHandler
 				 * 
-				
-				Thread.sleep(delay);
-				*/
-				if(!(line = bf.readLine()).isEmpty()){
-					String[] splittedLine = line.split(",");
+				 * Thread.sleep(delay);
+				 */
+				if (!(line = bf.readLine()).isEmpty()) {
+					String[] splittedLine = line.split(";");
 					Object[] tuple = new Object[splittedLine.length];
-		
-					for(int i=0;i< splittedLine.length;i++){
-						String datatype = this.getOutputSchema().getAttribute(i).getDatatype().getQualName();
 
-						if(datatype.equalsIgnoreCase("STRING")){
+					for (int i = 0; i < this.getOutputSchema().size(); i++) {
+						SDFDatatype datatype = this.getOutputSchema()
+								.getAttribute(i).getDatatype();
+
+						if (datatype == SDFDatatype.STRING) {
 							tuple[i] = splittedLine[i];
-						}	
-						if(datatype.equalsIgnoreCase("INTEGER")){
+						}
+						if (datatype == SDFDatatype.INTEGER) {
 							tuple[i] = Integer.parseInt(splittedLine[i]);
 						}
-						if(datatype.equalsIgnoreCase("LONG")){
+						if (datatype == SDFDatatype.LONG
+								|| datatype == SDFDatatype.START_TIMESTAMP
+								|| datatype == SDFDatatype.END_TIMESTAMP) {
 							tuple[i] = Long.parseLong(splittedLine[i]);
-						}	
-						if(datatype.equalsIgnoreCase("DOUBLE")){
+						}
+						if (datatype == SDFDatatype.DOUBLE) {
 							tuple[i] = Double.parseDouble(splittedLine[i]);
 						}
-						if(datatype.equalsIgnoreCase("FLOAT")){
+						if (datatype == SDFDatatype.FLOAT) {
 							tuple[i] = Float.parseFloat(splittedLine[i]);
 						}
-						if(datatype.equalsIgnoreCase("BOOLEAN")){
+						if (datatype == SDFDatatype.BOOLEAN) {
 							tuple[i] = Boolean.parseBoolean(splittedLine[i]);
-						}			
-						
+						}
+
 					}
-					transfer((T)(new RelationalTuple<IMetaAttribute>(tuple)));
-				}
-				else{
+					transfer((T) (new RelationalTuple<IMetaAttribute>(tuple)));
+				} else {
 					isDone = true;
 					propagateDone();
 				}
-			}
-			catch(Exception e){
+			} catch (Exception e) {
 				isDone = true;
-				propagateDone();	
+				propagateDone();
 				e.printStackTrace();
 			}
+		}
 	}
 
 	@Override
@@ -138,16 +143,16 @@ public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		logger.warn("Delay is deactivated.");
-		logger.warn("Delay is set: "+delay+".");
-		
+		logger.warn("Delay is set: " + delay + ".");
+
 		try {
-			//logger.debug(fileType);
-			if(fileType.equalsIgnoreCase("csv")){
-			            File file = new File(path);
-						bf = new BufferedReader(new FileReader(file));
-						//logger.debug(path);
+			// logger.debug(fileType);
+			if (fileType.equalsIgnoreCase("csv")) {
+				File file = new File(path);
+				bf = new BufferedReader(new FileReader(file));
+				// logger.debug(path);
 			}
-    	} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -156,20 +161,19 @@ public class FileAccessPO <T extends IMetaAttributeContainer<? extends IClone>> 
 	public AbstractSource<T> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-	
+
 	@Override
-	@SuppressWarnings({"rawtypes"})
+	@SuppressWarnings({ "rawtypes" })
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof FileAccessPO)) {
+		if (!(ipo instanceof FileAccessPO)) {
 			return false;
 		}
 		FileAccessPO fapo = (FileAccessPO) ipo;
-		if(this.path.equals(fapo.path) && this.fileType.equals(fapo.fileType)) {
+		if (this.path.equals(fapo.path) && this.fileType.equals(fapo.fileType)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
 
 }

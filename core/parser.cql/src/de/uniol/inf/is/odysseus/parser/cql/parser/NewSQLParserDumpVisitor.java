@@ -413,16 +413,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTOSGI node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTCSVSource node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
 	public Object visit(ASTSilab node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}	
@@ -683,6 +673,12 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTSocketSink node, Object data)
+			throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTFileSource node, Object data)
 			throws QueryParseException {
 		return pvisit(node);
 	}

@@ -36,7 +36,7 @@ public interface NewSQLParserTreeConstants
   public int JJTCHANNEL = 30;
   public int JJTAUTORECONNECT = 31;
   public int JJTHOST = 32;
-  public int JJTCSVSOURCE = 33;
+  public int JJTFILESOURCE = 33;
   public int JJTSIMPLETUPLE = 34;
   public int JJTVOID = 35;
   public int JJTATTRIBUTETYPE = 36;
@@ -94,36 +94,35 @@ public interface NewSQLParserTreeConstants
   public int JJTSTRING = 88;
   public int JJTCOMPAREOPERATOR = 89;
   public int JJTSPATIALCOMPAREOPERATOR = 90;
-  public int JJTOSGI = 91;
-  public int JJTCREATEBROKER = 92;
-  public int JJTBROKERSOURCE = 93;
-  public int JJTBROKERASSOURCE = 94;
-  public int JJTBROKERSELECTINTO = 95;
-  public int JJTBROKERSIMPLESOURCE = 96;
-  public int JJTBROKERQUEUE = 97;
-  public int JJTMETRIC = 98;
-  public int JJTCREATEUSERSTATEMENT = 99;
-  public int JJTALTERUSERSTATEMENT = 100;
-  public int JJTDROPUSERSTATEMENT = 101;
-  public int JJTCREATESLASTATEMENT = 102;
-  public int JJTSLAMETRICDEF = 103;
-  public int JJTSLASCOPEDEF = 104;
-  public int JJTSLAWINDOWDEF = 105;
-  public int JJTSLASERVICELEVELDEF = 106;
-  public int JJTSLAPENALTYDEF = 107;
-  public int JJTPERCENTILECONSTRAINT = 108;
-  public int JJTCREATETENANTSTATEMENT = 109;
-  public int JJTADDUSERTOTENANTSTATEMENT = 110;
-  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 111;
-  public int JJTDROPSTREAMSTATEMENT = 112;
-  public int JJTDROPVIEWSTATEMENT = 113;
-  public int JJTCREATEROLESTATEMENT = 114;
-  public int JJTDROPROLESTATEMENT = 115;
-  public int JJTGRANTROLESTATEMENT = 116;
-  public int JJTREVOKEROLESTATEMENT = 117;
-  public int JJTGRANTSTATEMENT = 118;
-  public int JJTIDENTIFIERLIST = 119;
-  public int JJTREVOKESTATEMENT = 120;
+  public int JJTCREATEBROKER = 91;
+  public int JJTBROKERSOURCE = 92;
+  public int JJTBROKERASSOURCE = 93;
+  public int JJTBROKERSELECTINTO = 94;
+  public int JJTBROKERSIMPLESOURCE = 95;
+  public int JJTBROKERQUEUE = 96;
+  public int JJTMETRIC = 97;
+  public int JJTCREATEUSERSTATEMENT = 98;
+  public int JJTALTERUSERSTATEMENT = 99;
+  public int JJTDROPUSERSTATEMENT = 100;
+  public int JJTCREATESLASTATEMENT = 101;
+  public int JJTSLAMETRICDEF = 102;
+  public int JJTSLASCOPEDEF = 103;
+  public int JJTSLAWINDOWDEF = 104;
+  public int JJTSLASERVICELEVELDEF = 105;
+  public int JJTSLAPENALTYDEF = 106;
+  public int JJTPERCENTILECONSTRAINT = 107;
+  public int JJTCREATETENANTSTATEMENT = 108;
+  public int JJTADDUSERTOTENANTSTATEMENT = 109;
+  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 110;
+  public int JJTDROPSTREAMSTATEMENT = 111;
+  public int JJTDROPVIEWSTATEMENT = 112;
+  public int JJTCREATEROLESTATEMENT = 113;
+  public int JJTDROPROLESTATEMENT = 114;
+  public int JJTGRANTROLESTATEMENT = 115;
+  public int JJTREVOKEROLESTATEMENT = 116;
+  public int JJTGRANTSTATEMENT = 117;
+  public int JJTIDENTIFIERLIST = 118;
+  public int JJTREVOKESTATEMENT = 119;
 
 
   public String[] jjtNodeName = {
@@ -160,7 +159,7 @@ public interface NewSQLParserTreeConstants
     "Channel",
     "AutoReconnect",
     "Host",
-    "CSVSource",
+    "FileSource",
     "SimpleTuple",
     "void",
     "AttributeType",
@@ -218,7 +217,6 @@ public interface NewSQLParserTreeConstants
     "String",
     "CompareOperator",
     "SpatialCompareOperator",
-    "OSGI",
     "CreateBroker",
     "BrokerSource",
     "BrokerAsSource",
@@ -250,4 +248,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=17b24c65294fc1008d432c74db6dab44 (do not edit this line) */
+/* JavaCC - OriginalChecksum=6f676792fa85d14b465bacdb318d3f1f (do not edit this line) */

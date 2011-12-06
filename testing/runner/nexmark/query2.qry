@@ -7,4 +7,4 @@ ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder IN
 GRANT READ ON nexmark:bid2 TO Public;
 
 #RUNQUERY
-SELECT * FROM nexmark:bid2
+SELECT auction, bidder, price FROM nexmark:bid2

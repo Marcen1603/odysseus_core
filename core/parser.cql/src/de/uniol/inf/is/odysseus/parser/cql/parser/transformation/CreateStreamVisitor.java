@@ -25,6 +25,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAutoReconnect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFileSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
@@ -280,6 +282,20 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		dd.setStream(name, op, caller);
 		return data;
 	}
+	
+	@Override
+	public Object visit(ASTFileSource node, Object data)
+			throws QueryParseException {
+		String filename = node.getFilename();
+		FileAccessAO source = new FileAccessAO(new SDFSource(name,"csv"));
+		source.setPath(filename);
+		source.setFileType("csv");
+		source.setOutputSchema(this.attributes);
+		ILogicalOperator op = addTimestampAO(source);
+		dd.setStream(name, op, caller);
+		return data;
+	}
+
 
 	private boolean hasAutoReconnect(ASTChannel node) {
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -346,5 +362,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
 		}
 	}
+	
 
 }

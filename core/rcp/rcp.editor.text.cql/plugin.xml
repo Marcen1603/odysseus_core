@@ -51,9 +51,6 @@
                name="DATE">
          </keyword>
          <keyword
-               name="CSV">
-         </keyword>
-         <keyword
                name="DAY">
          </keyword>
          <keyword
@@ -172,9 +169,6 @@
          </keyword>
          <keyword
                name="OR">
-         </keyword>
-         <keyword
-               name="OSGI">
          </keyword>
          <keyword
                name="OUTPUT">
@@ -326,6 +320,10 @@
          <keyword
                name="SINK">
          </keyword>
+         <keyword  name="METADATA">
+         </keyword>
+         <keyword  name="FILE">
+         </keyword>         
       </group>
    </extension>
 
