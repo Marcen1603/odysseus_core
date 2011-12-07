@@ -2,9 +2,7 @@
 #PARSER CQL
 #TRANSCFG Standard
 #QUERY
-ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440 marco test
-
-GRANT READ ON nexmark:person2 TO Public;
+ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FILE 'nexmark/daten/nexmark_person2.csv' AS string
 
 #RUNQUERY
 SELECT * FROM nexmark:person2
