@@ -19,7 +19,7 @@ public class ElementSampling<R> implements IUserDefinedFunction<R, R> {
 	@Override
 	public R process(R in, int port) {
 		objectsRead++;
-		if (objectsRead / everyNthObject  == 0){
+		if (objectsRead % everyNthObject  == 0){
 			return in;
 		}
 		return null;
