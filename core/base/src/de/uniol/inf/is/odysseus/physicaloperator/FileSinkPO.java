@@ -100,9 +100,11 @@ public class FileSinkPO extends AbstractSink<Object> {
 	}
 
 	void writeToFile(String elem) throws IOException {
-		synchronized (out) {
-			out.write(elem);
-			out.flush();
+		if (!isDone() && isOpen()) {
+			synchronized (out) {
+				out.write(elem);
+				out.flush();
+			}
 		}
 	}
 
