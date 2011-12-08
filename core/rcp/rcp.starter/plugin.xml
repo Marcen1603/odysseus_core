@@ -13,18 +13,6 @@
       </application>
    </extension>
    <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Odysseus Studio">
-         <property
-               name="appName"
-               value="Odysseus Studio">
-         </property>
-      </product>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
@@ -243,6 +231,26 @@
             </command>
          </menu>
       </menuContribution>
+   </extension>
+   <extension
+         id="OdysseusStudio"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.uniol.inf.is.odysseus.rcp.starter.application"
+            name="Odysseus Studio">
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
+         </property>
+         <property
+               name="appName"
+               value="Odysseus Studio">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
    </extension>
 
 

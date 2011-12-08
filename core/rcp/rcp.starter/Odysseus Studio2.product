@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Odysseus Studio" uid="de.uniol.inf.is.odysseus.studio" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Odysseus Studio2" uid="de.uniol.inf.is.odysseus.studio" id="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio" application="de.uniol.inf.is.odysseus.rcp.starter.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
 
    <configIni use="default">
@@ -149,6 +149,7 @@
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0"/>
+      <feature id="org.eclipse.rcp" version="3.7.1.r37x_v20110729-9DB5FmNFnFLSFCtLxnRfMqt15A4A"/>
    </features>
 
    <configurations>
