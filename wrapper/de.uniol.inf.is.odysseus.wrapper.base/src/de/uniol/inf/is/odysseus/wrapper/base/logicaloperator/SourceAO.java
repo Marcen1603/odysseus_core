@@ -127,7 +127,8 @@ public class SourceAO extends AbstractLogicalOperator implements
 		for (final String item : optionsList) {
 			final String[] option = item.split(":");
 			if (option.length == 2) {
-				this.options.put(option[0], option[1]);
+				this.options.put(option[0],
+						item.substring(option[0].length() + 1));
 			} else {
 				this.options.put(option[0], "");
 			}
