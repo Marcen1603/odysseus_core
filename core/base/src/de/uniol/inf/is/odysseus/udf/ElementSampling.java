@@ -10,6 +10,10 @@ public class ElementSampling<R> implements IUserDefinedFunction<R, R> {
 	int everyNthObject;
 	int objectsRead;
 	
+	/*
+	 * 
+	 * initString: Send each nth Element
+	 */
 	@Override
 	public void init(String initString) {
 		everyNthObject = Integer.parseInt(initString);
