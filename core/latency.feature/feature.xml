@@ -17,10 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <requires>
-      <import feature="de.uniol.inf.is.odysseus.interval.feature" version="1.0.0"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.latency"
          download-size="0"

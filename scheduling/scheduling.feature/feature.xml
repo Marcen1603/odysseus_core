@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"
          download-size="0"

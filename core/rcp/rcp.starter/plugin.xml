@@ -13,14 +13,14 @@
       </application>
    </extension>
    <extension
-         id="product1"
+         id="product"
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Streamcars Product">
+            name="Odysseus Studio">
          <property
                name="appName"
-               value="Streamcars Product">
+               value="Odysseus Studio">
          </property>
       </product>
    </extension>
@@ -244,5 +244,7 @@
          </menu>
       </menuContribution>
    </extension>
+
+
 
 </plugin>

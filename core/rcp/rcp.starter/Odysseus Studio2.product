@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Odysseus Studio" uid="de.uniol.inf.is.odysseus.studio" version="1.0.0" useFeatures="true" includeLaunchers="true">
+
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-console -debug</programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <splash
+      location="de.uniol.inf.is.odysseus.rcp.starter"
+      startupProgressRect="5,275,445,15" />
+   <launcher name="studio">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+      <plugin id="Commons.Math"/>
+      <plugin id="com.ibm.icu"/>
+      <plugin id="com.springsource.org.apache.log4j"/>
+      <plugin id="com.springsource.slf4j.api"/>
+      <plugin id="com.springsource.slf4j.bridge"/>
+      <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
+      <plugin id="de.uniol.inf.is.jfreechart"/>
+      <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus.args"/>
+      <plugin id="de.uniol.inf.is.odysseus.interval.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>
+      <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <plugin id="de.uniol.inf.is.odysseus.julproperties" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.latency"/>
+      <plugin id="de.uniol.inf.is.odysseus.latency.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
+      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
+      <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.persistentqueries"/>
+      <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor.parameters"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor.text"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor.text.cql"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.editor.text.pql"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.starter"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.viewer"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"/>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational.base"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
+      <plugin id="de.uniol.inf.is.odysseus.relational_interval.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.ruleengine"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+      <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
+      <plugin id="de.uniol.inf.is.odysseus.script.exector"/>
+      <plugin id="de.uniol.inf.is.odysseus.script.parser"/>
+      <plugin id="de.uniol.inf.is.odysseus.stdcfg"/>
+      <plugin id="de.uniol.inf.is.odysseus.transform"/>
+      <plugin id="javax.transaction" fragment="true"/>
+      <plugin id="log4jproperties" fragment="true"/>
+      <plugin id="org.apache.commons.collections"/>
+      <plugin id="org.eclipse.compare.core"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.databinding.observable"/>
+      <plugin id="org.eclipse.core.databinding.property"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.filebuffers"/>
+      <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.core.variables"/>
+      <plugin id="org.eclipse.draw2d"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.ds"/>
+      <plugin id="org.eclipse.equinox.p2.core"/>
+      <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.metadata"/>
+      <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
+      <plugin id="org.eclipse.equinox.p2.repository"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.equinox.security"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.gef"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.jface.text"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.persistence.jpa.equinox.weaving" fragment="true"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.text"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.console"/>
+      <plugin id="org.eclipse.ui.editors"/>
+      <plugin id="org.eclipse.ui.ide"/>
+      <plugin id="org.eclipse.ui.navigator"/>
+      <plugin id="org.eclipse.ui.views"/>
+      <plugin id="org.eclipse.ui.views.log"/>
+      <plugin id="org.eclipse.ui.win32" fragment="true"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.simpleframework.xml"/>
+   </plugins>
+
+   <features>
+      <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0"/>
+      <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+   </configurations>
+
+</product>
