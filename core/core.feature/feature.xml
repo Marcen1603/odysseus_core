@@ -18,32 +18,22 @@
    </license>
 
    <requires>
-      <import plugin="org.apache.log4j"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="de.uniol.inf.is.odysseus" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.latency"/>
       <import plugin="com.springsource.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
-      <import plugin="ch.qos.logback.classic"/>
-      <import plugin="ch.qos.logback.core"/>
       <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
-      <import plugin="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
-      <import feature="org.eclipse.rcp" version="3.7.1.r37x_v20110729-9DB5FmNFnFLSFCtLxnRfMqt15A4A"/>
+      <import plugin="javax.mail"/>
+      <import plugin="org.eclipse.net4j.jms.api"/>
+      <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
+      <import plugin="javax.servlet"/>
    </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.interval.transform"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -80,20 +70,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.pql"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.persistentqueries"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -156,13 +132,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.stdcfg"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.transform"
          download-size="0"
          install-size="0"
@@ -217,35 +186,41 @@
          fragment="true"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.opcount"
+         id="com.springsource.org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.apache.log4j"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator"
+         id="ch.qos.logback.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="com.springsource.slf4j.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.qos.logback.classic"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator.datasrc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator.util"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.querycount"
+         id="ch.qos.logback.core"
          download-size="0"
          install-size="0"
          version="0.0.0"

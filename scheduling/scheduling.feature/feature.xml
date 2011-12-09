@@ -43,20 +43,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.scheduler.slascheduler"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"
          download-size="0"
          install-size="0"
