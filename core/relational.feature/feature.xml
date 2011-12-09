@@ -18,7 +18,22 @@
    </license>
 
    <requires>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.datasrc"/>
+      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="de.uniol.inf.is.odysseus.parser.pql"/>
+      <import plugin="de.uniol.inf.is.odysseus" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.rewrite"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0"/>
+      <import plugin="de.uniol.inf.is.odysseus.priority"/>
+      <import plugin="de.uniol.inf.is.odysseus.database"/>
+      <import plugin="de.uniol.inf.is.odysseus.storing"/>
    </requires>
 
    <plugin
@@ -79,6 +94,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.relational_interval.transform"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.parser.cql"
          download-size="0"
          install-size="0"
          version="0.0.0"

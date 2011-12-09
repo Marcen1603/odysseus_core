@@ -1,3 +1,4 @@
+package de.uniol.inf.is.odysseus.relational_interval;
 /** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.stdcfg;
+
 
 import java.util.ArrayList;
 import java.util.List;

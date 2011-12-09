@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.stdcfg;
+package de.uniol.inf.is.odysseus.benchmarker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +27,18 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 
-public class StandardLatencyQueryBuildConfiguration implements
+public class BenchmarkQueryBuildConfiguration implements
 		IQueryBuildConfiguration {
 
 	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
 	
 	@SuppressWarnings("unchecked")
-	public StandardLatencyQueryBuildConfiguration() {
-		settings.add(new ParameterTransformationConfiguration(
-				new TransformationConfiguration(
-						"relational", 
-						ITimeInterval.class, ILatency.class)));
+	public BenchmarkQueryBuildConfiguration() {
+		TransformationConfiguration trafoconfig = new TransformationConfiguration(
+				"relational", 
+				ITimeInterval.class, ILatency.class);
+		trafoconfig.setOption("NO_METADATA", true);
+		settings.add(new ParameterTransformationConfiguration(trafoconfig));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
@@ -50,7 +51,7 @@ public class StandardLatencyQueryBuildConfiguration implements
 	
 	@Override
 	public String getName() {
-		return "Standard Latency";
+		return "Benchmark";
 	}
 
 }

@@ -237,14 +237,14 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Odysseus Studio">
+            name="Odysseus Studio2">
          <property
                name="startupProgressRect"
                value="5,275,445,15">
          </property>
          <property
                name="appName"
-               value="Odysseus Studio">
+               value="Odysseus Studio2">
          </property>
          <property
                name="preferenceCustomization"
