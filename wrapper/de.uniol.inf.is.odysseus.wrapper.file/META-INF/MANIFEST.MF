@@ -9,5 +9,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.6.1"
+ org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/FileSinkAdapter.xml
