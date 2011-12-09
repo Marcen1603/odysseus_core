@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckHaving;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAccessAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateAggregationVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateJoinAOVisitor;
-import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePriorityAOVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateTypeVisitor;
@@ -255,11 +254,28 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			top = new CreateProjectionVisitor(caller, dataDictionary)
 					.createProjection(statement, top, attributeResolver);
-			CreatePriorityAOVisitor prioVisitor = new CreatePriorityAOVisitor();
-			prioVisitor.setTopOperator(top);
-			prioVisitor.setAttributeResolver(attributeResolver);
-			prioVisitor.visit(statement, null);
-			top = prioVisitor.getTopOperator();
+			
+			// TODO: Correct Reflection
+//			Class<?> prioVisitor = Class
+//					.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
+//			Object pv = prioVisitor.newInstance();
+//			Method m = prioVisitor.getDeclaredMethod("setTopOperator",
+//					ILogicalOperator.class);
+//			m.invoke(pv, top);
+//			
+//			m = prioVisitor.getDeclaredMethod("setAttributeResolver",
+//					AttributeResolver.class);
+//			m.invoke(pv, attributeResolver);
+//			
+//			m = prioVisitor.getDeclaredMethod("visit",
+//					AttributeResolver.class);
+//			m.invoke(pv, caller);
+//			
+//			prioVisitor.setTopOperator(top);
+//			prioVisitor.setAttributeResolver(attributeResolver);
+//			prioVisitor.visit(statement, null);
+//			top = prioVisitor.getTopOperator();
+			
 			return top;
 		} catch (Exception e) {
 			throw new QueryParseException(e);
@@ -704,7 +720,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
 					User.class);
 			m.invoke(bsv, caller);
