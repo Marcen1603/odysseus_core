@@ -24,58 +24,8 @@
          id="org.eclipse.platform"
          version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.gef"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.draw2d"
-         version="0.0.0"/>
-
    <requires>
-      <import plugin="org.eclipse.swt" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus"/>
-      <import plugin="org.eclipse.core.commands"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="org.eclipse.equinox.preferences"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.ui.navigator"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.slf4j.api"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import plugin="org.eclipse.gef"/>
-      <import plugin="de.uniol.inf.is.odysseus.script.parser"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="de.uniol.inf.is.odysseus.parser.cql"/>
-      <import plugin="de.uniol.inf.is.odysseus.parser.pql"/>
-      <import plugin="org.eclipse.ui.console" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views.log" version="1.0.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions"/>
-      <import plugin="de.uniol.inf.is.jfreechart" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
-      <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.navigator" version="3.5.100" match="greaterOrEqual"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0"/>
-      <import feature="de.uniol.inf.is.odysseus.relational" version="1.0.0"/>
-      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254"/>
-      <import feature="org.eclipse.rcp" version="3.7.1.r37x_v20110729-9DB5FmNFnFLSFCtLxnRfMqt15A4A"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui" version="3.3.0" match="compatible"/>
-      <import plugin="com.ibm.icu"/>
+      <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254" match="greaterOrEqual"/>
    </requires>
 
    <plugin

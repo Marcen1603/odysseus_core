@@ -15,3 +15,4 @@ Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml
+
