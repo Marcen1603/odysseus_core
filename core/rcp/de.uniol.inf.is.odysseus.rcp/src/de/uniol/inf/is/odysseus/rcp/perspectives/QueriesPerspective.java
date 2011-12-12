@@ -25,28 +25,28 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 public class QueriesPerspective implements IPerspectiveFactory {
 
 	@Override
-	public void createInitialLayout(IPageLayout layout) {		
+	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 
 		// Top left: Project Explorer view and Bookmarks view placeholder
 		IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
 		topLeft.addView(ProjectExplorer.VIEW_ID);
-			
+
 		layout.addView(OdysseusRCPPlugIn.SINK_VIEW_ID, IPageLayout.BOTTOM, 0.5f, "topLeft");
 		layout.addView(OdysseusRCPPlugIn.SOURCES_VIEW_ID, IPageLayout.BOTTOM, 0.5f, OdysseusRCPPlugIn.SINK_VIEW_ID);
-		
+
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.75f, editorArea);
 		right.addView(IPageLayout.ID_OUTLINE);
 		right.addView(OdysseusRCPPlugIn.TENANT_VIEW_ID);
 		// Bottom right: Task List view
-		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.70f, editorArea);		
+		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(OdysseusRCPPlugIn.QUERY_VIEW_ID);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-		
-		
+		bottom.addView("org.eclipse.pde.runtime.LogView");
+
 		// Wizards
 		layout.addNewWizardShortcut(OdysseusRCPPlugIn.WIZARD_PROJECT_ID);
 
 	}
-	
+
 }
