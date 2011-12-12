@@ -13,5 +13,23 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.database.rcp.views.DatabaseConnectionsView"
+               minimized="false"
+               moveable="true"
+               ratio="0.5"
+               relationship="bottom"
+               relative="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
