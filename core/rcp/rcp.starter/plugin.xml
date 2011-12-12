@@ -237,10 +237,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.rcp.starter.application"
-            name="Odysseus Studio2">
+            name="Odysseus Studio 2">
          <property
                name="appName"
-               value="Odysseus Studio2">
+               value="Odysseus Studio 2">
          </property>
          <property
                name="preferenceCustomization"
@@ -248,24 +248,15 @@
          </property>
          <property
                name="aboutText"
-               value="/** Copyright [2011] [The Odysseus Team]
- *
- * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */">
+               value="This is Odysseus Studio&#x0D;&#x0A;&#x0D;&#x0A;Help can be found here:&#x0D;&#x0A;&#x0D;&#x0A;http://134.106.56.70/wiki/index.php/Hauptseite">
          </property>
          <property
                name="windowImages"
                value="icons/16_16.gif,icons/32_32.gif,icons/48_48.gif,icons/64_64.gif,icons/128_128.gif">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/128_128.gif">
          </property>
       </product>
    </extension>
