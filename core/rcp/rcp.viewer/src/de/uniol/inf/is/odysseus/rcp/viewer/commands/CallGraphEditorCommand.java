@@ -20,8 +20,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -31,6 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
@@ -45,15 +44,11 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 				IWorkbenchPage page = window.getActivePage();
 
-				ISelection selection = window.getSelectionService().getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection treeSelection = (IStructuredSelection) selection;
-					Object obj = treeSelection.getFirstElement();
-
+				for (Object selection : SelectionProvider.getSelection(event)) {
 					// Auswahl holen
 					List<IPhysicalOperator> graph = null;
-					if (obj instanceof IQuery) {
-						IQuery query = (IQuery) obj;
+					if (selection instanceof IQuery) {
+						IQuery query = (IQuery) selection;
 						graph = query.getRoots();
 
 						ISink<?> sink = (ISink<?>) graph.get(0);
@@ -69,6 +64,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 					}
 				}
 			}
+
 		});
 		return null;
 

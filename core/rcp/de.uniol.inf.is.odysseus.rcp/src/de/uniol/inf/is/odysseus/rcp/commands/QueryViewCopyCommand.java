@@ -1,18 +1,20 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.commands;
+
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -32,15 +34,23 @@ public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Object obj = SelectionProvider.getSelection(event);
-		if (obj instanceof IQuery) {
-			IQuery query = ((IQuery) obj);
-			
+		List<Object> selections = SelectionProvider.getSelection(event);
+		String text = "";
+		String sep = "";
+		for (Object selection : selections) {
+			if (selection instanceof IQuery) {
+				IQuery query = ((IQuery) obj);
+				text = text + sep + query.getQueryText();
+				sep = System.getProperty("line.separator");
+				
+			}
+		}
+		if (!text.isEmpty()) {
 			Clipboard cb = new Clipboard(HandlerUtil.getActiveWorkbenchWindow(event).getShell().getDisplay());
 			TextTransfer textTransfer = TextTransfer.getInstance();
-			cb.setContents(new Object[] { query.getQueryText() }, new Transfer[] { textTransfer });
+			cb.setContents(new Object[] { text}, new Transfer[] { textTransfer });
 			StatusBarManager.getInstance().setMessage("Copy successful");
 		}
-		
 		return null;
 	}
 

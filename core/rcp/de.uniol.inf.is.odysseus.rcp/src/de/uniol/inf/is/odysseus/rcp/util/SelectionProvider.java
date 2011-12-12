@@ -14,6 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.rcp.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,14 +27,23 @@ public final class SelectionProvider {
 
 	private SelectionProvider() {}
 	
-	public static Object getSelection(ExecutionEvent event) {
+	public static <T> List<T> getSelection(ExecutionEvent event) {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
-		if( selection == null ) return null;
+		if( selection == null ){ 
+			return new ArrayList<T>();
+		}
+		
 		
 		if( selection instanceof IStructuredSelection ) {
-			
+			List<T> items = new ArrayList<T>();
 			IStructuredSelection structSelection = (IStructuredSelection)selection;
-			return structSelection.getFirstElement();
+			Iterator<?> iter = structSelection.iterator();
+			while(iter.hasNext()){
+				@SuppressWarnings("unchecked")				
+				T item = (T)iter.next();
+				items.add(item);
+			}
+			return items;
 			
 		}
 		return null;

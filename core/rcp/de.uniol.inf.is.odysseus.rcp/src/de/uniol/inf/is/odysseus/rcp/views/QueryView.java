@@ -74,26 +74,21 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		tableViewer = new TableViewer(tableComposite, SWT.SINGLE
-				| SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 
 		/************* ID ****************/
-		TableViewerColumn idColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		idColumn.getColumn().setText("ID");
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IQuery) cell.getElement())
-						.getID()));
+				cell.setText(String.valueOf(((IQuery) cell.getElement()).getID()));
 			}
 		});
-		tableColumnLayout.setColumnData(idColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		ColumnViewerSorter sorter = new ColumnViewerSorter(tableViewer,
-				idColumn) {
+		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		ColumnViewerSorter sorter = new ColumnViewerSorter(tableViewer, idColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				IQuery id1 = (IQuery) e1;
@@ -108,8 +103,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		};
 
 		/************* Status ****************/
-		TableViewerColumn statusColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn statusColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		statusColumn.getColumn().setText("Status");
 		// statusColumn.getColumn().setWidth(100);
 		statusColumn.setLabelProvider(new CellLabelProvider() {
@@ -119,8 +113,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(statusColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(tableViewer, statusColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -144,18 +137,15 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		};
 
 		/************* Priority ****************/
-		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		priorityColumn.getColumn().setText("Priority");
 		priorityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IQuery) cell.getElement())
-						.getPriority()));
+				cell.setText(String.valueOf(((IQuery) cell.getElement()).getPriority()));
 			}
 		});
-		tableColumnLayout.setColumnData(priorityColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(priorityColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(tableViewer, priorityColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -171,8 +161,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		};
 
 		/************* Parser ID ****************/
-		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		parserIdColumn.getColumn().setText("Parser");
 		// parserIdColumn.getColumn().setWidth(100);
 		parserIdColumn.setLabelProvider(new CellLabelProvider() {
@@ -181,8 +170,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				cell.setText(((IQuery) cell.getElement()).getParserId());
 			}
 		});
-		tableColumnLayout.setColumnData(parserIdColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(parserIdColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(tableViewer, parserIdColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -193,8 +181,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		};
 
 		/************* User ****************/
-		TableViewerColumn userColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		userColumn.getColumn().setText("User");
 		// userColumn.getColumn().setWidth(400);
 		userColumn.setLabelProvider(new CellLabelProvider() {
@@ -207,21 +194,18 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 					cell.setText("[No user]");
 			}
 		});
-		tableColumnLayout.setColumnData(userColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		new ColumnViewerSorter(tableViewer, userColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				IQuery id1 = (IQuery) e1;
 				IQuery id2 = (IQuery) e2;
-				return id1.getUser().getUsername()
-						.compareToIgnoreCase(id2.getUser().getUsername());
+				return id1.getUser().getUsername().compareToIgnoreCase(id2.getUser().getUsername());
 			}
 		};
 
 		/************* Query Text ****************/
-		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		queryTextColumn.getColumn().setText("Query text");
 		// queryTextColumn.getColumn().setWidth(400);
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
@@ -238,46 +222,39 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(queryTextColumn.getColumn(),
-				new ColumnWeightData(50, 200, true));
+		tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(50, 200, true));
 		new ColumnViewerSorter(tableViewer, queryTextColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				IQuery id1 = (IQuery) e1;
 				IQuery id2 = (IQuery) e2;
-				return id1.getQueryText().compareToIgnoreCase(
-						id2.getQueryText());
+				return id1.getQueryText().compareToIgnoreCase(id2.getQueryText());
 			}
 		};
 
 		/************* Monitor ****************/
-		TableViewerColumn monitorColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn monitorColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		monitorColumn.getColumn().setText("Monitors");
 		// monitorColumn.getColumn().setWidth(100);
 		monitorColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				String text = ((IQuery) cell.getElement()).getPlanMonitors()
-						+ "";
+				String text = ((IQuery) cell.getElement()).getPlanMonitors() + "";
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(monitorColumn.getColumn(),
-				new ColumnWeightData(40, 50, true));
+		tableColumnLayout.setColumnData(monitorColumn.getColumn(), new ColumnWeightData(40, 50, true));
 		new ColumnViewerSorter(tableViewer, monitorColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				IQuery id1 = (IQuery) e1;
 				IQuery id2 = (IQuery) e2;
-				return (id1.getPlanMonitors() + "").compareToIgnoreCase(id2
-						.getPlanMonitors() + "");
+				return (id1.getPlanMonitors() + "").compareToIgnoreCase(id2.getPlanMonitors() + "");
 			}
 		};
 
 		/************* Penalty ****************/
-		TableViewerColumn penaltyColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
+		TableViewerColumn penaltyColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		penaltyColumn.getColumn().setText("Penalty");
 		// monitorColumn.getColumn().setWidth(100);
 		penaltyColumn.setLabelProvider(new CellLabelProvider() {
@@ -287,8 +264,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				cell.setText(text);
 			}
 		});
-		tableColumnLayout.setColumnData(penaltyColumn.getColumn(),
-				new ColumnWeightData(40, 50, true));
+		tableColumnLayout.setColumnData(penaltyColumn.getColumn(), new ColumnWeightData(40, 50, true));
 		new ColumnViewerSorter(tableViewer, penaltyColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -305,14 +281,10 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				IHandlerService handlerService = (IHandlerService) getSite()
-						.getService(IHandlerService.class);
+				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 
 				try {
-					handlerService
-							.executeCommand(
-									"de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand",
-									null);
+					handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -323,8 +295,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager
-				.createContextMenu(tableViewer.getTable());
+		Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
 		// Set the MenuManager
 		tableViewer.getTable().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, tableViewer);
@@ -392,11 +363,9 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
-				.getEventType())) {
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 			removeQuery((IQuery) eventArgs.getValue());
-		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
-				.getEventType())) {
+		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			addQuery((IQuery) eventArgs.getValue());
 		}
 		refreshTable();
@@ -452,29 +421,27 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		public ColumnViewerSorter(ColumnViewer viewer, TableViewerColumn column) {
 			this.column = column;
 			this.viewer = viewer;
-			this.column.getColumn().addSelectionListener(
-					new SelectionAdapter() {
+			this.column.getColumn().addSelectionListener(new SelectionAdapter() {
 
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							if (ColumnViewerSorter.this.viewer.getComparator() != null) {
-								if (ColumnViewerSorter.this.viewer
-										.getComparator() == ColumnViewerSorter.this) {
-									int tdirection = ColumnViewerSorter.this.direction;
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (ColumnViewerSorter.this.viewer.getComparator() != null) {
+						if (ColumnViewerSorter.this.viewer.getComparator() == ColumnViewerSorter.this) {
+							int tdirection = ColumnViewerSorter.this.direction;
 
-									if (tdirection == ASC) {
-										setSorter(ColumnViewerSorter.this, DESC);
-									} else if (tdirection == DESC) {
-										setSorter(ColumnViewerSorter.this, NONE);
-									}
-								} else {
-									setSorter(ColumnViewerSorter.this, ASC);
-								}
-							} else {
-								setSorter(ColumnViewerSorter.this, ASC);
+							if (tdirection == ASC) {
+								setSorter(ColumnViewerSorter.this, DESC);
+							} else if (tdirection == DESC) {
+								setSorter(ColumnViewerSorter.this, NONE);
 							}
+						} else {
+							setSorter(ColumnViewerSorter.this, ASC);
 						}
-					});
+					} else {
+						setSorter(ColumnViewerSorter.this, ASC);
+					}
+				}
+			});
 		}
 
 		public void setSorter(ColumnViewerSorter sorter, int direction) {
@@ -483,8 +450,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				column.getColumn().getParent().setSortDirection(SWT.NONE);
 				viewer.setComparator(null);
 			} else {
-				column.getColumn().getParent()
-						.setSortColumn(column.getColumn());
+				column.getColumn().getParent().setSortColumn(column.getColumn());
 				sorter.direction = direction;
 
 				if (direction == ASC) {

@@ -43,7 +43,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
