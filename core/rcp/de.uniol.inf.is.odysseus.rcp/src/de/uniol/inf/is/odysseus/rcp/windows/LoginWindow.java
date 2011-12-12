@@ -100,7 +100,7 @@ public class LoginWindow {
 					return;
 				
 				if( !cancelOK )
-					System.exit(1);
+					System.exit(0);
 			}
 			
 		});
@@ -182,7 +182,7 @@ public class LoginWindow {
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				wnd.dispose();
+				System.exit(0);
 			}
 		});
 	}
