@@ -46,15 +46,21 @@ public class Activator implements BundleActivator {
 		String[] args = new String[elementLimit == null ? 5 : 7];
 		args[0] = "-pr"; 
 		args[1] = System.getenv("pr");
+		if (args[1] == null) args[1] = "65440";
 		args[2] = "-useNIO";
 		String uN = System.getenv("useNIO");
 		if (uN != null){
 			boolean useNIO = Boolean.parseBoolean(uN);
 			if (!useNIO) args[2] = "";
+		}else{
+			uN = "true";
 		}
 		// Read from GeneratorConfigfile?
 		args[3] = "-gcf";
 		args[4] = System.getenv("gcf");
+		if (args[4] == null){
+			args[4] = "/config/NEXMarkGeneratorConfiguration_SLOW.properties";
+		}
 		if (args[4] == null || args[4] == ""){
 			args[3] = "";
 		}

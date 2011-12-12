@@ -18,7 +18,7 @@ http://134.106.56.70/wiki/index.php/Hauptseite
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug</programArgs>
+      <programArgs>-console -debug -clean</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -40,7 +40,6 @@ http://134.106.56.70/wiki/index.php/Hauptseite
             winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>

@@ -248,7 +248,7 @@
          </property>
          <property
                name="aboutText"
-               value="This is Odysseus Studio&#x0D;&#x0A;&#x0D;&#x0A;Help can be found here:&#x0D;&#x0A;&#x0D;&#x0A;http://134.106.56.70/wiki/index.php/Hauptseite">
+               value="This is Odysseus Studio&#x0A;&#x0A;Help can be found here:&#x0A;&#x0A;http://134.106.56.70/wiki/index.php/Hauptseite">
          </property>
          <property
                name="windowImages"

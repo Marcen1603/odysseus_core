@@ -24,6 +24,10 @@
          id="org.eclipse.platform"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.equinox.p2.rcp.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.draw2d" version="3.7.1.v20110830-1143-4607w3122194102254" match="greaterOrEqual"/>
    </requires>
