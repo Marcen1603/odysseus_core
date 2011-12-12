@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.relational.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

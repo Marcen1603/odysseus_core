@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.persistentqueries;
+package de.uniol.inf.is.odysseus.relational.persistentqueries;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 

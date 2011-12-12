@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.persistentqueries;
+package de.uniol.inf.is.odysseus.relational.persistentqueries;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
