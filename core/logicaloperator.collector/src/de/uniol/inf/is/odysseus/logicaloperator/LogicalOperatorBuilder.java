@@ -138,7 +138,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	private Class<? extends IUserDefinedFunction> loadUDFClass(Bundle bundle,
 			URL curURL) {
 		String file = curURL.getFile();
-		int start = 0;
+		int start = 1;
 		try {
 			if (file.startsWith("/bin/")) {
 				start = "/bin/".length();
