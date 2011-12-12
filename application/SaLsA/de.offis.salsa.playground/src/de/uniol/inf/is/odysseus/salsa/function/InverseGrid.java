@@ -48,14 +48,17 @@ public class InverseGrid extends AbstractFunction<Grid2D> {
     @Override
     public Grid2D getValue() {
         final Grid2D grid = this.getInputValue(0);
+        final Grid2D inverseGrid = new Grid2D(grid.origin, grid.grid.length * grid.cellsize,
+                grid.grid[0].length * grid.cellsize, grid.cellsize);
+        inverseGrid.fill(UNKNOWN);
         for (int l = 0; l < grid.grid.length; l++) {
             for (int w = 0; w < grid.grid[l].length; w++) {
                 if (grid.get(l, w) >= FREE) {
-                    grid.set(l, w, Math.abs(grid.get(l, w) - 1));
+                    inverseGrid.set(l, w, Math.abs(grid.get(l, w) - 1));
                 }
             }
         }
-        return grid;
+        return inverseGrid;
     }
 
     @Override

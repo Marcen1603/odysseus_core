@@ -25,15 +25,15 @@ public class ToGrid extends AbstractFunction<Grid2D> {
                     SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
                     SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }
     };
     private final static double FREE = 0.0;
@@ -72,20 +72,20 @@ public class ToGrid extends AbstractFunction<Grid2D> {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
-        Double width = (Double) this.getInputValue(3);
-        Double height = (Double) this.getInputValue(4);
+        Double length = (Double) this.getInputValue(3);
+        Double width = (Double) this.getInputValue(4);
         final Double cellsize = ((Double) this.getInputValue(5));
 
-        width = Math.ceil(width / cellsize) * cellsize;
-        height = Math.ceil(height / cellsize) * cellsize;
+        length = ((int) ((length / cellsize) + 0.5)) * cellsize;
+        width = ((int) ((width / cellsize) + 0.5)) * cellsize;
 
-        final Grid2D grid = new Grid2D(new Coordinate(x, y), width, height, cellsize);
+        final Grid2D grid = new Grid2D(new Coordinate(x, y), length, width, cellsize);
         // Fill the grid with UNKNWON
         grid.fill(UNKNOWN);
 
-        int gridMinX = (int) (width / cellsize);
+        int gridMinX = (int) (length / cellsize);
         int gridMaxX = 0;
-        int gridMinY = (int) (height / cellsize);
+        int gridMinY = (int) (width / cellsize);
         int gridMaxY = 0;
         Coordinate[] coordinates = geometry.getCoordinates();
 
@@ -94,8 +94,8 @@ public class ToGrid extends AbstractFunction<Grid2D> {
         // Find the first coordinate in the grid area
         for (int i = 0; i < coordinates.length; i++) {
             Coordinate coordinate = coordinates[i];
-            if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
-                    && (coordinate.y < y + height - cellsize)) {
+            if ((coordinate.x > x) && (coordinate.x < x + length - cellsize) && (coordinate.y > y)
+                    && (coordinate.y < y + width - cellsize)) {
                 tmp = coordinate;
                 polygonCoordinates.add(coordinates[i]);
                 break;
@@ -103,12 +103,12 @@ public class ToGrid extends AbstractFunction<Grid2D> {
         }
 
         if (tmp != null) {
-            for (int i = 1; i < coordinates.length; i++) {
-                Coordinate coordinate = coordinates[i];
+            for (int c = 1; c < coordinates.length; c++) {
+                Coordinate coordinate = coordinates[c];
                 // Check for valid coordinate in the grid area
-                if ((GridUtil.isInGrid(x, y, width, height, coordinate))
-                        && (GridUtil.isInGrid(x, y, width, height, tmp))) {
-                    if (!GridUtil.isInSameGridCell(x,y,cellsize,coordinate,tmp)) {
+                if ((GridUtil.isInGrid(x, y, length, width, coordinate))
+                        && (GridUtil.isInGrid(x, y, length, width, tmp))) {
+                    if (!GridUtil.isInSameGridCell(x, y, cellsize, coordinate, tmp)) {
                         polygonCoordinates.add(coordinate);
                         int minX = (int) Math.min(tmp.x, coordinate.x);
                         int maxX = (int) Math.max(tmp.x, coordinate.x);
@@ -129,34 +129,34 @@ public class ToGrid extends AbstractFunction<Grid2D> {
                         boolean foundStart = false;
                         boolean foundEnd = false;
 
-                        for (int j = minX; j < maxX; j += cellsize) {
-                            for (int k = minY; k < maxY; k += cellsize) {
-                                if ((j < x + width) && (k < y + height)) {
+                        for (int l = minX; l < maxX; l += cellsize) {
+                            for (int w = minY; w < maxY; w += cellsize) {
+                                if ((l < x + length) && (w < y + width)) {
                                     boolean foundIntersection = false;
 
                                     // Check if the last tmp coordinate is in this grid cell
                                     if ((!foundStart)
-                                            && (GridUtil.isInGridCell(j, k, cellsize, tmp))) {
+                                            && (GridUtil.isInGridCell(l, w, cellsize, tmp))) {
                                         foundStart = true;
                                         foundIntersection = true;
                                     }
                                     // Check if the current coordinate is in the grid cell
                                     else if ((!foundEnd)
-                                            && (GridUtil.isInGridCell(j, k, cellsize, coordinate))) {
+                                            && (GridUtil.isInGridCell(l, w, cellsize, coordinate))) {
                                         foundEnd = true;
                                         foundIntersection = true;
                                     }
                                     // Check for an intersection between this grid cell and the
                                     // segment
                                     // formed by the last tmp coordinate and the current coordinate
-                                    else if (GridUtil.intersects(j, k, cellsize, tmp, coordinate)) {
+                                    else if (GridUtil.intersects(l, w, cellsize, tmp, coordinate)) {
                                         foundIntersection = true;
                                     }
 
                                     if (foundIntersection) {
 
-                                        int gridX = (int) ((j - x) / cellsize);
-                                        int gridY = (int) ((k - y) / cellsize);
+                                        int gridX = (int) ((l - x) / cellsize);
+                                        int gridY = (int) ((w - y) / cellsize);
 
                                         // Form the bounding box for later calculation and mark the
                                         // grid
@@ -181,13 +181,13 @@ public class ToGrid extends AbstractFunction<Grid2D> {
             }
             // Mark all cells inside the polygon that are not marked as an obstacle as free
             Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
-            for (int i = gridMinX; i < gridMaxX; i++) {
-                for (int j = gridMinY; j < gridMaxY; j++) {
-                    if (grid.get(i, j) < 0.0) {
-                        Coordinate cell = new Coordinate(x + i * cellsize + cellsize / 2, y + j
+            for (int l = gridMinX; l < gridMaxX; l++) {
+                for (int w = gridMinY; w < gridMaxY; w++) {
+                    if (grid.get(l, w) < 0.0) {
+                        Coordinate cell = new Coordinate(x + l * cellsize + cellsize / 2, y + w
                                 * cellsize + cellsize / 2);
                         if (GridUtil.isInPolygon(cell, convexHull)) {
-                            grid.set(i, j, FREE);
+                            grid.set(l, w, FREE);
                         }
                     }
                 }

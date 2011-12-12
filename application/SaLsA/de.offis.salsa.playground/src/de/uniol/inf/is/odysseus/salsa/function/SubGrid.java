@@ -19,14 +19,13 @@ public class SubGrid extends AbstractFunction<Grid2D> {
                 SDFDatatype.GRID_DOUBLE
             },
             {
-                SDFDatatype.INTEGER
-            },
-            {
                     SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
                     SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
                     SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
+            }, {
+                SDFDatatype.DOUBLE
             }
     };
     private final static double UNKNOWN = -1.0;
@@ -62,8 +61,8 @@ public class SubGrid extends AbstractFunction<Grid2D> {
         Double length = (Double) this.getInputValue(2);
         Double width = (Double) this.getInputValue(3);
 
-        final int positionX = (int) Math.ceil((point.x - grid.origin.x) / grid.cellsize);
-        final int positionY = (int) Math.ceil((point.y - grid.origin.y) / grid.cellsize);
+        final int positionX = (int) (((point.x - grid.origin.x) / grid.cellsize) + 0.5);
+        final int positionY = (int) (((point.y - grid.origin.y) / grid.cellsize) + 0.5);
 
         int startX = (int) (positionX - length / 2);
         int startY = (int) (positionY - width / 2);

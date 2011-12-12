@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class IsGridFree extends AbstractFunction<Boolean> {
@@ -10,18 +13,21 @@ public class IsGridFree extends AbstractFunction<Boolean> {
     private static final long serialVersionUID = -5768528294591995540L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                SDFDatatype.MATRIX_DOUBLE
+                SDFDatatype.GRID_DOUBLE
+            },
+            {
+                    SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
+                    SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }, {
-                SDFDatatype.INTEGER
-            }, {
-                SDFDatatype.INTEGER
+                SDFDatatype.DOUBLE
             }
     };
-    private final static double FREE = 0.0;
+    private final static double UNKNOWN = -1.0;
 
     @Override
     public int getArity() {
@@ -49,15 +55,29 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 
     @Override
     public Boolean getValue() {
-        final Double[][] grid = this.getInputValue(0);
-        final Integer x = ((Double) this.getInputValue(1)).intValue();
-        final Integer y = ((Double) this.getInputValue(2)).intValue();
-        final Integer width = ((Double) this.getInputValue(3)).intValue();
-        final Integer height = ((Double) this.getInputValue(4)).intValue();
+        final Grid2D grid = (Grid2D) this.getInputValue(0);
+        final Coordinate point = (Coordinate) this.getInputValue(1);
+        Double length = (Double) this.getInputValue(2);
+        Double width = (Double) this.getInputValue(3);
+        Double threshold = (Double) this.getInputValue(4);
+
+        final int positionX = (int) (((point.x - grid.origin.x) / grid.cellsize) + 0.5);
+        final int positionY = (int) (((point.y - grid.origin.y) / grid.cellsize) + 0.5);
+
+        int startX = (int) (positionX - length / 2);
+        int startY = (int) (positionY - width / 2);
+        final int endX = (int) (startX + length);
+        final int endY = (int) (startY + width);
+
         boolean free = true;
-        for (int i = x; i < width && i < grid.length; i++) {
-            for (int j = y; j < height && j < grid[i].length; j++) {
-                if (grid[i][j] != FREE) {
+
+        int startGridX = (int) Math.max(startX, 0);
+        int startGridY = (int) Math.max(startY, 0);
+        int endGridX = (int) Math.min(endX, grid.grid.length);
+        int endGridY = (int) Math.min(endY, grid.grid[0].length);
+        for (int l = startGridX; l < endGridX; l++) {
+            for (int w = startGridY; w < endGridY; w++) {
+                if ((grid.get(l, w) == UNKNOWN) || (grid.get(l, w) >= threshold)) {
                     free = false;
                 }
             }

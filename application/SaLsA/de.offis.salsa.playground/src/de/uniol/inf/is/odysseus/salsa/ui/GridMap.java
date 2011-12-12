@@ -32,18 +32,18 @@ public class GridMap extends JPanel {
             graphics.fillRect(0, 0, 1000, 1000);
             for (final Grid2D grid : this.grids) {
                 int scale = 1000 / grid.grid.length;
-                for (int i = 0; i < grid.grid.length; i++) {
-                    for (int j = 0; j < grid.grid[i].length; j++) {
-                        if (grid.get(i, j) < 0.0) {
+                for (int l = 0; l < grid.grid.length; l++) {
+                    for (int w = 0; w < grid.grid[l].length; w++) {
+                        if (grid.get(l, w) < 0.0) {
                             graphics.setColor(new Color(204, 51, 51));
                         }
                         else {
-                            graphics.setColor(new Color(51, (int) (254 * grid.get(i, j)), 204));
+                            graphics.setColor(new Color(51, (int) (254 * grid.get(l, w)), 204));
                         }
 
                         // graphics.setColor(new Color(grid[i][j] & 0xFF, grid[i][j] & 0xFF,
                         // grid[i][j] & 0xFF));
-                        graphics.fillRect(i * scale, 1000 - j * scale, scale, scale);
+                        graphics.fillRect(l * scale, 1000 - w * scale, scale, scale);
                     }
                 }
                 break;

@@ -19,7 +19,7 @@ public class Grid2D {
     public Grid2D(Coordinate origin, double width, double height, double cellsize) {
         this.origin = origin;
         this.cellsize = cellsize;
-        this.grid = new double[(int) Math.ceil(width / cellsize)][(int) Math.ceil(height / cellsize)];
+        this.grid = new double[(int) ((width / cellsize) + 0.5)][(int) ((height / cellsize) + 0.5)];
     }
 
     public double get(int x, int y) {
@@ -38,6 +38,6 @@ public class Grid2D {
 
     @Override
     public String toString() {
-        return "{O: " + origin + ",S: " + cellsize + "}";
+        return "{Origin: " + origin + ",Size: " + cellsize + "}";
     }
 }

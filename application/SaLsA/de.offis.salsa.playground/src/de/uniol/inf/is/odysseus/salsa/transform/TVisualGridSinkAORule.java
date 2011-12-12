@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualSinkAO;
+import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualGridSinkAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualGridSinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> {
-    private static Logger LOG = LoggerFactory.getLogger(TVisualSinkAORule.class);
+public class TVisualGridSinkAORule extends AbstractTransformationRule<VisualGridSinkAO> {
+    private static Logger LOG = LoggerFactory.getLogger(TVisualGridSinkAORule.class);
 
     /*
      * (non-Javadoc)
@@ -25,9 +25,8 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
      * java.lang.Object)
      */
     @Override
-    public void execute(final VisualSinkAO operator, final TransformationConfiguration config) {
+    public void execute(final VisualGridSinkAO operator, final TransformationConfiguration config) {
         try {
-            // final VisualPolygonSinkPO po = new VisualPolygonSinkPO(operator.getOutputSchema());
             final VisualGridSinkPO po = new VisualGridSinkPO(operator.getOutputSchema());
             po.setOutputSchema(operator.getOutputSchema());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
@@ -40,7 +39,7 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
 
         }
         catch (final Exception e) {
-            TVisualSinkAORule.LOG.error(e.getMessage(), e);
+            TVisualGridSinkAORule.LOG.error(e.getMessage(), e);
         }
     }
 
@@ -50,7 +49,7 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
      */
     @Override
     public String getName() {
-        return "VisualSinkAO -> VisualSinkPO";
+        return "VisualGridSinkAO -> VisualGridSinkPO";
     }
 
     /*
@@ -77,13 +76,13 @@ public class TVisualSinkAORule extends AbstractTransformationRule<VisualSinkAO> 
      * java.lang.Object)
      */
     @Override
-    public boolean isExecutable(final VisualSinkAO operator,
+    public boolean isExecutable(final VisualGridSinkAO operator,
             final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 
     @Override
     public Class<?> getConditionClass() {
-        return VisualSinkAO.class;
+        return VisualGridSinkAO.class;
     }
 }

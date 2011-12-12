@@ -2,38 +2,24 @@ package de.uniol.inf.is.odysseus.salsa.model;
 
 import java.util.Arrays;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Grid3D {
-    private final double x;
-    private final double y;
-    private final double z;
-    private final double cellsize;
-    private final Double[][][] grid;
+    public final Coordinate origin;
+    public final double cellsize;
+    public final Double[][][] grid;
 
-    public Grid3D(double x, double y, double z, double width, double height, double depth, double cellsize) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Grid3D(Coordinate origin, double length, double width, double depth, double cellsize) {
+        this.origin = origin;
         this.cellsize = cellsize;
-        this.grid = new Double[(int) (width / cellsize) + 1][(int) (height / cellsize) + 1][(int) (depth / cellsize) + 1];
+        this.grid = new Double[(int) ((length / cellsize) + 0.5)][(int) ((width / cellsize) + 0.5)][(int) ((depth / cellsize) + 0.5)];
     }
 
     public double getCellSize() {
         return cellsize;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
     }
 
     public Double get(int x, int y, int z) {
@@ -50,5 +36,10 @@ public class Grid3D {
                 Arrays.fill(cells, value);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{Origin: " + origin + ",Size: " + cellsize + "}";
     }
 }

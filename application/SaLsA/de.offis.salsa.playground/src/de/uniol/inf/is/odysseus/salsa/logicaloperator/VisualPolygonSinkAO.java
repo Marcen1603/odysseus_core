@@ -7,25 +7,25 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAPSINK")
-public class VisualSinkAO extends AbstractLogicalOperator {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VPOLYGONSINK")
+public class VisualPolygonSinkAO extends AbstractLogicalOperator {
     /**
      * 
      */
     private static final long serialVersionUID = -200760768896205654L;
 
-    public VisualSinkAO() {
+    public VisualPolygonSinkAO() {
         super();
     }
 
-    public VisualSinkAO(final VisualSinkAO ao) {
+    public VisualPolygonSinkAO(final VisualPolygonSinkAO ao) {
         super(ao);
 
     }
 
     @Override
-    public VisualSinkAO clone() {
-        return new VisualSinkAO(this);
+    public VisualPolygonSinkAO clone() {
+        return new VisualPolygonSinkAO(this);
     }
 
     @Override
