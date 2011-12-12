@@ -121,7 +121,6 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			// name
 			String className = file.substring(start, file.length() - 6)
 					.replace('/', '.');
-			System.err.println("Loading Class "+className);
 			Class<?> classObject = bundle.loadClass(className);
 			if (classObject.isAnnotationPresent(LogicalOperator.class)
 					&& ILogicalOperator.class.isAssignableFrom(classObject)) {
