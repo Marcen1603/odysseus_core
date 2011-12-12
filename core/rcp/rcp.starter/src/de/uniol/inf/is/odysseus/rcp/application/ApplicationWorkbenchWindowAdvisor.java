@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.rcp.application;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -37,12 +38,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	@Override
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
-		configurer.setInitialSize(new Point(600, 600));
+	//	configurer.setInitialSize(new Point(600, 600));
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);
-		configurer.setTitle("Odysseus Studio");
+		configurer.setTitle("Odysseus Studio 2");
 		configurer.setShowProgressIndicator(true);
-		configurer.setShowPerspectiveBar(true);
+		configurer.setShowPerspectiveBar(true);		
 	}
 	
 	@Override

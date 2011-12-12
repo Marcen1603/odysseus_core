@@ -9,7 +9,7 @@
             canFinishEarly="false"
             category="de.uniol.inf.is.odysseus.rcp.wizard.category"
             class="de.uniol.inf.is.odysseus.rcp.wizard.output.OutputWizard"
-            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             hasPages="true"
             icon="icons/network-hub.png"
             id="de.uniol.inf.is.odysseus.rcp.wizard.output"

@@ -37,7 +37,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.QueryView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 
-	public static final String OBSERVER_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective";
+	
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 
 	public static final String REFRESH_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand";
@@ -63,6 +63,9 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public static final String RCP_USER_TOKEN = "RCP";
 
 	public static final String SOURCES_NAME_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.parameters.SourceNameParameter";
+	
+	
+	public static final String WIZARD_PROJECT_ID = "de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard";
 
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;

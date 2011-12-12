@@ -54,43 +54,7 @@
       </view>
    </extension>
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
-         <view
-               id="de.uniol.inf.is.odysseus.rcp.views.TenantView"
-               minimized="false"
-               ratio="0.7"
-               relationship="right"
-               relative="org.eclipse.ui.editorss">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective">
-         <view
-               closeable="true"
-               id="de.uniol.inf.is.odysseus.rcp.views.QueryView"
-               minimized="false"
-               moveable="true"
-               ratio="0.7"
-               relationship="stack"
-               relative="org.eclipse.ui.console.ConsoleView"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-         <newWizardShortcut
-               id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
-         </newWizardShortcut>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
-      <perspective
-            class="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
-            id="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective"
-            name="Observer">
-      </perspective>
       <perspective
             class="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             id="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
@@ -349,6 +313,9 @@
                class="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNature">
          </run>
       </runtime>
+      <requires-nature
+            id="de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature">
+      </requires-nature>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -357,6 +324,23 @@
             id="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNatureImage"
             natureId="de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature">
       </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <newWizardShortcut
+               id="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard">
+         <enablement></enablement>
+      </commonWizard>
    </extension>
 
 </plugin>

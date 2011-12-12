@@ -69,7 +69,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.ObserverPerspective">
+            targetID="*">
          <newWizardShortcut
                id="de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptWizard">
          </newWizardShortcut>
