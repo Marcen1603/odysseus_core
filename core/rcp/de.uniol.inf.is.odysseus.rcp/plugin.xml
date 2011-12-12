@@ -313,9 +313,6 @@
                class="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNature">
          </run>
       </runtime>
-      <requires-nature
-            id="de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature">
-      </requires-nature>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
