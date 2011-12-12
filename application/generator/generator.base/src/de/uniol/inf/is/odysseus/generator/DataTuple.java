@@ -34,6 +34,10 @@ public class DataTuple{
 		this.attributes = new ArrayList<Object>(); 
 	}
 	
+	public DataTuple(int size){
+		this.attributes = new ArrayList<Object>(size);
+	}
+	
 	
 	public DataTuple(DataTuple copy) {				
 		this.attributes = new ArrayList<Object>(copy.getAttributes());		
