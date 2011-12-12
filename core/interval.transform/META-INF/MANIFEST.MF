@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval.transform;singleton:=true
 Bundle-Version: 1.0.0.0
 Bundle-Activator: de.uniol.inf.is.odysseus.interval.transform.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.event,
+Import-Package: de.uniol.inf.is.odysseus.event,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.intervalapproach.window,
@@ -19,7 +18,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.planmanagement,
  de.uniol.inf.is.odysseus.predicate,
- de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.ruleengine.system,
@@ -33,3 +31,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/TransformRuleService.xml
 Require-Bundle: de.uniol.inf.is.odysseus
+Export-Package: de.uniol.inf.is.odysseus.interval.transform.join

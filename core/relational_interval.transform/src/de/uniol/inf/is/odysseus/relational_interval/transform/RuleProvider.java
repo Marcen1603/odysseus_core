@@ -30,6 +30,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TRelationalSlidingElementWindowTIPORule());
 		rules.add(new TLeftJoinTIPOInsertDataMergeRule());
 		rules.add(new TRelationalTimestampToPayloadRule());
+		rules.add(new TLeftJoinAOSetSARule());
+		rules.add(new TJoinAOSetSARule());
 		return rules;
 	}
 

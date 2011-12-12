@@ -85,20 +85,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.interval.transform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.persistentqueries"
          download-size="0"
          install-size="0"

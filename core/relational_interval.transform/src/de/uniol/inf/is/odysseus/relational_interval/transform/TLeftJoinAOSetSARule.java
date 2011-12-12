@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.interval.transform.join;
+package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-@SuppressWarnings({"unchecked","rawtypes"})
+import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
+
 public class TLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIPO> {
 	
 	@Override

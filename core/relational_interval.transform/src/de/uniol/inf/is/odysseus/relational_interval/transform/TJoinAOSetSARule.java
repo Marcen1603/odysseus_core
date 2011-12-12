@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.interval.transform.join;
+package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
