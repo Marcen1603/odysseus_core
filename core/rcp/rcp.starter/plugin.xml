@@ -226,7 +226,7 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.help.aboutAction"
-                  label="About Odysseus RCP"
+                  label="About Odysseus Studio"
                   style="push">
             </command>
          </menu>
