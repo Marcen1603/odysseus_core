@@ -15,10 +15,12 @@
 package de.uniol.inf.is.odysseus.predicate;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
  * @author Jonas Jacobi
@@ -32,4 +34,5 @@ public interface IPredicate<T> extends IClone, Serializable {
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated);
 	public boolean equals(IPredicate<T> pred);
 	boolean isContainedIn(Object o);
+	public List<SDFAttribute> getAttributes();
 }

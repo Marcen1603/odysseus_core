@@ -14,13 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class QSGraph {
@@ -41,9 +40,9 @@ public class QSGraph {
 		String label = po.getName();
 		if(po instanceof SelectPO) {
 			IPredicate<?> pred = ((SelectPO<?>)po).getPredicate();
-			if(pred instanceof IRelationalPredicate) {
-				List<SDFAttribute> attlist = ((IRelationalPredicate)pred).getAttributes();
-				System.out.println(((IRelationalPredicate)pred).toString());
+			if(pred instanceof IPredicate) {
+				List<SDFAttribute> attlist = ((IPredicate)pred).getAttributes();
+				System.out.println(((IPredicate)pred).toString());
 				for(SDFAttribute a : attlist) {
 					System.out.println(a.toString());
 				}

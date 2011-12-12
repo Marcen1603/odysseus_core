@@ -14,12 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IPriority>> implements IPredicate<T> {
 
@@ -59,6 +61,11 @@ public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IP
 	public boolean isContainedIn(Object o) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public List<SDFAttribute> getAttributes() {
+		return null;
 	}
 
 }

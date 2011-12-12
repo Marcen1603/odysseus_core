@@ -15,9 +15,11 @@
 package de.uniol.inf.is.odysseus.predicate;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
  * This is an abstract superclass for all predicates, that provides an empty init method.
@@ -45,6 +47,11 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	
 	@Override
 	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
+	
+	@Override
+	public List<SDFAttribute> getAttributes() {
+		return null;
+	}
 	
 	// TODO: IMplement in Child Classes... 
 	@Override
