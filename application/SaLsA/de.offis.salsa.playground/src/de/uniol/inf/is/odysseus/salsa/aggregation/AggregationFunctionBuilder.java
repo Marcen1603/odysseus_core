@@ -12,19 +12,12 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
-    private final static String MERGEDOUBLEGRID = "MERGEDOUBLEGRID";
-    private final static String MERGEFLOATGRID = "MERGEFLOATGRID";
-    private final static String MERGEBYTEGRID = "MERGEBYTEGRID";
-    private final static String MERGEBOOLEANGRID = "MERGEBOOLEANGRID";
+    private final static String MERGEGRID = "MERGEGRID";
     private final static String PMERGE = "PMERGE";
-    
+
     private static Collection<String> names = new LinkedList<String>();
     {
-        names.add(MERGEDOUBLEGRID);
-        names.add(MERGEFLOATGRID);
-        names.add(MERGEBYTEGRID);
-        names.add(MERGEBOOLEANGRID);
-
+        names.add(MERGEGRID);
         names.add(PMERGE);
     }
 
@@ -41,17 +34,8 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     @Override
     public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, int[] pos) {
         IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(MERGEDOUBLEGRID)) {
-            aggFunc = new MergeDoubleGrid(pos);
-        }
-        else if (key.getName().equalsIgnoreCase(MERGEFLOATGRID)) {
-            aggFunc = new MergeFloatGrid(pos);
-        }
-        else if (key.getName().equalsIgnoreCase(MERGEBYTEGRID)) {
-            aggFunc = new MergeByteGrid(pos);
-        }
-        else if (key.getName().equalsIgnoreCase(MERGEBOOLEANGRID)) {
-            aggFunc = new MergeBooleanGrid(pos);
+        if (key.getName().equalsIgnoreCase(MERGEGRID)) {
+            aggFunc = new MergeGrid(pos);
         }
         else if (key.getName().equalsIgnoreCase(PMERGE)) {
             aggFunc = new RelationalPolygonAggregation(pos);
