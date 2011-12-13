@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.nexmark.simulation;
 
 import java.io.IOException;
@@ -19,27 +19,28 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
+
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 
 /**
  * Server for NEXMark Benchmark.
  * <p>
- * Manages incoming connection for the streams: person,
- * auction, bid, category. Each stream has a port which can be
- * used to connect and get the data of the benchmark.
+ * Manages incoming connection for the streams: person, auction, bid, category.
+ * Each stream has a port which can be used to connect and get the data of the
+ * benchmark.
  * <p>
- * The {@link #start()} method starts server. 
- * The {@link #stop()} method stops the server and removes all connected clients.
+ * The {@link #startServer()} method starts server. The {@link #stop()} method
+ * stops the server and removes all connected clients.
  * 
- * @author Bernd Hochschulz
+ * @author Bernd Hochschulz, Marco Grawunder
  */
 public class NexmarkServer {
 	private HashMap<InetAddress, NexmarkStreamClientHandler> activeClientHandler = new HashMap<InetAddress, NexmarkStreamClientHandler>();
-//	private static final String PROPERTIES_FILE = "/de/uniol/inf/is/odysseus/nexmark/generator/NEXMarkGeneratorConfiguration.properties";
 	private static final String PROPERTIES_FILE = "/config/NEXMarkGeneratorConfiguration.properties";
 
-	
 	private int elementLimit = 0;
 
 	final private NEXMarkGeneratorConfiguration configuration;
@@ -49,7 +50,8 @@ public class NexmarkServer {
 	final private NEXMarkStreamServer categoryServer;
 
 	/**
-	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark
+	 * queries.
 	 * 
 	 * @param personPort
 	 *            - connections on this port are interpreted as person stream
@@ -60,15 +62,18 @@ public class NexmarkServer {
 	 * @param categoryPort
 	 *            - connections on this port are interpreted as category stream
 	 * @throws IOException
-	 *            - if no connection cannot be established on a port
+	 *             - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort, boolean useNIO, String configFile)
+	public NexmarkServer(int personPort, int auctionPort, int bidPort,
+			int categoryPort, boolean useNIO, String configFile)
 			throws IOException {
-		this(personPort, auctionPort, bidPort, categoryPort, 0, useNIO, configFile);
+		this(personPort, auctionPort, bidPort, categoryPort, 0, useNIO,
+				configFile);
 	}
 
 	/**
-	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark
+	 * queries.
 	 * 
 	 * @param personPort
 	 *            - connections on this port are interpreted as person stream
@@ -81,34 +86,43 @@ public class NexmarkServer {
 	 * @param elementLimit
 	 *            - how many elements per connections should be created
 	 * @throws IOException
-	 *            - if no connection cannot be established on a port
+	 *             - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int personPort, int auctionPort, int bidPort, int categoryPort,
-			int elementLimit, boolean useNIO, String configFile) throws IOException {
+	public NexmarkServer(int personPort, int auctionPort, int bidPort,
+			int categoryPort, int elementLimit, boolean useNIO,
+			String configFile) throws IOException {
 		configuration = new NEXMarkGeneratorConfiguration(configFile);
-		personServer = new NEXMarkStreamServer(personPort, this, NEXMarkStreamType.PERSON, useNIO);
-		auctionServer = new NEXMarkStreamServer(auctionPort, this, NEXMarkStreamType.AUCTION, useNIO);
-		bidServer = new NEXMarkStreamServer(bidPort, this, NEXMarkStreamType.BID, useNIO);
-		categoryServer = new NEXMarkStreamServer(categoryPort, this, NEXMarkStreamType.CATEGORY, useNIO);
-		
+		personServer = new NEXMarkStreamServer(personPort, this,
+				NEXMarkStreamType.PERSON, useNIO);
+		auctionServer = new NEXMarkStreamServer(auctionPort, this,
+				NEXMarkStreamType.AUCTION, useNIO);
+		bidServer = new NEXMarkStreamServer(bidPort, this,
+				NEXMarkStreamType.BID, useNIO);
+		categoryServer = new NEXMarkStreamServer(categoryPort, this,
+				NEXMarkStreamType.CATEGORY, useNIO);
+
 		this.elementLimit = elementLimit;
 	}
 
 	/**
-	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark
+	 * queries.
 	 * 
 	 * @param startPort
 	 *            - specifies startPort. personPort = startPort, auctionPort =
 	 *            startPort+1, bidPort = startPort+2, categoryPort = startPort+3
 	 * @throws IOException
-	 *            - if no connection cannot be established on a port
+	 *             - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int startPort, boolean useNIO, String filename) throws IOException {
-		this(startPort, ++startPort, ++startPort, ++startPort, 0, useNIO, filename);
+	public NexmarkServer(int startPort, boolean useNIO, String filename)
+			throws IOException {
+		this(startPort, ++startPort, ++startPort, ++startPort, 0, useNIO,
+				filename);
 	}
-	
+
 	/**
-	 * Creates a new {@link NexmarkServer} to process incoming benchmark queries.
+	 * Creates a new {@link NexmarkServer} to process incoming benchmark
+	 * queries.
 	 * 
 	 * @param startPort
 	 *            - specifies startPort. personPort = startPort, auctionPort =
@@ -116,30 +130,35 @@ public class NexmarkServer {
 	 * @param elementLimit
 	 *            - how many elements per connections should be created
 	 * @throws IOException
-	 *            - if no connection cannot be established on a port
+	 *             - if no connection cannot be established on a port
 	 */
 
-	public NexmarkServer(int startPort, int elementLimit, boolean useNIO, String filename) throws IOException {
-		this(startPort, ++startPort, ++startPort, ++startPort, elementLimit, useNIO, filename);
-	}	
+	public NexmarkServer(int startPort, int elementLimit, boolean useNIO,
+			String filename) throws IOException {
+		this(startPort, ++startPort, ++startPort, ++startPort, elementLimit,
+				useNIO, filename);
+	}
 
 	/**
-	 * Removes a ClientHandler from the list of ClientHandler. 
-	 * If a new query comes in from that IP it will be processed as new.
+	 * Removes a ClientHandler from the list of ClientHandler. If a new query
+	 * comes in from that IP it will be processed as new.
 	 * 
 	 * @param key
 	 *            - IP of connection
 	 * @param nexmarkStreamClientHandler
 	 */
-	public void removeClientHandler(InetAddress key, NexmarkStreamClientHandler clientHandler) {
+	public void removeClientHandler(InetAddress key,
+			NexmarkStreamClientHandler clientHandler) {
 		synchronized (activeClientHandler) {
 			// Do nothing if no IP is registered for this handler
 			if (!activeClientHandler.containsKey(key))
 				return;
 
-			// remove ClientHandler only if it is the rigt one. It could be that a new, still active ClientHandler is already
+			// remove ClientHandler only if it is the rigt one. It could be that
+			// a new, still active ClientHandler is already
 			// registered for that IP.
-			NexmarkStreamClientHandler currentClientHandler = activeClientHandler.get(key);
+			NexmarkStreamClientHandler currentClientHandler = activeClientHandler
+					.get(key);
 			if (currentClientHandler == clientHandler) {
 				activeClientHandler.remove(key);
 			}
@@ -147,34 +166,36 @@ public class NexmarkServer {
 
 	}
 
-	// @Override
-	// public void run() {
-	// personServer.start();
-	// auctionServer.start();
-	// bidServer.start();
-	// categoryServer.start();
-	// }
-	//
 	/**
-	 * Starts the server. After that, only the specified ports can be used for connections.
+	 * Starts the server. After that, only the specified ports can be used for
+	 * connections.
 	 */
-	public void start() {
+	public void startServer() {
 		personServer.start();
 		auctionServer.start();
 		bidServer.start();
 		categoryServer.start();
 	}
 
+	public void waitForTermination() throws InterruptedException {
+		personServer.join();
+		auctionServer.join();
+		bidServer.join();
+		categoryServer.join();
+	}
+
 	/**
-	 * Stops the server. No new connections are accepted. Connected clients are stopped.
+	 * Stops the server. No new connections are accepted. Connected clients are
+	 * stopped.
 	 */
-	public synchronized void stop() {
+	public synchronized void stopServers() {
 		personServer.close();
 		auctionServer.close();
 		bidServer.close();
 		categoryServer.close();
 
-		Iterator<NexmarkStreamClientHandler> iter = activeClientHandler.values().iterator();
+		Iterator<NexmarkStreamClientHandler> iter = activeClientHandler
+				.values().iterator();
 		while (iter.hasNext()) {
 			iter.next().interrupt();
 		}
@@ -198,9 +219,9 @@ public class NexmarkServer {
 				startPort = Integer.parseInt(args[++i]);
 			} else if (arg.equals("-element_limit") || arg.equals("-el")) {
 				elementLimit = Integer.parseInt(args[++i]);
-			} else if (arg.equals("-useNIO")){
+			} else if (arg.equals("-useNIO")) {
 				useNIO = true;
-			} else if (arg.equals("-genConfigFile") || arg.equals("-gcf")){
+			} else if (arg.equals("-genConfigFile") || arg.equals("-gcf")) {
 				generatorConfigFile = args[++i];
 			}
 		}
@@ -208,36 +229,51 @@ public class NexmarkServer {
 		try {
 			if (startPort > 0) {
 				if (elementLimit > 0) {
-					server = new NexmarkServer(startPort, elementLimit, useNIO, generatorConfigFile);
+					server = new NexmarkServer(startPort, elementLimit, useNIO,
+							generatorConfigFile);
 				} else {
-					server = new NexmarkServer(startPort, useNIO, generatorConfigFile);
+					server = new NexmarkServer(startPort, useNIO,
+							generatorConfigFile);
 				}
-			} else if (personPort > 0 && auctionPort > 0 && bidPort > 0 && categoryPort > 0) {
+			} else if (personPort > 0 && auctionPort > 0 && bidPort > 0
+					&& categoryPort > 0) {
 				if (elementLimit > 0) {
-					server = new NexmarkServer(personPort, auctionPort, bidPort, categoryPort,
-							elementLimit, useNIO, generatorConfigFile);
+					server = new NexmarkServer(personPort, auctionPort,
+							bidPort, categoryPort, elementLimit, useNIO,
+							generatorConfigFile);
 				} else {
-					server = new NexmarkServer(personPort, auctionPort, bidPort, categoryPort, useNIO, generatorConfigFile);
+					server = new NexmarkServer(personPort, auctionPort,
+							bidPort, categoryPort, useNIO, generatorConfigFile);
 				}
 			} else {
 				throw new IOException();
 			}
-			server.start();
+			server.startServer();
 		} catch (IOException e) {
 			printHelp(e);
+			throw new RuntimeException(e);
+		}
+		if (server != null) {
+			// Warte auf Terminierung von server
+			try {
+				server.waitForTermination();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private static void printHelp(Exception e) {
-		if (e != null){
-			System.err.println(e.getMessage()+"\n\n");
+		if (e != null) {
+			System.err.println(e.getMessage() + "\n\n");
 		}
 		String error = "NEXMark Server Usage: "
 				+ "\n  -ports|-p <personPort>, <auctionPort>, <bidPort>, <categoryPort> (to specify specific ports)"
 				+ "\n  -port_range|-pr <startPort> (to specify a port range, personPort is <startPort>, auctionPort is <startPort> + 1, ..."
 				+ "\n  -element_limit|-el <elementLimit> (to specify an optional element Limit. If started with this option only <elementLimit> elements are created."
 				+ "\n  -useNIO use java NIO with channel (otherwise ObjectStream).";
-		
+
 		System.err.println(error);
 	}
 
@@ -252,4 +288,5 @@ public class NexmarkServer {
 	public int getElementLimit() {
 		return elementLimit;
 	}
+
 }

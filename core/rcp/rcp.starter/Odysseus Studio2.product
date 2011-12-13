@@ -18,7 +18,6 @@ http://134.106.56.70/wiki/index.php/Hauptseite
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -clean</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
