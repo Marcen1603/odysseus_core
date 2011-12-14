@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Apache Commons Codec
 Bundle-SymbolicName: apache.commons.codec
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: commons-codec-1.4.jar,
  commons-codec-1.4-javadoc.jar
 Export-Package: org.apache.commons.codec,

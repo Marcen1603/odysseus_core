@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Suite
 Bundle-SymbolicName: java.topological.suite
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: jts-1.11.jar
 Export-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.algorithm,

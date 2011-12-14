@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Clientselection
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.distribution.provider.clientselection.Activator
 Import-Package: de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
  de.uniol.inf.is.odysseus.p2p.queryhandling,

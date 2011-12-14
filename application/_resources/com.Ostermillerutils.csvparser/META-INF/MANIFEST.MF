@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Csvparser
 Bundle-SymbolicName: com.Ostermillerutils.csvparser
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Export-Package: com.Ostermiller.util;version="1.0.0"

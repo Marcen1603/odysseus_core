@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: No Splitting Strategy
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.splitting.nosplitting
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p,

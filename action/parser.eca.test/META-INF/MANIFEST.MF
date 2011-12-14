@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECA-Parser Test
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.eca.test
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.action.output,
  de.uniol.inf.is.odysseus.action.services.actuator,

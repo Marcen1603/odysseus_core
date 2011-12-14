@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: 6
 Bundle-SymbolicName: Jxta.2.6
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: jxse-2.6.jar,
  jxse-2.6-javadoc.jar,
  bcprov-jdk15-145.jar,

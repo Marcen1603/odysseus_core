@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Action Services
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.action.services
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.action.services.Activator
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.relational.base,

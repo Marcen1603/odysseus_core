@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Args
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.args
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Export-Package: de.uniol.inf.is.odysseus.args,
  de.uniol.inf.is.odysseus.args.marshaller
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

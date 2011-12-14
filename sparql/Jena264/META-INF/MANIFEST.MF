@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jena264
 Bundle-SymbolicName: Jena264
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: jena-2.6.4.jar
 Export-Package: com.hp.hpl.jena,
  com.hp.hpl.jena.assembler,

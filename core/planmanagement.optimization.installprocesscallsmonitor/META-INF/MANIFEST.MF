@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Install Process Calls Monitor
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
 Service-Component: OSGI-INF/PostOptimizationAction.xml

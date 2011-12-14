@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Apache Log4J
 Bundle-SymbolicName: com.springsource.org.apache.log4j
-Bundle-Version: 1.2.15
+Bundle-Version: 1.2.15.qualifier
 Bundle-Vendor: SpringSource
 Export-Package: org.apache.log4j;version="1.2.15";uses:="org.apache.log4j.helpers,
  org.apache.log4j.or,
