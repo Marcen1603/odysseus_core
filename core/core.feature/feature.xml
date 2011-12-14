@@ -20,16 +20,13 @@
    <requires>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
       <import plugin="de.uniol.inf.is.odysseus" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.springsource.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
-      <import plugin="javax.mail"/>
-      <import plugin="org.eclipse.net4j.jms.api"/>
-      <import plugin="javax.servlet"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
    </requires>
 
    <plugin

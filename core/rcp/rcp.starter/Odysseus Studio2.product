@@ -10,7 +10,7 @@
 
 Help can be found here:
 
-http://134.106.56.70/wiki/index.php/Hauptseite
+http://odysseus.offis.uni-oldenburg.de/
       </text>
    </aboutInfo>
 
@@ -27,6 +27,7 @@ http://134.106.56.70/wiki/index.php/Hauptseite
    <splash
       location="de.uniol.inf.is.odysseus.rcp.starter" />
    <launcher name="studio">
+      <macosx icon="/de.uniol.inf.is.odysseus.rcp.benchmarker.gui/icons/alt_launcher.icns"/>
       <solaris/>
       <win useIco="false">
          <ico path="/de.uniol.inf.is.odysseus.rcp.starter/icons/Odysseus.ico"/>
@@ -39,6 +40,7 @@ http://134.106.56.70/wiki/index.php/Hauptseite
             winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
