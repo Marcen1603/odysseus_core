@@ -2,7 +2,7 @@
 <feature
       id="de.offis.salsa.feature"
       label="Salsa Feature"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="OFFIS Oldenburg">
 
    <description url="http://www.example.com/description">

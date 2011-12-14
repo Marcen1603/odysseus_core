@@ -2,7 +2,7 @@
 <feature
       id="de.uniol.inf.is.odysseus.admissioncontrol.feature"
       label="Admission Control Feature"
-      version="1.0.0"
+      version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
