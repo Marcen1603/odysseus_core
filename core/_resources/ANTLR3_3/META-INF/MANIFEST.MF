@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ANTLR3_3
 Bundle-SymbolicName: ANTLR3_3
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-ClassPath: antlr-3.3-complete.jar
 Export-Package: antlr,
  antlr.ASdebug,

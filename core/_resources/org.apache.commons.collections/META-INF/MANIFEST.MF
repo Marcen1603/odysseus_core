@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Collections
 Bundle-SymbolicName: org.apache.commons.collections
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Export-Package: org.apache.commons.collections;version="3.2.1",
  org.apache.commons.collections.bag;version="3.2.1",
  org.apache.commons.collections.bidimap;version="3.2.1",

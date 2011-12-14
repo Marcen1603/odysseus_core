@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
+@SuppressWarnings("all")
 public class MainWindow extends AbstractMainWindow implements ActionListener {
 	// Thin-Peer spezifisch
 	protected JList adminPeers;
