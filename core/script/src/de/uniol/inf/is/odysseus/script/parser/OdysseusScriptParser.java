@@ -94,7 +94,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 */
 
 	@Override
-	public void parseAndExecute(String completeText, User caller, ISink<?> defaultSink) throws OdysseusScriptParseException {
+	public void parseAndExecute(String completeText, User caller, ISink<?> defaultSink) throws OdysseusScriptException {
 		execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
@@ -102,7 +102,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(java.util.List, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public void execute(List<PreParserStatement> statements, User caller, ISink<?> defaultSink) throws OdysseusScriptParseException {
+	public void execute(List<PreParserStatement> statements, User caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
 		if (defaultSink != null){
@@ -127,12 +127,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public List<PreParserStatement> parseScript(String completeText, User caller) throws OdysseusScriptParseException {
+	public List<PreParserStatement> parseScript(String completeText, User caller) throws OdysseusScriptException {
 		List<String> lines = null;
 		try {
 			lines = splitToList(completeText);
 		} catch (Exception ex) {
-			throw new OdysseusScriptParseException("cannot parse script ", ex);
+			throw new OdysseusScriptException("cannot parse script ", ex);
 		}
 		return parseScript(lines.toArray(new String[lines.size()]), caller);
 	}
@@ -141,7 +141,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String[], de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public List<PreParserStatement> parseScript(String[] textToParse, User caller) throws OdysseusScriptParseException {
+	public List<PreParserStatement> parseScript(String[] textToParse, User caller) throws OdysseusScriptException {
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {
@@ -197,7 +197,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 						continue;
 
 					if (sb == null)
-						throw new OdysseusScriptParseException("No key set in line " + (currentLine + 1));
+						throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
 					sb.append("\n").append(line.trim());
 				}
 			}
@@ -209,12 +209,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 			}
 
 			return statements;
-		} catch (OdysseusScriptParseException ex) {
-			throw new OdysseusScriptParseException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
+		} catch (OdysseusScriptException ex) {
+			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
 		}
 	}
 
-	private String[] rewriteLoop(String[] textToParse) throws OdysseusScriptParseException {
+	private String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
@@ -222,17 +222,17 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 			String line = textToParse[linenr].trim();
 			if (line.indexOf(LOOP_START_KEY) != -1) {
 				if (from != -1) {
-					throw new OdysseusScriptParseException("Nested loops are not allowed!");
+					throw new OdysseusScriptException("Nested loops are not allowed!");
 				}
 				from = linenr;
 				continue;
 			}
 			if (line.indexOf(LOOP_END_KEY) != -1) {
 				if (from == -1) {
-					throw new OdysseusScriptParseException("Missing start loop statement");
+					throw new OdysseusScriptException("Missing start loop statement");
 				}
 				if (to != -1) {
-					throw new OdysseusScriptParseException("Nested loops are not allowed");
+					throw new OdysseusScriptException("Nested loops are not allowed");
 				}
 				to = linenr;
 			}
@@ -241,7 +241,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				try {
 					String[] parts = loopDef.split(" ");
 					if(parts.length!=4){
-						throw new OdysseusScriptParseException("Missing parameters in loop definition. Definition should be like \"variable FROM 1 TO 10\"");
+						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable FROM 1 TO 10\"");
 					}
 					String variable = parts[0].trim();
 					int startCount = Integer.parseInt(parts[1].trim());					
@@ -256,7 +256,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 						}
 					}
 				} catch (NumberFormatException e) {
-					throw new OdysseusScriptParseException("Definition of loop is wrong. No count found.");
+					throw new OdysseusScriptException("Definition of loop is wrong. No count found.");
 				}
 
 				from = -1;
@@ -269,7 +269,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 		}
 		if (from != -1 || to != -1) {
-			throw new OdysseusScriptParseException("Loop has missing start or end!");
+			throw new OdysseusScriptException("Loop has missing start or end!");
 		}		
 		
 //		System.out.println("------------------");
@@ -284,7 +284,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> getReplacements(String text) throws OdysseusScriptParseException {
+	public Map<String, String> getReplacements(String text) throws OdysseusScriptException {
 		return getReplacements(splitToList(text).toArray(new String[0]));
 	}
 
@@ -292,7 +292,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements(java.lang.String[])
 	 */
 	@Override
-	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptParseException {
+	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
 		Map<String, String> repl = new HashMap<String, String>();
 		for (String line : text) {
 			String correctLine = removeComments(line).trim();
@@ -312,7 +312,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		return repl;
 	}
 
-	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptParseException {
+	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
 		int posStart = line.indexOf(REPLACEMENT_START_KEY);
 		while (posStart != -1) {
 			int posEnd = posStart + 1 + line.substring(posStart + 1).indexOf(REPLACEMENT_END_KEY);
@@ -321,7 +321,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				if (replacements.containsKey(key)) {
 					line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
 				} else {								
-					throw new OdysseusScriptParseException("Replacer " + key + " not defined ");
+					throw new OdysseusScriptException("Replacer " + key + " not defined ");
 				}
 			}
 

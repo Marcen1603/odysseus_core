@@ -67,10 +67,8 @@ public class RemoveQueryCommand extends AbstractHandler implements IHandler {
 							executor.removeQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 							StatusBarManager.getInstance().setMessage("Query removed successfully");
 						} catch (PlanManagementException e) {
-							e.printStackTrace();
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						} catch (HasNoPermissionException e) {
-							e.printStackTrace();
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						}
 						return Status.OK_STATUS;

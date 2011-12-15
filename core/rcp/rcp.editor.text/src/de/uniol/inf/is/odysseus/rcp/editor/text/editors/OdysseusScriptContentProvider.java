@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -41,7 +41,7 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 			input = (StringTreeRoot)newInput;
 			try {
 				replaceLeaf = new ReplacementLeaf(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(input.getString()));
-			} catch (OdysseusScriptParseException e) {
+			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 				replaceLeaf = null;
 			}
@@ -69,9 +69,9 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 					list.addAll(statements);
 					return list.toArray();
 				} else {
-					throw new OdysseusScriptParseException();
+					throw new OdysseusScriptException();
 				}
-			} catch (OdysseusScriptParseException e) {
+			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 				return new Object[] { new StringError("Error in Query") };
 			}

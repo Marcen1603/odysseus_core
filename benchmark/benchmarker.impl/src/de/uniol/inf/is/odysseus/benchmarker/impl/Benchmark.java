@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -200,7 +200,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 					try {
 						scriptParser.parseAndExecute(
 								queryString, user, null);
-					} catch (OdysseusScriptParseException e) {
+					} catch (OdysseusScriptException e) {
 						throw new BenchmarkException(e);
 					}
 				} else {

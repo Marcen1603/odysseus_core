@@ -31,11 +31,11 @@ public class PreParserStatement {
 		this.parameter = parameter;
 	}
 	
-	public void validate( Map<String, Object> variables, User caller ) throws OdysseusScriptParseException {
+	public void validate( Map<String, Object> variables, User caller ) throws OdysseusScriptException {
 		keyword.validate(variables, parameter, caller);
 	}
 	
-	public void execute( Map<String, Object> variables, User caller, IOdysseusScriptParser parser ) throws OdysseusScriptParseException {
+	public void execute( Map<String, Object> variables, User caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		keyword.execute(variables, parameter, caller);
 	}
@@ -50,5 +50,10 @@ public class PreParserStatement {
 	
 	public IPreParserKeyword getKeyword(){
 		return keyword;
+	}
+	
+	@Override
+	public String toString() {
+		return keyword+" "+keywordText;
 	}
 }

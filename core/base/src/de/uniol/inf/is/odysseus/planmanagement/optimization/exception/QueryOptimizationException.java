@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.exception;
 
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 /**
  * QueryOptimizationException describes an {@link Exception} which occurs during
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
  * @author Wolf Bauer
  * 
  */
-public class QueryOptimizationException extends Exception {
+public class QueryOptimizationException extends PlanManagementException{
 	/**
 	 * 
 	 */

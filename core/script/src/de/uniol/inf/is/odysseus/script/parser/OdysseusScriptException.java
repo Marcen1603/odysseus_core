@@ -14,24 +14,24 @@
   */
 package de.uniol.inf.is.odysseus.script.parser;
 
-public class OdysseusScriptParseException extends Exception {
+public class OdysseusScriptException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	private static final String exceptionMessage = "Error during processing query-file";
 	
-	public OdysseusScriptParseException() {
+	public OdysseusScriptException() {
 		this(exceptionMessage);
 	}
 	
-	public OdysseusScriptParseException( String msg ) {
+	public OdysseusScriptException( String msg ) {
 		super(msg);
 	}
 	
-	public OdysseusScriptParseException( String msg, Throwable ex ) {
+	public OdysseusScriptException( String msg, Throwable ex ) {
 		super(msg, ex);
 	}
 	
-	public OdysseusScriptParseException( Throwable ex) {
+	public OdysseusScriptException( Throwable ex) {
 		this(exceptionMessage, ex);
 	}
 }

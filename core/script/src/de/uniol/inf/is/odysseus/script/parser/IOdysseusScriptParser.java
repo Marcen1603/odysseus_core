@@ -10,22 +10,22 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public interface IOdysseusScriptParser {
 
 	public void parseAndExecute(String completeText,
-			User caller, ISink<?> defaultSink) throws OdysseusScriptParseException;
+			User caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public void execute(List<PreParserStatement> statements,
-			User caller, ISink<?> defaultSink) throws OdysseusScriptParseException;
+			User caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String completeText,
-			User caller) throws OdysseusScriptParseException;
+			User caller) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String[] textToParse,
-			User caller) throws OdysseusScriptParseException;
+			User caller) throws OdysseusScriptException;
 
 	public Map<String, String> getReplacements(String text)
-			throws OdysseusScriptParseException;
+			throws OdysseusScriptException;
 
 	public Map<String, String> getReplacements(String[] text)
-			throws OdysseusScriptParseException;
+			throws OdysseusScriptException;
 
 	public Set<String> getKeywordNames();
 

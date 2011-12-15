@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class StartAllClosedQueriesPreParserKeyword extends
@@ -25,18 +25,18 @@ AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 		executor.startAllClosedQueries(caller);
 		return null;
 	}

@@ -85,7 +85,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -1883,7 +1883,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				ci.println("parsing and running query :");
 				ci.println(query3);
 				scriptParser.parseAndExecute(query3, user, null);
-			} catch (OdysseusScriptParseException e) {
+			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 			}
 			

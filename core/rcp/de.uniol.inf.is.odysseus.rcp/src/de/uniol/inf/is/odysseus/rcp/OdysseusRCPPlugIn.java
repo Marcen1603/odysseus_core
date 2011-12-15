@@ -32,12 +32,11 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
-	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";	
+	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";
 	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.QueryView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 
-	
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 
 	public static final String REFRESH_SOURCES_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand";
@@ -63,8 +62,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public static final String RCP_USER_TOKEN = "RCP";
 
 	public static final String SOURCES_NAME_PARAMETER_ID = "de.uniol.inf.is.odysseus.rcp.parameters.SourceNameParameter";
-	
-	
+
 	public static final String WIZARD_PROJECT_ID = "de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard";
 
 	private static OdysseusRCPPlugIn instance;
@@ -113,31 +111,24 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		return executor;
 	}
 
-	public void bindExecutor(IExecutor ex) {
+	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = ex;
 
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID,
 				"Executor " + executor.getName() + " ready");
-		try {
-			StatusBarManager.getInstance()
-					.setMessage(
-							StatusBarManager.SCHEDULER_ID,
-							executor.getCurrentSchedulerID()
-									+ " ("
-									+ executor.getCurrentSchedulingStrategyID()
-									+ ") "
-									+ (executor.isRunning() ? " running "
-											: " stopped "));
-			if (executor.getSchedulerManager() != null) {
-				executor.getSchedulerManager().subscribeToAll(this);
-				executor.getSchedulerManager().getActiveScheduler()
-						.subscribeToAll(this);
-			}
-			// New: Start Scheduler at Query Start
-			executor.startExecution();
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
+		StatusBarManager.getInstance().setMessage(
+				StatusBarManager.SCHEDULER_ID,
+				executor.getCurrentSchedulerID() + " ("
+						+ executor.getCurrentSchedulingStrategyID() + ") "
+						+ (executor.isRunning() ? " running " : " stopped "));
+		if (executor.getSchedulerManager() != null) {
+			executor.getSchedulerManager().subscribeToAll(this);
+			executor.getSchedulerManager().getActiveScheduler()
+					.subscribeToAll(this);
 		}
+		// New: Start Scheduler at Query Start
+		executor.startExecution();
+
 	}
 
 	public void unbindExecutor(IExecutor ex) {

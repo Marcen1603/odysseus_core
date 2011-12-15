@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -94,7 +94,6 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			execute(lines.toArray(new String[lines.size()]));
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			new ExceptionWindow(ex);
 		}
 	}
@@ -106,6 +105,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				IStatus status = Status.OK_STATUS;
 				try {
 					User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 					// Befehle holen
@@ -134,20 +134,17 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 						monitor.worked(1);
 						counter++;
 					}
-					// monitor.done();
-				} catch (OdysseusScriptParseException ex) {
-					if (ex.getCause() != null && ex.getCause().getCause() != null) {
-						if (ex.getCause().getCause() instanceof QueryParseException) {
-							QueryParseException qpe = (QueryParseException) ex.getCause().getCause();
-							return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Can't parse query", qpe);
-						}
-					}
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Can't execute query", ex);
-				} finally {
-					monitor.done();
-				}
-
-				return Status.OK_STATUS;
+				} catch (OdysseusScriptException ex) {
+					Throwable cause = ex.getCause();
+					if (cause != null && cause instanceof QueryParseException){
+						status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parse Error: "+cause.getMessage(), cause);
+					}else{
+						status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Execution Error: "+ex.getMessage(), ex);
+					}										
+				} 
+				monitor.done();
+			
+				return status;
 			}
 		};
 		job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgelöst hat

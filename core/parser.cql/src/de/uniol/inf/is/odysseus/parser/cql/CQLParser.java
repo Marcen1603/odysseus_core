@@ -130,7 +130,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
 		} catch (ParseException e) {
-			throw new QueryParseException(e);
+			throw new QueryParseException(e.getMessage(),e);
 		}
 	}
 

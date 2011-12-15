@@ -19,27 +19,27 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		if (params.size() != 2){
-			throw new OdysseusScriptParseException("Illegal Scheduler Definition "+parameter);
+			throw new OdysseusScriptException("Illegal Scheduler Definition "+parameter);
 		}
 		if (!(executor.getRegisteredSchedulers().contains(params.get(0)))){
-			throw new OdysseusScriptParseException("Scheduler "+params.get(0)+" not found");			
+			throw new OdysseusScriptException("Scheduler "+params.get(0)+" not found");			
 		}
 		if (!(executor.getRegisteredSchedulingStrategies().contains(params.get(1)))){
-			throw new OdysseusScriptParseException("Schedulingstrategy "+params.get(1)+" not found");			
+			throw new OdysseusScriptException("Schedulingstrategy "+params.get(1)+" not found");			
 		}
 		
 			
@@ -47,10 +47,10 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		executor.setScheduler(params.get(0), params.get(1));

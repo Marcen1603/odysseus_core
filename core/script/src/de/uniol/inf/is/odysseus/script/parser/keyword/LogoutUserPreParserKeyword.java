@@ -17,14 +17,14 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
 		// Eine Validierung ist hier nicht sinnvoll (vorerst). Da bei der Validierung keine
 		// User eingeloggt werden...
 		
@@ -32,7 +32,7 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
 
 		
 		try {
@@ -40,7 +40,7 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 			
 		} catch( Exception ex ) {
 			ex.printStackTrace();
-			throw new OdysseusScriptParseException("Cannot logout user " + parameter);
+			throw new OdysseusScriptException("Cannot logout user " + parameter);
 		}
 		return null;
 	}

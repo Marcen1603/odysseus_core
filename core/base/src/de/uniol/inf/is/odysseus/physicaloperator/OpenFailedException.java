@@ -14,13 +14,16 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+
 
 /**
  * Superclass for all exceptions which can occur during a call to open
  * on a {@link ISource} or {@link ISink}.
  * @author Jonas Jacobi
  */
-public class OpenFailedException extends Exception {
+public class OpenFailedException extends PlanManagementException {
 
 	private static final long serialVersionUID = 762295616036628102L;
 	

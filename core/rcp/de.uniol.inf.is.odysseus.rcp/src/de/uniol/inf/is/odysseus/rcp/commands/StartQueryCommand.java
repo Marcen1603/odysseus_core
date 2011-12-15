@@ -70,10 +70,8 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 							executor.startQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 							StatusBarManager.getInstance().setMessage("Query started");
 						} catch (PlanManagementException e) {
-							e.printStackTrace();
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query:\n See error log for details", e);
 						} catch (HasNoPermissionException e) {
-							e.printStackTrace();
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query:\n See error log for details", e);
 						}
 						return Status.OK_STATUS;

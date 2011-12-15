@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public abstract class AbstractQueryPreParserKeyword extends
@@ -34,40 +34,34 @@ AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptParseException {
+			User caller) throws OdysseusScriptException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
-				throw new OdysseusScriptParseException("No executor found");
+				throw new OdysseusScriptException("No executor found");
 
 			if (parameter.length() == 0)
-				throw new OdysseusScriptParseException("Encountered empty query");
+				throw new OdysseusScriptException("Encountered empty query");
 
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
-				throw new OdysseusScriptParseException("Parser not set");
-//			if (!executor.getSupportedQueryParsers().contains(parserID))
-//				throw new OdysseusScriptParseException("Parser " + parserID
-//						+ " not found");
+				throw new OdysseusScriptException("Parser not set");
+
 			String transCfg = (String) variables.get("TRANSCFG");
 			if (transCfg == null)
-				throw new OdysseusScriptParseException(
+				throw new OdysseusScriptException(
 						"TransformationConfiguration not set");
-//			if (executor.getQueryBuildConfiguration(transCfg) == null)
-//				throw new OdysseusScriptParseException(
-//						"TransformationConfiguration " + transCfg
-//								+ " not found");
+
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new OdysseusScriptParseException(
-					"Unknown Exception during validation a query", ex);
+			throw new OdysseusScriptException(
+					"Exception in query validation ", ex);
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptParseException {
+			User caller) throws OdysseusScriptException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
 		ISink defaultSink = variables.get("_defaultSink") != null?(ISink)variables.get("_defaultSink"):null; 
@@ -103,7 +97,7 @@ AbstractPreParserExecutorKeyword {
 			
 			return queries;
 		} catch (Exception ex) {
-			throw new OdysseusScriptParseException("Error during executing query",
+			throw new OdysseusScriptException("Query Execution Error",
 					ex);
 		}
 	}

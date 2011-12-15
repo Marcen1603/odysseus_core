@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -178,7 +178,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	}
 	
 	private void test(String key, File query, File result,
-			IOdysseusScriptParser parser) throws OdysseusScriptParseException,
+			IOdysseusScriptParser parser) throws OdysseusScriptException,
 			IOException {
 		String text ="Testing Query " + key + " from file " + query
 				+ " with results from file " + result+ " --> "; 

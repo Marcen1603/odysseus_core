@@ -67,7 +67,6 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			new ExceptionWindow(ex);
 		}
 

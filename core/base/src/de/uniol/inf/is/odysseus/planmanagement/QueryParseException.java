@@ -14,7 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement;
 
-public class QueryParseException extends Exception {
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+
+public class QueryParseException extends PlanManagementException {
 	private static final long serialVersionUID = -3000645620548786308L;
 	
 	public QueryParseException(String message) {

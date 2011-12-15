@@ -23,22 +23,22 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 
 public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 		if (parameter != null && !parameter.equalsIgnoreCase("NONE")) {
 			IBufferPlacementStrategy s = executor
 					.getBufferPlacementStrategy(parameter);
 			if (s == null) {
-				throw new OdysseusScriptParseException(
+				throw new OdysseusScriptException(
 						"No Buffer Placement Strategy " + parameter + " loaded");
 			}
 		}
@@ -46,10 +46,10 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, User caller)
-			throws OdysseusScriptParseException {
+			throws OdysseusScriptException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
-			throw new OdysseusScriptParseException("No executor found");
+			throw new OdysseusScriptException("No executor found");
 		List<IQueryBuildSetting<?>> config = executor
 				.getQueryBuildConfiguration((String) variables.get("TRANSCFG")).getConfiguration();
 		Iterator<IQueryBuildSetting<?>> iter = config.iterator();

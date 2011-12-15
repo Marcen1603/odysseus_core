@@ -46,8 +46,10 @@ public class PlanManagementException extends Exception {
 	 * @param details detailed exception message.
 	 */
 	protected PlanManagementException(String details) {
-		super(
-				"PlanManagementException: An error occured during planmangement. ("
-						+ AppEnv.LINE_SEPARATOR + details + ")");
+		super(details);
+	}
+
+	public PlanManagementException(String message, Throwable e) {
+		super(message,e);
 	}
 }

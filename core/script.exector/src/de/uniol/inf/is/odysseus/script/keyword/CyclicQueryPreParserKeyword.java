@@ -24,40 +24,40 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParseException;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
+	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
 		try {
 			IExecutor executor = getExecutor();
 			if( executor == null ) 
-				throw new OdysseusScriptParseException("No executor found");
+				throw new OdysseusScriptException("No executor found");
 			
 			if( executor.getCompiler() == null ) 
-				throw new OdysseusScriptParseException("No compiler found");
+				throw new OdysseusScriptException("No compiler found");
 			
 			String parserID = (String)variables.get("PARSER");
 			if( parserID == null ) 
-				throw new OdysseusScriptParseException("Parser not set");
+				throw new OdysseusScriptException("Parser not set");
 			if( !executor.getSupportedQueryParsers().contains(parserID))
-				throw new OdysseusScriptParseException("Parser " + parserID + " not found");
+				throw new OdysseusScriptException("Parser " + parserID + " not found");
 			String transCfg = (String) variables.get("TRANSCFG");
 			if( transCfg == null ) 
-				throw new OdysseusScriptParseException("TransformationConfiguration not set");
+				throw new OdysseusScriptException("TransformationConfiguration not set");
 			if( executor.getQueryBuildConfiguration(transCfg) == null ) 
-				throw new OdysseusScriptParseException("TransformationConfiguration " + transCfg + " not bound");
+				throw new OdysseusScriptException("TransformationConfiguration " + transCfg + " not bound");
 			
 		} catch( Exception ex ) {
-			throw new OdysseusScriptParseException("Unknown Exception during validation a cyclic query", ex);
+			throw new OdysseusScriptException("Unknown Exception during validation a cyclic query", ex);
 		}
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptParseException {
+	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
 
 		String queries = parameter;
 		String parserID = (String) variables.get("PARSER");

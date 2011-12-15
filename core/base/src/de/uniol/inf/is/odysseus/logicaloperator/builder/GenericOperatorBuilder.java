@@ -115,7 +115,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 			return isValid;
 		} catch (Exception e) {
 			// TODO: REMOVE
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
