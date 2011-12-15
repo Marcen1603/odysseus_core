@@ -63,7 +63,7 @@ public interface IDataDictionary {
 	public ILogicalOperator getStreamForTransformation(String name, User caller);
 
 	// no restric
-	public boolean hasStream(String name, User user);
+	public boolean existsSource(String name);
 
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(User caller);
 

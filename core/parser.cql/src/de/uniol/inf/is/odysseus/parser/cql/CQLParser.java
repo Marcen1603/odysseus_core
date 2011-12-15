@@ -277,6 +277,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 //			top = prioVisitor.getTopOperator();
 			
 			return top;
+		} catch (QueryParseException ex){
+			throw ex;
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}

@@ -70,6 +70,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
+		if (dd.existsSource(sourceString)){
+		
 		SDFSource source = dd.createSDFSource(sourceString);
 		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
@@ -84,7 +86,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			throw new QueryParseException("unknown type of source '"
 					+ source.getSourceType() + "' for source: " + sourceString);
 		}
-
+		}else{
+			throw new QueryParseException("Unkown Source "+sourceString);
+		}
 		// case Relational:
 		// relationalSource(node, source, sourceString);
 		// return null;

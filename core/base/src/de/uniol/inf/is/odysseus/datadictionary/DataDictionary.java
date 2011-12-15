@@ -350,7 +350,7 @@ public class DataDictionary implements IDataDictionary {
 
 	// no restric
 	@Override
-	public boolean hasStream(String name, User user) {
+	public boolean existsSource(String name) {
 		return streamDefinitions.containsKey(name);
 	}
 
