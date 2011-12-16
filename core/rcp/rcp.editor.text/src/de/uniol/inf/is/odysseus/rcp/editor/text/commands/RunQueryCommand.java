@@ -31,19 +31,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
-import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.usermanagement.User;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -67,8 +68,11 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
 		if (part instanceof OdysseusScriptEditor) {
 			OdysseusScriptEditor editor = (OdysseusScriptEditor) part;
-			FileEditorInput input = (FileEditorInput) editor.getEditorInput();
-			run(input.getFile());
+			OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
+			Document doc = (Document) docPro.getDocument(editor.getEditorInput());
+			String text = doc.get();
+			String lines[] = text.split(doc.getDefaultLineDelimiter());			
+			execute(lines);
 			return null;
 		}
 
