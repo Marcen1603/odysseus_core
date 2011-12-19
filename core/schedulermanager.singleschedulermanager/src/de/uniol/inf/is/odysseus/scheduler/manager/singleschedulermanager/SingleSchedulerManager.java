@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerM
 import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.util.FileUtils;
 
 /**
  * Standard {@link ISchedulerManager} for odysseus. The manger uses OSGi
@@ -97,7 +98,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = OdysseusDefaults.openOrCreateFile(OdysseusDefaults
+				File f = FileUtils.openOrCreateFile(OdysseusDefaults
 						.get("schedulingConfigFile"));
 				FileInputStream in;
 				in = new FileInputStream(f);
