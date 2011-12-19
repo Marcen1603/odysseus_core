@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.util.FileUtils;
 
 //import org.dynamicjava.osgi.classloading_utils.OsgiEnvironmentClassLoader;
 
@@ -51,7 +51,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	private void loadCache() throws IOException {
 //		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
 //		Thread.currentThread().setContextClassLoader(this.cl);
-		File f = OdysseusDefaults.openOrCreateFile(path);
+		File f = FileUtils.openOrCreateFile(path);
 		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(f));

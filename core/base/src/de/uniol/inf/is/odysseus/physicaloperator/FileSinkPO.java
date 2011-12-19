@@ -21,6 +21,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.ICSVToString;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.util.FileUtils;
 
 public class FileSinkPO extends AbstractSink<Object> {
 
@@ -61,7 +62,7 @@ public class FileSinkPO extends AbstractSink<Object> {
 			writeCache = new StringBuffer();
 			elementsWritten = 0;
 			out = new BufferedWriter(new FileWriter(
-					OdysseusDefaults.openOrCreateFile(filename)));
+					FileUtils.openOrCreateFile(filename)));
 		} catch (IOException e) {
 			OpenFailedException ex = new OpenFailedException(e);
 			ex.fillInStackTrace();
