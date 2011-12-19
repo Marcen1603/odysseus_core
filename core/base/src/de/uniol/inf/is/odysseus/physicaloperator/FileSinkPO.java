@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.ICSVToString;
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.util.FileUtils;
 
