@@ -35,6 +35,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
         }
         final CSVServer server = new CSVServer(source, this, port);
         final Thread serverThread = new Thread(server);
+        
         this.serverThreads.put(source, serverThread);
         serverThread.start();
 
@@ -54,6 +55,8 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
         public CSVServer(final SourceSpec source, final CSVSourceAdapter adapter, final int port) {
             try {
                 this.serverSocket = new ServerSocket(port);
+                this.source = source;
+                this.adapter = adapter;
             }
             catch (final IOException e) {
                 CSVSourceAdapter.LOG.error(e.getMessage(), e);
@@ -67,8 +70,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
                 Socket socket;
                 try {
                     socket = this.serverSocket.accept();
-                    final CSVProcessor processor = new CSVProcessor(this.source, socket,
-                            this.adapter);
+                    final CSVProcessor processor = new CSVProcessor(this.source, socket, this.adapter);
                     final Thread processingThread = new Thread(processor);
                     processingThreads.add(processingThread);
                     processingThread.start();
@@ -87,26 +89,23 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements So
             private final CSVSourceAdapter adapter;
             private SourceSpec source;
 
-            public CSVProcessor(final SourceSpec source, final Socket server,
-                    final CSVSourceAdapter adapter) {
-                this.server = server;
+            public CSVProcessor(final SourceSpec source, final Socket server,  final CSVSourceAdapter adapter) {
+            	this.server = server;
                 this.adapter = adapter;
+                this.source = source;
             }
 
             @Override
             public void run() {
                 LineNumberReader reader;
                 try {
-                    reader = new LineNumberReader(new InputStreamReader(
-                            this.server.getInputStream()));
-
+                    reader = new LineNumberReader(new InputStreamReader(this.server.getInputStream()));
                     String line = reader.readLine();
                     if (line != null) {
-                        while (((line = reader.readLine()) != null)
-                                && (!Thread.currentThread().isInterrupted())) {
-                            final String[] values = line.split(",");
-                            this.adapter.transfer(this.source,
-                                    System.currentTimeMillis(), values);
+                        while (((line = reader.readLine()) != null) && (!Thread.currentThread().isInterrupted())) {
+                            System.out.println(line);
+                        	final String[] values = line.split(",");
+                            this.adapter.transfer(this.source,  System.currentTimeMillis(), values);
                         }
                     }
                 }
