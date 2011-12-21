@@ -1,0 +1,6 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+
+SELECT * FROM nexmark:person2

@@ -1,6 +1,10 @@
-///OdysseusScript
-#PARSER CQL
+#PARSER PQL
 #TRANSCFG Standard
-#QUERY
-///Your first query here
 
+#QUERY
+
+lms1 = adapter({schema = ['scan:String','scan2:String'], options = ['host:localhost', 'port:2222'], adapter = 'CSV'})  
+
+renamed2 = rename({aliases = ['scan','scan2']}, lms1)
+
+silly = Udo({class='SALSA', init='Jubel'}, renamed2)
