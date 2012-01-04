@@ -32,7 +32,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 
 	private String path;
 	private String fileType;
-	private long delay;
+	private String separator = ";";
 
 	// This variable will be used to generate an ID for every new input tuple.
 	private static long ID = 1;
@@ -57,7 +57,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 		this.source = po.source;
 		this.path = po.path;
 		this.fileType = po.fileType;
-		this.delay = po.delay;
+		this.separator = po.separator;
 		this.outputSchema = po.outputSchema.clone();
 	}
 
@@ -135,12 +135,12 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 		this.fileType = fileType;
 	}
 
-	public long getDelay() {
-		return delay;
+	public String getSeparator() {
+		return separator;
 	}
 
-	public void setDelay(long delay) {
-		this.delay = delay;
+	public void setSeparator(String separator) {
+		this.separator = separator;
 	}
 
 	@Override

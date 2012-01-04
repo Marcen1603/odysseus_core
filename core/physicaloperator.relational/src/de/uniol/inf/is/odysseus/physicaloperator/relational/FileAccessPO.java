@@ -23,20 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.SetDataHandler;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Kai Pancratz, Marco Grawunder
@@ -49,22 +41,20 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	Logger logger = LoggerFactory.getLogger(FileAccessPO.class);
 
 	// Definition for the location and the type of file
-	private String path;
-	private String fileType;
+	final private String path;
+	final private String fileType;
 	
 	private boolean isDone = false;
 	private BufferedReader bf;
 
-	private IAtomicDataHandler[] dataHandlers;
+	private RelationalTupleDataHandler dataHandler;
 
-	public FileAccessPO(String path, String fileType) {
+	final private String separator;
+
+	public FileAccessPO(String path, String fileType, String separator) {
 		this.path = path;
 		this.fileType = fileType;
-	}
-
-	public FileAccessPO(String path, String fileType, long delay) {
-		this.path = path;
-		this.fileType = fileType;
+		this.separator = separator;
 	}
 
 	@Override
@@ -92,15 +82,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 			try {
 
 				if (!(line = bf.readLine()).isEmpty()) {
-					String[] splittedLine = line.split(";");
-					Object[] tuple = new Object[splittedLine.length];
-
-					for (int i = 0; i < this.getOutputSchema().size(); i++) {
-
-						tuple[i] = dataHandlers[i].readData(splittedLine[i]);
-
-					}
-					transfer((T) (new RelationalTuple<IMetaAttribute>(tuple)));
+					String[] splittedLine = line.split(separator);
+					transfer((T) dataHandler.readData(splittedLine));					
 				} else {
 					isDone = true;
 					propagateDone();
@@ -113,36 +96,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		}
 	}
 
-	// TODO: Der folgende Code taucht mehrfach auf .. siehe auch RelationalTupleDataHandler
-	private void createDataReader() {
-		SDFAttributeList schema = this.getOutputSchema();
-		this.dataHandlers = new IAtomicDataHandler[schema.size()];
-		int i = 0;
-		for (SDFAttribute attribute : schema) {
 
-			SDFDatatype type = attribute.getDatatype();
-
-			if (type.isBase() || type.isBean()) {
-				SDFDatatype datatype = attribute.getDatatype();
-				String uri = datatype.getURI(false);
-				IAtomicDataHandler handler = DataHandlerRegistry
-						.getDataHandler(uri);
-
-				if (handler == null) {
-					throw new RuntimeException("illegal datatype " + uri);
-				}
-
-				this.dataHandlers[i++] = handler;
-			} else if (type.isTuple()) {
-				RelationalTupleDataHandler handler = new RelationalTupleDataHandler(
-						type.getSubSchema());
-				this.dataHandlers[i++] = handler;
-			} else if (type.isMultiValue()) {
-				SetDataHandler handler = new SetDataHandler(type.getSubType());
-				this.dataHandlers[i++] = handler;
-			}
-		}
-	}
 
 	@Override
 	public boolean isDone() {
@@ -153,7 +107,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	protected void process_open() throws OpenFailedException {
 
 		try {
-			createDataReader();
+			this.dataHandler = new RelationalTupleDataHandler(this.getOutputSchema());
+
 			// logger.debug(fileType);
 			if (fileType.equalsIgnoreCase("csv")) {
 				File file = new File(path);

@@ -37,5 +37,11 @@ public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 	}
 	
 	@Override
+	public Object readData(String[] input) {
+		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
+		return readData(input[0]);
+	}
+	
+	@Override
 	abstract public List<String> getSupportedDataTypes();
 }

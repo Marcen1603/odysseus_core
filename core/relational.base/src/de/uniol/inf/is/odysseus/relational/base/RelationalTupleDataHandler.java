@@ -60,6 +60,16 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 		
 		return new RelationalTuple<IMetaAttribute>(attributes);		
 	}
+	
+	@Override
+	public Object readData(String[] input) {
+		Object[] attributes = new Object[schema.size()];
+		for(int i= 0; i<input.length; i++){
+			attributes[i] = dataHandlers[i].readData(input[i]);
+		}
+		
+		return new RelationalTuple<IMetaAttribute>(attributes);		
+	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#readData(java.nio.ByteBuffer)

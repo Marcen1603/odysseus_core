@@ -45,15 +45,14 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.MANDATORY, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
-
-	private final LongParameter delay = new LongParameter("DELAY",
-			REQUIREMENT.OPTIONAL);
+	
+	private final StringParameter separator = new StringParameter("SEPARATOR", REQUIREMENT.OPTIONAL);
 
 	static Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
 
 	public FileAccessAOBuilder() {
 		super(0, 0);
-		addParameters(sourceName, path, fileType, type, attributes, delay);
+		addParameters(sourceName, path, fileType, type, attributes, separator);
 	}
 
 	@Override
@@ -82,7 +81,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 		FileAccessAO ao = new FileAccessAO(sdfSource);
 		ao.setPath(path.getValue());
 		ao.setFileType(fileType.getValue());
-		ao.setDelay(delay.getValue());
+		ao.setSeparator(separator.getValue());
 
 		ao.setOutputSchema(schema);
 		return ao;
@@ -92,18 +91,9 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	protected boolean internalValidation() {
 		String sourceName = this.sourceName.getValue();
 
-		if (delay.getValue() == null)
-			delay.setInputValue(0l);
+		if (separator.getValue() == null)
+			separator.setInputValue(";");
 
-		// if (DataDictionary.getInstance().containsViewOrStream(sourceName,
-		// getCaller())) {
-		// if (path.hasValue() || type.hasValue() || fileType.hasValue() ||
-		// attributes.hasValue()) {
-		// addError(new IllegalArgumentException("view " + sourceName
-		// + " already exists"));
-		// return false;
-		// }
-		// }else {
 		if (!(path.hasValue() && type.hasValue() && fileType.hasValue() && attributes
 				.hasValue())) {
 			addError(new IllegalArgumentException(
@@ -112,12 +102,6 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 							+ ". expecting path, fileType, type and attributes."));
 			return false;
 		}
-		// }
-		/*
-		 * File file = new File(path.getValue()); if(!file.exists()){
-		 * addError(new IllegalArgumentException("File " + path.getValue() +
-		 * " does not exists.")); return false; }
-		 */
 		return true;
 	}
 	

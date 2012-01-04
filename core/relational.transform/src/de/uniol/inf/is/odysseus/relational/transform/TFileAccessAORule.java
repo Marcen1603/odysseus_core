@@ -39,8 +39,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 			TransformationConfiguration transformConfig) {
 		String fileAccessPOName = fileAccessAO.getSource().getURI(false);
 		ISource<?> fileAccessPO = new FileAccessPO<RelationalTuple<?>>(
-				fileAccessAO.getPath(), fileAccessAO.getFileType(),
-				fileAccessAO.getDelay());
+				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator());
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		WrapperPlanFactory.putAccessPlan(fileAccessPOName, fileAccessPO);
