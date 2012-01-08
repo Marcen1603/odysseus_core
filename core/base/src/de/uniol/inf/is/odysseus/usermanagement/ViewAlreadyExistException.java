@@ -12,20 +12,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain;
-
-import java.util.Set;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
  */
-public interface Privilege extends AbstractEntity {
+public class ViewAlreadyExistException extends Exception {
 
-    Set<Permission> getPermissions();
 
-    String getObjectURI();
+    /**
+     * 
+     */
+    public ViewAlreadyExistException() {
+    }
 
-    void getOwner();
+    /**
+     * @param message
+     */
+    public ViewAlreadyExistException(String message) {
+        super(message);
+    }
+
+    /**
+     * @param cause
+     */
+    public ViewAlreadyExistException(Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * @param message
+     * @param cause
+     */
+    public ViewAlreadyExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

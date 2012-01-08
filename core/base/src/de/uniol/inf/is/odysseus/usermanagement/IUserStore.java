@@ -1,29 +1,59 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.util.Collection;
 import de.uniol.inf.is.odysseus.store.StoreException;
 
+/**
+ * 
+ * @deprecated Replaced by {@link IUserManagement}
+ * 
+ */
+@Deprecated
 public interface IUserStore {
 
+	/**
+	 * 
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#findUser(String, ISession)}
+	 */
 	public User getUserByName(String username);
+
+	/**
+	 * 
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#deleteUser(IUser, ISession)}
+	 */
 	public User removeByName(String username) throws StoreException;
+
+	/**
+	 * 
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#createUser(String, ISession)}
+	 */
 	public void storeUser(User user) throws UserStoreException;
+
 	public boolean isEmpty();
+
+	/**
+	 * 
+	 * @deprecated Replaced by {@link IUserManagement#getUsers(ISession)}
+	 */
 	public Collection<User> getUsers();
+
 	public void clear() throws StoreException;
 
 }

@@ -12,19 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain;
-
-import java.util.List;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
+ *        
  */
-public interface Role extends AbstractEntity {
-    String getName();
+public interface IPermission {
 
-    /**
-     * @return The privileges of the role
-     */
-    List<? extends Privilege> getPrivileges();
 }

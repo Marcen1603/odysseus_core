@@ -12,16 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.policy;
-
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ChangePasswordPolicy {
+public interface ISessionManagement {
+	/**
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	ISession login(String username, byte[] password);
 
-    public static boolean allow(final IUser user, final IUser caller) {
-        return user.equals(caller);
-    }
+	/**
+	 * @param caller
+	 */
+	void logout(ISession caller);
+
+	/**
+	 * @param session
+	 * @param caller
+	 * @return
+	 */
+	boolean isValid(ISession session, ISession caller);
 }

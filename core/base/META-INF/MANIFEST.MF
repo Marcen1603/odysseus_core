@@ -97,5 +97,5 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.usermanagement.test,
  de.uniol.inf.is.odysseus.util
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/SDFFunctionProvider.xml, OSGI-INF/MEPFunctionService.xml, OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, OSGI-INF/LongHandler.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml
+Service-Component: OSGI-INF/SDFFunctionProvider.xml, OSGI-INF/MEPFunctionService.xml, OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, OSGI-INF/LongHandler.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml, OSGI-INF/UserManagement.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

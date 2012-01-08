@@ -14,14 +14,14 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.policy;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.User;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class LogoutPolicy {
 
-    public static boolean allow(final User user, final User caller) {
+    public static boolean allow(final IUser user, final IUser caller) {
         return user.equals(caller);
     }
 }

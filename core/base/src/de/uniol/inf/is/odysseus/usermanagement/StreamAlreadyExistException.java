@@ -12,31 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.service;
-
-import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
  */
-public interface SessionmanagementService {
+public class StreamAlreadyExistException extends Exception {
     /**
-     * @param username
-     * @param password
-     * @return
+     * 
      */
-    Session login(String username, byte[] password);
+    public StreamAlreadyExistException() {
+    }
 
     /**
-     * @param caller
+     * @param message
      */
-    void logout(Session caller);
+    public StreamAlreadyExistException(String message) {
+        super(message);
+    }
 
     /**
-     * @param session
-     * @param caller
-     * @return
+     * @param cause
      */
-    boolean isValid(Session session, Session caller);
+    public StreamAlreadyExistException(Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * @param message
+     * @param cause
+     */
+    public StreamAlreadyExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

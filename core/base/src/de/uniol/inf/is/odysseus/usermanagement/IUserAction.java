@@ -20,7 +20,9 @@ package de.uniol.inf.is.odysseus.usermanagement;
  * 
  *  @see de.uniol.inf.is.odysseus.usermanagement.UserManagementAction.java
  * 
- * @author Christian van Göns
+ * @author Christian van Gï¿½ns
+ * @deprecated Replaced by {@link IPermission}
  */
-public interface IUserAction {
+@Deprecated
+public interface IUserAction extends IPermission {
 }

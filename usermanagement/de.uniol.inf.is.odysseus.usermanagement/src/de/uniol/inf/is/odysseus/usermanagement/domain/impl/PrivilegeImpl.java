@@ -26,8 +26,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.Permission;
-import de.uniol.inf.is.odysseus.usermanagement.domain.Privilege;
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
+import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -35,79 +35,84 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.Privilege;
 @Entity(name = "Privilege")
 @Table(name = "Privilege")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries(value = {@NamedQuery(name = PrivilegeImpl.NQ_FIND_ALL, query = "select o from Privilege as o"),
-                       @NamedQuery(name = PrivilegeImpl.NQ_FIND_BY_OBJECTURI, query = "select o from Privilege as o where o.objectURI = :objectURI"),})
-public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements Privilege {
-    /** Find all privileges */
-    public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findAll";
-    /** Find all privileges for one object */
-    public static final String NQ_FIND_BY_OBJECTURI = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findByObjectURI";
+@NamedQueries(value = {
+		@NamedQuery(name = PrivilegeImpl.NQ_FIND_ALL, query = "select o from Privilege as o"),
+		@NamedQuery(name = PrivilegeImpl.NQ_FIND_BY_OBJECTURI, query = "select o from Privilege as o where o.objectURI = :objectURI"), })
+public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
+		IPrivilege {
+	/** Find all privileges */
+	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findAll";
+	/** Find all privileges for one object */
+	public static final String NQ_FIND_BY_OBJECTURI = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findByObjectURI";
 
-    private static final long serialVersionUID = 4054608803558374338L;
-    private String objectURI;
+	private static final long serialVersionUID = 4054608803558374338L;
+	private String objectURI;
 
-    @ElementCollection
-    @CollectionTable(name = "Privilege_Permission")
-    private Set<Permission> permissions = new HashSet<Permission>();
+	@ElementCollection
+	@CollectionTable(name = "Privilege_Permission")
+	private Set<IPermission> permissions = new HashSet<IPermission>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getPermissions()
-     */
-    @Override
-    public Set<Permission> getPermissions() {
-        return this.permissions;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getPermissions()
+	 */
+	@Override
+	public Set<IPermission> getPermissions() {
+		return this.permissions;
+	}
 
-    /**
-     * @param operations The operations to set.
-     */
-    public void setPermissions(final Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
+	/**
+	 * @param operations
+	 *            The operations to set.
+	 */
+	public void setPermissions(final Set<IPermission> permissions) {
+		this.permissions = permissions;
+	}
 
-    /**
-     * @param permission
-     */
-    public void addPermission(final Permission permission) {
-        this.permissions.add(permission);
-    }
+	/**
+	 * @param permission
+	 */
+	public void addPermission(final IPermission permission) {
+		this.permissions.add(permission);
+	}
 
-    /**
-     * @param permission
-     */
-    public void removePermission(final Permission permission) {
-        this.permissions.remove(permission);
-    }
+	/**
+	 * @param permission
+	 */
+	public void removePermission(final IPermission permission) {
+		this.permissions.remove(permission);
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getObjectURI()
-     */
-    @Override
-    public String getObjectURI() {
-        return this.objectURI;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getObjectURI()
+	 */
+	@Override
+	public String getObjectURI() {
+		return this.objectURI;
+	}
 
-    /**
-     * @param objectURI The objectURI to set.
-     */
-    public void setObjectURI(final String objectURI) {
-        this.objectURI = objectURI;
-    }
+	/**
+	 * @param objectURI
+	 *            The objectURI to set.
+	 */
+	public void setObjectURI(final String objectURI) {
+		this.objectURI = objectURI;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getOwner()
-     */
-    @Override
-    public void getOwner() {
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ObjectURI: ").append(getObjectURI()).append("\n")
+				.append("Permissions:\n");
+		for (IPermission permission : getPermissions()) {
+			sb.append("\t").append(permission.toString()).append("\n");
+		}
 
-    }
-
+		return sb.toString();
+	}
 }

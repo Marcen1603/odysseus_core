@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
@@ -20,6 +20,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 
+ * @deprecated Replaced by {@link IUser}
+ * 
+ */
+@Deprecated
 public final class User extends AbstractUserManagementEntity implements
 		Serializable, Comparable<User> {
 
@@ -40,7 +46,10 @@ public final class User extends AbstractUserManagementEntity implements
 	 * Adds a role to a user.
 	 * 
 	 * @param role
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#grantRole(IUser, IRole, ISession)}
 	 */
+	@Deprecated
 	void addRole(Role role) {
 		if (role != null && !this.roles.contains(role)) {
 			this.roles.add(role);
@@ -75,6 +84,11 @@ public final class User extends AbstractUserManagementEntity implements
 		return password;
 	}
 
+	/**
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#findRole(String, ISession)}
+	 */
+	@Deprecated
 	public Role getRoleByName(String name) {
 		for (Role role : roles) {
 			if (role.getRolename().equals(name)) {
@@ -170,6 +184,11 @@ public final class User extends AbstractUserManagementEntity implements
 		this.roles.remove(role);
 	}
 
+	/**
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#changePassword(IUser, byte[], ISession)}
+	 */
+	@Deprecated
 	public void setPassword(String password) {
 		this.password = hash(password);
 	}

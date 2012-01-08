@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
@@ -22,9 +22,10 @@ import java.util.List;
  * role and identified by the object name.
  * 
  * @see de.uniol.inf.is.odysseus.usermanagement.IUserAction.java
- * @author Christian van Göns
- * 
+ * @author Christian van Gï¿½ns
+ * @deprecated Replaced by {@link IPrivilege}
  */
+@Deprecated
 public final class Privilege implements Serializable {
 
 	private static final long serialVersionUID = -1623632077911032763L;
@@ -47,7 +48,10 @@ public final class Privilege implements Serializable {
 	 * Adds a new action (permissions) to a privilege.
 	 * 
 	 * @param newOperation
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#grantPermission(IUser, IPermission, String, ISession)}
 	 */
+	@Deprecated
 	void addOperation(IUserAction newOperation) {
 		this.operations.add(newOperation);
 	}
@@ -56,7 +60,10 @@ public final class Privilege implements Serializable {
 	 * Adds a list of new actions (permissions) to a privilege.
 	 * 
 	 * @param operations
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#grantPermissions(IUser, java.util.Set, String, ISession)}
 	 */
+	@Deprecated
 	public void addOperations(List<IUserAction> operations) {
 		for (IUserAction action : operations) {
 			if (!this.operations.contains(action)) {
@@ -64,8 +71,7 @@ public final class Privilege implements Serializable {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Returns a privileges id.
 	 * 
@@ -172,7 +178,10 @@ public final class Privilege implements Serializable {
 	 * Removes a action (permissions) from a privilege.
 	 * 
 	 * @param operation
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#revokePermission(IUser, IPermission, String, ISession)}
 	 */
+	@Deprecated
 	public void removeOperation(IUserAction operation) {
 		this.operations.remove(operation);
 	}
@@ -181,7 +190,10 @@ public final class Privilege implements Serializable {
 	 * Removes a list of actions (permissions) from a privilege.
 	 * 
 	 * @param operations
+	 * @deprecated Replaced by
+	 *             {@link IUserManagement#revokePermissions(IUser, java.util.Set, String, ISession)}
 	 */
+	@Deprecated
 	public void removeOperations(List<IUserAction> operations) {
 		this.operations.removeAll(operations);
 	}

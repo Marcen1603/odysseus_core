@@ -27,6 +27,12 @@ import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
 
+/**
+ * 
+ * @deprecated Replaced by {@link IUserManagement}
+ *
+ */
+@Deprecated
 abstract class AbstractUserManagement {
 
 	private Map<String, User> loggedIn = new HashMap<String, User>();
@@ -227,7 +233,7 @@ abstract class AbstractUserManagement {
 	 * @param action
 	 * @param objecturi
 	 */
-	// TODO: zusammenhänge granten
+	// TODO: zusammenhï¿½nge granten
 	private void dependingGrants(User caller, String entityname,
 			IUserAction action, String objecturi, boolean callerIsOwner) {
 		if (action instanceof DataDictionaryAction) {
@@ -353,7 +359,7 @@ abstract class AbstractUserManagement {
 				fireRoleChangedEvent();
 			}
 
-			// vergibt zusammenhängende Rechte
+			// vergibt zusammenhï¿½ngende Rechte
 			dependingGrants(caller, entityname, operation, objecturi, callerIsOwner);
 		} else {
 			throw new HasNoPermissionException("User " + caller.toString()

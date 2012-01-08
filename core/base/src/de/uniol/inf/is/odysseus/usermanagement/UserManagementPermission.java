@@ -12,20 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain;
+package de.uniol.inf.is.odysseus.usermanagement;
+
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
  */
-public interface AbstractEntity {
-    /**
-     * @return The id of this entity
-     */
-    String getId();
+public enum UserManagementPermission implements IPermission {
+    CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER, SET_SYSTEM_USER,
 
-    /**
-     * @return The version of this entity
-     */
-    Long getVersion();
+    CREATE_ROLE, DELETE_ROLE,
+
+    GRANT, GRANT_ALL, REVOKE, REVOKE_ALL, GRANT_ROLE, REVOKE_ROLE,
+
+    LOGOUT, GET_ALL_USER, GET_ALL;
 }

@@ -12,12 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
  */
-public interface Permission {
+public interface ISession {
+	/**
+	 * 
+	 * @return The session ID
+	 */
+	String getId();
+
+	/**
+	 * 
+	 * @return The user
+	 */
+
+	IUser getUser();
+
+	/**
+	 * 
+	 * @return The validity of the session
+	 */
+	boolean isValid();
 
 }

@@ -12,16 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.policy;
+package de.uniol.inf.is.odysseus.usermanagement;
 
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import java.util.List;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
-public class ChangePasswordPolicy {
+public interface IRole extends IAbstractEntity {
+	
+	/**
+	 * 
+	 * @return The name of the role
+	 */
+	String getName();
 
-    public static boolean allow(final IUser user, final IUser caller) {
-        return user.equals(caller);
-    }
+	/**
+	 * @return The privileges of the role
+	 */
+	List<? extends IPrivilege> getPrivileges();
 }

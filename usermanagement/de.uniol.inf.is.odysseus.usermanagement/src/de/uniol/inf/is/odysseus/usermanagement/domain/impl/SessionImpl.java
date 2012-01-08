@@ -16,20 +16,20 @@ package de.uniol.inf.is.odysseus.usermanagement.domain.impl;
 
 import java.util.UUID;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
-import de.uniol.inf.is.odysseus.usermanagement.domain.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SessionImpl implements Session {
+public class SessionImpl implements ISession {
     private final static long SESSION_TIMEOUT = 10 * 60000;
     private final String id = UUID.randomUUID().toString();
-    private final User user;
+    private final IUser user;
     private final long start;
     private long end;
 
-    public SessionImpl(final User user) {
+    public SessionImpl(final IUser user) {
         this.user = user;
         start = System.currentTimeMillis();
         end = start + SESSION_TIMEOUT;
@@ -51,7 +51,7 @@ public class SessionImpl implements Session {
      * @see de.uniol.inf.is.odysseus.usermanagement.domain.Session#getUser()
      */
     @Override
-    public User getUser() {
+    public IUser getUser() {
         return this.user;
     }
 

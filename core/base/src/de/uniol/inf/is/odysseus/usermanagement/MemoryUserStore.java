@@ -18,6 +18,12 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 
+/**
+ * 
+ * @deprecated Replaced by {@link IUserManagement}
+ *
+ */
+@Deprecated
 public class MemoryUserStore extends MemoryStore<String, User> implements
 		IUserStore {
 

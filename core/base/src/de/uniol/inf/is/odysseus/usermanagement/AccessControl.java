@@ -32,9 +32,11 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
  * @see de.uniol.inf.is.odysseus.usermanagement.IUserAction.java
  * @see hasPermission
  * @see isCreatorOfObject
- * @author Christian van Göns
+ * @author Christian van Gï¿½ns
+ * @deprecated Replaced by {@link IUserManagement}
  * 
  */
+@Deprecated
 public final class AccessControl {
 
 	static private AccessControl instance = null;
@@ -58,7 +60,9 @@ public final class AccessControl {
 	 * @param operation
 	 * @param user
 	 * @return boolean
+	  * @deprecated Replaced by {@link IUserManagement#hasPermission(ISession, IPermission, String)}
 	 */
+	@Deprecated
 	public static boolean hasPermission(IUserAction operation, String object,
 			User user) {
 		if (user != null) {

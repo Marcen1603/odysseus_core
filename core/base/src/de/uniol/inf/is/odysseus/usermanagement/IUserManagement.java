@@ -12,151 +12,114 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.service;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.Permission;
-import de.uniol.inf.is.odysseus.usermanagement.domain.Role;
-import de.uniol.inf.is.odysseus.usermanagement.domain.Session;
-import de.uniol.inf.is.odysseus.usermanagement.domain.User;
-
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
+ *         
  */
-public interface UsermanagementService {
+public interface IUserManagement {
     /**
      * @param name
      * @param caller
      * @return
      */
-    Role createRole(String name, Session caller);
+    IRole createRole(String name, ISession caller);
 
     /**
      * @param role
      * @param caller
      */
-    void deleteRole(Role role, Session caller);
+    void deleteRole(IRole role, ISession caller);
 
     /**
      * @param name
      * @param caller
      * @return
      */
-    Role findRole(String name, Session caller);
+    IRole findRole(String name, ISession caller);
 
     /**
      * @param roleId
      * @param caller
      * @return
      */
-    Role getRole(String roleId, Session caller);
+    IRole getRole(String roleId, ISession caller);
 
     /**
      * @param caller
      * @return
      */
-    List<? extends Role> getRoles(Session caller);
+    List<? extends IRole> getRoles(ISession caller);
 
     /**
      * @param name
      * @param caller
      * @return
      */
-    User createUser(String name, Session caller);
+    IUser createUser(String name, ISession caller);
 
     /**
      * @param user
      * @param password
      * @param caller
      */
-    void changePassword(User user, byte[] password, Session caller);
+    void changePassword(IUser user, byte[] password, ISession caller);
 
     /**
      * @param user
      * @param caller
      */
-    void activateUser(User user, Session caller);
+    void activateUser(IUser user, ISession caller);
 
     /**
      * @param user
      * @param caller
      */
-    void deactivateUser(User user, Session caller);
+    void deactivateUser(IUser user, ISession caller);
 
     /**
      * @param user
      * @param caller
      */
-    void deleteUser(User user, Session caller);
+    void deleteUser(IUser user, ISession caller);
 
     /**
      * @param name
      * @param caller
      * @return
      */
-    User findUser(String name, Session caller);
+    IUser findUser(String name, ISession caller);
 
     /**
      * @param userId
      * @param caller
      * @return
      */
-    User getUser(String userId, Session caller);
+    IUser getUser(String userId, ISession caller);
 
     /**
      * @param caller
      * @return
      */
-    List<? extends User> getUsers(Session caller);
+    List<? extends IUser> getUsers(ISession caller);
 
     /**
      * @param user
      * @param role
      * @param caller
      */
-    void grantRole(User user, Role role, Session caller);
+    void grantRole(IUser user, IRole role, ISession caller);
 
     /**
      * @param user
      * @param role
      * @param caller
      */
-    void revokeRole(User user, Role role, Session caller);
-
-    /**
-     * @param user
-     * @param permission
-     * @param objectURI
-     * @param caller
-     */
-    void grantPermission(User user, Permission permission, String objectURI, Session caller);
-
-    /**
-     * @param user
-     * @param permissions
-     * @param objectURI
-     * @param caller
-     */
-    void grantPermissions(User user, Set<Permission> permissions, String objectURI, Session caller);
-
-    /**
-     * @param role
-     * @param permission
-     * @param objectURI
-     * @param caller
-     */
-    void grantPermission(Role role, Permission permission, String objectURI, Session caller);
-
-    /**
-     * @param role
-     * @param permissions
-     * @param objectURI
-     * @param caller
-     */
-    void grantPermissions(Role role, Set<Permission> permissions, String objectURI, Session caller);
+    void revokeRole(IUser user, IRole role, ISession caller);
 
     /**
      * @param user
@@ -164,7 +127,7 @@ public interface UsermanagementService {
      * @param objectURI
      * @param caller
      */
-    void revokePermission(User user, Permission permission, String objectURI, Session caller);
+    void grantPermission(IUser user, IPermission permission, String objectURI, ISession caller);
 
     /**
      * @param user
@@ -172,7 +135,7 @@ public interface UsermanagementService {
      * @param objectURI
      * @param caller
      */
-    void revokePermissions(User user, Set<Permission> permissions, String objectURI, Session caller);
+    void grantPermissions(IUser user, Set<IPermission> permissions, String objectURI, ISession caller);
 
     /**
      * @param role
@@ -180,7 +143,7 @@ public interface UsermanagementService {
      * @param objectURI
      * @param caller
      */
-    void revokePermission(Role role, Permission permission, String objectURI, Session caller);
+    void grantPermission(IRole role, IPermission permission, String objectURI, ISession caller);
 
     /**
      * @param role
@@ -188,7 +151,39 @@ public interface UsermanagementService {
      * @param objectURI
      * @param caller
      */
-    void revokePermissions(Role role, Set<Permission> permissions, String objectURI, Session caller);
+    void grantPermissions(IRole role, Set<IPermission> permissions, String objectURI, ISession caller);
+
+    /**
+     * @param user
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
+    void revokePermission(IUser user, IPermission permission, String objectURI, ISession caller);
+
+    /**
+     * @param user
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
+    void revokePermissions(IUser user, Set<IPermission> permissions, String objectURI, ISession caller);
+
+    /**
+     * @param role
+     * @param permission
+     * @param objectURI
+     * @param caller
+     */
+    void revokePermission(IRole role, IPermission permission, String objectURI, ISession caller);
+
+    /**
+     * @param role
+     * @param permissions
+     * @param objectURI
+     * @param caller
+     */
+    void revokePermissions(IRole role, Set<IPermission> permissions, String objectURI, ISession caller);
 
     /**
      * @param caller
@@ -196,5 +191,5 @@ public interface UsermanagementService {
      * @param objectURI
      * @return
      */
-    boolean hasPermission(Session caller, Permission permission, String objectURI);
+    boolean hasPermission(ISession caller, IPermission permission, String objectURI);
 }

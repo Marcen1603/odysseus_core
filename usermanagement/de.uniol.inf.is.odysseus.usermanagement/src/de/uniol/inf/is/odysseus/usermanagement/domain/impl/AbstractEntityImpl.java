@@ -23,13 +23,13 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity;
+import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
 @MappedSuperclass
-public class AbstractEntityImpl<T> implements Serializable, AbstractEntity {
+public class AbstractEntityImpl<T> implements Serializable, IAbstractEntity {
     @Transient
     private static final long serialVersionUID = 8557204806069271649L;
 

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.usermanagement.persistence;
 import java.io.Serializable;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity;
+import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity;
  * @param <PK>
  *            The class of the primary key
  */
-public interface GenericDAO<T extends AbstractEntity, PK extends Serializable> {
+public interface GenericDAO<T extends IAbstractEntity, PK extends Serializable> {
 
     T create(T entity);
 

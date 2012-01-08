@@ -16,7 +16,12 @@ package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
 import java.util.Date;
-
+/**
+ * 
+ * @deprecated Replaced by {@link ISession}
+ *
+ */
+@Deprecated
 final public class Session implements Serializable {
 
 	private static final long serialVersionUID = 6601485682039247781L;

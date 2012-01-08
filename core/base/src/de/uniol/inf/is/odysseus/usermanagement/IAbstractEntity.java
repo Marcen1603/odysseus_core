@@ -12,16 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ *         TODO Move to base bundle
  */
-public interface Session {
+public interface IAbstractEntity {
+    /**
+     * @return The id of this entity
+     */
     String getId();
 
-    User getUser();
-
-    boolean isValid();
-
+    /**
+     * @return The version of this entity
+     */
+    Long getVersion();
 }

@@ -12,19 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.domain.impl;
+package de.uniol.inf.is.odysseus.usermanagement;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.Permission;
+import java.util.Set;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
-public enum UsermanagementPermission implements Permission {
-    CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER, SET_SYSTEM_USER,
+public interface IPrivilege extends IAbstractEntity {
 
-    CREATE_ROLE, DELETE_ROLE,
+	Set<IPermission> getPermissions();
 
-    GRANT, GRANT_ALL, REVOKE, REVOKE_ALL, GRANT_ROLE, REVOKE_ROLE,
+	String getObjectURI();
 
-    LOGOUT, GET_ALL_USER, GET_ALL;
 }

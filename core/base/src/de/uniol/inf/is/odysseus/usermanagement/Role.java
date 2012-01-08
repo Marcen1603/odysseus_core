@@ -22,9 +22,10 @@ import java.io.Serializable;
  * 
  * A role can also be a group. A group can't contain privileges.
  * 
- * @author Christian van Göns
- * 
+ * @author Christian van Gï¿½ns
+ * @deprecated Replaced by {@link IRole}
  */
+@Deprecated
 public final class Role extends AbstractUserManagementEntity implements
 		Serializable {
 
