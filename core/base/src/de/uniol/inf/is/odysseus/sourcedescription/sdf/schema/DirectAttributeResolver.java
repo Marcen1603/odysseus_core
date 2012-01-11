@@ -98,7 +98,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 			return curRoot;
 		}else if(curRoot.getDatatype().hasSchema()){ 
 			// TODO: MG: Is this correct?
-			return findORAttribute(curRoot.getDatatype().getSubSchema(), curRoot.getAttributeName(), path, index + 1 );
+			return findORAttribute(curRoot.getDatatype().getSubSchema(), null, path, index + 1 );
 		}
 		
 		return null;
