@@ -84,7 +84,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		SDFAttribute curRoot = null;
 		for( SDFAttribute attr : list ) {
 			
-			if( attr.getAttributeName().equals(toFind) && attr.getSourceName().equals(source)) {
+			if( attr.getAttributeName().equals(toFind) && (source == null || attr.getSourceName().equals(source))) {
 				if(curRoot == null){
 					curRoot = attr;
 				}
