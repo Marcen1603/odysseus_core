@@ -43,15 +43,17 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
         
         // source name available
         String path[] = null;
+        String source = null;
         if(parts.length == 2){
         	path = parts[1].split("\\:"); // split b:c:d into {b, c, d}
+        	source = parts[0];
         }
         // no source name available
         else{
         	path = parts[0].split("\\:"); // split b:c:d into {b, c, d}
         }
         
-        SDFAttribute attribute = findORAttribute(this.schema, path, 0);
+        SDFAttribute attribute = findORAttribute(this.schema, source, path, 0);
     	if(attribute != null) return attribute;
     	throw new IllegalArgumentException("no such attribute: " + name);
         
@@ -77,12 +79,12 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 //        return found;
     }
     
-    private SDFAttribute findORAttribute( SDFAttributeList list, String[] path, int index ) throws AmgigiousAttributeException{
+    private SDFAttribute findORAttribute( SDFAttributeList list, String source, String[] path, int index ) throws AmgigiousAttributeException{
 		String toFind = path[index];
 		SDFAttribute curRoot = null;
 		for( SDFAttribute attr : list ) {
 			
-			if( attr.getAttributeName().equals(toFind)) {
+			if( attr.getAttributeName().equals(toFind) && attr.getSourceName().equals(source)) {
 				if(curRoot == null){
 					curRoot = attr;
 				}
@@ -95,7 +97,8 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		if( index == path.length - 1 ){ 
 			return curRoot;
 		}else if(curRoot.getDatatype().hasSchema()){ 
-			return findORAttribute(curRoot.getDatatype().getSubSchema(), path, index + 1 );
+			// TODO: MG: Is this correct?
+			return findORAttribute(curRoot.getDatatype().getSubSchema(), curRoot.getAttributeName(), path, index + 1 );
 		}
 		
 		return null;
