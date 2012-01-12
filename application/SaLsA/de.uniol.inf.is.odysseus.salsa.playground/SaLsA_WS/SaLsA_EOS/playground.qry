@@ -18,8 +18,5 @@ aggregate = AGGREGATE({aggregations = [['PMERGE','shape','shape','tuple']] }, wi
 
 unested2 = unnest({attribute = 'shape'},aggregate)
 
-
-
-
 projected02 = project({attributes = ['shape']}, unested2) 
 sink = VPOLYGONSINK(projected02)
