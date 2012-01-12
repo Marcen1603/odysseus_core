@@ -18,12 +18,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 public class SaLsAUDFunction<R> implements
 		IUserDefinedFunction<R, R> {
 
-	String init = null;
-	
-	@Override
-	public void init(String initString) {
-		init = initString;
-	}
 
 	@Override
 	public R process(R in, int port) {
@@ -56,6 +50,12 @@ public class SaLsAUDFunction<R> implements
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
+	}
+
+	@Override
+	public void init(String initString) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
