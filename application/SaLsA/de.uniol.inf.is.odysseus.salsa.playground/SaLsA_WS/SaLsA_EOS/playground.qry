@@ -1,10 +1,25 @@
 #PARSER PQL
-#TRANSCFG Standard
+#TRANSCFG salsa
 
 #QUERY
 
-lms1 = adapter({schema = ['scan:String','scan2:String'], options = ['host:localhost', 'port:2222'], adapter = 'CSV'})  
+csvadapter = adapter({schema = ['time:STARTTIMESTAMP','position:SpatialPoint','shape:SpatialPolygon','message:String'], options = ['host:localhost', 'port:2222'], adapter = 'CSV'})  
+transformed = Udo({class='salsatransform', init='ObjectComparision'}, csvadapter)
 
-renamed2 = rename({aliases = ['scan','scan2']}, lms1)
 
-silly = Udo({class='SALSA', init='Jubel'}, renamed2)
+
+projected01 = project({attributes = ['shape']}, transformed) 
+
+sink2 = VPOLYGONSINK(projected01)
+
+windowed = window({size = 5, advance = 1, type = 'time'}, projected01)
+
+aggregate = AGGREGATE({aggregations = [['PMERGE','shape','shape','tuple']] }, windowed)
+
+unested2 = unnest({attribute = 'shape'},aggregate)
+
+
+
+
+projected02 = project({attributes = ['shape']}, unested2) 
+sink = VPOLYGONSINK(projected02)
