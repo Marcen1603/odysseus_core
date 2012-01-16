@@ -13,19 +13,19 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
-import de.uniol.inf.is.odysseus.physicaloperator.access.SizeByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 @SuppressWarnings("rawtypes")
-public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<SizeByteBufferReceiverPO> {
+public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<AbstractByteBufferReceiverPO> {
 
 	@Override
-	public Class<SizeByteBufferReceiverPO> getOperatorClass() {
-		return SizeByteBufferReceiverPO.class;
+	public Class<AbstractByteBufferReceiverPO> getOperatorClass() {
+		return AbstractByteBufferReceiverPO.class;
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(SizeByteBufferReceiverPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation estimateOperator(AbstractByteBufferReceiverPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
 		OperatorEstimation estimation = new OperatorEstimation(instance);
 		
