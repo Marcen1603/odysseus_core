@@ -24,27 +24,24 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener {
+abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener {
 
 	volatile protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
+			_logger = LoggerFactory.getLogger(AbstractByteBufferReceiverPO.class);
 		}
 		return _logger;
 	}
 
-	private IObjectHandler<W> objectHandler;
-	private int size = -1;
-	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
-	private int currentSize = 0;
+	protected IObjectHandler<W> objectHandler;
 	boolean opened;
 	
 	final IAccessConnection accessHandler;
 
 
-	public ByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) throws IOException {
+	public AbstractByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) throws IOException {
 		super();
 		this.objectHandler = objectHandler;
 		this.accessHandler = accessHandler;
@@ -53,12 +50,10 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 	}
 
 	@SuppressWarnings("unchecked")
-	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
+	public AbstractByteBufferReceiverPO(AbstractByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
 		objectHandler = (IObjectHandler<W>) byteBufferReceiverPO.objectHandler.clone();
 		accessHandler = (IAccessConnection) byteBufferReceiverPO.clone();
-		size = byteBufferReceiverPO.size;
-		currentSize = byteBufferReceiverPO.currentSize;
 		opened = byteBufferReceiverPO.opened;
 	}
 
@@ -68,8 +63,6 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
-				sizeBuffer.clear();
-				size = -1;
 				objectHandler.clear();
 				accessHandler.open(this);
 				opened = true;
@@ -86,8 +79,6 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 			try {
 				opened = false; // Do not read any data anymore
 				accessHandler.close(this);
-				sizeBuffer.clear();
-				size = -1;
 				objectHandler.clear();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -100,55 +91,10 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 		propagateDone();
 	}
 
-	@Override
-	public synchronized void process(ByteBuffer buffer) {
-		if (opened) {
-			try {
-				while (buffer.remaining() > 0) {
-					
-					// size ist dann ungleich -1 wenn die vollständige 
-					// Größeninformation übertragen wird
-					// Ansonsten schon mal soweit einlesen
-					if (size == -1) {
-						while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
-							sizeBuffer.put(buffer.get());
-						}
-						// Wenn alles übertragen
-						if (sizeBuffer.position() == 4) {
-							sizeBuffer.flip();
-							size = sizeBuffer.getInt();
-						}
-					}
-					// Es kann auch direkt nach der size noch was im Puffer
-					// sein!
-					// Und Size kann gesetzt worden sein
-					if (size != -1) {
-						// Ist das was dazukommt kleiner als die finale Größe?
-						if (currentSize + buffer.remaining() < size) {
-							currentSize = currentSize + buffer.remaining();
-							objectHandler.put(buffer);
-						} else {
-							// Splitten (wir sind mitten in einem Objekt
-							// 1. alles bis zur Grenze dem Handler übergeben
-							// logger.debug(" "+(size-currentSize));
-							objectHandler.put(buffer, size - currentSize);
-							// 2. das fertige Objekt weiterleiten
-							transfer();
-							// Dann in der While-Schleife weiterverarbeiten
-						}
-					}
-				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-				accessHandler.reconnect();
-			}
-		}
-	}
+  
 
 
-	private synchronized void transfer() throws IOException, ClassNotFoundException {
+	protected synchronized void transfer() throws IOException, ClassNotFoundException {
 
 		W toTrans = null;
 		try {
@@ -162,15 +108,9 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 		}
 		// logger.debug("Transfer "+toTrans);
 		transfer(toTrans);
-		size = -1;
-		sizeBuffer.clear();
-		currentSize = 0;
 	}
-
-	@Override
-	public ByteBufferReceiverPO<W> clone() {
-		return new ByteBufferReceiverPO<W>(this);
-	}
+	
+	abstract public void process(ByteBuffer buffer);
 
 	@Override
 	public String getSourceName() {
@@ -179,11 +119,11 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ByteBufferReceiverPO)) {
+		if (!(ipo instanceof AbstractByteBufferReceiverPO)) {
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
+		AbstractByteBufferReceiverPO bbrpo = (AbstractByteBufferReceiverPO) ipo;
 		if (this.objectHandler.equals(bbrpo.objectHandler) && this.accessHandler.equals(bbrpo.accessHandler)) {
 			return true;
 		}
