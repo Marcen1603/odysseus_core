@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.nio.ByteBuffer;
 
-public interface IRouterReceiver extends IConnectionListener{
+public interface IAccessConnectionListener{
 	public void process(ByteBuffer buffer);
 	public void done();
 	public String getSourceName();	

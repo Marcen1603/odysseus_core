@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
-public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRouterReceiver {
+public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener {
 
 	volatile protected static Logger _logger = null;
 
@@ -39,46 +39,29 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
-	private Router router;
-	private String host;
-	private int port;
 	boolean opened;
-	private boolean autoReconnect = false;
-	private long waitingForNextReconnect = 0;
-	private int tries = 0;	
+	
+	final IAccessConnection accessHandler;
 
-	public ByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
+
+	public ByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) throws IOException {
 		super();
-		this.objectHandler = handler;
-		router = Router.getInstance();
-		router.addConnectionListener(this);
-		this.host = host;
-		this.port = port;
-		setName("ByteBufferReceiverPO " + host + ":" + port);
+		this.objectHandler = objectHandler;
+		this.accessHandler = accessHandler;
+		setName("ByteBufferReceiverPO " + accessHandler);
 		this.opened = false;
-		this.autoReconnect = false;
 	}
 
 	@SuppressWarnings("unchecked")
 	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
 		objectHandler = (IObjectHandler<W>) byteBufferReceiverPO.objectHandler.clone();
+		accessHandler = (IAccessConnection) byteBufferReceiverPO.clone();
 		size = byteBufferReceiverPO.size;
 		currentSize = byteBufferReceiverPO.currentSize;
-		router = byteBufferReceiverPO.router;
-		host = byteBufferReceiverPO.host;
-		port = byteBufferReceiverPO.port;
 		opened = byteBufferReceiverPO.opened;
-		autoReconnect = byteBufferReceiverPO.autoReconnect;
 	}
 
-	public boolean isAutoReconnectEnabled() {
-		return autoReconnect;
-	}
-
-	public void setAutoReconnectEnabled(boolean autoReconnect) {
-		this.autoReconnect = autoReconnect;
-	}
 
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
@@ -88,7 +71,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 				sizeBuffer.clear();
 				size = -1;
 				objectHandler.clear();
-				router.connectToServer(this, host, port);
+				accessHandler.open(this);
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -102,7 +85,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		if (opened) {
 			try {
 				opened = false; // Do not read any data anymore
-				router.disconnectFromServer(this);
+				accessHandler.close(this);
 				sizeBuffer.clear();
 				size = -1;
 				objectHandler.clear();
@@ -159,36 +142,11 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-				reconnect();
+				accessHandler.reconnect();
 			}
 		}
 	}
 
-	private void reconnect() {
-		if (this.opened && this.autoReconnect) {			
-			if(waitingForNextReconnect<0){
-				waitingForNextReconnect = 0;
-			}
-			getLogger().info("Reconnect in " + waitingForNextReconnect + " ms ...");
-			try {
-				Thread.sleep(waitingForNextReconnect);
-			} catch (InterruptedException e1) {
-			}
-			getLogger().info("Trying to reconnect...");
-			process_close();
-			try {
-				process_open();
-			} catch (OpenFailedException e) {				
-				if (e.getCause() instanceof IOException) {
-					reconnect();
-				}
-				e.printStackTrace();
-			}
-			// failed again... increase waittime
-			waitingForNextReconnect = ((tries*tries)*100);
-			tries++;
-		}
-	}
 
 	private synchronized void transfer() throws IOException, ClassNotFoundException {
 
@@ -207,17 +165,11 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		size = -1;
 		sizeBuffer.clear();
 		currentSize = 0;
-		tries = 0;
 	}
 
 	@Override
 	public ByteBufferReceiverPO<W> clone() {
 		return new ByteBufferReceiverPO<W>(this);
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + " " + host + " " + port;
 	}
 
 	@Override
@@ -232,28 +184,11 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IRoute
 		}
 		@SuppressWarnings("rawtypes")
 		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
-		if (this.objectHandler.equals(bbrpo.objectHandler) && this.port == bbrpo.port && this.host.equals(bbrpo.host)) {
+		if (this.objectHandler.equals(bbrpo.objectHandler) && this.accessHandler.equals(bbrpo.accessHandler)) {
 			return true;
 		}
 		return false;
 	}
 
-	@Override
-	public void notify(Router router, ConnectionMessageReason reason) {
-		switch (reason) {
-		case ConnectionAbort:
-			reconnect();
-			break;
-		case ConnectionClosed:
-			break;
-		case ConnectionRefused:
-			reconnect();
-			break;
-		case ConnectionOpened:
-			break;
-		default:
-			break;
-		}
 
-	}
 }

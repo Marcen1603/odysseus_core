@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
 
-public class Router extends Thread {
+public class Router extends Thread implements IConnection {
 	
 	static private Logger _logger = null;
 	static private Logger getLogger(){
@@ -49,8 +49,8 @@ public class Router extends Thread {
 	private ByteBuffer buffer = ByteBuffer.allocate(1024);
 	Selector selector = null;
 	static Router instance = null;
-	private Map<IRouterReceiver,SocketChannel> routerReceiverMap = new HashMap<IRouterReceiver, SocketChannel>();
-	private LinkedList<IPair<SocketChannel, IRouterReceiver>> deferredList = new LinkedList<IPair<SocketChannel, IRouterReceiver>>();
+	private Map<IAccessConnectionListener,SocketChannel> routerReceiverMap = new HashMap<IAccessConnectionListener, SocketChannel>();
+	private LinkedList<IPair<SocketChannel, IAccessConnectionListener>> deferredList = new LinkedList<IPair<SocketChannel, IAccessConnectionListener>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 	private List<IConnectionListener> connectionlistener = new ArrayList<IConnectionListener>();
@@ -63,7 +63,7 @@ public class Router extends Thread {
 		return instance;
 	}
 
-	public Set<IRouterReceiver> getRouterReceiver(){
+	public Set<IAccessConnectionListener> getRouterReceiver(){
 		return routerReceiverMap.keySet();
 	}
 	
@@ -124,7 +124,7 @@ public class Router extends Thread {
 				while (it.hasNext()) {
 					SelectionKey key = (SelectionKey) it.next();
 					it.remove();
-					IRouterReceiver op = (IRouterReceiver) key.attachment();
+					IAccessConnectionListener op = (IAccessConnectionListener) key.attachment();
 					SocketChannel sc = (SocketChannel) key.channel();
 
 					// System.out.println("Selection Key "+key.isConnectable()+" "+key.isReadable()+" "+op);
@@ -186,7 +186,7 @@ public class Router extends Thread {
 		getLogger().debug("Router terminated ...");
 	}
 
-	public void connectToServer(IRouterReceiver sink, String host, int port)
+	public void connectToServer(IAccessConnectionListener sink, String host, int port)
 			throws Exception {
 		getLogger().debug(sink+" connect to server "+host+" "+port);
 		SocketChannel sc = SocketChannel.open();
@@ -198,7 +198,7 @@ public class Router extends Thread {
 		notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
 	}
 	
-	public void disconnectFromServer(IRouterReceiver sink) throws IOException{
+	public void disconnectFromServer(IAccessConnectionListener sink) throws IOException{
 		synchronized(routerReceiverMap){
 			SocketChannel s = routerReceiverMap.remove(sink);
 			if (s!=null){
@@ -207,9 +207,9 @@ public class Router extends Thread {
 		}		
 	}
 
-	private void deferedRegister(SocketChannel sc, IRouterReceiver sink) {
+	private void deferedRegister(SocketChannel sc, IAccessConnectionListener sink) {
 		synchronized (deferredList) {
-			deferredList.add(new Pair<SocketChannel, IRouterReceiver>(
+			deferredList.add(new Pair<SocketChannel, IAccessConnectionListener>(
 					sc, sink));
 			synchronized(routerReceiverMap){
 				routerReceiverMap.put(sink, sc);
@@ -221,7 +221,7 @@ public class Router extends Thread {
 	private synchronized void processRegister() {
 		synchronized (deferredList) {
 			while (deferredList.size() > 0) {
-				IPair<SocketChannel, IRouterReceiver> pair = deferredList
+				IPair<SocketChannel, IAccessConnectionListener> pair = deferredList
 						.poll();
 				try {
 					getLogger().debug("Registering "+pair.getE1()+" "+pair.getE2());
@@ -251,7 +251,7 @@ public class Router extends Thread {
 	// }
 
 	private void readDataFromSocket(SocketChannel socketChannel,
-			IRouterReceiver os) throws IOException {
+			IAccessConnectionListener os) throws IOException {
 		// ISink<ByteBuffer> os = clientMap.get(socketChannel);
 		// System.out.println(os);
 		// System.out.println("Read From Socket " + socketChannel.toString() +

@@ -21,5 +21,5 @@ package de.uniol.inf.is.odysseus.physicaloperator.access;
  */
 public interface IConnectionListener {
 
-	public void notify(Router router, ConnectionMessageReason reason);
+	public void notify(IConnection connection, ConnectionMessageReason reason);
 }
