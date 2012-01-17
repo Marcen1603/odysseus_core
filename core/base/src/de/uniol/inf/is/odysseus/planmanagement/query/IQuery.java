@@ -14,12 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.query;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -42,7 +44,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
  */
 public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 		IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner,
-		IMonitoringDataProvider {
+		IMonitoringDataProvider, Serializable, ISerializable{
 
 	/**
 	 * ID of this query. Should be unique.
@@ -219,5 +221,7 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	void open() throws OpenFailedException;
 
 	void close();
+		
+	
 	
 }

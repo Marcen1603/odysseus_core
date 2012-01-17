@@ -29,7 +29,17 @@ public class BundleClassLoading {
 	private static String DEFAULT_PACKAGE_ROOT_DIR = "/bin";
 
 	public static Class<?> findClass(String canonicalClassName, Bundle startBundle) throws ClassNotFoundException {
+		// first try to load by default-classloader
+		try{
+			Class<?> clazz = startBundle.loadClass(canonicalClassName);
+			return clazz;
+		}catch(Exception e){
+			
+		}
+		
+		// then scan wired bundles
 		try {
+			
 			for (Bundle b : startBundle.getBundleContext().getBundles()) {
 				String slashedName = canonicalClassName.replace('.', '/');
 				int splitPoint = slashedName.lastIndexOf("/");

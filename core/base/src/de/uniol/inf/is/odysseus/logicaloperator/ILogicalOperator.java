@@ -22,13 +22,14 @@ import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.ISubscriber;
 import de.uniol.inf.is.odysseus.Subscription;
+import de.uniol.inf.is.odysseus.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 public interface ILogicalOperator extends IOwnedOperator, 
-	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable{
+	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable, ISerializable{
 
 	@Override
 	public ILogicalOperator clone();
@@ -56,4 +57,6 @@ public interface ILogicalOperator extends IOwnedOperator,
 //	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
 	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a);
 	public boolean isValid();
+	
+	
 }

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
@@ -31,6 +32,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	private static final long serialVersionUID = 4218605858465342011L;
 	protected SDFAttributeList outputSchema;
+	private List<String> aliases;
 
 	public RenameAO() {
 		super();
@@ -38,12 +40,13 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	public RenameAO(AbstractLogicalOperator po) {
 		super(po);
-		outputSchema = po.getOutputSchema();
+		outputSchema = po.getOutputSchema();		
 	}
 
 	public RenameAO(RenameAO ao) {
 		super(ao);
 		outputSchema = new SDFAttributeList(ao.outputSchema);
+		aliases = ao.aliases;
 	}
 
 	@Override
@@ -53,6 +56,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	@Parameter(type = StringParameter.class, isList = true)
 	public void setAliases(List<String> aliases) {
+		this.aliases = aliases;
 		SDFAttributeList inputSchema = getInputSchema();
 		if (inputSchema.size() != aliases.size()) {
 			throw new IllegalArgumentException(
@@ -67,6 +71,11 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 //			attribute.setSourceName(null);
 			this.outputSchema.add(attribute);
 		}
+	}
+	
+	@GetParameter(name="setAliases")
+	public List<String> getAliases(){
+		return this.aliases;
 	}
 
 	@Override

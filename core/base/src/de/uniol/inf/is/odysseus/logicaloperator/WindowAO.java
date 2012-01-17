@@ -14,9 +14,11 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.EnumParameter;
@@ -41,10 +43,12 @@ public class WindowAO extends UnaryLogicalOp {
 
 	private long windowSlide = -1;
 
+	@GetParameter(name = "ADVANCE")
 	public long getWindowAdvance() {
 		return windowAdvance;
 	}
 
+	@GetParameter(name = "SLIDE")
 	public long getWindowSlide() {
 		return windowSlide;
 	}
@@ -82,6 +86,7 @@ public class WindowAO extends UnaryLogicalOp {
 		return new WindowAO(this);
 	}
 
+	@GetParameter(name = "SIZE")
 	public long getWindowSize() {
 		return windowSize;
 	}
@@ -95,6 +100,7 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowSize = Long.parseLong(size);
 	}
 
+	@GetParameter(name = "TYPE")
 	public WindowType getWindowType() {
 		return windowType;
 	}
@@ -109,8 +115,13 @@ public class WindowAO extends UnaryLogicalOp {
 		return WindowAO.class.getSimpleName();
 	}
 
+	@GetParameter(name = "PARTITION")
 	public List<SDFAttribute> getPartitionBy() {
-		return Collections.unmodifiableList(partitionedBy);
+		if (partitionedBy != null) {
+			return Collections.unmodifiableList(partitionedBy);
+		} else {
+			return new ArrayList<SDFAttribute>();
+		}
 	}
 
 	public boolean isPartitioned() {
@@ -132,19 +143,17 @@ public class WindowAO extends UnaryLogicalOp {
 		switch (windowType) {
 		case TIME:
 			if (this.partitionedBy != null) {
-				addError(new IllegalParameterException(
-						"can't use partition in time window"));
+				addError(new IllegalParameterException("can't use partition in time window"));
 				return false;
 			}
-			if (this.windowSlide > 0 && this.windowAdvance > 0){
+			if (this.windowSlide > 0 && this.windowAdvance > 0) {
 				addError(new IllegalParameterException("can't use slide and advance at the same time"));
 				return false;
 			}
 			return true;
 		case TUPLE:
 			if (this.windowSlide != -1) {
-				addError(new IllegalParameterException(
-						"can't use slide in tuple window"));
+				addError(new IllegalParameterException("can't use slide in tuple window"));
 				return false;
 			}
 			return true;
@@ -152,23 +161,19 @@ public class WindowAO extends UnaryLogicalOp {
 			boolean isValid = true;
 			if (this.windowSize != -1) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use size in unbounded window"));
+				addError(new IllegalParameterException("can't use size in unbounded window"));
 			}
 			if (this.windowAdvance != -1) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use advance in unbounded window"));
+				addError(new IllegalParameterException("can't use advance in unbounded window"));
 			}
 			if (this.partitionedBy != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use partition in unbounded window"));
+				addError(new IllegalParameterException("can't use partition in unbounded window"));
 			}
 			if (this.windowSlide != -1) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use slide in unbounded window"));
+				addError(new IllegalParameterException("can't use slide in unbounded window"));
 			}
 			return isValid;
 		}

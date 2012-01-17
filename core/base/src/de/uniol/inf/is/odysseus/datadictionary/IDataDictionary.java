@@ -14,11 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.datadictionary;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
@@ -72,6 +75,10 @@ public interface IDataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getStreams(User caller);
 	public Set<Entry<String, ILogicalOperator>> getViews(User caller);	
 
+	public void addLogicalPlan(IQuery q, User caller);
+	public IQuery getLogicalPlan(int id, User caller);
+	public List<IQuery> getLogicalPlans(User caller);
+	public void removeLogicalPlan(IQuery q, User caller);
 	
 	public ILogicalOperator removeViewOrStream(String viewname, User caller);
 	

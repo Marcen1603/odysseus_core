@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AggregateItem;
@@ -94,6 +95,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
+	@GetParameter(name="AGGREGATIONS")
 	public Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> getAggregations() {
 		return this.aggregations;
 	}
@@ -131,6 +133,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
+	@GetParameter(name = "GROUP_BY")
 	public List<SDFAttribute> getGroupingAttributes() {
 		return Collections.unmodifiableList(groupingAttributes);
 	}

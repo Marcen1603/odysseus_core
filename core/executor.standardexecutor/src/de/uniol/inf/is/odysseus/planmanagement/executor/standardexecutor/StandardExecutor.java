@@ -303,7 +303,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			for (IQuery optimizedQuery : newQueries) {
 				this.plan.addQuery(optimizedQuery);
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
-						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
+						PlanModificationEventType.QUERY_ADDED, optimizedQuery));				
+				optimizedQuery.getDataDictionary().addLogicalPlan(optimizedQuery, optimizedQuery.getUser());				
 			}
 
 		} catch (Exception e) {

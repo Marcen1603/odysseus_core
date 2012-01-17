@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.logicaloperator.serialize.ISerializable;
+import de.uniol.inf.is.odysseus.logicaloperator.serialize.SerializeNode;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -53,6 +56,8 @@ import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
  * 
  */
 public class Query extends AbstractMonitoringDataProvider implements IQuery {
+
+	private static final long serialVersionUID = -7846033747726522915L;
 
 	protected static Logger _logger = null;
 
@@ -166,8 +171,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * @param parameters
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public Query(List<IPhysicalOperator> physicalPlan,
-			QueryBuildConfiguration parameters) {
+	public Query(List<IPhysicalOperator> physicalPlan, QueryBuildConfiguration parameters) {
 		this("", null, physicalPlan, parameters);
 	}
 
@@ -192,8 +196,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * @param parameters
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	public Query(ILogicalOperator logicalPlan,
-			QueryBuildConfiguration parameters) {
+	public Query(ILogicalOperator logicalPlan, QueryBuildConfiguration parameters) {
 		this("", logicalPlan, null, parameters);
 	}
 
@@ -210,9 +213,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * @param parameters
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
-	private Query(String parserID, ILogicalOperator logicalPlan,
-			List<IPhysicalOperator> physicalPlan,
-			QueryBuildConfiguration parameters) {
+	private Query(String parserID, ILogicalOperator logicalPlan, List<IPhysicalOperator> physicalPlan, QueryBuildConfiguration parameters) {
 		this.id = idCounter++;
 		this.parameters = parameters;
 		this.parserID = parserID;
@@ -258,15 +259,13 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		this.logicalPlan = logicalPlan;
 		if (setOwner) {
 			// Set Owner
-			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(
-					this);
+			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(this);
 			@SuppressWarnings("rawtypes")
 			AbstractGraphWalker walker = new AbstractGraphWalker();
 			walker.prefixWalk(logicalPlan, visitor);
 		} else {
 			if (!logicalPlan.hasOwner()) {
-				throw new IllegalArgumentException(
-						"LogicalPlan must have an owner " + logicalPlan);
+				throw new IllegalArgumentException("LogicalPlan must have an owner " + logicalPlan);
 			}
 		}
 	}
@@ -297,12 +296,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 					// uebersprungen
 					// werden, wenn
 					// root keine source ist
-					if (defaultRoot != null && defaultRoot.isSink()
-							&& oldRoot.isSource()) {
-						IPhysicalOperator cloned = this.parameters
-								.getDefaultRootStrategy()
-								.connectDefaultRootToSource(
-										(ISink<?>) defaultRoot, oldRoot);
+					if (defaultRoot != null && defaultRoot.isSink() && oldRoot.isSource()) {
+						IPhysicalOperator cloned = this.parameters.getDefaultRootStrategy().connectDefaultRootToSource((ISink<?>) defaultRoot, oldRoot);
 						// ((ISink) defaultRoot).subscribeToSource((ISource)
 						// oldRoot, 0,
 						// 0, oldRoot.getOutputSchema());
@@ -322,7 +317,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 				// this.roots = newRoots;
 			}
 		}
-		//getLogger().debug("setRoots " + roots);
+		// getLogger().debug("setRoots " + roots);
 		return this.roots;
 	}
 
@@ -381,8 +376,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			visitedOps.add(curOp);
 			if (curOp.isSink()) {
 				@SuppressWarnings("rawtypes")
-				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
-						.getSubscribedToSource();
+				Collection<PhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp).getSubscribedToSource();
 				for (PhysicalSubscription<ISource<?>> subscription : subsriptions) {
 					ISource<?> target = subscription.getTarget();
 					if (!visitedOps.contains(target)) {
@@ -471,8 +465,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			if (curRoot.isSink()) {
 				((ISink<?>) curRoot).open();
 			} else {
-				throw new IllegalArgumentException(
-						"Open cannot be called on a source");
+				throw new IllegalArgumentException("Open cannot be called on a source");
 			}
 		}
 		opened = true;
@@ -487,8 +480,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 			if (curRoot.isSink()) {
 				((ISink<?>) curRoot).close();
 			} else {
-				throw new IllegalArgumentException(
-						"Close cannot be called on a a source");
+				throw new IllegalArgumentException("Close cannot be called on a a source");
 			}
 		}
 		opened = false;
@@ -520,8 +512,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * addReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void addReoptimizeListener(
-			IQueryReoptimizeListener reoptimizationListener) {
+	public void addReoptimizeListener(IQueryReoptimizeListener reoptimizationListener) {
 		synchronized (this.queryReoptimizeListener) {
 			if (!this.queryReoptimizeListener.contains(reoptimizationListener)) {
 				this.queryReoptimizeListener.add(reoptimizationListener);
@@ -536,8 +527,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * removeReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void removeReoptimizeListener(
-			IQueryReoptimizeListener reoptimizationListener) {
+	public void removeReoptimizeListener(IQueryReoptimizeListener reoptimizationListener) {
 		synchronized (this.queryReoptimizeListener) {
 			this.queryReoptimizeListener.remove(reoptimizationListener);
 		}
@@ -728,8 +718,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	public void replaceRoot(IPhysicalOperator oldRoot, IPhysicalOperator newRoot) {
 
 		if (this.roots.contains(oldRoot)) {
-			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(
-					this.roots);
+			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(this.roots);
 			oldRoots.remove(oldRoot);
 			oldRoots.add(newRoot);
 			this.setRoots(oldRoots);
@@ -813,6 +802,76 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		}
 
 		return ops;
+	}
+
+	@Override
+	public SerializeNode serialize() {
+		SerializeNode node = new SerializeNode(Query.class);
+		List<ILogicalOperator> visitedOperators = new ArrayList<ILogicalOperator>();		
+		ILogicalOperator operator = getLogicalPlan();
+		serializeWalker(operator, visitedOperators, node);
+		node.addPropertyValue("rootOperator", operator.hashCode());
+		return node;
+	}
+
+	private void serializeWalker(ILogicalOperator op, List<ILogicalOperator> visitedOperators, SerializeNode list) {
+		if (visitedOperators.contains(op)) {
+			return;
+		}
+		visitedOperators.add(op);
+		SerializeNode node = op.serialize();
+		node.addPropertyValue("id", op.hashCode());
+		list.addChild(node);
+		for (LogicalSubscription sub : op.getSubscribedToSource()) {
+			SerializeNode subNode = new SerializeNode(LogicalSubscription.class);
+			subNode.addPropertyValue("sinkInPort", sub.getSinkInPort());
+			subNode.addPropertyValue("sourceOutPort", sub.getSourceOutPort());
+			subNode.addPropertyValue("from", op.hashCode());
+			subNode.addPropertyValue("to", sub.getTarget().hashCode());
+			list.addChild(subNode);
+			serializeWalker(sub.getTarget(), visitedOperators, list);
+		}
+	}
+
+	@Override
+	public void deserialize(SerializeNode rootNode) {
+		try {
+			Map<String, ILogicalOperator> ops = new HashMap<String, ILogicalOperator>();
+			for (SerializeNode node : rootNode.getChilds()) {
+				if (ILogicalOperator.class.isAssignableFrom(node.getRepresentingClass())) {
+
+					// create instance
+					ISerializable s = (ISerializable) node.getRepresentingClass().newInstance();
+					// reload properties
+					s.deserialize(node);
+					// memorize for subscriptions
+					ops.put(node.getProperty("id").toString(), (ILogicalOperator) s);
+
+				}
+			}
+			// strict serial, so that the operators are all available and
+			// loaded!
+			for (SerializeNode node : rootNode.getChilds()) {
+				if (LogicalSubscription.class.isAssignableFrom(node.getRepresentingClass())) {
+					String from = node.getProperty("from").toString();
+					String to = node.getProperty("to").toString();
+					int sinkInPort = Integer.parseInt(node.getProperty("sinkInPort").toString());
+					int sourceOutPort = Integer.parseInt(node.getProperty("sourceOutPort").toString());
+					// TODO: schema speichern
+					ops.get(to).subscribeToSource(ops.get(from), sinkInPort, sourceOutPort, ops.get(from).getOutputSchema());
+				}
+			}
+			
+			String hashCode = rootNode.getProperty("rootOperator").toString();
+			ILogicalOperator rootOperator = ops.get(hashCode); 
+			//this.setLogicalPlan(rootOperator, getUser());
+			System.out.println("ready");
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

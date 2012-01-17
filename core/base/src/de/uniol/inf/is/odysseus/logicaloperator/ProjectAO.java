@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -67,6 +68,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	}
 	
 	@Override
+	@GetParameter(name ="ATTRIBUTES")
 	public SDFAttributeList getOutputSchema() {
 		return outputSchema;
 	}

@@ -38,6 +38,12 @@ public class Activator implements BundleActivator {
 	private IFunction<?>[] functions = new IFunction[] { new DolToEur(),
 			new Now(), new Distance(), new Polygon() };
 
+	private static BundleContext bundleContext;
+	
+	
+	public static BundleContext getBundleContext(){
+		return bundleContext;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -65,6 +71,7 @@ public class Activator implements BundleActivator {
 				new AccessAOBuilder());
 		OperatorBuilderFactory.putOperatorBuilderType("FILE",
 				new FileAccessAOBuilder());
+		bundleContext = context;
 	}
 
 	/*
@@ -78,6 +85,7 @@ public class Activator implements BundleActivator {
 		for (IFunction<?> function : functions) {
 			MEP.unregisterFunction(function.getSymbol());
 		}
+		bundleContext = null;
 	}
 
 }
