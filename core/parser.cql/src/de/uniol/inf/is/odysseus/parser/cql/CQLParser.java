@@ -130,7 +130,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			cqlParser.visit(statement, null);
 			return cqlParser.plans;
 		} catch (ParseException e) {
-			throw new QueryParseException(e.getMessage(),e);
+			throw new QueryParseException(e.getMessage(), e);
 		}
 	}
 
@@ -254,30 +254,31 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			top = new CreateProjectionVisitor(caller, dataDictionary)
 					.createProjection(statement, top, attributeResolver);
+
+			Class<?> prioVisitor = Class
+					.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
+			Object pv = prioVisitor.newInstance();
+			// prioVisitor.setTopOperator(top);
+
+			Method m = prioVisitor.getDeclaredMethod("setTopOperator",
+					ILogicalOperator.class);
+			m.invoke(pv, top);
+
+			// prioVisitor.setAttributeResolver(attributeResolver);
+			m = prioVisitor.getDeclaredMethod("setAttributeResolver",
+					AttributeResolver.class);
+			m.invoke(pv, attributeResolver);
+
+			// prioVisitor.visit(statement, null);
+			m = prioVisitor.getDeclaredMethod("visit", AttributeResolver.class);
+			m.invoke(pv, caller);
 			
-			// TODO: Correct Reflection
-//			Class<?> prioVisitor = Class
-//					.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
-//			Object pv = prioVisitor.newInstance();
-//			Method m = prioVisitor.getDeclaredMethod("setTopOperator",
-//					ILogicalOperator.class);
-//			m.invoke(pv, top);
-//			
-//			m = prioVisitor.getDeclaredMethod("setAttributeResolver",
-//					AttributeResolver.class);
-//			m.invoke(pv, attributeResolver);
-//			
-//			m = prioVisitor.getDeclaredMethod("visit",
-//					AttributeResolver.class);
-//			m.invoke(pv, caller);
-//			
-//			prioVisitor.setTopOperator(top);
-//			prioVisitor.setAttributeResolver(attributeResolver);
-//			prioVisitor.visit(statement, null);
-//			top = prioVisitor.getTopOperator();
+			// top = prioVisitor.getTopOperator();
+			top = (ILogicalOperator) prioVisitor.getDeclaredMethod("getTopOperator", (Class[])null).invoke(pv, (Object[])(null));
+			
 			
 			return top;
-		} catch (QueryParseException ex){
+		} catch (QueryParseException ex) {
 			throw ex;
 		} catch (Exception e) {
 			throw new QueryParseException(e);
@@ -1429,7 +1430,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					writeAfterElements = ((ASTInteger) node.jjtGetChild(i))
 							.getValue();
 			}
-			
+
 		}
 
 		ILogicalOperator sink = new FileSinkAO(filename, type,
