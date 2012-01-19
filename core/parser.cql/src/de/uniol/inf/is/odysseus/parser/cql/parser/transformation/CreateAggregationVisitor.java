@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
@@ -52,12 +52,8 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	private boolean hasGrouping;
 	
-//	private User user;
-	private IDataDictionary dd;
 
-	public CreateAggregationVisitor(User user, IDataDictionary dd){
-//		this.user = user;
-		this.dd = dd;
+	public CreateAggregationVisitor(){
 	}
 	
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IBiddingHandler;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
@@ -52,7 +52,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 	@Override
 	public void publishQuerySpezification(String queryId, String query,
-			String language, User user) {
+			String language, ISession user) {
 
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
@@ -93,7 +93,7 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
 	@Override
 	public void sendQuerySpezificationToAdminPeer(String queryId, String query,
-			String language,  User user, String adminPeer) {
+			String language,  ISession user, String adminPeer) {
 
 		PipeAdvertisement adminPipe = MessageTool
 				.createPipeAdvertisementFromXml(((ExtendedPeerAdvertisement) thinPeerJxtaImpl

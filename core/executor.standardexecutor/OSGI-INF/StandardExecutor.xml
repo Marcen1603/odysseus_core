@@ -11,4 +11,6 @@
    <reference bind="bindQueryBuildConfiguration" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration" name="IQueryBuildConfiguration" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
    <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
    <reference bind="bindAdmissionReaction" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionReaction" name="IAdmissionReaction" policy="dynamic" unbind="unbindAdmissionReaction"/>
+   <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
+   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
 </scr:component>

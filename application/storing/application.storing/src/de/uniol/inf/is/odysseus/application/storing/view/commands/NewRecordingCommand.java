@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.application.storing.view.dialogs.StartNewRecordi
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -41,7 +41,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		IDataDictionary dd = GlobalState.getActiveDatadictionary();
-		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 
 		if (DatabaseConnectionDictionary.getInstance().getConnections().isEmpty()) {
 			MessageBox mb = new MessageBox(shell);

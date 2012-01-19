@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener;
 
 import java.util.Enumeration;
+
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -96,7 +97,8 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 								adv.getSourceName(), adv);
 						IDataDictionary datadictionary = GlobalState
 								.getActiveDatadictionary();
-						User caller = GlobalState.getActiveUser("");
+						ISession caller = GlobalState.getActiveSession("");
+						
 						// Login des users?
 						String viewname = adv.getSourceName();
 

@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 
@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class DatabaseVisitor extends CQLParser {
 
 	@Override
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		super.setUser(user);
 	}
 

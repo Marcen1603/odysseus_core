@@ -48,7 +48,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
 		getDataDictionary().addListener(this);
-		UserManagement.getInstance().addUserManagementListener(this);
+		//UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
@@ -80,7 +80,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
+					getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?

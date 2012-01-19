@@ -43,16 +43,17 @@ public class LoginPreferencesManager {
 		return loginPrefs.get("username", "");
 	}
 	
-	public String getPasswordMD5() {
-		return loginPrefs.get("passwordMD5", "");
+	public String getPassword() {
+		return loginPrefs.get("password", "");
 	}
 	
 	public void setUsername( String username ) {
 		loginPrefs.put("username", username);
 	}
 	
-	public void setPasswordMD5( String passwordMD5 ) {
-		loginPrefs.put("passwordMD5", passwordMD5);
+	public void setPassword( String password ) {
+		// TODO: Verschlüsselung für das Passwort
+		loginPrefs.put("password", password);
 	}
 	
 	public boolean getAutoLogin() {

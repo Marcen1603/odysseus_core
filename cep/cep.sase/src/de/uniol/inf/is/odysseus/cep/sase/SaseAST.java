@@ -36,7 +36,7 @@
 	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-	import de.uniol.inf.is.odysseus.usermanagement.User;
+	import de.uniol.inf.is.odysseus.usermanagement.ISession;
 	
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -163,11 +163,11 @@ public class SaseAST extends TreeParser {
     Map<String, String> simpleAttributeState = null;
     Map<String, String> kleeneAttributeState = null;
     ISymbolTableOperationFactory symTableOpFac = null;
-    User user = null;
+    ISession user = null;
     IDataDictionary dd = null;
     boolean attachSources;
 
-    public void setUser(User user) {
+    public void setUser(ISession user) {
     	this.user = user;
     }
 

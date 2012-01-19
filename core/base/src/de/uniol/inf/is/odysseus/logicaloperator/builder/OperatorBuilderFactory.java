@@ -19,9 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IPredicateBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class OperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
@@ -29,7 +28,7 @@ public class OperatorBuilderFactory {
 	private static Map<String, Object> udfs = new HashMap<String,Object>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
-			User caller, IDataDictionary dataDictionary) {
+			ISession caller, IDataDictionary dataDictionary) {
 		name = name.toUpperCase();
 		if (!operatorBuilders.containsKey(name)) {
 			throw new IllegalArgumentException("no such operator builder: "

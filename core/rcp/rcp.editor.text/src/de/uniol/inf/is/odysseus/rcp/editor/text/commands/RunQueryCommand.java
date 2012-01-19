@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
@@ -111,7 +111,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
 				try {
-					User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+					ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 					// Befehle holen
 					final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
 

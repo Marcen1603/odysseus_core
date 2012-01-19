@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	private Combo comboDropDownDatabases;
 	private String recordingName;
 	private IDataDictionary dataDictionary;
-	private User user;
+	private ISession user;
 	private String fromStream;
 	private String databaseConnection;
 	private String tableName;
@@ -68,7 +68,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	private boolean truncateTable;
 	private boolean appendTable;
 
-	public StartNewRecordingDialog(Shell parentShell, IDataDictionary dd, User user) {
+	public StartNewRecordingDialog(Shell parentShell, IDataDictionary dd, ISession user) {
 		super(parentShell);
 		this.dataDictionary = dd;
 		this.user = user;

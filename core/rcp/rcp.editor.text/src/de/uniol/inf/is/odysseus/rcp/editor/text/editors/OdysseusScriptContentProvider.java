@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class OdysseusScriptContentProvider implements ITreeContentProvider {
@@ -61,7 +61,7 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 		if( parentElement instanceof StringTreeRoot ) {
 			String text = ((StringTreeRoot)parentElement).getString();
 			try {
-				User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+				ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 				ArrayList<Object> list = new ArrayList<Object>();
 				List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user);
 				if( replaceLeaf != null ) {

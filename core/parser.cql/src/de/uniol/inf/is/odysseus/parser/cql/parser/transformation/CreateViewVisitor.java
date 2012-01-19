@@ -24,14 +24,14 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateViewVisitor extends AbstractDefaultVisitor {
 
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dd;
 
-	public CreateViewVisitor(User user, IDataDictionary dd) {
+	public CreateViewVisitor(ISession user, IDataDictionary dd) {
 		this.caller = user;
 		this.dd = dd;
 	}

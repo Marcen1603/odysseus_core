@@ -125,7 +125,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 			this.thinPeer.stopPeer();
 		} else if ("translateButton".equals(e.getActionCommand())) {
 			thinPeer.publishQuerySpezification(query.getText(), "CQL",
-					GlobalState.getActiveUser(""));
+					GlobalState.getActiveSession(""));
 
 		}
 

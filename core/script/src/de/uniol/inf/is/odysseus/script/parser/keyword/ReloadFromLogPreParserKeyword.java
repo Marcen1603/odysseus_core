@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 
@@ -39,19 +40,19 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String LOG_FILENAME = System.getProperty("user.home") + "/odysseus/reloadlog.store";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		logger.debug("Start reloading queries from reload log file...");
 		loadData(caller);
 		logger.debug("Reloading queries from reload log file done.");
 		return null;
 	}
 
-	private void loadData(User caller) {
+	private void loadData(ISession caller) {
 
 		String toParse = "";
 		String newline = System.getProperty("line.separator");

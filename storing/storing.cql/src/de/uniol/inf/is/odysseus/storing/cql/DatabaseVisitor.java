@@ -25,11 +25,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateFromDatabase;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.storing.DatabaseService;
 import de.uniol.inf.is.odysseus.storing.logicaloperator.DatabaseAccessAO;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class DatabaseVisitor{
 
-	private User caller;
+	private ISession caller;
 	private String name;
 	private Connection connection;
 	
@@ -45,7 +45,7 @@ public class DatabaseVisitor{
 		this.dd = dd;
 	}
 
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.caller = user;
 	}
 

@@ -21,7 +21,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -42,7 +42,7 @@ public interface IOperatorBuilder extends Serializable {
 
 	public int getMaxInputOperatorCount();
 	
-	public void setCaller(User caller);
+	public void setCaller(ISession caller);
 
 	void setDataDictionary(IDataDictionary dataDictionary);
 

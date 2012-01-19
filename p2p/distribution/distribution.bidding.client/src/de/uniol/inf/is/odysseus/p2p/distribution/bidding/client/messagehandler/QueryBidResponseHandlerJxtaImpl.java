@@ -81,7 +81,7 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 			
 			Subplan plan = queryProvider.getQuery(queryId).getSubPlans().get(subPlanId);
 			try {
-				BiddingClient.getExecutor().removeQuery(plan.getQuery().getID(), GlobalState.getActiveUser(""));
+				BiddingClient.getExecutor().removeQuery(plan.getQuery().getID(), GlobalState.getActiveSession(""));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}			

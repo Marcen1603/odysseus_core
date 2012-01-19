@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
@@ -51,7 +51,8 @@ public class ECAParserTest implements CommandProvider {
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	private ICompiler compiler;
-	User user = UserManagement.getInstance().getSuperUser();
+	// TODO: Create Session !
+	ISession user = null;
 	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("ECA Parser Test");
 	
 	//set to false if u want to prevent removal of testActuators!

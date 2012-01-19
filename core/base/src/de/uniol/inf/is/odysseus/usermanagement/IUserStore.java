@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.store.StoreException;
 
 /**
  * 
- * @deprecated Replaced by {@link IUserManagement}
+ * @deprecated Replaced by {@link ISessionManagement}
  * 
  */
 @Deprecated
@@ -28,31 +28,31 @@ public interface IUserStore {
 	/**
 	 * 
 	 * @deprecated Replaced by
-	 *             {@link IUserManagement#findUser(String, ISession)}
+	 *             {@link ISessionManagement#findUser(String, ISession)}
 	 */
-	public User getUserByName(String username);
+	public ISession getUserByName(String username);
 
 	/**
 	 * 
 	 * @deprecated Replaced by
-	 *             {@link IUserManagement#deleteUser(IUser, ISession)}
+	 *             {@link ISessionManagement#deleteUser(ISession, ISession)}
 	 */
-	public User removeByName(String username) throws StoreException;
+	public ISession removeByName(String username) throws StoreException;
 
 	/**
 	 * 
 	 * @deprecated Replaced by
-	 *             {@link IUserManagement#createUser(String, ISession)}
+	 *             {@link ISessionManagement#createUser(String, ISession)}
 	 */
-	public void storeUser(User user) throws UserStoreException;
+	public void storeUser(ISession user) throws UserStoreException;
 
 	public boolean isEmpty();
 
 	/**
 	 * 
-	 * @deprecated Replaced by {@link IUserManagement#getUsers(ISession)}
+	 * @deprecated Replaced by {@link ISessionManagement#getUsers(ISession)}
 	 */
-	public Collection<User> getUsers();
+	public Collection<ISession> getUsers();
 
 	public void clear() throws StoreException;
 

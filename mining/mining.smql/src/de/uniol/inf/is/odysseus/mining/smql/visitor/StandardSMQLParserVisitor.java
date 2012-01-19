@@ -31,16 +31,16 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTOutlierDetections;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	private static final String CLEANING_CLASS = "SMQLCleaning";
 	private IDataDictionary dataDictionary;
-	private User user;		
+	private ISession user;		
 	private Map<String, ISMQLFeature> languageFeatures;
 
-	public StandardSMQLParserVisitor(User user, IDataDictionary dataDictionary, Map<String, ISMQLFeature> languageFeatures) {
+	public StandardSMQLParserVisitor(ISession user, IDataDictionary dataDictionary, Map<String, ISMQLFeature> languageFeatures) {
 		this.languageFeatures = languageFeatures;
 		this.user = user;
 		this.dataDictionary = dataDictionary;

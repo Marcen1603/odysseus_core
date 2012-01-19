@@ -5,12 +5,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.sla.SLADictionary;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		/*
 		 * check if the selected sla is already defined
@@ -23,7 +23,7 @@ public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		/*
 		 * buffer sla name for the usage for following queries of the user

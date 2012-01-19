@@ -18,6 +18,7 @@ http://odysseus.offis.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
+      <programArgs>-console -debug</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
@@ -40,7 +41,6 @@ http://odysseus.offis.uni-oldenburg.de/
             winLargeLow="/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48_8.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>

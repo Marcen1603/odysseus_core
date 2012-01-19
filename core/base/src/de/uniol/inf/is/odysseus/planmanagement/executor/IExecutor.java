@@ -42,7 +42,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
 /**
  * IExecutor stellt die Hauptschnittstelle fuer externe Anwendungen zu Odysseus
@@ -110,7 +112,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl√§ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public Collection<IQuery> addQuery(String query, String parserID, User user, IDataDictionary dd,
+	public Collection<IQuery> addQuery(String query, String parserID, ISession user, IDataDictionary dd,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
@@ -127,7 +129,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public IQuery addQuery(ILogicalOperator logicalPlan, User user, IDataDictionary dd,
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user, IDataDictionary dd,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
@@ -142,7 +144,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user, IDataDictionary dd,
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user, IDataDictionary dd,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 	
@@ -152,7 +154,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @param user
 	 * @return List of queries that could be started
 	 */
-	public List<IQuery> startAllClosedQueries(User user);
+	public List<IQuery> startAllClosedQueries(ISession user);
 	
 	public void addCompilerListener(ICompilerListener compilerListener);
 	
@@ -268,5 +270,8 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 	@Override
 	List<IQuery> getQueries();
+	
+	IUserManagement getUserManagement();
+	ISessionManagement getSessionManagement();
 
 }

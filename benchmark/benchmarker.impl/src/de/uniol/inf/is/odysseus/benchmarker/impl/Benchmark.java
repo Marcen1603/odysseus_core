@@ -56,8 +56,7 @@ import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventT
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class Benchmark implements IErrorEventListener, IBenchmark, IEventListener {
 	private static final String SCRIPT_PARSER = "SCRIPT";
@@ -76,7 +75,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private boolean useBenchmarkMemUsage = false;
 	private boolean sourcesCreated = false;
 
-	private User user = UserManagement.getInstance().getSuperUser();
+	// TODO: Create Session for Benchmarker
+	private ISession user = null ;
 	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Benchmark");
 
 	@SuppressWarnings("unused")

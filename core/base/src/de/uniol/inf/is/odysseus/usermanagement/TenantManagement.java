@@ -84,7 +84,7 @@ public class TenantManagement {
 		fireTenantManagementListener();
 	}
 
-	public void createTenant(String name, String slaName, User caller) {
+	public void createTenant(String name, String slaName, ISession caller) {
 		IServiceLevelAgreement sla = slas.get(slaName);
 		if (sla != null) {
 			Tenant newT = new Tenant(name, sla);
@@ -100,18 +100,18 @@ public class TenantManagement {
 		fireTenantManagementListener();
 	}
 
-	public void addUserToTenant(Tenant tenant, User user, User caller)
+	public void addUserToTenant(Tenant tenant, IUser user, ISession caller)
 			throws TenantNotFoundException, TooManyUsersException {
 		addUserToTenant(tenant.getName(), user, caller);
 	}
 
-	public void addUserToTenant(String tenantName, User user, User caller)
+	public void addUserToTenant(String tenantName, IUser user, ISession caller)
 			throws TenantNotFoundException, TooManyUsersException {
 		Tenant t = registeredTenants.get(tenantName);
 		if (t != null) {
 			t.addUser(user);
 			try {
-				users.put(user.getUsername(), t);
+				users.put(user.getName(), t);
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -121,18 +121,18 @@ public class TenantManagement {
 		fireTenantManagementListener();
 	}
 
-	public void removeUserFromTenant(Tenant tenant, User user, User caller)
+	public void removeUserFromTenant(Tenant tenant, IUser user, ISession caller)
 			throws TenantNotFoundException {
 		removeUserFromTenant(tenant.getName(), user, caller);
 	}
 
-	public void removeUserFromTenant(String tenantName, User user, User caller)
+	public void removeUserFromTenant(String tenantName, IUser user, ISession caller)
 			throws TenantNotFoundException {
 		Tenant t = registeredTenants.get(tenantName);
 		if (t != null) {
 			t.removeUser(user);
 			try {
-				users.remove(user.getUsername());
+				users.remove(user.getName());
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -142,12 +142,12 @@ public class TenantManagement {
 		fireTenantManagementListener();
 	}
 
-	public Tenant getTenant(User user, User caller) {
-		return users.get(user.getUsername());
+	public Tenant getTenant(ISession user, ISession caller) {
+		return users.get(user.getUser().getName());
 	}
 	
-	public IServiceLevelAgreement getSLAForUser(User user){
-		Tenant tenant = users.get(user.getUsername());
+	public IServiceLevelAgreement getSLAForUser(ISession user){
+		Tenant tenant = users.get(user.getUser().getName());
 		if (tenant != null){
 			return tenant.getServiceLevelAgreement();
 		}

@@ -20,13 +20,14 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class GlobalState {
 	
 	private static List<IActiveUserListener> activeUserListener = new CopyOnWriteArrayList<IActiveUserListener>();
 	
-	private static Map<String, User> activeUser = new HashMap<String, User>(); 
+	private static Map<String, ISession> activeSession = new HashMap<String, ISession>(); 
 	private static IDataDictionary activeDatadictionary;
 	
 	public static IDataDictionary getActiveDatadictionary() {
@@ -40,17 +41,17 @@ public class GlobalState {
 	private GlobalState() {
 	}
 	
-	public synchronized static void setActiveUser(String token, User user) {
-		activeUser.put(token, user);
+	public synchronized static void setActiveSession(String token, ISession user) {
+		activeSession.put(token, user);
 		fire(user);
 	}
 	
-	public synchronized static User getActiveUser(String token) { 
-		return activeUser.get(token);
+	public synchronized static ISession getActiveSession(String token) { 
+		return activeSession.get(token);
 	}
 	
 	public synchronized static void removeActiveUser(String token){
-		activeUser.remove(token);
+		activeSession.remove(token);
 	}
 	
 	public static void addActiveUserListner(IActiveUserListener listener){
@@ -61,7 +62,7 @@ public class GlobalState {
 		activeUserListener.remove(listener);
 	}
 	
-	public static void fire(User user){
+	public static void fire(ISession user){
 		for (IActiveUserListener l: activeUserListener){
 			l.activeUserChanged(user);
 		}

@@ -27,13 +27,15 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
+
 public class TenantView extends ViewPart implements IUserManagementListener,
 		ITenantManagementListener {
-
+	
 	private TreeViewer viewer;
 
 	public void refresh() {
@@ -45,14 +47,14 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 				l.add(new TenantsContentNode(TenantManagement.getInstance()
 						.getTenants()));
 				try {
-					l.add(new UserContentNode(
-							UserManagement.getInstance()
-									.getUsers(
-											GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN))));
+					List<? extends IUser> users = UserManagement.getUsermanagement()
+					.getUsers(
+							GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+					l.add(new UserContentNode(users));
 				} catch (HasNoPermissionException e) {
 					// If user has no rights to view all users, only the
 					// current user is shown
-					l.add(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+					l.add(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 				}
 				viewer.setInput(l);
 			}
@@ -67,7 +69,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 		viewer.setLabelProvider(new TenantViewLabelProvider());
 		refresh();
 
-		UserManagement.getInstance().addUserManagementListener(this);
+		//UserManagement.getInstance().addUserManagementListener(this);
 		TenantManagement.getInstance().addTenantManagementListener(this);
 	}
 

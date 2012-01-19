@@ -23,7 +23,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -71,20 +71,20 @@ public class SessionManagement {
 		return GlobalState.getActiveDatadictionary();
 	}
 	
-	public User getUser(String token){
-		return GlobalState.getActiveUser(token);
+	public ISession getUser(String token){
+		return GlobalState.getActiveSession(token);
 	}
 	
-	public String createNewSession(User user){
+	public String createNewSession(ISession user){
 		String token = createFreshSessionToken();
 		this.currentSessions.put(token, System.currentTimeMillis());
-		GlobalState.setActiveUser(token, user);
+		GlobalState.setActiveSession(token, user);
 		return token;
 	}
 	
 	private String createFreshSessionToken(){
 		String token = createToken();
-		while(GlobalState.getActiveUser(token)!=null){
+		while(GlobalState.getActiveSession(token)!=null){
 			token = createToken();
 		}
 		return token;

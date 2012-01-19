@@ -3,7 +3,8 @@ package de.uniol.inf.is.odysseus.sla;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Singleton class for saving all created service level agreements and looking
@@ -21,11 +22,11 @@ public class SLADictionary {
 
 	private Map<String, SLA> sla;
 	
-	private Map<User, String> currentSLA;
+	private Map<ISession, String> currentSLA;
 	
 	private SLADictionary() {
 		this.sla = new HashMap<String, SLA>();
-		this.currentSLA = new HashMap<User, String>();
+		this.currentSLA = new HashMap<ISession, String>();
 	}
 
 	/**
@@ -78,11 +79,11 @@ public class SLADictionary {
 	}
 	
 	
-	public void setCurrentSLA(User user, String slaName) {
+	public void setCurrentSLA(ISession user, String slaName) {
 		this.currentSLA.put(user, slaName);
 	}
 
-	public String getCurrentSLA(User user) {
+	public String getCurrentSLA(ISession user) {
 		return this.currentSLA.get(user);
 	}
 	
@@ -97,8 +98,8 @@ public class SLADictionary {
 			sb.append("\t").append(s).append("\n");
 		}
 		sb.append("Currently set SLAs for users:\n");
-		for (User user : this.currentSLA.keySet()) {
-			sb.append("\t").append(user.getName()).append(": ").append(
+		for (ISession user : this.currentSLA.keySet()) {
+			sb.append("\t").append(user.getUser().getName()).append(": ").append(
 					this.currentSLA.get(user)).append("\n");
 		}
 		return sb.toString();

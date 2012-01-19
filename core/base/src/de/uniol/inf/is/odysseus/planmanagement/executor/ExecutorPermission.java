@@ -12,29 +12,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus;
+package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import java.util.ArrayList;
-import java.util.List;
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 
-import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
-
-public enum ConfigurationAction implements IUserAction {
-	SET_PARAM, SAVE_PARAM;
+public enum ExecutorPermission implements IPermission {
+	ADD_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY,
+	START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES;
 	
-	static List<IUserAction> all;
-	public static final String alias = "Configuration";
+	public final static String objectURI = "queryexecutor";
 	
-	public synchronized static List<IUserAction> getAll() {
-		if (all == null) {
-			all = new ArrayList<IUserAction>();
-			for (IUserAction action : ConfigurationAction.class
-					.getEnumConstants()) {
-				all.add(action);
-			}
-
+	public static IPermission hasSuperAction(ExecutorPermission action) {
+		switch (action) {
+		case START_QUERY:
+			return START_ALL_QUERIES;
+		case STOP_QUERY:
+			return STOP_ALL_QUERIES;
+		case REMOVE_QUERY:
+			return REMOVE_ALL_QUERIES;
+		default:
+			return null;
 		}
-		return all;
 	}
-
 }

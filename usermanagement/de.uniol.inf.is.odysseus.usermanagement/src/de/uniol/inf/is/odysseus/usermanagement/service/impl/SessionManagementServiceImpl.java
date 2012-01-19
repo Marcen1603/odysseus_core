@@ -14,6 +14,12 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement.service.impl;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+import org.osgi.service.component.ComponentContext;
+
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
@@ -26,6 +32,9 @@ import de.uniol.inf.is.odysseus.usermanagement.policy.LogoutPolicy;
  */
 public class SessionManagementServiceImpl implements ISessionManagement {
 
+	private final EntityManagerFactory entityManagerFactory = Persistence
+			.createEntityManagerFactory("odysseusPU");
+	
     private final UserDAO userDAO = new UserDAO();
     private final SessionStore sessionStore = SessionStore.getInstance();
 
@@ -86,4 +95,10 @@ public class SessionManagementServiceImpl implements ISessionManagement {
         return false;
     }
 
+	protected void activate(ComponentContext context) {
+		final EntityManager em = this.entityManagerFactory
+				.createEntityManager();
+		this.userDAO.setEntityManager(em);
+	}
+    
 }

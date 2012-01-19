@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.datadictionary;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 
 /**
  * This class containing the actions (permissions) for the DataDictionary.
@@ -39,8 +39,10 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
  * @see de.uniol.inf.is.odysseus.datadictionary.DataDictionary.java
  * @author Christian van Göns
  */
-public enum DataDictionaryAction implements IUserAction {
+public enum DataDictionaryPermission implements IPermission {
 	ADD_ENTITY, GET_ENTITY, REMOVE_ENTITY,
+	
+	ADD_DATATYPE,
 
 	ADD_SOURCETYPE, 
 
@@ -48,33 +50,15 @@ public enum DataDictionaryAction implements IUserAction {
 
 	GET_ALL, REMOVE_ALL;
 
-	static List<IUserAction> all;
-	public static final String alias = "DataDictionary";
-
-	/**
-	 * returns a list with all actions of this action class.
-	 * 
-	 * @return List<IUserAction>
-	 */
-	public synchronized static List<IUserAction> getAll() {
-		if (all == null) {
-			all = new ArrayList<IUserAction>();
-			for (IUserAction action : DataDictionaryAction.class
-					.getEnumConstants()) {
-				all.add(action);
-			}
-
-		}
-		return all;
-	}
-
+	public final static String objectURI ="datadictionary";
+	
 	/**
 	 * returns the higher action (permission) for a given action.
 	 * 
 	 * @param action
-	 * @return IUserAction
+	 * @return IPermission
 	 */
-	public static IUserAction hasSuperAction(DataDictionaryAction action) {
+	public static IPermission hasSuperAction(DataDictionaryPermission action) {
 		switch (action) {
 		case GET_ENTITY:
 			return GET_ALL;
@@ -96,8 +80,8 @@ public enum DataDictionaryAction implements IUserAction {
 	 * @param action
 	 * @return
 	 */
-	public static boolean needsNoObject(IUserAction action) {
-		switch ((DataDictionaryAction) action) {
+	public static boolean needsNoObject(IPermission action) {
+		switch ((DataDictionaryPermission) action) {
 		case ADD_ENTITY:
 			return true;
 		case ADD_STREAM:

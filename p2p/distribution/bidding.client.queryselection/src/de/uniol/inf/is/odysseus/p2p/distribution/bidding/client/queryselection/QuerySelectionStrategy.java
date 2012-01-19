@@ -42,7 +42,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 			for (AccessAO ao : sources) {
 				if (!GlobalState.getActiveDatadictionary()
 						.containsViewOrStream(ao.getSource().getURI(),
-								GlobalState.getActiveUser(""))) {
+								GlobalState.getActiveSession(""))) {
 					return false;
 				}
 			}

@@ -58,7 +58,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -66,10 +67,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dd;
 
-	public CreateStreamVisitor(User user, IDataDictionary dd) {
+	public CreateStreamVisitor(ISession user, IDataDictionary dd) {
 		this.caller = user;
 		this.dd = dd;
 	}
@@ -344,7 +345,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		try {
 			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
-			Method m = visitor.getDeclaredMethod("setUser", User.class);
+			Method m = visitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(v, caller);
 			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dd);

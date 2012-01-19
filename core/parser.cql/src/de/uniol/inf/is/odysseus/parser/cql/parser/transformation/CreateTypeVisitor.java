@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author André Bolles
@@ -39,12 +39,12 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class CreateTypeVisitor extends AbstractDefaultVisitor {
 
 	String name;
-//	private User caller;
+	private ISession caller;
 	private IDataDictionary dd;
 	SDFAttributeList attributes;
 
-	public CreateTypeVisitor(User user, IDataDictionary dd) {
-//		this.caller = user;
+	public CreateTypeVisitor(ISession user, IDataDictionary dd) {
+		this.caller = user;
 		this.dd = dd;
 	}
 	
@@ -55,7 +55,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, attributes);
-		dd.addDatatype(name, newType);
+		dd.addDatatype(name, newType, caller);
 
 		return data;
 	}

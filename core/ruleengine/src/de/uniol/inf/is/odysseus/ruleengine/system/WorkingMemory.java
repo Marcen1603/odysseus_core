@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class WorkingMemory {
 
@@ -35,10 +35,10 @@ public class WorkingMemory {
 	private List<Object> objects = new ArrayList<Object>();
 	private volatile boolean hasChanged = false;
 
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dd;
 
-	public WorkingMemory(IWorkingEnvironment<?> env, User caller, IDataDictionary dd) {
+	public WorkingMemory(IWorkingEnvironment<?> env, ISession caller, IDataDictionary dd) {
 		this.env = env;
 		this.caller = caller;
 		this.dd = dd;
@@ -194,7 +194,7 @@ public class WorkingMemory {
 		return out;
 	}
 
-	public User getCaller() {
+	public ISession getCaller() {
 		return caller;
 	}
 

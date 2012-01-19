@@ -43,7 +43,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -72,7 +73,7 @@ public class WebserviceServer {
 	
 	@WebResult(name = "securitytoken")
 	public StringResponse login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
-		User user = UserManagement.getInstance().login(username, password, false);
+		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
 		if (user != null) {
 			String token = SessionManagement.getInstance().createNewSession(user);
 			StringResponse response = new StringResponse(token, true);
@@ -85,7 +86,7 @@ public class WebserviceServer {
 	public Response addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
-			User user = loginWithSecurityToken(securityToken);			
+			ISession user = loginWithSecurityToken(securityToken);			
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, dd,transCfg);
 			return new Response(true);
@@ -100,7 +101,7 @@ public class WebserviceServer {
 	public StringListResponse getInstalledSources(@WebParam(name = "securitytoken") String securityToken) {
 		StringListResponse response = new StringListResponse(true);
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			for (Entry<String, ILogicalOperator> e : dd.getStreams(user)) {
 				response.addResponseValue(e.getKey());
@@ -127,10 +128,12 @@ public class WebserviceServer {
 		}
 	}
 
-	protected User loginWithSecurityToken(String securityToken) throws WebserviceException {
+	protected ISession loginWithSecurityToken(String securityToken) throws WebserviceException {
 		if (SessionManagement.getInstance().isValidSession(securityToken)) {
-			User user = SessionManagement.getInstance().getUser(securityToken);
-			return user;
+			// TODO: ---> Session initalisieren, kein User mehr
+			//ISession user = SessionManagement.getInstance().getUser(securityToken);
+			//return user;
+			return null;
 		} else {
 			throw new WebserviceException("Security token unknown! You have to login first to obtain a security token!");
 		}
@@ -138,7 +141,7 @@ public class WebserviceServer {
 
 	public Response removeQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
 			return new Response(true);
 		} catch (Exception e) {
@@ -149,7 +152,7 @@ public class WebserviceServer {
 
 	public Response startQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().startQuery(queryID, user);
 			return new Response(true);
 		} catch (Exception e) {
@@ -161,7 +164,7 @@ public class WebserviceServer {
 
 	public Response stopQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().stopQuery(queryID, user);
 			return new Response(true);
 		} catch (Exception e) {
@@ -249,7 +252,7 @@ public class WebserviceServer {
 
 	public Response startAllClosedQueries(@WebParam(name = "securitytoken") String securityToken) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().startAllClosedQueries(user);
 			return new Response(true);
 		} catch (Exception e) {

@@ -23,11 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -49,13 +50,13 @@ public class Login {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
 		String password = LoginPreferencesManager.getInstance()
-				.getPasswordMD5();
+				.getPassword();
 
 		// Daten ok und automatisches anmelden erlaubt?
 		if (username.length() > 0 && password.length() > 0 && !forceShow
 				&& LoginPreferencesManager.getInstance().getAutoLogin()) {
 			// Automatisch anmelden (password ist md5)
-			if (realLogin(username, password, true) == null) {
+			if (realLogin(username, password) == null) {
 				// fehlerhafte anmeldung..
 				// Fenster anzeigen, damit der Nutzer das
 				// korrigieren kann.
@@ -70,16 +71,18 @@ public class Login {
 
 	}
 
-	public static User realLogin(String username, String password,
-			boolean passwordIsMD5) {
+	public static ISession realLogin(String username, String password) {
 		try {
-			User user = null;
-			user = UserManagement.getInstance().login(username, password,
-					passwordIsMD5);
+			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+			
+			// TODO: Kann der Executor hier noch nicht gebunden sein??
+			
+			ISession user = null;
+			user = executor.getSessionManagement().login(username, password.getBytes());
 
 			if (user != null) {
 				// anmelden ok
-				GlobalState.setActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN, user);
+				GlobalState.setActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN, user);
 				GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(OdysseusDefaults.get("defaultDataDictionaryName")));
 				StatusBarManager.getInstance().setMessage(
 						"Automatically logged in as " + username);

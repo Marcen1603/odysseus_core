@@ -33,7 +33,8 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
@@ -189,7 +190,7 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@Override
 	public List<IQuery> translateQuery(String query,
-			String parserID, User user, IDataDictionary dd) throws QueryParseException {
+			String parserID, ISession user, IDataDictionary dd) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID)
 					.parse(query, user, dd);
@@ -219,7 +220,7 @@ public class StandardCompiler implements ICompiler {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void transform(IQuery query,
-			TransformationConfiguration transformationConfiguration, User caller, IDataDictionary dd) throws TransformationException {
+			TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException {
 //		System.err.println("TRANSFORMING QUERY");
 //		
 //		System.err.println("OLD PLAN: TREE WALKER");
@@ -312,7 +313,7 @@ public class StandardCompiler implements ICompiler {
 
 	@Override
 	public List<IQuery> translateAndTransformQuery(String query,
-			String parserID, User user, IDataDictionary dd, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
+			String parserID, ISession user, IDataDictionary dd, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
 		List<IQuery> translate = translateQuery(query, parserID, user, dd);
 		for (IQuery q:translate){
 			transform(q, transformationConfiguration, user, dd);

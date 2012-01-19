@@ -25,13 +25,13 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		try {
 			IExecutor executor = getExecutor();
 			if( executor == null ) 
@@ -57,7 +57,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 
 		String queries = parameter;
 		String parserID = (String) variables.get("PARSER");

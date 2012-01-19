@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.ruleengine.system;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironment<T> {
 	
@@ -25,7 +25,7 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 	private WorkingMemory workingMemory;
 	private IRuleFlow ruleFlow;
 	
-	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, User caller, IDataDictionary dd){
+	public AbstractWorkingEnvironment(T config, IRuleFlow ruleflow, ISession caller, IDataDictionary dd){
 		this.configuration = config;
 		this.ruleFlow = ruleflow;
 		this.workingMemory = new WorkingMemory(this, caller, dd);

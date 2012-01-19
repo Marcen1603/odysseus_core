@@ -5,21 +5,21 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public interface IOdysseusScriptParser {
 
 	public void parseAndExecute(String completeText,
-			User caller, ISink<?> defaultSink) throws OdysseusScriptException;
+			ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public void execute(List<PreParserStatement> statements,
-			User caller, ISink<?> defaultSink) throws OdysseusScriptException;
+			ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String completeText,
-			User caller) throws OdysseusScriptException;
+			ISession caller) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String[] textToParse,
-			User caller) throws OdysseusScriptException;
+			ISession caller) throws OdysseusScriptException;
 
 	public Map<String, String> getReplacements(String text)
 			throws OdysseusScriptException;

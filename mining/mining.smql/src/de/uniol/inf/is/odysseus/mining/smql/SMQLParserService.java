@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SMQLParserService implements IQueryParser {
 
@@ -29,12 +29,12 @@ public class SMQLParserService implements IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(String query, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		try {
 			if (parser == null) {
 				parser = new SMQLParser(reader);

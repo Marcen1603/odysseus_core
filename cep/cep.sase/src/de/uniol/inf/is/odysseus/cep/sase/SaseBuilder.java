@@ -36,11 +36,12 @@ import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SaseBuilder implements IQueryParser, BundleActivator {
 
-	private User user;
+	private ISession user;
 
 	@Override
 	public String getLanguage() {
@@ -68,7 +69,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		SaseLexer lex = null;
 		try {
@@ -81,11 +82,11 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<IQuery> parse(String text, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(String text, ISession user, IDataDictionary dd) throws QueryParseException {
 		return parse(text, user, dd, true);
 	}
 	
-		public List<IQuery> parse(String text, User user, IDataDictionary dd, boolean attachSources) throws QueryParseException {
+		public List<IQuery> parse(String text, ISession user, IDataDictionary dd, boolean attachSources) throws QueryParseException {
 		this.user = user;
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex, attachSources);

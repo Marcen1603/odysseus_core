@@ -14,42 +14,30 @@
   */
 package de.uniol.inf.is.odysseus.usermanagement;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryAction;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryPermission;
 
 public class UserActionFactory {
 	
-	static public IUserAction valueOf(String value){
-		IUserAction action = DataDictionaryAction.valueOf(value);
+	static public IPermission valueOf(String value){
+		IPermission action = DataDictionaryPermission.valueOf(value);
 		if (action != null){
 			return action;
 		}else{
-			action = UserManagementAction.valueOf(value);
+			action = UserManagementPermission.valueOf(value);
 			return action;
 		}
 	}
 
-	public static boolean needsNoObject(IUserAction action) {
-		if (action instanceof DataDictionaryAction){
-			return DataDictionaryAction.needsNoObject(action);
+	public static boolean needsNoObject(IPermission action) {
+		if (action instanceof DataDictionaryPermission){
+			return DataDictionaryPermission.needsNoObject(action);
 		}
-		if (action instanceof UserManagementAction){
-			return UserManagementAction.needsNoObject(action);
+		if (action instanceof UserManagementPermission){
+			return UserManagementPermission.needsNoObject(action);
 		}
 		return false;
 	}
 
-	public static String getAliasObject(IUserAction action) {
-		if (action instanceof DataDictionaryAction){
-			return DataDictionaryAction.alias;
-		}
-		if (action instanceof UserManagementAction){
-			return UserManagementAction.alias;
-		}		
-		
-		return null;
-	}
-	
-	
 	
 	
 }

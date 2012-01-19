@@ -18,7 +18,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Auswahl des Parsers
@@ -30,7 +30,7 @@ public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptException {
+			ISession caller) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException(
 					"Parameter needed for #PARSER");
@@ -39,7 +39,7 @@ public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptException {
+			ISession caller) throws OdysseusScriptException {
 		variables.put("PARSER", parameter);
 		return null;
 	}

@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -66,13 +66,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	double[] projectionVector = null;
 
-	// private User user;
-	@SuppressWarnings("unused")
-	private IDataDictionary dd;
 
-	public CreateProjectionVisitor(User user, IDataDictionary dd) {
-		// this.user = user;
-		this.dd = dd;
+	public CreateProjectionVisitor() {
 	}
 
 	// TODO kompletten visitor draus machen, ohne diese methode

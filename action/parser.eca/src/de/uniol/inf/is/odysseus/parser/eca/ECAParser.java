@@ -40,7 +40,8 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Queryparser for Event, Condition, Action Queries. Pattern for queries: ON
@@ -57,7 +58,7 @@ public class ECAParser implements IQueryParser {
 
 	private IActuatorFactory actuatorFactory;
 
-	private User user;
+	private ISession user;
 
 	private IDataDictionary dataDictionary;
 
@@ -213,14 +214,14 @@ public class ECAParser implements IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		return null;
 	}
 
 	@Override
-	public List<IQuery> parse(String query, User user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
@@ -384,7 +385,7 @@ public class ECAParser implements IQueryParser {
 		throw new QueryParseException("Incorrect ECA syntax");
 	}
 	
-	public User getUser() {
+	public ISession getUser() {
 		return user;
 	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.usermanagement.client.IActiveUserListener;
 
@@ -115,7 +115,7 @@ public class StatusBarManager implements IActiveUserListener{
 	}
 
 	@Override
-	public void activeUserChanged(User user) {
-		setMessage(USER_ID, user.getName());
+	public void activeUserChanged(ISession session) {
+		setMessage(USER_ID, session.getUser().getName());
 	}
 }

@@ -64,7 +64,7 @@ public class StopQueryCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							executor.stopQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+							executor.stopQuery(qID2, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 							StatusBarManager.getInstance().setMessage("Query stopped");
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);

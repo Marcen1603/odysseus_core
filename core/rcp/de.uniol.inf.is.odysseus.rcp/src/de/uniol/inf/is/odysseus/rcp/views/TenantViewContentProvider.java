@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.views;
 
 import java.util.ArrayList;
@@ -22,13 +22,15 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
-import de.uniol.inf.is.odysseus.usermanagement.Privilege;
-import de.uniol.inf.is.odysseus.usermanagement.Role;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.Tenant;
-import de.uniol.inf.is.odysseus.usermanagement.User;
 
-public class TenantViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+public class TenantViewContentProvider implements IStructuredContentProvider,
+		ITreeContentProvider {
 
 	@Override
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
@@ -67,29 +69,37 @@ public class TenantViewContentProvider implements IStructuredContentProvider, IT
 			list.addAll(t.getUsers());
 			return list.toArray();
 		}
-		if (parentElement instanceof User) {
+		if (parentElement instanceof IUser){
 			ArrayList<Object> list = new ArrayList<Object>();
-			User u = (User) parentElement;
+			IUser u = (IUser) parentElement;
+			// TODO: Add Roles and Priviliges 
 			list.addAll(u.getRoles());
-			list.addAll(u.getPrivileges());
+			list.addAll(u.getPrivileges());			
+			return list.toArray();
+		}
+		if (parentElement instanceof ISession) {
+			ArrayList<Object> list = new ArrayList<Object>();
+			ISession u = (ISession) parentElement;
+			list.add(u.getUser());
 			return list.toArray();
 		}
 		// new
-		if (parentElement instanceof Role) {
+		if (parentElement instanceof IRole) {
 			ArrayList<Object> list = new ArrayList<Object>();
-			Role r = (Role) parentElement;
+			IRole r = (IRole) parentElement;
 			list.addAll(r.getPrivileges());
 			return list.toArray();
 		}
-		if (parentElement instanceof Privilege) {
+		if (parentElement instanceof IPrivilege) {
 			ArrayList<Object> list = new ArrayList<Object>();
-			Privilege p = (Privilege) parentElement;
-			list.addAll(p.getOperations());
+			IPrivilege p = (IPrivilege) parentElement;
+			list.addAll(p.getPermissions());
 			return list.toArray();
 		}
 
 		if (parentElement instanceof IServiceLevelAgreement) {
-			return ((IServiceLevelAgreement) parentElement).getPercentilConstraints().toArray();
+			return ((IServiceLevelAgreement) parentElement)
+					.getPercentilConstraints().toArray();
 		}
 		return null;
 	}
@@ -115,12 +125,12 @@ public class TenantViewContentProvider implements IStructuredContentProvider, IT
 			return true;
 		if (element instanceof Tenant)
 			return true;
-		if (element instanceof User)
+		if (element instanceof ISession)
 			return true;
 		// new
-		if (element instanceof Role)
+		if (element instanceof IRole)
 			return true;
-		if (element instanceof Privilege)
+		if (element instanceof IPrivilege)
 			return true;
 		return false;
 	}

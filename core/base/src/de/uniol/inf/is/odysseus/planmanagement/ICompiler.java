@@ -19,7 +19,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Describes an object which provides methods for processing queries. Fassade to
@@ -43,10 +43,10 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<IQuery> translateQuery(String query, String parserID, User user, IDataDictionary dd)
+	public List<IQuery> translateQuery(String query, String parserID, ISession user, IDataDictionary dd)
 			throws QueryParseException;
 
-	public List<IQuery> translateAndTransformQuery(String query, String parserID, User user, IDataDictionary dd,
+	public List<IQuery> translateAndTransformQuery(String query, String parserID, ISession user, IDataDictionary dd,
 			TransformationConfiguration transformationConfiguration)
 			throws QueryParseException, TransformationException;
 //	/**
@@ -93,7 +93,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public void transform(/*InOut*/IQuery query, TransformationConfiguration transformationConfiguration, User caller, IDataDictionary dd) throws TransformationException;
+	public void transform(/*InOut*/IQuery query, TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException;
 
 //	/**
 //	 * Transforms a logical plan into several semantically equivalent physical

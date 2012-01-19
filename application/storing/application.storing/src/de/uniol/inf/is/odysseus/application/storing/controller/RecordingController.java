@@ -32,7 +32,8 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -67,7 +68,7 @@ public class RecordingController {
 
 	public void startRecording(String recordingName) {
 		RecordEntry record = recordings.get(recordingName);
-		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		if (!record.isPaused()) {
 			try {
 				deployQueries(record);
@@ -90,7 +91,7 @@ public class RecordingController {
 
 	public void pauseRecording(String recordingName) {
 		RecordEntry record = this.recordings.get(recordingName);
-		User caller = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession caller = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		for (IQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().stopQuery(q.getID(), caller);
@@ -104,7 +105,7 @@ public class RecordingController {
 
 	public void stopRecording(String name) {
 		RecordEntry record = recordings.get(name);
-		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		for (IQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().removeQuery(q.getID(), user);
@@ -131,7 +132,7 @@ public class RecordingController {
 		String createSink = "CREATE SINK " + sinkName + " TO DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
 		IDataDictionary dd = GlobalState.getActiveDatadictionary();
-		User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		Collection<IQuery> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, dd, "Standard");
 		Collection<IQuery> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, dd, "Standard");
 		record.clearQueries();

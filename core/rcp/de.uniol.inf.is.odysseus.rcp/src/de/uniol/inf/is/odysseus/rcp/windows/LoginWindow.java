@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.windows;
 
 import org.eclipse.core.runtime.Assert;
@@ -33,22 +33,22 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.rcp.Login;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class LoginWindow {
-	
+
 	private static final String TITLE_TEXT = "Odysseus RCP Login";
-	
+
 	private static final String USER_TEXT = "Username";
 	private static final String PASSWORD_TEXT = "Password";
-	
+
 	private static final String OK_BUTTON_TEXT = "OK";
 	private static final String CANCEL_BUTTON_TEXT = "Cancel";
-	
+
 	private static final String AUTO_LOGIN_TEXT = "Login automatically";
-	
+
 	private Shell wnd;
-	
+
 	private Label usernameLabel;
 	private Label passwordLabel;
 	private Text usernameInput;
@@ -56,83 +56,84 @@ public class LoginWindow {
 	private Button okButton;
 	private Button cancelButton;
 	private Button autoLoginCheck;
-	
+
 	private final String startUserName;
 	private final boolean cancelOK;
 	private boolean loginOK = false;
 	private final Display display;
-	
-	public LoginWindow( Display parent,  boolean cancelOK ) {
+
+	public LoginWindow(Display parent, boolean cancelOK) {
 		this(parent, "", cancelOK);
 	}
-	
-	public LoginWindow( Display parent,  String userName, boolean cancelOK ) {
+
+	public LoginWindow(Display parent, String userName, boolean cancelOK) {
 		Assert.isNotNull(userName);
 		Assert.isNotNull(parent);
 		startUserName = userName;
 		this.cancelOK = cancelOK;
 		this.display = parent;
 	}
-	
+
 	public void show() {
 		wnd = createWindow();
 		wnd.setVisible(true);
-		
-		while( !wnd.isDisposed() )
-			if( !display.readAndDispatch() )
+
+		while (!wnd.isDisposed())
+			if (!display.readAndDispatch())
 				display.sleep();
 	}
-	
+
 	private Shell createWindow() {
 		Shell wnd = new Shell(display, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
-		
-		wnd.setLayout( new GridLayout() );
+
+		wnd.setLayout(new GridLayout());
 		wnd.setText(TITLE_TEXT);
 		wnd.setSize(400, 180);
-		
+
 		wnd.setLayout(new GridLayout());
-		
+
 		wnd.addDisposeListener(new DisposeListener() {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				if( loginOK ) 
+				if (loginOK)
 					return;
-				
-				if( !cancelOK )
+
+				if (!cancelOK)
 					System.exit(0);
 			}
-			
+
 		});
-		
+
 		createInput(wnd);
-		
+
 		autoLoginCheck = new Button(wnd, SWT.CHECK);
 		autoLoginCheck.setText(AUTO_LOGIN_TEXT);
-		autoLoginCheck.setSelection(LoginPreferencesManager.getInstance().getAutoLogin());
-		
+		autoLoginCheck.setSelection(LoginPreferencesManager.getInstance()
+				.getAutoLogin());
+
 		createButtons(wnd);
-		
+
 		wnd.layout();
 		usernameInput.setFocus();
-		
+
 		return wnd;
 	}
-	
-	private void createInput( Composite parent ) {
+
+	private void createInput(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
-		
+
 		usernameLabel = new Label(comp, SWT.NONE);
 		usernameLabel.setText(USER_TEXT);
 		usernameInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		usernameInput.setText(startUserName);
 		usernameInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		passwordLabel = new Label(comp, SWT.NONE);
 		passwordLabel.setText(PASSWORD_TEXT);
 		passwordInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
@@ -142,30 +143,33 @@ public class LoginWindow {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if( e.keyCode == 13 ) {
+				if (e.keyCode == 13) {
 					tryToLogin();
 				}
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
-			
+			public void keyReleased(KeyEvent e) {
+			}
+
 		});
 	}
-	
+
 	private void markRed() {
-		usernameLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		passwordLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+		usernameLabel.setForeground(Display.getCurrent().getSystemColor(
+				SWT.COLOR_RED));
+		passwordLabel.setForeground(Display.getCurrent().getSystemColor(
+				SWT.COLOR_RED));
 	}
-	
+
 	private void createButtons(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
-		
+
 		okButton = new Button(comp, SWT.PUSH);
 		okButton.setText(OK_BUTTON_TEXT);
 		okButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -175,7 +179,7 @@ public class LoginWindow {
 				tryToLogin();
 			}
 		});
-		
+
 		cancelButton = new Button(comp, SWT.PUSH);
 		cancelButton.setText(CANCEL_BUTTON_TEXT);
 		cancelButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -186,20 +190,27 @@ public class LoginWindow {
 			}
 		});
 	}
-	
+
 	// versucht, sich mit den eingegebenen Daten anzumelden
 	private void tryToLogin() {
 		// password ist klartext, daher false
-		User user = Login.realLogin(usernameInput.getText(), passwordInput.getText(), false);
-		if( user != null ) {
+		ISession user = Login.realLogin(usernameInput.getText(),
+				passwordInput.getText());
+		if (user != null) {
 			// anmeldung ok
 			loginOK = true;
-			
-			// einstellungen speichern
-			LoginPreferencesManager.getInstance().setUsername(user.getUsername());
-			LoginPreferencesManager.getInstance().setPasswordMD5(user.getPassword());
-			LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
+
+			// Nutzerdaten nur speichern, wenn AutoLogin gewählt
+			if (autoLoginCheck.getSelection()) {
+				LoginPreferencesManager.getInstance().setUsername(
+						user.getUser().getName());
+				LoginPreferencesManager.getInstance().setPassword(
+						passwordInput.getText());
+			}
+			LoginPreferencesManager.getInstance().setAutoLogin(
+					autoLoginCheck.getSelection());
 			LoginPreferencesManager.getInstance().save();
+
 			wnd.dispose();
 		} else {
 			// anmeldung nicht ok

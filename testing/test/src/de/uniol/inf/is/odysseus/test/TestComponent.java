@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -36,7 +36,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	private IOdysseusScriptParser parser;
 	
 	public static String newline = System.getProperty("line.separator");
-	User user = null;
+	ISession user = null;
 	private boolean processingDone = false;
 	private String errorText;
 
@@ -59,15 +59,14 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		String dir = null;
 		if (args.length == 3) {
 			dir = args[0];
-			user = UserManagement.getInstance().login(args[1], args[2],
-					false);
+			user = UserManagement.getSessionmanagement().login(args[1], args[2].getBytes());
 		}
 
 		if (user == null){
 			throw new RuntimeException("No valid user/password");
 		}
 		
-		GlobalState.setActiveUser("", user);
+		GlobalState.setActiveSession("", user);
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(""));
 
 		

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
@@ -63,7 +63,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 					return null;
 				}
 				// Logischen Plan aufbauen
-				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN), GlobalState.getActiveDatadictionary());
+				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN), GlobalState.getActiveDatadictionary());
 
 			}
 		} catch (Exception ex) {
@@ -91,7 +91,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		return errorTexts.size() == 0;
 	}
 	
-	private void buildLogicalPlan(OperatorPlan plan, User user, IDataDictionary dd) {
+	private void buildLogicalPlan(OperatorPlan plan, ISession user, IDataDictionary dd) {
 
 		// oberste Operatoren finden
 		List<Operator> sinks = new ArrayList<Operator>();

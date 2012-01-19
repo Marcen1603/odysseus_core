@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
@@ -132,9 +133,9 @@ public class LabdataServer {
 		SDFEntity stream = null;
 
 		IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Labdata Server");
+		ISession user = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 		try {
-			stream = dd.getEntity(streamName, UserManagement.getInstance()
-					.getSuperUser());
+			stream = dd.getEntity(streamName, user);
 		} catch (Exception e) {
 			// Ignore
 		}
@@ -148,14 +149,12 @@ public class LabdataServer {
 
 			InputStreamReader reader = new InputStreamReader(input);
 			try {
-				CQLParser.getInstance().parse(reader,
-						UserManagement.getInstance().getSuperUser(),dd);
+				CQLParser.getInstance().parse(reader,user,dd);
 			} catch (QueryParseException e) {
 				e.printStackTrace();
 			}
 
-			stream = dd.getEntity(streamName, UserManagement.getInstance()
-					.getSuperUser());
+			stream = dd.getEntity(streamName, user);
 		}
 
 		SDFAttributeList schema = stream.getAttributes();

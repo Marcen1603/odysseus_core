@@ -23,7 +23,7 @@ public class Tenant implements Serializable{
 
 	private static final long serialVersionUID = -4491105336941528822L;
 
-	private List<User> users = new ArrayList<User>();
+	private List<IUser> users = new ArrayList<IUser>();
 	private String name;
 	private IServiceLevelAgreement sla;
 	
@@ -32,7 +32,7 @@ public class Tenant implements Serializable{
 		this.sla = sla;
 	}
 	
-	void addUser(User user) throws TooManyUsersException {
+	void addUser(IUser user) throws TooManyUsersException {
 		if (sla.getMaxUsers() == -1 || users.size() < sla.getMaxUsers()){
 			users.add(user);
 		}else{
@@ -40,11 +40,11 @@ public class Tenant implements Serializable{
 		}
 	}
 	
-	void removeUser(User user){
+	void removeUser(IUser user){
 		users.remove(user);
 	}
 	
-	public List<User> getUsers(){
+	public List<IUser> getUsers(){
 		return Collections.unmodifiableList(users);
 	}
 	

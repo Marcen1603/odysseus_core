@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.usermanagement.client;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public interface IActiveUserListener {
-	public void activeUserChanged(User user);
+	public void activeUserChanged(ISession user);
 }

@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
 public class PreParserStatement {
@@ -31,11 +31,11 @@ public class PreParserStatement {
 		this.parameter = parameter;
 	}
 	
-	public void validate( Map<String, Object> variables, User caller ) throws OdysseusScriptException {
+	public void validate( Map<String, Object> variables, ISession caller ) throws OdysseusScriptException {
 		keyword.validate(variables, parameter, caller);
 	}
 	
-	public void execute( Map<String, Object> variables, User caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+	public void execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		keyword.execute(variables, parameter, caller);
 	}

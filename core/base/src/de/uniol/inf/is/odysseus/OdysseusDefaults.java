@@ -24,9 +24,9 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.usermanagement.AccessControl;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class OdysseusDefaults {
 
@@ -175,13 +175,12 @@ public class OdysseusDefaults {
 	}
 
 	public static void set(String key, String value, boolean permanent,
-			User caller) {
-		if (AccessControl.hasPermission(ConfigurationAction.SET_PARAM,
-				ConfigurationAction.alias, caller)) {
+			ISession caller) {
+		
+		if (UserManagement.getUsermanagement().hasPermission(caller, ConfigurationPermission.SET_PARAM, null)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (AccessControl.hasPermission(ConfigurationAction.SAVE_PARAM,
-						ConfigurationAction.alias, caller)) {
+				if (UserManagement.getUsermanagement().hasPermission(caller, ConfigurationPermission.SAVE_PARAM, null)) {
 					savePropertyFile(homeDir);
 				} else {
 					throw new HasNoPermissionException(

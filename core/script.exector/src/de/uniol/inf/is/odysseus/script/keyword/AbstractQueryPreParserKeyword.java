@@ -27,14 +27,15 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractQueryPreParserKeyword extends
 AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptException {
+			ISession caller) throws OdysseusScriptException {
 		try {
 			IExecutor executor = ExecutorHandler.getExecutor();
 			if (executor == null)
@@ -61,7 +62,7 @@ AbstractPreParserExecutorKeyword {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			User caller) throws OdysseusScriptException {
+			ISession caller) throws OdysseusScriptException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
 		ISink defaultSink = variables.get("_defaultSink") != null?(ISink)variables.get("_defaultSink"):null; 

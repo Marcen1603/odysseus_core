@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -62,7 +62,7 @@ public class DropSourceCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+							ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 							IDataDictionary dd = GlobalState.getActiveDatadictionary();
 							executor.addQuery("DROP STREAM " + param, "CQL", user, dd, "Standard");
 							StatusBarManager.getInstance().setMessage("Source dropped");

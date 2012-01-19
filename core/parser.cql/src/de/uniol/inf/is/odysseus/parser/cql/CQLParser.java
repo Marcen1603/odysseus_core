@@ -67,19 +67,22 @@ import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
+import de.uniol.inf.is.odysseus.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
 import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantNotFoundException;
 import de.uniol.inf.is.odysseus.usermanagement.TooManyUsersException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserActionFactory;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dataDictionary;
 	private static CQLParser instance = null;
 	private static NewSQLParser parser;
@@ -95,7 +98,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return this.dataDictionary;
 	}
 
-	protected User getCaller() {
+	protected ISession getCaller() {
 		return this.caller;
 	}
 
@@ -105,7 +108,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, User user,
+	public synchronized List<IQuery> parse(String query, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
@@ -113,7 +116,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, User user,
+	public synchronized List<IQuery> parse(Reader reader, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
@@ -134,7 +137,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.caller = user;
 	}
 
@@ -246,37 +249,42 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
 					statement, null);
 
-			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor(
-					caller, dataDictionary);
+			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
 			aggregationVisitor.init(top, attributeResolver);
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			top = new CreateProjectionVisitor(caller, dataDictionary)
-					.createProjection(statement, top, attributeResolver);
+			top = new CreateProjectionVisitor().createProjection(statement,
+					top, attributeResolver);
 
-			Class<?> prioVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
-			Object pv = prioVisitor.newInstance();
-			// prioVisitor.setTopOperator(top);
+			try {
+				Class<?> prioVisitor = Class
+						.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
+				Object pv = prioVisitor.newInstance();
+				// prioVisitor.setTopOperator(top);
 
-			Method m = prioVisitor.getDeclaredMethod("setTopOperator",
-					ILogicalOperator.class);
-			m.invoke(pv, top);
+				Method m = prioVisitor.getDeclaredMethod("setTopOperator",
+						ILogicalOperator.class);
+				m.invoke(pv, top);
 
-			// prioVisitor.setAttributeResolver(attributeResolver);
-			m = prioVisitor.getDeclaredMethod("setAttributeResolver",
-					AttributeResolver.class);
-			m.invoke(pv, attributeResolver);
+				// prioVisitor.setAttributeResolver(attributeResolver);
+				m = prioVisitor.getDeclaredMethod("setAttributeResolver",
+						AttributeResolver.class);
+				m.invoke(pv, attributeResolver);
 
-			// prioVisitor.visit(statement, null);
-			m = prioVisitor.getDeclaredMethod("visit", AttributeResolver.class);
-			m.invoke(pv, caller);
-			
-			// top = prioVisitor.getTopOperator();
-			top = (ILogicalOperator) prioVisitor.getDeclaredMethod("getTopOperator", (Class[])null).invoke(pv, (Object[])(null));
-			
-			
+				// prioVisitor.visit(statement, null);
+				m = prioVisitor.getDeclaredMethod("visit",
+						AttributeResolver.class);
+				m.invoke(pv, caller);
+
+				// top = prioVisitor.getTopOperator();
+				top = (ILogicalOperator) prioVisitor.getDeclaredMethod(
+						"getTopOperator", (Class[]) null).invoke(pv,
+						(Object[]) (null));
+
+			} catch (ClassNotFoundException e) {
+				// Ignore --> Prio not loaded
+			}
 			return top;
 		} catch (QueryParseException ex) {
 			throw ex;
@@ -724,7 +732,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					User.class);
+					ISession.class);
 			m.invoke(bsv, caller);
 
 			Method m2 = brokerSourceVisitor.getDeclaredMethod(
@@ -769,7 +777,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					User.class);
+					ISession.class);
 			m.invoke(bsv, caller);
 			Method m2 = brokerSourceVisitor.getDeclaredMethod(
 					"setDataDictionary", IDataDictionary.class);
@@ -820,7 +828,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					"setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
 			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					User.class);
+					ISession.class);
 			m.invoke(bsv, caller);
 			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTMetric.class,
 					Object.class);
@@ -843,7 +851,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> sensorVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
-			Method m = sensorVisitor.getDeclaredMethod("setUser", User.class);
+			Method m = sensorVisitor.getDeclaredMethod("setUser",
+					ISession.class);
 			m.invoke(sv, caller);
 			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary",
 					IDataDictionary.class);
@@ -897,8 +906,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
-		UserManagement.getInstance().registerUser(this.caller, username,
-				password);
+		IUser user = UserManagement.getUsermanagement().createUser(username,
+				caller);
+		UserManagement.getUsermanagement().changePassword(user,
+				password.getBytes(), caller);
 		return null;
 	}
 
@@ -908,8 +919,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			UserManagement.getInstance().updateUserPassword(this.caller,
-					username, password);
+			IUser user = UserManagement.getUsermanagement().findUser(username,
+					caller);
+			if (user != null) {
+				UserManagement.getUsermanagement().changePassword(user,
+						password.getBytes(), caller);
+			}
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -946,7 +961,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String tenantName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		User uToAdd = UserManagement.getInstance().findUser(userName, caller);
+		IUser uToAdd = UserManagement.getUsermanagement().findUser(userName,
+				caller);
 		try {
 			TenantManagement.getInstance().addUserToTenant(tenantName, uToAdd,
 					caller);
@@ -963,8 +979,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String tenantName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		User uToRemove = UserManagement.getInstance()
-				.findUser(userName, caller);
+		IUser uToRemove = UserManagement.getUsermanagement().findUser(userName,
+				caller);
 		try {
 			TenantManagement.getInstance().removeUserFromTenant(tenantName,
 					uToRemove, caller);
@@ -1003,7 +1019,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			UserManagement.getInstance().deleteUser(caller, userName);
+			IUser user = UserManagement.getUsermanagement().findUser(userName,
+					caller);
+			UserManagement.getUsermanagement().deleteUser(user, caller);
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -1015,7 +1033,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			UserManagement.getInstance().createRole(rolename, caller);
+			UserManagement.getUsermanagement().createRole(rolename, caller);
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -1027,7 +1045,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			UserManagement.getInstance().deleteRole(rolename, caller);
+			// UserManagement.getInstance().deleteRole(rolename, caller);
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -1041,9 +1059,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
 				this, data);
 		// Validate if rights are User Actions
-		List<IUserAction> operations = new ArrayList<IUserAction>();
+		List<IPermission> operations = new ArrayList<IPermission>();
 		for (String r : rights) {
-			IUserAction action = UserActionFactory.valueOf(r);
+			IPermission action = UserActionFactory.valueOf(r);
 			if (action != null) {
 				operations.add(action);
 			} else {
@@ -1052,29 +1070,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 
 		List<String> objects = null;
-		String user = null;
+		String userName = null;
 		if (node.jjtGetNumChildren() == 3) {
 			objects = (List<String>) node.jjtGetChild(1).jjtAccept(this, data);
-			user = ((ASTIdentifier) node.jjtGetChild(2)).getName();
+			userName = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 		} else {
-			user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
-		for (IUserAction action : operations) {
+		IUser user = UserManagement.getUsermanagement().findUser(userName,
+				caller);
+		for (IPermission action : operations) {
 
 			if (UserActionFactory.needsNoObject(action)) {
-				String object = UserActionFactory.getAliasObject(action);
-				UserManagement.getInstance().grantPermission(
-						caller,
-						user,
-						dataDictionary.isCreatorOfObject(caller.getName(),
-								object), action, object);
+				UserManagement.getUsermanagement().grantPermission(user,
+						action, null, caller);
 			} else {
 				for (String entityname : objects) {
-					UserManagement.getInstance().grantPermission(
-							caller,
-							user,
-							dataDictionary.isCreatorOfObject(caller.getName(),
-									entityname), action, entityname);
+					UserManagement.getUsermanagement().grantPermission(user,
+							action, entityname, caller);
 				}
 			}
 
@@ -1096,9 +1109,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			@SuppressWarnings("unchecked")
 			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
 					this, data);
-			String user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			IUser user = UserManagement.getUsermanagement().findUser(userName,
+					caller);
 			for (String rolename : roles) {
-				UserManagement.getInstance().grantRole(caller, rolename, user);
+				IRole role = UserManagement.getUsermanagement().getRole(
+						rolename, caller);
+				UserManagement.getUsermanagement()
+						.grantRole(user, role, caller);
 			}
 		}
 		return null;
@@ -1111,9 +1129,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			@SuppressWarnings("unchecked")
 			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
 					this, data);
-			String user = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
+			IUser user = UserManagement.getUsermanagement().findUser(userName,
+					caller);
 			for (String rolename : roles) {
-				UserManagement.getInstance().revokeRole(caller, rolename, user);
+				IRole role = UserManagement.getUsermanagement().getRole(
+						rolename, caller);
+				UserManagement.getUsermanagement().revokeRole(user, role,
+						caller);
 			}
 		}
 		return null;
@@ -1372,7 +1395,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			Class<?> visitor = Class
 					.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
-			Method m = visitor.getDeclaredMethod("setUser", User.class);
+			Method m = visitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(v, caller);
 			m = visitor.getDeclaredMethod("setDataDictionary",
 					IDataDictionary.class);

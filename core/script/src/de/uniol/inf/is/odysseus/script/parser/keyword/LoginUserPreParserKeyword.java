@@ -18,29 +18,31 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		// kann hier nicht validieren, da es sein kann, dass in der gleichen anfrage zuvor
 		// erst der Nutzer angelegt wurde.
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		String[] para = getSimpleParameters(parameter);
 		String userName = para[0];
 		String password = para[1];
 		
-		User user = null;
+		ISession user = null;
 		if (password != null && password.length() > 0){
-			user = UserManagement.getInstance().login(userName, password, false);
-		}else{
-			user = UserManagement.getInstance().login(userName, caller);			
+			user = UserManagement.getSessionmanagement().login(userName, password.getBytes());
 		}
+//		else{
+//			user = UserManagement.getSessionmanagement().login(userName, caller);			
+//		}
 		if( user == null ) 
 			throw new OdysseusScriptException("Login with user " + userName + " failed");
 				

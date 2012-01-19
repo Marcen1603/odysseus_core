@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser {
 
@@ -94,7 +94,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 */
 
 	@Override
-	public void parseAndExecute(String completeText, User caller, ISink<?> defaultSink) throws OdysseusScriptException {
+	public void parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 		execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
@@ -102,7 +102,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(java.util.List, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public void execute(List<PreParserStatement> statements, User caller, ISink<?> defaultSink) throws OdysseusScriptException {
+	public void execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
 		if (defaultSink != null){
@@ -127,7 +127,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String, de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public List<PreParserStatement> parseScript(String completeText, User caller) throws OdysseusScriptException {
+	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
 		List<String> lines = null;
 		try {
 			lines = splitToList(completeText);
@@ -141,7 +141,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String[], de.uniol.inf.is.odysseus.usermanagement.User)
 	 */
 	@Override
-	public List<PreParserStatement> parseScript(String[] textToParse, User caller) throws OdysseusScriptException {
+	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException {
 
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
 		try {

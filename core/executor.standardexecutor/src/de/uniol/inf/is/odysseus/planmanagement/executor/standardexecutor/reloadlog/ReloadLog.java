@@ -23,7 +23,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 
@@ -39,14 +39,14 @@ public class ReloadLog {
 	public ReloadLog() {
 	}
 
-	public void queryAdded(String query, String buildConfig, String parserID, User user) {
+	public void queryAdded(String query, String buildConfig, String parserID, ISession user) {
 		logger.debug("Query added to log: " + query);
 
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;
 		qe.query = query;
 		qe.transCfgID = buildConfig;
-		qe.username = user.getUsername();
+		qe.username = user.getUser().getName();
 		queries.add(qe);
 		saveState();
 	}

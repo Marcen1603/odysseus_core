@@ -41,7 +41,10 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
 public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 
@@ -82,21 +85,21 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	
 	
 	@Override
-	public void removeQuery(int queryID, User caller)
+	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void startQuery(int queryID, User caller)
+	public void startQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void stopQuery(int queryID, User caller)
+	public void stopQuery(int queryID, ISession caller)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		
@@ -238,14 +241,14 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 
 	@Override
 	public Collection<IQuery> addQuery(String query, String parserID,
-			User user, IDataDictionary dd, String queryBuildConfigurationName)
+			ISession user, IDataDictionary dd, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		thinPeer.publishQuerySpezification(query, parserID, user);
 		return null;
 	}
 
 	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, User user,
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			IDataDictionary dd, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -253,7 +256,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, User user,
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
 			IDataDictionary dd, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -261,7 +264,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public List<IQuery> startAllClosedQueries(User user) {
+	public List<IQuery> startAllClosedQueries(ISession user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -367,6 +370,18 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	
 	public void activate() {
 		System.out.println("Thin Peer Executor activated");
+	}
+
+	@Override
+	public IUserManagement getUserManagement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISessionManagement getSessionManagement() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

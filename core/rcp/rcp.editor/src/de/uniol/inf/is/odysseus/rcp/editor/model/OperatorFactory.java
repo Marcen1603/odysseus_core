@@ -19,7 +19,7 @@ import org.eclipse.gef.requests.CreationFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class OperatorFactory implements CreationFactory {
@@ -32,7 +32,7 @@ public class OperatorFactory implements CreationFactory {
 	
 	@Override
 	public Object getNewObject() {
-		final User user = GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		final ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
 		final IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, dd), 
 				operatorBuilderName);

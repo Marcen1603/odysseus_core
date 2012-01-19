@@ -43,7 +43,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.sla.SLA;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.SetOwnerGraphVisitor;
 
@@ -86,7 +87,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/**
 	 * The user who created this query
 	 */
-	private User user = null;
+	private ISession user = null;
 
 	/**
 	 * The Data Dictionary belonging to this query
@@ -649,12 +650,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	}
 
 	@Override
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;
 	}
 
 	@Override
-	public User getUser() {
+	public ISession getUser() {
 		return user;
 	}
 

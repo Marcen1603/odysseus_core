@@ -14,13 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.handler;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public interface IQueryPublisher {
 	
-	void publishQuerySpezification(String queryId, String query, String language, User user);
+	void publishQuerySpezification(String queryId, String query, String language, ISession user);
 	
 	//Anfrage wird nicht ausgeschrieben sondern direkt an einen AdminPeer gesendet.
-	void sendQuerySpezificationToAdminPeer(String queryId, String query, String language, User user, String adminPeer);
+	void sendQuerySpezificationToAdminPeer(String queryId, String query, String language, ISession user, String adminPeer);
 
 }

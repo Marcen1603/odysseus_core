@@ -39,9 +39,9 @@ import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.APQueryBitResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.APQuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.HotPeerListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.OperatorPeerListenerJxtaImpl;
-import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.APQuerySpezificationListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.HotPeerStrategyRandom;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.strategy.MaxQueryBiddingStrategyJxtaImpl;
@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -110,7 +111,10 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		getLogger().debug("Activate Admin Peer");
 
 		// TODO: Nutzer auslesen
-		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
+		String username = "";
+		String password = "";
+		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
+		GlobalState.setActiveSession("",user);
 		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
 		// ein Admin Peer to JVM ..
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory

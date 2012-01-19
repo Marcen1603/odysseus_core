@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
@@ -76,14 +76,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return result;
   }
 
-  static User user;
+  static ISession user;
 
-  static public User getUser()
+  static public ISession getUser()
   {
     return user;
   }
 
-  static public void setUser(User newUser)
+  static public void setUser(ISession newUser)
   {
     user = newUser;
   }

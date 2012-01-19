@@ -173,8 +173,8 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 
 		final IDataDictionary dd = GlobalState.getActiveDatadictionary();		
 		String builderName = getAttributeValue(node, "builder");
-		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN), dd);
-		builder.setCaller(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN), dd);
+		builder.setCaller(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 
 		Map<String, Object> parameters = loadParameters(node);
 

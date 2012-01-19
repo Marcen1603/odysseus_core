@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
@@ -170,7 +170,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 			for (AccessAO ao : sources) {
 				if (!GlobalState.getActiveDatadictionary()
 						.containsViewOrStream(ao.getSource().getURI(),
-								GlobalState.getActiveUser(""))) {
+								GlobalState.getActiveSession(""))) {
 					return "-1";
 				}
 			}
@@ -188,7 +188,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		try {
 			// Plan in Ausf�hrungsplan hinzuf�gen
 			IQuery query = null;
-			User user = GlobalState.getActiveUser("");
+			ISession user = GlobalState.getActiveSession("");
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 
 			boolean result = false;

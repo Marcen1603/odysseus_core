@@ -69,9 +69,9 @@ public class RestartQueryCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							executor.stopQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+							executor.stopQuery(qID2, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 							StatusBarManager.getInstance().setMessage("Query stopped");
-							executor.startQuery(qID2, GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+							executor.startQuery(qID2, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 							StatusBarManager.getInstance().setMessage("Query started");
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);

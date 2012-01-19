@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaIm
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
@@ -107,7 +107,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		setName(configuration.getName());
 		
 		// TODO: User einlesen
-		GlobalState.setActiveUser("",UserManagement.getInstance().getSuperUser());
+		GlobalState.setActiveSession("",UserManagement.getSessionmanagement().login("System", "manager".getBytes()));
 		// TODO: Unterschiedliche Namen notwendig?
 		GlobalState.setActiveDatadictionary(DataDictionaryFactory
 				.getDefaultDataDictionary("OperatorPeer"));
@@ -305,7 +305,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 		for (IPair<String, String> s : getSources().values()) {
 			try {
-				User user = GlobalState.getActiveUser("");
+				ISession user = GlobalState.getActiveSession("");
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();
 				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, dd,
 						"Standard");

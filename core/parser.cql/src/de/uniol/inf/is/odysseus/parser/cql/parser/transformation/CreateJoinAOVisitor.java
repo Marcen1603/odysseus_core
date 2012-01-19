@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 //creates join operators
 //visit returns the topmost operator of an operator tree:
@@ -70,10 +70,10 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dataDictionary;
 
-	public CreateJoinAOVisitor(User caller, IDataDictionary dd) {
+	public CreateJoinAOVisitor(ISession caller, IDataDictionary dd) {
 		super();
 		this.caller = caller;
 		this.dataDictionary = dd;

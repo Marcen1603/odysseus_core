@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -56,7 +56,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		// Publish all sources
 		while (true) {
 			advList.clear();
-			User user = GlobalState.getActiveUser(""); 
+			ISession user = GlobalState.getActiveSession(""); 
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			for (Entry<String, ILogicalOperator> v : dd
 					.getStreamsAndViews(user)) {

@@ -29,16 +29,16 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStreamSQLWindow;
 import de.uniol.inf.is.odysseus.mining.smql.parser.Node;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 
 	private IDataDictionary dataDictionary;
-	private User user;
+	private ISession user;
 	private List<ILogicalOperator> topOperators = new ArrayList<ILogicalOperator>();
 	private SMQLParserVisitor currentMainVisitor;
 
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;		
 	}	
 	
@@ -46,7 +46,7 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 		this.dataDictionary = dataDictionary;
 	}
 	
-	public User getUser(){
+	public ISession getUser(){
 		return this.user;
 	}
 	

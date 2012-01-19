@@ -12,17 +12,12 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.usermanagement;
+package de.uniol.inf.is.odysseus;
 
-/**
- * Provides a super class for the action classes (permissions). For example the
- * action class UserManagementAction.
- * 
- *  @see de.uniol.inf.is.odysseus.usermanagement.UserManagementAction.java
- * 
- * @author Christian van G�ns
- * @deprecated Replaced by {@link IPermission}
- */
-@Deprecated
-public interface IUserAction extends IPermission {
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
+
+public enum ConfigurationPermission implements IPermission {
+	SET_PARAM, SAVE_PARAM;	
+
+	public final static String objectURI = "configuration";
 }

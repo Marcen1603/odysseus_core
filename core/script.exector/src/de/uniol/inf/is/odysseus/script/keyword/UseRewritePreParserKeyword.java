@@ -22,12 +22,12 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class UseRewritePreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		
 		if (getExecutor() == null)
@@ -35,7 +35,7 @@ public class UseRewritePreParserKeyword extends AbstractPreParserExecutorKeyword
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)

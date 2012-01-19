@@ -26,14 +26,15 @@ import javax.persistence.Persistence;
 
 import org.osgi.service.component.ComponentContext;
 
+import de.uniol.inf.is.odysseus.ConfigurationPermission;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryPermission;
+import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.IUserAction;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagementAction;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagementPermission;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.RoleImpl;
@@ -50,7 +51,6 @@ import de.uniol.inf.is.odysseus.usermanagement.policy.ChangePasswordPolicy;
 public class UserManagementServiceImpl implements IUserManagement {
 	private final EntityManagerFactory entityManagerFactory = Persistence
 			.createEntityManagerFactory("odysseusPU");
-	private final static String OBJECT_URI = "Usermanagement";
 	private final UserDAO userDAO = new UserDAO();
 	private final RoleDAO roleDAO = new RoleDAO();
 	private final PrivilegeDAO privilegeDAO = new PrivilegeDAO();
@@ -67,7 +67,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public IRole createRole(final String name, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.CREATE_ROLE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final RoleImpl role = new RoleImpl();
 			role.setName(name);
 			this.roleDAO.create(role);
@@ -87,7 +87,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public void deleteRole(final IRole role, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.DELETE_ROLE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final RoleImpl tmpRole = this.roleDAO.find(role.getId());
 			if (tmpRole != null) {
 				this.roleDAO.delete(tmpRole);
@@ -133,9 +133,9 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public List<? extends IRole> getRoles(final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GET_ALL_USER,
-				UserManagementServiceImpl.OBJECT_URI)
+				UserManagementPermission.objectUri)
 				|| this.hasPermission(caller, UserManagementPermission.GET_ALL,
-						UserManagementServiceImpl.OBJECT_URI)) {
+						UserManagementPermission.objectUri)) {
 			final List<RoleImpl> roles = this.roleDAO.findAll();
 			return roles;
 		}
@@ -153,7 +153,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public IUser createUser(final String name, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.CREATE_USER,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl user = new UserImpl();
 			user.setName(name);
 			this.userDAO.create(user);
@@ -177,7 +177,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 		if (ChangePasswordPolicy.allow(user, session.getUser())
 				|| this.hasPermission(session,
 						UserManagementPermission.ALTER_USER,
-						UserManagementServiceImpl.OBJECT_URI)) {
+						UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			tmpUser.setPassword(password);
 			this.userDAO.update(tmpUser);
@@ -195,7 +195,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public void activateUser(final IUser user, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.ALTER_USER,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			tmpUser.setActive(true);
 			this.userDAO.update(tmpUser);
@@ -214,7 +214,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	public void deactivateUser(final IUser user, final ISession caller) {
 		if (this.hasPermission(caller,
 				UserManagementPermission.DEACTIVATE_USER,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			tmpUser.setActive(false);
 			this.userDAO.update(tmpUser);
@@ -233,7 +233,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public void deleteUser(final IUser user, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.DELETE_USER,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			this.userDAO.delete(tmpUser);
 		}
@@ -277,9 +277,9 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public List<? extends IUser> getUsers(final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GET_ALL_USER,
-				UserManagementServiceImpl.OBJECT_URI)
+				UserManagementPermission.objectUri)
 				|| this.hasPermission(caller, UserManagementPermission.GET_ALL,
-						UserManagementServiceImpl.OBJECT_URI)) {
+						UserManagementPermission.objectUri)) {
 			final List<UserImpl> users = this.userDAO.findAll();
 			return users;
 		}
@@ -299,7 +299,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	public void grantRole(final IUser user, final IRole role,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GRANT_ROLE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			final RoleImpl tmpRole = this.roleDAO.find(role.getId());
 			tmpUser.addRole(tmpRole);
@@ -320,7 +320,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	public void revokeRole(final IUser user, final IRole role,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.REVOKE_ROLE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			final RoleImpl tmpRole = this.roleDAO.find(role.getId());
 			tmpUser.removeRole(tmpRole);
@@ -359,7 +359,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final Set<IPermission> permissions, final String objectURI,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GRANT,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			boolean create = true;
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
@@ -419,7 +419,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final Set<IPermission> permissions, final String objectURI,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.GRANT,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			boolean create = true;
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
@@ -480,7 +480,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final Set<IPermission> permissions, final String objectURI,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.REVOKE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : user.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
 					final PrivilegeImpl tmpPrivilege = this.privilegeDAO
@@ -528,7 +528,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final Set<IPermission> permissions, final String objectURI,
 			final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.REVOKE,
-				UserManagementServiceImpl.OBJECT_URI)) {
+				UserManagementPermission.objectUri)) {
 			for (final IPrivilege privilege : role.getPrivileges()) {
 				if (privilege.getObjectURI().equals(objectURI)) {
 					final PrivilegeImpl tmpPrivilege = this.privilegeDAO
@@ -547,6 +547,9 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public boolean hasPermission(final ISession session,
 			final IPermission permission, final String objectURI) {
+		if (objectURI == null){
+			throw new IllegalArgumentException("Object URI cannot be null !");
+		}
 		final Map<String, Set<IPermission>> permissions = new HashMap<String, Set<IPermission>>();
 		final SessionImpl tmpSession = this.sessionStore.get(session.getId());
 		if (tmpSession.isValid()) {
@@ -589,13 +592,14 @@ public class UserManagementServiceImpl implements IUserManagement {
 				user.setPassword("manager".getBytes());
 				user = userDAO.create(user);
 
+				// --- ADMIN ROLE ----
 				RoleImpl adminRole = new RoleImpl();
 				adminRole.setName("sys_admin");
 				adminRole = roleDAO.create(adminRole);
 
 				PrivilegeImpl adminPrivilege = new PrivilegeImpl();
 				adminPrivilege
-						.setObjectURI(UserManagementServiceImpl.OBJECT_URI);
+						.setObjectURI(UserManagementPermission.objectUri);
 				for (IPermission permission : UserManagementPermission.class
 						.getEnumConstants()) {
 					adminPrivilege.addPermission(permission);
@@ -604,22 +608,53 @@ public class UserManagementServiceImpl implements IUserManagement {
 				adminRole.addPrivilege(adminPrivilege);
 				roleDAO.update(adminRole);
 
+				// --- Data dictionary Role ----
 				RoleImpl dictionaryRole = new RoleImpl();
 				dictionaryRole.setName("datadictionary");
 				dictionaryRole = roleDAO.create(dictionaryRole);
+				
+				PrivilegeImpl dictPrivilege = new PrivilegeImpl();
+				dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
+				for (IPermission permission : DataDictionaryPermission.class.getEnumConstants()){
+					dictPrivilege.addPermission(permission);
+				}
+				dictPrivilege = privilegeDAO.create(dictPrivilege);
+				dictionaryRole.addPrivilege(dictPrivilege);
+				roleDAO.update(dictionaryRole);
 
+				// --- Configuration Role ----
 				RoleImpl configurationRole = new RoleImpl();
 				configurationRole.setName("configuration");
 				configurationRole = roleDAO.create(configurationRole);
+				
+				PrivilegeImpl confPrivilege = new PrivilegeImpl();
+				confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
+				for (IPermission permission : ConfigurationPermission.class.getEnumConstants()){
+					confPrivilege.addPermission(permission);
+				}
+				confPrivilege = privilegeDAO.create(confPrivilege);
+				configurationRole.addPrivilege(confPrivilege);
+				roleDAO.update(configurationRole);
 
+				// --- Query Execution Role ----				
 				RoleImpl queryexecutor = new RoleImpl();
 				queryexecutor.setName("queryexecutor");
 				queryexecutor = roleDAO.create(queryexecutor);
+				
+				PrivilegeImpl execPrivilege = new PrivilegeImpl();
+				execPrivilege.setObjectURI(ExecutorPermission.objectURI);
+				for (IPermission permission : ExecutorPermission.class.getEnumConstants()){
+					execPrivilege.addPermission(permission);
+				}
+				execPrivilege = privilegeDAO.create(execPrivilege);
+				queryexecutor.addPrivilege(execPrivilege);
+				roleDAO.update(queryexecutor);
 
 				user.addRole(adminRole);
 				user.addRole(dictionaryRole);
 				user.addRole(configurationRole);
 				user.addRole(queryexecutor);
+				user.setActive(true);
 				userDAO.update(user);
 			} catch (Exception e) {
 				e.printStackTrace();

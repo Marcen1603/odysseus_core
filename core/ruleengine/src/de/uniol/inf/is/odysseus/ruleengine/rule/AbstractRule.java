@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.ruleengine.system.WorkingMemory;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
@@ -96,7 +96,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 		}
 	}
 
-	protected User getCaller(){
+	protected ISession getCaller(){
 		return this.getCurrentWorkingMemory().getCaller();
 	}
 	

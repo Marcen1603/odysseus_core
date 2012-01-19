@@ -53,7 +53,8 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministrationPeerListener, ISourceDiscovererListener,  IDiscoveryServiceProvider {
@@ -244,7 +245,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 
 	@Override
 	public void publishQuerySpezification(String query, String language,
-			User user) {
+			ISession user) {
 		queryPublisher.publishQuerySpezification(idGenerator.generateId(),
 				query, language, user);
 	}
@@ -272,7 +273,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 
 	@Override
 	public void sendQuerySpezificationToAdminPeer(String query,
-			String language, String adminPeer, User user) {
+			String language, String adminPeer, ISession user) {
 		String queryId = idGenerator.generateId();
 		queryPublisher.sendQuerySpezificationToAdminPeer(queryId, query,
 				language, user, adminPeer);
@@ -332,7 +333,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 	public void addToDD(ISourceAdvertisement adv) {
 		IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		// TODO: Nicht gut so "RCP"
-		User user = GlobalState.getActiveUser("RCP");
+		ISession user = GlobalState.getActiveSession("RCP");
 		SDFEntity entity = new SDFEntity(adv.getSourceName());
 		dd.addEntity(adv.getSourceName(), entity, user);
 		

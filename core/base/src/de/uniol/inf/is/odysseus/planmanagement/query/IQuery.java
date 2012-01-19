@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.sla.SLA;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Describes an object which represents a basic query in odyessus.
@@ -77,9 +77,9 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 
 	public void setQueryText(String queryText);
 
-	public User getUser();
+	public ISession getUser();
 
-	public void setUser(User user);
+	public void setUser(ISession user);
 
 	/**
 	 * Set the logical plan of this query.
@@ -221,7 +221,5 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	void open() throws OpenFailedException;
 
 	void close();
-		
-	
 	
 }

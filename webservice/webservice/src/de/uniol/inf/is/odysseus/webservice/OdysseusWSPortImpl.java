@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
@@ -55,7 +56,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
         try {
 			// TODO: User einfuegen, der diese Query ausführt
-        	User user = UserManagement.getInstance().getSuperUser();
+        	ISession user = null;
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, dd, "Standard"
 					).iterator().next().getID();
 			return queryID;
@@ -138,7 +139,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     			query = sourceDescription.getSourceString();
     		}
 			// TODO: User einfuegen, der diese Query ausführt
-    		User user = UserManagement.getInstance().login("Console","", false);
+    		ISession user = null;
     		executor.addQuery(query, "CQL", user, dd, "Standard");
     		return "";
     	}catch (Exception e){
@@ -205,7 +206,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
         try {
 			// TODO: User einfuegen, der diese Query entfernen will
-        	User user = UserManagement.getInstance().getSuperUser();
+        	ISession user = null;
         	executor.removeQuery(queryID.intValue(), user);
         	return "";
         }catch (Exception e){

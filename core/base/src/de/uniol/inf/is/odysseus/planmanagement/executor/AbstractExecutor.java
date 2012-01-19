@@ -55,6 +55,8 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
@@ -106,6 +108,13 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 * Konfiguration der Ausf�hrungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
+	
+	
+	/**
+	 * Nutzer- und Rechteverwaltung
+	 */
+	protected IUserManagement usrMgmt;
+	protected ISessionManagement sessMgmt;
 	
 	/**
 	 * Standard Configurationen
@@ -327,6 +336,30 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		queryBuildConfigs.remove(config.getName());
 	}
 
+	protected void bindUserManagement(IUserManagement usermanagement) {
+		if (usrMgmt == null){
+			usrMgmt = usermanagement;
+		}else{
+			throw new RuntimeException("UserManagement already bound!");
+		}
+	}
+
+	// TODO: Will man das?
+	protected void unbindUserManagement(IUserManagement usermanagement) {
+		usermanagement = null;
+	}
+
+	protected void bindSessionManagement(ISessionManagement sessionmanagement) {
+		if (sessMgmt == null){
+			sessMgmt = sessionmanagement;
+		}else{
+			throw new RuntimeException("SessionManagement already bound!");
+		}
+	}
+
+	protected void unbindSessionManagement(ISessionManagement sessionmanagement) {
+		sessionmanagement = null;
+	}
 	
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
@@ -720,5 +753,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 //				.getBufferPlacementStrategy(strategy);
 //		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
 //	}
+	
+	@Override
+	public ISessionManagement getSessionManagement() {
+		return sessMgmt;
+	}
+	
+	@Override
+	public IUserManagement getUserManagement() {
+		return usrMgmt;
+	}
 
 }

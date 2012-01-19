@@ -18,13 +18,13 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class StartAllClosedQueriesPreParserKeyword extends
 AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)
@@ -32,7 +32,7 @@ AbstractPreParserExecutorKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		IExecutor executor = getExecutor();
 		if (executor == null)

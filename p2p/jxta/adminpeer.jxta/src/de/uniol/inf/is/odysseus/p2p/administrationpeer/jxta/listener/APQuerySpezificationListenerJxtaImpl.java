@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezific
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.UsernameNotExistException;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
@@ -161,7 +161,7 @@ public class APQuerySpezificationListenerJxtaImpl implements
 	private P2PQueryJxtaImpl createQuery(QueryTranslationSpezification adv,
 			PipeAdvertisement pipeAdv) throws UsernameNotExistException {
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
-		User user = UserManagement.getInstance().login(adv.getUserName(),adv.getUserPasswordHash(),true);
+		ISession user = UserManagement.getSessionmanagement().login(adv.getUserName(),adv.getUserPassword().getBytes());
 		if (user == null){
 			throw new UsernameNotExistException("User "+adv.getUserName()+" could not be logged in");
 		}

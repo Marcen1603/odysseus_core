@@ -86,8 +86,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBu
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -109,7 +109,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	private String parser = null;
 
-	private User currentUser = UserManagement.getInstance().getSuperUser();
+	// TODOO: CREATE SESSION!!
+	private ISession currentUser = null;
 	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Executor Console");
 
 	private String defaultBuildConfiguration = "Standard";
@@ -1870,7 +1871,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			System.gc();
 			
 			// parse and run queries
-			User user = UserManagement.getInstance().getSuperUser();
+			ISession user = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 			try {
 				if (i == 0) {
 					ci.println("parsing and running query :");

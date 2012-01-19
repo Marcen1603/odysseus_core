@@ -99,7 +99,7 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 	protected String[] getList() {
 		// Liste der Quellen
 		List<String> sources = new ArrayList<String>();
-		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN))) {
+		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN))) {
 			sources.add(e.getKey());
 		}
 		return sources.toArray(new String[sources.size()]);

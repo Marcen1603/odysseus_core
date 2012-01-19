@@ -31,8 +31,7 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Extension for the Equinox OSGI Console providing commands to access
@@ -44,7 +43,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IExecutor executer;
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
-	private User user = UserManagement.getInstance().getSuperUser();
+	private ISession user = null;
 	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Console");;
 
 	public void _addactionquery(CommandInterpreter ci){

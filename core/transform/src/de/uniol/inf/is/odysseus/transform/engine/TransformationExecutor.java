@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.FindQueryRootsVisitor;
 import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
@@ -47,7 +47,7 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, User caller, IDataDictionary dd) throws TransformationException {		
+	public ArrayList<IPhysicalOperator> transform(ILogicalOperator op, TransformationConfiguration config, ISession caller, IDataDictionary dd) throws TransformationException {		
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Starting transformation of " + op + "...");		
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "Before transformation: \n"+planPrinter.createString(op));

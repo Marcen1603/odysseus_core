@@ -25,7 +25,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 @SuppressWarnings("rawtypes")
@@ -81,7 +81,7 @@ class SinkConnectionListener extends Thread {
 					// TODO: Login und Passwort auslesen
 					String username = "";
 					String password = "";
-					User user = UserManagement.getInstance().login(username, password, false);
+					ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
 					if (user != null){
 						// TODO: Test if User has right to access sink
 						connectionAllowed = true;

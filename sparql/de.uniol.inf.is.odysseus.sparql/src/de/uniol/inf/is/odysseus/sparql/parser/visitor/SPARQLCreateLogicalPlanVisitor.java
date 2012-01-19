@@ -127,8 +127,8 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolv
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
 /**
@@ -141,7 +141,7 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 @SuppressWarnings({"rawtypes","unchecked"})
 public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 
-	private User user;
+	private ISession user;
 	private IDataDictionary dd;
 	
 	
@@ -162,7 +162,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	}
 	
 	
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;
 	}
 	

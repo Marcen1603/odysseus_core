@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class PQLParser implements IQueryParser {
 
@@ -45,7 +45,7 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, User user, IDataDictionary dd)
+	public synchronized List<IQuery> parse(String query, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;
@@ -55,7 +55,7 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, User user, IDataDictionary dd)
+	public synchronized List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;

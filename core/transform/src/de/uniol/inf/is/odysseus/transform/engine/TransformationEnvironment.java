@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.AbstractWorkingEnvironment;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Handles the local state: current loaded configuration for each transformation instance etc.
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class TransformationEnvironment extends AbstractWorkingEnvironment<TransformationConfiguration>{
 		
 		
-	public TransformationEnvironment(TransformationConfiguration transformConfig, IRuleFlow ruleFlow, User caller, IDataDictionary dd){
+	public TransformationEnvironment(TransformationConfiguration transformConfig, IRuleFlow ruleFlow, ISession caller, IDataDictionary dd){
 		super(transformConfig, ruleFlow, caller, dd);		
 	}				
 	

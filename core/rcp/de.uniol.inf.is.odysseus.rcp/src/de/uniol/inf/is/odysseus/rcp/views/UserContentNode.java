@@ -14,14 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.rcp.views;
 
-import java.util.Collection;
+import java.util.List;
 
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
 class UserContentNode {
-	public Collection<User> users;
+	public List<? extends IUser> users;
 
-	public UserContentNode(Collection<User> users) {
+	public UserContentNode(List<? extends IUser> users) {
 		this.users = users;
 	}
 }

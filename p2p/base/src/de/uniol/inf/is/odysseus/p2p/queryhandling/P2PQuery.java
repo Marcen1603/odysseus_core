@@ -22,7 +22,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class P2PQuery implements Serializable{
 
@@ -34,14 +34,14 @@ public abstract class P2PQuery implements Serializable{
 	private List<ILogicalOperator> logicalOperatorPlan = new ArrayList<ILogicalOperator>();
 	protected Map<String,Subplan> subPlans = new HashMap<String, Subplan>();
 	private ArrayList<Lifecycle> history = new ArrayList<Lifecycle>();
-	private User user;
+	private ISession user;
 	transient private IDataDictionary dataDictionary;
 	private Subplan topSink;
 
 	public P2PQuery(){
 	}
 	
-	public P2PQuery(String query, String queryID, User user) {
+	public P2PQuery(String query, String queryID, ISession user) {
 		setDeclarativeQuery(queryID);
 		setId(queryID);
 		this.user = user;
@@ -63,11 +63,11 @@ public abstract class P2PQuery implements Serializable{
 		this.id = id;
 	}
 	
-	public User getUser() {
+	public ISession getUser() {
 		return user;
 	}
 	
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;
 	}
 

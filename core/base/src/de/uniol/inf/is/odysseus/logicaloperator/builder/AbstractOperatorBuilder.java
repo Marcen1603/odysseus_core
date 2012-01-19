@@ -28,7 +28,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -42,7 +43,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private int minPortCount;
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
-	private User caller;
+	private ISession caller;
 
 	protected InputOperatorItem getInputOperatorItem(int i) {
 		return inputOperators.get(i);
@@ -97,11 +98,11 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	@Override
-	public void setCaller(User caller) {
+	public void setCaller(ISession caller) {
 		this.caller = caller;
 	}
 
-	public User getCaller() {
+	public ISession getCaller() {
 		return caller;
 	}
 

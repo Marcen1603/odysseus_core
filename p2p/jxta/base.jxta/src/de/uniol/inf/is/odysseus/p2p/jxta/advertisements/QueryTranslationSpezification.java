@@ -33,7 +33,7 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class QueryTranslationSpezification extends Advertisement implements
 		Serializable, Comparable {
@@ -54,7 +54,7 @@ public class QueryTranslationSpezification extends Advertisement implements
 	private String language;
 	
 	private String userName;
-	private String userPasswordHash;
+	private String userPassword;
 		
 	public String getLanguage() {
 		return language;
@@ -68,12 +68,12 @@ public class QueryTranslationSpezification extends Advertisement implements
 		return userName;
 	}
 	
-	public void setUserPasswordHash(String userPasswordHash) {
-		this.userPasswordHash = userPasswordHash;
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
 	}
 	
-	public String getUserPasswordHash() {
-		return userPasswordHash;
+	public String getUserPassword() {
+		return userPassword;
 	}
 	
 	public void setLanguage(String language) {
@@ -206,7 +206,7 @@ public class QueryTranslationSpezification extends Advertisement implements
 			return true;
 		}
 		if (elem.getName().equals(userPasswordTag)){
-			setUserPasswordHash(elem.getTextValue());
+			setUserPassword(elem.getTextValue());
 			return true;
 		}
 		

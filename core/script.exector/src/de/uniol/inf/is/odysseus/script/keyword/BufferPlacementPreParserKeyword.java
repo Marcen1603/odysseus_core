@@ -24,12 +24,13 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryB
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
@@ -45,7 +46,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 		IExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)

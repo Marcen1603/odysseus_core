@@ -18,7 +18,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. 
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.usermanagement.User;
 public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #TRANCFG");
 
@@ -37,7 +37,7 @@ public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, User caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		variables.put("TRANSCFG", parameter);
 		return null;
 	}

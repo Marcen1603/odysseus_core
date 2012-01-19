@@ -28,7 +28,8 @@ import javax.xml.ws.Endpoint;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -64,8 +65,8 @@ public class SensorRegistryService extends WebserviceServer {
 	public boolean registerSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "name") String name, @WebParam(name = "host") String host,
 			@WebParam(name = "port") int port, @WebParam(name = "schema") SensorSchema schema) {
 		try {
-
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);			
+			
 			IDataDictionary dd = GlobalState.getActiveDatadictionary();			
 			Sensor sensor = new Sensor(host, port);
 			boolean result = SensorRegistry.getInstance().registerSensor(name, sensor);
@@ -97,7 +98,8 @@ public class SensorRegistryService extends WebserviceServer {
 
 	public boolean unregisterSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "name") String name) {
 		try {
-			User user = loginWithSecurityToken(securityToken);
+			ISession user = loginWithSecurityToken(securityToken);
+			
 			boolean result = SensorRegistry.getInstance().unregisterSensor(name);
 			if (result) {				
 				IDataDictionary dd = GlobalState.getActiveDatadictionary();				

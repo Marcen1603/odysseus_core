@@ -189,7 +189,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 			public void update(ViewerCell cell) {
 				IQuery query = (IQuery) cell.getElement();
 				if (query.getUser() != null)
-					cell.setText(query.getUser().getUsername());
+					cell.setText(query.getUser().getUser().getName());
 				else
 					cell.setText("[No user]");
 			}
@@ -200,7 +200,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				IQuery id1 = (IQuery) e1;
 				IQuery id2 = (IQuery) e2;
-				return id1.getUser().getUsername().compareToIgnoreCase(id2.getUser().getUsername());
+				return id1.getUser().getUser().getName().compareToIgnoreCase(id2.getUser().getUser().getName());
 			}
 		};
 

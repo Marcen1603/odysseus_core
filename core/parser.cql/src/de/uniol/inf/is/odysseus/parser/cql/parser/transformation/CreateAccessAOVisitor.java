@@ -39,7 +39,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
@@ -47,10 +48,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private Map<SDFSource, ILogicalOperator> sources;
 
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dd;
 
-	public CreateAccessAOVisitor(User user, IDataDictionary dd) {
+	public CreateAccessAOVisitor(ISession user, IDataDictionary dd) {
 		super();
 		init();
 		this.caller = user;
@@ -283,7 +284,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
 			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(bsv, dd);
@@ -314,7 +315,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			Class<?> brokerSourceVisitor = Class
 					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", User.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
 			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(bsv, dd);

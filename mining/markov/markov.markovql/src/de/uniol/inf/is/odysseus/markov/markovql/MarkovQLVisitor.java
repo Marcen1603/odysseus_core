@@ -25,13 +25,13 @@ import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 
 	private List<IQuery> plans = new ArrayList<IQuery>();
 
-	public MarkovQLVisitor(User user, IDataDictionary dd) {
+	public MarkovQLVisitor(ISession user, IDataDictionary dd) {
 		
 	}	
 

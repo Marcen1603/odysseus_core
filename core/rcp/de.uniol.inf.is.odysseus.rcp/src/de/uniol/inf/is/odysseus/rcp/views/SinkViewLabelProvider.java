@@ -75,7 +75,7 @@ public class SinkViewLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");
 //			User user = GlobalState.getActiveDatadictionary().getUserForViewOrStream(entry.getKey());
 //			if (user != null) {
-//				sb.append(" created by ").append(user.getUsername());
+//				sb.append(" created by ").append(user.getUser().getName());
 //			} else {
 //				sb.append(" created by no user ??");
 //			}

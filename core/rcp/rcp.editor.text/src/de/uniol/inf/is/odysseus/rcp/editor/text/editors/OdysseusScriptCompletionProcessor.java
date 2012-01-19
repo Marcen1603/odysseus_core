@@ -60,7 +60,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 			if(tokenBefore.trim().equalsIgnoreCase("FROM")){
-				Set<Entry<String, ILogicalOperator>> sources = GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN));				
+				Set<Entry<String, ILogicalOperator>> sources = GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));				
 				for(Entry<String, ILogicalOperator> e : sources){
 					words.add(e.getKey());
 				}				

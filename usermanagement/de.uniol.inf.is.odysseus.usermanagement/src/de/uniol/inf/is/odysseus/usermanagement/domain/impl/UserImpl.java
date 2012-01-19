@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.usermanagement.domain.impl;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -110,7 +109,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	public void setPassword(final byte[] password) {
 		try {
 			this.password = this.getPasswordDigest(this.getAlgorithm(),
-					password).toString();
+					password);
 		} catch (final NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,8 +208,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	@Override
 	public boolean validatePassword(final byte[] password) {
 		try {
-			return Arrays.equals(this.password.getBytes(),
-					this.getPasswordDigest(this.getAlgorithm(), password));
+			return this.password.equals(this.getPasswordDigest(this.getAlgorithm(), password));
 		} catch (final NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -267,19 +265,25 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @return The digist using the given algorithm.
 	 * @throws NoSuchAlgorithmException
 	 */
-	private byte[] getPasswordDigest(final String algorithmName,
+	private String getPasswordDigest(final String algorithmName,
 			final byte[] password) throws NoSuchAlgorithmException {
 		final MessageDigest algorithm = MessageDigest
 				.getInstance(algorithmName);
-		algorithm.reset();
-		algorithm.update(password);
-		final byte messageDigest[] = algorithm.digest();
+		synchronized (algorithm) {
+			algorithm.reset();
+			algorithm.update(password);
+			final byte messageDigest[] = algorithm.digest();
 
-		final StringBuffer hexString = new StringBuffer();
-		for (final byte element : messageDigest) {
-			hexString.append(Integer.toHexString(0xFF & element));
+			final StringBuffer hexString = new StringBuffer();
+			for (final byte element : messageDigest) {
+				if (element <= 15 && element >= 0) {
+					hexString.append("0");
+				}
+				hexString.append(Integer.toHexString(0xFF & element));
+			}
+
+			return hexString.toString();
 		}
-		return messageDigest;
 	}
 
 	@Override
