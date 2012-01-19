@@ -72,9 +72,8 @@ public class TenantViewContentProvider implements IStructuredContentProvider,
 		if (parentElement instanceof IUser){
 			ArrayList<Object> list = new ArrayList<Object>();
 			IUser u = (IUser) parentElement;
-			// TODO: Add Roles and Priviliges 
 			list.addAll(u.getRoles());
-			list.addAll(u.getPrivileges());			
+			list.addAll(u.getPrivileges());		
 			return list.toArray();
 		}
 		if (parentElement instanceof ISession) {
@@ -124,6 +123,8 @@ public class TenantViewContentProvider implements IStructuredContentProvider,
 		if (element instanceof IServiceLevelAgreement)
 			return true;
 		if (element instanceof Tenant)
+			return true;
+		if (element instanceof IUser)
 			return true;
 		if (element instanceof ISession)
 			return true;

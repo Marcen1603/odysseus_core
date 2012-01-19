@@ -192,4 +192,6 @@ public interface IUserManagement {
      * @return
      */
     boolean hasPermission(ISession caller, IPermission permission, String objectURI);
+
+	void addUserManagementListener(IUserManagementListener tenantView);
 }

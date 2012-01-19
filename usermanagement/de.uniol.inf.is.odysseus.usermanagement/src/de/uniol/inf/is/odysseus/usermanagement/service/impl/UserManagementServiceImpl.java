@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -35,6 +36,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagementPermission;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.RoleImpl;
@@ -56,6 +58,8 @@ public class UserManagementServiceImpl implements IUserManagement {
 	private final PrivilegeDAO privilegeDAO = new PrivilegeDAO();
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
+	private final List<IUserManagementListener> listener = new CopyOnWriteArrayList<IUserManagementListener>();
+			
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -157,7 +161,9 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final UserImpl user = new UserImpl();
 			user.setName(name);
 			this.userDAO.create(user);
+			fireUserChangedEvent();
 			return user;
+			
 		}
 		return null;
 	}
@@ -199,6 +205,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			tmpUser.setActive(true);
 			this.userDAO.update(tmpUser);
+			fireUserChangedEvent();
 		}
 	}
 
@@ -218,6 +225,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			tmpUser.setActive(false);
 			this.userDAO.update(tmpUser);
+			fireUserChangedEvent();
 		}
 
 	}
@@ -236,6 +244,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 				UserManagementPermission.objectUri)) {
 			final UserImpl tmpUser = this.userDAO.find(user.getId());
 			this.userDAO.delete(tmpUser);
+			fireUserChangedEvent();
 		}
 	}
 
@@ -304,6 +313,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final RoleImpl tmpRole = this.roleDAO.find(role.getId());
 			tmpUser.addRole(tmpRole);
 			this.userDAO.update(tmpUser);
+			fireUserChangedEvent();
 		}
 	}
 
@@ -325,6 +335,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 			final RoleImpl tmpRole = this.roleDAO.find(role.getId());
 			tmpUser.removeRole(tmpRole);
 			this.userDAO.update(tmpUser);
+			fireUserChangedEvent();
 		}
 	}
 
@@ -386,6 +397,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 
 			}
 		}
+		fireUserChangedEvent();
 	}
 
 	/*
@@ -446,6 +458,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 
 			}
 		}
+		fireUserChangedEvent();
 	}
 
 	/*
@@ -494,6 +507,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 				}
 			}
 		}
+		fireUserChangedEvent();
 	}
 
 	/*
@@ -542,6 +556,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 				}
 			}
 		}
+		fireUserChangedEvent();
 	}
 
 	@Override
@@ -664,5 +679,16 @@ public class UserManagementServiceImpl implements IUserManagement {
 
 	protected void deactivate(ComponentContext context) {
 
+	}
+	
+	@Override
+	public void addUserManagementListener(IUserManagementListener listener) {
+		this.listener.add(listener);
+	}
+	
+	private void fireUserChangedEvent(){
+		for(IUserManagementListener l: listener){
+			l.usersChangedEvent();
+		}
 	}
 }

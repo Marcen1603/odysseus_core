@@ -910,6 +910,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				caller);
 		UserManagement.getUsermanagement().changePassword(user,
 				password.getBytes(), caller);
+		UserManagement.getUsermanagement().activateUser(user, caller);
 		return null;
 	}
 

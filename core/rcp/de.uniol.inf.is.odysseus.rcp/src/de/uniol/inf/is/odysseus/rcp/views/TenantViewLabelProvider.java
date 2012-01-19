@@ -53,10 +53,10 @@ public class TenantViewLabelProvider extends LabelProvider {
 			return role.getName();
 		}
 		if (obj instanceof IPrivilege) {
-			return "Privilege: " + ((IPrivilege) obj).getId();
+			return "Privilege: " + ((IPrivilege) obj).getObjectURI();
 		}
 		if (obj instanceof IPermission){
-			return ""+obj;
+			return "Permission:"+obj;
 		}
 		if (obj instanceof Tenant) {
 			return ((Tenant) obj).getName();

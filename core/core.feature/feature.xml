@@ -17,17 +17,25 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.usermanagement.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.slf4j.api"/>
       <import plugin="de.uniol.inf.is.odysseus" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.springsource.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
+      <import plugin="javax.mail"/>
+      <import plugin="org.eclipse.net4j.jms.api"/>
+      <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
+      <import plugin="javax.servlet"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
-      <import feature="de.uniol.inf.is.odysseus.usermanagement.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
@@ -226,13 +234,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.interval.transform"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.usermanagement"
          download-size="0"
          install-size="0"
          version="0.0.0"

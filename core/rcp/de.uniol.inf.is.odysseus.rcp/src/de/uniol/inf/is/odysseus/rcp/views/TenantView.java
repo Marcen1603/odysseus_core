@@ -70,6 +70,7 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 		refresh();
 
 		//UserManagement.getInstance().addUserManagementListener(this);
+		UserManagement.getUsermanagement().addUserManagementListener(this);
 		TenantManagement.getInstance().addTenantManagementListener(this);
 	}
 
