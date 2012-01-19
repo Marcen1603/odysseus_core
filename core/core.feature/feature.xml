@@ -27,6 +27,7 @@
       <import plugin="com.springsource.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
+      <import feature="de.uniol.inf.is.odysseus.usermanagement.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
