@@ -37,7 +37,9 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagementPermission;
+import de.uniol.inf.is.odysseus.usermanagement.UsernameAlreadyUsedException;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.RoleImpl;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.SessionImpl;
@@ -59,7 +61,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
 	private final List<IUserManagementListener> listener = new CopyOnWriteArrayList<IUserManagementListener>();
-			
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -158,14 +160,18 @@ public class UserManagementServiceImpl implements IUserManagement {
 	public IUser createUser(final String name, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.CREATE_USER,
 				UserManagementPermission.objectUri)) {
-			final UserImpl user = new UserImpl();
-			user.setName(name);
-			this.userDAO.create(user);
-			fireUserChangedEvent();
-			return user;
-			
+			if (userDAO.findByName(name) == null) {
+				final UserImpl user = new UserImpl();
+				user.setName(name);
+				this.userDAO.create(user);
+				fireUserChangedEvent();
+				return user;
+			}else{
+				throw new UsernameAlreadyUsedException("name");
+			}
+		}else{
+			throw new PermissionException("Not right to create user");
 		}
-		return null;
 	}
 
 	/*
@@ -562,7 +568,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	@Override
 	public boolean hasPermission(final ISession session,
 			final IPermission permission, final String objectURI) {
-		if (objectURI == null){
+		if (objectURI == null) {
 			throw new IllegalArgumentException("Object URI cannot be null !");
 		}
 		final Map<String, Set<IPermission>> permissions = new HashMap<String, Set<IPermission>>();
@@ -613,8 +619,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 				adminRole = roleDAO.create(adminRole);
 
 				PrivilegeImpl adminPrivilege = new PrivilegeImpl();
-				adminPrivilege
-						.setObjectURI(UserManagementPermission.objectUri);
+				adminPrivilege.setObjectURI(UserManagementPermission.objectUri);
 				for (IPermission permission : UserManagementPermission.class
 						.getEnumConstants()) {
 					adminPrivilege.addPermission(permission);
@@ -627,10 +632,11 @@ public class UserManagementServiceImpl implements IUserManagement {
 				RoleImpl dictionaryRole = new RoleImpl();
 				dictionaryRole.setName("datadictionary");
 				dictionaryRole = roleDAO.create(dictionaryRole);
-				
+
 				PrivilegeImpl dictPrivilege = new PrivilegeImpl();
 				dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
-				for (IPermission permission : DataDictionaryPermission.class.getEnumConstants()){
+				for (IPermission permission : DataDictionaryPermission.class
+						.getEnumConstants()) {
 					dictPrivilege.addPermission(permission);
 				}
 				dictPrivilege = privilegeDAO.create(dictPrivilege);
@@ -641,24 +647,26 @@ public class UserManagementServiceImpl implements IUserManagement {
 				RoleImpl configurationRole = new RoleImpl();
 				configurationRole.setName("configuration");
 				configurationRole = roleDAO.create(configurationRole);
-				
+
 				PrivilegeImpl confPrivilege = new PrivilegeImpl();
 				confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
-				for (IPermission permission : ConfigurationPermission.class.getEnumConstants()){
+				for (IPermission permission : ConfigurationPermission.class
+						.getEnumConstants()) {
 					confPrivilege.addPermission(permission);
 				}
 				confPrivilege = privilegeDAO.create(confPrivilege);
 				configurationRole.addPrivilege(confPrivilege);
 				roleDAO.update(configurationRole);
 
-				// --- Query Execution Role ----				
+				// --- Query Execution Role ----
 				RoleImpl queryexecutor = new RoleImpl();
 				queryexecutor.setName("queryexecutor");
 				queryexecutor = roleDAO.create(queryexecutor);
-				
+
 				PrivilegeImpl execPrivilege = new PrivilegeImpl();
 				execPrivilege.setObjectURI(ExecutorPermission.objectURI);
-				for (IPermission permission : ExecutorPermission.class.getEnumConstants()){
+				for (IPermission permission : ExecutorPermission.class
+						.getEnumConstants()) {
 					execPrivilege.addPermission(permission);
 				}
 				execPrivilege = privilegeDAO.create(execPrivilege);
@@ -670,6 +678,13 @@ public class UserManagementServiceImpl implements IUserManagement {
 				user.addRole(configurationRole);
 				user.addRole(queryexecutor);
 				user.setActive(true);
+
+				// TEST
+				PrivilegeImpl tmp = new PrivilegeImpl();
+				tmp.setObjectURI(null);
+				tmp.addPermission(ExecutorPermission.ADD_QUERY);
+				user.addPrivilege(tmp);
+
 				userDAO.update(user);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -680,14 +695,14 @@ public class UserManagementServiceImpl implements IUserManagement {
 	protected void deactivate(ComponentContext context) {
 
 	}
-	
+
 	@Override
 	public void addUserManagementListener(IUserManagementListener listener) {
 		this.listener.add(listener);
 	}
-	
-	private void fireUserChangedEvent(){
-		for(IUserManagementListener l: listener){
+
+	private void fireUserChangedEvent() {
+		for (IUserManagementListener l : listener) {
 			l.usersChangedEvent();
 		}
 	}

@@ -20,4 +20,8 @@ public enum ConfigurationPermission implements IPermission {
 	SET_PARAM, SAVE_PARAM;	
 
 	public final static String objectURI = "configuration";
+
+	public static boolean needsNoObject(IPermission action) {
+		return true;
+	}
 }

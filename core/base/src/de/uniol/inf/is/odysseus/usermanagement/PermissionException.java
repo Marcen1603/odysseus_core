@@ -14,11 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.usermanagement;
 
-public class HasNoPermissionException extends RuntimeException{
+public class PermissionException extends RuntimeException{
 
 	private static final long serialVersionUID = -701006083841346101L;
 
-	public HasNoPermissionException(String message) {
+	public PermissionException(String message) {
 		super(message);
 	}
 }

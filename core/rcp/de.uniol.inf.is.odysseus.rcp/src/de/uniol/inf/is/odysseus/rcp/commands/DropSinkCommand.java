@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
@@ -63,7 +63,7 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 							IDataDictionary dd = GlobalState.getActiveDatadictionary();
 							dd.removeSink(param);
 							StatusBarManager.getInstance().setMessage("Sink removed");
-						} catch (HasNoPermissionException e) {
+						} catch (PermissionException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove sink:\n See error log for details", e);
 						}
 						return Status.OK_STATUS;

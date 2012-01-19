@@ -24,23 +24,23 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public interface IDataDictionary {
 
 	public void addEntity(String uri, SDFEntity entity, ISession user)
-			throws HasNoPermissionException;
+			throws PermissionException;
 
 	public SDFEntity getEntity(String uri, ISession caller)
-			throws HasNoPermissionException;
+			throws PermissionException;
 
 	/**
 	 * returns the username from the creator of the given entity
 	 * 
 	 * @param entityuri
 	 * @return username
-	 * @throws HasNoPermissionException
+	 * @throws PermissionException
 	 */
 	// no restric
 	public String getUserForEntity(String entityuri);

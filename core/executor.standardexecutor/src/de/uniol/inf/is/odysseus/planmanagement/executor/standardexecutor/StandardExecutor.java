@@ -71,7 +71,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBu
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.sla.SLADictionary;
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
@@ -601,7 +601,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		usrMgmt.hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				null))) {
-			throw new HasNoPermissionException("No Right to execute "
+			throw new PermissionException("No Right to execute "
 					+ executorAction + " on Query " + query.getID() + " for "
 					+ caller.getUser().getName());
 		}
@@ -615,7 +615,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		// User has higher right
 		usrMgmt.hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),ExecutorPermission.objectURI))) {
-			throw new HasNoPermissionException("No Right to execute "
+			throw new PermissionException("No Right to execute "
 					+ executorAction + " for " + caller.getUser().getName());
 		}
 

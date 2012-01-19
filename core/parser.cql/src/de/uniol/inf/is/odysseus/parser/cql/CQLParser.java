@@ -76,7 +76,7 @@ import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
 import de.uniol.inf.is.odysseus.usermanagement.TenantNotFoundException;
 import de.uniol.inf.is.odysseus.usermanagement.TooManyUsersException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserActionFactory;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
@@ -908,6 +908,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String password = node.getPassword();
 		IUser user = UserManagement.getUsermanagement().createUser(username,
 				caller);
+		if (user == null) throw new QueryParseException("User cannot be created.");
 		UserManagement.getUsermanagement().changePassword(user,
 				password.getBytes(), caller);
 		UserManagement.getUsermanagement().activateUser(user, caller);
@@ -1062,7 +1063,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// Validate if rights are User Actions
 		List<IPermission> operations = new ArrayList<IPermission>();
 		for (String r : rights) {
-			IPermission action = UserActionFactory.valueOf(r);
+			IPermission action = PermissionFactory.valueOf(r);
 			if (action != null) {
 				operations.add(action);
 			} else {
@@ -1082,7 +1083,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				caller);
 		for (IPermission action : operations) {
 
-			if (UserActionFactory.needsNoObject(action)) {
+			if (PermissionFactory.needsNoObject(action)) {
 				UserManagement.getUsermanagement().grantPermission(user,
 						action, null, caller);
 			} else {

@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
@@ -137,7 +137,7 @@ public class DataDictionary implements IDataDictionary {
 
 	@Override
 	public void addEntity(String uri, SDFEntity entity, ISession caller)
-			throws HasNoPermissionException {
+			throws PermissionException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)){
 			try {
 				this.entityMap.put(uri, entity);
@@ -147,14 +147,14 @@ public class DataDictionary implements IDataDictionary {
 				throw new RuntimeException(e);
 			}
 		} else {
-			throw new HasNoPermissionException("User " + caller.getUser().getName()
+			throw new PermissionException("User " + caller.getUser().getName()
 					+ "has no permission to add entities.");
 		}
 	}
 
 	@Override
 	public SDFEntity getEntity(String uri, ISession caller)
-			throws HasNoPermissionException {
+			throws PermissionException {
 		if (checkObjectAccess(uri, caller, DataDictionaryPermission.GET_ENTITY)) {
 			SDFEntity ret = entityMap.get(uri);
 			if (ret == null) {
@@ -162,7 +162,7 @@ public class DataDictionary implements IDataDictionary {
 			}
 			return ret;
 		} else {
-			throw new HasNoPermissionException("User " + caller.getUser().getName()
+			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has no permission to get entity '" + uri + "'.");
 		}
 	}
@@ -174,7 +174,7 @@ public class DataDictionary implements IDataDictionary {
 	 * 
 	 * @param entityuri
 	 * @return username
-	 * @throws HasNoPermissionException
+	 * @throws PermissionException
 	 */
 	// no restric
 	@Override
@@ -246,7 +246,7 @@ public class DataDictionary implements IDataDictionary {
 			}
 			fireAddEvent(viewname, topOperator);
 		} else {
-			throw new HasNoPermissionException("User " + caller.getUser().getName()
+			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has no permission to add a view.");
 		}
 	}
@@ -319,7 +319,7 @@ public class DataDictionary implements IDataDictionary {
 			fireAddEvent(streamname, plan);
 			fireDataDictionaryChangedEvent();
 		} else {
-			throw new HasNoPermissionException("User " + caller.getUser().getName()
+			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has no permission to set a new view.");
 		}
 	}
@@ -380,7 +380,7 @@ public class DataDictionary implements IDataDictionary {
 				checkViewAccess(viewEntry.getKey(), caller,
 						DataDictionaryPermission.READ);
 				sources.add(viewEntry);
-			} catch (HasNoPermissionException e) {
+			} catch (PermissionException e) {
 			}
 		}
 		return sources;
@@ -441,7 +441,7 @@ public class DataDictionary implements IDataDictionary {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_DATATYPE)){
 			addDatatype(name, dt);
 		}else{
-			throw new HasNoPermissionException("User " + caller.getUser().getName()
+			throw new PermissionException("User " + caller.getUser().getName()
 					+ " has not the permission to create new data types");
 		}
 	}
@@ -664,7 +664,7 @@ public class DataDictionary implements IDataDictionary {
 				|| hasSuperAction(action, caller)) {
 			return;
 		}
-		throw new HasNoPermissionException("User " + caller.getUser().getName()
+		throw new PermissionException("User " + caller.getUser().getName()
 				+ " has not the permission '" + action + "' on Source/View '"
 				+ viewOrSource);
 	}

@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.usermanagement.HasNoPermissionException;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -183,7 +183,7 @@ public class OdysseusDefaults {
 				if (UserManagement.getUsermanagement().hasPermission(caller, ConfigurationPermission.SAVE_PARAM, null)) {
 					savePropertyFile(homeDir);
 				} else {
-					throw new HasNoPermissionException(
+					throw new PermissionException(
 							"User "
 									+ caller
 									+ " is not allowed to permanently set config param "
@@ -191,7 +191,7 @@ public class OdysseusDefaults {
 				}
 			}
 		} else {
-			throw new HasNoPermissionException("User " + caller
+			throw new PermissionException("User " + caller
 					+ " is not allowed to temporally set config param " + key);
 		}
 	}

@@ -34,4 +34,19 @@ public enum ExecutorPermission implements IPermission {
 			return null;
 		}
 	}
+	
+	/**
+	 * returns whether the given action (permission) operates with an objecturi
+	 * or the action class alias.
+	 * 
+	 * @param action
+	 * @return
+	 */
+	public static boolean needsNoObject(IPermission action) {
+		switch ((ExecutorPermission) action) {
+		default:
+			return true;
+		}
+	}
+	
 }
