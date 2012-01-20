@@ -60,6 +60,24 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return retval.iterator();
 	}
 
+	public Iterator<T> queryOverlaps(ITimeInterval t, boolean remove) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (elements) {
+			Iterator<T> iter = elements.iterator();
+			while (iter.hasNext()){
+				T elem = iter.next();
+				if (TimeInterval.overlaps(elem.getMetadata(), t)) {
+					retval.add(elem);
+					if (remove){
+						iter.remove();
+					}
+				}				
+			}
+		}
+		return retval.iterator();
+	}
+
+	
 	/**
 	 * Removes all elements from this sweep area that
 	 * are totally before "element". The while loop in
