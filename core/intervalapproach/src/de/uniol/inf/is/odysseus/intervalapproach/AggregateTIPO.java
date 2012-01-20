@@ -153,7 +153,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		// Determine elements in this sweep area that overlaps the time interval
 		// of elem
 		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
-				.queryOverlaps(t_probe);
+				.queryOverlaps(t_probe, true);
 		if (!qualifies.hasNext()) { // insert new partial aggregate
 			saInsert(sa, calcInit(e_probe), t_probe);
 		} else {
@@ -164,7 +164,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			while (qualifies.hasNext()) {
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 						.next();
-				sa.remove(element_agg);
+				//sa.remove(element_agg);
 				ITimeInterval t_agg = element_agg.getMetadata();
 				pl.add(new _Point(t_agg.getStart(), true, element_agg));
 				pl.add(new _Point(t_agg.getEnd(), false, element_agg));
