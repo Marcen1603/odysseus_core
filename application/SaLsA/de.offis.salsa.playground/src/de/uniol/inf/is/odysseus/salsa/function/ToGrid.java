@@ -3,18 +3,21 @@ package de.uniol.inf.is.odysseus.salsa.function;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.CvScalar;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.salsa.common.GridUtil;
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToGrid extends AbstractFunction<Grid2D> {
+public class ToGrid extends AbstractFunction<Grid> {
     /**
      * 
      */
@@ -36,9 +39,10 @@ public class ToGrid extends AbstractFunction<Grid2D> {
                 SDFDatatype.DOUBLE
             }
     };
-    private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
+    private final static byte FREE = (byte) 0x00;
+    private final static byte UNKNOWN = (byte) 0xFF;
+    private final static byte OBSTACLE = (byte) 0x64;
+    private final static CvScalar UNKNOWN_PIXEL = opencv_core.cvScalarAll(255);
 
     @Override
     public int getArity() {
@@ -68,24 +72,23 @@ public class ToGrid extends AbstractFunction<Grid2D> {
     }
 
     @Override
-    public Grid2D getValue() {
+    public Grid getValue() {
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double x = (Double) this.getInputValue(1);
         final Double y = (Double) this.getInputValue(2);
-        Double length = (Double) this.getInputValue(3);
-        Double width = (Double) this.getInputValue(4);
+        Double width = (Double) this.getInputValue(3);
+        Double depth = (Double) this.getInputValue(4);
         final Double cellsize = ((Double) this.getInputValue(5));
 
-        length = ((int) ((length / cellsize) + 0.5)) * cellsize;
-        width = ((int) ((width / cellsize) + 0.5)) * cellsize;
-
-        final Grid2D grid = new Grid2D(new Coordinate(x, y), length, width, cellsize);
+        final Grid grid = new Grid(new Coordinate(x, y), width, depth, cellsize);
+        IplImage image = opencv_core.cvCreateImage(opencv_core.cvSize(grid.width, grid.depth),
+                opencv_core.IPL_DEPTH_8U, 1);
         // Fill the grid with UNKNWON
-        grid.fill(UNKNOWN);
+        opencv_core.cvSet(image, UNKNOWN_PIXEL);
 
-        int gridMinX = (int) (length / cellsize);
+        int gridMinX = grid.width;
         int gridMaxX = 0;
-        int gridMinY = (int) (width / cellsize);
+        int gridMinY = grid.depth;
         int gridMaxY = 0;
         Coordinate[] coordinates = geometry.getCoordinates();
 
@@ -94,8 +97,8 @@ public class ToGrid extends AbstractFunction<Grid2D> {
         // Find the first coordinate in the grid area
         for (int i = 0; i < coordinates.length; i++) {
             Coordinate coordinate = coordinates[i];
-            if ((coordinate.x > x) && (coordinate.x < x + length - cellsize) && (coordinate.y > y)
-                    && (coordinate.y < y + width - cellsize)) {
+            if ((coordinate.x > x) && (coordinate.x < x + width - cellsize) && (coordinate.y > y)
+                    && (coordinate.y < y + depth - cellsize)) {
                 tmp = coordinate;
                 polygonCoordinates.add(coordinates[i]);
                 break;
@@ -106,8 +109,8 @@ public class ToGrid extends AbstractFunction<Grid2D> {
             for (int c = 1; c < coordinates.length; c++) {
                 Coordinate coordinate = coordinates[c];
                 // Check for valid coordinate in the grid area
-                if ((GridUtil.isInGrid(x, y, length, width, coordinate))
-                        && (GridUtil.isInGrid(x, y, length, width, tmp))) {
+                if ((GridUtil.isInGrid(x, y, width, depth, coordinate))
+                        && (GridUtil.isInGrid(x, y, width, depth, tmp))) {
                     if (!GridUtil.isInSameGridCell(x, y, cellsize, coordinate, tmp)) {
                         polygonCoordinates.add(coordinate);
                         int minX = (int) Math.min(tmp.x, coordinate.x);
@@ -131,7 +134,7 @@ public class ToGrid extends AbstractFunction<Grid2D> {
 
                         for (int l = minX; l < maxX; l += cellsize) {
                             for (int w = minY; w < maxY; w += cellsize) {
-                                if ((l < x + length) && (w < y + width)) {
+                                if ((l < x + width) && (w < y + depth)) {
                                     boolean foundIntersection = false;
 
                                     // Check if the last tmp coordinate is in this grid cell
@@ -166,7 +169,9 @@ public class ToGrid extends AbstractFunction<Grid2D> {
                                         gridMinY = Math.min(gridMinY, gridY);
                                         gridMaxY = Math.max(gridMaxY, gridY);
                                         if (coordinate.distance(tmp) <= cellsize) {
-                                            grid.set(gridX, gridY, OBSTACLE);
+                                            image.getByteBuffer().put(
+                                                    gridY * image.widthStep() + gridX, OBSTACLE);
+
                                         }
                                     }
                                 }
@@ -181,23 +186,35 @@ public class ToGrid extends AbstractFunction<Grid2D> {
             }
             // Mark all cells inside the polygon that are not marked as an obstacle as free
             Coordinate[] convexHull = polygonCoordinates.toArray(new Coordinate[] {});
-            for (int l = gridMinX; l < gridMaxX; l++) {
-                for (int w = gridMinY; w < gridMaxY; w++) {
-                    if (grid.get(l, w) < 0.0) {
-                        Coordinate cell = new Coordinate(x + l * cellsize + cellsize / 2, y + w
+            for (int w = gridMinX; w < gridMaxX; w++) {
+                for (int d = gridMinY; d < gridMaxY; d++) {
+                    if (image.getByteBuffer().get(d * image.widthStep() + w) == UNKNOWN) {
+                        Coordinate cell = new Coordinate(x + w * cellsize + cellsize / 2, y + d
                                 * cellsize + cellsize / 2);
                         if (GridUtil.isInPolygon(cell, convexHull)) {
-                            grid.set(l, w, FREE);
+                            image.getByteBuffer().put(d * image.widthStep() + w, FREE);
                         }
                     }
                 }
             }
         }
+        for (int d = 0; d < grid.depth; d++) {
+            if (d * image.widthStep() > grid.size) {
+                image.getByteBuffer(d*image.widthStep()).get(grid.get(), d * grid.width, image.width());
+            }
+            else {
+                image.getByteBuffer(d*image.widthStep())
+                        .get(grid.get(), d * grid.width, image.widthStep());
+            }
+        }
+
+        opencv_core.cvReleaseImage(image);
+        image = null;
         return grid;
     }
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.GRID_DOUBLE;
+        return SDFDatatype.GRID;
     }
 }

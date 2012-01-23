@@ -6,7 +6,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -40,7 +40,7 @@ public class GridScreen extends JFrame {
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    public void onGrid(final Grid2D grid) {
+    public void onGrid(final Grid grid) {
         this.map.onGrid(grid);
     }
 }

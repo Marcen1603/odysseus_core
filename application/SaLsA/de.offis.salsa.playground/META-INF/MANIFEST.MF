@@ -26,5 +26,11 @@ Require-Bundle: de.uniol.inf.is.odysseus,
  org.junit
 Service-Component: OSGI-INF/TransformationRuleService.xml, OSGI-INF/SourceControlService.xml, OSGI-INF/SickSensorAdapter.xml, OSGI-INF/AggregationFunctionBuilder.xml, OSGI-INF/SalsaQueryBuilderConfiguration.xml
 Bundle-ClassPath: .,
- lib/json-20090211.jar
+ lib/json-20090211.jar,
+ lib/javacpp.jar,
+ lib/javacv-linux-x86_64.jar,
+ lib/javacv.jar
 Bundle-Activator: de.uniol.inf.is.odysseus.salsa.Activator
+Bundle-NativeCode: lib/libopencv_core.so ; lib/libopencv_imgproc.so ; lib/libopencv_calib3d.so ; lib/libopencv_contrib.so ; lib/libopencv_features2d.so ; lib/libopencv_flann.so ; lib/libopencv_gpu.so ; lib/libopencv_highgui.so ; lib/libopencv_legacy.so ; lib/libopencv_ml.so ; lib/libopencv_objdetect.so ;
+  osname=linux;
+  processor=x86-64

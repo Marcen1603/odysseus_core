@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.salsa.physicaloperator;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.salsa.ui.GridScreen;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -15,17 +15,23 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
-    private final Queue<Grid2D> grids = new ConcurrentLinkedQueue<Grid2D>();
+    private final BlockingQueue<Grid> grids = new LinkedBlockingQueue<Grid>();
     private GridScreen screen = new GridScreen();
     private final SDFAttributeList schema;
     private final Thread painter = new Thread() {
 
+        // 100% CPU
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                Grid2D grid;
-                while ((grid = VisualGridSinkPO.this.grids.poll()) != null) {
-                    VisualGridSinkPO.this.screen.onGrid(grid);
+                Grid grid;
+                try {
+                    while ((grid = VisualGridSinkPO.this.grids.take()) != null) {
+                        VisualGridSinkPO.this.screen.onGrid(grid);
+                    }
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -51,7 +57,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Object object, final int port, final boolean isReadOnly) {
-        this.grids.offer((Grid2D) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
+        this.grids.offer((Grid) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
     }
 
     @Override

@@ -126,13 +126,19 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
 
     private double getDistanceToLine(final Coordinate point, final Coordinate from,
             final Coordinate to) {
-        final Coordinate line = new Coordinate(to.x - from.x, to.y - from.y);
-        final double length = Math.sqrt(line.x * line.x + line.y * line.y);
-        line.x /= length;
-        line.y /= length;
-        final double lambda = point.x - from.x * line.x + (point.y - from.y) * line.y;
-        final Coordinate foot = new Coordinate(from.x + lambda * line.x, from.y + lambda * line.y);
-        return Math.sqrt((foot.x - point.x) * (foot.x - point.x) + (foot.y - point.y)
-                * (foot.y - point.y));
+        final Coordinate fromTo = new Coordinate(to.x - from.x, to.y - from.y);
+        final Coordinate fromPoint = new Coordinate(point.x - from.x, point.y - from.y);
+        final Coordinate toPoint = new Coordinate(point.x - to.x, point.y - to.y);
+
+        final double dot = fromPoint.x * fromTo.x + fromPoint.y * fromTo.y;
+        if (dot <= 0.0) {
+            return Math.sqrt(fromPoint.x * fromPoint.x + fromPoint.y * fromPoint.y);
+        }
+        final double sqrtLength = fromTo.x * fromTo.x + fromTo.y * fromTo.y;
+        if (dot >= sqrtLength) {
+            return Math.sqrt(toPoint.x * toPoint.x + toPoint.y * toPoint.y);
+        }
+        return Math.sqrt((fromPoint.x * fromPoint.x + fromPoint.y * fromPoint.y) - dot * dot
+                / sqrtLength);
     }
 }

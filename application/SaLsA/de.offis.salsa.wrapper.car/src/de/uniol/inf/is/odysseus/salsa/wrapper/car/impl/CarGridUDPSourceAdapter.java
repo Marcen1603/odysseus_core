@@ -5,7 +5,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.SocketChannel;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
@@ -16,16 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
 public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(CarGridUDPSourceAdapter.class);
-	private final static double FREE = 0.0;
-	private final static double UNKNOWN = -1.0;
-	private final static double OBSTACLE = 1.0;
+
 	private final Map<SourceSpec, GridConnection> connections = new ConcurrentHashMap<SourceSpec, GridConnection>();
 
 	@Override
@@ -68,6 +65,7 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 		@Override
 		public void run() {
 			DatagramChannel channel = null;
+			long timestamp = 0l;
 			try {
 				while (!Thread.currentThread().isInterrupted()) {
 					try {
@@ -75,7 +73,7 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 						final InetSocketAddress address = new InetSocketAddress(
 								this.port);
 						channel.socket().bind(address);
-						channel.configureBlocking(false);
+						channel.configureBlocking(true);
 						while ((!Thread.currentThread().isInterrupted())
 								&& (channel.isOpen())) {
 							SocketAddress client = channel.receive(buffer);
@@ -113,25 +111,23 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									}
 									pos = buffer.position();
 									buffer.flip();
-									Grid2D grid = new Grid2D(new Coordinate(x,
+									Grid grid = new Grid(new Coordinate(x,
 											y), length * cell, width * cell,
 											cell);
 									// FIXME Use 3D Grid when height>1
 									for (int l = 0; l < length; l++) {
 										for (int w = 0; w < width; w++) {
 											for (int h = 0; h < height; h++) {
-												int value = (int) buffer.get() & 0xFF;
-												if (value > 100) {
-													grid.set(l, w, UNKNOWN);
-												} else {
-													grid.set(l, w, value / 100);
-												}
+												grid.set(l, w, buffer.get());
 											}
 										}
 									}
-									this.listener.transfer(source,
-											calendar.getTimeInMillis(),
-											new Object[] { id, grid });
+									if (calendar.getTimeInMillis() >= timestamp) {
+										this.listener.transfer(source,
+												calendar.getTimeInMillis(),
+												new Object[] { id, grid });
+										timestamp = calendar.getTimeInMillis();
+									}
 								} catch (Exception e) {
 									e.printStackTrace();
 									buffer.position(pos);

@@ -89,6 +89,9 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 								this.source, socket, this.adapter);
 						final Thread processingThread = new Thread(processor);
 						processingThreads.add(processingThread);
+						CarSourceAdapter.LOG.info(String.format(
+								"New Connection from %s", socket.socket()
+										.getInetAddress()));
 						processingThread.start();
 					} catch (final IOException e) {
 						CarSourceAdapter.LOG.error(e.getMessage(), e);
@@ -133,57 +136,73 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 					final ByteBuffer buffer = ByteBuffer
 							.allocateDirect(64 * 1024);
 					int nbytes = 0;
-
-					while (!Thread.currentThread().isInterrupted()) {
-						if (channel.isOpen()) {
-							while ((nbytes = channel.read(buffer)) > 0) {
-								int pos = buffer.position();
-								buffer.flip();
-								try {
-									int year = buffer.getChar();
-									int month = buffer.get();
-									int day = buffer.get();
-									int hour = buffer.get();
-									int minute = buffer.get();
-									int second = buffer.get();
-									int millisecond = buffer.get();
-									Calendar calendar = Calendar
-											.getInstance(TimeZone
-													.getTimeZone("UTC"));
-									calendar.clear();
-									calendar.set(year, month - 1, day, hour,
-											minute, second);
-									calendar.add(Calendar.MILLISECOND,
-											millisecond * 10);
-									long timestamp = calendar.getTimeInMillis();
-									int id = (int) buffer.getShort();
-									int x = buffer.getInt();
-									int y = buffer.getInt();
-									float speed = buffer.getFloat();
-									float angle = buffer.getFloat();
+					long currentTimestamp = 0;
+					this.channel.configureBlocking(true);
+					while ((!Thread.currentThread().isInterrupted())
+							&& (channel.isConnected())) {
+						while ((nbytes = channel.read(buffer)) > 0) {
+							int pos = buffer.position();
+							buffer.flip();
+							try {
+								int year = buffer.getChar();
+								int month = buffer.get();
+								int day = buffer.get();
+								int hour = buffer.get();
+								int minute = buffer.get();
+								int second = buffer.get();
+								int millisecond = buffer.get();
+								Calendar calendar = Calendar
+										.getInstance(TimeZone
+												.getTimeZone("UTC"));
+								calendar.clear();
+								calendar.set(year, month - 1, day, hour,
+										minute, second);
+								calendar.add(Calendar.MILLISECOND,
+										millisecond * 10);
+								long timestamp = calendar.getTimeInMillis();
+								int id = (int) buffer.getShort();
+								int x = buffer.getInt();
+								int y = buffer.getInt();
+								float speed = buffer.getFloat();
+								float angle = buffer.getFloat();
+//								if (System.currentTimeMillis() - timestamp > 50) {
+//									CarSourceAdapter.LOG.error(String.format(
+//											"Lag with timestamp %s to %s = %s",
+//											timestamp,
+//											System.currentTimeMillis(),
+//											System.currentTimeMillis()
+//													- timestamp));
+//								}
+								if (currentTimestamp < timestamp) {
+									currentTimestamp = timestamp;
 									this.adapter.transfer(this.sourceSpec,
 											timestamp, new Object[] { id,
 													new Coordinate(x, y),
-													speed, angle });
+													speed, angle, timestamp });
+								} else {
+									this.dumpPackage(buffer);
 									this.writeLog(id, new Coordinate(x, y),
 											speed, angle, timestamp);
-								} catch (final Exception e) {
-									if (CarSourceAdapter.LOG.isDebugEnabled()) {
-										CarSourceAdapter.LOG.debug(
-												e.getMessage(), e);
-										this.dumpPackage(buffer);
-									}
-									buffer.position(pos);
+									CarSourceAdapter.LOG
+											.error(String
+													.format("Invalid timestamp %s, please refer to log file",
+															timestamp));
 								}
-								// if (buffer.hasRemaining()) {
-								// buffer.compact();
-								// } else {
+							} catch (final Exception e) {
+								if (CarSourceAdapter.LOG.isDebugEnabled()) {
+									CarSourceAdapter.LOG.debug(e.getMessage(),
+											e);
+									this.dumpPackage(buffer);
+								}
+								buffer.position(pos);
+							}
+							if (buffer.hasRemaining()) {
+								buffer.compact();
+							} else {
 								buffer.clear();
-								// }
 							}
 						}
 					}
-
 				} catch (final IOException e) {
 					CarSourceAdapter.LOG.error(e.getMessage(), e);
 				}
@@ -202,6 +221,11 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 					} catch (final IOException e) {
 						CarSourceAdapter.LOG.error(e.getMessage(), e);
 					}
+				}
+				try {
+					out.close();
+				} catch (IOException e) {
+					CarSourceAdapter.LOG.error(e.getMessage(), e);
 				}
 			}
 

@@ -128,20 +128,23 @@ public class ScooterSourceAdapter extends AbstractPushingSourceAdapter
 							Thread.sleep((long) 20.0);
 						}
 					}
-					objectAdapter.deactivate();
 				} catch (final Exception e) {
 					ScooterSourceAdapter.LOG.error(e.getMessage(), e);
 				} finally {
 					try {
 						if (objectAdapter != null) {
 							objectAdapter.deactivate();
+							objectAdapter.destroy();
+							objectAdapter = null;
 						}
 					} catch (final Exception e) {
 						ScooterSourceAdapter.LOG.error(e.getMessage(), e);
 					}
 					try {
 						if (communicator != null) {
+							communicator.shutdown();
 							communicator.destroy();
+							communicator = null;
 						}
 					} catch (final Exception e) {
 						ScooterSourceAdapter.LOG.error(e.getMessage(), e);

@@ -1,25 +1,25 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class InverseGrid extends AbstractFunction<Grid2D> {
+public class InverseGrid extends AbstractFunction<Grid> {
     /**
      * 
      */
     private static final long serialVersionUID = 6682089158563417930L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
         {
-            SDFDatatype.GRID_DOUBLE
+            SDFDatatype.GRID
         }
     };
-    private final static double FREE = 0.0;
-    private final static double UNKNOWN = -1.0;
-    private final static double OBSTACLE = 1.0;
+    private final static byte FREE = (byte) 0x00;
+    private final static byte UNKNOWN = (byte) 0xFF;
+    private final static byte OBSTACLE = (byte) 0x64;
 
     @Override
     public int getArity() {
@@ -46,15 +46,15 @@ public class InverseGrid extends AbstractFunction<Grid2D> {
     }
 
     @Override
-    public Grid2D getValue() {
-        final Grid2D grid = this.getInputValue(0);
-        final Grid2D inverseGrid = new Grid2D(grid.origin, grid.grid.length * grid.cellsize,
-                grid.grid[0].length * grid.cellsize, grid.cellsize);
+    public Grid getValue() {
+        final Grid grid = this.getInputValue(0);
+        final Grid inverseGrid = new Grid(grid.origin, grid.width * grid.cellsize, grid.depth
+                * grid.cellsize, grid.cellsize);
         inverseGrid.fill(UNKNOWN);
-        for (int l = 0; l < grid.grid.length; l++) {
-            for (int w = 0; w < grid.grid[l].length; w++) {
-                if (grid.get(l, w) >= FREE) {
-                    inverseGrid.set(l, w, Math.abs(grid.get(l, w) - 1));
+        for (int l = 0; l < grid.width; l++) {
+            for (int w = 0; w < grid.depth; w++) {
+                if (grid.get(l, w) <= OBSTACLE) {
+                    inverseGrid.set(l, w, (byte) (((byte) 0x64) - grid.get(l, w)));
                 }
             }
         }
@@ -63,7 +63,7 @@ public class InverseGrid extends AbstractFunction<Grid2D> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.GRID_DOUBLE;
+        return SDFDatatype.GRID;
     }
 
 }

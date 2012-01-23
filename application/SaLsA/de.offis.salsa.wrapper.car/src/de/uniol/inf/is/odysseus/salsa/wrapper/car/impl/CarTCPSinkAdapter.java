@@ -17,9 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
@@ -28,9 +26,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 		SinkAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(CarTCPSinkAdapter.class);
-	private final static double FREE = 0.0;
-	private final static double UNKNOWN = -1.0;
-	private final static double OBSTACLE = 1.0;
+
 	private final BlockingQueue<Object[]> messageQueue = new LinkedBlockingQueue<Object[]>();
 	private final Map<SinkSpec, Thread> connectionThreads = new HashMap<SinkSpec, Thread>();
 
@@ -87,7 +83,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 		public void run() {
 			try {
 				while ((!Thread.currentThread().isInterrupted())
-						&& (this.channel.isOpen())) {
+						&& (this.channel.isConnected())) {
 					Object[] event = messageQueue.take();
 					long timestamp = (Long) event[0];
 					Object[] data = (Object[]) event[1];
@@ -109,32 +105,23 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 							// ID
 							buffer.putShort(((Double) data[0]).shortValue());
 							// Grid
-							Grid2D grid = (Grid2D) data[1];
+							Grid grid = (Grid) data[1];
 
 							// X Position
 							buffer.putInt((int) grid.origin.x);
 							// Y Position
 							buffer.putInt((int) grid.origin.y);
 							// Grid Length
-							buffer.putShort((short) grid.grid.length);
+							buffer.putShort((short) grid.width);
 							// Grid Width
-							buffer.putShort((short) grid.grid[0].length);
+							buffer.putShort((short) grid.depth);
 							// Grid Height
 							buffer.putShort((short) 1);
 							// Cell Size
 							buffer.putInt((int) grid.cellsize * 10);
 
-							for (int l = 0; l < grid.grid.length; l++) {
-								for (int w = 0; w < grid.grid[l].length; w++) {
-									if (grid.get(l, w) == FREE) {
-										buffer.put((byte) 0x00);
-									} else if (grid.get(l, w) < FREE) {
-										buffer.put((byte) 0xFF);
-									} else {
-										buffer.put((byte) 0x64);
-									}
-								}
-							}
+							buffer.put(grid.get());
+
 							buffer.flip();
 							this.channel.write(buffer);
 							if (buffer.hasRemaining()) {
@@ -148,6 +135,9 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 					} catch (Exception e) {
 						LOG.error(e.getMessage(), e);
 						buffer.clear();
+						if (this.channel != null) {
+							this.channel.close();
+						}
 					}
 				}
 			} catch (Exception e) {

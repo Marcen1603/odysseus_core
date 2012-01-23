@@ -1,30 +1,19 @@
 package de.uniol.inf.is.odysseus.salsa.wrapper.car.impl;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
@@ -33,15 +22,13 @@ public class CarUDPSinkAdapter extends AbstractSinkAdapter implements
 		SinkAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(CarUDPSinkAdapter.class);
-	private final static double FREE = 0.0;
-	private final static double UNKNOWN = -1.0;
-	private final static double OBSTACLE = 1.0;
+
 	private DatagramChannel channel;
 	private final Map<SinkSpec, SocketAddress> sinks = new HashMap<SinkSpec, SocketAddress>();
 	private final ByteBuffer buffer;
 
 	public CarUDPSinkAdapter() {
-		buffer = ByteBuffer.allocate(64 * 1024);
+		buffer = ByteBuffer.allocate(1024 * 1024);
 		try {
 			channel = DatagramChannel.open();
 		} catch (IOException e) {
@@ -73,32 +60,21 @@ public class CarUDPSinkAdapter extends AbstractSinkAdapter implements
 					// ID
 					buffer.putShort(((Double) data[0]).shortValue());
 					// Grid
-					Grid2D grid = (Grid2D) data[1];
-
+					Grid grid = (Grid) data[1];
 					// X Position
 					buffer.putInt((int) grid.origin.x);
 					// Y Position
 					buffer.putInt((int) grid.origin.y);
 					// Grid Length
-					buffer.putShort((short) grid.grid.length);
+					buffer.putShort((short) grid.width);
 					// Grid Width
-					buffer.putShort((short) grid.grid[0].length);
+					buffer.putShort((short) grid.depth);
 					// Grid Height
 					buffer.putShort((short) 1);
 					// Cell Size
 					buffer.putInt((int) grid.cellsize * 10);
 
-					for (int l = 0; l < grid.grid.length; l++) {
-						for (int w = 0; w < grid.grid[l].length; w++) {
-							if (grid.get(l, w) == FREE) {
-								buffer.put((byte) 0x00);
-							} else if (grid.get(l, w) < FREE) {
-								buffer.put((byte) 0xFF);
-							} else {
-								buffer.put((byte) 0x64);
-							}
-						}
-					}
+					buffer.put(grid.get());
 					buffer.flip();
 					this.channel.send(buffer, addr);
 					if (buffer.hasRemaining()) {

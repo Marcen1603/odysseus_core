@@ -12,7 +12,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -264,67 +263,74 @@ public class SickConnectionImpl implements SickConnection {
 
 		@Override
 		public void run() {
-			try {
-				this.channel = SocketChannel.open();
-				final InetSocketAddress address = new InetSocketAddress(
-						this.host, this.port);
-				this.channel.connect(address);
-				this.channel.configureBlocking(false);
-				final CharsetDecoder decoder = this.charset.newDecoder();
-				this.onOpen();
-				final ByteBuffer buffer = ByteBuffer.allocateDirect(64 * 1024);
-				int nbytes = 0;
-				int pos = 0;
-				int size = 0;
+			while (!Thread.currentThread().isInterrupted()) {
+				try {
+					this.channel = SocketChannel.open();
+					final InetSocketAddress address = new InetSocketAddress(
+							this.host, this.port);
+					this.channel.connect(address);
+					this.channel.configureBlocking(true);
+					final CharsetDecoder decoder = this.charset.newDecoder();
+					this.onOpen();
+					final ByteBuffer buffer = ByteBuffer
+							.allocateDirect(64 * 1024);
+					int nbytes = 0;
+					int pos = 0;
+					int size = 0;
 
-				while (!Thread.currentThread().isInterrupted()) {
-					while ((nbytes = this.channel.read(buffer)) > 0) {
-						size += nbytes;
-						for (int i = pos; i < size; i++) {
-							// for (int i = 0; i < size; i++) {
-							if (buffer.get(i) == SickConnectionImpl.END) {
-								buffer.position(i + 1);
-								buffer.flip();
-								final CharBuffer charBuffer = decoder
-										.decode(buffer);
-								try {
-									Calendar calendar = Calendar
-											.getInstance(TimeZone
-													.getTimeZone("UTC"));
-									this.onMessage(
-											charBuffer.subSequence(1,
-													charBuffer.length() - 1)
-													.toString(), calendar
-													.getTimeInMillis());
-								} catch (final Exception e) {
-									if (SickConnectionImpl.LOG.isDebugEnabled()) {
-										SickConnectionImpl.LOG.debug(
-												e.getMessage(), e);
-										this.dumpPackage(buffer);
+					while (!Thread.currentThread().isInterrupted()) {
+						while ((nbytes = this.channel.read(buffer)) > 0) {
+							size += nbytes;
+							for (int i = pos; i < size; i++) {
+								// for (int i = 0; i < size; i++) {
+								if (buffer.get(i) == SickConnectionImpl.END) {
+									buffer.position(i + 1);
+									buffer.flip();
+									final CharBuffer charBuffer;
+									try {
+										charBuffer = decoder
+												.decode(buffer);
+										Calendar calendar = Calendar
+												.getInstance(TimeZone
+														.getTimeZone("UTC"));
+										this.onMessage(
+												charBuffer
+														.subSequence(
+																1,
+																charBuffer
+																		.length() - 1)
+														.toString(), calendar
+														.getTimeInMillis());
+									} catch (final Exception e) {
+										if (SickConnectionImpl.LOG
+												.isDebugEnabled()) {
+											SickConnectionImpl.LOG.debug(
+													e.getMessage(), e);
+											this.dumpPackage(buffer);
+										}
 									}
+									buffer.limit(size);
+
+									buffer.compact();
+									size -= (i + 1);
+									pos = 0;
+									i = 0;
 								}
-								buffer.limit(size);
-
-								buffer.compact();
-								size -= (i + 1);
-								pos = 0;
-								i = 0;
 							}
+							pos++;
 						}
-						pos++;
 					}
-
-				}
-				this.onClose();
-				SickConnectionImpl.LOG.info("SICK connection interrupted");
-			} catch (final Exception e) {
-				SickConnectionImpl.LOG.error(e.getMessage(), e);
-			} finally {
-				if (this.channel != null) {
-					try {
-						this.channel.close();
-					} catch (final IOException e) {
-						SickConnectionImpl.LOG.error(e.getMessage(), e);
+					this.onClose();
+					SickConnectionImpl.LOG.info("SICK connection interrupted");
+				} catch (final Exception e) {
+					SickConnectionImpl.LOG.error(e.getMessage(), e);
+				} finally {
+					if (this.channel != null) {
+						try {
+							this.channel.close();
+						} catch (final IOException e) {
+							SickConnectionImpl.LOG.error(e.getMessage(), e);
+						}
 					}
 				}
 			}

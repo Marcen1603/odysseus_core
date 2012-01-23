@@ -19,7 +19,7 @@ import Ice.InitializationData;
 import Ice.ObjectAdapter;
 import Ice.Properties;
 import Ice.Util;
-import de.uniol.inf.is.odysseus.salsa.model.Grid2D;
+import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
@@ -132,46 +132,47 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 						}
 						final Object[] data = ScooterSinkAdapter.this.messageQueue
 								.take();
-						Grid2D grid = (Grid2D) ((Object[]) data[1])[0];
+						Grid grid = (Grid) ((Object[]) data[1])[0];
 
 						GridStruct iceGrid = new GridStruct();
 						iceGrid.timestamp = (Long) data[0];
 						iceGrid.x = grid.origin.x * grid.cellsize;
 						iceGrid.y = grid.origin.y * grid.cellsize;
 						iceGrid.cellsize = grid.cellsize;
-						iceGrid.width = grid.grid.length;
-						iceGrid.height = grid.grid[0].length;
+						iceGrid.width = grid.width;
+						iceGrid.height = grid.depth;
 						iceGrid.data = new byte[iceGrid.width * iceGrid.height];
-						for (int l = 0; l < grid.grid.length; l++) {
-							for (int w = 0; w < grid.grid[l].length; w++) {
-								int index = l * grid.grid[l].length + w;
-								if (grid.get(l, w) == FREE) {
-									iceGrid.data[index] = (byte) 0x00;
-								} else if (grid.get(l, w) < FREE) {
-									iceGrid.data[index] = (byte) 0xFF;
-								} else {
-									iceGrid.data[index] = (byte) 0x64;
-								}
+						for (int l = 0; l < grid.width; l++) {
+							for (int w = 0; w < grid.depth; w++) {
+								int index = l * grid.depth + w;
+								iceGrid.data[index] = grid.get(l, w);
 							}
 						}
-						for (GridSubscriberPrx listener : listeners) {
-							listener._notify(iceGrid);
+						try {
+							for (GridSubscriberPrx listener : listeners) {
+								listener._notify(iceGrid);
+							}
+						} catch (final Exception e) {
+							ScooterSinkAdapter.LOG.error(e.getMessage(), e);
 						}
 					}
-					objectAdapter.deactivate();
 				} catch (final Exception e) {
 					ScooterSinkAdapter.LOG.error(e.getMessage(), e);
 				} finally {
 					try {
 						if (objectAdapter != null) {
 							objectAdapter.deactivate();
+							objectAdapter.destroy();
+							objectAdapter = null;
 						}
 					} catch (final Exception e) {
 						ScooterSinkAdapter.LOG.error(e.getMessage(), e);
 					}
 					try {
 						if (communicator != null) {
+							communicator.shutdown();
 							communicator.destroy();
+							communicator = null;
 						}
 					} catch (final Exception e) {
 						ScooterSinkAdapter.LOG.error(e.getMessage(), e);

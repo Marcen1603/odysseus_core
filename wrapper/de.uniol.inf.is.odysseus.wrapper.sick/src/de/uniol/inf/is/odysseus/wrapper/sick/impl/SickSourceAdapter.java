@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
@@ -85,10 +86,18 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 							.getDist1Vector()));
 				}
 			}
-			SickSourceAdapter.this.transfer(source, timestamp,
-					new Object[] { this.geometryFactory
-							.createMultiPoint(coordinates
-									.toArray(new Point[] {})) });
+			if (System.currentTimeMillis() - timestamp > 50) {
+				LOG.error(String.format("Lag with timestamp %s to %s = %s",
+						timestamp, System.currentTimeMillis(),
+						System.currentTimeMillis() - timestamp));
+			}
+			coordinates.add(this.geometryFactory.createPoint(new Coordinate(0,0)));
+			SickSourceAdapter.this.transfer(
+					source,
+					timestamp,
+					new Object[] {
+							this.geometryFactory.createMultiPoint(coordinates
+									.toArray(new Point[] {})), timestamp });
 		}
 
 	}
