@@ -16,20 +16,37 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.eclipse.persistence.jpa"
+         version="0.0.0"/>
+
    <requires>
-      <import feature="org.eclipse.jpt.jpa.eclipselink.feature" version="3.0.1.v201108303011-7J7F78F7RZHQPJBNCKbSR7FB"/>
-      <import plugin="de.uniol.inf.is.odysseus"/>
-      <import plugin="javax.persistence"/>
-      <import plugin="org.apache.derby"/>
-      <import plugin="org.eclipse.persistence.core"/>
-      <import plugin="org.eclipse.persistence.antlr"/>
-      <import plugin="org.eclipse.persistence.jpa"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.osgi.services"/>
+      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.persistence.jpa" version="2.3.2.v20111125-r10461"/>
    </requires>
 
    <plugin
          id="de.uniol.inf.is.odysseus.usermanagement"
+         download-size="0"
+         install-size="0"
+         version="1.0.0.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.derby"
+         download-size="0"
+         install-size="0"
+         version="10.5.1.1_201105231903"/>
+
+   <plugin
+         id="javax.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javax.persistence"
          download-size="0"
          install-size="0"
          version="0.0.0"

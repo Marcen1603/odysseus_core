@@ -53,8 +53,7 @@ import de.uniol.inf.is.odysseus.usermanagement.policy.ChangePasswordPolicy;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class UserManagementServiceImpl implements IUserManagement {
-	private final EntityManagerFactory entityManagerFactory = Persistence
-			.createEntityManagerFactory("odysseusPU");
+	private EntityManagerFactory entityManagerFactory;
 	private final UserDAO userDAO = new UserDAO();
 	private final RoleDAO roleDAO = new RoleDAO();
 	private final PrivilegeDAO privilegeDAO = new PrivilegeDAO();
@@ -601,6 +600,7 @@ public class UserManagementServiceImpl implements IUserManagement {
 	}
 
 	protected void activate(ComponentContext context) {
+		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
 		final EntityManager em = this.entityManagerFactory
 				.createEntityManager();
 		this.userDAO.setEntityManager(em);

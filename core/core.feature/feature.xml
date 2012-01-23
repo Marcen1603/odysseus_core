@@ -24,7 +24,6 @@
    <requires>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.slf4j.api"/>
       <import plugin="de.uniol.inf.is.odysseus" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
@@ -33,7 +32,6 @@
       <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
       <import plugin="javax.mail"/>
       <import plugin="org.eclipse.net4j.jms.api"/>
-      <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
       <import plugin="javax.servlet"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
    </requires>
@@ -191,39 +189,10 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.log4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.qos.logback.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
          id="com.springsource.slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="ch.qos.logback.classic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.qos.logback.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"
