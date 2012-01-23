@@ -153,7 +153,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		// Determine elements in this sweep area that overlaps the time interval
 		// of elem
 		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
-				.queryOverlaps(t_probe, true);
+				.extractOverlaps(t_probe);
 		if (!qualifies.hasNext()) { // insert new partial aggregate
 			saInsert(sa, calcInit(e_probe), t_probe);
 		} else {
@@ -250,14 +250,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 		// Determine elements in this sweep area containing splitpoint
 		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
-				.queryOverlaps(t_probe);
+				.extractOverlaps(t_probe);
 		while (qualifies.hasNext()) {
 			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
 			if (element_agg.getMetadata().getStart().before(splitPoint)) {
 				// TODO: Is removal necessary or is update of metadata enough?
 				// Remove current element
-				sa.remove(element_agg);
+//				sa.remove(element_agg);
 				// and split into two new elements
 				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(
 						element_agg, true);
