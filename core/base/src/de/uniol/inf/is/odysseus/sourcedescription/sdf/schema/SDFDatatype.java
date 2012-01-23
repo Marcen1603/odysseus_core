@@ -96,11 +96,11 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype("VectorBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
 	
 	
-	public static final SDFDatatype GRID_DOUBLE = new SDFDatatype("Grid",
+	public static final SDFDatatype GRID = new SDFDatatype("Grid",
 			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList(
 					new SDFAttribute(null,"origin", SDFDatatype.SPATIAL_POINT),
 					new SDFAttribute(null,"cellsize", SDFDatatype.DOUBLE),
-					new SDFAttribute(null,"grid", SDFDatatype.MATRIX_DOUBLE)));
+					new SDFAttribute(null,"grid", SDFDatatype.MATRIX_BYTE)));
 	
 	private static final long serialVersionUID = 8585322290347489841L;
 	
@@ -309,7 +309,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	}
 	
 	public boolean isGrid(){
-		return this.getURI().equals(GRID_DOUBLE.getURI());
+		return this.getURI().equals(GRID.getURI());
 	}
 	
 	public int getSubattributeCount(){
