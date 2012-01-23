@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.ArrayList;
@@ -60,32 +60,27 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return retval.iterator();
 	}
 
-	public Iterator<T> queryOverlaps(ITimeInterval t, boolean remove) {
+	public Iterator<T> extractOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (elements) {
 			Iterator<T> iter = elements.iterator();
-			while (iter.hasNext()){
+			while (iter.hasNext()) {
 				T elem = iter.next();
 				if (TimeInterval.overlaps(elem.getMetadata(), t)) {
 					retval.add(elem);
-					if (remove){
-						iter.remove();
-					}
-				}				
+					iter.remove();
+				}
 			}
 		}
 		return retval.iterator();
 	}
 
-	
 	/**
-	 * Removes all elements from this sweep area that
-	 * are totally before "element". The while loop in
-	 * this method can be broken, if the next element
-	 * has a start timestamp that is after or equals
-	 * to the start timestamp of "element", because the
-	 * elements in the sweep area are ordered by their
-	 * start timestamps.
+	 * Removes all elements from this sweep area that are totally before
+	 * "element". The while loop in this method can be broken, if the next
+	 * element has a start timestamp that is after or equals to the start
+	 * timestamp of "element", because the elements in the sweep area are
+	 * ordered by their start timestamps.
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
@@ -99,11 +94,12 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 					++i;
 					it.remove();
 				}
-				
-				if(cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())){
+
+				if (cur.getMetadata().getStart()
+						.afterOrEquals(element.getMetadata().getStart())) {
 					return;
 				}
-				
+
 			}
 		}
 	}
@@ -175,7 +171,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	public Iterator<T> extractElementsStartingEquals(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (elements) {
@@ -275,12 +271,13 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	}
 
 	/**
-	 * Deliver all elements containing the time stamp. 
-	 * Sweep area is not changed 
+	 * Deliver all elements containing the time stamp. Sweep area is not changed
+	 * 
 	 * @param timestamp
 	 * @return
 	 */
-	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
+	public Iterator<T> peekElementsContaing(PointInTime timestamp,
+			boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
 		synchronized (elements) {
 			Iterator<T> li = elements.iterator();
@@ -288,8 +285,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 				T s_hat = li.next();
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
 					retval.add(s_hat);
-				} 
-				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)){
+				}
+				if (includingEndtime
+						&& s_hat.getMetadata().getEnd().equals(timestamp)) {
 					retval.add(s_hat);
 				}
 			}
