@@ -233,7 +233,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						// In this case handle area from p1 und p2
 
 					} else if (p1.isStart() && p2.isEnd()) {
-						// Add new element as a combination from current value and new
+						// Add new element as a combination from current value
+						// and new
 						// element for new time interval
 						Q newMeta = metadataMerge.mergeMetadata(
 								lastPartialAggregate.getMetadata(),
@@ -243,13 +244,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 								calcMerge(lastPartialAggregate, elemToAdd),
 								newMeta);
 
-// Cannot happen 
-						//					}
-//					else if (p1.isEnd() && p2.isStart()) {
-//						// New element has a part that is newer than the partial aggregate
-//						Q newTI = elemToAdd.getMetadata();
-//						newTI.setStartAndEnd(p1.point, p2.point);
-//						saInsert(sa, calcInit(elemToAdd), newTI);
+					} else if (p1.isEnd() && p2.isStart()) {
+						// New element has a part that is newer than the partial
+						// aggregate
+						Q newTI = elemToAdd.getMetadata();
+						newTI.setStartAndEnd(p1.point, p2.point);
+						saInsert(sa, calcInit(elemToAdd), newTI);
 					} else if (p1.isEnd() && p2.isEnd()) { // Element after
 						// OldEnd && NewEnd
 						if (p2.newElement()) {
@@ -264,12 +264,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 					}
 				}
 
-				// Remember the last seen partial aggregate (not the new element)
-				lastPartialAggregate = (p1.newElement())? lastPartialAggregate: p1.element_agg;
+				// Remember the last seen partial aggregate (not the new
+				// element)
+				lastPartialAggregate = (p1.newElement()) ? lastPartialAggregate
+						: p1.element_agg;
 				p1 = p2;
 			}
 		}
-		//System.err.println(sa.toString());
+		// System.err.println(sa.toString());
 	}
 
 	// Updates SA by splitting all partial aggregates before split point
