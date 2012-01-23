@@ -29,6 +29,7 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String LAST = "LAST";
     private final static String FIRST = "FIRST";
     private final static String NTH = "NTH";
+    private final static String RATE = "RATE";
     
 	private static Collection<String> names = new LinkedList<String>();
 	{
@@ -44,6 +45,7 @@ public class RelationalAggregateFunctionBuilder implements
         names.add(LAST);
         names.add(FIRST);
         names.add(NTH);
+        names.add(RATE);
 	}
 	
 	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
@@ -71,6 +73,8 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = RelationalLast.getInstance();
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
 			aggFunc = RelationalFirst.getInstance();
+		} else if (key.getName().equalsIgnoreCase(RATE)) {
+			aggFunc = RelationalRate.getInstance();
 		} else if (key.getName().equalsIgnoreCase(NTH)) {
 			aggFunc = RelationalNth.getInstance(Integer.parseInt(key
 					.getProperty("nth")));
