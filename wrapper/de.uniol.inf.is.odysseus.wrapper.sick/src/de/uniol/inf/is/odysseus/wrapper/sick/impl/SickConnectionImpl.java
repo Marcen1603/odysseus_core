@@ -288,8 +288,7 @@ public class SickConnectionImpl implements SickConnection {
 									buffer.flip();
 									final CharBuffer charBuffer;
 									try {
-										charBuffer = decoder
-												.decode(buffer);
+										charBuffer = decoder.decode(buffer);
 										Calendar calendar = Calendar
 												.getInstance(TimeZone
 														.getTimeZone("UTC"));

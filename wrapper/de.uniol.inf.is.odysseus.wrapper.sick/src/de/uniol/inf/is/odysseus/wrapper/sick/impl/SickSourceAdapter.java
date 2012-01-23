@@ -86,12 +86,8 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 							.getDist1Vector()));
 				}
 			}
-			if (System.currentTimeMillis() - timestamp > 50) {
-				LOG.error(String.format("Lag with timestamp %s to %s = %s",
-						timestamp, System.currentTimeMillis(),
-						System.currentTimeMillis() - timestamp));
-			}
-			coordinates.add(this.geometryFactory.createPoint(new Coordinate(0,0)));
+			coordinates.add(this.geometryFactory.createPoint(new Coordinate(0,
+					0)));
 			SickSourceAdapter.this.transfer(
 					source,
 					timestamp,
