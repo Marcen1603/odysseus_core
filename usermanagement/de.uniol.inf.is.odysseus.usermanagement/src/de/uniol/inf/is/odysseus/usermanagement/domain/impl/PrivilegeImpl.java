@@ -26,6 +26,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 
@@ -114,5 +115,11 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public void update(IAbstractEntity entity) {
+		// TODO Auto-generated method stub
+		
 	}
 }

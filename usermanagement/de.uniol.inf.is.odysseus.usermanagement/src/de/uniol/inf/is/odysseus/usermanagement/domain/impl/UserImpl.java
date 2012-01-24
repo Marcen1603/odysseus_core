@@ -28,6 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
@@ -52,9 +53,9 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	private String password;
 	private boolean active;
 	@OneToMany
-	private List<RoleImpl> roles = new ArrayList<RoleImpl>();
+	private List<IRole> roles = new ArrayList<IRole>();
 	@OneToMany
-	private List<PrivilegeImpl> privileges = new ArrayList<PrivilegeImpl>();
+	private List<IPrivilege> privileges = new ArrayList<IPrivilege>();
 
 	/*
 	 * (non-Javadoc)
@@ -140,7 +141,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getRoles()
 	 */
 	@Override
-	public List<RoleImpl> getRoles() {
+	public List<IRole> getRoles() {
 		return this.roles;
 	}
 
@@ -148,21 +149,21 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @param roles
 	 *            The roles to set.
 	 */
-	public void setRoles(final List<RoleImpl> roles) {
+	public void setRoles(final List<IRole> roles) {
 		this.roles = roles;
 	}
 
 	/**
 	 * @param role
 	 */
-	public void addRole(final RoleImpl role) {
+	public void addRole(final IRole role) {
 		this.roles.add(role);
 	}
 
 	/**
 	 * @param role
 	 */
-	public void removeRole(final RoleImpl role) {
+	public void removeRole(final IRole role) {
 		this.roles.remove(role);
 	}
 
@@ -172,7 +173,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getPrivileges()
 	 */
 	@Override
-	public List<PrivilegeImpl> getPrivileges() {
+	public List<IPrivilege> getPrivileges() {
 		return this.privileges;
 	}
 
@@ -180,21 +181,21 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @param privileges
 	 *            The privileges to set.
 	 */
-	public void setPrivileges(final List<PrivilegeImpl> privileges) {
+	public void setPrivileges(final List<IPrivilege> privileges) {
 		this.privileges = privileges;
 	}
 
 	/**
 	 * @param privilege
 	 */
-	public void addPrivilege(final PrivilegeImpl privilege) {
+	public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}
 
 	/**
 	 * @param privilege
 	 */
-	public void removePrivilege(final PrivilegeImpl privilege) {
+	public void removePrivilege(final IPrivilege privilege) {
 		this.privileges.remove(privilege);
 	}
 
@@ -299,5 +300,11 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 			sb.append("\t").append(role.toString()).append("\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public void update(IAbstractEntity entity) {
+		// TODO Auto-generated method stub
+		
 	}
 }

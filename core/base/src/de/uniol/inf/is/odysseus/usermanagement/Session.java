@@ -1,51 +1,75 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.usermanagement;
 
-import java.io.Serializable;
-import java.util.Date;
+import java.util.UUID;
+
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
+
 /**
- * 
- * @deprecated Replaced by {@link ISession}
- *
+ * @author Christian Kuka <christian@kuka.cc>
  */
-@Deprecated
-final public class Session implements Serializable {
+public class Session implements ISession {
+    private final static long SESSION_TIMEOUT = 10 * 60000;
+    private final String id = UUID.randomUUID().toString();
+    private final IUser user;
+    private final long start;
+    private long end;
 
-	private static final long serialVersionUID = 6601485682039247781L;
-	final int key;
-	private long timestamp;
+    public Session(final IUser user) {
+        this.user = user;
+        start = System.currentTimeMillis();
+        end = start + SESSION_TIMEOUT;
+    }
 
-	Session(int key) {
-		synchronized (this) {
-			this.key = key;
-			updateTimestamp();
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see de.uniol.inf.is.odysseus.usermanagement.domain.Session#getId()
+     */
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-	synchronized void updateTimestamp() {
-		this.timestamp = System.currentTimeMillis();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see de.uniol.inf.is.odysseus.usermanagement.domain.Session#getUser()
+     */
+    @Override
+    public IUser getUser() {
+        return this.user;
+    }
 
-	synchronized long getTimestamp() {
-		return this.timestamp;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see de.uniol.inf.is.odysseus.usermanagement.domain.Session#isValid()
+     */
+    @Override
+    public boolean isValid() {
+        long timestamp = System.currentTimeMillis();
+        return timestamp >= start && timestamp <= end;
+    }
 
-	@Override
-	public String toString() {
-		return key+" "+new Date(timestamp);
-	}
-	
+    @Override
+    public void updateSession() {
+        if (isValid()) {
+            this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
+        }
+    }
 }

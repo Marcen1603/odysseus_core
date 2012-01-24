@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.usermanagement;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         TODO Move to base bundle
+ *         
  */
 public interface IAbstractEntity {
     /**
@@ -28,4 +28,9 @@ public interface IAbstractEntity {
      * @return The version of this entity
      */
     Long getVersion();
+    
+    /**
+     * 
+     */
+    void update(IAbstractEntity entity);
 }

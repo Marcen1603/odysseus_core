@@ -20,84 +20,25 @@ import javax.persistence.Persistence;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.AbstractSessionManagement;
 import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.SessionImpl;
+import de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl;
 import de.uniol.inf.is.odysseus.usermanagement.persistence.impl.UserDAO;
-import de.uniol.inf.is.odysseus.usermanagement.policy.LogoutPolicy;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class SessionManagementServiceImpl implements ISessionManagement {
+public class SessionManagementServiceImpl extends AbstractSessionManagement<UserImpl> implements ISessionManagement {
 
 	private EntityManagerFactory entityManagerFactory;
-
-	private final UserDAO userDAO = new UserDAO();
-	private final SessionStore sessionStore = SessionStore.getInstance();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
-	 * #login(java.lang.String, byte[])
-	 */
-	@Override
-	public ISession login(final String username, final byte[] password) {
-		final IUser user = this.userDAO.findByName(username);
-		if (user.isActive() && user.validatePassword(password)) {
-			if (this.sessionStore.containsKey(user.getId())) {
-				this.sessionStore.remove(user.getId());
-			}
-			final SessionImpl session = new SessionImpl(user);
-			this.sessionStore.put(session.getId(), session);
-			return session;
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
-	 * #logout(de.uniol.inf.is.odysseus.usermanagement.domain.Session)
-	 */
-	@Override
-	public void logout(final ISession caller) {
-		final SessionStore sessionStore = SessionStore.getInstance();
-		final ISession session = sessionStore.get(caller.getId());
-		if (LogoutPolicy.allow(session.getUser(), caller.getUser())) {
-			sessionStore.remove(session.getId());
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.service.SessionmanagementService
-	 * #isValid(de.uniol.inf.is.odysseus.usermanagement.domain.Session,
-	 * de.uniol.inf.is.odysseus.usermanagement.domain.Session)
-	 */
-	@Override
-	public boolean isValid(final ISession session, final ISession caller) {
-		if (session.getUser() != null) {
-			final ISession realSession = this.sessionStore.get(session.getId());
-			this.sessionStore.get(caller.getId());
-			if (realSession.isValid()) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	protected void activate(ComponentContext context) {
 		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
 		final EntityManager em = this.entityManagerFactory.createEntityManager();
-		this.userDAO.setEntityManager(em);
+		
+		userDAO = new UserDAO();
+		
+		((UserDAO)userDAO).setEntityManager(em);
 	}
 
 }

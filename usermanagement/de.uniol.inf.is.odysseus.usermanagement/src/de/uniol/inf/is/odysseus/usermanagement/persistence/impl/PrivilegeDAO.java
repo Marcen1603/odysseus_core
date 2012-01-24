@@ -40,6 +40,11 @@ public class PrivilegeDAO extends GenericDAOImpl<PrivilegeImpl, String> {
         return this.getResultList(this.startNamedQuery(PrivilegeImpl.NQ_FIND_BY_OBJECTURI).add("objectURI", objectURI));
     }
 
+    @Override
+    public PrivilegeImpl findByName(String name) {
+    	throw new IllegalArgumentException("NO NAME IN PRIVILEGE!");
+    }
+    
     @PersistenceUnit(unitName = "odysseusPU")
     public void setEntityManager(final EntityManager em) {
         this.entityManager = em;

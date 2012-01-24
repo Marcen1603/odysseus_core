@@ -28,8 +28,12 @@ public interface IRole extends IAbstractEntity {
 	 */
 	String getName();
 
+	public void setName(String name);
+	
 	/**
 	 * @return The privileges of the role
 	 */
 	List<? extends IPrivilege> getPrivileges();
+	public void addPrivilege(IPrivilege privilege);
+	
 }

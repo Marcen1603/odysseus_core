@@ -26,6 +26,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
 
@@ -49,7 +50,7 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	private String name;
 	/** The privileges of the role */
 	@OneToMany
-	private List<PrivilegeImpl> privileges = new ArrayList<PrivilegeImpl>();
+	private List<IPrivilege> privileges = new ArrayList<IPrivilege>();
 
 	/*
 	 * (non-Javadoc)
@@ -75,21 +76,21 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.Role#getPrivileges()
 	 */
 	@Override
-	public List<PrivilegeImpl> getPrivileges() {
+	public List<IPrivilege> getPrivileges() {
 		return this.privileges;
 	}
 
 	/**
 	 * @param privilege
 	 */
-	public void addPrivilege(final PrivilegeImpl privilege) {
+	public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}
 
 	/**
 	 * @param privilege
 	 */
-	public void removePrivilege(final PrivilegeImpl privilege) {
+	public void removePrivilege(final IPrivilege privilege) {
 		this.privileges.remove(privilege);
 	}
 
@@ -97,7 +98,7 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	 * @param privileges
 	 *            The privileges to set.
 	 */
-	public void setPrivileges(final List<PrivilegeImpl> privileges) {
+	public void setPrivileges(final List<IPrivilege> privileges) {
 		this.privileges = privileges;
 	}
 
@@ -110,5 +111,11 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 			sb.append("\t").append(privilege.toString()).append("\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public void update(IAbstractEntity entity) {
+		// TODO Auto-generated method stub
+		
 	}
 }

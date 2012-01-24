@@ -12,12 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.persistence;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.io.Serializable;
 import java.util.List;
-
-import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -26,19 +24,21 @@ import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
  * @param <PK>
  *            The class of the primary key
  */
-public interface GenericDAO<T extends IAbstractEntity, PK extends Serializable> {
+public interface IGenericDAO<T, PK extends Serializable> {
 
     T create(T entity);
 
     void delete(T entity);
 
     T find(PK id);
+    
+    T findByName(String name);
 
     List<T> findAll();
 
-    List<T> findAll(Integer position, Integer max);
+//    List<T> findAll(Integer position, Integer max);
 
-    void refresh(T entity);
+//    void refresh(T entity);
 
     void update(T entity);
 }

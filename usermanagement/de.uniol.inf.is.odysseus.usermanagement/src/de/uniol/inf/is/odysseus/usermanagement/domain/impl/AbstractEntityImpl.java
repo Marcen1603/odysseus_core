@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
  * @author Christian Kuka <christian@kuka.cc>
  */
 @MappedSuperclass
-public class AbstractEntityImpl<T> implements Serializable, IAbstractEntity {
+abstract public class AbstractEntityImpl<T> implements Serializable, IAbstractEntity {
     @Transient
     private static final long serialVersionUID = 8557204806069271649L;
 

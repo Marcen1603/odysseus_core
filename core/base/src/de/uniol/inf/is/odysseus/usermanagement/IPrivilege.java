@@ -23,7 +23,10 @@ import java.util.Set;
 public interface IPrivilege extends IAbstractEntity {
 
 	Set<IPermission> getPermissions();
+	public void addPermission(IPermission permission);
+	public void removePermission(IPermission permission);
 
 	String getObjectURI();
+	public void setObjectURI(String objectURI);
 
 }

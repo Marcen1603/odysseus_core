@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.usermanagement.service.impl;
+package de.uniol.inf.is.odysseus.usermanagement;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,14 +20,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.uniol.inf.is.odysseus.usermanagement.domain.impl.SessionImpl;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
 // TODO use EH-Cache (http://ehcache.org/) for Sessions (ckuka)
-public class SessionStore implements Map<String, SessionImpl> {
-    private final Map<String, SessionImpl> sessionStore = new ConcurrentHashMap<String, SessionImpl>();
+public class SessionStore implements Map<String, ISession> {
+    private final Map<String, ISession> sessionStore = new ConcurrentHashMap<String, ISession>();
     private static SessionStore instance;
 
     private SessionStore() {
@@ -77,7 +78,7 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#entrySet()
      */
     @Override
-    public Set<Map.Entry<String, SessionImpl>> entrySet() {
+    public Set<Map.Entry<String, ISession>> entrySet() {
         return Collections.unmodifiableSet(this.sessionStore.entrySet());
     }
 
@@ -87,7 +88,7 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#get(java.lang.Object)
      */
     @Override
-    public SessionImpl get(final Object key) {
+    public ISession get(final Object key) {
         return this.sessionStore.get(key);
     }
 
@@ -117,8 +118,8 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     @Override
-    public SessionImpl put(final String key, final SessionImpl value) {
-        return ((ConcurrentHashMap<String, SessionImpl>)this.sessionStore).putIfAbsent(key, value);
+    public ISession put(final String key, final ISession value) {
+        return ((ConcurrentHashMap<String, ISession>)this.sessionStore).putIfAbsent(key, value);
     }
 
     /*
@@ -127,7 +128,7 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#remove(java.lang.Object)
      */
     @Override
-    public SessionImpl remove(final Object key) {
+    public ISession remove(final Object key) {
         return this.sessionStore.remove(key);
     }
 
@@ -147,7 +148,7 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#values()
      */
     @Override
-    public Collection<SessionImpl> values() {
+    public Collection<ISession> values() {
         return Collections.unmodifiableCollection(this.sessionStore.values());
     }
 
@@ -157,7 +158,7 @@ public class SessionStore implements Map<String, SessionImpl> {
      * @see java.util.Map#putAll(java.util.Map)
      */
     @Override
-    public void putAll(final Map<? extends String, ? extends SessionImpl> sessions) {
+    public void putAll(final Map<? extends String, ? extends ISession> sessions) {
         this.sessionStore.putAll(sessions);
     }
 }

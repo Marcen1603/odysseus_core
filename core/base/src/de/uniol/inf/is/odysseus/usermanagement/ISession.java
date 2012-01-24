@@ -37,4 +37,6 @@ public interface ISession {
 	 */
 	boolean isValid();
 
+	void updateSession();
+
 }

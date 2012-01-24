@@ -18,7 +18,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * @author Christian Kuka <christian@kuka.cc> TODO Move to base bundle
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public interface IUser extends IAbstractEntity, Principal, Comparable<IUser> {
 	/*
@@ -34,15 +34,21 @@ public interface IUser extends IAbstractEntity, Principal, Comparable<IUser> {
 	 */
 	boolean isActive();
 
+	public void setActive(boolean state);
+	
 	/**
 	 * @return The roles of the user
 	 */
 	List<? extends IRole> getRoles();
+	
+	public void addRole(IRole role);
+	public void removeRole(IRole role);
 
 	/**
 	 * @return The privileges of the user
 	 */
 	List<? extends IPrivilege> getPrivileges();
+	public void addPrivilege(IPrivilege privilege);
 
 	/**
 	 * Validates if the given password is correct for this user.
@@ -51,5 +57,8 @@ public interface IUser extends IAbstractEntity, Principal, Comparable<IUser> {
 	 * @return
 	 */
 	boolean validatePassword(byte[] password);
+	
+	public void setPassword(byte[] password);
+	public void setName(String name);
 
 }

@@ -27,13 +27,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import de.uniol.inf.is.odysseus.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.usermanagement.domain.impl.AbstractEntityImpl;
-import de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializable> implements GenericDAO<T, PK> {
+abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializable> implements IGenericDAO<T, PK> {
     protected EntityManager entityManager;
     private final Class<T> type;
     private Class<?> cls;
@@ -121,49 +121,49 @@ public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends Serializ
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll
-     * (java.lang.Integer, java.lang.Integer)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<T> findAll(final Integer position, final Integer max) {
-        String entity = this.getEntityClass().getSimpleName();
-        entity = entity.substring(0, entity.length() - 4);
-        final Query query = this.entityManager.createQuery(String.format("select o from %s o", entity));
-        query.setFirstResult(position);
-        query.setMaxResults(max);
-        try {
-            return query.getResultList();
-        } catch (final NoResultException e) {
-            return new ArrayList<T>();
-        }
-    }
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll
+//     * (java.lang.Integer, java.lang.Integer)
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public List<T> findAll(final Integer position, final Integer max) {
+//        String entity = this.getEntityClass().getSimpleName();
+//        entity = entity.substring(0, entity.length() - 4);
+//        final Query query = this.entityManager.createQuery(String.format("select o from %s o", entity));
+//        query.setFirstResult(position);
+//        query.setMaxResults(max);
+//        try {
+//            return query.getResultList();
+//        } catch (final NoResultException e) {
+//            return new ArrayList<T>();
+//        }
+//    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#refresh
-     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
-     */
-    @Override
-    public void refresh(final T entity) {
-        final EntityTransaction transaction = this.entityManager.getTransaction();
-        transaction.begin();
-        try {
-            this.entityManager.refresh(entity);
-        } catch (final Exception e) {
-            transaction.rollback();
-        } finally {
-            if (transaction.isActive()) {
-                transaction.commit();
-            }
-        }
-    }
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see
+//     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#refresh
+//     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
+//     */
+//    @Override
+//    public void refresh(final T entity) {
+//        final EntityTransaction transaction = this.entityManager.getTransaction();
+//        transaction.begin();
+//        try {
+//            this.entityManager.refresh(entity);
+//        } catch (final Exception e) {
+//            transaction.rollback();
+//        } finally {
+//            if (transaction.isActive()) {
+//                transaction.commit();
+//            }
+//        }
+//    }
 
     /*
      * (non-Javadoc)
