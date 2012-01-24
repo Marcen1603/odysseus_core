@@ -68,90 +68,9 @@ public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,R
 		((UserDAO)userDAO).setEntityManager(em);
 		((RoleDAO)roleDAO).setEntityManager(em);
 		((PrivilegeDAO)privilegeDAO).setEntityManager(em);
-		if (userDAO.findByName("System") == null) {
-			try {
-				UserImpl user = new UserImpl();
-				user.setName("System");
-				user.setPassword("manager".getBytes());
-				user = userDAO.create(user);
-
-				// --- ADMIN ROLE ----
-				RoleImpl adminRole = new RoleImpl();
-				adminRole.setName("sys_admin");
-				adminRole = roleDAO.create(adminRole);
-
-				PrivilegeImpl adminPrivilege = new PrivilegeImpl();
-				adminPrivilege.setObjectURI(UserManagementPermission.objectUri);
-				for (IPermission permission : UserManagementPermission.class
-						.getEnumConstants()) {
-					adminPrivilege.addPermission(permission);
-				}
-				adminPrivilege = privilegeDAO.create(adminPrivilege);
-				adminRole.addPrivilege(adminPrivilege);
-				roleDAO.update(adminRole);
-
-				// --- Data dictionary Role ----
-				RoleImpl dictionaryRole = new RoleImpl();
-				dictionaryRole.setName("datadictionary");
-				dictionaryRole = roleDAO.create(dictionaryRole);
-
-				PrivilegeImpl dictPrivilege = new PrivilegeImpl();
-				dictPrivilege.setObjectURI(DataDictionaryPermission.objectURI);
-				for (IPermission permission : DataDictionaryPermission.class
-						.getEnumConstants()) {
-					dictPrivilege.addPermission(permission);
-				}
-				dictPrivilege = privilegeDAO.create(dictPrivilege);
-				dictionaryRole.addPrivilege(dictPrivilege);
-				roleDAO.update(dictionaryRole);
-
-				// --- Configuration Role ----
-				RoleImpl configurationRole = new RoleImpl();
-				configurationRole.setName("configuration");
-				configurationRole = roleDAO.create(configurationRole);
-
-				PrivilegeImpl confPrivilege = new PrivilegeImpl();
-				confPrivilege.setObjectURI(ConfigurationPermission.objectURI);
-				for (IPermission permission : ConfigurationPermission.class
-						.getEnumConstants()) {
-					confPrivilege.addPermission(permission);
-				}
-				confPrivilege = privilegeDAO.create(confPrivilege);
-				configurationRole.addPrivilege(confPrivilege);
-				roleDAO.update(configurationRole);
-
-				// --- Query Execution Role ----
-				RoleImpl queryexecutor = new RoleImpl();
-				queryexecutor.setName("queryexecutor");
-				queryexecutor = roleDAO.create(queryexecutor);
-
-				PrivilegeImpl execPrivilege = new PrivilegeImpl();
-				execPrivilege.setObjectURI(ExecutorPermission.objectURI);
-				for (IPermission permission : ExecutorPermission.class
-						.getEnumConstants()) {
-					execPrivilege.addPermission(permission);
-				}
-				execPrivilege = privilegeDAO.create(execPrivilege);
-				queryexecutor.addPrivilege(execPrivilege);
-				roleDAO.update(queryexecutor);
-
-				user.addRole(adminRole);
-				user.addRole(dictionaryRole);
-				user.addRole(configurationRole);
-				user.addRole(queryexecutor);
-				user.setActive(true);
-
-				// TEST
-				PrivilegeImpl tmp = new PrivilegeImpl();
-				tmp.setObjectURI(null);
-				tmp.addPermission(ExecutorPermission.ADD_QUERY);
-				user.addPrivilege(tmp);
-
-				userDAO.update(user);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	
+		initDefaultUsers();
+		
 	}
 
 	protected void deactivate(ComponentContext context) {
