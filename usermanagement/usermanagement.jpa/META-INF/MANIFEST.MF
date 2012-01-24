@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Usermanagement
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.usermanagement.jpa;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus,
+ de.uniol.inf.is.odysseus.datadictionary,
+ de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.usermanagement,
+ javax.persistence;jpa="2.0";version="1.1.0",
+ org.apache.derby.jdbc;version="10.5.1.1",
+ org.osgi.service.component;version="1.1.0"
+JPA-PersistenceUnits: odysseusPU
+Service-Component: OSGI-INF/Usermanagement.xml, OSGI-INF/Sessionmanagement.xml
