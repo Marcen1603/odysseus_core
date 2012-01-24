@@ -84,6 +84,8 @@ abstract public class AbstractUserManagement<USER extends IUser,ROLE extends IRo
 			if (userDAO.findByName(name) == null) {
 				final USER user = createEmptyUser();
 				user.setName(name);
+				// Every User has the public role
+				user.addRole(findRole("Public", caller));
 				this.userDAO.create(user);
 				fireUserChangedEvent();
 				return user;
