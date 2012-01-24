@@ -46,7 +46,10 @@ public class AbstractStoreDAO<T extends IAbstractEntity> implements IGenericDAO<
 	@Override
 	public void update(T entity) {
 		T toUpdate = entities.get(entity.getId());
-		toUpdate.update(entity);
+		// Do not update if its the same instance!
+		if (toUpdate != entity){
+			toUpdate.update(entity);	
+		}
 	}
 
 }
