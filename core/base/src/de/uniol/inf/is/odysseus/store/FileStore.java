@@ -142,5 +142,14 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	public Collection<STORETYPE> values() {
 		return cache.values();
 	}
+	
+	@Override
+	public void commit() {
+		try {
+			saveCache();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

@@ -28,4 +28,5 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	public boolean containsKey(IDType key);
 	boolean isEmpty();
 	void clear() throws StoreException;
+	public void commit();
 }

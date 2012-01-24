@@ -35,7 +35,7 @@ public class SessionStore implements Map<String, ISession> {
 
     }
 
-    public static SessionStore getInstance() {
+    public synchronized static SessionStore getInstance() {
         if (SessionStore.instance == null) {
             SessionStore.instance = new SessionStore();
         }

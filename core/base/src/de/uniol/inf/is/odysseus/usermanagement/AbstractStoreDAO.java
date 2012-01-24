@@ -50,6 +50,7 @@ public class AbstractStoreDAO<T extends IAbstractEntity> implements IGenericDAO<
 		if (toUpdate != entity){
 			toUpdate.update(entity);	
 		}
+		entities.commit();
 	}
 
 }

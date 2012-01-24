@@ -69,6 +69,11 @@ public class MemoryStore<IDType extends Comparable<?>,STORETYPE> implements ISto
 		return elements.values();
 	}
 	
+	
+	@Override
+	public void commit() {
+		// Nothing to do in MainMemory
+	}
 
 
 	
