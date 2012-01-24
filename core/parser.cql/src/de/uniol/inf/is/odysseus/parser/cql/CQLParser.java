@@ -908,7 +908,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String password = node.getPassword();
 		IUser user = UserManagement.getUsermanagement().createUser(username,
 				caller);
-		if (user == null) throw new QueryParseException("User cannot be created.");
+		if (user == null)
+			throw new QueryParseException("User cannot be created.");
 		UserManagement.getUsermanagement().changePassword(user,
 				password.getBytes(), caller);
 		UserManagement.getUsermanagement().activateUser(user, caller);
@@ -1081,20 +1082,38 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 		IUser user = UserManagement.getUsermanagement().findUser(userName,
 				caller);
-		for (IPermission action : operations) {
+		if (user != null) {
+			for (IPermission action : operations) {
 
-			if (PermissionFactory.needsNoObject(action)) {
-				UserManagement.getUsermanagement().grantPermission(user,
-						action, null, caller);
-			} else {
-				for (String entityname : objects) {
+				if (PermissionFactory.needsNoObject(action)) {
 					UserManagement.getUsermanagement().grantPermission(user,
-							action, entityname, caller);
+							action, null, caller);
+				} else {
+					for (String entityname : objects) {
+						UserManagement.getUsermanagement().grantPermission(
+								user, action, entityname, caller);
+					}
 				}
+
 			}
-
 		}
+		IRole role = UserManagement.getUsermanagement().findRole(userName, caller);
+		if (role != null){
+			for (IPermission action : operations) {
 
+				if (PermissionFactory.needsNoObject(action)) {
+					UserManagement.getUsermanagement().grantPermission(role,
+							action, null, caller);
+				} else {
+					for (String entityname : objects) {
+						UserManagement.getUsermanagement().grantPermission(
+								role, action, entityname, caller);
+					}
+				}
+
+			}
+		}
+		
 		return null;
 	}
 

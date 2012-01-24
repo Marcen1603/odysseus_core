@@ -656,6 +656,11 @@ abstract public class AbstractUserManagement<USER extends IUser,ROLE extends IRo
 			user.addRole(queryexecutor);
 			user.setActive(true);
 
+			ROLE pub = createEmptyRole();
+			pub.setName("Public");
+			roleDAO.create(pub);
+			user.addRole(pub);
+			
 			userDAO.update(user);
 		} catch (Exception e) {
 			e.printStackTrace();
