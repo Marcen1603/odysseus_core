@@ -93,7 +93,7 @@ public class DataDictionary implements IDataDictionary {
 				sinkFromUser = new FileStore<String, IUser>(
 						OdysseusDefaults.get("sinkDefinitionsUserFilename"));
 				savedQueries = new FileStore<IQuery, IUser>(
-						OdysseusDefaults.get("logicalPlansFilename"));
+						OdysseusDefaults.get("queriesFilename"));
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, IUser>();

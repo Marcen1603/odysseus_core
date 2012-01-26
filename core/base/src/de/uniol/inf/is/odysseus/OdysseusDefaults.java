@@ -75,10 +75,6 @@ public class OdysseusDefaults {
 		props.setProperty("roleStoreFilename", odysseusHome + "roles.store");
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
 		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
-		props.setProperty("storeTenants", Boolean.FALSE.toString());
-		props.setProperty("tenantsFilename", odysseusHome + "tenants.store");
-		props.setProperty("userTenantFilename", odysseusHome
-				+ "userTenant.store");
 		props.setProperty("slasFilename", odysseusHome + "slas.store");
 
 		props.setProperty("storeDataDictionary", Boolean.FALSE.toString());
@@ -100,6 +96,8 @@ public class OdysseusDefaults {
 				+ "entityFromUser.store");
 		props.setProperty("sourceFromUserFilename", odysseusHome
 				+ "sourceFromUser.store");
+		props.setProperty("queriesFilename", "queries.store");
+		
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");
 		props.setProperty("datatypesFromDatatypesFilename", odysseusHome + "datatypes.store");
