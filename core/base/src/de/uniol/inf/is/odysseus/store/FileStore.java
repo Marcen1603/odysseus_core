@@ -26,35 +26,35 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.util.FileUtils;
 
-//import org.dynamicjava.osgi.classloading_utils.OsgiEnvironmentClassLoader;
-
-//import de.uniol.inf.is.odysseus.Activator;
 
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		implements IStore<IDType, STORETYPE> {
 
+	Logger logger = LoggerFactory.getLogger(FileStore.class);
+	
 	private String path;
 	private MemoryStore<IDType, STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
-//	private OsgiEnvironmentClassLoader cl;
 
 	public FileStore(String path) throws IOException {
 		this.path = path;
-//		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
-//		this.cl = new OsgiEnvironmentClassLoader(Activator.getBundleContext(),
-//				curCl, Activator.getBundleContext().getBundle());
 		loadCache();
+		logger.debug("Loaded from "+path+" "+cache.entrySet().size()+" values");
+//		for (Entry<IDType, STORETYPE> entry : cache.entrySet()){
+//			logger.debug(entry.getKey()+" "+entry.getValue());
+//		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
-//		ClassLoader curCl = Thread.currentThread().getContextClassLoader();
-//		Thread.currentThread().setContextClassLoader(this.cl);
 		File f = FileUtils.openOrCreateFile(path);
 		ObjectInputStream in = null;
 		try {
-			in = new ObjectInputStream(new FileInputStream(f));
+			in = new OsgiObjectInputStream(new FileInputStream(f));
 			IDType key = null;
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
@@ -66,9 +66,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			}
 			in.close();
 		} catch (EOFException e) {
-			// initial ...
 		}
-//		Thread.currentThread().setContextClassLoader(curCl);
 	}
 
 	private void saveCache() throws IOException {
@@ -77,7 +75,6 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		for (Entry<IDType, STORETYPE> e : cache.entrySet()) {
 			out.writeObject(e.getKey());
 			out.writeObject(e.getValue());
-			// System.out.println("WRITTEN "+e.getKey()+" "+e.getValue());
 		}
 		out.close();
 	}
