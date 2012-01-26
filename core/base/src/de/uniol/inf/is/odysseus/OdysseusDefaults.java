@@ -24,9 +24,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.util.FileUtils;
 
 public class OdysseusDefaults {
 
@@ -42,24 +43,6 @@ public class OdysseusDefaults {
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
 	private static String homeDir;
 
-	static public File openOrCreateFile(String path) throws IOException {
-		File f = new File(path);
-		boolean success = false;
-		if (!f.exists()) {
-			File d = f.getParentFile();
-			if (d != null) {
-				success = d.mkdirs();
-			}
-			success = f.createNewFile();
-			if (success){
-				getLogger().debug("Created new File " + f.getAbsolutePath());
-			}
-		} else {
-			getLogger().debug("Read from file " + f.getAbsolutePath());
-		}
-		return f;
-	}
-
 	static {
 		try {
 			homeDir = System.getenv("ODYSSEUS_HOME");
@@ -67,11 +50,6 @@ public class OdysseusDefaults {
 				homeDir = odysseusDefaultHome;
 			}
 			loadProperties(homeDir,"odysseus.conf", props);
-			if (props.getProperty("storeUsers") == null) {
-				getLogger().info("No Odysseus config found.");
-				setDefaults(homeDir);
-				savePropertyFile(homeDir);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,7 +59,7 @@ public class OdysseusDefaults {
 			FileNotFoundException {
 		// If there are new properties, load defaults and overwrite with file-properties
 		setDefaults(odysseusHome);
-		File f = openOrCreateFile(odysseusHome + filename);
+		File f = FileUtils.openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
 		properties.load(in);
