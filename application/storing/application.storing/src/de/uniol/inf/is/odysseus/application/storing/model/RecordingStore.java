@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
+import de.uniol.inf.is.odysseus.util.FileUtils;
 
 /**
  * 
@@ -49,7 +50,7 @@ public class RecordingStore {
 	}
 
 	private void loadCache() throws IOException {
-		File f = OdysseusDefaults.openOrCreateFile(PATH_TO_STORE);
+		File f = FileUtils.openOrCreateFile(PATH_TO_STORE);
 		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new FileInputStream(f));
