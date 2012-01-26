@@ -67,15 +67,10 @@ import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.PercentileContraint;
-import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
-import de.uniol.inf.is.odysseus.usermanagement.TenantNotFoundException;
-import de.uniol.inf.is.odysseus.usermanagement.TooManyUsersException;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
@@ -950,60 +945,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
-	@Override
-	public Object visit(ASTCreateTenantStatement node, Object data)
-			throws QueryParseException {
-		String tenant = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String sla = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		TenantManagement.getInstance().createTenant(tenant, sla, caller);
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTAddUserToTenantStatement node, Object data)
-			throws QueryParseException {
-		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String tenantName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		IUser uToAdd = UserManagement.getUsermanagement().findUser(userName,
-				caller);
-		try {
-			TenantManagement.getInstance().addUserToTenant(tenantName, uToAdd,
-					caller);
-		} catch (TenantNotFoundException e) {
-			throw new QueryParseException(e);
-		} catch (TooManyUsersException e) {
-			throw new QueryParseException(e);
-		}
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTRemoveUserFromTenantStatement node, Object data)
-			throws QueryParseException {
-		String tenantName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-		IUser uToRemove = UserManagement.getUsermanagement().findUser(userName,
-				caller);
-		try {
-			TenantManagement.getInstance().removeUserFromTenant(tenantName,
-					uToRemove, caller);
-		} catch (TenantNotFoundException e) {
-			throw new QueryParseException(e);
-		}
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTPercentileConstraint node, Object data)
-			throws QueryParseException {
-		double left = Double.parseDouble(((ASTNumber) node.jjtGetChild(0))
-				.getValue());
-		double right = Double.parseDouble(((ASTNumber) node.jjtGetChild(1))
-				.getValue());
-		double penalty = Double.parseDouble(((ASTNumber) node.jjtGetChild(2))
-				.getValue());
-		return new PercentileContraint(right, left, penalty);
-	}
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data)

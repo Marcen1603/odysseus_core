@@ -24,17 +24,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.ITenantManagementListener;
-import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.TenantManagement;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
-public class TenantView extends ViewPart implements IUserManagementListener,
-		ITenantManagementListener {
+public class UserView extends ViewPart implements IUserManagementListener{
 	
 	private TreeViewer viewer;
 
@@ -44,13 +41,11 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 			@Override
 			public void run() {
 				List<Object> l = new ArrayList<Object>();
-				l.add(new TenantsContentNode(TenantManagement.getInstance()
-						.getTenants()));
 				try {
 					List<? extends IUser> users = UserManagement.getUsermanagement()
 					.getUsers(
 							GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
-					l.add(new UserContentNode(users));
+					l.add(users);
 				} catch (PermissionException e) {
 					// If user has no rights to view all users, only the
 					// current user is shown
@@ -65,23 +60,16 @@ public class TenantView extends ViewPart implements IUserManagementListener,
 	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new TenantViewContentProvider());
-		viewer.setLabelProvider(new TenantViewLabelProvider());
+		viewer.setContentProvider(new UserViewContentProvider());
+		viewer.setLabelProvider(new UserViewLabelProvider());
 		refresh();
 
-		//UserManagement.getInstance().addUserManagementListener(this);
 		UserManagement.getUsermanagement().addUserManagementListener(this);
-		TenantManagement.getInstance().addTenantManagementListener(this);
 	}
 
 	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
-	}
-
-	@Override
-	public void tenantsChangedEvent() {
-		refresh();
 	}
 
 	@Override

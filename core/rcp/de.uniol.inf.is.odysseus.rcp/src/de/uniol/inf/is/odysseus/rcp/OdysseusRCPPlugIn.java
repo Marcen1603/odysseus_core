@@ -32,7 +32,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
-	public static final String TENANT_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.TenantView";
+	public static final String USER_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.UserView";
 	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.QueryView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
@@ -86,8 +86,6 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		ImageManager.getInstance().register("sla", "icons/document-block.png");
 		ImageManager.getInstance().register("percentile",
 				"icons/document-tag.png");
-		ImageManager.getInstance()
-				.register("tenant", "icons/user-business.png");
 		ImageManager.getInstance().register("role",
 				"icons/tick-small-circle.png");
 		ImageManager.getInstance().register("source",

@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class SourcesViewLabelProvider implements ILabelProvider {
@@ -71,10 +71,10 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			ISession user = GlobalState.getActiveDatadictionary().getCreator(
+			IUser user = GlobalState.getActiveDatadictionary().getCreator(
 					entry.getKey());
 			if (user != null) {
-				sb.append(" created by ").append(user.getUser().getName());
+				sb.append(" created by ").append(user.getName());
 			} else {
 				sb.append(" created by no user ??");
 			}

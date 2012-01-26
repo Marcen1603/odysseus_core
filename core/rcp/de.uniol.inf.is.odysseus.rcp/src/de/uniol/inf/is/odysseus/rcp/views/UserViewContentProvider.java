@@ -24,12 +24,10 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
-import de.uniol.inf.is.odysseus.usermanagement.IServiceLevelAgreement;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.Tenant;
 
-public class TenantViewContentProvider implements IStructuredContentProvider,
+public class UserViewContentProvider implements IStructuredContentProvider,
 		ITreeContentProvider {
 
 	@Override
@@ -47,28 +45,13 @@ public class TenantViewContentProvider implements IStructuredContentProvider,
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof UserContentNode) {
-			ArrayList<Object> list = new ArrayList<Object>();
-			list.addAll(((UserContentNode) parentElement).users);
-			return list.toArray();
-		}
-		if (parentElement instanceof TenantsContentNode) {
-			return ((TenantsContentNode) parentElement).tenants.toArray();
-		}
-
 		if (parentElement instanceof List) {
 			return ((List<?>) parentElement).toArray();
 		}
 		if (parentElement instanceof Collection) {
 			return ((Collection<?>) parentElement).toArray();
 		}
-		if (parentElement instanceof Tenant) {
-			ArrayList<Object> list = new ArrayList<Object>();
-			Tenant t = (Tenant) parentElement;
-			list.add(t.getServiceLevelAgreement());
-			list.addAll(t.getUsers());
-			return list.toArray();
-		}
+
 		if (parentElement instanceof IUser){
 			ArrayList<Object> list = new ArrayList<Object>();
 			IUser u = (IUser) parentElement;
@@ -96,10 +79,6 @@ public class TenantViewContentProvider implements IStructuredContentProvider,
 			return list.toArray();
 		}
 
-		if (parentElement instanceof IServiceLevelAgreement) {
-			return ((IServiceLevelAgreement) parentElement)
-					.getPercentilConstraints().toArray();
-		}
 		return null;
 	}
 
@@ -110,19 +89,9 @@ public class TenantViewContentProvider implements IStructuredContentProvider,
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof UserContentNode) {
-			return true;
-		}
-		if (element instanceof TenantsContentNode) {
-			return true;
-		}
 		if (element instanceof Collection)
 			return true;
 		if (element instanceof List)
-			return true;
-		if (element instanceof IServiceLevelAgreement)
-			return true;
-		if (element instanceof Tenant)
 			return true;
 		if (element instanceof IUser)
 			return true;

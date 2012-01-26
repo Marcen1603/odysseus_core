@@ -110,19 +110,15 @@ public interface NewSQLParserTreeConstants
   public int JJTSLAWINDOWDEF = 104;
   public int JJTSLASERVICELEVELDEF = 105;
   public int JJTSLAPENALTYDEF = 106;
-  public int JJTPERCENTILECONSTRAINT = 107;
-  public int JJTCREATETENANTSTATEMENT = 108;
-  public int JJTADDUSERTOTENANTSTATEMENT = 109;
-  public int JJTREMOVEUSERFROMTENANTSTATEMENT = 110;
-  public int JJTDROPSTREAMSTATEMENT = 111;
-  public int JJTDROPVIEWSTATEMENT = 112;
-  public int JJTCREATEROLESTATEMENT = 113;
-  public int JJTDROPROLESTATEMENT = 114;
-  public int JJTGRANTROLESTATEMENT = 115;
-  public int JJTREVOKEROLESTATEMENT = 116;
-  public int JJTGRANTSTATEMENT = 117;
-  public int JJTIDENTIFIERLIST = 118;
-  public int JJTREVOKESTATEMENT = 119;
+  public int JJTDROPSTREAMSTATEMENT = 107;
+  public int JJTDROPVIEWSTATEMENT = 108;
+  public int JJTCREATEROLESTATEMENT = 109;
+  public int JJTDROPROLESTATEMENT = 110;
+  public int JJTGRANTROLESTATEMENT = 111;
+  public int JJTREVOKEROLESTATEMENT = 112;
+  public int JJTGRANTSTATEMENT = 113;
+  public int JJTIDENTIFIERLIST = 114;
+  public int JJTREVOKESTATEMENT = 115;
 
 
   public String[] jjtNodeName = {
@@ -233,10 +229,6 @@ public interface NewSQLParserTreeConstants
     "SlaWindowDef",
     "SlaServiceLevelDef",
     "SlaPenaltyDef",
-    "PercentileConstraint",
-    "CreateTenantStatement",
-    "AddUserToTenantStatement",
-    "RemoveUserFromTenantStatement",
     "DropStreamStatement",
     "DropViewStatement",
     "CreateRoleStatement",
@@ -248,4 +240,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=6f676792fa85d14b465bacdb318d3f1f (do not edit this line) */
+/* JavaCC - OriginalChecksum=df0dfed8e09b641cc44fbad1d4a0a3a3 (do not edit this line) */

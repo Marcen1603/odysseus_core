@@ -95,7 +95,6 @@ Export-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.store,
  de.uniol.inf.is.odysseus.usermanagement,
  de.uniol.inf.is.odysseus.usermanagement.client,
- de.uniol.inf.is.odysseus.usermanagement.test,
  de.uniol.inf.is.odysseus.util
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/SDFFunctionProvider.xml, OSGI-INF/MEPFunctionService.xml, OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, OSGI-INF/LongHandler.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml, OSGI-INF/UserManagement.xml

@@ -616,32 +616,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 		return null;
 	}
 
-	@Override
-	public Object visit(ASTCreateTenantStatement node, Object data)
-			throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTAddUserToTenantStatement node, Object data)
-			throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTRemoveUserFromTenantStatement node, Object data)
-			throws QueryParseException {
-		return null;
-	}
 
 	@Override
 	public Object visit(ASTCreateSLAStatement node, Object data)
-			throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTPercentileConstraint node, Object data)
 			throws QueryParseException {
 		return null;
 	}

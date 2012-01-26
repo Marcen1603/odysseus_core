@@ -11,10 +11,10 @@
          point="org.eclipse.ui.views">
       <view
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.TenantView"
+            class="de.uniol.inf.is.odysseus.rcp.views.UserView"
             icon="icons/users.png"
-            id="de.uniol.inf.is.odysseus.rcp.views.TenantView"
-            name="Tenants and Users"
+            id="de.uniol.inf.is.odysseus.rcp.views.UserView"
+            name="Users"
             restorable="true">
       </view>
       <category

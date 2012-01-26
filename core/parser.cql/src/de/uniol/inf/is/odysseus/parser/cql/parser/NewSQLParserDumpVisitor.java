@@ -513,29 +513,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTCreateTenantStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTAddUserToTenantStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTRemoveUserFromTenantStatement node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
 	public Object visit(ASTCreateSLAStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
-
-	@Override
-	public Object visit(ASTPercentileConstraint node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}	
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {

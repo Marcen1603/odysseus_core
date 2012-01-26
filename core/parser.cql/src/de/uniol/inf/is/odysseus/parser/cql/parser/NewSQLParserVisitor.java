@@ -110,10 +110,6 @@ public interface NewSQLParserVisitor
   public Object visit(ASTSlaWindowDef node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSlaServiceLevelDef node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTSlaPenaltyDef node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTPercentileConstraint node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTCreateTenantStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTAddUserToTenantStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-  public Object visit(ASTRemoveUserFromTenantStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDropStreamStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTDropViewStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTCreateRoleStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
@@ -124,4 +120,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=e99527247d38a4a7c04753bca49fd6d6 (do not edit this line) */
+/* JavaCC - OriginalChecksum=10141e57bb9ae327dd3b7be419433643 (do not edit this line) */

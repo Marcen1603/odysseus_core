@@ -37,7 +37,7 @@ public class QueriesPerspective implements IPerspectiveFactory {
 
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.75f, editorArea);
 		right.addView(IPageLayout.ID_OUTLINE);
-		right.addView(OdysseusRCPPlugIn.TENANT_VIEW_ID);
+		right.addView(OdysseusRCPPlugIn.USER_VIEW_ID);
 		// Bottom right: Task List view
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(OdysseusRCPPlugIn.QUERY_VIEW_ID);
