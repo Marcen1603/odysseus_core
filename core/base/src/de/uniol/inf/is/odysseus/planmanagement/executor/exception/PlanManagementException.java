@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
  * @author Wolf Bauer
  * 
  */
-public class PlanManagementException extends Exception {
+public class PlanManagementException extends RuntimeException {
 
 	/**
 	 * 

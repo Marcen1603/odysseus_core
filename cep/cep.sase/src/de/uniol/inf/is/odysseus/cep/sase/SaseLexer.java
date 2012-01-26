@@ -1,3 +1,4 @@
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g 2012-01-26 17:16:52
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -21,77 +22,79 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
-@SuppressWarnings("all")
+@SuppressWarnings({"all", "warnings", "unchecked"})
 public class SaseLexer extends Lexer {
     public static final int EOF=-1;
-    public static final int CREATE=4;
-    public static final int STREAM=5;
-    public static final int VIEW=6;
-    public static final int PATTERN=7;
-    public static final int WHERE=8;
-    public static final int WITHIN=9;
-    public static final int RETURN=10;
-    public static final int SEQ=11;
-    public static final int LEFTCURLY=12;
-    public static final int RIGHTCURLY=13;
-    public static final int AND=14;
-    public static final int LEN=15;
-    public static final int BBRACKETLEFT=16;
-    public static final int BBRACKETRIGHT=17;
-    public static final int WEEK=18;
-    public static final int DAY=19;
-    public static final int HOUR=20;
-    public static final int MINUTE=21;
-    public static final int SECOND=22;
-    public static final int MILLISECOND=23;
-    public static final int SKIP_TILL_NEXT_MATCH=24;
-    public static final int SKIP_TILL_ANY_MATCH=25;
-    public static final int STRICT_CONTIGUITY=26;
-    public static final int PARTITION_CONTIGUITY=27;
-    public static final int AVG=28;
-    public static final int MIN=29;
-    public static final int MAX=30;
-    public static final int SUM=31;
-    public static final int COUNT=32;
-    public static final int PLUS=33;
-    public static final int MINUS=34;
-    public static final int POINT=35;
-    public static final int DIVISION=36;
-    public static final int MULT=37;
-    public static final int COMPAREOP=38;
-    public static final int SINGLEEQUALS=39;
-    public static final int EQUALS=40;
-    public static final int ASSIGN=41;
-    public static final int NOTSIGN=42;
-    public static final int COMMA=43;
-    public static final int LBRACKET=44;
-    public static final int RBRACKET=45;
-    public static final int INTEGER=46;
-    public static final int FLOAT=47;
-    public static final int NUMBER=48;
-    public static final int DIGIT=49;
-    public static final int LETTER=50;
-    public static final int NAME=51;
-    public static final int NONCONTROL_CHAR=52;
-    public static final int STRING_LITERAL=53;
-    public static final int SPACE=54;
-    public static final int LOWER=55;
-    public static final int UPPER=56;
-    public static final int NEWLINE=57;
-    public static final int WHITESPACE=58;
+    public static final int AND=4;
+    public static final int ASSIGN=5;
+    public static final int AVG=6;
+    public static final int BBRACKETLEFT=7;
+    public static final int BBRACKETRIGHT=8;
+    public static final int COMMA=9;
+    public static final int COMPAREOP=10;
+    public static final int COUNT=11;
+    public static final int CREATE=12;
+    public static final int DAY=13;
+    public static final int DIGIT=14;
+    public static final int DIVISION=15;
+    public static final int EQUALS=16;
+    public static final int FLOAT=17;
+    public static final int HOUR=18;
+    public static final int INTEGER=19;
+    public static final int LBRACKET=20;
+    public static final int LEFTCURLY=21;
+    public static final int LEN=22;
+    public static final int LETTER=23;
+    public static final int LOWER=24;
+    public static final int MAX=25;
+    public static final int MILLISECOND=26;
+    public static final int MIN=27;
+    public static final int MINUS=28;
+    public static final int MINUTE=29;
+    public static final int MULT=30;
+    public static final int NAME=31;
+    public static final int NEWLINE=32;
+    public static final int NONCONTROL_CHAR=33;
+    public static final int NOTSIGN=34;
+    public static final int NUMBER=35;
+    public static final int PARTITION_CONTIGUITY=36;
+    public static final int PATTERN=37;
+    public static final int PLUS=38;
+    public static final int POINT=39;
+    public static final int RBRACKET=40;
+    public static final int RETURN=41;
+    public static final int RIGHTCURLY=42;
+    public static final int SECOND=43;
+    public static final int SEQ=44;
+    public static final int SINGLEEQUALS=45;
+    public static final int SKIP_TILL_ANY_MATCH=46;
+    public static final int SKIP_TILL_NEXT_MATCH=47;
+    public static final int SPACE=48;
+    public static final int STREAM=49;
+    public static final int STRICT_CONTIGUITY=50;
+    public static final int STRING_LITERAL=51;
+    public static final int SUM=52;
+    public static final int UPPER=53;
+    public static final int VIEW=54;
+    public static final int WEEK=55;
+    public static final int WHERE=56;
+    public static final int WHITESPACE=57;
+    public static final int WITHIN=58;
 
     // delegates
     // delegators
+    public Lexer[] getDelegates() {
+        return new Lexer[] {};
+    }
 
-    public SaseLexer() {;} 
+    public SaseLexer() {} 
     public SaseLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }
     public SaseLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
-
     }
-    public String getGrammarFileName() { return null; }
+    public String getGrammarFileName() { return "E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g"; }
 
     // $ANTLR start "CREATE"
     public final void mCREATE() throws RecognitionException {
@@ -103,57 +106,62 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -162,6 +170,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "CREATE"
@@ -176,57 +185,62 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -235,6 +249,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "STREAM"
@@ -249,39 +264,42 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='V'||input.LA(1)=='v' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -290,6 +308,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "VIEW"
@@ -304,66 +323,72 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -372,6 +397,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PATTERN"
@@ -386,48 +412,52 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -436,6 +466,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "WHERE"
@@ -450,57 +481,62 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -509,6 +545,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "WITHIN"
@@ -523,57 +560,62 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -582,6 +624,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "RETURN"
@@ -596,30 +639,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='Q'||input.LA(1)=='q' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -628,6 +673,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SEQ"
@@ -648,6 +694,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LEFTCURLY"
@@ -668,6 +715,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "RIGHTCURLY"
@@ -682,30 +730,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -714,6 +764,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "AND"
@@ -728,30 +779,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -760,6 +813,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LEN"
@@ -780,6 +834,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BBRACKETLEFT"
@@ -800,6 +855,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BBRACKETRIGHT"
@@ -814,39 +870,43 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:37:43: ( 'S' | 's' )?
             int alt1=2;
@@ -861,12 +921,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -881,6 +941,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "WEEK"
@@ -895,30 +956,33 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:38:33: ( 'S' | 's' )?
             int alt2=2;
@@ -933,12 +997,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -953,6 +1017,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "DAY"
@@ -967,39 +1032,43 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:39:43: ( 'S' | 's' )?
             int alt3=2;
@@ -1014,12 +1083,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -1034,6 +1103,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "HOUR"
@@ -1048,57 +1118,63 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:40:63: ( 'S' | 's' )?
             int alt4=2;
@@ -1113,12 +1189,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -1133,6 +1209,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MINUTE"
@@ -1147,57 +1224,63 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:41:63: ( 'S' | 's' )?
             int alt5=2;
@@ -1212,12 +1295,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -1232,6 +1315,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SECOND"
@@ -1246,102 +1330,113 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:42:112: ( 'S' | 's' )?
             int alt6=2;
@@ -1356,12 +1451,12 @@ public class SaseLexer extends Lexer {
                     {
                     if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                         input.consume();
-
                     }
                     else {
                         MismatchedSetException mse = new MismatchedSetException(null,input);
                         recover(mse);
-                        throw mse;}
+                        throw mse;
+                    }
 
 
                     }
@@ -1376,6 +1471,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MILLISECOND"
@@ -1390,39 +1486,43 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:59: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:60: '_'
@@ -1431,41 +1531,46 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:100: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:101: '_'
@@ -1474,41 +1579,46 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:141: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:45:142: '_'
@@ -1517,50 +1627,55 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -1569,6 +1684,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SKIP_TILL_NEXT_MATCH"
@@ -1583,39 +1699,43 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:60: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:61: '_'
@@ -1624,41 +1744,46 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:101: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:102: '_'
@@ -1667,32 +1792,36 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:133: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:46:134: '_'
@@ -1701,50 +1830,55 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -1753,6 +1887,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SKIP_TILL_ANY_MATCH"
@@ -1767,57 +1902,63 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:76: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:47:77: '_'
@@ -1826,95 +1967,105 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -1923,6 +2074,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "STRICT_CONTIGUITY"
@@ -1937,84 +2089,93 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:48:106: ( '_' )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:48:107: '_'
@@ -2023,95 +2184,105 @@ public class SaseLexer extends Lexer {
 
             }
 
+
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2120,6 +2291,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PARTITION_CONTIGUITY"
@@ -2134,30 +2306,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='V'||input.LA(1)=='v' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2166,6 +2340,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "AVG"
@@ -2180,30 +2355,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2212,6 +2389,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MIN"
@@ -2226,30 +2404,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2258,6 +2438,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MAX"
@@ -2272,30 +2453,32 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2304,6 +2487,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SUM"
@@ -2318,48 +2502,52 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
@@ -2368,6 +2556,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COUNT"
@@ -2388,6 +2577,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PLUS"
@@ -2408,6 +2598,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MINUS"
@@ -2428,6 +2619,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "POINT"
@@ -2448,6 +2640,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "DIVISION"
@@ -2468,6 +2661,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MULT"
@@ -2488,7 +2682,8 @@ public class SaseLexer extends Lexer {
                     alt7=1;
                 }
                 else {
-                    alt7=4;}
+                    alt7=4;
+                }
                 }
                 break;
             case '>':
@@ -2499,7 +2694,8 @@ public class SaseLexer extends Lexer {
                     alt7=2;
                 }
                 else {
-                    alt7=5;}
+                    alt7=5;
+                }
                 }
                 break;
             case '!':
@@ -2512,6 +2708,7 @@ public class SaseLexer extends Lexer {
                     new NoViableAltException("", 7, 0, input);
 
                 throw nvae;
+
             }
 
             switch (alt7) {
@@ -2519,6 +2716,7 @@ public class SaseLexer extends Lexer {
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:13: '<='
                     {
                     match("<="); 
+
 
 
                     }
@@ -2529,12 +2727,14 @@ public class SaseLexer extends Lexer {
                     match(">="); 
 
 
+
                     }
                     break;
                 case 3 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:63:23: '!='
                     {
                     match("!="); 
+
 
 
                     }
@@ -2559,6 +2759,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COMPAREOP"
@@ -2579,6 +2780,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SINGLEEQUALS"
@@ -2594,12 +2796,14 @@ public class SaseLexer extends Lexer {
             match("=="); 
 
 
+
             }
 
             state.type = _type;
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "EQUALS"
@@ -2615,12 +2819,14 @@ public class SaseLexer extends Lexer {
             match(":="); 
 
 
+
             }
 
             state.type = _type;
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "ASSIGN"
@@ -2641,6 +2847,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NOTSIGN"
@@ -2661,6 +2868,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COMMA"
@@ -2681,6 +2889,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LBRACKET"
@@ -2701,6 +2910,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "RBRACKET"
@@ -2719,12 +2929,14 @@ public class SaseLexer extends Lexer {
                     {
                     mINTEGER(); 
 
+
                     }
                     break;
                 case 2 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:78:21: FLOAT
                     {
                     mFLOAT(); 
+
 
                     }
                     break;
@@ -2734,6 +2946,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NUMBER"
@@ -2745,7 +2958,10 @@ public class SaseLexer extends Lexer {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:79:18: INTEGER '.' ( DIGIT )+
             {
             mINTEGER(); 
+
+
             match('.'); 
+
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:79:30: ( DIGIT )+
             int cnt9=0;
             loop9:
@@ -2753,16 +2969,24 @@ public class SaseLexer extends Lexer {
                 int alt9=2;
                 int LA9_0 = input.LA(1);
 
-                if ( ((LA9_0>='0' && LA9_0<='9')) ) {
+                if ( ((LA9_0 >= '0' && LA9_0 <= '9')) ) {
                     alt9=1;
                 }
 
 
                 switch (alt9) {
             	case 1 :
-            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:79:30: DIGIT
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
-            	    mDIGIT(); 
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
+            	        input.consume();
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;
+            	    }
+
 
             	    }
             	    break;
@@ -2779,8 +3003,10 @@ public class SaseLexer extends Lexer {
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "FLOAT"
@@ -2795,7 +3021,7 @@ public class SaseLexer extends Lexer {
             if ( (LA11_0=='0') ) {
                 alt11=1;
             }
-            else if ( ((LA11_0>='1' && LA11_0<='9')) ) {
+            else if ( ((LA11_0 >= '1' && LA11_0 <= '9')) ) {
                 alt11=2;
             }
             else {
@@ -2803,6 +3029,7 @@ public class SaseLexer extends Lexer {
                     new NoViableAltException("", 11, 0, input);
 
                 throw nvae;
+
             }
             switch (alt11) {
                 case 1 :
@@ -2816,22 +3043,31 @@ public class SaseLexer extends Lexer {
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:80:26: '1' .. '9' ( '0' .. '9' )*
                     {
                     matchRange('1','9'); 
+
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:80:35: ( '0' .. '9' )*
                     loop10:
                     do {
                         int alt10=2;
                         int LA10_0 = input.LA(1);
 
-                        if ( ((LA10_0>='0' && LA10_0<='9')) ) {
+                        if ( ((LA10_0 >= '0' && LA10_0 <= '9')) ) {
                             alt10=1;
                         }
 
 
                         switch (alt10) {
                     	case 1 :
-                    	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:80:36: '0' .. '9'
+                    	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
                     	    {
-                    	    matchRange('0','9'); 
+                    	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
+                    	        input.consume();
+                    	    }
+                    	    else {
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;
+                    	    }
+
 
                     	    }
                     	    break;
@@ -2846,8 +3082,10 @@ public class SaseLexer extends Lexer {
                     break;
 
             }
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "INTEGER"
@@ -2861,13 +3099,15 @@ public class SaseLexer extends Lexer {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:82:8: LETTER ( LETTER | DIGIT | '_' | ':' )*
             {
             mLETTER(); 
+
+
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:82:15: ( LETTER | DIGIT | '_' | ':' )*
             loop12:
             do {
                 int alt12=2;
                 int LA12_0 = input.LA(1);
 
-                if ( ((LA12_0>='0' && LA12_0<=':')||(LA12_0>='A' && LA12_0<='Z')||LA12_0=='_'||(LA12_0>='a' && LA12_0<='z')) ) {
+                if ( ((LA12_0 >= '0' && LA12_0 <= ':')||(LA12_0 >= 'A' && LA12_0 <= 'Z')||LA12_0=='_'||(LA12_0 >= 'a' && LA12_0 <= 'z')) ) {
                     alt12=1;
                 }
 
@@ -2876,14 +3116,14 @@ public class SaseLexer extends Lexer {
             	case 1 :
             	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
-            	    if ( (input.LA(1)>='0' && input.LA(1)<=':')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= ':')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
-
             	    }
             	    else {
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
-            	        throw mse;}
+            	        throw mse;
+            	    }
 
 
             	    }
@@ -2901,6 +3141,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NAME"
@@ -2914,22 +3155,31 @@ public class SaseLexer extends Lexer {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:83:18: '\"' ( NONCONTROL_CHAR )* '\"'
             {
             match('\"'); 
+
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:83:22: ( NONCONTROL_CHAR )*
             loop13:
             do {
                 int alt13=2;
                 int LA13_0 = input.LA(1);
 
-                if ( (LA13_0=='\t'||LA13_0==' '||(LA13_0>='0' && LA13_0<='9')||(LA13_0>='A' && LA13_0<='Z')||(LA13_0>='a' && LA13_0<='z')) ) {
+                if ( (LA13_0=='\t'||LA13_0==' '||(LA13_0 >= '0' && LA13_0 <= '9')||(LA13_0 >= 'A' && LA13_0 <= 'Z')||(LA13_0 >= 'a' && LA13_0 <= 'z')) ) {
                     alt13=1;
                 }
 
 
                 switch (alt13) {
             	case 1 :
-            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:83:22: NONCONTROL_CHAR
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
-            	    mNONCONTROL_CHAR(); 
+            	    if ( input.LA(1)=='\t'||input.LA(1)==' '||(input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+            	        input.consume();
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;
+            	    }
+
 
             	    }
             	    break;
@@ -2939,6 +3189,7 @@ public class SaseLexer extends Lexer {
                 }
             } while (true);
 
+
             match('\"'); 
 
             }
@@ -2947,6 +3198,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "STRING_LITERAL"
@@ -2957,20 +3209,22 @@ public class SaseLexer extends Lexer {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:85:26: ( LETTER | DIGIT | SPACE )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
-            if ( input.LA(1)=='\t'||input.LA(1)==' '||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            if ( input.LA(1)=='\t'||input.LA(1)==' '||(input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NONCONTROL_CHAR"
@@ -2981,20 +3235,22 @@ public class SaseLexer extends Lexer {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:86:17: ( LOWER | UPPER )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
-            if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LETTER"
@@ -3003,14 +3259,24 @@ public class SaseLexer extends Lexer {
     public final void mLOWER() throws RecognitionException {
         try {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:87:17: ( 'a' .. 'z' )
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:87:19: 'a' .. 'z'
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
-            matchRange('a','z'); 
+            if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LOWER"
@@ -3019,14 +3285,24 @@ public class SaseLexer extends Lexer {
     public final void mUPPER() throws RecognitionException {
         try {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:88:17: ( 'A' .. 'Z' )
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:88:19: 'A' .. 'Z'
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
-            matchRange('A','Z'); 
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "UPPER"
@@ -3035,14 +3311,24 @@ public class SaseLexer extends Lexer {
     public final void mDIGIT() throws RecognitionException {
         try {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:89:17: ( '0' .. '9' )
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:89:19: '0' .. '9'
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             {
-            matchRange('0','9'); 
+            if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "DIGIT"
@@ -3055,18 +3341,20 @@ public class SaseLexer extends Lexer {
             {
             if ( input.LA(1)=='\t'||input.LA(1)==' ' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SPACE"
@@ -3113,6 +3401,7 @@ public class SaseLexer extends Lexer {
 
             	    }
 
+
             	    match('\n'); 
 
             	    }
@@ -3127,6 +3416,7 @@ public class SaseLexer extends Lexer {
                 cnt15++;
             } while (true);
 
+
             _channel = HIDDEN;
 
             }
@@ -3135,6 +3425,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NEWLINE"
@@ -3161,9 +3452,17 @@ public class SaseLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:94:14: SPACE
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:
             	    {
-            	    mSPACE(); 
+            	    if ( input.LA(1)=='\t'||input.LA(1)==' ' ) {
+            	        input.consume();
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;
+            	    }
+
 
             	    }
             	    break;
@@ -3177,6 +3476,7 @@ public class SaseLexer extends Lexer {
                 cnt16++;
             } while (true);
 
+
             _channel = HIDDEN;
 
             }
@@ -3185,6 +3485,7 @@ public class SaseLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "WHITESPACE"
@@ -3199,12 +3500,14 @@ public class SaseLexer extends Lexer {
                 {
                 mCREATE(); 
 
+
                 }
                 break;
             case 2 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:17: STREAM
                 {
                 mSTREAM(); 
+
 
                 }
                 break;
@@ -3213,12 +3516,14 @@ public class SaseLexer extends Lexer {
                 {
                 mVIEW(); 
 
+
                 }
                 break;
             case 4 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:29: PATTERN
                 {
                 mPATTERN(); 
+
 
                 }
                 break;
@@ -3227,12 +3532,14 @@ public class SaseLexer extends Lexer {
                 {
                 mWHERE(); 
 
+
                 }
                 break;
             case 6 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:43: WITHIN
                 {
                 mWITHIN(); 
+
 
                 }
                 break;
@@ -3241,12 +3548,14 @@ public class SaseLexer extends Lexer {
                 {
                 mRETURN(); 
 
+
                 }
                 break;
             case 8 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:57: SEQ
                 {
                 mSEQ(); 
+
 
                 }
                 break;
@@ -3255,12 +3564,14 @@ public class SaseLexer extends Lexer {
                 {
                 mLEFTCURLY(); 
 
+
                 }
                 break;
             case 10 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:71: RIGHTCURLY
                 {
                 mRIGHTCURLY(); 
+
 
                 }
                 break;
@@ -3269,12 +3580,14 @@ public class SaseLexer extends Lexer {
                 {
                 mAND(); 
 
+
                 }
                 break;
             case 12 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:86: LEN
                 {
                 mLEN(); 
+
 
                 }
                 break;
@@ -3283,12 +3596,14 @@ public class SaseLexer extends Lexer {
                 {
                 mBBRACKETLEFT(); 
 
+
                 }
                 break;
             case 14 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:103: BBRACKETRIGHT
                 {
                 mBBRACKETRIGHT(); 
+
 
                 }
                 break;
@@ -3297,12 +3612,14 @@ public class SaseLexer extends Lexer {
                 {
                 mWEEK(); 
 
+
                 }
                 break;
             case 16 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:122: DAY
                 {
                 mDAY(); 
+
 
                 }
                 break;
@@ -3311,12 +3628,14 @@ public class SaseLexer extends Lexer {
                 {
                 mHOUR(); 
 
+
                 }
                 break;
             case 18 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:131: MINUTE
                 {
                 mMINUTE(); 
+
 
                 }
                 break;
@@ -3325,12 +3644,14 @@ public class SaseLexer extends Lexer {
                 {
                 mSECOND(); 
 
+
                 }
                 break;
             case 20 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:145: MILLISECOND
                 {
                 mMILLISECOND(); 
+
 
                 }
                 break;
@@ -3339,12 +3660,14 @@ public class SaseLexer extends Lexer {
                 {
                 mSKIP_TILL_NEXT_MATCH(); 
 
+
                 }
                 break;
             case 22 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:178: SKIP_TILL_ANY_MATCH
                 {
                 mSKIP_TILL_ANY_MATCH(); 
+
 
                 }
                 break;
@@ -3353,12 +3676,14 @@ public class SaseLexer extends Lexer {
                 {
                 mSTRICT_CONTIGUITY(); 
 
+
                 }
                 break;
             case 24 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:216: PARTITION_CONTIGUITY
                 {
                 mPARTITION_CONTIGUITY(); 
+
 
                 }
                 break;
@@ -3367,12 +3692,14 @@ public class SaseLexer extends Lexer {
                 {
                 mAVG(); 
 
+
                 }
                 break;
             case 26 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:241: MIN
                 {
                 mMIN(); 
+
 
                 }
                 break;
@@ -3381,12 +3708,14 @@ public class SaseLexer extends Lexer {
                 {
                 mMAX(); 
 
+
                 }
                 break;
             case 28 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:249: SUM
                 {
                 mSUM(); 
+
 
                 }
                 break;
@@ -3395,12 +3724,14 @@ public class SaseLexer extends Lexer {
                 {
                 mCOUNT(); 
 
+
                 }
                 break;
             case 30 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:259: PLUS
                 {
                 mPLUS(); 
+
 
                 }
                 break;
@@ -3409,12 +3740,14 @@ public class SaseLexer extends Lexer {
                 {
                 mMINUS(); 
 
+
                 }
                 break;
             case 32 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:270: POINT
                 {
                 mPOINT(); 
+
 
                 }
                 break;
@@ -3423,12 +3756,14 @@ public class SaseLexer extends Lexer {
                 {
                 mDIVISION(); 
 
+
                 }
                 break;
             case 34 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:285: MULT
                 {
                 mMULT(); 
+
 
                 }
                 break;
@@ -3437,12 +3772,14 @@ public class SaseLexer extends Lexer {
                 {
                 mCOMPAREOP(); 
 
+
                 }
                 break;
             case 36 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:300: SINGLEEQUALS
                 {
                 mSINGLEEQUALS(); 
+
 
                 }
                 break;
@@ -3451,12 +3788,14 @@ public class SaseLexer extends Lexer {
                 {
                 mEQUALS(); 
 
+
                 }
                 break;
             case 38 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:320: ASSIGN
                 {
                 mASSIGN(); 
+
 
                 }
                 break;
@@ -3465,12 +3804,14 @@ public class SaseLexer extends Lexer {
                 {
                 mNOTSIGN(); 
 
+
                 }
                 break;
             case 40 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:335: COMMA
                 {
                 mCOMMA(); 
+
 
                 }
                 break;
@@ -3479,12 +3820,14 @@ public class SaseLexer extends Lexer {
                 {
                 mLBRACKET(); 
 
+
                 }
                 break;
             case 42 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:350: RBRACKET
                 {
                 mRBRACKET(); 
+
 
                 }
                 break;
@@ -3493,12 +3836,14 @@ public class SaseLexer extends Lexer {
                 {
                 mNUMBER(); 
 
+
                 }
                 break;
             case 44 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:366: NAME
                 {
                 mNAME(); 
+
 
                 }
                 break;
@@ -3507,6 +3852,7 @@ public class SaseLexer extends Lexer {
                 {
                 mSTRING_LITERAL(); 
 
+
                 }
                 break;
             case 46 :
@@ -3514,12 +3860,14 @@ public class SaseLexer extends Lexer {
                 {
                 mNEWLINE(); 
 
+
                 }
                 break;
             case 47 :
                 // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseLexer.g:1:394: WHITESPACE
                 {
                 mWHITESPACE(); 
+
 
                 }
                 break;
@@ -3617,8 +3965,8 @@ public class SaseLexer extends Lexer {
         "\1\124\1\103\1\111\1\uffff\1\103\1\110\1\124\1\110\1\60\1\131\1"+
         "\60\1\uffff\1\60\2\uffff";
     static final String DFA17_maxS =
-        "\1\176\1\162\1\165\1\151\1\141\1\151\1\145\2\uffff\1\166\1\145"+
-        "\2\uffff\1\141\1\157\1\151\6\uffff\1\75\12\uffff\1\145\1\165\1\162"+
+        "\1\176\1\162\1\165\1\151\1\141\1\151\1\145\2\uffff\1\166\1\145\2"+
+        "\uffff\1\141\1\157\1\151\6\uffff\1\75\12\uffff\1\145\1\165\1\162"+
         "\1\161\1\151\1\155\1\145\1\164\1\145\1\164\1\145\1\164\1\144\1\147"+
         "\1\156\1\171\1\165\1\156\1\170\2\uffff\1\141\1\156\1\151\1\172\1"+
         "\157\1\160\1\172\1\167\2\164\1\162\1\150\1\153\1\165\4\172\1\162"+
@@ -3778,16 +4126,16 @@ public class SaseLexer extends Lexer {
             "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\1\u0086",
-            "\13\35\6\uffff\22\35\1\u0087\7\35\4\uffff\1\35\1\uffff\22"+
-            "\35\1\u0087\7\35",
+            "\13\35\6\uffff\22\35\1\u0087\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\u0087\7\35",
             "\1\u0089\37\uffff\1\u0089",
             "\1\u008a\37\uffff\1\u008a",
             "\1\u008b\37\uffff\1\u008b",
             "",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
             "\13\35\6\uffff\32\35\4\uffff\1\35\1\uffff\32\35",
-            "\13\35\6\uffff\22\35\1\u008e\7\35\4\uffff\1\35\1\uffff\22"+
-            "\35\1\u008e\7\35",
+            "\13\35\6\uffff\22\35\1\u008e\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\u008e\7\35",
             "\1\u0090\37\uffff\1\u0090",
             "",
             "",
@@ -3819,8 +4167,8 @@ public class SaseLexer extends Lexer {
             "\1\u00a4\37\uffff\1\u00a4",
             "\1\u00a5\37\uffff\1\u00a5",
             "\1\u00a6\37\uffff\1\u00a6",
-            "\13\35\6\uffff\22\35\1\u00a7\7\35\4\uffff\1\35\1\uffff\22"+
-            "\35\1\u00a7\7\35",
+            "\13\35\6\uffff\22\35\1\u00a7\7\35\4\uffff\1\35\1\uffff\22\35"+
+            "\1\u00a7\7\35",
             "\1\u00a9\37\uffff\1\u00a9",
             "\1\u00aa\37\uffff\1\u00aa",
             "\1\u00ab\37\uffff\1\u00ab",

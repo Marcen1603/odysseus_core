@@ -13,38 +13,34 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 public class SaseAOBuilder extends AbstractOperatorBuilder {
 
 	private static final long serialVersionUID = -4928010950616650135L;
-	
-	private final StringParameter query = new StringParameter(
-			"QUERY", REQUIREMENT.MANDATORY);
-	
-	
-	public SaseAOBuilder(int minPortCount, int maxPortCount) {
+
+	private final StringParameter query = new StringParameter("QUERY",
+			REQUIREMENT.MANDATORY);
+
+	public SaseAOBuilder() {
 		super(1, Integer.MAX_VALUE);
 		addParameters(query);
 	}
 
 	@Override
 	public IOperatorBuilder cleanCopy() {
-		return null;
+		return new SaseAOBuilder();
 	}
 
 	@Override
 	protected boolean internalValidation() {
-		return false;
+		return true;
 	}
 
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		SaseBuilder parser = new SaseBuilder();
 		ILogicalOperator ret = null;
-		try {
-			List<IQuery> op = parser.parse(query.getValue(), getCaller(), getDataDictionary(), false);
-			// I know there is only one operator
-			ret = op.get(0).getLogicalPlan();
-		} catch (QueryParseException e) {
-			throw new RuntimeException(e);
-		}
-		
+		List<IQuery> op = parser.parse(query.getValue(), getCaller(),
+				getDataDictionary(), false);
+		// I know there is only one operator
+		ret = op.get(0).getLogicalPlan();
+
 		return ret;
 	}
 

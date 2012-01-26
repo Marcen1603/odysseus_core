@@ -25,4 +25,4 @@ Service-Component: OSGI-INF/SaseRelational.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.sase.SaseBuilder
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus,
- ANTLR3_3;bundle-version="1.0.0"
+ ANTLR3_4;bundle-version="1.0.0"

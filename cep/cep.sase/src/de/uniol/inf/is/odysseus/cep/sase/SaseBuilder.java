@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.cep.sase;
 
 import java.io.IOException;
@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolT
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.AccessAOBuilder;
+import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -50,6 +52,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public void start(BundleContext arg0) throws Exception {
+		OperatorBuilderFactory.putOperatorBuilderType("SASE",
+				new SaseAOBuilder());
 	}
 
 	@Override
@@ -69,29 +73,30 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd)
+			throws QueryParseException {
 		this.user = user;
 		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
 		} catch (IOException e) {
-			throw new RuntimeException(e);
-			//throw new QueryParseException(e);
+			throw new QueryParseException(e);
 		}
 		return processParse(lex, true);
 	}
 
 	@Override
-	public List<IQuery> parse(String text, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IQuery> parse(String text, ISession user, IDataDictionary dd)
+			throws QueryParseException {
 		return parse(text, user, dd, true);
 	}
-	
-		public List<IQuery> parse(String text, ISession user, IDataDictionary dd, boolean attachSources) throws QueryParseException {
+
+	public List<IQuery> parse(String text, ISession user, IDataDictionary dd,
+			boolean attachSources) throws QueryParseException {
 		this.user = user;
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex, attachSources);
 	}
-	
 
 	private List<IQuery> processParse(SaseLexer lexer, boolean attachSources)
 			throws QueryParseException {
@@ -102,9 +107,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			ret = parser.start();
 		} catch (RecognitionException e) {
-			throw new RuntimeException(e);
-			//			e.printStackTrace();
-//			throw new QueryParseException(e);
+			throw new QueryParseException(e);
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
 		printTree(tree, 2);
@@ -123,8 +126,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			query.setLogicalPlan(ao, true);
 			retList.add(query);
 		} catch (RecognitionException e) {
-			throw new RuntimeException(e);
-			//throw new QueryParseException(e);
+			throw new QueryParseException(e);
 		}
 		return retList;
 	}

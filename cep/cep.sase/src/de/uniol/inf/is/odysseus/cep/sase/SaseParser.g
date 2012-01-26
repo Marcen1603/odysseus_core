@@ -114,7 +114,7 @@ typeDefinition
 	;
 
 ktypeDefinition
-	:	NAME PLUS! kAttributeName
+	:	NAME PLUS kAttributeName
 	;
 
 	
@@ -128,7 +128,7 @@ attributeName
 	;  
 	
 kAttributeName
-	:	NAME  BBRACKETLEFT! BBRACKETRIGHT!   
+	:	NAME  BBRACKETLEFT BBRACKETRIGHT   
 	;
 
 sAttributeName
