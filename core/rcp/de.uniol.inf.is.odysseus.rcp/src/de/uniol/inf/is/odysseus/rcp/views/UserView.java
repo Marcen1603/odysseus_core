@@ -25,6 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -42,7 +43,8 @@ public class UserView extends ViewPart implements IUserManagementListener{
 			public void run() {
 				List<Object> l = new ArrayList<Object>();
 				try {
-					List<? extends IUser> users = UserManagement.getUsermanagement()
+					IUserManagement mmgt = UserManagement.getUsermanagement();
+					List<? extends IUser> users = mmgt
 					.getUsers(
 							GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
 					l.addAll(users);

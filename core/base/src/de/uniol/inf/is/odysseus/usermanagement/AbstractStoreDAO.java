@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.store.IStore;
 
@@ -39,6 +41,12 @@ public class AbstractStoreDAO<T extends IAbstractEntity> implements IGenericDAO<
 	
 	@Override
 	public List<T> findAll() {
+		if (allEntities.size() != entities.entrySet().size()){
+			allEntities.clear();
+			for (Entry<String, T> e:entities.entrySet()){
+				allEntities.add(e.getValue());
+			}
+		}
 		return Collections.unmodifiableList(allEntities);
 
 	}
