@@ -42,7 +42,6 @@ http://odysseus.offis.uni-oldenburg.de/
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -185,6 +184,7 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
