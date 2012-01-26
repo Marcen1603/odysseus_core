@@ -45,7 +45,7 @@ public class UserView extends ViewPart implements IUserManagementListener{
 					List<? extends IUser> users = UserManagement.getUsermanagement()
 					.getUsers(
 							GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
-					l.add(users);
+					l.addAll(users);
 				} catch (PermissionException e) {
 					// If user has no rights to view all users, only the
 					// current user is shown
