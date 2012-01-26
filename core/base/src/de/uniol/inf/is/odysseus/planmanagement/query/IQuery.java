@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  */
 public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 		IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner,
-		IMonitoringDataProvider, Serializable, ISerializable{
+		IMonitoringDataProvider, Serializable, ISerializable, Comparable<IQuery>{
 
 	/**
 	 * ID of this query. Should be unique.

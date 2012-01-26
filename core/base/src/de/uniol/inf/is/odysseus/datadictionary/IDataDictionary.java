@@ -24,8 +24,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 
 public interface IDataDictionary {
 
@@ -74,10 +75,10 @@ public interface IDataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 	public Set<Entry<String, ILogicalOperator>> getViews(ISession caller);	
 
-	public void addLogicalPlan(IQuery q, ISession caller);
-	public IQuery getLogicalPlan(int id, ISession caller);
-	public List<IQuery> getLogicalPlans(ISession caller);
-	public void removeLogicalPlan(IQuery q, ISession caller);
+	public void addQuery(IQuery q, ISession caller);
+	public IQuery getQuery(int id, ISession caller);
+	public List<IQuery> getQueries(IUser user, ISession caller);
+	public void removeQuery(IQuery q, ISession caller);
 	
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 	
@@ -89,7 +90,7 @@ public interface IDataDictionary {
 	// no restric
 	//public User getUserForViewOrStream(String view);
 	
-	public ISession getCreator(String resource);
+	public IUser getCreator(String resource);
 
 	/**
 	 * checks if the given user has higher permission as the given action.

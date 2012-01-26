@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.datadictionary;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 
 /**

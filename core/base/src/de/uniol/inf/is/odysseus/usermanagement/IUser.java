@@ -14,13 +14,14 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.List;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public interface IUser extends IAbstractEntity, Principal, Comparable<IUser> {
+public interface IUser extends IAbstractEntity, Principal, Comparable<IUser>, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
