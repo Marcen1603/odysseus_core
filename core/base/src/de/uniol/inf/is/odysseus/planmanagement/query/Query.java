@@ -59,7 +59,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 
 	private static final long serialVersionUID = -7846033747726522915L;
 
-	protected static Logger _logger = null;
+	transient protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
@@ -97,13 +97,13 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * List of all direct physical child operators. Stored separate because a
 	 * root can contain operators which are part of an other query.
 	 */
-	private ArrayList<IPhysicalOperator> physicalChilds = new ArrayList<IPhysicalOperator>();
+	transient private ArrayList<IPhysicalOperator> physicalChilds = new ArrayList<IPhysicalOperator>();
 
 	/**
 	 * Physical root operators of this query. Since we do not have trees any
 	 * more, there can be more than one query.
 	 */
-	private List<IPhysicalOperator> roots;
+	transient private List<IPhysicalOperator> roots;
 
 	/**
 	 * ID of the parser that should be used to translate the query string.
@@ -120,12 +120,12 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/**
 	 * List of objects which respond to reoptimize requests.
 	 */
-	private ArrayList<IQueryReoptimizeListener> queryReoptimizeListener = new ArrayList<IQueryReoptimizeListener>();
+	transient private ArrayList<IQueryReoptimizeListener> queryReoptimizeListener = new ArrayList<IQueryReoptimizeListener>();
 
 	/**
 	 * List of rules for reoptimize requests.
 	 */
-	private ArrayList<AbstractQueryReoptimizeRule> queryReoptimizeRule = new ArrayList<AbstractQueryReoptimizeRule>();
+	transient private ArrayList<AbstractQueryReoptimizeRule> queryReoptimizeRule = new ArrayList<AbstractQueryReoptimizeRule>();
 
 	/**
 	 * Priority of this query.
@@ -151,10 +151,10 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * EventListener
 	 */
 
-	Map<String, IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
+	transient Map<String, IPOEventListener> poEventListener = new HashMap<String, IPOEventListener>();
 
 	@SuppressWarnings("rawtypes")
-	public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();
+	transient public Map<String, IPlanMonitor> planmonitors = new HashMap<String, IPlanMonitor>();
 
 	private boolean opened = false;
 
@@ -862,8 +862,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 				}
 			}
 			
-			String hashCode = rootNode.getProperty("rootOperator").toString();
-			ILogicalOperator rootOperator = ops.get(hashCode); 
+			//String hashCode = rootNode.getProperty("rootOperator").toString();
+			//ILogicalOperator rootOperator = ops.get(hashCode); 
 			//this.setLogicalPlan(rootOperator, getUser());
 			System.out.println("ready");
 		} catch (InstantiationException e) {
