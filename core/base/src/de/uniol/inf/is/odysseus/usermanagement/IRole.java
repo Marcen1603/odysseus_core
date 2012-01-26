@@ -14,13 +14,14 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface IRole extends IAbstractEntity {
+public interface IRole extends IAbstractEntity, Serializable {
 	
 	/**
 	 * 

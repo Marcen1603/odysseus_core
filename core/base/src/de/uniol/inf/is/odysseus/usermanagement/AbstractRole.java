@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractRole implements IRole {
+
+	private static final long serialVersionUID = -2633056745390718448L;
 	private String name;
 	/** The privileges of the role */
 	final private List<IPrivilege> privileges = new ArrayList<IPrivilege>();

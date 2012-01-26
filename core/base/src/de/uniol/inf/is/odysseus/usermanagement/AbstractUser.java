@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractUser implements IUser {
+public abstract class AbstractUser implements IUser, Serializable {
 
+	private static final long serialVersionUID = -8370585460200716268L;
 	private String name;
 	private String algorithm;
 	private String password;

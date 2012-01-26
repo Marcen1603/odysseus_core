@@ -1,10 +1,14 @@
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class AbstractPrivilege implements IPrivilege {
+public abstract class AbstractPrivilege implements IPrivilege, Serializable {
+
+	private static final long serialVersionUID = -4914303846915212339L;
+
 	private String objectURI;
 
 	final private Set<IPermission> permissions = new HashSet<IPermission>();
