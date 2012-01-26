@@ -79,17 +79,22 @@ public class OdysseusDefaults {
 
 	private static void loadProperties(String odysseusHome, String filename, Properties properties) throws IOException,
 			FileNotFoundException {
+		// If there are new properties, load defaults and overwrite with file-properties
+		setDefaults(odysseusHome);
 		File f = openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
 		properties.load(in);
 		in.close();
+		// Save always because there could be new properties ... do only if there are new defaults?
+		savePropertyFile(odysseusHome);
 	}
 
 	private static void setDefaults(String odysseusHome) {		
 		props.setProperty("odysseusHome", odysseusHome);
-		props.setProperty("storeUsers", Boolean.FALSE.toString());
 		props.setProperty("userStoreFilename", odysseusHome + "users.store");
+		props.setProperty("privilegStoreFilename", odysseusHome + "priviliges.store");
+		props.setProperty("roleStoreFilename", odysseusHome + "roles.store");
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
 		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
 		props.setProperty("storeTenants", Boolean.FALSE.toString());
