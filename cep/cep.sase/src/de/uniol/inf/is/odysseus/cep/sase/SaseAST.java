@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-01-27 09:02:27
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-01-27 10:01:58
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -437,8 +437,8 @@ public class SaseAST extends TreeParser {
                 			throw new RuntimeException("Source " + sn + " not found");
                 		}
                 	}
-                	op = cepAo;
                 }
+                op = cepAo;
                
 
             }

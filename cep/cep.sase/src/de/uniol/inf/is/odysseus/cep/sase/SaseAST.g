@@ -230,8 +230,8 @@ List<String> sourceNames = new ArrayList<String>();
     			throw new RuntimeException("Source " + sn + " not found");
     		}
     	}
-    	$op = cepAo;
     }
+    $op = cepAo;
    }
   ;
 

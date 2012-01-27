@@ -45,7 +45,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	private ISession user;
 	private IDataDictionary dd;
-	
+
 	@Override
 	public String getLanguage() {
 		return "SASE_Relational";
@@ -125,10 +125,14 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 		try {
 			ILogicalOperator ao = walker.start(attachSources);
-			IQuery query = new Query();
-			query.setParserId(getLanguage());
-			query.setLogicalPlan(ao, true);
-			retList.add(query);
+			if (ao != null) {
+				IQuery query = new Query();
+				query.setParserId(getLanguage());
+				query.setLogicalPlan(ao, true);
+				retList.add(query);
+			}else{
+				 throw new QueryParseException("Could not create logical Operator");
+			}
 		} catch (RecognitionException e) {
 			throw new QueryParseException(e);
 		}
