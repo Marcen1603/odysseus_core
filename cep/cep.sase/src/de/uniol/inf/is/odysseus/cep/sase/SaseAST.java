@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-01-27 13:54:49
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-01-27 14:32:59
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -2029,7 +2029,7 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "returnPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:675:1: returnPart[CepAO cepAo] : ( ^( RETURN value= NAME ( attributeTerm[retAttr] )* ) |);
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:675:1: returnPart[CepAO cepAo] : ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |);
     public final void returnPart(CepAO cepAo) throws RecognitionException {
         CommonTree value=null;
 
@@ -2037,70 +2037,93 @@ public class SaseAST extends TreeParser {
         List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:679:3: ( ^( RETURN value= NAME ( attributeTerm[retAttr] )* ) |)
-            int alt19=2;
-            int LA19_0 = input.LA(1);
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:679:3: ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |)
+            int alt20=2;
+            int LA20_0 = input.LA(1);
 
-            if ( (LA19_0==RETURN) ) {
-                alt19=1;
+            if ( (LA20_0==RETURN) ) {
+                alt20=1;
             }
-            else if ( (LA19_0==UP) ) {
-                alt19=2;
+            else if ( (LA20_0==UP) ) {
+                alt20=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 19, 0, input);
+                    new NoViableAltException("", 20, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt19) {
+            switch (alt20) {
                 case 1 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:3: ^( RETURN value= NAME ( attributeTerm[retAttr] )* )
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:3: ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? )
                     {
                     match(input,RETURN,FOLLOW_RETURN_in_returnPart1355); 
 
-                    match(input, Token.DOWN, null); 
-                    value=(CommonTree)match(input,NAME,FOLLOW_NAME_in_returnPart1359); 
+                    if ( input.LA(1)==Token.DOWN ) {
+                        match(input, Token.DOWN, null); 
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:12: ( attributeTerm[retAttr] )*
+                        loop18:
+                        do {
+                            int alt18=2;
+                            int LA18_0 = input.LA(1);
 
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:23: ( attributeTerm[retAttr] )*
-                    loop18:
-                    do {
-                        int alt18=2;
-                        int LA18_0 = input.LA(1);
+                            if ( (LA18_0==AGGREGATION||LA18_0==KMEMBER||LA18_0==MEMBER) ) {
+                                alt18=1;
+                            }
 
-                        if ( (LA18_0==AGGREGATION||LA18_0==KMEMBER||LA18_0==MEMBER) ) {
-                            alt18=1;
+
+                            switch (alt18) {
+                        	case 1 :
+                        	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:12: attributeTerm[retAttr]
+                        	    {
+                        	    pushFollow(FOLLOW_attributeTerm_in_returnPart1357);
+                        	    attributeTerm(retAttr);
+
+                        	    state._fsp--;
+
+
+                        	    }
+                        	    break;
+
+                        	default :
+                        	    break loop18;
+                            }
+                        } while (true);
+
+
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:41: (value= NAME )?
+                        int alt19=2;
+                        int LA19_0 = input.LA(1);
+
+                        if ( (LA19_0==NAME) ) {
+                            alt19=1;
+                        }
+                        switch (alt19) {
+                            case 1 :
+                                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:41: value= NAME
+                                {
+                                value=(CommonTree)match(input,NAME,FOLLOW_NAME_in_returnPart1363); 
+
+                                }
+                                break;
+
                         }
 
 
-                        switch (alt18) {
-                    	case 1 :
-                    	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:680:23: attributeTerm[retAttr]
-                    	    {
-                    	    pushFollow(FOLLOW_attributeTerm_in_returnPart1361);
-                    	    attributeTerm(retAttr);
-
-                    	    state._fsp--;
-
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    break loop18;
-                        }
-                    } while (true);
-
-
-                    match(input, Token.UP, null); 
+                        match(input, Token.UP, null); 
+                    }
 
 
 
                         RelationalMEPOutputSchemeEntry e = null;
                         OutputScheme scheme = new OutputScheme();
-
-                        SDFAttributeList attrList = new SDFAttributeList(value.getText());
+                        SDFAttributeList attrList = null;
+                        if (value != null){
+                          attrList= new SDFAttributeList(value.getText());
+                          }else{
+                          attrList = new SDFAttributeList("");
+                          }
                         for (PathAttribute p : retAttr) {
                         	String op = p.getAggregation();
                         	String a = p.getStatename();
@@ -2125,7 +2148,7 @@ public class SaseAST extends TreeParser {
                     }
                     break;
                 case 2 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:708:3: 
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:712:3: 
                     {
                     }
                     break;
@@ -2231,7 +2254,7 @@ public class SaseAST extends TreeParser {
     public static final BitSet FOLLOW_NUMBER_in_withinPart1208 = new BitSet(new long[]{0x0200200090108008L});
     public static final BitSet FOLLOW_set_in_withinPart1231 = new BitSet(new long[]{0x0000000000000008L});
     public static final BitSet FOLLOW_RETURN_in_returnPart1355 = new BitSet(new long[]{0x0000000000000004L});
-    public static final BitSet FOLLOW_NAME_in_returnPart1359 = new BitSet(new long[]{0x2000000000000008L,0x0000000000000440L});
-    public static final BitSet FOLLOW_attributeTerm_in_returnPart1361 = new BitSet(new long[]{0x2000000000000008L,0x0000000000000440L});
+    public static final BitSet FOLLOW_attributeTerm_in_returnPart1357 = new BitSet(new long[]{0x2000000200000008L,0x0000000000000440L});
+    public static final BitSet FOLLOW_NAME_in_returnPart1363 = new BitSet(new long[]{0x0000000000000008L});
 
 }

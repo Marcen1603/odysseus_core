@@ -677,13 +677,17 @@ returnPart[CepAO cepAo]
 List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 }
   :
-  ^(RETURN value=NAME attributeTerm[retAttr]*)
+  ^(RETURN attributeTerm[retAttr]* value=NAME?)
   
    {
     RelationalMEPOutputSchemeEntry e = null;
     OutputScheme scheme = new OutputScheme();
-
-    SDFAttributeList attrList = new SDFAttributeList(value.getText());
+    SDFAttributeList attrList = null;
+    if (value != null){
+      attrList= new SDFAttributeList(value.getText());
+      }else{
+      attrList = new SDFAttributeList("");
+      }
     for (PathAttribute p : retAttr) {
     	String op = p.getAggregation();
     	String a = p.getStatename();
