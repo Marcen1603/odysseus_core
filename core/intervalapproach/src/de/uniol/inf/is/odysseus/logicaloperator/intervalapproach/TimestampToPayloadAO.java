@@ -21,7 +21,7 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 	public SDFAttributeList getOutputSchema() {
 		SDFAttributeList outputSchema = new SDFAttributeList();
 		if(getInputSchema(0)!=null){
-			outputSchema = getInputSchema(0);
+			outputSchema.addAll(getInputSchema(0));
 		}
 		
 		SDFAttribute starttimeStamp = new SDFAttribute(null,"meta_valid_start", SDFDatatype.TIMESTAMP);
