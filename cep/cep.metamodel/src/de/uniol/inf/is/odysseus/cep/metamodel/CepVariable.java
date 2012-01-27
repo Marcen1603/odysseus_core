@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
@@ -43,8 +45,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggreg
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class CepVariable {
+public class CepVariable implements Serializable{
 
+	private static final long serialVersionUID = 5673792398657038594L;
 	private static ISymbolTableOperationFactory symTabOpFac = null;
 	
 	static public void setSymbolTableOperationFactory(ISymbolTableOperationFactory symTabOpFactory) {

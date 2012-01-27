@@ -91,7 +91,7 @@ skipMethod:
   |PARTITION_CONTIGUITY;
   	
 patternPart 
-	: PATTERN patternDecl -> ^(patternDecl)
+	: PATTERN patternDecl* -> ^(PATTERN patternDecl*)
 	;
 	
 returnPart
@@ -99,7 +99,11 @@ returnPart
 	;
 	
 patternDecl
-	:	SEQ LBRACKET stateDef (COMMA stateDef)* RBRACKET -> ^(SEQ stateDef*)
+	: 	seqPatternDecl
+	;
+	
+seqPatternDecl
+	: SEQ LBRACKET stateDef (COMMA stateDef)* RBRACKET -> ^(SEQ stateDef*)
 	;
 		
 	
@@ -159,7 +163,7 @@ len	:
 	;
 	
 whereExpressions
-	:	expression ((AND|KOMMA) expression)* -> ^(WHEREEXPRESSION expression*)
+	:	expression ((AND|COMMA) expression)* -> ^(WHEREEXPRESSION expression*)
 	;
 	
 expression

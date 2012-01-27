@@ -44,9 +44,6 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		this.path = path;
 		loadCache();
 		logger.debug("Loaded from "+path+" "+cache.entrySet().size()+" values");
-//		for (Entry<IDType, STORETYPE> entry : cache.entrySet()){
-//			logger.debug(entry.getKey()+" "+entry.getValue());
-//		}
 	}
 
 	@SuppressWarnings("unchecked")

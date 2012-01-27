@@ -236,6 +236,10 @@ List<String> sourceNames = new ArrayList<String>();
   ;
 
 patternPart[CepAO cepAo, List<String> sourceNames]
+: ^(PATTERN seqPatternPart[cepAo, sourceNames])
+;
+
+seqPatternPart[CepAO cepAo, List<String> sourceNames]
 @init {
 List<State> states = new LinkedList<State>();
 }

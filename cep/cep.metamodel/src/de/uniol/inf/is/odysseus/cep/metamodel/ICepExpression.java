@@ -14,9 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public interface ICepExpression<T> {
+public interface ICepExpression<T> extends Serializable{
 	public Set<CepVariable> getVarNames();
 	public T getValue();
 	public void setValue(CepVariable varName, Object newValue);

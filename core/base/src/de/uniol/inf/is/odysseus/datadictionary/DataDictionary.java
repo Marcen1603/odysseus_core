@@ -65,7 +65,7 @@ public class DataDictionary implements IDataDictionary {
 	final private IStore<String, IUser> entityFromUser;
 	final private IStore<String, String> sourceTypeMap;
 	final private IStore<String, SDFDatatype> datatypes;
-	final private IStore<IQuery, IUser> savedQueries;
+	private IStore<IQuery, IUser> savedQueries;
 
 	final private IStore<String, ILogicalOperator> sinkDefinitions;
 	final private IStore<String, IUser> sinkFromUser;
@@ -92,8 +92,14 @@ public class DataDictionary implements IDataDictionary {
 						OdysseusDefaults.get("sinkDefinitionsFilename"));
 				sinkFromUser = new FileStore<String, IUser>(
 						OdysseusDefaults.get("sinkDefinitionsUserFilename"));
-				savedQueries = new FileStore<IQuery, IUser>(
-						OdysseusDefaults.get("queriesFilename"));
+				
+				try {
+					savedQueries = new FileStore<IQuery, IUser>(
+							OdysseusDefaults.get("queriesFilename"));
+				} catch (Exception e) {
+					getLogger().warn("Error Loading Queries ");
+					savedQueries = null;
+				}
 			} else {
 				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 				viewOrStreamFromUser = new MemoryStore<String, IUser>();

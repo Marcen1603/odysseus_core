@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
+
 /**
  * Zustandsübergang eines Automaten. Die Zustandsübergänge werden grundsätzlich
  * in dem Zustand referenziert, von dem der Zustandsübergang ausgeht. Der
@@ -22,8 +24,9 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
  * @author Thomas Vogelgesang
  * 
  */
-public class Transition {
+public class Transition implements Serializable{
 
+	private static final long serialVersionUID = 4496816133940791011L;
 	/**
 	 * Die im gesamten Automaten eindeutige ID der Transition.
 	 */

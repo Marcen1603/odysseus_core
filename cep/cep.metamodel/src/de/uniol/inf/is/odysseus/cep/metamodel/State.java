@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,8 +28,10 @@ import javax.xml.bind.annotation.XmlID;
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class State {
+public class State implements Serializable{
 
+
+	private static final long serialVersionUID = 590839149140344317L;
 	/**
 	 * ID des Zustands. Darf nicht null sein. Muss innerhalb eines Automaten
 	 * eindeutig sein. Darf nur Buchstaben und Ziffern beinhalten, wobei das

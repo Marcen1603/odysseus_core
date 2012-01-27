@@ -26,6 +26,7 @@ WHERE : ('W'|'w')('H'|'h')('E'|'e')('R'|'r')('E'|'e');
 WITHIN	:('W'|'w')('I'|'i')('T'|'t')('H'|'h')('I'|'i')('N'|'n');
 RETURN 	: ('R'|'r')('E'|'e')('T'|'t')('U'|'u')('R'|'r')('N'|'n');	 
 SEQ : ('S'|'s')('E'|'e')('Q'|'q');
+ALT :('A'|'a')('L'|'l')('T'|'t');
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
 AND : ('A'|'a')('N'|'n')('D'|'d');	

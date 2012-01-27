@@ -96,7 +96,7 @@ public class OdysseusDefaults {
 				+ "entityFromUser.store");
 		props.setProperty("sourceFromUserFilename", odysseusHome
 				+ "sourceFromUser.store");
-		props.setProperty("queriesFilename", "queries.store");
+		props.setProperty("queriesFilename", odysseusHome+"queries.store");
 		
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");

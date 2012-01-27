@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,8 +36,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement
-public class StateMachine<E> {
+public class StateMachine<E> implements Serializable{
 	
+	private static final long serialVersionUID = 6012448345909786996L;
+
 	long windowSize = -1;
 
 	/**
@@ -61,12 +64,6 @@ public class StateMachine<E> {
 	 * Definiert das Ausgabeschema der CEP-Anfrage. Darf nicht null sein.
 	 */
 	private OutputScheme outputScheme;
-//	/**
-//	 * Strategie, die angibt, ob bei nichtdeterministischen Verzweigungen nur
-//	 * die abgeschlossene Automateninstanz oder alle damit verbundenen
-//	 * Automateninstanzen aus dem Instanzspeicher entfernt werden.
-//	 */
-//	private EConsumptionMode consumptionMode = EConsumptionMode.allMatches;
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 

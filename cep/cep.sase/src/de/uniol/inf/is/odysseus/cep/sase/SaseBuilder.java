@@ -44,7 +44,8 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	private ISession user;
-
+	private IDataDictionary dd;
+	
 	@Override
 	public String getLanguage() {
 		return "SASE_Relational";
@@ -76,6 +77,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 		this.user = user;
+		this.dd = dd;
 		SaseLexer lex = null;
 		try {
 			lex = new SaseLexer(new ANTLRReaderStream(reader));
@@ -94,6 +96,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	public List<IQuery> parse(String text, ISession user, IDataDictionary dd,
 			boolean attachSources) throws QueryParseException {
 		this.user = user;
+		this.dd = dd;
 		SaseLexer lex = new SaseLexer(new ANTLRStringStream(text));
 		return processParse(lex, attachSources);
 	}
@@ -114,6 +117,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
 		SaseAST walker = new SaseAST(nodes);
 		walker.setUser(user);
+		walker.setDataDictionary(dd);
 
 		// Relational ... ggf. auslagern ?
 		walker.symTableOpFac = new RelationalSymbolTableOperationFactory();
