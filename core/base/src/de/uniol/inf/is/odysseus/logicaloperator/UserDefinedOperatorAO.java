@@ -69,7 +69,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFAttributeList();
+		this.outputSchema = new SDFAttributeList("");
 		this.outputSchema.addAll(outputSchema);
 	}
 

@@ -114,7 +114,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 	}
 
 	public SDFAttributeList getSchema(String tablename) {
-		SDFAttributeList schema = new SDFAttributeList();
+		SDFAttributeList schema = new SDFAttributeList(tablename);
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet rs = meta.getColumns(null, null, tablename, null);

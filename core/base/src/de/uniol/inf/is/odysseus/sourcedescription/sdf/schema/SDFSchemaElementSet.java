@@ -43,8 +43,8 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	/**
      * @param attributes1
      */    
-	public SDFSchemaElementSet(SDFSchemaElementSet<T> newElements) {
-        super("TemporaryElement" + System.currentTimeMillis(), (SDFDatatype)null);
+	public SDFSchemaElementSet(String uri, SDFSchemaElementSet<T> newElements) {
+        super(uri, (SDFDatatype)null);
         elements.addAll(newElements);
     }
 	
@@ -211,7 +211,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	
 	@Override
 	public SDFSchemaElementSet<T> clone() {
-		return new SDFSchemaElementSet<T>(this);
+		return new SDFSchemaElementSet<T>(this.getURI(), this);
 	}
 	
 }

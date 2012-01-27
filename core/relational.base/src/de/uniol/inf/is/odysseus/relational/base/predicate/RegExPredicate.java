@@ -166,7 +166,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	@Override
 	public List<SDFAttribute> getAttributes() {
-		SDFAttributeList attrList = new SDFAttributeList();
+		SDFAttributeList attrList = new SDFAttributeList("");
 		attrList.add(this.attribute);
 		return Collections.unmodifiableList(attrList);
 	}

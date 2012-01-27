@@ -17,18 +17,21 @@ package de.uniol.inf.is.odysseus.cep.transform;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCreator;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
+import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -44,9 +47,20 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	public void execute(CepAO cepAO,
 			TransformationConfiguration transformConfig) {
 		Map<Integer, RelationalReader> rMap = new HashMap<Integer, RelationalReader>();
+		
+		StateMachine m = cepAO.getStateMachine();
+		Set<String> types = m.getStateTypeSet();
+		
 		for (LogicalSubscription s : cepAO.getSubscribedToSource()) {
-			rMap.put(s.getSinkInPort(), new RelationalReader(s.getSchema(),
-					cepAO.getInputTypeName(s.getSinkInPort())));
+			String name = cepAO.getInputTypeName(s.getSinkInPort());
+			if (name == null){
+				SDFAttributeList schema = s.getSchema();
+				name = schema.getURI();
+				if (!types.contains(name)){
+					throw new IllegalArgumentException("Type "+name+" no input for Operator");
+				}
+			}
+			rMap.put(s.getSinkInPort(), new RelationalReader(s.getSchema(),name));
 		}
 		IComplexEventFactory complexEventFactory = new RelationalCreator();
 		CepOperator cepPO = null;

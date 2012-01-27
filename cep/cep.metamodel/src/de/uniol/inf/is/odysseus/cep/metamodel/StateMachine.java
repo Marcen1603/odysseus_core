@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.io.Serializable;
@@ -21,12 +21,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-//import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTableScheme;
 
 /**
  * Objekte dieser Klasse kapseln den fÃ¼r das CEP erforderlichen Automaten sowie
@@ -36,8 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement
-public class StateMachine<E> implements Serializable{
-	
+public class StateMachine<E> implements Serializable {
+
 	private static final long serialVersionUID = 6012448345909786996L;
 
 	long windowSize = -1;
@@ -89,10 +88,11 @@ public class StateMachine<E> implements Serializable{
 	 * @param outputScheme
 	 *            AusgabeSchema
 	 */
-	public StateMachine(List<State> states, String initialStateId, OutputScheme outputScheme, long windowSize) {
+	public StateMachine(List<State> states, String initialStateId,
+			OutputScheme outputScheme, long windowSize) {
 		this.states = states;
 		this.stateMap = new HashMap<String, State>();
-		for (State s:states){
+		for (State s : states) {
 			stateMap.put(s.getId(), s);
 		}
 		this.initialStateId = initialStateId;
@@ -128,7 +128,7 @@ public class StateMachine<E> implements Serializable{
 	public void setStates(List<State> states) {
 		this.states = states;
 		this.stateMap = new HashMap<String, State>();
-		for (State s:states){
+		for (State s : states) {
 			stateMap.put(s.getId(), s);
 		}
 	}
@@ -145,7 +145,6 @@ public class StateMachine<E> implements Serializable{
 	public State getState(String id) {
 		return stateMap.get(id);
 	}
-	
 
 	/**
 	 * Setzt den Startzustand des Automaten.
@@ -163,31 +162,31 @@ public class StateMachine<E> implements Serializable{
 	 * @return Das Symboltabellen-Schema des Automaten.
 	 */
 	public List<CepVariable> getSymTabScheme(boolean recalc) {
-		if (symTabScheme == null || recalc){
+		if (symTabScheme == null || recalc) {
 			initSymTabScheme();
 		}
 		return symTabScheme;
 	}
-	
-	private void initSymTabScheme(){
+
+	private void initSymTabScheme() {
 		symTabScheme = new ArrayList<CepVariable>();
-		//System.out.println("INIT SYM TAB SCHEME");
-		for (State s: states){
-			//System.out.println("State "+s.getId());
-			for (Transition t: s.getTransitions()){
-				//System.out.println("Transition "+t.getId());
+		// System.out.println("INIT SYM TAB SCHEME");
+		for (State s : states) {
+			// System.out.println("State "+s.getId());
+			for (Transition t : s.getTransitions()) {
+				// System.out.println("Transition "+t.getId());
 				Set<CepVariable> varnames = t.getCondition().getVarNames();
-				for (CepVariable var: varnames){
-			//		System.out.println("Variable "+v);
-//					if (var.getStateIdentifier() == null){
-//						var.setStateIdentifier(s.getId());
-//					}
-//					if (var.getOperation() == null){
-//						var.setOperation(SymbolTableOperationFactory.getOperation("Write"));
-//					}
-					
-					if (var.getOperation() != null){
-					//	System.out.println("add "+var);
+				for (CepVariable var : varnames) {
+					// System.out.println("Variable "+v);
+					// if (var.getStateIdentifier() == null){
+					// var.setStateIdentifier(s.getId());
+					// }
+					// if (var.getOperation() == null){
+					// var.setOperation(SymbolTableOperationFactory.getOperation("Write"));
+					// }
+
+					if (var.getOperation() != null) {
+						// System.out.println("add "+var);
 						symTabScheme.add(var);
 					}
 				}
@@ -214,43 +213,23 @@ public class StateMachine<E> implements Serializable{
 		this.outputScheme = outputScheme;
 	}
 
-//	/**
-//	 * Liefert die Matching-Strategie, die verfolgt werden soll.
-//	 * 
-//	 * @return Die Matching-Strategie des Automaten.
-//	 */
-//	public EConsumptionMode getConsumptionMode() {
-//		return this.consumptionMode;
-//	}
-//
-//	/**
-//	 * Setzt die Matching-Strategie des Automaten.
-//	 * 
-//	 * @param strategy
-//	 *            Die neue Matching-Strategie, nicht null.
-//	 */
-//	public void setConsumptionMode(EConsumptionMode strategy) {
-//		this.consumptionMode = strategy;
-//	}
-
-
 	public void setWindowSize(long windowSize) {
 		this.windowSize = windowSize;
 	}
-	
+
 	public long getWindowSize() {
 		return windowSize;
 	}
-	
+
 	@Override
 	public String toString() {
 		String str = "StateMachine: " + this.hashCode() + " ";
 		str += states;
-		str += " Initial State: "+initialStateId;
+		str += " Initial State: " + initialStateId;
 		str += this.symTabScheme;
 
 		str += this.outputScheme;
-//		str += "Matching Strategy: " + this.consumptionMode;
+		// str += "Matching Strategy: " + this.consumptionMode;
 		return str;
 	}
 
@@ -265,7 +244,7 @@ public class StateMachine<E> implements Serializable{
 		str += "\n";
 		str += this.symTabScheme + "\n";
 		str += this.outputScheme + "\n";
-//		str += "Matching Strategy: " + this.consumptionMode + "\n";
+		// str += "Matching Strategy: " + this.consumptionMode + "\n";
 		return str;
 	}
 
@@ -283,7 +262,6 @@ public class StateMachine<E> implements Serializable{
 		return fStates;
 	}
 
-	
 	/**
 	 * Returns list of other (!) States that have outgoing transitions to state
 	 * 
@@ -320,12 +298,26 @@ public class StateMachine<E> implements Serializable{
 			}
 		}
 	}
-	
+
 	@Override
-	public StateMachine<E> clone()  {
-		// Eine StateMachine zu clonen macht keinen Sinn! Probleme sind die Transitionen die
-		// wieder States haben und dann nicht zu den hier geclonten passen würden.
-		throw new RuntimeException("Clone Not implemented yet"); 
+	public StateMachine<E> clone() {
+		// Eine StateMachine zu clonen macht keinen Sinn! Probleme sind die
+		// Transitionen die
+		// wieder States haben und dann nicht zu den hier geclonten passen
+		// würden.
+		throw new RuntimeException("Clone Not implemented yet");
+	}
+
+	public Set<String> getStateTypeSet() {
+		Set<String> set = new TreeSet<String>();
+		for (State s : states) {
+			// There may be some states without types (e.g. ACCEPTING)
+			if (s.getType() != null) {
+				set.add(s.getType());
+			}
+		}
+
+		return set;
 	}
 
 }

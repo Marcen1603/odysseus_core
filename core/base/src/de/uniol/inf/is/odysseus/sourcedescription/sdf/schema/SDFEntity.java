@@ -24,21 +24,25 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 public class SDFEntity extends SDFSchemaElement {
 	
 	private static final long serialVersionUID = -5891495267668181672L;	
-    private SDFAttributeList  idAttributes = new SDFAttributeList();
-    private SDFAttributeList attributes = new SDFAttributeList();
-    private SDFConstantList constants = new SDFConstantList();
+    final private SDFAttributeList  idAttributes;
+    final private SDFAttributeList attributes;
+    final private SDFConstantList constants;
     
     private ArrayList<SDFEntity> subClassOf = new ArrayList<SDFEntity>();
 
 	public SDFEntity(String URI) {
 		super(URI, (SDFDatatype)null);
+		idAttributes = new SDFAttributeList(URI);
+		attributes = new SDFAttributeList(URI);
+		constants = new SDFConstantList();
 	}
 
 	public SDFEntity(SDFEntity sdfEntity) {
 		super(sdfEntity);
-		this.idAttributes.addAll(sdfEntity.idAttributes);
-		this.attributes.addAll(sdfEntity.attributes);
-		this.constants.addAll(sdfEntity.constants);
+		this.idAttributes = new SDFAttributeList(sdfEntity.idAttributes.getURI(), sdfEntity.idAttributes);
+		this.attributes = new SDFAttributeList(sdfEntity.attributes.getURI(), sdfEntity.attributes);
+		this.constants = new SDFConstantList();
+		constants.addAll(sdfEntity.constants);
 	}
 
 	public boolean isIdentifiying(SDFAttribute attribute){
@@ -91,7 +95,8 @@ public class SDFEntity extends SDFSchemaElement {
 	}
 	
 	public void setAttributes(SDFAttributeList attrs) {
-		this.attributes = attrs;
+		this.attributes.clear();
+		this.attributes.addAll(attrs);
 	}
 
 	@Override

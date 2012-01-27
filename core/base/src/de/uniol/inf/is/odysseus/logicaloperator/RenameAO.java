@@ -45,7 +45,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	public RenameAO(RenameAO ao) {
 		super(ao);
-		outputSchema = new SDFAttributeList(ao.outputSchema);
+		outputSchema = new SDFAttributeList(ao.outputSchema.getURI(), ao.outputSchema);
 		aliases = ao.aliases;
 	}
 
@@ -62,7 +62,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 			throw new IllegalArgumentException(
 					"number of aliases does not match number of input attributes for rename");
 		}
-		this.outputSchema = new SDFAttributeList();
+		this.outputSchema = new SDFAttributeList(inputSchema.getURI());
 		Iterator<SDFAttribute> it = inputSchema.iterator();
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.

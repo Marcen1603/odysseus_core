@@ -74,9 +74,9 @@ public class JoinAO extends BinaryLogicalOp {
 	public synchronized SDFAttributeList getOutputSchema() {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata) {
-			outputSchema = new SDFAttributeList();
+			outputSchema = new SDFAttributeList("");
 			for (LogicalSubscription l : getSubscribedToSource()) {
-				outputSchema.addAttributes(l.getSchema());
+				outputSchema = SDFAttributeList.union(outputSchema, l.getSchema());
 			}
 			recalcOutputSchemata = false;
 		}

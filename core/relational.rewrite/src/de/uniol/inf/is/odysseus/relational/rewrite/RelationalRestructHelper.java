@@ -154,7 +154,7 @@ public class RelationalRestructHelper {
 		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
 
 		// change attribute names for projection
-		SDFAttributeList newOutputSchema = new SDFAttributeList();
+		SDFAttributeList newOutputSchema = new SDFAttributeList(oldOutputSchema.getURI());
 		for (SDFAttribute a : oldOutputSchema) {
 			int pos = son.getOutputSchema().indexOf(a);
 			newOutputSchema.add(inputSchema.get(pos));
@@ -164,7 +164,7 @@ public class RelationalRestructHelper {
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
 		// remove attributes from rename operator that get projected away
-		SDFAttributeList newRenameSchema = new SDFAttributeList();
+		SDFAttributeList newRenameSchema = new SDFAttributeList(inputSchema.getURI());
 		Iterator<SDFAttribute> inIt = inputSchema.iterator();
 		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
 		while (inIt.hasNext()) {

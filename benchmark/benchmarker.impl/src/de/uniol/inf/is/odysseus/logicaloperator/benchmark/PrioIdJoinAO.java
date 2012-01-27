@@ -72,8 +72,9 @@ public class PrioIdJoinAO extends AbstractLogicalOperator implements
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList outputSchema = new SDFAttributeList();
+		SDFAttributeList outputSchema = new SDFAttributeList("");
 		for (LogicalSubscription l : getSubscribedToSource()) {
+			outputSchema = SDFAttributeList.union(outputSchema, l.getSchema());
 			outputSchema.addAttributes(l.getSchema());
 		}
 		return outputSchema;

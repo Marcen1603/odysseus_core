@@ -65,7 +65,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
 		SDFEntity sdfEntity = new SDFEntity(sourceName);
 		List<SDFAttribute> attributeList = attributes.getValue();
-		SDFAttributeList schema = new SDFAttributeList(attributeList);
+		SDFAttributeList schema = new SDFAttributeList(sourceName, attributeList);
 		sdfEntity.setAttributes(schema);
 
 		getDataDictionary().addSourceType(sourceName,

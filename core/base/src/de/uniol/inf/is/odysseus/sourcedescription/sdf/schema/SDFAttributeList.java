@@ -31,32 +31,32 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
         super(URI);
     }
 
-    public SDFAttributeList() {
-        super();
-    }
+//    public SDFAttributeList() {
+//        super();
+//    }
 
     /**
      * @param attributes1
      */
-    public SDFAttributeList(SDFAttributeList attributes1) {
-        super(attributes1);
+    public SDFAttributeList(String uri, SDFAttributeList attributes1) {
+        super(uri, attributes1);
     }
 
-    public SDFAttributeList(SDFAttribute... attributes1) {
-        super();
+    public SDFAttributeList(String uri, SDFAttribute... attributes1) {
+        super(uri);
         for (SDFAttribute a : attributes1) {
             this.add(a);
         }
     }
 
-    public SDFAttributeList(Collection<SDFAttribute> attributes1) {
-        super();
+    public SDFAttributeList(String uri, Collection<SDFAttribute> attributes1) {
+        super(uri);
         super.addAll(attributes1);
     }
 
     @Override
     public SDFAttributeList clone() {
-        return new SDFAttributeList(this);
+        return new SDFAttributeList(this.getURI(), this);
     }
 
     public void addAttribute(SDFAttribute attribute) {
@@ -95,7 +95,8 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
         if (attributes2 == null || attributes2.getAttributeCount() == 0) {
             return attributes1;
         }
-        SDFAttributeList newSet = new SDFAttributeList(attributes1);
+        String name = getNewName(attributes1, attributes2);
+        SDFAttributeList newSet = new SDFAttributeList(name, attributes1);
         for (int i = 0; i < attributes2.size(); i++) {
             if (!newSet.contains(attributes2.getAttribute(i))) {
                 newSet.addAttribute(attributes2.getAttribute(i));
@@ -103,6 +104,12 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
         }
         return newSet;
     }
+
+	protected static String getNewName(SDFAttributeList attributes1,
+			SDFAttributeList attributes2) {
+		String name = attributes1.getURI().compareToIgnoreCase(attributes2.getURI())>=0?attributes1.getURI()+attributes2.getURI():attributes2.getURI()+attributes1.getURI();
+		return name;
+	}
 
     /**
      * attributes1 - attributes2
@@ -114,7 +121,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
     public static SDFAttributeList difference(SDFAttributeList attributes1,
             SDFAttributeList attributes2) {
 
-        SDFAttributeList newSet = new SDFAttributeList(attributes1);
+        SDFAttributeList newSet = new SDFAttributeList(attributes1.getURI(), attributes1);
         for (int j = 0; j < attributes2.getAttributeCount(); j++) {
             SDFAttribute nextAttr = attributes2.getAttribute(j);
 
@@ -138,7 +145,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      */
     public static SDFAttributeList intersection(SDFAttributeList attributes1,
             SDFAttributeList attributes2) {
-        SDFAttributeList newSet = new SDFAttributeList();
+        SDFAttributeList newSet = new SDFAttributeList(getNewName(attributes1, attributes2));
         for (int j = 0; j < attributes1.getAttributeCount(); j++) {
             SDFAttribute nextAttr = attributes1.getAttribute(j);
 

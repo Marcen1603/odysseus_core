@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
 public class SaseAOBuilder extends AbstractOperatorBuilder {

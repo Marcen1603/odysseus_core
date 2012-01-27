@@ -26,11 +26,11 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 	}
 
 	public SDFMetaAttributeList(SDFMetaAttributeList attributes1) {
-		super(attributes1);
+		super("",attributes1);
 	}
 
 	public SDFAttributeList convertToSDFAttributeList(){
-		SDFAttributeList list = new SDFAttributeList();
+		SDFAttributeList list = new SDFAttributeList("");
 		for(SDFMetaAttribute metaattribute : this){
 			Class<?> metaClass = metaattribute.getMetaAttributeClass();
 			for(Method m : metaClass.getMethods()){

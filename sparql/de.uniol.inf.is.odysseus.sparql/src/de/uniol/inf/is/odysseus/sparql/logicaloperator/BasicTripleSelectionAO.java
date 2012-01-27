@@ -18,7 +18,7 @@ public class BasicTripleSelectionAO extends SelectAO {
 	}
 	
 	public void calcOutElements(){
-		SDFAttributeList l = new SDFAttributeList();
+		SDFAttributeList l = new SDFAttributeList("");
 		if (triple.getSubject().isVariable()){
 			l.add(new SDFAttribute(null,this.hashCode()+"#"+triple.getSubject().getName(), SDFDatatype.STRING));
 		}

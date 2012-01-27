@@ -576,7 +576,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	private Map<Integer, SDFAttributeList> createCleanClone(Map<Integer, SDFAttributeList> old){
 		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
 		for(Entry<Integer, SDFAttributeList> e : old.entrySet()){
-			copy.put(e.getKey(), new SDFAttributeList(e.getValue()));
+			copy.put(e.getKey(), new SDFAttributeList(e.getValue().getURI(), e.getValue()));
 		}
 		return copy;
 	}

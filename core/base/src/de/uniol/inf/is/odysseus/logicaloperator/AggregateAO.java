@@ -49,7 +49,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		super();
 		aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
-		outputSchema = new SDFAttributeList();
+		outputSchema = new SDFAttributeList(getInputSchema()!=null?getInputSchema().getURI():"");
 	}
 
 	public AggregateAO(AggregateAO op) {
@@ -63,7 +63,7 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	public void addAggregation(SDFAttribute attribute,
 			AggregateFunction function, SDFAttribute outAttribute) {
-		SDFAttributeList attributes = new SDFAttributeList();
+		SDFAttributeList attributes = new SDFAttributeList("");
 		attributes.add(attribute);
 		addAggregation(attributes, function, outAttribute);
 	}

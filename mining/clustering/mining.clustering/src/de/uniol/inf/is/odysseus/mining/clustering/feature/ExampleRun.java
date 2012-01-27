@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ExampleRun {
 
 	public static void main(String[] args) {
-		SDFAttributeList schema = new SDFAttributeList();
+		SDFAttributeList schema = new SDFAttributeList("dummy");
 		SDFAttribute attributeID = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
 		schema.add(attributeID);
 		SDFAttribute attributeName = new SDFAttribute(null,"name", SDFDatatype.STRING);

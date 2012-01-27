@@ -37,7 +37,7 @@ public enum NEXMarkStreamType {
 		if (schema == null) {
 			switch (type) {
 			case PERSON:
-				schema = new SDFAttributeList();
+				schema = new SDFAttributeList("Person");
 				SDFAttribute a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
@@ -54,7 +54,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case AUCTION:
-				schema = new SDFAttributeList();
+				schema = new SDFAttributeList("Auction");
 				a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
@@ -75,7 +75,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case BID:
-				schema = new SDFAttributeList();
+				schema = new SDFAttributeList("Bid");
 				a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"auction", SDFDatatype.INTEGER);
@@ -88,7 +88,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case CATEGORY:
-				schema = new SDFAttributeList();
+				schema = new SDFAttributeList("Category");
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
 				schema.add(a);
 				a = new SDFAttribute(null,"name", SDFDatatype.STRING);

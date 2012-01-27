@@ -30,6 +30,7 @@ ALT :('A'|'a')('L'|'l')('T'|'t');
 LEFTCURLY : '{';
 RIGHTCURLY : '}';	
 AND : ('A'|'a')('N'|'n')('D'|'d');	
+AS : ('A'|'a')('S'|'s');
 LEN 	: ('L'|'l')('E'|'e')('N'|'n');
 
 BBRACKETLEFT :  '[';

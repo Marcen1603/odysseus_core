@@ -145,7 +145,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     }
     
 	private SDFAttributeList calcOutputSchema(){
-		SDFAttributeList outputSchema = new SDFAttributeList();
+		SDFAttributeList outputSchema = new SDFAttributeList("");
 		if (triple.getSubject().isVariable()){
 			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(),SDFDatatype.STRING);
 			outputSchema.add(subject);

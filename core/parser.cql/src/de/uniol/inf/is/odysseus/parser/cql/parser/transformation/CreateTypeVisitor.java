@@ -50,8 +50,8 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	
 	@Override
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
-		attributes = new SDFAttributeList();
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		attributes = new SDFAttributeList(name);
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, attributes);

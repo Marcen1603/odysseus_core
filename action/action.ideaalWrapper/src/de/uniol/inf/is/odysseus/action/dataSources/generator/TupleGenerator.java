@@ -34,7 +34,7 @@ public class TupleGenerator {
 	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
 
 	public TupleGenerator(GeneratorConfig config, GeneratorType type) throws GeneratorException{
-		this.schema = new SDFAttributeList();
+		this.schema = new SDFAttributeList(type.name());
 		this.genTyp = type;
 		this.config = config;
 		

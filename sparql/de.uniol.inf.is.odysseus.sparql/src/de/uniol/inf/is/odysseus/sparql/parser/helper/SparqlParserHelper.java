@@ -126,7 +126,7 @@ public class SparqlParserHelper {
 	 * @return
 	 */
 	private static SDFAttributeList getCommonVariables(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
-		SDFAttributeList commonSchema = new SDFAttributeList();
+		SDFAttributeList commonSchema = new SDFAttributeList("");
 		for(SDFAttribute leftAttr: leftSchema){
 			for(SDFAttribute rightAttr: rightSchema){
 				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){

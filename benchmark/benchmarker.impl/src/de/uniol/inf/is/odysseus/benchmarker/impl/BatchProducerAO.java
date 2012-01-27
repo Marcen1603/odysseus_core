@@ -51,7 +51,7 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		return new SDFAttributeList();
+		return new SDFAttributeList("");
 	}
 
 	public List<Integer> getElementCounts() {

@@ -133,7 +133,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
-			SDFAttributeList schema = new SDFAttributeList();
+			SDFAttributeList schema = new SDFAttributeList("");
 			for (InputOperatorItem opItem : inputOperators.values()) {
 				schema = SDFAttributeList.union(schema,
 						opItem.operator.getOutputSchema());
@@ -206,7 +206,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private IAttributeResolver buildAttributeResolver(
 			List<ILogicalOperator> inputOps) {
-		SDFAttributeList attributes = new SDFAttributeList();
+		SDFAttributeList attributes = new SDFAttributeList("tmp");
 		for (ILogicalOperator op : inputOps) {
 			attributes.addAll(op.getOutputSchema());
 		}

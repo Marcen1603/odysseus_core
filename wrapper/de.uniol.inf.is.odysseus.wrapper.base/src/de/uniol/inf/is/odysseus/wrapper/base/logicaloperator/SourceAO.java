@@ -111,7 +111,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 */
 	@Parameter(name = "SCHEMA", type = StringParameter.class, isList = true)
 	public void setOutputSchemaWithList(final List<String> schemaAttributes) {
-		final SDFAttributeList schema = new SDFAttributeList();
+		final SDFAttributeList schema = new SDFAttributeList("");
 		for (final String item : schemaAttributes) {
 			final String[] schemaInformation = item.split(":");
 			final SDFAttribute attribute = new SDFAttribute(null,

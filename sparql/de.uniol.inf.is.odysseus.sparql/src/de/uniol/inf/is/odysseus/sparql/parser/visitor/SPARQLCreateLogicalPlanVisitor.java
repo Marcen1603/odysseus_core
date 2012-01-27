@@ -271,7 +271,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			if(node.getAggregations().isEmpty()){
 				ProjectAO projectAO = new ProjectAO();
 				
-				SDFAttributeList outputSchema = new SDFAttributeList();
+				SDFAttributeList outputSchema = new SDFAttributeList("");
 				
 				/* In SPARQL Variables are used only for natural joins.
 				 * Odysseus does not provide a natural join and therefore
@@ -1249,7 +1249,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		boolean isPersistent = node.isPersistent();
 		
 		// the schema
-		SDFAttributeList outputSchema = new SDFAttributeList();
+		SDFAttributeList outputSchema = new SDFAttributeList("");
 		
 		SDFAttribute subject = new SDFAttribute(null,streamName + ".subject", SDFDatatype.STRING);
 		outputSchema.add(subject);
@@ -1358,7 +1358,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	 * @return
 	 */
 	private static SDFAttributeList getCommonVariables(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
-		SDFAttributeList commonSchema = new SDFAttributeList();
+		SDFAttributeList commonSchema = new SDFAttributeList("");
 		for(SDFAttribute leftAttr: leftSchema){
 			for(SDFAttribute rightAttr: rightSchema){
 				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){

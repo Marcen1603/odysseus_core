@@ -95,7 +95,7 @@ patternPart
 	;
 	
 returnPart
-	:	 RETURN attributeTerm (COMMA attributeTerm)* -> ^(RETURN attributeTerm*)
+	:	 RETURN attributeTerm (COMMA attributeTerm)* AS NAME-> ^(RETURN NAME attributeTerm*)
 	;
 	
 patternDecl

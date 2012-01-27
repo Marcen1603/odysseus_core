@@ -70,7 +70,7 @@ public class MarkovAOBuilder extends AbstractOperatorBuilder {
 		HiddenMarkovModel hmm = HiddenMarkovModelDictionary.getInstance().getHMM(this.hmm.getValue());
 		MarkovAO ao = new MarkovAO(hmm);
 		if(groupBy.hasValue()){
-			SDFAttributeList groupList = new SDFAttributeList(groupBy.getValue());
+			SDFAttributeList groupList = new SDFAttributeList("",groupBy.getValue());
 			ao.addGroupingAttributes(groupList);
 		}
 		for(AggregateItem item : this.aggregations.getValue()){

@@ -132,7 +132,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	@Override
 	public SDFAttributeList getOutputSchema() {
 
-		SDFAttributeList outputSchema = new SDFAttributeList();
+		SDFAttributeList outputSchema = new SDFAttributeList("Cluster");
 		SDFAttribute id = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
 		outputSchema.add(id);
 		outputSchema.addAll(getInputSchema().clone());
@@ -151,7 +151,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 		if (port == 0) {
 			return getOutputSchema();
 		} else {
-			SDFAttributeList clusterSchema = new SDFAttributeList();
+			SDFAttributeList clusterSchema = new SDFAttributeList("Cluster");
 			SDFAttribute idA = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
 			clusterSchema.add(idA);
 			SDFAttribute idCount = new SDFAttribute(null,"cluster_count", SDFDatatype.LONG);

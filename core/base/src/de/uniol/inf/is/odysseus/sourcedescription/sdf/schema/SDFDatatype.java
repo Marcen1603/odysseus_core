@@ -46,7 +46,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 	
 	public static final SDFDatatype SPATIAL_POINT = new SDFDatatype("SpatialPoint", SDFDatatype.KindOfDatatype.BEAN, 
-			new SDFAttributeList(
+			new SDFAttributeList("Coordinate",
 					new SDFAttribute(null,"x", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"y", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"z", SDFDatatype.DOUBLE)));
@@ -55,7 +55,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	
 	public static final SDFDatatype SPATIAL_LINE = new SDFDatatype("SpatialLine", SDFDatatype.KindOfDatatype.BEAN,
-			new SDFAttributeList(
+			new SDFAttributeList("Line",
 					new SDFAttribute(null,"start", SDFDatatype.SPATIAL_POINT),
 					new SDFAttribute(null,"end", SDFDatatype.SPATIAL_POINT)));
 	
@@ -63,7 +63,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	
 	public static final SDFDatatype SPATIAL_POLYGON = new SDFDatatype("SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
-			new SDFAttributeList(
+			new SDFAttributeList("Points",
 					new SDFAttribute(null,"points", SDFDatatype.SPATIAL_MULTI_POINT)));
 	
 	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype("SpatialMultiPolygon", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFDatatype.SPATIAL_POLYGON);
@@ -97,7 +97,7 @@ public class SDFDatatype extends SDFElement implements Serializable{
 	
 	
 	public static final SDFDatatype GRID = new SDFDatatype("Grid",
-			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList(
+			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList("",
 					new SDFAttribute(null,"origin", SDFDatatype.SPATIAL_POINT),
 					new SDFAttribute(null,"cellsize", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"grid", SDFDatatype.MATRIX_BYTE)));

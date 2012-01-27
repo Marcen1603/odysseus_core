@@ -104,8 +104,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
-		attributes = new SDFAttributeList();
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		attributes = new SDFAttributeList(name);
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFEntity entity = new SDFEntity(name);
 		entity.setAttributes(attributes);

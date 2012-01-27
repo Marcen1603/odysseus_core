@@ -35,7 +35,7 @@ public class UnNestAO extends UnaryLogicalOp {
     private static final long serialVersionUID = -5918972476973244744L;
     private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
     private SDFAttribute attribute;
-    private SDFAttributeList outputSchema = new SDFAttributeList();
+    private SDFAttributeList outputSchema = new SDFAttributeList("UNNEST");
 
     /**
      * 
@@ -69,7 +69,7 @@ public class UnNestAO extends UnaryLogicalOp {
     @Override
     public SDFAttributeList getOutputSchema() {
         if (outputSchema == null || recalcOutputSchemata) {
-            outputSchema = new SDFAttributeList();
+            outputSchema = new SDFAttributeList("UNNEST");
             for (int i = 0; i < getInputSchema().getAttributeCount(); i++) {
                 if ((getInputSchema().getAttribute(i).equals(attribute))
                         && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {

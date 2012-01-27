@@ -81,7 +81,7 @@ public enum Sensor {
 			schema = new HashMap<Sensor, SDFAttributeList>();
 
 			// BedBalance
-			SDFAttributeList schema = new SDFAttributeList();
+			SDFAttributeList schema = new SDFAttributeList("Bed");
 			String[] identifiers = { "timestamp", "id", "weight0", "weight1",
 					"weight2", "weight3" };
 			SDFDatatype[] types = { SDFDatatype.LONG, SDFDatatype.INTEGER,
@@ -96,7 +96,7 @@ public enum Sensor {
 			Sensor.schema.put(Sensor.BedBalance, schema);
 
 			// Bed1-Bed4
-			schema = new SDFAttributeList();
+			schema = new SDFAttributeList("Bed");
 
 			for (int i = 0; i < 3; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],

@@ -106,7 +106,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
 		}
 		if (element != null && element instanceof SDFAttributeList){				
-			return "OutputSchema";
+			return "OutputSchema ("+((SDFAttributeList)element).getURI()+")";
 		}
 
 		if (element != null && element instanceof IPredicate){				

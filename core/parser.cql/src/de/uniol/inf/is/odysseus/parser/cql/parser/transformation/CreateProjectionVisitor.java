@@ -16,10 +16,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
@@ -47,7 +45,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -58,9 +55,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator top;
 
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-	private SDFAttributeList outputSchema = new SDFAttributeList();
+	private SDFAttributeList outputSchema = new SDFAttributeList("");
 
-	private SDFAttributeList aliasSchema = new SDFAttributeList();
+	private SDFAttributeList aliasSchema = new SDFAttributeList("");
 
 	double[][] projectionMatrix = null;
 
@@ -146,7 +143,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		outputSchema = top.getOutputSchema();
-		for (SDFAttribute attribute : top.getOutputSchema()) {
+		aliasSchema = new SDFAttributeList(top.getOutputSchema().getURI());
+		for (SDFAttribute attribute : outputSchema) {
 			SDFAttribute attr = (SDFAttribute) attribute;
 			if (attr.getSourceName() != null) {
 				// Create new Attribute without sourcepart
@@ -249,7 +247,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	/**
 	 * checks wether outputschema contains ambigious identifiers
 	 */
-	private void checkAttributes(SDFAttributeList outputSchema) {
+	private void checkAttributes(SDFAttributeList aliasSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
 				throw new IllegalArgumentException("ambigious attribute: " + attribute);
