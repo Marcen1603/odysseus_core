@@ -64,7 +64,7 @@ createStmt
 	: CREATE VIEW NAME queryStmt -> ^(CREATEVIEW NAME queryStmt);
 	
 
-queryStmt:  patternPart wherePart? withinPart? returnPart? -> ^(QUERY patternPart wherePart? withinPart? returnPart?)
+queryStmt:  patternPart wherePart? withinPart? returnPart -> ^(QUERY patternPart wherePart? withinPart? returnPart)
 	;
 	
 		
