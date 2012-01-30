@@ -75,17 +75,23 @@ public class DataReader {
 
 	}
 
-	public synchronized void addListener(DataProvider provider) {
-		this.clients.add(provider);
+	public void addListener(DataProvider provider) {
+		synchronized (this.clients) {
+			this.clients.add(provider);
+		}
 	}
 
-	public synchronized void removeListener(DataProvider provider) {
-		this.clients.remove(provider);
+	public void removeListener(DataProvider provider) {
+		synchronized (this.clients) {
+			this.clients.remove(provider);
+		}
 	}
 
 	public synchronized void processLines() {
+		long startTime = System.currentTimeMillis();
 		String line;
 		try {
+
 			lineNr = 0;
 			line = in.readLine();
 			while (line != null) {
@@ -107,14 +113,14 @@ public class DataReader {
 					position++;
 				}
 				parts.add(token);
-				
-				if(parts.size()>4){
+
+				if (parts.size() > 4) {
 					String adl = parts.get(4).trim();
-					if(!adls.contains(adl)){
+					if (!adls.contains(adl)) {
 						adls.add(adl);
 					}
 				}
-				
+
 				String timeString = parts.get(1);
 				// ein fehler im datensatz, wenn nur sekunden angegeben sind...
 				if (timeString.length() <= 8) {
@@ -142,24 +148,27 @@ public class DataReader {
 				tuple.addString(value);
 				tuple.addLong(timeInMillis);
 
-				for (DataProvider provider : this.clients) {
-					if (provider.getStreamName().equals(type)) {
-						provider.addTuple(tuple);
+				synchronized (this.clients) {
+					for (DataProvider provider : this.clients) {
+						if (provider.getStreamName().equals(type)) {
+							provider.addTuple(tuple);
+						}
 					}
 				}
-				if (lineNr % 2500 == 0) {
-					System.out.println("Line: " + lineNr);
+				if (lineNr % 10000 == 0) {
+					System.out.println("Line: " + lineNr + " Time in ms: " + (System.currentTimeMillis() - startTime));
 				}
 
 			}
+			init();
 		} catch (Exception e) {
 			System.err.println("Fehler bei Zeile " + lineNr);
 			e.printStackTrace();
 		}
-		for(String a : adls){
-			System.out.println(a);
-		}
-		System.exit(0);
+		// for (String a : adls) {
+		// System.out.println(a);
+		// }
+		// System.exit(0);
 	}
 
 	public void init() {
