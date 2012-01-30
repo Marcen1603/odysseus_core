@@ -15,17 +15,19 @@ public class PunctuationPO<T extends IMetaAttributeContainer<? extends ITimeInte
 	public PunctuationPO(final long ratio) {
 		this.punctuationTime = PointInTime.getZeroTime();
 		this.ratio = ratio;
+		this.count = 0;
 	}
 
 	public PunctuationPO(final PunctuationPO<T> po) {
-		this.count = po.count;
+		this.punctuationTime = po.punctuationTime.clone();
 		this.ratio = po.ratio;
-		this.punctuationTime = po.punctuationTime;
+		this.count = po.count;
+
 	}
 
 	@Override
 	public AbstractPipe.OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.NEW_ELEMENT;
 	}
 
 	@Override
@@ -39,11 +41,16 @@ public class PunctuationPO<T extends IMetaAttributeContainer<? extends ITimeInte
 		} else {
 			this.count++;
 			if (count % ratio == 0) {
-				this.count = 0;
 				if (tuple.getMetadata().getStart().after(punctuationTime)) {
 					punctuationTime = tuple.getMetadata().getStart();
 				}
 				sendPunctuation(punctuationTime);
+			}
+		}
+		synchronized (this) {
+			if (isDone()) {
+				propagateDone();
+				return;
 			}
 		}
 	}

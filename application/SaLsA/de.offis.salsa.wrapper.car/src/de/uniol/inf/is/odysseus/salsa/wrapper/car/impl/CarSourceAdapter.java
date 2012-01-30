@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 		SourceAdapter {
 	private static Logger LOG = LoggerFactory.getLogger(CarSourceAdapter.class);
-	private static final int LENGTH = 24;
 	private final Map<SourceSpec, Thread> serverThreads = new HashMap<SourceSpec, Thread>();
 
 	@Override
@@ -163,31 +162,41 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 								int id = (int) buffer.getShort();
 								int x = buffer.getInt();
 								int y = buffer.getInt();
-								float speed = buffer.getFloat();
-								float angle = buffer.getFloat();
-//								if (System.currentTimeMillis() - timestamp > 50) {
-//									CarSourceAdapter.LOG.error(String.format(
-//											"Lag with timestamp %s to %s = %s",
-//											timestamp,
-//											System.currentTimeMillis(),
-//											System.currentTimeMillis()
-//													- timestamp));
+								double speed = Float.valueOf(buffer.getFloat())
+										.doubleValue();
+								double angle = Float.valueOf(buffer.getFloat())
+										.doubleValue();
+								
+								//FIXME
+								 calendar = Calendar
+										.getInstance(TimeZone
+												.getTimeZone("UTC"));
+								timestamp = calendar.getTimeInMillis();
+								this.adapter.transfer(this.sourceSpec,
+										timestamp, new Object[] { id,
+												new Coordinate(x, y),
+												speed, angle, timestamp });
+								
+								
+//								if (currentTimestamp <= timestamp) {
+//									currentTimestamp = timestamp;
+//									this.adapter.transfer(this.sourceSpec,
+//											timestamp, new Object[] { id,
+//													new Coordinate(x, y),
+//													speed, angle, timestamp });
+//								} else {
+//									calendar = Calendar.getInstance(TimeZone
+//											.getTimeZone("UTC"));
+//									currentTimestamp = calendar
+//											.getTimeInMillis();
+//									this.dumpPackage(buffer);
+//									this.writeLog(id, new Coordinate(x, y),
+//											speed, angle, timestamp);
+//									CarSourceAdapter.LOG
+//											.error(String
+//													.format("Invalid timestamp %s, please refer to log file",
+//															timestamp));
 //								}
-								if (currentTimestamp < timestamp) {
-									currentTimestamp = timestamp;
-									this.adapter.transfer(this.sourceSpec,
-											timestamp, new Object[] { id,
-													new Coordinate(x, y),
-													speed, angle, timestamp });
-								} else {
-									this.dumpPackage(buffer);
-									this.writeLog(id, new Coordinate(x, y),
-											speed, angle, timestamp);
-									CarSourceAdapter.LOG
-											.error(String
-													.format("Invalid timestamp %s, please refer to log file",
-															timestamp));
-								}
 							} catch (final Exception e) {
 								if (CarSourceAdapter.LOG.isDebugEnabled()) {
 									CarSourceAdapter.LOG.debug(e.getMessage(),
@@ -229,8 +238,8 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 				}
 			}
 
-			public void writeLog(int id, Coordinate coordinate, float speed,
-					float angle, final long timestamp) {
+			public void writeLog(int id, Coordinate coordinate, double speed,
+					double angle, final long timestamp) {
 				if ((logChannel != null) && (logChannel.isOpen())) {
 					charBuffer.append(timestamp + ",");
 					charBuffer.append(coordinate.x + ",");

@@ -61,8 +61,7 @@ public class SubGrid extends AbstractFunction<Grid> {
 
     @Override
     public int getArity() {
-        // FIXME Set back to 5
-        return 4;
+        return 5;
     }
 
     @Override
@@ -78,24 +77,22 @@ public class SubGrid extends AbstractFunction<Grid> {
     @Override
     public Grid getValue() {
         final Grid grid = (Grid) this.getInputValue(0);
-        // final Coordinate point = (Coordinate) this.getInputValue(1);
-        // final Double length = (Double) this.getInputValue(2);
-        // final Double width = (Double) this.getInputValue(3);
-        // final Float angle = (Float) this.getInputValue(4);
+        final Coordinate point = (Coordinate) this.getInputValue(1);
+        final Double width = (Double) this.getInputValue(2);
+        final Double depth = (Double) this.getInputValue(3);
+        final Double angle = (Double) this.getInputValue(4);
 
-        final Coordinate point = new Coordinate(0, 0);
-        final Double width = (Double) this.getInputValue(1);
-        final Double depth = (Double) this.getInputValue(2);
-        // final Double angle = (Double) this.getInputValue(3);
-        Double angle = -45.0;
+        // Double angle = -45.0;
         final double sin = Math.sin(Math.toRadians(angle));
         final double cos = Math.cos(Math.toRadians(angle));
 
         // Origin of the sub-grid in global coordinate system (in cm)
         // x' = x_0 + (x - x_0) cos(alpha) - (y - y_0) sin(alpha)
         // y' = y_0 + (x - x_0) sin(alpha) + (y - y_0) cos(alpha)
-        final double originX = point.x + (((width / 2) * cos) - ((depth / 2) * sin));
-        final double originY = point.y + ((width / 2) * sin) + ((depth / 2) * cos);
+        final double originX = point.x + ((point.x - (width / 2) - point.x) * cos)
+                - ((point.y - (depth / 2) - point.y) * sin);
+        final double originY = point.y + ((point.x - (width / 2) - point.x) * sin)
+                + ((point.y - (depth / 2) - point.y) * cos);
 
         final Grid subgrid = new Grid(new Coordinate(originX, originY), width, depth, grid.cellsize);
 
@@ -124,35 +121,59 @@ public class SubGrid extends AbstractFunction<Grid> {
         roiDepth = (int) (Math.abs(widthSin) + Math.abs(depthCos) + 0.5);
 
         // Center point in the ROI (in grid cells)
-        final CvPoint2D32f center = new CvPoint2D32f(roiWidth / 2, roiDepth / 2);
+        final CvPoint2D32f center = new CvPoint2D32f(roiWidth / 2, (roiDepth / 2));
+
+        final CvRect subRect = new CvRect();
+        if ((globalGridCenterX - (roiWidth / 2)) < 0) {
+            subRect.x((roiWidth / 2) - globalGridCenterX);
+        }
+        else {
+            subRect.x(0);
+        }
+        if ((globalGridCenterY - (roiDepth / 2)) < 0) {
+            subRect.y((roiDepth / 2) - globalGridCenterY);
+        }
+        else {
+            subRect.y(0);
+        }
+        subRect.width(Math.min(subimage.width() - subRect.x(), roiWidth));
+        subRect.height(Math.min(subimage.height() - subRect.y(), roiDepth));
 
         // X and Y of the ROI (in grid cells)
         final int roiX = Math.max(globalGridCenterX - (roiWidth / 2), 0);
-        final int roiY = Math.max(globalGridCenterY - (roiDepth / 2), 0);
+        final int roiY = Math.max((globalGridCenterY) - (roiDepth / 2), 0);
 
         // Width and length of the ROI (in grid cells)
         roiWidth = (roiX + roiWidth) > grid.width ? grid.width - roiX : roiWidth;
-        roiDepth = (roiY + roiDepth) > grid.depth ? grid.depth - roiY : roiDepth;
+        roiDepth = (roiY + roiDepth) < grid.depth ? grid.depth - roiY : roiDepth;
 
-        // Rect for the ROI
-        final CvRect roiRect = new CvRect();
-        roiRect.x(roiX);
-        roiRect.y(roiY);
-        roiRect.width(roiWidth);
-        roiRect.height(roiDepth);
+        if ((roiWidth > 0) && (roiDepth > 0)) {
+            // Rect for the ROI
+            final CvRect roiRect = new CvRect();
 
-        IplImage roi = opencv_core.cvCreateImage(
-                opencv_core.cvSize(roiRect.width(), roiRect.height()), opencv_core.IPL_DEPTH_8U, 1);
-        opencv_core.cvSet(roi, SubGrid.UNKNOWN_PIXEL);
+            roiRect.x(roiX);
+            roiRect.y(roiY);
+            roiRect.width(roiWidth);
+            roiRect.height(roiDepth);
 
-        opencv_core.cvSetImageROI(image, roiRect);
-        opencv_core.cvCopy(image, roi);
-        opencv_core.cvResetImageROI(image);
+            IplImage roi = opencv_core.cvCreateImage(
+                    opencv_core.cvSize(roiRect.width(), roiRect.height()),
+                    opencv_core.IPL_DEPTH_8U, 1);
+            opencv_core.cvSet(roi, SubGrid.UNKNOWN_PIXEL);
 
-        final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_32F);
-        opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
-        opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix, SubGrid.flags, SubGrid.UNKNOWN_PIXEL);
+            opencv_core.cvSetImageROI(image, roiRect);
+            opencv_core.cvCopy(image, roi);
+            opencv_core.cvResetImageROI(image);
 
+            opencv_core.cvSetImageROI(subimage, subRect);
+            final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_32F);
+            opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
+            opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix, SubGrid.flags,
+                    SubGrid.UNKNOWN_PIXEL);
+            opencv_core.cvResetImageROI(subimage);
+            opencv_core.cvReleaseImage(roi);
+            roi = null;
+        }
         for (int d = 0; d < subgrid.depth; d++) {
             if (d * subimage.widthStep() > subgrid.size) {
                 subimage.getByteBuffer(d * subimage.widthStep()).get(subgrid.get(),
@@ -166,11 +187,9 @@ public class SubGrid extends AbstractFunction<Grid> {
 
         opencv_core.cvReleaseImage(image);
         image = null;
-        opencv_core.cvReleaseImage(roi);
-        roi = null;
+
         opencv_core.cvReleaseImage(subimage);
         subimage = null;
         return subgrid;
     }
-
 }

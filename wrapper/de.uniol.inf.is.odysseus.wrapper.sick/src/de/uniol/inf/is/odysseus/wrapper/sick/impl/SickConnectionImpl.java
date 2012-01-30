@@ -38,6 +38,8 @@ public class SickConnectionImpl implements SickConnection {
 		private boolean record = false;
 		private long recordInterval;
 		private long recordEnd;
+		private long timestamp = 0;
+		private long clock = 0;
 		private final SickConnectionImpl connection;
 
 		public SickConnectionHandler(final String host, final int port,
@@ -89,7 +91,7 @@ public class SickConnectionImpl implements SickConnection {
 			this.sendMessage(SickConnectionImpl.STOP_SCAN);
 		}
 
-		private void onMessage(final String message, final long timestamp)
+		private void onMessage(final String message)
 				throws SickReadErrorException {
 			final String[] data = message.split(" ");
 
@@ -243,8 +245,27 @@ public class SickConnectionImpl implements SickConnection {
 							this.background = Background.merge(this.background,
 									measurement);
 						} else {
+							
+							//FIXME
+							Calendar calendar = Calendar
+									.getInstance(TimeZone
+											.getTimeZone("UTC"));
+							this.timestamp = calendar.getTimeInMillis();
+//							if ((this.clock == 0)
+//									|| (this.clock > measurement
+//											.getPowerUpDuration())) {
+//								Calendar calendar = Calendar
+//										.getInstance(TimeZone
+//												.getTimeZone("UTC"));
+//								this.timestamp = calendar.getTimeInMillis();
+//								this.clock = measurement.getPowerUpDuration();
+//							} else {
+//								this.timestamp += (measurement
+//										.getPowerUpDuration() - this.clock) / 1000;
+//								this.clock = measurement.getPowerUpDuration();
+//							}
 							this.connection.onMeasurement(measurement,
-									timestamp);
+									this.timestamp);
 						}
 					}
 				}
@@ -279,44 +300,43 @@ public class SickConnectionImpl implements SickConnection {
 					int size = 0;
 
 					while (!Thread.currentThread().isInterrupted()) {
-						while ((nbytes = this.channel.read(buffer)) > 0) {
-							size += nbytes;
-							for (int i = pos; i < size; i++) {
-								// for (int i = 0; i < size; i++) {
-								if (buffer.get(i) == SickConnectionImpl.END) {
-									buffer.position(i + 1);
-									buffer.flip();
-									final CharBuffer charBuffer;
-									try {
-										charBuffer = decoder.decode(buffer);
-										Calendar calendar = Calendar
-												.getInstance(TimeZone
-														.getTimeZone("UTC"));
-										this.onMessage(
-												charBuffer
-														.subSequence(
-																1,
-																charBuffer
-																		.length() - 1)
-														.toString(), calendar
-														.getTimeInMillis());
-									} catch (final Exception e) {
-										if (SickConnectionImpl.LOG
-												.isDebugEnabled()) {
-											SickConnectionImpl.LOG.debug(
-													e.getMessage(), e);
-											this.dumpPackage(buffer);
-										}
-									}
-									buffer.limit(size);
+						if (this.channel.isConnected()) {
+							while ((nbytes = this.channel.read(buffer)) > 0) {
+								size += nbytes;
+								for (int i = pos; i < size; i++) {
+									// for (int i = 0; i < size; i++) {
+									if (buffer.get(i) == SickConnectionImpl.END) {
+										buffer.position(i + 1);
+										buffer.flip();
+										final CharBuffer charBuffer;
+										try {
+											charBuffer = decoder.decode(buffer);
 
-									buffer.compact();
-									size -= (i + 1);
-									pos = 0;
-									i = 0;
+											this.onMessage(charBuffer
+													.subSequence(
+															1,
+															charBuffer.length() - 1)
+													.toString());
+										} catch (final Exception e) {
+											if (SickConnectionImpl.LOG
+													.isDebugEnabled()) {
+												SickConnectionImpl.LOG.debug(
+														e.getMessage(), e);
+												this.dumpPackage(buffer);
+											}
+										}
+										buffer.limit(size);
+
+										buffer.compact();
+										size -= (i + 1);
+										pos = 0;
+										i = 0;
+									}
 								}
+								pos++;
 							}
-							pos++;
+						} else {
+							break;
 						}
 					}
 					this.onClose();

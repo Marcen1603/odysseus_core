@@ -30,9 +30,9 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
                 opencv_core.cvSize(this.grid.width, this.grid.depth), opencv_core.IPL_DEPTH_8U, 1);
         tmp.getByteBuffer().put(this.grid.getBuffer().duplicate());
         // Plausability Grid
-        // opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TRUNC);
+        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TRUNC);
         // Beliefe Grid
-        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
+        // opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
 
         opencv_core.cvConvertScale(tmp, this.image, 1, 0);
         opencv_core.cvReleaseImage(tmp);
@@ -104,9 +104,9 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
         tmp.getByteBuffer().put(grid.getBuffer().duplicate());
 
         // Plausability Grid
-        // opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TRUNC);
+        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TRUNC);
         // Beliefe Grid
-        opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
+        // opencv_imgproc.cvThreshold(tmp, tmp, 100, 0, opencv_imgproc.CV_THRESH_TOZERO_INV);
 
         opencv_core.cvConvertScale(tmp, merge, 1, 0);
         opencv_core.cvReleaseImage(tmp);

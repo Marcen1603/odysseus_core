@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
-    private final BlockingQueue<Grid> grids = new LinkedBlockingQueue<Grid>();
     private CanvasFrame canvas;
     private final SDFAttributeList schema;
     private final AtomicBoolean pause = new AtomicBoolean(false);
@@ -63,10 +62,10 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
         super.close();
         if (this.canvas != null) {
             this.canvas.dispose();
+            this.canvas = null;
         }
     }
 
