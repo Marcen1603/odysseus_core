@@ -19,6 +19,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.SWT;
 
+import de.uniol.inf.is.odysseus.application.storing.RecordingException;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 
@@ -35,7 +36,11 @@ public class DropRecordingCommand extends AbstractRecordingCommand {
 			if (confirmDialog("Warning", "Do you really want to remove this recording?")) {
 				boolean dropTable = confirmDialog("Drop Table?", "Do you also want to drop the corresponding table from database?", SWT.ICON_QUESTION);
 				RecordEntry record = (RecordEntry) selected;
-				RecordingController.getInstance().dropRecording(record.getName(), dropTable);
+				try {
+					RecordingController.getInstance().dropRecording(record.getName(), dropTable);
+				} catch (RecordingException e) {
+					showError(e.getMessage());
+				}
 			}
 		} else {
 			return null;

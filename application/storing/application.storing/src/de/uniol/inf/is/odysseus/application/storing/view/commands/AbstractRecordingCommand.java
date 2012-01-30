@@ -51,6 +51,17 @@ public abstract class AbstractRecordingCommand extends AbstractHandler {
 		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
 	}
 	
+	protected void showError(String message){
+		showInfoDialog("Error", message, SWT.ICON_ERROR);
+	}
+	
+	protected void showInfoDialog(String title, String message, int icon){
+		MessageBox mb = new MessageBox(getParentShell(), icon | SWT.OK);
+		mb.setText(title);
+		mb.setMessage(message);
+		mb.open();
+	}
+	
 	protected boolean confirmDialog(String title, String message, int icon) {		
 		
 		MessageBox mb = new MessageBox(getParentShell(), icon | SWT.YES | SWT.NO);

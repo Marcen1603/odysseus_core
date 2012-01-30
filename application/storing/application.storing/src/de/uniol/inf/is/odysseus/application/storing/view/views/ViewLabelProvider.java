@@ -28,6 +28,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 	public String getColumnText(Object obj, int index) {
+		
+		
+		
 		return getText(obj);
 	}
 	public Image getColumnImage(Object obj, int index) {

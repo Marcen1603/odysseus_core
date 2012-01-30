@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.application.storing.RecordingException;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.PlayingState;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.State;
 import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
@@ -129,7 +130,7 @@ public class RecordingController {
 
 	private void deployQueries(RecordEntry record) throws PlanManagementException {
 		String sinkName = record.getSinkName();
-		String createSink = "CREATE SINK " + sinkName + " TO DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
+		String createSink = "CREATE SINK " + sinkName + " AS DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
 		IDataDictionary dd = GlobalState.getActiveDatadictionary();
 		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
@@ -140,7 +141,7 @@ public class RecordingController {
 		record.setStreamToQueries(streamToQueries);
 	}
 	
-	public void dropRecording(String name, boolean dropTable){		
+	public void dropRecording(String name, boolean dropTable) throws RecordingException{		
 		RecordEntry record = recordings.get(name);
 		if(!record.isStopped()){
 			stopRecording(name);
@@ -150,8 +151,12 @@ public class RecordingController {
 		}
 		if(dropTable){			
 			IDatabaseConnection connection = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(record.getDatabaseConnection());
-			if(connection.tableExists(record.getTableName())){
-				connection.dropTable(record.getTableName());
+			if(connection != null){
+				if(connection.tableExists(record.getTableName())){
+					connection.dropTable(record.getTableName());
+				}
+			}else{
+				throw new RecordingException("There is no connection named \""+record.getDatabaseConnection()+"\"\nCreate the connection with that name before!");
 			}
 		}
 		recordings.remove(name);
