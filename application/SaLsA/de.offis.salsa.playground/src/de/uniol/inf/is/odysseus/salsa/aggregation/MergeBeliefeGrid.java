@@ -8,18 +8,19 @@ import de.uniol.inf.is.odysseus.salsa.model.Grid;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class MergeGrid extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+public class MergeBeliefeGrid extends
+        AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
 
     private final int attribPos;
 
-    public MergeGrid(int[] pos) {
-        super("MergeGrid");
+    public MergeBeliefeGrid(int[] pos) {
+        super("MergeBeliefeGrid");
         this.attribPos = pos[0];
     }
 
     @Override
     public IPartialAggregate<RelationalTuple<?>> init(final RelationalTuple<?> in) {
-        final IPartialAggregate<RelationalTuple<?>> grid = new GridPartialAggregate<RelationalTuple<?>>(
+        final IPartialAggregate<RelationalTuple<?>> grid = new GridPartialBeliefeAggregate<RelationalTuple<?>>(
                 (Grid) in.getAttribute(attribPos));
         return grid;
     }
@@ -28,13 +29,13 @@ public class MergeGrid extends AbstractAggregateFunction<RelationalTuple<?>, Rel
     public IPartialAggregate<RelationalTuple<?>> merge(
             final IPartialAggregate<RelationalTuple<?>> p, final RelationalTuple<?> toMerge,
             final boolean createNew) {
-        GridPartialAggregate<RelationalTuple<?>> grid = null;
+        GridPartialBeliefeAggregate<RelationalTuple<?>> grid = null;
         if (createNew) {
-            grid = new GridPartialAggregate<RelationalTuple<?>>(
-                    ((GridPartialAggregate<RelationalTuple<?>>) p).getGrid());
+            grid = new GridPartialBeliefeAggregate<RelationalTuple<?>>(
+                    ((GridPartialBeliefeAggregate<RelationalTuple<?>>) p).getGrid());
         }
         else {
-            grid = (GridPartialAggregate<RelationalTuple<?>>) p;
+            grid = (GridPartialBeliefeAggregate<RelationalTuple<?>>) p;
         }
         grid.merge((Grid) toMerge.getAttribute(attribPos));
         return grid;
@@ -42,7 +43,7 @@ public class MergeGrid extends AbstractAggregateFunction<RelationalTuple<?>, Rel
 
     @Override
     public RelationalTuple<?> evaluate(final IPartialAggregate<RelationalTuple<?>> p) {
-        final GridPartialAggregate<RelationalTuple<?>> grid = (GridPartialAggregate<RelationalTuple<?>>) p;
+        final GridPartialBeliefeAggregate<RelationalTuple<?>> grid = (GridPartialBeliefeAggregate<RelationalTuple<?>>) p;
         grid.evaluate();
         @SuppressWarnings("rawtypes")
         final RelationalTuple<?> tuple = new RelationalTuple(1);
