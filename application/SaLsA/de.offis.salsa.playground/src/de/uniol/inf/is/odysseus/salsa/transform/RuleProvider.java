@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.spatial.transform.TVisualGridSinkAORule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
@@ -22,7 +23,6 @@ public class RuleProvider implements ITransformRuleProvider {
     @Override
     public List<IRule<?, ?>> getRules() {
         final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-        rules.add(new TVisualGridSinkAORule());
         rules.add(new TVisualPolygonSinkAORule());
         if (LOG.isDebugEnabled()) {
             for (IRule<?, ?> rule : rules) {

@@ -10,16 +10,10 @@ import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
 import de.uniol.inf.is.odysseus.salsa.function.ClearGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
-import de.uniol.inf.is.odysseus.salsa.function.InverseGrid;
 import de.uniol.inf.is.odysseus.salsa.function.IsGridFree;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
-import de.uniol.inf.is.odysseus.salsa.function.MoveViewPoint;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
-import de.uniol.inf.is.odysseus.salsa.function.RotateGrid;
-import de.uniol.inf.is.odysseus.salsa.function.RotateViewPoint;
-import de.uniol.inf.is.odysseus.salsa.function.SubGrid;
-import de.uniol.inf.is.odysseus.salsa.function.ToGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -44,19 +38,13 @@ public class Activator implements BundleActivator {
         Activator.context = bundleContext;
         try {
             MEP.registerFunction(new ExtractSegments());
-            MEP.registerFunction(new MoveViewPoint());
-            MEP.registerFunction(new RotateViewPoint());
             MEP.registerFunction(new IsPedestrian());
             MEP.registerFunction(new MergeGeometries());
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
-            MEP.registerFunction(new ToGrid());
-            MEP.registerFunction(new InverseGrid());
             MEP.registerFunction(new IEPF());
             MEP.registerFunction(new IsGridFree());
             MEP.registerFunction(new ClearGrid());
-            MEP.registerFunction(new SubGrid());
-            MEP.registerFunction(new RotateGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -72,19 +60,13 @@ public class Activator implements BundleActivator {
         Activator.context = null;
         try {
             MEP.unregisterFunction("ExtractSegments");
-            MEP.unregisterFunction("MoveViewPoint");
-            MEP.unregisterFunction("RotateViewPoint");
             MEP.unregisterFunction("IsPedestrian");
             MEP.unregisterFunction("MergeGeometries");
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
-            MEP.unregisterFunction("ToGrid");
-            MEP.unregisterFunction("InverseGrid");
             MEP.unregisterFunction("IEPF");
             MEP.unregisterFunction("IsGridFree");
             MEP.unregisterFunction("ClearGrid");
-            MEP.unregisterFunction("SubGrid");
-            MEP.unregisterFunction("RotateGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

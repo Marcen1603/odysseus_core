@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.common;
+package de.uniol.inf.is.odysseus.spatial.common;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

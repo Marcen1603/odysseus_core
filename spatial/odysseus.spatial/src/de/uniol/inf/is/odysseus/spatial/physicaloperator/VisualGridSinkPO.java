@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.physicaloperator;
+package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.salsa.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.salsa.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 /**

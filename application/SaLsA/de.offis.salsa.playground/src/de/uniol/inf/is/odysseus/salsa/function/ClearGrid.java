@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.spatial.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

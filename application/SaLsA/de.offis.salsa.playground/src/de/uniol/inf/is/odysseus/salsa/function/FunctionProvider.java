@@ -19,15 +19,10 @@ public class FunctionProvider implements IFunctionProvider {
 
         final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
         functions.add(new ExtractSegments());
-        functions.add(new MoveViewPoint());
-        functions.add(new RotateViewPoint());
-        functions.add(new ToGrid());
-        functions.add(new InverseGrid());
         functions.add(new IEPF());
         functions.add(new IsGridFree());
         functions.add(new ClearGrid());
-        functions.add(new SubGrid());
-        functions.add(new RotateGrid());
+
         return functions;
     }
 }

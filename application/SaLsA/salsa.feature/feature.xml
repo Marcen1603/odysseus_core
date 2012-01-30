@@ -3,7 +3,7 @@
       id="de.offis.salsa.feature"
       label="Salsa Feature"
       version="1.0.0.qualifier"
-      provider-name="OFFIS Oldenburg">
+      provider-name="OFFIS">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,12 +17,20 @@
       [Enter License Description here.]
    </license>
 
-   <plugin
-         id="de.offis.salsa.playground"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus"/>
+      <import plugin="org.junit"/>
+      <import plugin="java.topological.suite"/>
+      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="Commons.Math"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="de.offis.salsa.wrapper.car"
@@ -32,21 +40,14 @@
          unpack="false"/>
 
    <plugin
-         id="de.offis.salsa.wrapper.raw"
+         id="de.uniol.inf.is.odysseus.wrapper.sick"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.offis.salsa.wrapper.scooter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.salsa.playground"
+         id="de.uniol.inf.is.odysseus.wrapper.base"
          download-size="0"
          install-size="0"
          version="0.0.0"

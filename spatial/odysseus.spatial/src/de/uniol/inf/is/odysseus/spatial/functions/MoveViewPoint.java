@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.function;
+package de.uniol.inf.is.odysseus.spatial.functions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,12 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RotateViewPoint extends AbstractFunction<Geometry> {
+public class MoveViewPoint extends AbstractFunction<Geometry> {
+
     /**
      * 
      */
-    private static final long serialVersionUID = -6834872922674099184L;
+    private static final long serialVersionUID = -8906668468905044717L;
     private final GeometryFactory geometryFactory = new GeometryFactory();
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
@@ -27,12 +28,14 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
                     SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
             }, {
                 SDFDatatype.DOUBLE
+            }, {
+                SDFDatatype.DOUBLE
             }
     };
 
     @Override
     public int getArity() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -42,31 +45,28 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
         }
         if (argPos > this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
-                    + " argument(s): A geometry and an angle in degree.");
+                    + " argument(s): A geometry and a x and y value.");
         }
         else {
-            return RotateViewPoint.accTypes[argPos];
+            return MoveViewPoint.accTypes[argPos];
         }
     }
 
     @Override
     public String getSymbol() {
-        return "RotateViewPoint";
+        return "MoveViewPoint";
     }
 
     @Override
     public Geometry getValue() {
         final Geometry geometry = (Geometry) this.getInputValue(0);
-        Double angle = (Double) this.getInputValue(1);
-        angle = Math.toRadians(angle);
-        double sin = Math.sin(angle);
-        double cos = Math.cos(angle);
+        final Double x = (Double) this.getInputValue(1);
+        final Double y = (Double) this.getInputValue(2);
         final List<Point> coordinates = new ArrayList<Point>(geometry.getCoordinates().length);
+
         for (final Coordinate coordinate : geometry.getCoordinates()) {
-            final double x = coordinate.x;
-            final double y = coordinate.y;
-            coordinates.add(this.geometryFactory.createPoint(new Coordinate(x * cos - y * sin, x
-                    * sin + y * cos)));
+            coordinates.add(this.geometryFactory.createPoint(new Coordinate(coordinate.x - x,
+                    coordinate.y - y)));
         }
         return this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {}));
     }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.salsa.model;
+package de.uniol.inf.is.odysseus.spatial.model;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -69,7 +69,7 @@ public class Grid implements Cloneable {
     }
 
     public void fill(byte value) {
-        Arrays.fill(this.buffer.array(), (byte) value);
+        Arrays.fill(this.buffer.array(), value);
     }
 
     @Override

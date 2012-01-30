@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.salsa.logicaloperator;
+package de.uniol.inf.is.odysseus.spatial.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;

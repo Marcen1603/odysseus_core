@@ -5,6 +5,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.spatial.functions.InverseGrid;
+import de.uniol.inf.is.odysseus.spatial.functions.MoveViewPoint;
+import de.uniol.inf.is.odysseus.spatial.functions.RotateGrid;
+import de.uniol.inf.is.odysseus.spatial.functions.RotateViewPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialContains;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialConvexHull;
@@ -21,15 +25,17 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialTouches;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
+import de.uniol.inf.is.odysseus.spatial.functions.SubGrid;
+import de.uniol.inf.is.odysseus.spatial.functions.ToGrid;
 
-public class SpatialFunctionProvider implements IFunctionProvider{
+public class SpatialFunctionProvider implements IFunctionProvider {
 
-	public SpatialFunctionProvider(){
+	public SpatialFunctionProvider() {
 	}
-	
+
 	@Override
 	public List<IFunction<?>> getFunctions() {
-		
+
 		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		functions.add(new SpatialContains());
 		functions.add(new SpatialCoveredBy());
@@ -41,15 +47,23 @@ public class SpatialFunctionProvider implements IFunctionProvider{
 		functions.add(new SpatialIsWithinDistance());
 		functions.add(new SpatialTouches());
 		functions.add(new SpatialWithin());
-		
+
 		functions.add(new SpatialConvexHull());
 		functions.add(new SpatialUnion());
 		functions.add(new SpatialUnionBuffer());
 		functions.add(new SpatialBuffer());
-		
+
 		functions.add(new SpatialIsPolygon());
 		functions.add(new SpatialIsLine());
-		
+
+		// Grid Functions
+		functions.add(new InverseGrid());
+		functions.add(new MoveViewPoint());
+		functions.add(new RotateGrid());
+		functions.add(new RotateViewPoint());
+		functions.add(new SubGrid());
+		functions.add(new ToGrid());
+
 		return functions;
 	}
 

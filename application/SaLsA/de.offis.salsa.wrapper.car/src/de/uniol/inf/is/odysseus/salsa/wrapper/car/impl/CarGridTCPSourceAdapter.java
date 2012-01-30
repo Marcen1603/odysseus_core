@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.salsa.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
@@ -106,9 +106,8 @@ public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 									short height = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
-									Grid grid = new Grid(new Coordinate(x,
-											y), length * cell, width * cell,
-											cell);
+									Grid grid = new Grid(new Coordinate(x, y),
+											length * cell, width * cell, cell);
 									// FIXME Use 3D Grid when height>1
 									for (int l = 0; l < length; l++) {
 										for (int w = 0; w < width; w++) {
