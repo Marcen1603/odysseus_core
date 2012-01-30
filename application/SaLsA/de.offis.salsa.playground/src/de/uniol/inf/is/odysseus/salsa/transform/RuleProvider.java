@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
-import de.uniol.inf.is.odysseus.spatial.transform.TVisualGridSinkAORule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**

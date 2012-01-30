@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.salsa.logicaloperator.VisualPolygonSinkAO;
 import de.uniol.inf.is.odysseus.salsa.physicaloperator.VisualPolygonSinkPO;
-import de.uniol.inf.is.odysseus.spatial.logicaloperator.VisualGridSinkAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -29,20 +29,21 @@ public class TVisualGridSinkAORule extends
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(final VisualGridSinkAO operator,
-			final TransformationConfiguration config) {
+	public void execute(final VisualGridSinkAO visualGridSinkAO,
+			final TransformationConfiguration transformConfig) {
 		try {
-			final VisualGridSinkPO po = new VisualGridSinkPO(
-					operator.getOutputSchema());
-			po.setOutputSchema(operator.getOutputSchema());
-			final Collection<ILogicalOperator> toUpdate = config
-					.getTransformationHelper().replace(operator, po);
-			for (final ILogicalOperator o : toUpdate) {
-				this.update(o);
-			}
-			this.replace(operator, po, config);
-			this.retract(operator);
+			final VisualGridSinkPO visualGridSinkPO = new VisualGridSinkPO(
+					visualGridSinkAO.getOutputSchema());
+			visualGridSinkPO
+					.setOutputSchema(visualGridSinkAO.getOutputSchema());
 
+			Collection<ILogicalOperator> toUpdate = transformConfig
+					.getTransformationHelper().replace(visualGridSinkAO,
+							visualGridSinkPO);
+			for (ILogicalOperator o : toUpdate) {
+				update(o);
+			}
+			retract(visualGridSinkAO);
 		} catch (final Exception e) {
 			TVisualGridSinkAORule.LOG.error(e.getMessage(), e);
 		}
@@ -86,9 +87,14 @@ public class TVisualGridSinkAORule extends
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(final VisualGridSinkAO operator,
-			final TransformationConfiguration config) {
-		return operator.isAllPhysicalInputSet();
+	public boolean isExecutable(VisualGridSinkAO operator,
+			TransformationConfiguration transformConfig) {
+		if (transformConfig.getDataType().equals("relational")) {
+			if (operator.isAllPhysicalInputSet()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class SalsaQueryBuildConfiguration implements IQueryBuildConfiguration {
         settings.add(new ParameterTransformationConfiguration(trafoconfig));
         settings.add(ParameterDoRewrite.TRUE);
         settings.add(ParameterPerformQuerySharing.TRUE);
-        settings.add(ParameterShareSimilarOperators.TRUE);
+        settings.add(ParameterShareSimilarOperators.FALSE);
     }
 
     @Override
