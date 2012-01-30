@@ -10,7 +10,7 @@
 		<class>de.uniol.inf.is.odysseus.usermanagement.domain.impl.RoleImpl</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:derby:odysseus;create=true" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:odysseusDB;create=true" />
 			<property name="eclipselink.target-database" value="Derby" />
 			<property name="eclipselink.jdbc.read-connections.min"
 				value="1" />

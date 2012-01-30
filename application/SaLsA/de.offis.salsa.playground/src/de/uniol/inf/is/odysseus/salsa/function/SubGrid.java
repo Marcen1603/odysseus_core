@@ -4,12 +4,12 @@ import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint2D32f;
 import com.googlecode.javacv.cpp.opencv_core.CvRect;
-import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -39,8 +39,7 @@ public class SubGrid extends AbstractFunction<Grid> {
      * 
      */
     private static final long serialVersionUID = -6671876863268014302L;
-    private final static byte UNKNOWN = (byte) 0xFF;
-    private final static CvScalar UNKNOWN_PIXEL = opencv_core.cvScalarAll(255);
+
 
     @Override
     public SDFDatatype[] getAcceptedTypes(final int argPos) {
@@ -98,12 +97,12 @@ public class SubGrid extends AbstractFunction<Grid> {
 
         IplImage subimage = opencv_core.cvCreateImage(
                 opencv_core.cvSize(subgrid.width, subgrid.depth), opencv_core.IPL_DEPTH_8U, 1);
-        opencv_core.cvSet(subimage, SubGrid.UNKNOWN_PIXEL);
+        opencv_core.cvSet(subimage, OpenCVUtil.UNKNOWN);
 
         // Create global grid view
         IplImage image = opencv_core.cvCreateImage(opencv_core.cvSize(grid.width, grid.depth),
                 opencv_core.IPL_DEPTH_8U, 1);
-        image.getByteBuffer().put(grid.getBuffer());
+        OpenCVUtil.gridToImage(grid, image);
 
         // Position in the global grid (in grid cells)
         final int globalGridCenterX = (int) (Math.abs(point.x - grid.origin.x) / grid.cellsize);
@@ -159,7 +158,7 @@ public class SubGrid extends AbstractFunction<Grid> {
             IplImage roi = opencv_core.cvCreateImage(
                     opencv_core.cvSize(roiRect.width(), roiRect.height()),
                     opencv_core.IPL_DEPTH_8U, 1);
-            opencv_core.cvSet(roi, SubGrid.UNKNOWN_PIXEL);
+            opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
 
             opencv_core.cvSetImageROI(image, roiRect);
             opencv_core.cvCopy(image, roi);
@@ -169,21 +168,12 @@ public class SubGrid extends AbstractFunction<Grid> {
             final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_32F);
             opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
             opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix, SubGrid.flags,
-                    SubGrid.UNKNOWN_PIXEL);
+                    OpenCVUtil.UNKNOWN);
             opencv_core.cvResetImageROI(subimage);
             opencv_core.cvReleaseImage(roi);
             roi = null;
         }
-        for (int d = 0; d < subgrid.depth; d++) {
-            if (d * subimage.widthStep() > subgrid.size) {
-                subimage.getByteBuffer(d * subimage.widthStep()).get(subgrid.get(),
-                        d * subgrid.width, subimage.width());
-            }
-            else {
-                subimage.getByteBuffer(d * subimage.widthStep()).get(subgrid.get(),
-                        d * subgrid.width, subimage.widthStep());
-            }
-        }
+        OpenCVUtil.imageToGrid(subimage, subgrid);
 
         opencv_core.cvReleaseImage(image);
         image = null;

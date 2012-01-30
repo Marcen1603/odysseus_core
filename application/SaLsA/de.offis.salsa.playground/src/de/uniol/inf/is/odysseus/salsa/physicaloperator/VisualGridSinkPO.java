@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.salsa.physicaloperator;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.javacv.CanvasFrame;
@@ -15,6 +14,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.salsa.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -81,7 +81,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
             Grid grid = (Grid) ((RelationalTuple<TimeInterval>) object).getAttribute(0);
             IplImage image = opencv_core.cvCreateImage(opencv_core.cvSize(grid.width, grid.depth),
                     opencv_core.IPL_DEPTH_8U, 1);
-            image.getByteBuffer().put(grid.getBuffer().duplicate());
+            OpenCVUtil.gridToImage(grid, image);
             this.canvas.showImage(image);
             opencv_core.cvReleaseImage(image);
             image = null;
@@ -90,7 +90,9 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 
     @Override
     public void processPunctuation(final PointInTime timestamp, final int port) {
-
+        if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
+            this.canvas.setBackground(new Color(255, 0, 0));
+        }
     }
 
 }

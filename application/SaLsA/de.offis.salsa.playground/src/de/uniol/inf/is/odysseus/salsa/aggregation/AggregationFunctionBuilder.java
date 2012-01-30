@@ -12,12 +12,14 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
-    private final static String MERGEGRID = "MERGEGRID";
+    private final static String MERGE_BELIEFE_GRID = "MERGEBELIEFEGRID";
+    private final static String MERGE_PLAUSABILITY_GRID = "MERGEPLAUSABILITYGRID";
     private final static String PMERGE = "PMERGE";
 
     private static Collection<String> names = new LinkedList<String>();
     {
-        names.add(MERGEGRID);
+        names.add(MERGE_BELIEFE_GRID);
+        names.add(MERGE_PLAUSABILITY_GRID);
         names.add(PMERGE);
     }
 
@@ -34,8 +36,11 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     @Override
     public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, int[] pos) {
         IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(MERGEGRID)) {
-            aggFunc = new MergeGrid(pos);
+        if (key.getName().equalsIgnoreCase(MERGE_PLAUSABILITY_GRID)) {
+            aggFunc = new MergePlausabilityGrid(pos);
+        }
+        else if (key.getName().equalsIgnoreCase(MERGE_BELIEFE_GRID)) {
+            aggFunc = new MergeBeliefeGrid(pos);
         }
         else if (key.getName().equalsIgnoreCase(PMERGE)) {
             aggFunc = new RelationalPolygonAggregation(pos);

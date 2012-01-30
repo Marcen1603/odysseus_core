@@ -1,6 +1,14 @@
 package de.uniol.inf.is.odysseus.salsa.function;
 
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
+import static com.googlecode.javacv.cpp.opencv_core.cvSize;
+
+import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
+
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.salsa.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.salsa.model.Grid;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -17,9 +25,7 @@ public class InverseGrid extends AbstractFunction<Grid> {
             SDFDatatype.GRID
         }
     };
-    private final static byte FREE = (byte) 0x00;
-    private final static byte UNKNOWN = (byte) 0xFF;
-    private final static byte OBSTACLE = (byte) 0x64;
+
 
     @Override
     public int getArity() {
@@ -50,14 +56,11 @@ public class InverseGrid extends AbstractFunction<Grid> {
         final Grid grid = this.getInputValue(0);
         final Grid inverseGrid = new Grid(grid.origin, grid.width * grid.cellsize, grid.depth
                 * grid.cellsize, grid.cellsize);
-        inverseGrid.fill(UNKNOWN);
-        for (int l = 0; l < grid.width; l++) {
-            for (int w = 0; w < grid.depth; w++) {
-                if (grid.get(l, w) <= OBSTACLE) {
-                    inverseGrid.set(l, w, (byte) (((byte) 0x64) - grid.get(l, w)));
-                }
-            }
-        }
+        IplImage image = cvCreateImage(cvSize(grid.width, grid.depth), IPL_DEPTH_8U, 1);
+        
+        OpenCVUtil.gridToImage(grid, image);
+        opencv_core.cvNot(image,image);
+        OpenCVUtil.imageToGrid(image, inverseGrid);
         return inverseGrid;
     }
 
