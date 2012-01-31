@@ -1,5 +1,0 @@
-CREATE STREAM rdfStream(
-	subject String,
-	predicate String,
-	object	String
-) SOCKET localhost : 22222
