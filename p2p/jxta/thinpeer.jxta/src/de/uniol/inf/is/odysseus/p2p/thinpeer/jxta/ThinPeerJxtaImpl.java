@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.management.RuntimeErrorException;
+
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
@@ -51,11 +55,10 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.ISourceDiscovererList
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministrationPeerListener, ISourceDiscovererListener,  IDiscoveryServiceProvider {
 
@@ -263,7 +266,10 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 
 	@Override
 	protected void initSourceListener() {
-		sourceListener = new SourceListenerJxtaImpl(this,this);
+		// FIXME:
+		// There must be a user associated to the source listener!
+		ISession caller = null;
+		sourceListener = new SourceListenerJxtaImpl(this,this, caller);
 	}
 
 	@Override
@@ -325,21 +331,18 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 	}
 
 	@Override
-	public void foundNewSource(SourceAdvertisement adv) {
-		addOrUpdateSources(adv);
+	public void foundNewSource(SourceAdvertisement adv, ISession caller) {
+		addOrUpdateSources(adv, caller);
 	}
 	
 	@Override
-	public void addToDD(ISourceAdvertisement adv) {
-		IDataDictionary dd = GlobalState.getActiveDatadictionary();
-		// TODO: Nicht gut so "RCP"
-		ISession user = GlobalState.getActiveSession("RCP");
+	public void addToDD(ISourceAdvertisement adv, IDataDictionary dd, ISession caller) {
 		SDFEntity entity = new SDFEntity(adv.getSourceName());
-		dd.addEntity(adv.getSourceName(), entity, user);
+		dd.addEntity(adv.getSourceName(), entity, caller);
 		
 		AccessAO source = new AccessAO();
 		source.setSource(new SDFSource(adv.getPeerID()+":"+adv.getSourceName(), "P2PSource"));
-		dd.setStream(adv.getSourceName(), source, user);
+		dd.setStream(adv.getSourceName(), source, caller);
 	}
 
 }

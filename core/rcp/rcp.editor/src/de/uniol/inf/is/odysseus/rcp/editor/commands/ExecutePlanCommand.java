@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 
@@ -63,7 +63,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 					return null;
 				}
 				// Logischen Plan aufbauen
-				buildLogicalPlan(part.getOperatorPlan(), GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN), GlobalState.getActiveDatadictionary());
+				buildLogicalPlan(part.getOperatorPlan(), OdysseusRCPPlugIn.getActiveSession());
 
 			}
 		} catch (Exception ex) {
@@ -91,7 +91,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		return errorTexts.size() == 0;
 	}
 	
-	private void buildLogicalPlan(OperatorPlan plan, ISession user, IDataDictionary dd) {
+	private void buildLogicalPlan(OperatorPlan plan, ISession user) {
 
 		// oberste Operatoren finden
 		List<Operator> sinks = new ArrayList<Operator>();
@@ -104,7 +104,7 @@ public class ExecutePlanCommand extends AbstractHandler implements IHandler {
 		try {
 			for (Operator sink : sinks) {
 				printLogicalPlan(sink.getLogicalOperator(), 0);
-				OdysseusRCPEditorPlugIn.getExecutor().addQuery(sink.getLogicalOperator(), user, dd, "Standard");
+				OdysseusRCPEditorPlugIn.getExecutor().addQuery(sink.getLogicalOperator(), user, "Standard");
 			}
 		} catch (PlanManagementException ex) {
 			ex.printStackTrace();

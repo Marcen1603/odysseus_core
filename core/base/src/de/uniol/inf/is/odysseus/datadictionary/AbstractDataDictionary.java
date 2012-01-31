@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.datadictionary;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -32,9 +30,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.store.IStore;
-import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -46,7 +42,7 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.util.RemoveOwnersGraphVisitor;
 
-public class DataDictionary implements IDataDictionary {
+abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	protected static Logger _logger = null;
 
@@ -58,100 +54,69 @@ public class DataDictionary implements IDataDictionary {
 	}
 
 	private List<IDataDictionaryListener> listeners = new ArrayList<IDataDictionaryListener>();
-	final private IStore<String, ILogicalOperator> streamDefinitions;
-	final private IStore<String, IUser> viewOrStreamFromUser;
-	final private IStore<String, ILogicalOperator> viewDefinitions;
-	final private IStore<String, SDFEntity> entityMap;
-	final private IStore<String, IUser> entityFromUser;
-	final private IStore<String, String> sourceTypeMap;
-	final private IStore<String, SDFDatatype> datatypes;
-	private IStore<IQuery, IUser> savedQueries;
+	protected IStore<String, ILogicalOperator> streamDefinitions;
+	protected IStore<String, IUser> viewOrStreamFromUser;
+	protected IStore<String, ILogicalOperator> viewDefinitions;
+	protected IStore<String, SDFEntity> entityMap;
+	protected IStore<String, IUser> entityFromUser;
+	protected IStore<String, String> sourceTypeMap;
+	protected IStore<String, SDFDatatype> datatypes;
+	protected IStore<IQuery, IUser> savedQueries;
 
-	final private IStore<String, ILogicalOperator> sinkDefinitions;
-	final private IStore<String, IUser> sinkFromUser;
+	protected IStore<String, ILogicalOperator> sinkDefinitions;
+	protected IStore<String, IUser> sinkFromUser;
 
-	DataDictionary() {
-		try {
-			if (Boolean.parseBoolean(OdysseusDefaults
-					.get("storeDataDictionary"))) {
-				streamDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.get("streamDefinitionsFilename"));
-				viewOrStreamFromUser = new FileStore<String, IUser>(
-						OdysseusDefaults.get("streamOrViewFromUserFilename"));
-				viewDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.get("viewDefinitionsFilename"));
-				entityMap = new FileStore<String, SDFEntity>(
-						OdysseusDefaults.get("entitiesFilename"));
-				sourceTypeMap = new FileStore<String, String>(
-						OdysseusDefaults.get("sourceTypeMapFilename"));
-				entityFromUser = new FileStore<String, IUser>(
-						OdysseusDefaults.get("entityFromUserFilename"));
-				datatypes = new FileStore<String, SDFDatatype>(
-						OdysseusDefaults.get("datatypesFromDatatypesFilename"));
-				sinkDefinitions = new FileStore<String, ILogicalOperator>(
-						OdysseusDefaults.get("sinkDefinitionsFilename"));
-				sinkFromUser = new FileStore<String, IUser>(
-						OdysseusDefaults.get("sinkDefinitionsUserFilename"));
-				
-				try {
-					savedQueries = new FileStore<IQuery, IUser>(
-							OdysseusDefaults.get("queriesFilename"));
-				} catch (Exception e) {
-					getLogger().warn("Error Loading Queries ");
-					savedQueries = null;
-				}
-			} else {
-				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
-				viewOrStreamFromUser = new MemoryStore<String, IUser>();
-				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-				entityMap = new MemoryStore<String, SDFEntity>();
-				entityFromUser = new MemoryStore<String, IUser>();
-				sourceTypeMap = new MemoryStore<String, String>();
-				datatypes = new MemoryStore<String, SDFDatatype>();
-				sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
-				sinkFromUser = new MemoryStore<String, IUser>();
-				savedQueries = new MemoryStore<IQuery, IUser>();
-			}
+	public AbstractDataDictionary() {
+//				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
+//				viewOrStreamFromUser = new MemoryStore<String, IUser>();
+//				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
+//				entityMap = new MemoryStore<String, SDFEntity>();
+//				entityFromUser = new MemoryStore<String, IUser>();
+//				sourceTypeMap = new MemoryStore<String, String>();
+//				datatypes = new MemoryStore<String, SDFDatatype>();
+//				sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
+//				sinkFromUser = new MemoryStore<String, IUser>();
+//				savedQueries = new MemoryStore<IQuery, IUser>();
 
-			/**
-			 * fill in the built-in datatypes
-			 */
+	}
+	
+	protected void initDatatypes(){
+		/**
+		 * fill in the built-in datatypes
+		 */
 
-			if (datatypes.entrySet().size() == 0) {
+		if (datatypes.entrySet().size() == 0) {
 
-				addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
-				addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
-				addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
-				addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
-						SDFDatatype.END_TIMESTAMP);
-				addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
-				addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
-				addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-				addDatatype(SDFDatatype.SPATIAL_LINE.getURI(),
-						SDFDatatype.SPATIAL_LINE);
-				addDatatype(SDFDatatype.SPATIAL_MULTI_LINE.getURI(),
-						SDFDatatype.SPATIAL_MULTI_LINE);
-				addDatatype(SDFDatatype.SPATIAL_MULTI_POINT.getURI(),
-						SDFDatatype.SPATIAL_MULTI_POINT);
-				addDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(),
-						SDFDatatype.SPATIAL_MULTI_POLYGON);
-				addDatatype(SDFDatatype.SPATIAL_POINT.getURI(),
-						SDFDatatype.SPATIAL_POINT);
-				addDatatype(SDFDatatype.SPATIAL_POLYGON.getURI(),
-						SDFDatatype.SPATIAL_POLYGON);
-				addDatatype(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
-				addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
-						SDFDatatype.START_TIMESTAMP);
-				addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
-				addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-				addDatatype(SDFDatatype.TIMESTAMP.getURI(),
-						SDFDatatype.TIMESTAMP);
-				addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
-				addDatatype(SDFDatatype.GRID.getURI(), SDFDatatype.GRID);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+			addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
+			addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
+			addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
+			addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
+					SDFDatatype.END_TIMESTAMP);
+			addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
+			addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
+			addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
+			addDatatype(SDFDatatype.SPATIAL_LINE.getURI(),
+					SDFDatatype.SPATIAL_LINE);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_LINE.getURI(),
+					SDFDatatype.SPATIAL_MULTI_LINE);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_POINT.getURI(),
+					SDFDatatype.SPATIAL_MULTI_POINT);
+			addDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(),
+					SDFDatatype.SPATIAL_MULTI_POLYGON);
+			addDatatype(SDFDatatype.SPATIAL_POINT.getURI(),
+					SDFDatatype.SPATIAL_POINT);
+			addDatatype(SDFDatatype.SPATIAL_POLYGON.getURI(),
+					SDFDatatype.SPATIAL_POLYGON);
+			addDatatype(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
+			addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
+					SDFDatatype.START_TIMESTAMP);
+			addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
+			addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
+			addDatatype(SDFDatatype.TIMESTAMP.getURI(),
+					SDFDatatype.TIMESTAMP);
+			addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
+			addDatatype(SDFDatatype.GRID.getURI(), SDFDatatype.GRID);
+		}	
 	}
 
 	// ----------------------------------------------------------------------------

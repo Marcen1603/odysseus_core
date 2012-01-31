@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.APQueryBitResultHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.handler.AliveHandlerJxtaImpl;
@@ -58,9 +57,10 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.JxtaConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 
@@ -114,11 +114,7 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		String username = "";
 		String password = "";
 		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
-		GlobalState.setActiveSession("",user);
-		// TODO: Müssen sich die Namen unterscheiden? Eigentlich nicht, ist nur
-		// ein Admin Peer to JVM ..
-		GlobalState.setActiveDatadictionary(DataDictionaryFactory
-				.getDefaultDataDictionary("AdminPeer"));
+		P2PUserContext.setActiveSession("",user);
 
 		// TODO: Read from Config-File
 		startPeer();

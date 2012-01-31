@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.ThinPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.BiddingHandlerStrategyStandard;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 
@@ -59,7 +59,6 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		q.setId(queryId);
 		q.setStatus(Lifecycle.NEW);
 		q.setUser(user);
-		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setLanguage(language);
 		thinPeerJxtaImpl.addQuery(q);
 		log.addTab(q.getId(), query);
@@ -104,7 +103,6 @@ public class QueryPublisherHandlerJxtaImpl implements IQueryPublisher {
 		P2PQueryJxtaImpl q = new P2PQueryJxtaImpl();
 		q.setDeclarativeQuery(query);
 		q.setUser(user);
-		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setId(queryId);
 		BidJxtaImpl bid = new BidJxtaImpl();
 		bid.setResponseSocket(adminPipe);

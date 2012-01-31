@@ -21,12 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.DefaultListModel;
-
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
@@ -36,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerDiscoverer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceDiscoverer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractThinPeer extends AbstractOdysseusPeer implements
 		IThinPeer {
@@ -203,11 +201,11 @@ public abstract class AbstractThinPeer extends AbstractOdysseusPeer implements
 		}
 	}
 
-	public void addOrUpdateSources(ISourceAdvertisement adv) {
+	public void addOrUpdateSources(ISourceAdvertisement adv, ISession caller) {
 		if (!sources.contains(adv)) {
 			this.sources.add(adv);
 			for (IThinPeerListener l : listener) {
-				l.foundSource(adv);
+				l.foundSource(adv, caller);
 			}
 		}
 	}

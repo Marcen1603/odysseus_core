@@ -18,5 +18,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.rcp.wizard,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.script.parser,
- de.uniol.inf.is.odysseus.usermanagement,
- de.uniol.inf.is.odysseus.usermanagement.client
+ de.uniol.inf.is.odysseus.usermanagement

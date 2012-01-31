@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class OperatorFactory implements CreationFactory {
 
@@ -32,9 +32,8 @@ public class OperatorFactory implements CreationFactory {
 	
 	@Override
 	public Object getNewObject() {
-		final ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
-		final IDataDictionary dd = GlobalState.getActiveDatadictionary();
-		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, dd), 
+		final ISession user = OdysseusRCPPlugIn.getActiveSession();
+		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, OdysseusRCPPlugIn.getExecutor().getDataDictionary()), 
 				operatorBuilderName);
 		return op;
 	}

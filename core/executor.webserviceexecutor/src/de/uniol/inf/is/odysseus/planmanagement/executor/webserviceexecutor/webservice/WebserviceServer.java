@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 /**
@@ -87,8 +87,7 @@ public class WebserviceServer {
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);			
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, dd,transCfg);
+			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,transCfg);
 			return new Response(true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
@@ -102,8 +101,7 @@ public class WebserviceServer {
 		StringListResponse response = new StringListResponse(true);
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
-			for (Entry<String, ILogicalOperator> e : dd.getStreams(user)) {
+			for (Entry<String, ILogicalOperator> e : getExecutor().getDataDictionary().getStreams(user)) {
 				response.addResponseValue(e.getKey());
 			}
 			return response;

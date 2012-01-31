@@ -4,4 +4,6 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySelectionStrategy"/>
    </service>
+   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.datadictionary.IDataDictionary" name="IDataDictionary" policy="static"/>
+   
 </scr:component>

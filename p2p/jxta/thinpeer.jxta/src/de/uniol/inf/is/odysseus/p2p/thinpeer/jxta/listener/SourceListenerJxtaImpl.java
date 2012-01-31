@@ -24,6 +24,7 @@ import net.jxta.protocol.DiscoveryResponseMsg;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.IDiscoveryServiceProvider;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceDiscoverer;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SourceListenerJxtaImpl implements ISourceDiscoverer,
 		DiscoveryListener {
@@ -36,11 +37,13 @@ public class SourceListenerJxtaImpl implements ISourceDiscoverer,
 
 	private ISourceDiscovererListener sourceDiscovererListener;
 	private IDiscoveryServiceProvider discoveryServiceProvider;
+	private ISession caller = null;
 
 	public SourceListenerJxtaImpl(ISourceDiscovererListener thinPeerJxtaImpl,
-			IDiscoveryServiceProvider discoveryServiceProvider) {
+			IDiscoveryServiceProvider discoveryServiceProvider, ISession caller) {
 		this.sourceDiscovererListener = thinPeerJxtaImpl;
 		this.discoveryServiceProvider = discoveryServiceProvider;
+		this.caller = caller;
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class SourceListenerJxtaImpl implements ISourceDiscoverer,
 					if (temp2 instanceof SourceAdvertisement) {
 						adv = (SourceAdvertisement) temp2;
 
-						sourceDiscovererListener.foundNewSource(adv);
+						sourceDiscovererListener.foundNewSource(adv, caller);
 					} else {
 						return;
 					}

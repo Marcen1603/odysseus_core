@@ -112,7 +112,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl√§ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public Collection<IQuery> addQuery(String query, String parserID, ISession user, IDataDictionary dd,
+	public Collection<IQuery> addQuery(String query, String parserID, ISession user,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
@@ -129,7 +129,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user, IDataDictionary dd,
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 
@@ -144,7 +144,7 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */	
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user, IDataDictionary dd,
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
 			String queryBuildConfigurationName)
 			throws PlanManagementException;
 	
@@ -273,5 +273,8 @@ public interface IExecutor extends IPlanManager, IPlanScheduling,
 	
 	IUserManagement getUserManagement();
 	ISessionManagement getSessionManagement();
+	IDataDictionary getDataDictionary();
+
+	void reloadStoredQueries(ISession caller);
 
 }

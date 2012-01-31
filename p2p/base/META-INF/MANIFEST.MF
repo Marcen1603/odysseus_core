@@ -24,7 +24,8 @@ Export-Package: de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.peer.communication,
  de.uniol.inf.is.odysseus.p2p.peer.execution.handler,
  de.uniol.inf.is.odysseus.p2p.peer.execution.listener,
- de.uniol.inf.is.odysseus.p2p.queryhandling
+ de.uniol.inf.is.odysseus.p2p.queryhandling,
+ de.uniol.inf.is.odysseus.p2p.user
 Require-Bundle: de.uniol.inf.is.odysseus
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/ExecutionListenerFactory.xml

@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.SimpleColumnDefini
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingColumnDefinition;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class SchemaParameterEditor extends AbstractTableButtonListParameterEditor<SDFAttribute, SDFAttribute, List<String>> {
 

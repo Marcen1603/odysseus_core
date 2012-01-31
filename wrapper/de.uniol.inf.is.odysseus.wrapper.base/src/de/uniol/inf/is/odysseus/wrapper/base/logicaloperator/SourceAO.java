@@ -14,7 +14,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParame
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
+import de.uniol.inf.is.odysseus.wrapper.base.Activator;
 
 /**
  * @author ckuka
@@ -115,8 +116,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 		for (final String item : schemaAttributes) {
 			final String[] schemaInformation = item.split(":");
 			final SDFAttribute attribute = new SDFAttribute(null,
-					schemaInformation[0], GlobalState.getActiveDatadictionary()
-							.getDatatype(schemaInformation[1]));
+					schemaInformation[0], Activator.getDataDictionary().getDatatype(schemaInformation[1]));
 			schema.add(attribute);
 		}
 		this.setOutputSchema(schema, 0);

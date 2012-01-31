@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 @LogicalOperator(name="TESTPRODUCER", minInputPorts=0, maxInputPorts=0)
 public class TestProducerAO extends AbstractLogicalOperator {

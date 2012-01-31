@@ -14,9 +14,6 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -24,7 +21,6 @@ import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class TestComponent implements ITestComponent, ICompareSinkListener{
 	
@@ -65,9 +61,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		if (user == null){
 			throw new RuntimeException("No valid user/password");
 		}
-		
-		GlobalState.setActiveSession("", user);
-		GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(""));
 
 		
 		// Read queries from directory dir

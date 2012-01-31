@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.parameters;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,11 +24,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.SimpleParameterEditor;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class ComboParameterEditor extends SimpleParameterEditor<String> implements IParameterEditor {
 
@@ -99,9 +95,10 @@ public class ComboParameterEditor extends SimpleParameterEditor<String> implemen
 	protected String[] getList() {
 		// Liste der Quellen
 		List<String> sources = new ArrayList<String>();
-		for( Entry<String, ILogicalOperator> e : GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN))) {
-			sources.add(e.getKey());
-		}
+		// TODO: Bind DataDictionary to read sources
+		//		for( Entry<String, ILogicalOperator> e :   .getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession())) {
+//			sources.add(e.getKey());
+//		}
 		return sources.toArray(new String[sources.size()]);
 	}
 	

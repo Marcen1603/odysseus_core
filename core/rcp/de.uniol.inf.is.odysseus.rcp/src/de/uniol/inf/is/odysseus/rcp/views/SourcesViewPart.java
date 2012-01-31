@@ -23,14 +23,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class SourcesViewPart extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
@@ -47,7 +47,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
-		getDataDictionary().addListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().addListener(this);
 		//UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
@@ -61,7 +61,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 
 	@Override
 	public void dispose() {
-		getDataDictionary().removeListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().removeListener(this);
 		super.dispose();
 	}
 
@@ -80,7 +80,7 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
+					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getDataDictionary().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?
@@ -90,21 +90,17 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 		});
 	}
 
-	public IDataDictionary getDataDictionary() {
-		return GlobalState.getActiveDatadictionary();
-	}
-
 	protected void setTreeViewer(TreeViewer viewer) {
 		this.viewer = viewer;
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 

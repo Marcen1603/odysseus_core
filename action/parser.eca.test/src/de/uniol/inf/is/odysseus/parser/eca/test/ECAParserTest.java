@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.action.output.StaticParameter;
 import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.console.ExecutorConsole;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
@@ -39,7 +37,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
  * Testclass for ECAParser and its integration into the executer
@@ -53,7 +50,6 @@ public class ECAParserTest implements CommandProvider {
 	private ICompiler compiler;
 	// TODO: Create Session !
 	ISession user = null;
-	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("ECA Parser Test");
 	
 	//set to false if u want to prevent removal of testActuators!
 	private static boolean autoRemoveActuator = true;
@@ -151,7 +147,7 @@ public class ECAParserTest implements CommandProvider {
 
 	@SuppressWarnings({"rawtypes"})
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
-		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user, dd);
+		List<IQuery> queries = this.compiler.translateQuery(query , "ECA", user, executor.getDataDictionary());
 		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();
 		logicalPlan.getOutputSchema();
 		
@@ -200,7 +196,7 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, dd, "Standard");
+		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, "Standard");
 		ci.println("	*Testcase3: Check if physical plan is correct");
 		IPlan plan = this.executor.getPlan();
 		IQuery installedQuery = plan.getQuery(addedQuery.getID());

@@ -22,13 +22,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.application.storing.Activator;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 import de.uniol.inf.is.odysseus.application.storing.view.dialogs.StartNewRecordingDialog;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -40,8 +41,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		IDataDictionary dd = GlobalState.getActiveDatadictionary();
-		ISession user = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+		ISession user = OdysseusRCPPlugIn.getActiveSession();
 
 		if (DatabaseConnectionDictionary.getInstance().getConnections().isEmpty()) {
 			MessageBox mb = new MessageBox(shell);
@@ -51,7 +51,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 			return null;
 		}
 
-		if (dd.getStreamsAndViews(user).size() <= 0) {
+		if (OdysseusRCPPlugIn.getExecutor().getDataDictionary().getStreamsAndViews(user).size() <= 0) {
 			MessageBox mb = new MessageBox(shell);
 			mb.setText("No sources found");
 			mb.setMessage("There are no sources that can be recorded!\nCreate one first!");
@@ -61,7 +61,7 @@ public class NewRecordingCommand extends AbstractRecordingCommand {
 		
 	
 
-		StartNewRecordingDialog dialog = new StartNewRecordingDialog(shell, dd, user);
+		StartNewRecordingDialog dialog = new StartNewRecordingDialog(shell, OdysseusRCPPlugIn.getExecutor().getDataDictionary(), user);
 		int ergebnis = dialog.open();
 		if (ergebnis == Window.OK) {			
 			RecordingController.getInstance().createRecording(dialog.getRecordingName(), dialog.getDatabaseConnection(), dialog.getTableName(), dialog.getFromStream());

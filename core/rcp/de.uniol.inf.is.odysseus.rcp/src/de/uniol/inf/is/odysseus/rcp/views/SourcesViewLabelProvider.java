@@ -22,9 +22,10 @@ import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class SourcesViewLabelProvider implements ILabelProvider {
 
@@ -50,7 +51,7 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 		if (element instanceof Entry) {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
-			if (GlobalState.getActiveDatadictionary().isView(entry.getKey())){
+			if (OdysseusRCPPlugIn.getExecutor().getDataDictionary().isView(entry.getKey())){
 				return ImageManager.getInstance().get("view");
 			}else{
 				return ImageManager.getInstance().get("source");
@@ -71,7 +72,7 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 			sb.append(entry.getKey()).append(" [")
 					.append(entry.getValue().getClass().getSimpleName())
 					.append("]");
-			IUser user = GlobalState.getActiveDatadictionary().getCreator(
+			IUser user = OdysseusRCPPlugIn.getExecutor().getDataDictionary().getCreator(
 					entry.getKey());
 			if (user != null) {
 				sb.append(" created by ").append(user.getName());

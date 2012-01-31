@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -60,7 +60,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 			if(tokenBefore.trim().equalsIgnoreCase("FROM")){
-				Set<Entry<String, ILogicalOperator>> sources = GlobalState.getActiveDatadictionary().getStreamsAndViews(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));				
+				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getDataDictionary().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());				
 				for(Entry<String, ILogicalOperator> e : sources){
 					words.add(e.getKey());
 				}				

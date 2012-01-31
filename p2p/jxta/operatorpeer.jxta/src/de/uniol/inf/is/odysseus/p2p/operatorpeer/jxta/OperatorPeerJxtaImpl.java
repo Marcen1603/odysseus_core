@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.collection.IPair;
 import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
@@ -55,7 +54,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
@@ -107,10 +106,8 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 		setName(configuration.getName());
 		
 		// TODO: User einlesen
-		GlobalState.setActiveSession("",UserManagement.getSessionmanagement().login("System", "manager".getBytes()));
-		// TODO: Unterschiedliche Namen notwendig?
-		GlobalState.setActiveDatadictionary(DataDictionaryFactory
-				.getDefaultDataDictionary("OperatorPeer"));
+		P2PUserContext.setActiveSession("",UserManagement.getSessionmanagement().login("System", "manager".getBytes()));
+
 		startPeer();
 		getDistributionClient().initializeService();
 
@@ -305,9 +302,8 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
 		for (IPair<String, String> s : getSources().values()) {
 			try {
-				ISession user = GlobalState.getActiveSession("");
-				IDataDictionary dd = GlobalState.getActiveDatadictionary();
-				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, dd,
+				ISession user = P2PUserContext.getActiveSession("");
+				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, 
 						"Standard");
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
@@ -321,7 +317,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
 		this.sourceHandler = new SourceHandlerJxtaImpl(
-				(OperatorPeerJxtaImpl) aPeer);
+				(OperatorPeerJxtaImpl) aPeer, getExecutor().getDataDictionary());
 
 	}
 

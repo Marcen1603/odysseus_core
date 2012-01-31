@@ -75,11 +75,11 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 	
 	@Override
-	public void foundSource(ISourceAdvertisement adv) {
+	public void foundSource(ISourceAdvertisement adv, ISession caller) {
 		if (!sources.contains(adv)){
 			logger.debug("Found new Source "+adv.getPeerID()+" with "+adv.getSourceName());
 			sources.add(adv);
-			thinPeer.addToDD(adv);
+			thinPeer.addToDD(adv, getDataDictionary(), caller);
 		}
 	}
 	
@@ -241,23 +241,21 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 
 	@Override
 	public Collection<IQuery> addQuery(String query, String parserID,
-			ISession user, IDataDictionary dd, String queryBuildConfigurationName)
+			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		thinPeer.publishQuerySpezification(query, parserID, user);
 		return null;
 	}
 
 	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
-			IDataDictionary dd, String queryBuildConfigurationName)
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			IDataDictionary dd, String queryBuildConfigurationName)
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
@@ -382,6 +380,18 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	public ISessionManagement getSessionManagement() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IDataDictionary getDataDictionary() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void reloadStoredQueries(ISession caller) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

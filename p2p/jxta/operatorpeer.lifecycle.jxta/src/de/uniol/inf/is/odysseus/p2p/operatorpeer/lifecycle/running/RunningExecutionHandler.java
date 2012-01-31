@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class RunningExecutionHandler extends
@@ -63,7 +63,7 @@ public class RunningExecutionHandler extends
 					logger.debug("Adding plan: "
 							+ AbstractTreeWalker.prefixWalk(s.getAo(),
 									new AlgebraPlanToStringVisitor()));
-					ISession user = GlobalState.getActiveSession("");
+					ISession user = P2PUserContext.getActiveSession("");
 					getFunction().startQuery(s.getQuery().getID(), user);
 //					System.err.println("Query " + s.getQuery() + " started");
 					

@@ -21,15 +21,11 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
  * Implementation of the generated webservice
@@ -47,7 +43,6 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
 	private static IExecutor executor;
 	private static IActuatorFactory actuatorFactory;	
-	IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("WSPort");
 	
 	/* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
@@ -57,7 +52,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         try {
 			// TODO: User einfuegen, der diese Query ausführt
         	ISession user = null;
-			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, dd, "Standard"
+			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, "Standard"
 					).iterator().next().getID();
 			return queryID;
 		} catch (Exception e) {
@@ -140,7 +135,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     		}
 			// TODO: User einfuegen, der diese Query ausführt
     		ISession user = null;
-    		executor.addQuery(query, "CQL", user, dd, "Standard");
+    		executor.addQuery(query, "CQL", user, "Standard");
     		return "";
     	}catch (Exception e){
     		ObjectFactory factory = new ObjectFactory();

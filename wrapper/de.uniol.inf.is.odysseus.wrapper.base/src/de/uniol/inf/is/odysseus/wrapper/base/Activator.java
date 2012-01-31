@@ -3,10 +3,14 @@ package de.uniol.inf.is.odysseus.wrapper.base;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+
 public class Activator implements BundleActivator {
 
     private static BundleContext context;
 
+    private static IDataDictionary dd;
+    
     static BundleContext getContext() {
         return Activator.context;
     }
@@ -28,5 +32,17 @@ public class Activator implements BundleActivator {
     public void stop(final BundleContext bundleContext) throws Exception {
         Activator.context = null;
     }
+    
+    public void bindDataDictionary(IDataDictionary dd){
+    	Activator.dd = dd;
+    }
 
+    public void unbindDataDictionary(IDataDictionary dd){
+    	Activator.dd = null;
+    }
+
+    public static IDataDictionary getDataDictionary() {
+		return dd;
+	}
+    
 }

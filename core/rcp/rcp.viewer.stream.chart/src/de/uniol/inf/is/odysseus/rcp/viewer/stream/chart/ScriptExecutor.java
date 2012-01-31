@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.wizard.DummySink;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -38,7 +38,7 @@ public class ScriptExecutor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<ISource<?>> loadAndExecuteQueryScript(String queryFile) {
 		try {
-			ISession caller = GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN);
+			ISession caller = OdysseusRCPPlugIn.getActiveSession();
 			DummySink<?> dummy = new DummySink<Object>();
 			String text = "";
 			Scanner scanner = new Scanner(new File(queryFile));

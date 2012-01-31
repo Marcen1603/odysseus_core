@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class StopQueryCommand extends AbstractHandler implements IHandler {
 
@@ -64,7 +64,7 @@ public class StopQueryCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							executor.stopQuery(qID2, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+							executor.stopQuery(qID2, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Query stopped");
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);

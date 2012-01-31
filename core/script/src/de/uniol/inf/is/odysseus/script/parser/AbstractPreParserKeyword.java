@@ -14,8 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.script.parser;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
@@ -30,10 +28,6 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	@Override
 	public IOdysseusScriptParser getParser() {
 		return parser;
-	}
-	
-	protected IDataDictionary getDataDictionary() {
-		return GlobalState.getActiveDatadictionary();
 	}
 	
 	/**

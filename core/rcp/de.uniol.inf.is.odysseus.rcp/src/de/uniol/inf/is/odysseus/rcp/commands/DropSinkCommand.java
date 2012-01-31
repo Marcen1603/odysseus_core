@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -60,7 +60,7 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							// TODO: eventuell über Executor machen
-							IDataDictionary dd = GlobalState.getActiveDatadictionary();
+							IDataDictionary dd = executor.getDataDictionary();
 							dd.removeSink(param);
 							StatusBarManager.getInstance().setMessage("Sink removed");
 						} catch (PermissionException e) {

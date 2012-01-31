@@ -24,7 +24,10 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
+
+
 
 /**
  * This class reacts on messages that state if a peer should process a
@@ -81,7 +84,7 @@ public class QueryBidResponseHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 			
 			Subplan plan = queryProvider.getQuery(queryId).getSubPlans().get(subPlanId);
 			try {
-				BiddingClient.getExecutor().removeQuery(plan.getQuery().getID(), GlobalState.getActiveSession(""));
+				BiddingClient.getExecutor().removeQuery(plan.getQuery().getID(), P2PUserContext.getActiveSession(""));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}			

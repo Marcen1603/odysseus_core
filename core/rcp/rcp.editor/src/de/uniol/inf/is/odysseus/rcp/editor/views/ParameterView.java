@@ -33,18 +33,19 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.ParameterEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.OperatorEditPart;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class ParameterView extends ViewPart implements IViewPart, ISelectionListener, IParameterView, IDataDictionaryListener{
 
@@ -66,7 +67,7 @@ public class ParameterView extends ViewPart implements IViewPart, ISelectionList
 		this.parent = parent;
 		parent.setLayout(new FillLayout());
 				
-		GlobalState.getActiveDatadictionary().addListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().addListener(this);
 		updateParameterEditors(true);
 	
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
@@ -80,7 +81,7 @@ public class ParameterView extends ViewPart implements IViewPart, ISelectionList
 	@Override
 	public void dispose() {
 		super.dispose();
-		GlobalState.getActiveDatadictionary().removeListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().removeListener(this);
 	}
 
 	@Override
@@ -252,12 +253,12 @@ public class ParameterView extends ViewPart implements IViewPart, ISelectionList
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		updateParameterEditors(true);
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		updateParameterEditors(true);
 	}
 

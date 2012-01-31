@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
@@ -52,9 +53,11 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
@@ -115,6 +118,11 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 	 */
 	protected IUserManagement usrMgmt;
 	protected ISessionManagement sessMgmt;
+	
+	/**
+	 * Data Dictionary
+	 */
+	protected IDataDictionary dataDictionary;
 	
 	/**
 	 * Standard Configurationen
@@ -359,6 +367,18 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 
 	protected void unbindSessionManagement(ISessionManagement sessionmanagement) {
 		sessionmanagement = null;
+	}
+	
+	protected void bindDataDictionary(IDataDictionary datadictionary) {
+		if (dataDictionary == null){
+			dataDictionary = datadictionary;
+		}else{
+			throw new RuntimeException("DataDictionary already bound!");
+		}
+	}
+	
+	protected void unbindDataDictionary(IDataDictionary dd) {
+		dataDictionary = null;
 	}
 	
 	// ----------------------------------------------------------------------------------------
@@ -764,4 +784,25 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 		return usrMgmt;
 	}
 
+	@Override
+	public IDataDictionary getDataDictionary() {
+		return dataDictionary;
+	}
+	
+	@Override
+	public void reloadStoredQueries(ISession caller) {
+		if (dataDictionary != null){
+			List<IQuery> q = dataDictionary.getQueries(caller.getUser(), caller);
+			for (IQuery query:q){
+				if (query.getQueryText() != null){
+					addQuery(query.getQueryText(), query.getParserId(), caller, query.getBuildConfigName());
+				}else if (query.getLogicalPlan() != null){
+					addQuery(query.getLogicalPlan(), caller, query.getBuildConfigName());
+				}else{
+					getLogger().warn("Query "+query+" cannot be loaded");
+				}
+			}
+		}
+		
+	}
 }

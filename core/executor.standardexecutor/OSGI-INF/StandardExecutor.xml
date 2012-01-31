@@ -13,4 +13,5 @@
    <reference bind="bindAdmissionReaction" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionReaction" name="IAdmissionReaction" policy="dynamic" unbind="unbindAdmissionReaction"/>
    <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
    <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
+   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
 </scr:component>

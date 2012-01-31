@@ -86,7 +86,7 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/**
 	 * The user who created this query
 	 */
-	private ISession user = null;
+	transient private ISession user = null;
 
 	/**
 	 * The Data Dictionary belonging to this query
@@ -145,7 +145,8 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	/**
 	 * Parameter for building this query.
 	 */
-	private QueryBuildConfiguration parameters = new QueryBuildConfiguration();
+	transient private QueryBuildConfiguration parameters = new QueryBuildConfiguration();
+	private String buildConfigName;
 
 	/**
 	 * EventListener
@@ -674,8 +675,9 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	}
 
 	@Override
-	public void setBuildParameter(QueryBuildConfiguration parameter) {
+	public void setBuildParameter(String name, QueryBuildConfiguration parameter) {
 		this.parameters = parameter;
+		this.buildConfigName = name;
 	}
 
 	@Override
@@ -877,6 +879,11 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	@Override
 	public int compareTo(IQuery query) {
 		return Integer.compare(this.id, query.getID());
+	}
+
+	@Override
+	public String getBuildConfigName() {
+		return buildConfigName;
 	}
 
 	

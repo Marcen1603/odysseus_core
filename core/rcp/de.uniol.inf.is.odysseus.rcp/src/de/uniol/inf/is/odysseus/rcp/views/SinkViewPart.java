@@ -24,14 +24,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -43,12 +43,8 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 
 	@Override
 	public void dispose() {
-		getDataDictionary().removeListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().removeListener(this);
 		super.dispose();
-	}
-
-	public IDataDictionary getDataDictionary() {
-		return GlobalState.getActiveDatadictionary();
 	}
 
 	public TreeViewer getTreeViewer() {
@@ -61,7 +57,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(getDataDictionary().getSinks(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
+					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getDataDictionary().getSinks(OdysseusRCPPlugIn.getActiveSession()));
 					// getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
@@ -82,12 +78,12 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
@@ -109,7 +105,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
-		getDataDictionary().addListener(this);
+		OdysseusRCPPlugIn.getExecutor().getDataDictionary().addListener(this);
 		//UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 

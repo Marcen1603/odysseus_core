@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
@@ -71,8 +70,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBu
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.sla.SLA;
 import de.uniol.inf.is.odysseus.sla.SLADictionary;
-import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
 
@@ -135,8 +134,6 @@ public class StandardExecutor extends AbstractExecutor implements
 		}
 	}
 
-
-	
 	// ----------------------------------------------------------------------------------------
 	// OSGI-Framework
 	// ----------------------------------------------------------------------------------------
@@ -245,23 +242,22 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * @throws OpenFailedException
 	 *             Opening an sink or source failed.
 	 */
-	private List<IQuery> createQueries(String queryStr, ISession user,
-			IDataDictionary dd, QueryBuildConfiguration parameters)
+	private List<IQuery> createQueries(String queryStr, ISession user, String buildConfigName,QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
 		// translate query and build logical plans
 		List<IQuery> queries = getCompiler().translateQuery(queryStr,
-				parameters.getParserID(), user, dd);
+				parameters.getParserID(), user, getDataDictionary());
 		getLogger().trace("Number of queries: " + queries.size());
 		String slaName = SLADictionary.getInstance().getCurrentSLA(user);
 		SLA sla = SLADictionary.getInstance().getSLA(slaName);
 		// create for each logical plan an intern query
 		for (IQuery query : queries) {
-			query.setBuildParameter(parameters);
+			query.setBuildParameter(buildConfigName, parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
-			query.setDataDictionary(dd);
+			query.setDataDictionary(getDataDictionary());
 			query.setSLA(sla);
 			// this executor processes reoptimize requests
 			query.addReoptimizeListener(this);
@@ -304,9 +300,9 @@ public class StandardExecutor extends AbstractExecutor implements
 			for (IQuery optimizedQuery : newQueries) {
 				this.plan.addQuery(optimizedQuery);
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
-						PlanModificationEventType.QUERY_ADDED, optimizedQuery));				
-				// Currently not working!!
-				//optimizedQuery.getDataDictionary().addQuery(optimizedQuery, optimizedQuery.getUser());				
+						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
+				optimizedQuery.getDataDictionary().addQuery(optimizedQuery,
+						optimizedQuery.getUser());
 			}
 
 		} catch (Exception e) {
@@ -318,23 +314,6 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		getLogger().info("Queries added (Count: " + newQueries.size() + ").");
 	}
-
-	// /**
-	// * Returns a ID list of the given queries.
-	// *
-	// * @param newQueries
-	// * Queries for search.
-	// * @return ID list of the given queries.
-	// */
-	// private List<Integer> getQuerieIDs(List<IQuery> newQueries) {
-	// ArrayList<Integer> newIDs = new ArrayList<Integer>();
-	//
-	// for (IQuery query : newQueries) {
-	// newIDs.add(query.getID());
-	// }
-	//
-	// return newIDs;
-	// }
 
 	private QueryBuildConfiguration validateBuildParameters(
 			QueryBuildConfiguration params) {
@@ -381,7 +360,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public synchronized Collection<IQuery> addQuery(String query,
-			String parserID, ISession user, IDataDictionary dd,
+			String parserID, ISession user,
 			String buildConfiguartionName) throws PlanManagementException {
 		getLogger().info(
 				"Start adding Queries. " + query + " for user "
@@ -391,8 +370,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		validateBuildParameters(buildConfiguration);
 		try {
-			List<IQuery> newQueries = createQueries(query, user, dd,
-					buildConfiguration);
+			List<IQuery> newQueries = createQueries(query, user, buildConfiguartionName, buildConfiguration);
 			addQueries(newQueries, new OptimizationConfiguration(
 					buildConfiguration));
 			reloadLog.queryAdded(query, buildConfiguartionName, parserID, user);
@@ -423,8 +401,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * <?>[])
 	 */
 	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
-			IDataDictionary dd, String buildConfigurationName)
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user, String buildConfigurationName)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
@@ -433,7 +410,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			IQuery query = new Query(logicalPlan, params);
 			query.setUser(user);
-			query.setDataDictionary(dd);
+			query.setDataDictionary(getDataDictionary());
 			query.addReoptimizeListener(this);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
@@ -458,7 +435,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	@Override
 	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			IDataDictionary dd, String buildConfigurationName)
+			 String buildConfigurationName)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
@@ -467,7 +444,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			IQuery query = new Query(physicalPlan, queryBuildConfiguration);
 			query.setUser(user);
-			query.setDataDictionary(dd);
+			query.setDataDictionary(getDataDictionary());
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(
@@ -506,7 +483,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		getLogger().info("Start remove a query (ID: " + queryID + ").");
 
 		IQuery queryToRemove = this.plan.getQuery(queryID);
-		validateUserRight(queryToRemove, caller, ExecutorPermission.REMOVE_QUERY);
+		validateUserRight(queryToRemove, caller,
+				ExecutorPermission.REMOVE_QUERY);
 		if (queryToRemove != null && getOptimizer() != null) {
 			try {
 				executionPlanLock.lock();
@@ -595,13 +573,13 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		usrMgmt.hasPermission(caller, executorAction, "Query " + query.getID()) ||
-		// User is owner
+		usrMgmt.hasPermission(caller, executorAction, "Query " + query.getID())
+				||
+				// User is owner
 				query.getUser().equals(caller) ||
 		// User has higher right
 		usrMgmt.hasPermission(caller,
-				ExecutorPermission.hasSuperAction(executorAction),
-				null))) {
+				ExecutorPermission.hasSuperAction(executorAction), null))) {
 			throw new PermissionException("No Right to execute "
 					+ executorAction + " on Query " + query.getID() + " for "
 					+ caller.getUser().getName());
@@ -609,13 +587,16 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	}
 
-	private void validateUserRight(ISession caller, ExecutorPermission executorAction) {
+	private void validateUserRight(ISession caller,
+			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		usrMgmt.hasPermission(caller, executorAction, ExecutorPermission.objectURI) ||
+		usrMgmt.hasPermission(caller, executorAction,
+				ExecutorPermission.objectURI) ||
 		// User has higher right
 		usrMgmt.hasPermission(caller,
-				ExecutorPermission.hasSuperAction(executorAction),ExecutorPermission.objectURI))) {
+				ExecutorPermission.hasSuperAction(executorAction),
+				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
 					+ executorAction + " for " + caller.getUser().getName());
 		}

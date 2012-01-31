@@ -54,8 +54,9 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
+
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 /**
  * Handle queries
@@ -168,11 +169,12 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		collectSourcesFromPlan(subplan.getAo(), sources);
 		if (!sources.isEmpty()) {
 			for (AccessAO ao : sources) {
-				if (!GlobalState.getActiveDatadictionary()
-						.containsViewOrStream(ao.getSource().getURI(),
-								GlobalState.getActiveSession(""))) {
+				//TODO: Find a solution ;-)
+//				if (!GlobalState.getActiveDatadictionary()
+//						.containsViewOrStream(ao.getSource().getURI(),
+//								GlobalState.getActiveSession(""))) {
 					return "-1";
-				}
+//				}
 			}
 		}
 
@@ -188,8 +190,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		try {
 			// Plan in Ausf�hrungsplan hinzuf�gen
 			IQuery query = null;
-			ISession user = GlobalState.getActiveSession("");
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
+			ISession user = P2PUserContext.getActiveSession("");
 
 			boolean result = false;
 			if (executor == null || admissionControl == null) {
@@ -197,7 +198,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 					result = true;
 				}
 			} else {
-				query = executor.addQuery(subplan.getAo(), user, dd, "Standard");
+				query = executor.addQuery(subplan.getAo(), user, "Standard");
 				subplan.setQuery(query);
 
 				result = admissionControl.canStartQuery(query);

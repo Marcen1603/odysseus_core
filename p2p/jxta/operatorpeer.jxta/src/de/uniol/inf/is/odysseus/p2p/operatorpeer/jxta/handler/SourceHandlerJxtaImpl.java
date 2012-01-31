@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
-
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 /**
  * Alle Streams und Views werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und
  * in regelmaessigen Abstaenden ausgeschrieben.
@@ -43,9 +42,11 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 	private int LIFETIME = 60000;
 	private OperatorPeerJxtaImpl peer = null;
-
-	public SourceHandlerJxtaImpl(OperatorPeerJxtaImpl aPeer) {
+	final private IDataDictionary dd;
+	
+	public SourceHandlerJxtaImpl(OperatorPeerJxtaImpl aPeer, IDataDictionary dd) {
 		this.setPeer(aPeer);
+		this.dd = dd;
 	}
 
 	@Override
@@ -56,8 +57,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		// Publish all sources
 		while (true) {
 			advList.clear();
-			ISession user = GlobalState.getActiveSession(""); 
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
+			ISession user = P2PUserContext.getActiveSession(""); 
 			for (Entry<String, ILogicalOperator> v : dd
 					.getStreamsAndViews(user)) {
 				// Create source advertisement and add to publish list

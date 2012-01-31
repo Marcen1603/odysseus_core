@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus;
 
 import java.io.File;
@@ -32,75 +32,89 @@ import de.uniol.inf.is.odysseus.util.FileUtils;
 public class OdysseusDefaults {
 
 	static Logger _logger = null;
-	static Logger getLogger(){
-		if (_logger == null){
+
+	static Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(OdysseusDefaults.class);
 		}
 		return _logger;
 	}
-	static Properties props = new Properties();
 
-	private static String odysseusDefaultHome = String.format("%s/%sodysseus/", System.getProperty("user.home"),getDot(System.getProperty("os.name")));
+	static Properties props = new Properties();
+	
+	// TODO: Make Platform specific homedir
+	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
+			System.getProperty("user.home"),
+			getDot(System.getProperty("os.name")));
 	private static String homeDir;
 
 	static {
 		try {
 			homeDir = System.getenv("ODYSSEUS_HOME");
-			if (homeDir == null || homeDir.length() == 0){
+			if (homeDir == null || homeDir.length() == 0) {
 				homeDir = odysseusDefaultHome;
 			}
-			loadProperties(homeDir,"odysseus.conf", props);
+			loadProperties(homeDir, "odysseus.conf", props);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void loadProperties(String odysseusHome, String filename, Properties properties) throws IOException,
-			FileNotFoundException {
-		// If there are new properties, load defaults and overwrite with file-properties
+	private static void loadProperties(String odysseusHome, String filename,
+			Properties properties) throws IOException, FileNotFoundException {
+		// If there are new properties, load defaults and overwrite with
+		// file-properties
 		setDefaults(odysseusHome);
 		File f = FileUtils.openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
 		properties.load(in);
 		in.close();
-		// Save always because there could be new properties ... do only if there are new defaults?
+		// Save always because there could be new properties ... do only if
+		// there are new defaults?
 		savePropertyFile(odysseusHome);
 	}
 
-	private static void setDefaults(String odysseusHome) {		
+	private static void setDefaults(String odysseusHome) {
 		props.setProperty("odysseusHome", odysseusHome);
-		props.setProperty("userStoreFilename", odysseusHome + "users.store");
-		props.setProperty("privilegStoreFilename", odysseusHome + "priviliges.store");
-		props.setProperty("roleStoreFilename", odysseusHome + "roles.store");
-		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
-		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
-		props.setProperty("slasFilename", odysseusHome + "slas.store");
 
-		props.setProperty("storeDataDictionary", Boolean.FALSE.toString());
-		props.setProperty("defaultDataDictionaryName", "DEFAULT_DD");
+		// Store-Filename
+		props.setProperty("userStoreFilename", odysseusHome
+				+ "store/users.store");
+		props.setProperty("privilegStoreFilename", odysseusHome
+				+ "store/priviliges.store");
+		props.setProperty("roleStoreFilename", odysseusHome
+				+ "store/roles.store");
+		props.setProperty("slasFilename", odysseusHome + "store/slas.store");
 		props.setProperty("streamDefinitionsFilename", odysseusHome
-				+ "viewDefinitions.store");
+				+ "store/viewDefinitions.store");
 		props.setProperty("streamOrViewFromUserFilename", odysseusHome
-				+ "viewFromUser.store");
+				+ "store/viewFromUser.store");
 		props.setProperty("viewDefinitionsFilename", odysseusHome
-				+ "logicalViewDefinitions.store");
+				+ "store/logicalViewDefinitions.store");
 		props.setProperty("sinkDefinitionsFilename", odysseusHome
-				+ "sinkDefinitions.store");
-		props.setProperty("sinkDefinitionsUserFilename", odysseusHome +
-				"sinkDefinitionsUser.store");
-		props.setProperty("entitiesFilename", odysseusHome + "entities.store");
+				+ "store/sinkDefinitions.store");
+		props.setProperty("sinkDefinitionsUserFilename", odysseusHome
+				+ "store/sinkDefinitionsUser.store");
+		props.setProperty("entitiesFilename", odysseusHome
+				+ "store/entities.store");
 		props.setProperty("sourceTypeMapFilename", odysseusHome
-				+ "sourceTypeMap.store");
+				+ "store/sourceTypeMap.store");
 		props.setProperty("entityFromUserFilename", odysseusHome
-				+ "entityFromUser.store");
+				+ "store/entityFromUser.store");
 		props.setProperty("sourceFromUserFilename", odysseusHome
-				+ "sourceFromUser.store");
-		props.setProperty("queriesFilename", odysseusHome+"queries.store");
-		
+				+ "store/sourceFromUser.store");
+		props.setProperty("queriesFilename", odysseusHome
+				+ "store/queries.store");
+
+		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
+		props.setProperty("reloadLogStoreFilename", odysseusHome
+				+ "reloadlog.store");
+
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");
-		props.setProperty("datatypesFromDatatypesFilename", odysseusHome + "datatypes.store");
+		props.setProperty("datatypesFromDatatypesFilename", odysseusHome
+				+ "store/datatypes.store");
 
 		props.setProperty("sessionTimeout", (240 * 60000) + ""); // Milliseconds
 
@@ -108,13 +122,13 @@ public class OdysseusDefaults {
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
-		props.setProperty("scheduler_DebugFileName","SchedulerLog");
+		props.setProperty("scheduler_DebugFileName", "SchedulerLog");
 		props.setProperty("scheduler_trainSize", 1 + "");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
-		props.setProperty("sla_updatePenaltyTime", 60000+""); // Milliseconds
-		
+		props.setProperty("sla_updatePenaltyTime", 60000 + ""); // Milliseconds
+
 		// new SLA
 		props.setProperty("sla_starvationFreedomFuncName", "QueueSizeSF");
 		props.setProperty("sla_prioFuncName", "max");
@@ -122,10 +136,10 @@ public class OdysseusDefaults {
 		props.setProperty("sla_querySharingCostModel", "none");
 		props.setProperty("sla_querySharing", Boolean.FALSE.toString());
 		props.setProperty("sla_costFunctionName", "quadratic");
-		
-		// Odysseus Storing 
+
+		// Odysseus Storing
 		props.setProperty("storing_database", odysseusHome + "database.conf");
-		
+
 		// AC
 		props.setProperty("ac_memHeadroom", "0.4");
 		props.setProperty("ac_cpuHeadroom", "0.4");
@@ -157,11 +171,13 @@ public class OdysseusDefaults {
 
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
-		
-		if (UserManagement.getUsermanagement().hasPermission(caller, ConfigurationPermission.SET_PARAM, null)) {
+
+		if (UserManagement.getUsermanagement().hasPermission(caller,
+				ConfigurationPermission.SET_PARAM, null)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagement.getUsermanagement().hasPermission(caller, ConfigurationPermission.SAVE_PARAM, null)) {
+				if (UserManagement.getUsermanagement().hasPermission(caller,
+						ConfigurationPermission.SAVE_PARAM, null)) {
 					savePropertyFile(homeDir);
 				} else {
 					throw new PermissionException(
@@ -176,8 +192,8 @@ public class OdysseusDefaults {
 					+ " is not allowed to temporally set config param " + key);
 		}
 	}
-	
-	public static String getHomeDir(){
+
+	public static String getHomeDir() {
 		return homeDir;
 	}
 
@@ -185,22 +201,22 @@ public class OdysseusDefaults {
 	 * Returns a dot on specific operating systems: unix,linux, and mac.
 	 * 
 	 */
-	private static String getDot(String os){
+	private static String getDot(String os) {
 		os = os.toLowerCase();
-		if((os.indexOf( "win" ) >= 0)){
-			//Windows
+		if ((os.indexOf("win") >= 0)) {
+			// Windows
 			getLogger().info("OS: Windows");
 			return "";
-		}else if((os.indexOf( "mac" ) >= 0)){
-			//Macintosh 
+		} else if ((os.indexOf("mac") >= 0)) {
+			// Macintosh
 			getLogger().info("OS: MacOS");
 			return ".";
-		}else if((os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0)){
-			//Unix
+		} else if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
+			// Unix
 			getLogger().info("OS: Unix/Linux");
 			return ".";
-		}else{
-			//All other
+		} else {
+			// All other
 			getLogger().info("OS: not Supported");
 			return "";
 		}

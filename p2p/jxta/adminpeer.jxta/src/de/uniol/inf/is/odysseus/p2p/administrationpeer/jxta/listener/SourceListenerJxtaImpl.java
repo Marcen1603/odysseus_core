@@ -25,16 +25,15 @@ import net.jxta.protocol.DiscoveryResponseMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese
@@ -95,15 +94,14 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						adv = (SourceAdvertisement) source;
 						administrationPeerJxtaImpl.getSources().put(
 								adv.getSourceName(), adv);
-						IDataDictionary datadictionary = GlobalState
-								.getActiveDatadictionary();
-						ISession caller = GlobalState.getActiveSession("");
+
+						ISession caller = P2PUserContext.getActiveSession("");
 						
 						// Login des users?
 						String viewname = adv.getSourceName();
 
 						// Nur eintragen, wenn nicht eh schon vorhanden
-						if (!datadictionary.containsViewOrStream(
+						if (executor.getDataDictionary().containsViewOrStream(
 								adv.getSourceName(), caller)) {
 
 							String sourceType = adv.getSourceType();
@@ -117,13 +115,13 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 							logger.debug("Adding to DD " + adv.getSourceName()
 									+ " " + sourceType + " as "+entity);
 							
-							datadictionary.addSourceType(viewname, sourceType);
-							datadictionary.addEntity(viewname, entity, caller);
+							executor.getDataDictionary().addSourceType(viewname, sourceType);
+							executor.getDataDictionary().addEntity(viewname, entity, caller);
 							if (adv.isView()) {
-								datadictionary.setView(viewname, topOperator,
+								executor.getDataDictionary().setView(viewname, topOperator,
 										caller);
 							} else {
-								datadictionary.setStream(viewname, topOperator,
+								executor.getDataDictionary().setStream(viewname, topOperator,
 										caller);
 							}
 						}

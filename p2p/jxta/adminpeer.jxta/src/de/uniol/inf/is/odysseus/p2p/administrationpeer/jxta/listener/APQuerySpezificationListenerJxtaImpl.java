@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.UsernameNotExistException;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 /**
  * Discover queries and possibly bid for administration
@@ -169,7 +168,6 @@ public class APQuerySpezificationListenerJxtaImpl implements
 		q.setLanguage(adv.getLanguage());
 		q.setDeclarativeQuery(adv.getQuery());
 		q.setUser(user);
-		q.setDataDictionary(GlobalState.getActiveDatadictionary());
 		q.setResponseSocketThinPeer(pipeAdv);
 		return q;
 	}

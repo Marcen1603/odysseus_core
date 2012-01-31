@@ -73,10 +73,9 @@ AbstractPreParserExecutorKeyword {
 			parserID = parserID.trim();
 			transCfg = transCfg.trim();
 			String queryText = parameter.trim();
-			IDataDictionary dd = getDataDictionary();
 
 			Collection<IQuery> queries = ExecutorHandler.getExecutor().addQuery(
-					queryText, parserID, caller, dd, transCfg);
+					queryText, parserID, caller, transCfg);
 			
 			// Append defaultSink to all queries
 			// and make it query root

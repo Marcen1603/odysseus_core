@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IPermission;
  * <li>REMOVE_ALL - super permission to remove all removable things from DataDictionary without having permissions on the specified object uri</li>
  * </ul>
  * @see de.uniol.inf.is.odysseus.usermanagement.Privilege.java
- * @see de.uniol.inf.is.odysseus.datadictionary.DataDictionary.java
+ * @see de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary.java
  * @author Christian van Göns
  */
 public enum DataDictionaryPermission implements IPermission {

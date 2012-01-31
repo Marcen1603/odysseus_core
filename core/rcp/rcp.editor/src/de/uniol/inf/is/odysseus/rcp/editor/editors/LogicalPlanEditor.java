@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.editor.editors;
 
 import java.beans.PropertyChangeEvent;
@@ -51,10 +51,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
@@ -63,9 +64,11 @@ import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.parts.MyEditPartFactory;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
-public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implements IEditorPart, IAdaptable, IDataDictionaryListener, PropertyChangeListener {
+
+public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette
+		implements IEditorPart, IAdaptable, IDataDictionaryListener,
+		PropertyChangeListener {
 
 	private OperatorPlan plan;
 	private static PaletteRoot paletteModel = null;
@@ -74,36 +77,43 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 	public LogicalPlanEditor() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
-		GlobalState.getActiveDatadictionary().addListener(this);
+		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
+			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary()
+					.addListener(this);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		GlobalState.getActiveDatadictionary().removeListener(this);
+		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
+			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary().removeListener(this);
+		}
 	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		Job job = new Job("Save " + getPartName() ) {
+		Job job = new Job("Save " + getPartName()) {
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				FileEditorInput fi = (FileEditorInput) getEditorInput();
-				IOperatorPlanExporter exporter = new OperatorPlanExporter(fi.getFile());
+				IOperatorPlanExporter exporter = new OperatorPlanExporter(
+						fi.getFile());
 				exporter.save(plan);
 				setDirty(false);
 				return Status.OK_STATUS;
 			}
-			
+
 		};
-		
+
 		job.setUser(true);
 		job.schedule();
 	}
 
 	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
 		super.init(site, input);
 
 		FileEditorInput fi = (FileEditorInput) getEditorInput();
@@ -111,7 +121,7 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 		plan = importer.load();
 
 		fullBuild();
-		
+
 		setPartName(fi.getFile().getName());
 		setDirty(false);
 		plan.addPropertyChangeListener(this);
@@ -129,12 +139,12 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 	public void doSaveAs() {
 		// TODO: Implement
 	}
-	
+
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return true;
@@ -151,16 +161,20 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 		final GraphicalViewer graphicalViewer = getGraphicalViewer();
 		graphicalViewer.setRootEditPart(new ScalableRootEditPart());
 		graphicalViewer.setEditPartFactory(new MyEditPartFactory());
-		graphicalViewer.setKeyHandler(new GraphicalViewerKeyHandler(graphicalViewer));
+		graphicalViewer.setKeyHandler(new GraphicalViewerKeyHandler(
+				graphicalViewer));
 
 		RootEditPart root = graphicalViewer.getRootEditPart();
 
 		if (root instanceof LayerManager) {
-			((ConnectionLayer) ((LayerManager) root).getLayer(LayerConstants.CONNECTION_LAYER)).setConnectionRouter(new BendpointConnectionRouter());
+			((ConnectionLayer) ((LayerManager) root)
+					.getLayer(LayerConstants.CONNECTION_LAYER))
+					.setConnectionRouter(new BendpointConnectionRouter());
 		}
 
 		createActions();
-		ContextMenuProvider cmProvider = new MyContextMenuProvider(graphicalViewer, getActionRegistry());
+		ContextMenuProvider cmProvider = new MyContextMenuProvider(
+				graphicalViewer, getActionRegistry());
 		graphicalViewer.setContextMenu(cmProvider);
 	}
 
@@ -170,18 +184,19 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 			@Override
 			protected void configurePaletteViewer(PaletteViewer viewer) {
 				super.configurePaletteViewer(viewer);
-				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(viewer));
+				viewer.addDragSourceListener(new TemplateTransferDragSourceListener(
+						viewer));
 			}
 		};
 	}
-	
+
 	@Override
 	public boolean isDirty() {
 		return isDirty;
 	}
-	
-	protected void setDirty( boolean dirty ) {
-		if( dirty != isDirty ) {
+
+	protected void setDirty(boolean dirty) {
+		if (dirty != isDirty) {
 			isDirty = dirty;
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
@@ -189,7 +204,7 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 				public void run() {
 					firePropertyChange(IEditorPart.PROP_DIRTY);
 				}
-				
+
 			});
 		}
 	}
@@ -211,7 +226,8 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 		super.initializeGraphicalViewer();
 		GraphicalViewer graphicalViewer = getGraphicalViewer();
 		graphicalViewer.setContents(plan);
-		graphicalViewer.addDropTargetListener(createTransferDropTargetListener());
+		graphicalViewer
+				.addDropTargetListener(createTransferDropTargetListener());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -239,37 +255,41 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette implemen
 	}
 
 	@Override
-	public void addedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name,
+			ILogicalOperator op) {
 		fullBuild();
 	}
 
 	@Override
-	public void removedViewDefinition(DataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender, String name,
+			ILogicalOperator op) {
 		fullBuild();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if( OperatorPlan.PROPERTY_OPERATOR_ADD.equals(event.getPropertyName())) {
-			((Operator)event.getNewValue()).addPropertyChangeListener(this);
+		if (OperatorPlan.PROPERTY_OPERATOR_ADD.equals(event.getPropertyName())) {
+			((Operator) event.getNewValue()).addPropertyChangeListener(this);
 			setDirty(true);
-			
-		} else if( OperatorPlan.PROPERTY_OPERATOR_REMOVE.equals(event.getPropertyName())) {
-			((Operator)event.getNewValue()).removePropertyChangeListener(this);
+
+		} else if (OperatorPlan.PROPERTY_OPERATOR_REMOVE.equals(event
+				.getPropertyName())) {
+			((Operator) event.getNewValue()).removePropertyChangeListener(this);
 			setDirty(true);
-			
-		} else if( OperatorPlan.PROPERTY_OPERATOR_CHANGE.equals(event.getPropertyName()) ) {
-			PropertyChangeEvent evt = (PropertyChangeEvent)event.getNewValue();
-			
+
+		} else if (OperatorPlan.PROPERTY_OPERATOR_CHANGE.equals(event
+				.getPropertyName())) {
+			PropertyChangeEvent evt = (PropertyChangeEvent) event.getNewValue();
+
 			// Bauen ändert nicht das Model
-			if( !evt.getPropertyName().equals(Operator.PROPERTY_BUILD))
+			if (!evt.getPropertyName().equals(Operator.PROPERTY_BUILD))
 				setDirty(true);
 		}
-		
+
 	}
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
-		fullBuild();		
+		fullBuild();
 	}
 }

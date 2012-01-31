@@ -115,7 +115,7 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	 */
 	public QueryBuildConfiguration getBuildParameter();
 
-	public void setBuildParameter(QueryBuildConfiguration parameter);
+	public void setBuildParameter(String name, QueryBuildConfiguration parameter);
 
 	/**
 	 * The method must be called for each of the physical roots of a query.
@@ -221,5 +221,7 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 	void open() throws OpenFailedException;
 
 	void close();
+
+	String getBuildConfigName();
 	
 }

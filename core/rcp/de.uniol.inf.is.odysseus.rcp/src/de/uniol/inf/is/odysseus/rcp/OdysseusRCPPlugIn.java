@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		IEventListener {
@@ -68,8 +69,18 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
 
+	private static ISession activeSession;
+
 	public static OdysseusRCPPlugIn getDefault() {
 		return instance;
+	}
+	
+	public static void setActiveSession(ISession session){
+		OdysseusRCPPlugIn.activeSession = session;
+	}
+	
+	public static ISession getActiveSession() {
+		return activeSession;
 	}
 
 	@Override

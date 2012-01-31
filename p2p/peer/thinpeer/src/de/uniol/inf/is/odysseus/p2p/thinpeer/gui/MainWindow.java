@@ -34,7 +34,7 @@ import javax.swing.WindowConstants;
 
 import de.uniol.inf.is.odysseus.p2p.gui.AbstractMainWindow;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.AbstractThinPeer;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 @SuppressWarnings("all")
 public class MainWindow extends AbstractMainWindow implements ActionListener {
@@ -125,7 +125,7 @@ public class MainWindow extends AbstractMainWindow implements ActionListener {
 			this.thinPeer.stopPeer();
 		} else if ("translateButton".equals(e.getActionCommand())) {
 			thinPeer.publishQuerySpezification(query.getText(), "CQL",
-					GlobalState.getActiveSession(""));
+					P2PUserContext.getActiveSession(""));
 
 		}
 

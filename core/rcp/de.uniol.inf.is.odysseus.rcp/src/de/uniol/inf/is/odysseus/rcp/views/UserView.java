@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 
 public class UserView extends ViewPart implements IUserManagementListener{
@@ -46,12 +46,12 @@ public class UserView extends ViewPart implements IUserManagementListener{
 					IUserManagement mmgt = UserManagement.getUsermanagement();
 					List<? extends IUser> users = mmgt
 					.getUsers(
-							GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+							OdysseusRCPPlugIn.getActiveSession());
 					l.addAll(users);
 				} catch (PermissionException e) {
 					// If user has no rights to view all users, only the
 					// current user is shown
-					l.add(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+					l.add(OdysseusRCPPlugIn.getActiveSession());
 				}
 				viewer.setInput(l);
 			}

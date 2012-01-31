@@ -26,8 +26,6 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -44,7 +42,6 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 	private IActuatorFactory actuatorFactory;
 	private IActuatorBenchmark benchmark;
 	private ISession user = null;
-	private IDataDictionary dd = DataDictionaryFactory.getDefaultDataDictionary("Console");;
 
 	public void _addactionquery(CommandInterpreter ci){
 		String args[] = this.extractArgument(ci);
@@ -54,7 +51,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user,dd, "Standard");
+			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user,"Standard");
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -99,7 +96,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55564");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, "Standard");
+				this.executer.addQuery(query, "CQL", user, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -149,7 +146,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, "Standard");
+				this.executer.addQuery(query, "CQL", user, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -172,7 +169,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 				"CHANNEL localhost : 55559");
 		for (String query : queries){
 			try {
-				this.executer.addQuery(query, "CQL", user, dd, "Standard");
+				this.executer.addQuery(query, "CQL", user, "Standard");
 			} catch (PlanManagementException e) {
 				ci.println(e.getMessage());
 			}
@@ -233,10 +230,10 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		this._mmsdb(ci);
 		
 		try {
-			executer.addQuery("select * from machineMaintenance:usage", "CQL", user, dd, "Standard");
-			executer.addQuery("select * from machineMaintenance:factory", "CQL", user, dd, "Standard");
-			executer.addQuery("select * from machineMaintenance:machine", "CQL", user, dd, "Standard");
-			executer.addQuery("select * from machineMaintenance:install", "CQL", user, dd, "Standard");
+			executer.addQuery("select * from machineMaintenance:usage", "CQL", user, "Standard");
+			executer.addQuery("select * from machineMaintenance:factory", "CQL", user, "Standard");
+			executer.addQuery("select * from machineMaintenance:machine", "CQL", user, "Standard");
+			executer.addQuery("select * from machineMaintenance:install", "CQL", user, "Standard");
 			
 			this.benchmark.run();
 			

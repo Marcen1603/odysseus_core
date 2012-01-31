@@ -215,9 +215,6 @@ public abstract class AbstractUser implements IUser, Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (!super.equals(obj)) {
-			return false;
-		}
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryB
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
@@ -67,9 +67,8 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 		
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID).getConfiguration();
 		try {
-			IDataDictionary dd = GlobalState.getActiveDatadictionary();
 			ICompiler compiler = executor.getCompiler();
-			List<IQuery> plans = compiler.translateQuery(queries, parserID, caller, dd);
+			List<IQuery> plans = compiler.translateQuery(queries, parserID, caller, executor.getDataDictionary());
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
@@ -84,9 +83,9 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, cfg.getValue(), caller, dd);
+				compiler.transform(query, cfg.getValue(), caller, executor.getDataDictionary());
 	
-				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, dd, transCfgID);
+				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, transCfgID);
 				executor.startQuery(addedQuery.getID(), caller);
 			} 
 

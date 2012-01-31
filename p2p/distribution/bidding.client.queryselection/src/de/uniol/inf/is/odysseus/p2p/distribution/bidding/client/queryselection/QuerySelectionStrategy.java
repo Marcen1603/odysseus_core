@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.queryselection;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
@@ -24,11 +25,16 @@ import de.uniol.inf.is.odysseus.p2p.distribution.client.queryselection.IQuerySel
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PAO;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 	private static int MAXQUERIES = 10;
-
+	IDataDictionary dd = null;
+	
+	public void bindDataDictionary(IDataDictionary dd){
+		this.dd = dd;
+	}
+	
 	@Override
 	public boolean handleQuery(Subplan subplan, IOdysseusPeer peer) {
 
@@ -40,16 +46,16 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 		collectSourcesFromPlan(subplan.getAo(), sources);
 		if (!sources.isEmpty()) {
 			for (AccessAO ao : sources) {
-				if (!GlobalState.getActiveDatadictionary()
+				if (dd
 						.containsViewOrStream(ao.getSource().getURI(),
-								GlobalState.getActiveSession(""))) {
+								P2PUserContext.getActiveSession(""))) {
 					return false;
 				}
 			}
 			return true;
 		}
 		// keine Quellen werden verwaltet
-		if (GlobalState.getActiveDatadictionary().emptySourceTypeMap()) {
+		if (dd.emptySourceTypeMap()) {
 			return true;
 		} else {
 			return false;

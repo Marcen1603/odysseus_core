@@ -21,16 +21,12 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
 
 public class Login {
 
@@ -82,10 +78,10 @@ public class Login {
 
 			if (user != null) {
 				// anmelden ok
-				GlobalState.setActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN, user);
-				GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(OdysseusDefaults.get("defaultDataDictionaryName")));
+				OdysseusRCPPlugIn.setActiveSession(user);
 				StatusBarManager.getInstance().setMessage(
 						"Automatically logged in as " + username);
+				executor.reloadStoredQueries(user);
 				return user;
 			}
 			return null;

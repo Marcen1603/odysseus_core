@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 public class OperatorPlanImporter implements IOperatorPlanImporter {
 
@@ -171,10 +171,9 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		int x = Integer.valueOf(getAttributeValue(node, "x"));
 		int y = Integer.valueOf(getAttributeValue(node, "y"));
 
-		final IDataDictionary dd = GlobalState.getActiveDatadictionary();		
 		String builderName = getAttributeValue(node, "builder");
-		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN), dd);
-		builder.setCaller(GlobalState.getActiveSession(OdysseusRCPPlugIn.RCP_USER_TOKEN));
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor().getDataDictionary());
+		builder.setCaller(OdysseusRCPPlugIn.getActiveSession());
 
 		Map<String, Object> parameters = loadParameters(node);
 

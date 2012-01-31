@@ -20,11 +20,9 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+
 
 /**
  * 
@@ -37,9 +35,7 @@ public class SessionManagement {
 	private static SessionManagement instance = null;
 	
 	private SessionManagement(){
-		if(GlobalState.getActiveDatadictionary()==null){
-			GlobalState.setActiveDatadictionary(DataDictionaryFactory.getDefaultDataDictionary(OdysseusDefaults.get("defaultDataDictionaryName")));
-		}
+
 	}
 	
 	public synchronized static SessionManagement getInstance(){		
@@ -66,10 +62,7 @@ public class SessionManagement {
 	public boolean isValidSession(String token){
 		return currentSessions.containsKey(token);
 	}
-	
-	public synchronized IDataDictionary getDataDictionary(){		
-		return GlobalState.getActiveDatadictionary();
-	}
+
 	
 	public ISession getUser(String token){
 		return GlobalState.getActiveSession(token);

@@ -1,19 +1,20 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.store;
 
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -31,19 +34,20 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.util.FileUtils;
 
-
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		implements IStore<IDType, STORETYPE> {
 
 	Logger logger = LoggerFactory.getLogger(FileStore.class);
-	
+
 	private String path;
 	private MemoryStore<IDType, STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
+	private Map<IDType, Boolean> serializableTestPassed = new HashMap<IDType, Boolean>();
 
 	public FileStore(String path) throws IOException {
 		this.path = path;
 		loadCache();
-		logger.debug("Loaded from "+path+" "+cache.entrySet().size()+" values");
+		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
+				+ " values");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -57,6 +61,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 				while ((key = (IDType) in.readObject()) != null) {
 					STORETYPE element = (STORETYPE) in.readObject();
 					cache.put(key, element);
+					// Object that have been written must be serializable ;-)
+					serializableTestPassed.put(key, Boolean.TRUE);
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -70,8 +76,11 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
 				new File(path)));
 		for (Entry<IDType, STORETYPE> e : cache.entrySet()) {
-			out.writeObject(e.getKey());
-			out.writeObject(e.getValue());
+			if (serializableTestPassed.get(e.getKey())) {
+				out.writeObject(e.getKey());
+				out.writeObject(e.getValue());
+			}
+
 		}
 		out.close();
 	}
@@ -84,10 +93,17 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	@Override
 	public void put(IDType id, STORETYPE elem) throws StoreException {
 		cache.put(id, elem);
+		// Do serializable test for this new object
 		try {
+			ObjectOutputStream test = new ObjectOutputStream(
+					new ByteArrayOutputStream());
+			test.writeObject(elem);
+			// If no exception is thrown, object is serializable
+			serializableTestPassed.put(id, Boolean.TRUE);
 			saveCache();
-		} catch (IOException e) {
-			throw new StoreException(e);
+		} catch (Exception e) {
+			logger.warn("Tried to store non serializable object " + elem);
+			serializableTestPassed.put(id, Boolean.FALSE);
 		}
 	}
 
@@ -136,7 +152,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	public Collection<STORETYPE> values() {
 		return cache.values();
 	}
-	
+
 	@Override
 	public void commit() {
 		try {
