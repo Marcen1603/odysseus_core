@@ -37,19 +37,16 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 2539966167342852544L;
 
-	private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
-
-	private List<SDFAttribute> groupingAttributes = new ArrayList<SDFAttribute>();
-
-	private SDFAttributeList outputSchema = null;
-
+	final private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations;
+	final private List<SDFAttribute> groupingAttributes;
+	final private SDFAttributeList outputSchema;
 	private int dumpAtValueCount = -1;
 
 	public AggregateAO() {
 		super();
 		aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
-		outputSchema = new SDFAttributeList(getInputSchema()!=null?getInputSchema().getURI():"");
+		outputSchema = new SDFAttributeList(getInputSchema()!=null?getInputSchema().getURI():"AGGREGATE");
 	}
 
 	public AggregateAO(AggregateAO op) {

@@ -37,6 +37,7 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 	@Override
 	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		UnboundedWindowTIPO window = new UnboundedWindowTIPO(windowAO);
+		window.setOutputSchema(windowAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, window);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);

@@ -61,6 +61,8 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //				for( SDFAttribute attr : node.getModelNode().getContent().getOutputSchema())
 //					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
+			}else{
+				System.err.println("No output Schema for "+node.getModelNode().getContent());
 			}
 			if (node.getModelNode().getContent() instanceof IHasPredicate){
 				children.add(((IHasPredicate)node.getModelNode().getContent()).getPredicate());

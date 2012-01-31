@@ -27,7 +27,6 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.serialize.ISerializable;
@@ -87,11 +86,6 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 * The user who created this query
 	 */
 	transient private ISession user = null;
-
-//	/**
-//	 * The Data Dictionary belonging to this query
-//	 */
-//	transient private IDataDictionary datadictionary;
 
 	/**
 	 * List of all direct physical child operators. Stored separate because a
