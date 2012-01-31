@@ -59,13 +59,20 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			IDType key = null;
 			try {
 				while ((key = (IDType) in.readObject()) != null) {
-					STORETYPE element = (STORETYPE) in.readObject();
-					cache.put(key, element);
-					// Object that have been written must be serializable ;-)
-					serializableTestPassed.put(key, Boolean.TRUE);
+					// Could be unreadable input
+					try {
+						STORETYPE element = (STORETYPE) in.readObject();
+						cache.put(key, element);
+						// Object that have been written must be serializable
+						// ;-)
+						serializableTestPassed.put(key, Boolean.TRUE);
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				//e.printStackTrace();
 			}
 			in.close();
 		} catch (EOFException e) {
@@ -102,7 +109,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			serializableTestPassed.put(id, Boolean.TRUE);
 			saveCache();
 		} catch (Exception e) {
-			logger.warn("Tried to store non serializable object " + elem);
+			logger.warn(e.getMessage()
+					+ " Tried to store non serializable object " + elem);
 			serializableTestPassed.put(id, Boolean.FALSE);
 		}
 	}
