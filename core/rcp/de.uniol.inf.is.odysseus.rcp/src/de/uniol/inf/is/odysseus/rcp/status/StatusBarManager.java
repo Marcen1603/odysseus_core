@@ -22,7 +22,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class StatusBarManager{
 
@@ -63,7 +63,7 @@ public class StatusBarManager{
 	private void setStandardMessages() {
 		setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
 		setMessage(StatusBarManager.SCHEDULER_ID, "No Scheduler");
-		setMessage(StatusBarManager.USER_ID, "No user logged in");
+		setMessage(StatusBarManager.USER_ID, "User "+OdysseusRCPPlugIn.getActiveSession().getUser().getName());
 	}
 	
 	private void applyCache() {
