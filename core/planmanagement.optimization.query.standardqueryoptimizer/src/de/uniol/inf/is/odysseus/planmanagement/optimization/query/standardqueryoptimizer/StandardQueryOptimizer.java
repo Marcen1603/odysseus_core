@@ -20,6 +20,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -71,7 +72,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters) throws QueryOptimizationException {
+			OptimizationConfiguration parameters, IDataDictionary dd) throws QueryOptimizationException {
 		ICompiler compiler = null;
 			
 		try{
@@ -109,7 +110,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		try {
 				// create the physical plan
 				compiler.transform(query, query.getBuildParameter()
-						.getTransformationConfiguration(), query.getUser(), query.getDataDictionary());
+						.getTransformationConfiguration(), query.getUser(), dd);
 
 				postTransformationInit(query, query.getRoots());
 			} catch (Throwable e) {

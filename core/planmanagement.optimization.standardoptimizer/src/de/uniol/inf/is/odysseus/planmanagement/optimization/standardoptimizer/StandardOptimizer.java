@@ -24,6 +24,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -69,12 +70,12 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan optimize(IOptimizable sender, List<IQuery> queries,
-			OptimizationConfiguration parameter)
+			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
 			for (IQuery query : queries) {
 				if (query.getLogicalPlan() != null){
-					this.queryOptimizer.optimizeQuery(sender, query, parameter);
+					this.queryOptimizer.optimizeQuery(sender, query, parameter, dd);
 				}
 				doPostOptimizationActions(query, parameter);
 			}
@@ -86,7 +87,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			newPlan.addAll(queries);
 
 			IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
-					sender, parameter, newPlan);
+					sender, parameter, newPlan, dd);
 
 			return newExecutionPlan;
 		}
@@ -96,13 +97,13 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
 			T sender, IQuery removedQuery, IExecutionPlan executionPlan,
-			OptimizationConfiguration parameter)
+			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
 		newPlan.remove(removedQuery);
 
 		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
-				sender, parameter, newPlan);
+				sender, parameter, newPlan, dd);
 
 		return newExecutionPlan;
 	}
@@ -111,11 +112,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
-			OptimizationConfiguration parameter)
+			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
 		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
-				sender, parameter, newPlan);
+				sender, parameter, newPlan, dd);
 		return newExecutionPlan;
 	}
 

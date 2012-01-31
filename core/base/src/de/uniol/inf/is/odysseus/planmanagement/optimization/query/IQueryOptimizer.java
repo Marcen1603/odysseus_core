@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.query;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -48,7 +49,7 @@ public interface IQueryOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-			OptimizationConfiguration parameters) throws QueryOptimizationException;
+			OptimizationConfiguration parameters, IDataDictionary dd) throws QueryOptimizationException;
 	
 	/**
 	 * Adds buffers corresponding to the query's

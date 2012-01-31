@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
@@ -70,7 +71,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 *             {@link QueryBuildConfiguration}.
 	 * @throws CompilerException
 	 */
-	private void checkPhysikalPlan(IPlanOptimizable sender, List<IQuery> queries)
+	private void checkPhysikalPlan(IPlanOptimizable sender, List<IQuery> queries, IDataDictionary dd)
 			throws OpenFailedException, TransformationException,
 			NoTransformationConfiguration, NoCompilerLoadedException {
 
@@ -83,7 +84,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 								query,
 								query.getBuildParameter()
 										.getTransformationConfiguration(),
-										query.getUser(), query.getDataDictionary());
+										query.getUser(), dd);
 			}
 		}
 	}
@@ -101,12 +102,12 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 */
 	@Override
 	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizationConfiguration parameters, List<IQuery> allQueries)
+			OptimizationConfiguration parameters, List<IQuery> allQueries, IDataDictionary dd)
 			throws QueryOptimizationException {
 
 		// check all queries
 		try {
-			checkPhysikalPlan(sender, allQueries);
+			checkPhysikalPlan(sender, allQueries,dd);
 		} catch (Exception e) {
 			throw new QueryOptimizationException(
 					"Error while optimizer checking Queries.", e);

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
@@ -57,11 +58,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan optimize(IOptimizable sender,
-			List<IQuery> newQueries, OptimizationConfiguration parameter)
-			throws QueryOptimizationException;
-	
-	IExecutionPlan optimize(IOptimizable sender,
-			List<IQuery> newQueries, IOptimizationSetting... parameters)
+			List<IQuery> newQueries, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
 	
 	/**
@@ -157,30 +154,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException;
 
-	
-	/**
-	 * Initializes an optimization if a query should be removed.
-	 * 
-	 * @param <T>
-	 *            Type of the optimization request sender
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
-	 * @param removedQuery
-	 *            Query that should be removed.
-	 * @param executionPlan
-	 *            Current execution plan.
-	 * @param parameters
-	 *            Parameter for the optimization.
-	 * @return New optimized execution plan.
-	 * @throws QueryOptimizationException
-	 *             An exception occurred during optimization.
-	 */
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IQuery removedQuery,
-			IExecutionPlan executionPlan,
-			IOptimizationSetting<?>... parameters)
-			throws QueryOptimizationException;
+
 
 	/**
 	 * Initializes an optimization if a query should be removed.
@@ -202,7 +176,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 */
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
 			T sender, IQuery removedQuery,
-			IExecutionPlan executionPlan, OptimizationConfiguration parameter)
+			IExecutionPlan executionPlan, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
 	
 	/**
@@ -217,7 +191,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 */
 	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
-			OptimizationConfiguration parameter) throws QueryOptimizationException;
+			OptimizationConfiguration parameter, IDataDictionary dd) throws QueryOptimizationException;
 	
 	/**
 	 * Handles a callback, when a plan migration has finished.

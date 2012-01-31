@@ -88,10 +88,10 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 	 */
 	transient private ISession user = null;
 
-	/**
-	 * The Data Dictionary belonging to this query
-	 */
-	transient private IDataDictionary datadictionary;
+//	/**
+//	 * The Data Dictionary belonging to this query
+//	 */
+//	transient private IDataDictionary datadictionary;
 
 	/**
 	 * List of all direct physical child operators. Stored separate because a
@@ -659,15 +659,15 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 		return user;
 	}
 
-	@Override
-	public IDataDictionary getDataDictionary() {
-		return datadictionary;
-	}
-
-	@Override
-	public void setDataDictionary(IDataDictionary dd) {
-		this.datadictionary = dd;
-	}
+//	@Override
+//	public IDataDictionary getDataDictionary() {
+//		return datadictionary;
+//	}
+//
+//	@Override
+//	public void setDataDictionary(IDataDictionary dd) {
+//		this.datadictionary = dd;
+//	}
 
 	@Override
 	public void setParserId(String parserId) {

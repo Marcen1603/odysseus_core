@@ -257,7 +257,6 @@ public class StandardExecutor extends AbstractExecutor implements
 			query.setBuildParameter(buildConfigName, parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
-			query.setDataDictionary(getDataDictionary());
 			query.setSLA(sla);
 			// this executor processes reoptimize requests
 			query.addReoptimizeListener(this);
@@ -291,7 +290,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		try {
 			// optimize queries and set resulting execution plan
 			IExecutionPlan exep = getOptimizer().optimize(this, newQueries,
-					conf);
+					conf, getDataDictionary());
 
 			setExecutionPlan(exep);
 
@@ -301,7 +300,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				this.plan.addQuery(optimizedQuery);
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
-				optimizedQuery.getDataDictionary().addQuery(optimizedQuery,
+				getDataDictionary().addQuery(optimizedQuery,
 						optimizedQuery.getUser());
 			}
 
@@ -410,7 +409,6 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			IQuery query = new Query(logicalPlan, params);
 			query.setUser(user);
-			query.setDataDictionary(getDataDictionary());
 			query.addReoptimizeListener(this);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
@@ -444,7 +442,6 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IQuery> newQueries = new ArrayList<IQuery>();
 			IQuery query = new Query(physicalPlan, queryBuildConfiguration);
 			query.setUser(user);
-			query.setDataDictionary(getDataDictionary());
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			addQueries(newQueries, new OptimizationConfiguration(
@@ -489,7 +486,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			try {
 				executionPlanLock.lock();
 				setExecutionPlan(getOptimizer().beforeQueryRemove(this,
-						queryToRemove, this.executionPlan));
+						queryToRemove, this.executionPlan, null, getDataDictionary()));
 				stopQuery(queryToRemove.getID(), caller);
 				getLogger().info("Removing Query " + queryToRemove.getID());
 				this.plan.removeQuery(queryToRemove.getID());
@@ -878,7 +875,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		this.executionPlanLock.lock();
 		try {
 			setExecutionPlan(this.getOptimizer().beforeQueryMigration(this,
-					new OptimizationConfiguration(ParameterDoRewrite.FALSE)));
+					new OptimizationConfiguration(ParameterDoRewrite.FALSE), getDataDictionary()));
 		} finally {
 			// end synchronize of the process
 			this.executionPlanLock.unlock();

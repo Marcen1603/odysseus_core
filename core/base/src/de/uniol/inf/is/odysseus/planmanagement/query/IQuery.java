@@ -199,8 +199,8 @@ public interface IQuery extends IReoptimizeHandler<IQueryReoptimizeListener>,
 
 	double getPenalty();
 
-	public IDataDictionary getDataDictionary();
-	public void setDataDictionary(IDataDictionary dd);
+//	public IDataDictionary getDataDictionary();
+//	public void setDataDictionary(IDataDictionary dd);
 	
 	/**
 	 * returns the query's service level agreement

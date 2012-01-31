@@ -23,6 +23,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
@@ -336,31 +337,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return executionPlan;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryRemoveOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
-	 */
-	@Override
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IQuery removedQuery,
-			IExecutionPlan executionPlan,
-			IOptimizationSetting<?>... parameters)
-			throws QueryOptimizationException {
-		return beforeQueryRemove(sender, removedQuery, executionPlan,
-				new OptimizationConfiguration(parameters));
-	};
-
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preQueryAddOptimization(de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable, java.util.List, de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.AbstractOptimizationSetting<?>[])
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public IExecutionPlan optimize(IOptimizable sender,
-			List<IQuery> newQueries,
-			IOptimizationSetting... parameters)
-			throws QueryOptimizationException {
-		return optimize(sender, newQueries,
-				new OptimizationConfiguration(parameters));
-	};
 	
 	protected void doPostOptimizationActions(IQuery query, OptimizationConfiguration parameter) {
 		for (IPostOptimizationAction action: postOptimizationActions){
