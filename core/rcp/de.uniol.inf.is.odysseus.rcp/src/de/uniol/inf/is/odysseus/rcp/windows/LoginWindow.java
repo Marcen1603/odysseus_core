@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.rcp.Login;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -108,7 +109,7 @@ public class LoginWindow {
 		createInput(wnd);
 
 		autoLoginCheck = new Button(wnd, SWT.CHECK);
-		autoLoginCheck.setText(AUTO_LOGIN_TEXT);
+		autoLoginCheck.setText(OdysseusNLS.LoginAutomatically);
 		autoLoginCheck.setSelection(LoginPreferencesManager.getInstance()
 				.getAutoLogin());
 
@@ -129,13 +130,13 @@ public class LoginWindow {
 		comp.setLayout(layout);
 
 		usernameLabel = new Label(comp, SWT.NONE);
-		usernameLabel.setText(USER_TEXT);
+		usernameLabel.setText(OdysseusNLS.Username + ":");
 		usernameInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		usernameInput.setText(startUserName);
 		usernameInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		passwordLabel = new Label(comp, SWT.NONE);
-		passwordLabel.setText(PASSWORD_TEXT);
+		passwordLabel.setText(OdysseusNLS.Password + ":");
 		passwordInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		passwordInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		passwordInput.setEchoChar('*');
@@ -171,7 +172,7 @@ public class LoginWindow {
 		comp.setLayout(layout);
 
 		okButton = new Button(comp, SWT.PUSH);
-		okButton.setText(OK_BUTTON_TEXT);
+		okButton.setText(OdysseusNLS.OK);
 		okButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -181,7 +182,7 @@ public class LoginWindow {
 		});
 
 		cancelButton = new Button(comp, SWT.PUSH);
-		cancelButton.setText(CANCEL_BUTTON_TEXT);
+		cancelButton.setText(OdysseusNLS.Cancel);
 		cancelButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -200,7 +201,7 @@ public class LoginWindow {
 			// anmeldung ok
 			loginOK = true;
 
-			// Nutzerdaten nur speichern, wenn AutoLogin gewählt
+			// Nutzerdaten nur speichern, wenn AutoLogin gewï¿½hlt
 			if (autoLoginCheck.getSelection()) {
 				LoginPreferencesManager.getInstance().setUsername(
 						user.getUser().getName());

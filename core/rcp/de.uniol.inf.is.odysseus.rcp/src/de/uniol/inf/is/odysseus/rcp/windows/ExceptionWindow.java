@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
+
 public class ExceptionWindow {
 
 	private Text stackTrace = null;
@@ -51,14 +53,14 @@ public class ExceptionWindow {
 		else
 			shell = new Shell();
 		
-		shell.setText("Exception");
+		shell.setText(OdysseusNLS.Exception);
 
 		GridLayout gl = new GridLayout();
 		gl.numColumns = 3;
 		shell.setLayout(gl);
 
 		Label label = new Label(shell, SWT.NONE);
-		label.setText("An error has occured: " + ex.getClass().getSimpleName());
+		label.setText(OdysseusNLS.AnErrorHasOccured+": " + ex.getClass().getSimpleName());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
 		label.setLayoutData(data);
@@ -79,7 +81,7 @@ public class ExceptionWindow {
 		Button closeButton = new Button( shell, SWT.PUSH );
 		data = new GridData( GridData.FILL_HORIZONTAL);
 		closeButton.setLayoutData(data);
-		closeButton.setText("Close Application");
+		closeButton.setText(OdysseusNLS.CloseApplication);
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -93,18 +95,18 @@ public class ExceptionWindow {
 		final Button stackTraceButton = new Button( shell, SWT.PUSH );
 		data = new GridData( GridData.FILL_HORIZONTAL);
 		stackTraceButton.setLayoutData(data);
-		stackTraceButton.setText("Show StackTrace");
+		stackTraceButton.setText(OdysseusNLS.ShowStackTrace);
 		stackTraceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if( stackTrace != null ) {
 					// Stacktrace wird schon angezeigt --> ausblenden
 					hideStackTrace(placeHolder);
-					stackTraceButton.setText("Show StackTrace");
+					stackTraceButton.setText(OdysseusNLS.ShowStackTrace);
 				} else {
 					// Stacktrace noch unsichtbar --> einblenden
 					showStackTrace(placeHolder, ex);
-					stackTraceButton.setText("Hide StackTrace");
+					stackTraceButton.setText(OdysseusNLS.HideStackTrace);
 				}
 				layoutShell(shell);
 			}
@@ -112,7 +114,7 @@ public class ExceptionWindow {
 		
 		Button acceptButton = new Button(shell, SWT.PUSH);
 		acceptButton.setLayoutData( new GridData(GridData.FILL_HORIZONTAL));
-		acceptButton.setText("Continue");
+		acceptButton.setText(OdysseusNLS.Continue);
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -176,7 +178,7 @@ public class ExceptionWindow {
 		}
 		int framesInCommon = trace.length - 1 - m;
 
-		sb.append("Caused by: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+		sb.append(OdysseusNLS.CausedBy+": " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
 		sb.append("\n");
 		for (int i = 0; i <= m; i++)
 			sb.append("\tat " + trace[i]).append("\n");

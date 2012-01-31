@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class QueryView extends ViewPart implements IPlanModificationListener {
 
@@ -80,7 +81,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* ID ****************/
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		idColumn.getColumn().setText("ID");
+		idColumn.getColumn().setText(OdysseusNLS.ID);
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -104,7 +105,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* Status ****************/
 		TableViewerColumn statusColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		statusColumn.getColumn().setText("Status");
+		statusColumn.getColumn().setText(OdysseusNLS.Status);
 		// statusColumn.getColumn().setWidth(100);
 		statusColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -124,10 +125,10 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 				if (s1.equals(s2))
 					return 0;
-				else if (s1.equals("Opened"))
+				else if (s1.equals(OdysseusNLS.Opened))
 					return 1;
-				else if (s1.equals("Active"))
-					if (s2.equals("Inactive"))
+				else if (s1.equals(OdysseusNLS.Active))
+					if (s2.equals(OdysseusNLS.Inactive))
 						return 1;
 					else
 						return -1;
@@ -138,7 +139,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* Priority ****************/
 		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		priorityColumn.getColumn().setText("Priority");
+		priorityColumn.getColumn().setText(OdysseusNLS.Priority);
 		priorityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -162,7 +163,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* Parser ID ****************/
 		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		parserIdColumn.getColumn().setText("Parser");
+		parserIdColumn.getColumn().setText(OdysseusNLS.Parser);
 		// parserIdColumn.getColumn().setWidth(100);
 		parserIdColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -182,7 +183,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* User ****************/
 		TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		userColumn.getColumn().setText("User");
+		userColumn.getColumn().setText(OdysseusNLS.User);
 		// userColumn.getColumn().setWidth(400);
 		userColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -206,7 +207,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 		/************* Query Text ****************/
 		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		queryTextColumn.getColumn().setText("Query text");
+		queryTextColumn.getColumn().setText(OdysseusNLS.QueryText);
 		// queryTextColumn.getColumn().setWidth(400);
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -320,7 +321,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 						executor.addPlanModificationListener(QueryView.this);
 					} else {
-						logger.error("cannot get executor service");
+						logger.error(OdysseusNLS.NoExecutorFound);
 					}
 					// execTracker.close();
 					// } catch (InterruptedException e) {
@@ -400,9 +401,9 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 	private String getQueryStatus(IQuery q) {
 		if (q.isOpened())
-			return "Running";
+			return OdysseusNLS.Running;
 		else
-			return "Inactive";
+			return OdysseusNLS.Inactive;
 	}
 
 	private static abstract class ColumnViewerSorter extends ViewerComparator {

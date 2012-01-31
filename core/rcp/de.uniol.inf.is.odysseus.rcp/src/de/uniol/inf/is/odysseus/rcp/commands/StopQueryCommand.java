@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
@@ -77,9 +78,9 @@ public class StopQueryCommand extends AbstractHandler implements IHandler {
 				job.setUser(true);
 				job.schedule();
 			} else {
-				logger.error("Kein ExecutorService gefunden");
+				logger.error(OdysseusNLS.NoExecutorFound);
 				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-				box.setMessage("No executor available");
+				box.setMessage(OdysseusNLS.NoExecutorFound);
 				box.setText("Error");
 				box.open();
 

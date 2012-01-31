@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class PartialPlanView extends ViewPart implements IPlanModificationListener {
 
@@ -62,7 +63,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableViewer.getTable().setLinesVisible(true);
 
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		idColumn.getColumn().setText("ID");
+		idColumn.getColumn().setText(OdysseusNLS.ID);
 		// idColumn.getColumn().setWidth(50);
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -73,7 +74,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn queryColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		queryColumn.getColumn().setText("Queries");
+		queryColumn.getColumn().setText(OdysseusNLS.Queries);
 		// idColumn.getColumn().setWidth(50);
 		queryColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -84,7 +85,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(queryColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn sourceColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		sourceColumn.getColumn().setText("Iteratable Sources");
+		sourceColumn.getColumn().setText(OdysseusNLS.IteratableSources);
 		// idColumn.getColumn().setWidth(50);
 		sourceColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -95,7 +96,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(sourceColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn rootsColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		rootsColumn.getColumn().setText("Roots");
+		rootsColumn.getColumn().setText(OdysseusNLS.Roots);
 		// idColumn.getColumn().setWidth(50);
 		rootsColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -106,7 +107,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(rootsColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn basePrioColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		basePrioColumn.getColumn().setText("Base Priority");
+		basePrioColumn.getColumn().setText(OdysseusNLS.BasePriority);
 		// idColumn.getColumn().setWidth(50);
 		basePrioColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -117,7 +118,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(basePrioColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn curPrioColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		curPrioColumn.getColumn().setText("Current Priority");
+		curPrioColumn.getColumn().setText(OdysseusNLS.CurrentPriority);
 		// idColumn.getColumn().setWidth(50);
 		curPrioColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -128,7 +129,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(curPrioColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn slaRateColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		slaRateColumn.getColumn().setText("SLA Infos");
+		slaRateColumn.getColumn().setText(OdysseusNLS.SLAInfos);
 		// idColumn.getColumn().setWidth(50);
 		slaRateColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -156,11 +157,11 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 						setExecutionPlan(executor.getExecutionPlan());
 						executor.addPlanModificationListener(PartialPlanView.this);
 					} else {
-						logger.error("cannot get executor service");
+						logger.error(OdysseusNLS.NoExecutorFound);
 					}
 					execTracker.close();
 				} catch (InterruptedException e) {
-					logger.error("cannot get executor service", e);
+					logger.error(OdysseusNLS.NoExecutorFound, e);
 				}
 			}
 

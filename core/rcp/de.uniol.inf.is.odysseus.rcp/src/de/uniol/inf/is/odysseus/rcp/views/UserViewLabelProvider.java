@@ -20,6 +20,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
@@ -43,10 +44,10 @@ public class UserViewLabelProvider extends LabelProvider {
 			return role.getName();
 		}
 		if (obj instanceof IPrivilege) {
-			return "Privilege: " + ((IPrivilege) obj).getObjectURI();
+			return OdysseusNLS.Privilege+": " + ((IPrivilege) obj).getObjectURI();
 		}
 		if (obj instanceof IPermission){
-			return "Permission:"+obj;
+			return OdysseusNLS.Permission+":"+obj;
 		}
 		return obj.toString();
 	}

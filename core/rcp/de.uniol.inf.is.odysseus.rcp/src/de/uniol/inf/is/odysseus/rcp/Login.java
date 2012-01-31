@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
@@ -80,7 +81,7 @@ public class Login {
 				// anmelden ok
 				OdysseusRCPPlugIn.setActiveSession(user);
 				StatusBarManager.getInstance().setMessage(
-						"Automatically logged in as " + username);
+						OdysseusNLS.AutomaticallyLoggedInAs + " " + username);
 				executor.reloadStoredQueries(user);
 				return user;
 			}

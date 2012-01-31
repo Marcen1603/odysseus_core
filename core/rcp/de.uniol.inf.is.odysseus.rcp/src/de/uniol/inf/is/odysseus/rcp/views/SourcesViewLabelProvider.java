@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
@@ -75,9 +76,9 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 			IUser user = OdysseusRCPPlugIn.getExecutor().getDataDictionary().getCreator(
 					entry.getKey());
 			if (user != null) {
-				sb.append(" created by ").append(user.getName());
+				sb.append(" " + OdysseusNLS.CreatedBy + " ").append(user.getName());
 			} else {
-				sb.append(" created by no user ??");
+				sb.append(" " + OdysseusNLS.CreatedBy + " no user ??");
 			}
 			return sb.toString();
 		}

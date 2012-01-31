@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
@@ -124,12 +125,12 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		executor = ex;
 
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID,
-				"Executor " + executor.getName() + " ready");
+				OdysseusNLS.Executor +" " + executor.getName() + " " + OdysseusNLS.Ready);
 		StatusBarManager.getInstance().setMessage(
 				StatusBarManager.SCHEDULER_ID,
 				executor.getCurrentSchedulerID() + " ("
 						+ executor.getCurrentSchedulingStrategyID() + ") "
-						+ (executor.isRunning() ? " running " : " stopped "));
+						+ (executor.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
 		if (executor.getSchedulerManager() != null) {
 			executor.getSchedulerManager().subscribeToAll(this);
 			executor.getSchedulerManager().getActiveScheduler()
@@ -163,8 +164,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 								+ " ("
 								+ executor.getCurrentSchedulingStrategyID()
 								+ ") "
-								+ (executor.isRunning() ? " running "
-										: " stopped "));
+								+ (executor.isRunning() ? OdysseusNLS.Running
+										: OdysseusNLS.Stopped));
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}

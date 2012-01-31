@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
@@ -59,7 +60,7 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							// TODO: eventuell über Executor machen
+							// TODO: eventuell ï¿½ber Executor machen
 							IDataDictionary dd = executor.getDataDictionary();
 							dd.removeSink(param);
 							StatusBarManager.getInstance().setMessage("Sink removed");
@@ -72,9 +73,9 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 				job.setUser(true);
 				job.schedule();
 			} else {
-				logger.error("Kein ExecutorService gefunden");
+				logger.error(OdysseusNLS.NoExecutorFound);
 				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-				box.setMessage("No executor available");
+				box.setMessage(OdysseusNLS.NoExecutorFound);
 				box.setText("Error");
 				box.open();
 
