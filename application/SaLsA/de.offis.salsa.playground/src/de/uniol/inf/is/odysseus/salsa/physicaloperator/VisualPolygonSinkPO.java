@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.salsa.physicaloperator;
 
+
 import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -16,7 +19,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualPolygonSinkPO extends AbstractSink<Object> {
+
     private final BlockingQueue<Geometry> segments = new LinkedBlockingQueue<Geometry>();
+
     private PolygonScreen screen = new PolygonScreen();
     private final SDFAttributeList schema;
 
@@ -32,6 +37,7 @@ public class VisualPolygonSinkPO extends AbstractSink<Object> {
                     }
                 }
                 catch (InterruptedException e) {
+
                     e.printStackTrace();
                 }
             }

@@ -91,16 +91,22 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
 
     @Override
     public SDFDatatype getReturnType() {
-        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.SPATIAL);
+        return new SDFDatatype(SDFDatatype.TUPLE.getURI(), SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.SPATIAL);
     }
 
     private List<Geometry> segmentize(final Coordinate[] coordinates, final double threshold) {
         final List<Geometry> segments = new ArrayList<Geometry>();
+        
+        
+        
         if (coordinates.length >= 2) {
+            
             final Coordinate start = coordinates[0];
             final Coordinate end = coordinates[coordinates.length - 1];
+            
             double maxDistance = 0;
             int splitIndex = 0;
+            
             for (int i = 1; i < coordinates.length - 1; i++) {
                 final double distance = this.getDistanceToLine(coordinates[i], start, end);
                 if (distance > maxDistance) {
@@ -108,24 +114,27 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
                     splitIndex = i;
                 }
             }
-            if ((splitIndex > 0) && (splitIndex < coordinates.length - 1)
-                    && (maxDistance > threshold)) {
-                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex + 1),
-                        threshold));
-                segments.addAll(this.segmentize(
-                        Arrays.copyOfRange(coordinates, splitIndex, coordinates.length), threshold));
+            
+            if ((splitIndex > 0) && (splitIndex < coordinates.length - 1) && (maxDistance > threshold)) {
+                
+                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, 0, splitIndex), threshold));
+                segments.addAll(this.segmentize(Arrays.copyOfRange(coordinates, splitIndex, coordinates.length), threshold));
             }
             else {
-                if ((start.distance(end) <= threshold) || (coordinates.length > 2)) {
+                
+                if ((start.distance(end) <= threshold)) {
                     segments.add(this.geometryFactory.createLineString(coordinates));
                 }
+                
             }
         }
         return segments;
     }
 
-    private double getDistanceToLine(final Coordinate point, final Coordinate from,
-            final Coordinate to) {
+
+
+    private double getDistanceToLine(final Coordinate point, final Coordinate from, final Coordinate to) {
+
         final Coordinate fromTo = new Coordinate(to.x - from.x, to.y - from.y);
         final Coordinate fromPoint = new Coordinate(point.x - from.x, point.y - from.y);
         final Coordinate toPoint = new Coordinate(point.x - to.x, point.y - to.y);
@@ -138,7 +147,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
         if (dot >= sqrtLength) {
             return Math.sqrt(toPoint.x * toPoint.x + toPoint.y * toPoint.y);
         }
-        return Math.sqrt((fromPoint.x * fromPoint.x + fromPoint.y * fromPoint.y) - dot * dot
-                / sqrtLength);
+
+        return Math.sqrt((fromPoint.x * fromPoint.x + fromPoint.y * fromPoint.y) - dot * dot / sqrtLength);
     }
 }
