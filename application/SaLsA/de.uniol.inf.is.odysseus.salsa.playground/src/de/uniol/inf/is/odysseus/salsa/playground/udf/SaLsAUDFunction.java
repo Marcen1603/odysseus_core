@@ -63,13 +63,18 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 @UserDefinedFunction(name = "FusionL1")
 public class SaLsAUDFunction<R> implements IUserDefinedFunction<R, R> {
 
-	String init = null;
 	List<RelationalTuple> tupleList = null;
 	List<RelationalTuple> mergetupleList = null;
-
+	RelationalTuple last = null;
+	
+	double mDistance = 0.00;
+	
 	@Override
 	public void init(String initString) {
-		init = initString;
+		mDistance = Double.parseDouble(initString);
+		
+		
+		
 		tupleList = new ArrayList<RelationalTuple>();
 		mergetupleList = new ArrayList<RelationalTuple>();
 	}
@@ -77,47 +82,86 @@ public class SaLsAUDFunction<R> implements IUserDefinedFunction<R, R> {
 	@Override
 	public R process(R in, int port) {
 		RelationalTuple<IMetaAttribute> intuple = (RelationalTuple<IMetaAttribute>) in;
-		mergetupleList.clear();
+		mergetupleList = new ArrayList<RelationalTuple>();
+		
+		//System.out.println((String)intuple.getAttribute(1));
+		if(last != null){
+			//System.out.println(intuple.getAttribute(1).equals((String)last.getAttribute(1)));
+		}
+		last = intuple;
 		
 		if (((ITimeInterval) intuple.getMetadata()).isValid()) {
 			tupleList.add(intuple);
 
+		} else {
+			tupleList.add(intuple);
+			/*
+			System.out.println("------------------------------");
+			System.out.println("Current: " + tupleList.size());
+			
+			for(RelationalTuple tuple : tupleList){
+				System.out.println((String)tuple.getAttribute(1));
+			}
+			System.out.println("------------------------------");
+			*/
+			if(tupleList.size() > 4){
+				tupleList.clear();
+			}
 			if (tupleList.size() > 1) {
-				System.out.println("Merge Tuple in List: " + tupleList.size());
+				//System.out.println("Merge Tuple in List: " + tupleList.size());
 				for (RelationalTuple<IMetaAttribute> wtuple : tupleList) {
 
 					// System.out.println(((List<RelationalTuple<IMetaAttribute>>)intuple.getAttribute(0)).addAll(((List<RelationalTuple<IMetaAttribute>>)wtuple.getAttribute(0))));
 
 					for (int i = 0; i < ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).size(); i++) {
 						Geometry geometry = (Geometry) ((RelationalTuple) ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i)).getAttribute(0);
-						geometry = geometry.convexHull();
+						//Enverlope Runs
+						//geometry = geometry.getEnvelope();
+						//geometry = geometry.convexHull();
 						
 						for (int ii = 0; ii < ((List<RelationalTuple<IMetaAttribute>>) wtuple.getAttribute(0)).size(); ii++) {
 	
 							Geometry geometry_element = (Geometry) ((RelationalTuple) ((List<RelationalTuple<IMetaAttribute>>) wtuple.getAttribute(0)).get(ii)).getAttribute(0);
-							geometry_element = geometry_element.convexHull();
+							//Enverlope Runs
+							//geometry_element = geometry_element.getEnvelope();
 							
+							//geometry_element = geometry_element.convexHull();
 							
-							if (geometry.crosses(geometry_element)) {
-								System.out.println("Merge Candidate");
-								
-								if (isCrosses(geometry.getDimension(), geometry_element.getDimension())) {
-									System.out.println("Merged");
-									((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i).setAttribute(0, geometry_element.union(geometry).convexHull());
-									System.out.println("Add:" + ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i));
+							//if (geometry.crosses(geometry_element)) {
+								//System.out.println("Merge Candidate");
+							
+							//System.out.println(geometry.distance(geometry_element));
+							if(geometry.distance(geometry_element) < mDistance){
+								if (isCrosses(geometry.getEnvelope().getDimension(), geometry_element.getEnvelope().getDimension())) {
+								//if(geometry.getEnvelope().crosses(geometry_element.getEnvelope())){
+									//System.out.println("Merged");
+									((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i).setAttribute(0, (geometry_element.union(geometry)).convexHull());
+									//System.out.println("Add:" + ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i));
 									mergetupleList.add(((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i));
 								}
+							//}
 							}
+							else{
+								mergetupleList.add(intuple);
+							}
+							
+							
 						}
 					}
 				}
-				intuple.setAttribute(0, mergetupleList);
-				return (R) intuple;
+				
+				if(mergetupleList.size() > 0){
+					//System.out.println("Send: " + mergetupleList.size());
+					intuple.setAttribute(0, mergetupleList);
+					tupleList.clear();
+					return (R) intuple;	
+				}
 			}
-
-		} else {
+			
+			
 			tupleList.clear();
 		}
+		
 		return null;
 	}
 
@@ -145,8 +189,7 @@ public class SaLsAUDFunction<R> implements IUserDefinedFunction<R, R> {
 		return false;
 	}
 
-	public static boolean matches(int actualDimensionValue,
-			char requiredDimensionSymbol) {
+	public static boolean matches(int actualDimensionValue, char requiredDimensionSymbol) {
 		if (requiredDimensionSymbol == '*') {
 			return true;
 		}
