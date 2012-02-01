@@ -201,7 +201,7 @@ public class SickConnectionImpl implements SickConnection {
 														.setDist1(this
 																.substractBackground(
 																		j,
-																		value <= 3 ? Float.MAX_VALUE
+																		value <= 3 ? 5000f
 																				: value));
 
 											} else if (name
@@ -210,7 +210,7 @@ public class SickConnectionImpl implements SickConnection {
 														.setDist2(this
 																.substractBackground(
 																		j,
-																		value <= 3 ? Float.MAX_VALUE
+																		value <= 3 ? 5000f
 																				: value));
 											} else if (name
 													.equalsIgnoreCase(SickConnectionImpl.RSSI1)) {
