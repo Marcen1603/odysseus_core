@@ -236,15 +236,18 @@ public class SickConnectionImpl implements SickConnection {
 							throw new SickReadErrorException(message);
 						}
 						if (this.record) {
+							
 							if (System.currentTimeMillis() > recordEnd) {
 								this.record = false;
 							}
+							
 							if (this.background == null) {
 								this.background = new Background(measurement);
 							}
-							this.background = Background.merge(this.background,
-									measurement);
+							
+							this.background = Background.merge(this.background,	measurement);
 						} else {
+
 							
 							//FIXME
 							Calendar calendar = Calendar
@@ -266,6 +269,7 @@ public class SickConnectionImpl implements SickConnection {
 //							}
 							this.connection.onMeasurement(measurement,
 									this.timestamp);
+
 						}
 					}
 				}
@@ -375,8 +379,16 @@ public class SickConnectionImpl implements SickConnection {
 
 		private float substractBackground(final int index, final float value) {
 			if (this.background != null) {
-				return value > this.background.getDistance(index) ? Float.MAX_VALUE
-						: value;
+				
+				//5999f = 6m and 0.7m Radios of the Scanner!
+				// if((value > 5999f && value < 700f) | value > this.background.getDistance(index)){
+				 if(value > 5999f | value > this.background.getDistance(index)){
+					 return 0f;
+				 }
+				 else{
+					return value;
+				 }
+			
 			} else {
 				return value;
 			}

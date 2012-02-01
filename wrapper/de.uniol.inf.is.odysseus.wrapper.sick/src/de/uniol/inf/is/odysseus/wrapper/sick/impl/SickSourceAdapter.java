@@ -74,18 +74,21 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 	}
 
 	@Override
-	public void onMeasurement(final SourceSpec source,
-			final Measurement measurement, final long timestamp) {
+	public void onMeasurement(final SourceSpec source, final Measurement measurement, final long timestamp) {
+		
 		if ((measurement != null) && (measurement.getSamples() != null)) {
-			final List<Point> coordinates = new ArrayList<Point>(
-					measurement.getSamples().length);
+			final List<Point> coordinates = new ArrayList<Point>(measurement.getSamples().length);
+			
+			
 			for (int i = 0; i < measurement.getSamples().length; i++) {
 				final Sample sample = measurement.getSamples()[i];
-				if (sample.getDist1() < Float.MAX_VALUE) {
-					coordinates.add(this.geometryFactory.createPoint(sample
-							.getDist1Vector()));
+				
+				//Set sample.getDist1() != 0f in background Extraction to 0!
+				if (sample.getDist1() < Float.MAX_VALUE && sample.getDist1() != 0f) {
+					coordinates.add(this.geometryFactory.createPoint(sample.getDist1Vector()));
 				}
 			}
+
 			coordinates.add(this.geometryFactory.createPoint(new Coordinate(0,
 					0)));
 			SickSourceAdapter.this.transfer(
@@ -94,6 +97,15 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 					new Object[] {
 							this.geometryFactory.createMultiPoint(coordinates
 									.toArray(new Point[] {})), timestamp });
+
+
+			/*
+			>>>>>>> Optimized the Sick-Background Extraction.
+			if(this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {})).getCoordinates().length > 0){
+				SickSourceAdapter.this.transfer(source, timestamp,new Object[] { this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {})) });	
+			}
+			*/
+			
 		}
 
 	}

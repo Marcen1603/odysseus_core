@@ -5,16 +5,27 @@ package de.uniol.inf.is.odysseus.wrapper.sick.model;
  */
 public class Background {
 
+	static float scanDistance = 6000f;
+	
     public static Background merge(final Background base, final Measurement diff) {
         final Background result = new Background(base.size());
+        
+        
         for (int i = 0; i < base.size(); i++) {
-            if (Math.abs(base.getDistance(i) - diff.getSamples()[i].getDist1()) <= 10) {
-                result.setDistance(i,
-                        Math.min(base.getDistance(i), diff.getSamples()[i].getDist1()));
-            }
-            else {
-                result.setDistance(i, base.getDistance(i));
-            }
+        	//6m Circle extraction	
+        	System.out.println(diff.getSamples()[i].getDist1());
+        	
+        	//if( diff.getSamples()[i].getDist1() < scanDistance){
+        	 
+	        	if (Math.abs(base.getDistance(i) - diff.getSamples()[i].getDist1()) <= 5) {
+	                result.setDistance(i, Math.min(base.getDistance(i), diff.getSamples()[i].getDist1()));
+	            }
+	            else {
+	                result.setDistance(i, base.getDistance(i));
+	            }
+        	
+        	//}
+        	
         }
         return result;
     }
@@ -28,12 +39,16 @@ public class Background {
     public Background(final Measurement measurement) {
         this.distances = new float[measurement.getSamples().length];
         for (final Sample sample : measurement.getSamples()) {
-            this.distances[sample.getIndex()] = sample.getDist1() * 0.99f;
+        	//6m Circle record
+        	//if(this.distances[sample.getIndex()] < scanDistance){
+        		this.distances[sample.getIndex()] = sample.getDist1() * 0.965f;
+        	//}
+        	
         }
     }
 
     public float getDistance(final int index) {
-        if (index < this.distances.length) {
+    	if (index < this.distances.length) {
             return this.distances[index];
         }
         else {
