@@ -14,37 +14,163 @@ import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
-@UserDefinedFunction(name="salsatransform")
-public class SaLsAUDFunction<R> implements
-		IUserDefinedFunction<R, R> {
+//@UserDefinedFunction(name="salsatransform")
+//public class SaLsAUDFunction<R> implements
+//		IUserDefinedFunction<R, R> {
+//
+//
+//	@Override
+//	public R process(R in, int port) {
+//		//System.out.println(this+"("+init+") PROCESS "+in);
+//		
+//		RelationalTuple<IMetaAttribute> tuple = (RelationalTuple<IMetaAttribute>)in;	
+//		
+//		//POINT (25 15749)
+//		String[] cpoint = tuple.getAttribute(1).toString().substring(7,tuple.getAttribute(1).toString().length()-1).split(" ");	
+//		tuple.setAttribute(1, new GeometryFactory().createPoint(new Coordinate(Double.parseDouble(cpoint[0]) , Double.parseDouble(cpoint[1]))));
+//		
+//		//POLYGON ((10 15734, 40 15764, 20 15744, 30 15754, 10 15734))
+//		Coordinate[] coordinates = new Coordinate[5];
+//		int i = 0;
+//		for(String polyPoint  : tuple.getAttribute(2).toString().substring(9,tuple.getAttribute(2).toString().length()-2).split(",")){				
+//			coordinates[i] = new Coordinate(		
+//					Double.parseDouble(polyPoint.substring(1).split(" ")[0])
+//					, 
+//					Double.parseDouble(polyPoint.substring(1).split(" ")[1])
+//					);
+//			
+//			i++;
+//		}
+//		tuple.setAttribute(2,  new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(coordinates) , null));
+//		
+//		System.out.println(tuple.toString());
+//		return (R) tuple;
+//=======
+import java.util.ArrayList;
+import java.util.List;
 
+import com.vividsolutions.jts.geom.Dimension;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Location;
+
+import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+
+@UserDefinedFunction(name = "FusionL1")
+public class SaLsAUDFunction<R> implements IUserDefinedFunction<R, R> {
+
+	String init = null;
+	List<RelationalTuple> tupleList = null;
+	List<RelationalTuple> mergetupleList = null;
+
+	@Override
+	public void init(String initString) {
+		init = initString;
+		tupleList = new ArrayList<RelationalTuple>();
+		mergetupleList = new ArrayList<RelationalTuple>();
+	}
 
 	@Override
 	public R process(R in, int port) {
-		//System.out.println(this+"("+init+") PROCESS "+in);
+		RelationalTuple<IMetaAttribute> intuple = (RelationalTuple<IMetaAttribute>) in;
+		mergetupleList.clear();
 		
-		RelationalTuple<IMetaAttribute> tuple = (RelationalTuple<IMetaAttribute>)in;	
-		
-		//POINT (25 15749)
-		String[] cpoint = tuple.getAttribute(1).toString().substring(7,tuple.getAttribute(1).toString().length()-1).split(" ");	
-		tuple.setAttribute(1, new GeometryFactory().createPoint(new Coordinate(Double.parseDouble(cpoint[0]) , Double.parseDouble(cpoint[1]))));
-		
-		//POLYGON ((10 15734, 40 15764, 20 15744, 30 15754, 10 15734))
-		Coordinate[] coordinates = new Coordinate[5];
-		int i = 0;
-		for(String polyPoint  : tuple.getAttribute(2).toString().substring(9,tuple.getAttribute(2).toString().length()-2).split(",")){				
-			coordinates[i] = new Coordinate(		
-					Double.parseDouble(polyPoint.substring(1).split(" ")[0])
-					, 
-					Double.parseDouble(polyPoint.substring(1).split(" ")[1])
-					);
-			
-			i++;
+		if (((ITimeInterval) intuple.getMetadata()).isValid()) {
+			tupleList.add(intuple);
+
+			if (tupleList.size() > 1) {
+				System.out.println("Merge Tuple in List: " + tupleList.size());
+				for (RelationalTuple<IMetaAttribute> wtuple : tupleList) {
+
+					// System.out.println(((List<RelationalTuple<IMetaAttribute>>)intuple.getAttribute(0)).addAll(((List<RelationalTuple<IMetaAttribute>>)wtuple.getAttribute(0))));
+
+					for (int i = 0; i < ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).size(); i++) {
+						Geometry geometry = (Geometry) ((RelationalTuple) ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i)).getAttribute(0);
+						geometry = geometry.convexHull();
+						
+						for (int ii = 0; ii < ((List<RelationalTuple<IMetaAttribute>>) wtuple.getAttribute(0)).size(); ii++) {
+	
+							Geometry geometry_element = (Geometry) ((RelationalTuple) ((List<RelationalTuple<IMetaAttribute>>) wtuple.getAttribute(0)).get(ii)).getAttribute(0);
+							geometry_element = geometry_element.convexHull();
+							
+							
+							if (geometry.crosses(geometry_element)) {
+								System.out.println("Merge Candidate");
+								
+								if (isCrosses(geometry.getDimension(), geometry_element.getDimension())) {
+									System.out.println("Merged");
+									((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i).setAttribute(0, geometry_element.union(geometry).convexHull());
+									System.out.println("Add:" + ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i));
+									mergetupleList.add(((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i));
+								}
+							}
+						}
+					}
+				}
+				intuple.setAttribute(0, mergetupleList);
+				return (R) intuple;
+			}
+
+		} else {
+			tupleList.clear();
 		}
-		tuple.setAttribute(2,  new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(coordinates) , null));
-		
-		System.out.println(tuple.toString());
-		return (R) tuple;
+		return null;
+	}
+
+	public boolean isCrosses(int dimensionOfGeometryA, int dimensionOfGeometryB) {
+		int[][] matrix = new int[3][3];
+
+		if ((dimensionOfGeometryA == Dimension.P && dimensionOfGeometryB == Dimension.L)
+				|| (dimensionOfGeometryA == Dimension.P && dimensionOfGeometryB == Dimension.A)
+				|| (dimensionOfGeometryA == Dimension.L && dimensionOfGeometryB == Dimension.A)) {
+			return matches(matrix[Location.INTERIOR][Location.INTERIOR], 'T')
+					&& matches(matrix[Location.INTERIOR][Location.EXTERIOR],
+							'T');
+		}
+		if ((dimensionOfGeometryA == Dimension.L && dimensionOfGeometryB == Dimension.P)
+				|| (dimensionOfGeometryA == Dimension.A && dimensionOfGeometryB == Dimension.P)
+				|| (dimensionOfGeometryA == Dimension.A && dimensionOfGeometryB == Dimension.L)) {
+			return matches(matrix[Location.INTERIOR][Location.INTERIOR], 'T')
+					&& matches(matrix[Location.EXTERIOR][Location.INTERIOR],
+							'T');
+		}
+		if (dimensionOfGeometryA == Dimension.L
+				&& dimensionOfGeometryB == Dimension.L) {
+			return matrix[Location.INTERIOR][Location.INTERIOR] == 0;
+		}
+		return false;
+	}
+
+	public static boolean matches(int actualDimensionValue,
+			char requiredDimensionSymbol) {
+		if (requiredDimensionSymbol == '*') {
+			return true;
+		}
+		if (requiredDimensionSymbol == 'T'
+				&& (actualDimensionValue >= 0 || actualDimensionValue == Dimension.TRUE)) {
+			return true;
+		}
+		if (requiredDimensionSymbol == 'F'
+				&& actualDimensionValue == Dimension.FALSE) {
+			return true;
+		}
+		if (requiredDimensionSymbol == '0'
+				&& actualDimensionValue == Dimension.P) {
+			return true;
+		}
+		if (requiredDimensionSymbol == '1'
+				&& actualDimensionValue == Dimension.L) {
+			return true;
+		}
+		if (requiredDimensionSymbol == '2'
+				&& actualDimensionValue == Dimension.A) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -52,10 +178,5 @@ public class SaLsAUDFunction<R> implements
 		return OutputMode.INPUT;
 	}
 
-	@Override
-	public void init(String initString) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
