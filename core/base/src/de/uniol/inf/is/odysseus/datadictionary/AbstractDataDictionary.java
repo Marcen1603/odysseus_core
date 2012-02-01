@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.datadictionary;
 
+import java.awt.color.ICC_ColorSpace;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -479,7 +480,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public ILogicalOperator getSinkTop(String sinkname) {
+	public ILogicalOperator getSinkTop(String sinkname, ISession caller) {
 		if (this.sinkDefinitions.containsKey(sinkname)) {
 			return sinkDefinitions.get(sinkname);
 		} else {
@@ -488,8 +489,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public ILogicalOperator getSinkInput(String sinkname) {
-		ILogicalOperator sinkTop = getSinkTop(sinkname);
+	public ILogicalOperator getSinkInput(String sinkname, ISession caller) {
+		ILogicalOperator sinkTop = getSinkTop(sinkname, caller);
 		ILogicalOperator ret = sinkTop;
 		while (ret.getSubscribedToSource().size() > 0) {
 			ret = ret.getSubscribedToSource(0).getTarget();
@@ -598,7 +599,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public ILogicalOperator removeSink(String name) {
+	public ILogicalOperator removeSink(String name, ISession caller) {
 		ILogicalOperator op = this.sinkDefinitions.remove(name);
 		fireDataDictionaryChangedEvent();
 		return op;

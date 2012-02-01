@@ -77,18 +77,18 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette
 	public LogicalPlanEditor() {
 		super();
 		setEditDomain(new DefaultEditDomain(this));
-		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
-			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary()
-					.addListener(this);
-		}
+//		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
+//			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary()
+//					.addListener(this);
+//		}
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
-			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary().removeListener(this);
-		}
+//		if (OdysseusRCPEditorPlugIn.getExecutor() != null) {
+//			OdysseusRCPEditorPlugIn.getExecutor().getDataDictionary().removeListener(this);
+//		}
 	}
 
 	@Override

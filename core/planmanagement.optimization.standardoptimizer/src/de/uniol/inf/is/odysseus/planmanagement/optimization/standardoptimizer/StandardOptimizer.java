@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
@@ -139,7 +140,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 		// high system load test
 		try {
-			ISystemMonitor monitor = ((IExecutor) sender)
+			ISystemMonitor monitor = ((IServerExecutor) sender)
 					.getDefaultSystemMonitor();
 			double cpuLoad = monitor.getAverageCPULoad();
 			double memLoad = monitor.getHeapMemoryUsage();
@@ -148,7 +149,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 				queueRequest(query, "System CPU load is currently too high ("
 						+ cpuLoad + ").");
 				new LowSystemLoadWaiter(
-						((IExecutor) sender)
+						((IServerExecutor) sender)
 								.newSystemMonitor(MONITORING_PERIOD),
 						this, this.configuration
 								.getSettingRefuseOptimizationAtCpuLoad()
@@ -163,7 +164,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 						"System memory load is currently too high (" + memLoad
 								+ ").");
 				new LowSystemLoadWaiter(
-						((IExecutor) sender)
+						((IServerExecutor) sender)
 								.newSystemMonitor(MONITORING_PERIOD),
 						this, this.configuration
 								.getSettingRefuseOptimizationAtCpuLoad()

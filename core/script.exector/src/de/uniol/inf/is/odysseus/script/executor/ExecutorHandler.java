@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.script.executor;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 
 /**
  * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verfügung
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
  */
 public class ExecutorHandler {
 
-	private static IExecutor executor;
+	private static IServerExecutor executor;
 
 	/**
 	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
@@ -45,7 +46,7 @@ public class ExecutorHandler {
 	 *            <code>null</code> sein.
 	 */
 	public void bindExecutor(IExecutor e) {
-		executor = e;
+		executor = (IServerExecutor) e;
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class ExecutorHandler {
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder
 	 *         <code>null</code>.
 	 */
-	public static IExecutor getExecutor() {
+	public static IServerExecutor getExecutor() {
 		return executor;
 	}
 	

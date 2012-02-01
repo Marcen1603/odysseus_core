@@ -82,7 +82,7 @@ public interface IDataDictionary {
 	
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 	
-	public ILogicalOperator removeSink(String name);
+	public ILogicalOperator removeSink(String name, ISession caller);
 
 	// no restric
 	public boolean containsViewOrStream(String viewName, ISession user);
@@ -125,8 +125,8 @@ public interface IDataDictionary {
 	
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
-	ILogicalOperator getSinkTop(String sinkname);
-	ILogicalOperator getSinkInput(String sinkname);
+	ILogicalOperator getSinkTop(String sinkname, ISession caller);
+	ILogicalOperator getSinkInput(String sinkname, ISession caller);
 
 	boolean existsSink(String sinkname);
 

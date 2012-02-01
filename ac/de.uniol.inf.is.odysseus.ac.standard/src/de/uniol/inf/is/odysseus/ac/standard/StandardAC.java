@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
@@ -36,7 +37,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	private Map<String, ICostModel> costModels;
 	private ICostModel selectedCostModel;
-	private IExecutor executor;
+	private IServerExecutor executor;
 
 	private ICost maxCost;
 	private ICost actCost;
@@ -318,7 +319,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * @param executor Neuer {@link IExecutor}
 	 */
 	public void bindExecutor(IExecutor executor) {
-		this.executor = executor;
+		this.executor = (IServerExecutor)executor;
 
 		this.executor.addPlanModificationListener(this);
 

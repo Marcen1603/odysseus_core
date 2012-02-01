@@ -59,13 +59,13 @@ import de.uniol.inf.is.odysseus.physicaloperator.FileSinkPO;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -100,7 +100,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	private static final String MACROS_NODE = "/macros";
 
-	private IExecutor executor;
+	// TODO: Check if this can also be done with IExecutor
+	private IServerExecutor executor;
 	private IOdysseusScriptParser scriptParser;
 
 	private String parser = null;
@@ -275,22 +276,23 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	public void bindExecutor(IExecutor executor) {
 		logger.debug("executor gebunden");
 
-		this.executor = executor;
+		// TODO: Console funktioniert nur auf dem Server --> das irgendwie klar machen
+		this.executor = (IServerExecutor)executor;
 
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-		this.executor.addCompilerListener(this);
-		try {
-			System.out.println(executor.getCompiler());
-			if (executor.getCompiler() != null) {
-				System.out.println("Rewrite Bound : " + executor.getCompiler().isRewriteBound());
-				System.out.println("Transformation Bound :" + executor.getCompiler().isTransformationBound());				
-				this.originalBuildConfig = executor.getQueryBuildConfiguration(defaultBuildConfiguration);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		//this.executor.addCompilerListener(this);
+//		try {
+//			System.out.println(executor.getCompiler());
+//			if (executor.getCompiler() != null) {
+//				System.out.println("Rewrite Bound : " + executor.getCompiler().isRewriteBound());
+//				System.out.println("Transformation Bound :" + executor.getCompiler().isTransformationBound());				
+//				this.originalBuildConfig = executor.getQueryBuildConfiguration(defaultBuildConfiguration);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		// Typically no compiler is loaded here, so the following
 		// code will always break
 
@@ -1110,9 +1112,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				return;
 			}
 
-			try {
-				ICompiler compiler = this.executor.getCompiler();
-				List<IQuery> plans = compiler.translateQuery(queries, parser(), currentUser, executor.getDataDictionary());
+			try {			
+				List<IQuery> plans = executor.translateQuery(queries, parser(), currentUser);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
@@ -1132,7 +1133,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, this.trafoConfigParam.getValue(), currentUser, executor.getDataDictionary());
+				executor.transform(query, this.trafoConfigParam.getValue(), currentUser);
 
 				IQuery addedQuery = this.executor.addQuery(query.getRoots(), currentUser, defaultBuildConfiguration);
 				this.executor.startQuery(addedQuery.getID(), currentUser);

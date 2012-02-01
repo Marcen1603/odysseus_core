@@ -33,8 +33,10 @@ public class OperatorFactory implements CreationFactory {
 	@Override
 	public Object getNewObject() {
 		final ISession user = OdysseusRCPPlugIn.getActiveSession();
-		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, OdysseusRCPPlugIn.getExecutor().getDataDictionary()), 
-				operatorBuilderName);
+		Operator op = null;
+		// FIXME: Find solution for Operator-Generation!
+		//		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, OdysseusRCPPlugIn.getExecutor().getDataDictionary()), 
+//				operatorBuilderName);
 		return op;
 	}
 

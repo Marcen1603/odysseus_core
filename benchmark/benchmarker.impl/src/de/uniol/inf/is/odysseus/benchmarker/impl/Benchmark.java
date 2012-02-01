@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -80,7 +81,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private static Logger logger = LoggerFactory.getLogger(Benchmark.class);
 
 	private AtomicReference<ErrorEvent> error = new AtomicReference<ErrorEvent>();
-	private IExecutor executor;
+	private IServerExecutor executor;
 	private IOdysseusScriptParser scriptParser;
 	private AvgBenchmarkMemUsageListener avgMemListener = null;
 
@@ -325,7 +326,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	}
 
 	public void bindExecutor(IExecutor executor) {
-		this.executor = executor;
+		this.executor = (IServerExecutor)executor;
 	}
 	
 	public void bindOdysseusScript(IOdysseusScriptParser parser){

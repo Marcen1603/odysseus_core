@@ -172,7 +172,9 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 		int y = Integer.valueOf(getAttributeValue(node, "y"));
 
 		String builderName = getAttributeValue(node, "builder");
-		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor().getDataDictionary());
+		IOperatorBuilder builder = null;
+		// FIXME: THIS IS LOCAL ... THE OTHER COULD BE REMOTE!
+		//		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor());
 		builder.setCaller(OdysseusRCPPlugIn.getActiveSession());
 
 		Map<String, Object> parameters = loadParameters(node);

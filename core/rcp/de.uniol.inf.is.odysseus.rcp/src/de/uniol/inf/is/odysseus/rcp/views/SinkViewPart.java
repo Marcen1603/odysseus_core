@@ -28,22 +28,27 @@ import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-
 
 /**
  * 
  * @author Dennis Geesen Created at: 24.08.2011
  */
-public class SinkViewPart extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
+public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
+		IUserManagementListener {
 
 	private TreeViewer viewer;
 
 	@Override
 	public void dispose() {
-		OdysseusRCPPlugIn.getExecutor().getDataDictionary().removeListener(this);
+		IExecutor e = OdysseusRCPPlugIn.getExecutor();
+		if (e instanceof IServerExecutor) {
+			((IServerExecutor) e).getDataDictionary().removeListener(this);
+		}
 		super.dispose();
 	}
 
@@ -57,7 +62,9 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getDataDictionary().getSinks(OdysseusRCPPlugIn.getActiveSession()));
+					getTreeViewer().setInput(
+							OdysseusRCPPlugIn.getExecutor().getSinks(
+									OdysseusRCPPlugIn.getActiveSession()));
 					// getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
@@ -78,12 +85,14 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 	}
 
 	@Override
-	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name,
+			ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender,
+			String name, ILogicalOperator op) {
 		refresh();
 	}
 
@@ -101,17 +110,22 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener, I
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
-		OdysseusRCPPlugIn.getExecutor().getDataDictionary().addListener(this);
-		//UserManagement.getUsermanagement().addUserManagementListener(this);
+		IExecutor e = OdysseusRCPPlugIn.getExecutor();
+		if (e instanceof IServerExecutor) {
+			((IServerExecutor) e).getDataDictionary().addListener(this);
+		}
+		// UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+				.getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());

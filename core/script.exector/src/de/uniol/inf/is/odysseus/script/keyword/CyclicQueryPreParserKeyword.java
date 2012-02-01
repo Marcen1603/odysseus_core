@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.script.keyword;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
@@ -37,8 +35,8 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 			if( executor == null ) 
 				throw new OdysseusScriptException("No executor found");
 			
-			if( executor.getCompiler() == null ) 
-				throw new OdysseusScriptException("No compiler found");
+//			if( executor.getCompiler() == null ) 
+//				throw new OdysseusScriptException("No compiler found");
 			
 			String parserID = (String)variables.get("PARSER");
 			if( parserID == null ) 
@@ -67,8 +65,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 		
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID).getConfiguration();
 		try {
-			ICompiler compiler = executor.getCompiler();
-			List<IQuery> plans = compiler.translateQuery(queries, parserID, caller, executor.getDataDictionary());
+			List<IQuery> plans = executor.translateQuery(queries, parserID, caller);
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
@@ -83,7 +80,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 				// the last plan is the complete plan
 				// so transform this one
 				IQuery query = plans.get(plans.size() - 1);
-				compiler.transform(query, cfg.getValue(), caller, executor.getDataDictionary());
+				executor.transform(query, cfg.getValue(), caller);
 	
 				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, transCfgID);
 				executor.startQuery(addedQuery.getID(), caller);

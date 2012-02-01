@@ -121,8 +121,7 @@ public class RecordingController {
 				e.printStackTrace();
 			}
 		}
-		IDataDictionary dd = OdysseusRCPPlugIn.getExecutor().getDataDictionary();
-		dd.removeSink(record.getSinkName());
+		OdysseusRCPPlugIn.getExecutor().removeSink(record.getSinkName(), user);
 
 		record.setState(State.Stopped);
 		fireChangedEvent();

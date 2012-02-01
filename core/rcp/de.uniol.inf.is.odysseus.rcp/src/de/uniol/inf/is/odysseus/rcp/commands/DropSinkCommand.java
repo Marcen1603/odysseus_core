@@ -60,9 +60,7 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							// TODO: eventuell �ber Executor machen
-							IDataDictionary dd = executor.getDataDictionary();
-							dd.removeSink(param);
+							executor.removeSink(param, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Sink removed");
 						} catch (PermissionException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove sink:\n See error log for details", e);

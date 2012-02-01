@@ -100,32 +100,34 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						// Login des users?
 						String viewname = adv.getSourceName();
 
+						// FIXME: DAS MACHT SO ÜBERHAUPT KEINEN SINN!
+						
 						// Nur eintragen, wenn nicht eh schon vorhanden
-						if (executor.getDataDictionary().containsViewOrStream(
-								adv.getSourceName(), caller)) {
-
-							String sourceType = adv.getSourceType();
-
-
-							ILogicalOperator topOperator = (ILogicalOperator) AdvertisementTools
-									.fromBase64String(adv.getLogicalPlan());
-							SDFEntity entity = (SDFEntity) AdvertisementTools
-									.fromBase64String(adv.getEntity());
-
-							logger.debug("Adding to DD " + adv.getSourceName()
-									+ " " + sourceType + " as "+entity);
-							
-							executor.getDataDictionary().addSourceType(viewname, sourceType);
-							executor.getDataDictionary().addEntity(viewname, entity, caller);
-							if (adv.isView()) {
-								executor.getDataDictionary().setView(viewname, topOperator,
-										caller);
-							} else {
-								executor.getDataDictionary().setStream(viewname, topOperator,
-										caller);
-							}
-						}
-					} else {
+//						if (executor.getDataDictionary().containsViewOrStream(
+//								adv.getSourceName(), caller)) {
+//
+//							String sourceType = adv.getSourceType();
+//
+//
+//							ILogicalOperator topOperator = (ILogicalOperator) AdvertisementTools
+//									.fromBase64String(adv.getLogicalPlan());
+//							SDFEntity entity = (SDFEntity) AdvertisementTools
+//									.fromBase64String(adv.getEntity());
+//
+//							logger.debug("Adding to DD " + adv.getSourceName()
+//									+ " " + sourceType + " as "+entity);
+//							
+//							executor.getDataDictionary().addSourceType(viewname, sourceType);
+//							executor.getDataDictionary().addEntity(viewname, entity, caller);
+//							if (adv.isView()) {
+//								executor.getDataDictionary().setView(viewname, topOperator,
+//										caller);
+//							} else {
+//								executor.getDataDictionary().setStream(viewname, topOperator,
+//										caller);
+//							}
+//						}
+//					} else {
 						return;
 					}
 				} catch (Exception e) {

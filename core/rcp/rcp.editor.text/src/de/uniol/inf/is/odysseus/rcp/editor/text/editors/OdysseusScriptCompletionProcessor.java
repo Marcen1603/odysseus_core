@@ -60,14 +60,14 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 			if(tokenBefore.trim().equalsIgnoreCase("FROM")){
-				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getDataDictionary().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());				
+				Set<Entry<String, ILogicalOperator>> sources = OdysseusRCPEditorTextPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());				
 				for(Entry<String, ILogicalOperator> e : sources){
 					words.add(e.getKey());
 				}				
 			}else if(tokenBefore.trim().equalsIgnoreCase("#TRANSCFG")){
 				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getQueryBuildConfigurationNames());
 			}else if(tokenBefore.trim().equalsIgnoreCase("#PARSER")){
-				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getCompiler().getSupportedQueryParser());
+				words.addAll(OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers());
 			}else if(tokenBefore.trim().equalsIgnoreCase("=")){
 				words.addAll(getKeywordsFromRegistry());
 			}else{								

@@ -27,12 +27,13 @@ import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
-
-public class SourcesViewPart extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
+public class SourcesViewPart extends ViewPart implements
+		IDataDictionaryListener, IUserManagementListener {
 
 	private TreeViewer viewer;
 
@@ -43,17 +44,22 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
-		OdysseusRCPPlugIn.getExecutor().getDataDictionary().addListener(this);
-		//UserManagement.getInstance().addUserManagementListener(this);
+		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor())
+					.getDataDictionary().addListener(this);
+		}
+		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
+				.getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
@@ -61,7 +67,10 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 
 	@Override
 	public void dispose() {
-		OdysseusRCPPlugIn.getExecutor().getDataDictionary().removeListener(this);
+		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor())
+					.getDataDictionary().removeListener(this);
+		}
 		super.dispose();
 	}
 
@@ -80,7 +89,12 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getDataDictionary().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+					getTreeViewer().setInput(
+							OdysseusRCPPlugIn
+									.getExecutor()
+									.getStreamsAndViews(
+											OdysseusRCPPlugIn
+													.getActiveSession()));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
 					e.printStackTrace();// ?
@@ -95,12 +109,14 @@ public class SourcesViewPart extends ViewPart implements IDataDictionaryListener
 	}
 
 	@Override
-	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name,
+			ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender,
+			String name, ILogicalOperator op) {
 		refresh();
 	}
 

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
@@ -28,7 +29,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 
 
 	static TestComponent instance = null;
-	private IExecutor executor;
+	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
 	
 	public static String newline = System.getProperty("line.separator");
@@ -43,7 +44,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	}
 	
 	public void bindExecutor(IExecutor executor){
-		this.executor = executor;
+		this.executor = (IServerExecutor)executor;
 	}
 	
 	public void bindScriptParser(IOdysseusScriptParser scriptParser){

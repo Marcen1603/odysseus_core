@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
-
 /**
  * 
  * @author Dennis Geesen Created at: 24.08.2011
@@ -55,11 +54,7 @@ public class SinkViewLabelProvider implements ILabelProvider {
 		if (element instanceof Entry) {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
-			if (OdysseusRCPPlugIn.getExecutor().getDataDictionary().isView(entry.getKey())) {
-				return ImageManager.getInstance().get("view");
-			} else {
-				return ImageManager.getInstance().get("source");
-			}
+			return ImageManager.getInstance().get("source");
 		}
 		if (element instanceof SDFAttribute) {
 			return ImageManager.getInstance().get("attribute");
@@ -73,13 +68,16 @@ public class SinkViewLabelProvider implements ILabelProvider {
 			@SuppressWarnings("unchecked")
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
 			StringBuilder sb = new StringBuilder();
-			sb.append(entry.getKey()).append(" [").append(entry.getValue().getClass().getSimpleName()).append("]");
-//			User user = GlobalState.getActiveDatadictionary().getUserForViewOrStream(entry.getKey());
-//			if (user != null) {
-//				sb.append(" created by ").append(user.getUser().getName());
-//			} else {
-//				sb.append(" created by no user ??");
-//			}
+			sb.append(entry.getKey()).append(" [")
+					.append(entry.getValue().getClass().getSimpleName())
+					.append("]");
+			// User user =
+			// GlobalState.getActiveDatadictionary().getUserForViewOrStream(entry.getKey());
+			// if (user != null) {
+			// sb.append(" created by ").append(user.getUser().getName());
+			// } else {
+			// sb.append(" created by no user ??");
+			// }
 			return sb.toString();
 		}
 		if (element instanceof SDFAttribute) {

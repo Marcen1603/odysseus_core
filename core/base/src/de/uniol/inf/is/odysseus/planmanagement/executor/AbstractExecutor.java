@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,11 +31,14 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ISettingChangeListener;
@@ -69,7 +73,7 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
  * @author wolf
  * 
  */
-public abstract class AbstractExecutor implements IExecutor, IScheduleable,
+public abstract class AbstractExecutor implements IServerExecutor, IScheduleable,
 		ISettingChangeListener, IQueryReoptimizeListener,
 		IPlanReoptimizeListener {
 
@@ -774,15 +778,15 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 //		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
 //	}
 	
-	@Override
-	public ISessionManagement getSessionManagement() {
-		return sessMgmt;
-	}
+//	@Override
+//	public ISessionManagement getSessionManagement() {
+//		return sessMgmt;
+//	}
 	
-	@Override
-	public IUserManagement getUserManagement() {
-		return usrMgmt;
-	}
+//	@Override
+//	public IUserManagement getUserManagement() {
+//		return usrMgmt;
+//	}
 
 	@Override
 	public IDataDictionary getDataDictionary() {
@@ -803,6 +807,48 @@ public abstract class AbstractExecutor implements IExecutor, IScheduleable,
 				}
 			}
 		}
-		
+	}
+	
+	// Session specific delegates
+	
+	@Override
+	public ISession login(String username, byte[] password) {
+		return sessMgmt.login(username, password);
+	}
+	
+	@Override
+	public void logout(ISession caller) {
+		sessMgmt.logout(caller);
+	}
+	
+	// Compiler Facade
+	@Override
+	public List<IQuery> translateQuery(String queries, String parser,
+			ISession currentUser) {
+		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary());
+	}
+	
+	@Override
+	public void transform(IQuery query,
+			TransformationConfiguration transformationConfiguration,
+			ISession caller) throws TransformationException {
+		getCompiler().transform(query, transformationConfiguration, caller, dataDictionary);
+	}
+	
+	// DataDictionary Facade
+	@Override
+	public ILogicalOperator removeSink(String name, ISession caller) {
+		return getDataDictionary().removeSink(name,caller);
+	}
+	
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
+			ISession caller) {
+		return getDataDictionary().getStreamsAndViews(caller);
+	}
+	
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
+		return getDataDictionary().getSinks(caller);
 	}
 }

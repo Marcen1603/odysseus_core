@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,6 +23,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
@@ -79,11 +83,33 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		if (!sources.contains(adv)){
 			logger.debug("Found new Source "+adv.getPeerID()+" with "+adv.getSourceName());
 			sources.add(adv);
-			thinPeer.addToDD(adv, getDataDictionary(), caller);
+			// FIXME: No DD on Client-Side
+			//thinPeer.addToDD(adv, getDataDictionary(), caller);
 		}
 	}
 	
 	
+
+	@Override
+	public Collection<IQuery> addQuery(String query, String parserID,
+			ISession user, String queryBuildConfigurationName)
+			throws PlanManagementException {
+		thinPeer.publishQuerySpezification(query, parserID, user);
+		return null;
+	}
+
+
+
+	@Override
+	public String getName() {
+		return "Thin Peer Executor";
+	}
+
+	
+	public void activate() {
+		System.out.println("Thin Peer Executor activated");
+	}
+
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
@@ -191,18 +217,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public ICompiler getCompiler() throws NoCompilerLoadedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISchedulerManager getSchedulerManager() throws SchedulerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void initialize() throws ExecutorInitializeException {
 		// TODO Auto-generated method stub
 		
@@ -240,23 +254,15 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public Collection<IQuery> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName)
-			throws PlanManagementException {
-		thinPeer.publishQuerySpezification(query, parserID, user);
-		return null;
-	}
-
-	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user, String queryBuildConfigurationName)
-			throws PlanManagementException {
+	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user, String queryBuildConfigurationName)
-			throws PlanManagementException {
+	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -268,19 +274,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public void addCompilerListener(ICompilerListener compilerListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -310,34 +304,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public IScheduler getCurrentScheduler() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getCurrentSchedulingStrategyID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public OptimizationConfiguration getOptimizerConfiguration()
-			throws NoOptimizerLoadedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISystemMonitor getDefaultSystemMonitor()
-			throws NoSystemMonitorLoadedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISystemMonitor newSystemMonitor(long period)
-			throws NoSystemMonitorLoadedException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -350,40 +317,47 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public String getName() {
-		return "Thin Peer Executor";
-	}
-
-	@Override
-	public IOptimizer getOptimizer() throws NoOptimizerLoadedException {
+	public ISession login(String username, byte[] password) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<IQuery> getQueries() {
+	public void logout(ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public void activate() {
-		System.out.println("Thin Peer Executor activated");
+		
 	}
 
 	@Override
-	public IUserManagement getUserManagement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISessionManagement getSessionManagement() {
+	public List<IQuery> translateQuery(String query, String parserID,
+			ISession user) throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IDataDictionary getDataDictionary() {
+	public void transform(IQuery query,
+			TransformationConfiguration transformationConfiguration,
+			ISession caller) throws TransformationException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ILogicalOperator removeSink(String name, ISession caller) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
+			ISession caller) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -393,5 +367,5 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		// TODO Auto-generated method stub
 		
 	}
-	
+
 }

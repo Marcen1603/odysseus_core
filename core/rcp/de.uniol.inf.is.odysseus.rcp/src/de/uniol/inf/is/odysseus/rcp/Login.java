@@ -75,7 +75,7 @@ public class Login {
 			// TODO: Kann der Executor hier noch nicht gebunden sein??
 			
 			ISession user = null;
-			user = executor.getSessionManagement().login(username, password.getBytes());
+			user = executor.login(username, password.getBytes());
 
 			if (user != null) {
 				// anmelden ok

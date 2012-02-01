@@ -101,7 +101,7 @@ public class WebserviceServer {
 		StringListResponse response = new StringListResponse(true);
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			for (Entry<String, ILogicalOperator> e : getExecutor().getDataDictionary().getStreams(user)) {
+			for (Entry<String, ILogicalOperator> e : getExecutor().getStreamsAndViews(user)) {
 				response.addResponseValue(e.getKey());
 			}
 			return response;

@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 /**
  * Alle Streams und Views werden hier fuer die Verwendung im P2P Netzwerk vorbereitet und
  * in regelmaessigen Abstaenden ausgeschrieben.
@@ -42,11 +43,11 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 	private int LIFETIME = 60000;
 	private OperatorPeerJxtaImpl peer = null;
-	final private IDataDictionary dd;
+	final private IExecutor executor;
 	
-	public SourceHandlerJxtaImpl(OperatorPeerJxtaImpl aPeer, IDataDictionary dd) {
+	public SourceHandlerJxtaImpl(OperatorPeerJxtaImpl aPeer, IExecutor executor) {
 		this.setPeer(aPeer);
-		this.dd = dd;
+		this.executor = executor;
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 		while (true) {
 			advList.clear();
 			ISession user = P2PUserContext.getActiveSession(""); 
-			for (Entry<String, ILogicalOperator> v : dd
+			for (Entry<String, ILogicalOperator> v : executor
 					.getStreamsAndViews(user)) {
 				// Create source advertisement and add to publish list
 				SourceAdvertisement adv = (SourceAdvertisement) AdvertisementFactory
@@ -74,9 +75,10 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 				adv.setSourceId(v.getKey());
 				adv.setLogicalPlan(AdvertisementTools.toBase64String(v
 						.getValue()));
-				adv.setEntity(AdvertisementTools.toBase64String(dd.getEntity(
-						v.getKey(), user)));
-				adv.setSourceType(dd.getSourceType(v.getKey()));
+				// FIXME: FIND A SOLUTION FOR THIS
+//				adv.setEntity(AdvertisementTools.toBase64String(executor.getEntity(
+//						v.getKey(), user)));
+//				adv.setSourceType(executor.getSourceType(v.getKey()));
 
 				adv.setUser(AdvertisementTools.toBase64String(user));
 				advList.add(adv);

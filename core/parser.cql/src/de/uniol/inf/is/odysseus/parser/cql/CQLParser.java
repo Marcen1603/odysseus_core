@@ -1278,9 +1278,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ASTSelectStatement statement = (ASTSelectStatement) node.jjtGetChild(1);
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
 
-		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName);
+		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName, caller);
 		// Append plan to input and update subscriptions
-		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName);
+		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName, caller);
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		// if database -> be sure, that the schemas are equal

@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.Text;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -55,7 +55,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	private Combo comboDropDownStreams;
 	private Combo comboDropDownDatabases;
 	private String recordingName;
-	private IDataDictionary dataDictionary;
+	private IExecutor executor;
 	private ISession user;
 	private String fromStream;
 	private String databaseConnection;
@@ -68,9 +68,9 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 	private boolean truncateTable;
 	private boolean appendTable;
 
-	public StartNewRecordingDialog(Shell parentShell, IDataDictionary dd, ISession user) {
+	public StartNewRecordingDialog(Shell parentShell, IExecutor executor, ISession user) {
 		super(parentShell);
-		this.dataDictionary = dd;
+		this.executor = executor;
 		this.user = user;
 	}
 
@@ -115,7 +115,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		label2.setText("From stream:");
 
 		comboDropDownStreams = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for (Entry<String, ILogicalOperator> e : this.dataDictionary.getStreamsAndViews(user)) {
+		for (Entry<String, ILogicalOperator> e : this.executor.getStreamsAndViews(user)) {
 			comboDropDownStreams.add(e.getKey());
 		}
 

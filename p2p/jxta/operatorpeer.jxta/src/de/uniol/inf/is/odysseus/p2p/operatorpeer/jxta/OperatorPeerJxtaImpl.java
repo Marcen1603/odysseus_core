@@ -317,7 +317,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 	@Override
 	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
 		this.sourceHandler = new SourceHandlerJxtaImpl(
-				(OperatorPeerJxtaImpl) aPeer, getExecutor().getDataDictionary());
+				(OperatorPeerJxtaImpl) aPeer, getExecutor());
 
 	}
 

@@ -21,6 +21,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.event.IEvent;
 import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
@@ -75,11 +76,11 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public static OdysseusRCPPlugIn getDefault() {
 		return instance;
 	}
-	
-	public static void setActiveSession(ISession session){
+
+	public static void setActiveSession(ISession session) {
 		OdysseusRCPPlugIn.activeSession = session;
 	}
-	
+
 	public static ISession getActiveSession() {
 		return activeSession;
 	}
@@ -124,17 +125,26 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = ex;
 
-		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID,
-				OdysseusNLS.Executor +" " + executor.getName() + " " + OdysseusNLS.Ready);
+		StatusBarManager.getInstance().setMessage(
+				StatusBarManager.EXECUTOR_ID,
+				OdysseusNLS.Executor + " " + executor.getName() + " "
+						+ OdysseusNLS.Ready);
 		StatusBarManager.getInstance().setMessage(
 				StatusBarManager.SCHEDULER_ID,
-				executor.getCurrentSchedulerID() + " ("
-						+ executor.getCurrentSchedulingStrategyID() + ") "
-						+ (executor.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
-		if (executor.getSchedulerManager() != null) {
-			executor.getSchedulerManager().subscribeToAll(this);
-			executor.getSchedulerManager().getActiveScheduler()
-					.subscribeToAll(this);
+				executor.getCurrentSchedulerID()
+						+ " ("
+						+ executor.getCurrentSchedulingStrategyID()
+						+ ") "
+						+ (executor.isRunning() ? OdysseusNLS.Running
+								: OdysseusNLS.Stopped));
+
+		if (executor instanceof IServerExecutor) {
+			IServerExecutor se = (IServerExecutor) executor; 
+			if (se.getSchedulerManager() != null) {
+				se.getSchedulerManager().subscribeToAll(this);
+				se.getSchedulerManager().getActiveScheduler()
+						.subscribeToAll(this);
+			}
 		}
 		// New: Start Scheduler at Query Start
 		executor.startExecution();

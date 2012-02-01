@@ -19,12 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {
@@ -32,7 +31,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+		IServerExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		if (parameter != null && !parameter.equalsIgnoreCase("NONE")) {
@@ -48,7 +47,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = ExecutorHandler.getExecutor();
+		IServerExecutor executor = ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		List<IQueryBuildSetting<?>> config = executor
