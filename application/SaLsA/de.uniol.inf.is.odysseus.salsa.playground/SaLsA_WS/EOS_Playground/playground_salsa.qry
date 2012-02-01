@@ -1,0 +1,25 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+#QUERY
+
+/// LMS1 Scanner
+///Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+EBG_Lms1 = UDO({class='SchulerBG', init='BG'},Lms1)
+
+Rot_Lms1 = MAP({expressions = ['RotateViewPoint(scan, 43.00)']},EBG_Lms1)
+Rename_Lms1 = RENAME({aliases = ['scan']}, Rot_Lms1)
+
+Window_Lms1 = WINDOW({type = 'time', size = 50, advance = 50}, Rename_Lms1)
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20)']}, Window_Lms1))
+
+Unested_Lms1 = UNNEST({attribute = 'scan'}, Segments_Lms1)
+LineFilter_Lms1 = SELECT({predicate = RelationalPredicate('SpatialIsLine(scan)')},Unested_Lms1)
+
+ConvexHull_Lms1 = MAP({expressions = ['SpatialConvexHull(scan)']},LineFilter_Lms1)
+
+sink = VPOLYGONSINK(ConvexHull_Lms1)
+
