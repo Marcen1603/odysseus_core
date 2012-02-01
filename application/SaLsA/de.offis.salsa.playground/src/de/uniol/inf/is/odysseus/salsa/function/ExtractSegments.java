@@ -56,7 +56,8 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
 
     @Override
     public SDFDatatype getReturnType() {
-        return new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.SPATIAL);
+        return SDFDatatype.TUPLE;
+                
     }
 
     @Override
