@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
@@ -143,16 +144,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public SDFEntity getEntity(String uri, ISession caller)
 			throws PermissionException {
-		if (checkObjectAccess(uri, caller, DataDictionaryPermission.GET_ENTITY)) {
-			SDFEntity ret = entityMap.get(uri);
-			if (ret == null) {
-				throw new IllegalArgumentException("no such entity: " + uri);
-			}
-			return ret;
-		} else {
-			throw new PermissionException("User " + caller.getUser().getName()
-					+ " has no permission to get entity '" + uri + "'.");
+		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
+		SDFEntity ret = entityMap.get(uri);
+		if (ret == null) {
+			throw new IllegalArgumentException("no such entity: " + uri);
 		}
+		return ret;
 	}
 
 	// TODO: REMOVE Entity
@@ -243,7 +240,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public ILogicalOperator getView(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
-			checkViewAccess(viewname, caller, DataDictionaryPermission.READ);
+			checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
 			ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
 					null);
@@ -316,7 +313,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public AccessAO getStream(String viewname, ISession caller) {
-		checkViewAccess(viewname, caller, DataDictionaryPermission.READ);
+		checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
 
 		if (!this.streamDefinitions.containsKey(viewname)) {
 			throw new IllegalArgumentException("no such view: " + viewname);
@@ -334,7 +331,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public ILogicalOperator getStreamForTransformation(String name,
 			ISession caller) {
-		checkViewAccess(name, caller, DataDictionaryPermission.READ);
+		checkAccessRights(name, caller, DataDictionaryPermission.READ);
 		return streamDefinitions.get(name);
 	}
 
@@ -368,11 +365,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			ISession caller, IStore<String, ILogicalOperator> definitions) {
 		Set<Entry<String, ILogicalOperator>> sources = new HashSet<Entry<String, ILogicalOperator>>();
 		for (Entry<String, ILogicalOperator> viewEntry : definitions.entrySet()) {
-			try {
-				checkViewAccess(viewEntry.getKey(), caller,
-						DataDictionaryPermission.READ);
+			if (hasAccessRights(viewEntry.getKey(), caller,
+					DataDictionaryPermission.READ)) {
 				sources.add(viewEntry);
-			} catch (PermissionException e) {
 			}
 		}
 		return sources;
@@ -390,12 +385,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {
 		if (this.viewDefinitions.containsKey(viewname)) {
-			checkViewAccess(viewname, caller,
+			checkAccessRights(viewname, caller,
 					DataDictionaryPermission.REMOVE_VIEW);
 			return removeView(viewname, caller);
 		} else {
 			ILogicalOperator op;
-			checkViewAccess(viewname, caller,
+			checkAccessRights(viewname, caller,
 					DataDictionaryPermission.REMOVE_STREAM);
 			op = streamDefinitions.remove(viewname);
 			if (op != null) {
@@ -524,8 +519,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public IQuery getQuery(int id, ISession caller) {
-		// FIXME: Restrict!
-		return this.savedQueries.get(id);
+		if (hasPermission(caller, ExecutorPermission.ADD_QUERY)) {
+			return this.savedQueries.get(id);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -544,7 +542,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void removeQuery(IQuery q, ISession caller) {
-		// FIXME: Restrict!!
 		this.savedQueries.remove(q.getID());
 		this.savedQueriesForUser.remove(q.getID());
 	}
@@ -612,23 +609,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// -------------------------------------------------------------------------------------
 
 	/**
-	 * return true if the given user has permission to access the given object
-	 * in a certain way (action). Object can be a source or entity.
-	 * 
-	 * @param uri
-	 * @param caller
-	 * @param action
-	 * @return boolean
-	 */
-	private boolean checkObjectAccess(String uri, ISession caller,
-			DataDictionaryPermission action) {
-		return UserManagement.getUsermanagement().hasPermission(caller, action,
-				uri)
-				|| isCreatorOfObject(caller.getUser().getName(), uri)
-				|| hasSuperAction(action, caller);
-	}
-
-	/**
 	 * return true if the given user has permission to access the given view in
 	 * a certain way (action).
 	 * 
@@ -637,17 +617,25 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	 * @param action
 	 * @return boolean
 	 */
-	private void checkViewAccess(String viewOrSource, ISession caller,
+	private boolean hasAccessRights(String resource, ISession caller,
 			DataDictionaryPermission action) {
-		if (hasPermission(caller, action, viewOrSource)
+		if (hasPermission(caller, action, resource)
 				// is owner
-				|| isCreatorOfView(caller.getUser().getName(), viewOrSource)
+				|| isCreatorOfView(caller.getUser().getName(), resource)
 				|| hasSuperAction(action, caller)) {
-			return;
+			return true;
+		} else {
+			return false;
 		}
-		throw new PermissionException("User " + caller.getUser().getName()
-				+ " has not the permission '" + action + "' on Source/View '"
-				+ viewOrSource);
+	}
+
+	private void checkAccessRights(String resource, ISession caller,
+			DataDictionaryPermission action) {
+		if (!hasAccessRights(resource, caller, action)) {
+			throw new PermissionException("User " + caller.getUser().getName()
+					+ " has not the permission '" + action + "' on resource '"
+					+ resource);
+		}
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission,
