@@ -90,6 +90,7 @@ public class ObjectHandler<T> implements
 //					byteBuffer.put(buffer.get());
 //				}
 				byteBuffer.put(buffer.array(), buffer.position(), size);
+				buffer.position(buffer.position() + size);
 				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 			}
 		}
