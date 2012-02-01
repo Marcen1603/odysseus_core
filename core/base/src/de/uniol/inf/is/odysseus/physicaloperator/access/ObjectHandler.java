@@ -85,9 +85,11 @@ public class ObjectHandler<T> implements
 			synchronized(byteBuffer){
 				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 				checkOverflow(buffer, size);
-				for (int i=0;i<size;i++){
-					byteBuffer.put(buffer.get());
-				}
+				// Why copy each single byte?
+//				for (int i=0;i<size;i++){
+//					byteBuffer.put(buffer.get());
+//				}
+				byteBuffer.put(buffer.array(), buffer.position(), size);
 				//System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 			}
 		}
