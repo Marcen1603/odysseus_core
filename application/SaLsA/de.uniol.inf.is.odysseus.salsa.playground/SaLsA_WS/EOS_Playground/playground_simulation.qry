@@ -1,0 +1,25 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa
+#QUERY
+///Your first query here
+
+Lms1Simu = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:10.53.1.90', 'port:12340', 'record:350'], adapter = 'Sick'})  
+Rot_Lms1Simu = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,-65.0,235.0), -43.00)']},Lms1Simu))
+
+Window_Lms1Simu = window({type='time', size= 20 , advance = 5},  Rot_Lms1Simu)
+Segments_Lms1Simu = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms1Simu))
+Unested_Lms1Simu = UNNEST({attribute = 'scan'}, Segments_Lms1Simu)
+
+
+sink = VPOLYGONSINK(Unested_Lms1Simu)
+
+Lms2Simu = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:10.53.1.90', 'port:12341', 'record:350'], adapter = 'Sick'})  
+Rot_Lms2Simu = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,-65.0,235.0), -43.00)']},Lms2Simu))
+
+Window_Lms2Simu = window({type='time', size= 20 , advance = 5},  Rot_Lms2Simu)
+Segments_Lms2Simu = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms2Simu))
+Unested_Lms2Simu = UNNEST({attribute = 'scan'}, Segments_Lms2Simu)
+
+
+sink2 = VPOLYGONSINK(Unested_Lms2Simu)
