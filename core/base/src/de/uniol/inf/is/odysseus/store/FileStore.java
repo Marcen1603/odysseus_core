@@ -110,7 +110,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			saveCache();
 		} catch (Exception e) {
 			logger.warn(e.getMessage()
-					+ " Tried to store non serializable object " + elem);
+					+ " Tried to store non serializable object " + elem+ " in "+path);
+			e.printStackTrace();
 			serializableTestPassed.put(id, Boolean.FALSE);
 		}
 	}

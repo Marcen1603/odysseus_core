@@ -14,8 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
 
-public interface ICepCondition extends ICepExpression<Boolean>{
+
+public interface ICepCondition extends ICepExpression<Boolean>,Serializable{
 
 	/**
 	 * Setzt die Transitionsbedingung.

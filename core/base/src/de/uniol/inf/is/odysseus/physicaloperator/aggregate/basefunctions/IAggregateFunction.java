@@ -14,8 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions;
 
+import java.io.Serializable;
+
 public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
-		IEvaluator<R,W> {
+		IEvaluator<R,W>, Serializable{
 	public String getName();
 	@Override
 	public int hashCode();

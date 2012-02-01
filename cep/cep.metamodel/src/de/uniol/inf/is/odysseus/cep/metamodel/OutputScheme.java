@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
@@ -22,8 +23,9 @@ import java.util.LinkedList;
  * @author Thomas Vogelgesang
  * 
  */
-public class OutputScheme {
+public class OutputScheme implements Serializable{
 
+	private static final long serialVersionUID = 7002822862639034364L;
 	private LinkedList<IOutputSchemeEntry> entries;
 
 	/**

@@ -61,26 +61,27 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	protected IStore<String, IUser> entityFromUser;
 	protected IStore<String, String> sourceTypeMap;
 	protected IStore<String, SDFDatatype> datatypes;
-	protected IStore<IQuery, IUser> savedQueries;
+	protected IStore<Integer, IQuery> savedQueries;
+	protected IStore<Integer, IUser> savedQueriesForUser;
 
 	protected IStore<String, ILogicalOperator> sinkDefinitions;
 	protected IStore<String, IUser> sinkFromUser;
 
 	public AbstractDataDictionary() {
-//				streamDefinitions = new MemoryStore<String, ILogicalOperator>();
-//				viewOrStreamFromUser = new MemoryStore<String, IUser>();
-//				viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-//				entityMap = new MemoryStore<String, SDFEntity>();
-//				entityFromUser = new MemoryStore<String, IUser>();
-//				sourceTypeMap = new MemoryStore<String, String>();
-//				datatypes = new MemoryStore<String, SDFDatatype>();
-//				sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
-//				sinkFromUser = new MemoryStore<String, IUser>();
-//				savedQueries = new MemoryStore<IQuery, IUser>();
+		// streamDefinitions = new MemoryStore<String, ILogicalOperator>();
+		// viewOrStreamFromUser = new MemoryStore<String, IUser>();
+		// viewDefinitions = new MemoryStore<String, ILogicalOperator>();
+		// entityMap = new MemoryStore<String, SDFEntity>();
+		// entityFromUser = new MemoryStore<String, IUser>();
+		// sourceTypeMap = new MemoryStore<String, String>();
+		// datatypes = new MemoryStore<String, SDFDatatype>();
+		// sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
+		// sinkFromUser = new MemoryStore<String, IUser>();
+		// savedQueries = new MemoryStore<IQuery, IUser>();
 
 	}
-	
-	protected void initDatatypes(){
+
+	protected void initDatatypes() {
 		/**
 		 * fill in the built-in datatypes
 		 */
@@ -112,11 +113,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 					SDFDatatype.START_TIMESTAMP);
 			addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
 			addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-			addDatatype(SDFDatatype.TIMESTAMP.getURI(),
-					SDFDatatype.TIMESTAMP);
+			addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
 			addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
 			addDatatype(SDFDatatype.GRID.getURI(), SDFDatatype.GRID);
-		}	
+		}
 	}
 
 	// ----------------------------------------------------------------------------
@@ -517,25 +517,26 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void addQuery(IQuery q, ISession caller) {
-		this.savedQueries.put(q, caller.getUser());
+		this.savedQueries.put(q.getID(), q);
+		this.savedQueriesForUser.put(q.getID(), caller.getUser());
+
 	}
 
 	@Override
 	public IQuery getQuery(int id, ISession caller) {
-		for (IQuery q : savedQueries.keySet()) {
-			if (q.getID() == id) {
-				return q;
-			}
-		}
-		return null;
+		// FIXME: Restrict!
+		return this.savedQueries.get(id);
 	}
 
 	@Override
 	public List<IQuery> getQueries(IUser user, ISession caller) {
 		List<IQuery> queries = new ArrayList<IQuery>();
-		for (Entry<IQuery, IUser> e : savedQueries.entrySet()) {
+		for (Entry<Integer, IUser> e : savedQueriesForUser.entrySet()) {
 			if (e.getValue().equals(user)) {
-				queries.add(e.getKey());
+				IQuery query = getQuery(e.getKey(), caller);
+				if (query != null) {
+					queries.add(query);
+				}
 			}
 		}
 		return queries;
@@ -543,10 +544,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void removeQuery(IQuery q, ISession caller) {
-		IQuery plan = getQuery(q.getID(), caller);
-		if (plan != null) {
-			this.savedQueries.remove(plan);
-		}
+		// FIXME: Restrict!!
+		this.savedQueries.remove(q.getID());
+		this.savedQueriesForUser.remove(q.getID());
 	}
 
 	// ----------------------------------------------------------------------------

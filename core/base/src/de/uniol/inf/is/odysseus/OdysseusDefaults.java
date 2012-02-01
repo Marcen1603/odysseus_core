@@ -106,7 +106,10 @@ public class OdysseusDefaults {
 				+ "store/sourceFromUser.store");
 		props.setProperty("queriesFilename", odysseusHome
 				+ "store/queries.store");
+		props.setProperty("queriesUserFilename", odysseusHome
+				+ "store/queriesUser.store");
 
+		
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
 		props.setProperty("reloadLogStoreFilename", odysseusHome
 				+ "reloadlog.store");

@@ -33,8 +33,11 @@ public class DataDictionary extends AbstractDataDictionary {
 				OdysseusDefaults.get("sinkDefinitionsFilename"));
 		sinkFromUser = new FileStore<String, IUser>(
 				OdysseusDefaults.get("sinkDefinitionsUserFilename"));
-		savedQueries = new FileStore<IQuery, IUser>(
+		savedQueries = new FileStore<Integer, IQuery>(
 				OdysseusDefaults.get("queriesFilename"));
+		savedQueriesForUser = new FileStore<Integer, IUser>(
+				OdysseusDefaults.get("queriesUserFilename"));
+
 		initDatatypes();
 	}
 

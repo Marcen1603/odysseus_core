@@ -23,7 +23,8 @@ public class DataDictionary extends AbstractDataDictionary {
 		datatypes = new MemoryStore<String, SDFDatatype>();
 		sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
 		sinkFromUser = new MemoryStore<String, IUser>();
-		savedQueries = new MemoryStore<IQuery, IUser>();
+		savedQueries = new MemoryStore<Integer, IQuery>();
+		savedQueriesForUser = new MemoryStore<Integer, IUser>();
 		initDatatypes();
 	}
 
