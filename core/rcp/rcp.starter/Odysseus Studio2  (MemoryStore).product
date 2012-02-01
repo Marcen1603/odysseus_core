@@ -18,7 +18,7 @@ http://odysseus.offis.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug</programArgs>
+      <programArgs>-console -debug -nl ${target.nl}</programArgs>
       <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
