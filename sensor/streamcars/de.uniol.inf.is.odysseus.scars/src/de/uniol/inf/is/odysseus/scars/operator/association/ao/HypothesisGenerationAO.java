@@ -84,7 +84,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		SDFAttribute scannedObjects = helper.getAttribute(this.sourcePredictedObjListPath).clone();
 		this.outputScannedObjListPath = this.sourceScannedObjListPath.replace(scannedObjects.getAttributeName(), SCANNED_OBJECTS_NAME);
 		// set new list name
-		scannedObjects.setAttributeName(SCANNED_OBJECTS_NAME);
+		// FIXME: scannedObjects.setAttributeName(SCANNED_OBJECTS_NAME);
 
 		// get timestamp from scanned data
 		String timeStampName = helper.getStartTimestampFullAttributeName();
@@ -97,7 +97,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		String oldSource = predictedObjects.getSourceName();
 		
 		// set new list name
-		predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
+		// FIXME: predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
 
 		// create new record
 		
@@ -126,7 +126,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	}
 
 	private SDFAttribute setSourceName(SDFAttribute attribute, String sourceName) {
-		attribute.setSourceName(sourceName);
+		// FIXME: attribute.setSourceName(sourceName);
 		
 		if(attribute.getDatatype().getSubSchema() != null){
 			for (SDFAttribute attSdfAttribute : attribute.getDatatype().getSubSchema()) {
