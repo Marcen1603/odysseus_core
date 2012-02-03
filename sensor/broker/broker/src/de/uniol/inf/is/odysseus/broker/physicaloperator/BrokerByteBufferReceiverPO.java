@@ -18,13 +18,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.access.ByteBufferReceiverPO;
-import de.uniol.inf.is.odysseus.physicaloperator.access.ConnectionMessageReason;
+import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.physicaloperator.access.IAccessConnection;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IRouterReceiver;
-import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
 
 /**
  * The BrokerByteBufferReceiverPO is a physical source which is able to receive elements of type W.
@@ -40,11 +37,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.Router;
  *
  * @param <W> the generic type
  */
-public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements IRouterReceiver {
+public class BrokerByteBufferReceiverPO<W> extends AbstractByteBufferReceiverPO<W> {
 
-	/** The handler which wraps e.g. into an relational tuple. */
-	private IObjectHandler<W> handler;
-	
 	/** The size of the following element. */
 	private int size = -1;
 	
@@ -63,18 +57,9 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	/** The current size. */
 	private int currentSize = 0;
 	
-	/** The router. */
-	private Router router;
-	
-	/** The host. */
-	private String host;
-	
-	/** The port. */
-	private int port;
-	
-	/** Determines if connection is open. */
-	boolean opened;
 
+	
+	
 	/**
 	 * Instantiates a new BrokerByteBufferReceiverPO.
 	 *
@@ -83,13 +68,8 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	 * @param port the port
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, String host, int port) throws IOException {
-		super();
-		this.handler = handler;
-		router = Router.getInstance();
-		this.host = host;
-		this.port = port;
-		this.opened = false;
+	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, IAccessConnection accessHandler) throws IOException {
+		super(handler, accessHandler);
 	}
 
 	/**
@@ -98,39 +78,28 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 	 * @param byteBufferReceiverPO the original to copy from
 	 * @ 
 	 */
-	@SuppressWarnings("unchecked")
 	public BrokerByteBufferReceiverPO(BrokerByteBufferReceiverPO<W> byteBufferReceiverPO)  {
-		super();
-		handler = (IObjectHandler<W>) byteBufferReceiverPO.handler.clone();
+		super(byteBufferReceiverPO);
 		size = byteBufferReceiverPO.size;
 		currentSize = byteBufferReceiverPO.currentSize;
-		router = byteBufferReceiverPO.router;
-		host = byteBufferReceiverPO.host;
-		port = byteBufferReceiverPO.port;
-		opened = byteBufferReceiverPO.opened;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_open()
-	 */
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
-		if (!opened) {
-			try {
-				router.connectToServer(this, host, port);
-				opened = true;
-			} catch (Exception e) {
-				throw new OpenFailedException(e);
-			}
-		}
+		sizeBuffer.clear();
+		typeBuffer.clear();
+		timeBuffer.clear();
+		size = -1;
+		super.process_open();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IRouterReceiver#done()
-	 */
 	@Override
-	public void done() {
-		propagateDone();
+	protected void process_close() {
+		sizeBuffer.clear();
+		typeBuffer.clear();
+		timeBuffer.clear();
+		size = -1;
+		super.process_close();
 	}
 
 	/* (non-Javadoc)
@@ -164,9 +133,9 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 					if (type == 0) {
 						if (currentSize + buffer.remaining() <= size) {
 							currentSize = currentSize + buffer.remaining();
-							handler.put(buffer);
+							objectHandler.put(buffer);
 						} else {
-							handler.put(buffer, size - currentSize);
+							objectHandler.put(buffer, size - currentSize);
 							transfer();
 						}
 					} else {
@@ -200,27 +169,6 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		}
 	}
 
-	// @Override
-	// public void process(ByteBuffer buffer) {
-	// super.process(buffer);
-	// System.out.println("Send punctuation");
-	// sendPunctuation(PointInTime.currentPointInTime());
-	// }
-
-	/**
-	 * Transfers a tuple from handler to subscribed sinks.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws ClassNotFoundException Signals that a class could not be found
-	 */
-	private synchronized void transfer() throws IOException, ClassNotFoundException {
-		W toTrans = handler.create();
-		transfer(toTrans);
-		size = -1;
-		sizeBuffer.clear();
-		typeBuffer.clear();
-		currentSize = 0;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
@@ -230,23 +178,5 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractSource<W> implements 
 		return new BrokerByteBufferReceiverPO<W>(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#toString()
-	 */
-	@Override
-	public String toString() {
-		return super.toString() + " " + host + " " + port;
-	}
-	
-	@Override
-	public String getSourceName() {
-		return toString();
-	}
-
-	@Override
-	public void notify(Router router, ConnectionMessageReason reason) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * In this SDFAttributeList metadata about the schema can be carried.
@@ -44,7 +45,7 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	}
 
 	public SDFAttributeListExtended() {
-		super();
+		super("");
 		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
 	}
 
@@ -67,9 +68,10 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 			}
 		}
 	}
-	
+
+
 	private SDFAttribute copyDeep(SDFAttribute attribute) {
-		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName());
+		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype());
 		copy.setDatatype(attribute.getDatatype().clone()); // copies subschema too
 		copy.setCovariance(attribute.getCovariance());
 		copy.setUnit(attribute.getUnit());

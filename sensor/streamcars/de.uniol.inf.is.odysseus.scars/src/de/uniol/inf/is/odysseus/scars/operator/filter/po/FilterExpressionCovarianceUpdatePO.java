@@ -25,9 +25,6 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IGain;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 
@@ -35,7 +32,7 @@ import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
  * @author dtwumasi
  * 
  */
-public class FilterExpressionCovarianceUpdatePO<M extends IGain & IProbability & IObjectTrackingLatency & IConnectionContainer>
+public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObjectTrackingLatencyIConnectionContainer>
 		extends AbstractFilterExpressionPO<M> {
 
 	private static final String METADATA_COV = "COVARIANCE";

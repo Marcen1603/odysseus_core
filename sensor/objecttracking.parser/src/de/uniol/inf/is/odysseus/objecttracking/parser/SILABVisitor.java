@@ -27,17 +27,17 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVis
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SILABVisitor implements IVisitor{
 
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new SILABVisitor(), "Silab");
 	
-	private User user;
+	private ISession user;
 	private IDataDictionary dd;
 	
 	@Override
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;
 	}
 	

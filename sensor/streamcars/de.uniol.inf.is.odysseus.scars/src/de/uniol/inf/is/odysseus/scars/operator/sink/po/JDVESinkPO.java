@@ -19,27 +19,21 @@ import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.util.server.IServer;
 import de.uniol.inf.is.odysseus.scars.util.server.NIOServer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
-public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval & ILatency>
+public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeIntervalLatency<IPredicate<MVRelationalTuple<M>>>>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	public static final String SERVER_TYPE_UDP = "udp";
@@ -165,15 +159,11 @@ public class JDVESinkPO<M extends IProbability & IObjectTrackingLatency & IPredi
 
 	@Override
 	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList schema = new SDFAttributeList();
-		SDFAttribute attr0 = new SDFAttribute("Odysseus latency median");
-		attr0.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
-		SDFAttribute attr1 = new SDFAttribute("Objecttracking latency median");
-		attr1.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
-		SDFAttribute attr2 = new SDFAttribute("Odysseus latency");
-		attr2.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
-		SDFAttribute attr3 = new SDFAttribute("Objecttracking latency");
-		attr3.setDatatype(GlobalState.getActiveDatadictionary().getDatatype("Long"));
+		SDFAttributeList schema = new SDFAttributeList("");
+		SDFAttribute attr0 = new SDFAttribute("","Odysseus latency median", SDFDatatype.LONG);
+		SDFAttribute attr1 = new SDFAttribute("","Objecttracking latency median", SDFDatatype.LONG);
+		SDFAttribute attr2 = new SDFAttribute("","Odysseus latency",SDFDatatype.LONG);
+		SDFAttribute attr3 = new SDFAttribute("","Objecttracking latency", SDFDatatype.LONG);
 		schema.add(attr0);
 		schema.add(attr1);
 		schema.add(attr2);

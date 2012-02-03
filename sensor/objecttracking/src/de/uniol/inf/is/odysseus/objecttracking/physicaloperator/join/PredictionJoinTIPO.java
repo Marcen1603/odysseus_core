@@ -14,11 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.objecttracking.ITimeIntervalProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 
 
@@ -36,7 +34,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
  *            Datentyp
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class PredictionJoinTIPO<K extends ITimeInterval & IProbability & IPredictionFunction, T extends MVRelationalTuple<K>>
+public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunction, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 
 	@Override

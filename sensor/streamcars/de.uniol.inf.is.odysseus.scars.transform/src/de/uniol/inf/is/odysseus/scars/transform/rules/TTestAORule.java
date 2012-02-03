@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.scars.operator.test.po.TestPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
 public class TTestAORule extends AbstractTransformationRule<TestAO>{
 
 	@Override

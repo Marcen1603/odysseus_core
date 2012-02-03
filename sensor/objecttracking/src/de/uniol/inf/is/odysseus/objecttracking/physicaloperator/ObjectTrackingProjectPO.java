@@ -16,12 +16,10 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import org.apache.commons.math.linear.RealMatrix;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionKeyLatency;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -35,7 +33,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * @param <T>
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class ObjectTrackingProjectPO<T extends IProbability & IPredictionFunctionKey & ILatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
+public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKeyLatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
 
 //	private final String LOGGER_NAME = "ObjectTrackingProjectPO";
 	

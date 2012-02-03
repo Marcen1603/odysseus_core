@@ -25,7 +25,6 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
@@ -36,7 +35,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  * @param <T> The metadata of tuples must provide a covariance matrix
  */
-public class MahalanobisPredicate<T extends IProbability> extends AbstractPredicate<MVRelationalTuple<T>> implements IRelationalPredicate{
+public class MahalanobisPredicate<T extends IProbability> extends AbstractPredicate<MVRelationalTuple<T>>{
 
 
 	private static final long serialVersionUID = 9146263764814383957L;
@@ -71,7 +70,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		return null;
 	}
 
-	@Override
+	//@Override
 	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
 		// setting the left measurement value positions
 		ArrayList<Integer> list = new ArrayList<Integer>();
@@ -151,7 +150,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		
 	}
 
-	@Override
+	//@Override
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		this.replacementMap.put(curAttr, newAttr);
 		

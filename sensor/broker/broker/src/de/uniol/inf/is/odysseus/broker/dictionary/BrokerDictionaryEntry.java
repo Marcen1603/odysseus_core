@@ -36,7 +36,7 @@ public class BrokerDictionaryEntry {
 	private SDFAttributeListExtended schema = new SDFAttributeListExtended();
 	
 	/** The queue schema. */
-	private SDFAttributeList queueSchema = new SDFAttributeList();
+	private SDFAttributeList queueSchema = new SDFAttributeList("BrokerQueue");
 	
 	/** The broker name. */
 	private String brokerName;	

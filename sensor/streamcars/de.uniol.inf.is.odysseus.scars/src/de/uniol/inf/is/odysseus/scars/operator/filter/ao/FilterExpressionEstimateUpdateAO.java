@@ -18,12 +18,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterExpressionEstimateUpdateAO <M extends IProbability & IConnectionContainer & IGain> extends UnaryLogicalOp {
+public class FilterExpressionEstimateUpdateAO <M extends IProbabilityGainConnectionContainer> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	

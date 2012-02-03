@@ -17,26 +17,21 @@ package de.uniol.inf.is.odysseus.scars.operator.evaluation.po;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.IProbabilityLatencyObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeInterval;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
-public class EvaluationPO<M extends IProbability & ILatency & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval>
+public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVRelationalTuple<M>>>>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String associationObjListPath;

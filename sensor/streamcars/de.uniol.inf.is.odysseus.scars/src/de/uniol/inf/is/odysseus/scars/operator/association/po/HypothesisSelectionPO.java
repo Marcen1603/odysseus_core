@@ -19,18 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
+import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
@@ -51,8 +48,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
  *
  * @author Nico Klein, Volker Janz
  */
-public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & IConnectionContainer & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-
+public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+	
 	private String oldObjListPath;
 	private String newObjListPath;
 	private SchemaHelper schemaHelper;
@@ -202,7 +199,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			tmpObject.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(tmpObject, 1);
 		} else {
-			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 1);
+			this.sendPunctuation(new PointInTime(object.getMetadata().getStart().getMainPoint()), 1);
 		}
 
 		// PORT: 0, get new not matching objects
@@ -231,7 +228,7 @@ public class HypothesisSelectionPO<M extends IProbability & ITimeInterval & ICon
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(predictedNotMatchedTuple.clone(), 2);
 		} else {
-			this.sendPunctuation(new PointInTime(object.getMetadata().getStart()), 2);
+			this.sendPunctuation(new PointInTime(object.getMetadata().getStart().getMainPoint()), 2);
 		}
 	}
 

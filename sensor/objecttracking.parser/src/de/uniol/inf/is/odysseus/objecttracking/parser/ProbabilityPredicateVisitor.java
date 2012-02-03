@@ -24,17 +24,17 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class ProbabilityPredicateVisitor implements IVisitor{
 
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new CreateMVProjectionVisitor(), "ProbabilityPredicate");
 	
-	User user = null;
+	ISession user = null;
 	
 	@Override
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;	
 	}
 	

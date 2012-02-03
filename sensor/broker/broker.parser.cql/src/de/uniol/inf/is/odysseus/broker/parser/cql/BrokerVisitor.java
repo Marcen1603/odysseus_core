@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -49,8 +48,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
+
 
 /**
  * The BrokerVisitor provides the implementation of the broker related parts
@@ -61,13 +60,13 @@ import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
  */
 public class BrokerVisitor extends AbstractDefaultVisitor {
 
-	private User caller;
+	private ISession caller;
 	private IDataDictionary dataDictionary;
 
 	public BrokerVisitor() {
 	}
 	
-	public void setUser(User user){
+	public void setUser(ISession user){
 		this.caller = user;
 	}
 	

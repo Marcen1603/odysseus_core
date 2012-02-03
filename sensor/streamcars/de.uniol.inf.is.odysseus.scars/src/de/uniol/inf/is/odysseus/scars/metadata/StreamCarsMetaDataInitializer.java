@@ -17,12 +17,10 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
@@ -38,7 +36,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
  * @author Hauke
  * @author Sven
  */
-public class StreamCarsMetaDataInitializer<M extends IProbability & IConnectionContainer & ITimeInterval & ILatency>
+public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionContainerTimeIntervalLatency>
 		extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
 	// set by constructor/initMetadata
 	// used by updateMetadata

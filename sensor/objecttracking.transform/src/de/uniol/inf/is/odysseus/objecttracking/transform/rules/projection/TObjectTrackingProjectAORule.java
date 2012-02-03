@@ -26,6 +26,9 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
+
 @SuppressWarnings({"rawtypes","unchecked"})
 public class TObjectTrackingProjectAORule extends AbstractTransformationRule<ObjectTrackingProjectAO>{
 

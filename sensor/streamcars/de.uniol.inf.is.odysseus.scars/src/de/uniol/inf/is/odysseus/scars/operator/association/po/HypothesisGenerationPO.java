@@ -17,16 +17,13 @@ package de.uniol.inf.is.odysseus.scars.operator.association.po;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
+import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
@@ -47,8 +44,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
  *
  * @author Volker Janz
  */
-public class HypothesisGenerationPO<M extends IProbability & IConnectionContainer & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-
+public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+	
 	private String sourcePredictedObjListPath;
 	private String sourceScannedObjListPath;
 	

@@ -16,18 +16,14 @@ package de.uniol.inf.is.odysseus.scars.operator.prediction.po;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 
-public class PredictionAssignPO<M extends ITimeInterval & IProbability & IObjectTrackingLatency & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] pathToList;

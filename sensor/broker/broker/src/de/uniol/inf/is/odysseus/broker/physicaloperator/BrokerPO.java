@@ -283,7 +283,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 
 			else {
 				if (this.min != null && send == false) {
-					this.sendPunctuation(new PointInTime(this.min));
+					this.sendPunctuation(new PointInTime(this.min.getMainPoint()));
 					send = true;
 				}
 

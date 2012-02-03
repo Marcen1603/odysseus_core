@@ -16,22 +16,18 @@ package de.uniol.inf.is.odysseus.scars.operator.objectselector.po;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
-public class DistanceObjectSelectorPO<M extends IProbability & IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>> & IConnectionContainer & ITimeInterval> extends
+public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVRelationalTuple<M>>>> extends
 		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private Double distanceThresholdYRight;

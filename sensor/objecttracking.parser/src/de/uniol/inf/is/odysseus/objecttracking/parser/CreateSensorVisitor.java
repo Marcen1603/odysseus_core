@@ -36,8 +36,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.User;
-import de.uniol.inf.is.odysseus.usermanagement.client.GlobalState;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
@@ -45,10 +44,10 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	private String host;
 	private Long port;
 
-	private User user;
+	private ISession user;
 	private IDataDictionary dd;
 
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;
 	}
 	

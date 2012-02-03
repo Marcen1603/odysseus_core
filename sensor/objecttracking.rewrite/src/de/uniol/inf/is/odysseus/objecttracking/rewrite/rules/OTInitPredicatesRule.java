@@ -22,9 +22,13 @@ import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory; 
 
 public class OTInitPredicatesRule extends AbstractRewriteRule<IHasRangePredicates>{
 
+	Logger logger = LoggerFactory.getLogger(OTInitPredicatesRule.class);
+	
 	@Override
 	public int getPriority() {
 		// TODO Auto-generated method stub

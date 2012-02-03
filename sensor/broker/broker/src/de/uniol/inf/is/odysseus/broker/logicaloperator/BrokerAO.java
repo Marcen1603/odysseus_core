@@ -40,7 +40,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	private long generatedTime;
 	
 	/** The queue schema. */
-	private SDFAttributeList queueSchema = new SDFAttributeList();	
+	private SDFAttributeList queueSchema = new SDFAttributeList("BrokerQueue");	
 		
 	/**
 	 * Instantiates a new logical broker.

@@ -18,17 +18,15 @@ package de.uniol.inf.is.odysseus.scars.operator.bouncer.po;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
+import de.uniol.inf.is.odysseus.scars.IProbabilityTimeIntervalObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
-public class TemporaryDataBouncerPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String objListPath;
 	private double threshold;

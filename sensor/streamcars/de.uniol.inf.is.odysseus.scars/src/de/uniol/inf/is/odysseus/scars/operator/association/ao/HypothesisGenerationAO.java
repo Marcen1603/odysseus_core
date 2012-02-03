@@ -100,15 +100,14 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		predictedObjects.setAttributeName(PREDICTED_OBJECTS_NAME);
 
 		// create new record
-		SDFAttribute association = new SDFAttribute(ASSOCIATION_RECORD_NAME);
 		
-		SDFAttributeList subschema = new SDFAttributeList();
+		SDFAttributeList subschema = new SDFAttributeList("");
 		subschema.add(timestamp);
 		subschema.add(scannedObjects);
 		subschema.add(predictedObjects);
 		
 		SDFDatatype recordType = new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, subschema);
-		association.setDatatype(recordType);
+		SDFAttribute association = new SDFAttribute("",ASSOCIATION_RECORD_NAME,recordType);
 		
 
 		// set source name

@@ -14,16 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.merge;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionTimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
 
-public class AssociationDataMergeFunction<M extends IProbability & IPredictionFunction<RelationalTuple<M>, M> & ITimeInterval>
+public class AssociationDataMergeFunction<M extends IProbabilityPredictionFunctionTimeInterval<RelationalTuple<M>, M>>
 		implements IDataMergeFunction<MVRelationalTuple<M>>{
 
 	/**

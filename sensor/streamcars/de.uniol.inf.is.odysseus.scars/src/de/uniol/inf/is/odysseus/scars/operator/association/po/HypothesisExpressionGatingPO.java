@@ -18,17 +18,15 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
+import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.Connection;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceHelper;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpressionVariable;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpressionVariable;
@@ -46,7 +44,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
  * @author Volker Janz
  */
 
-public class HypothesisExpressionGatingPO<M extends IProbability & IConnectionContainer & IObjectTrackingLatency>
+public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContainerObjectTrackingLatency>
 		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private StreamCarsExpression expression;

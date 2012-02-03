@@ -20,16 +20,16 @@ import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateProjectionVisitor;
-import de.uniol.inf.is.odysseus.usermanagement.User;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateMVProjectionVisitor implements IVisitor{
 	
 	static boolean registerd = VisitorFactory.getInstance().setVisitor(new CreateMVProjectionVisitor(), "MVProjection");
 	
-	User user = null;
+	ISession user = null;
 	
 	@Override
-	public void setUser(User user) {
+	public void setUser(ISession user) {
 		this.user = user;	
 	}
 	

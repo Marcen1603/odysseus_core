@@ -22,8 +22,7 @@ public class MetricMeasureAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 4253188596531819983L;
 	/** The queue schema. */
-	private SDFAttributeList schema = new SDFAttributeList();	
-	
+	private SDFAttributeList schema = null;
 	private String onAttribute;	
 
 	public MetricMeasureAO(String onAttribute){

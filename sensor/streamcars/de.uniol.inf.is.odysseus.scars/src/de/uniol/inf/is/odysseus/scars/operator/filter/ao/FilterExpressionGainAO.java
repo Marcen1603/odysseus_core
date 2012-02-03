@@ -19,11 +19,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.scars.metadata.IGain;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 
-public class FilterExpressionGainAO <M extends IProbability & IGain> extends UnaryLogicalOp {
+public class FilterExpressionGainAO <M extends IProbabilityGain> extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1L;
 	

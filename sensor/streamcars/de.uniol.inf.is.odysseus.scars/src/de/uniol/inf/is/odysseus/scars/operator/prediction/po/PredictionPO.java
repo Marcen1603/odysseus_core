@@ -16,17 +16,13 @@ package de.uniol.inf.is.odysseus.scars.operator.prediction.po;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
@@ -34,8 +30,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
-public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTrackingLatency &  IPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
-
+public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+	
 	private int[] objListPath;
 	private SchemaIndexPath currentTimeSchemaPath;
 	private SchemaIndexPath currentScanTimeSchemaPath;
@@ -118,7 +114,7 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 				// Port 1 hat Punctuation
 				// --> Broker hat (noch) nix
 				// --> wir haben auch (noch) nix
-				PointInTime pt = new PointInTime(currentTimeTuple.getMetadata().getStart());
+				PointInTime pt = new PointInTime(currentTimeTuple.getMetadata().getStart().getMainPoint());
 				sendPunctuation(pt);
 			}
 		} else {
@@ -149,7 +145,8 @@ public class PredictionPO<M extends IProbability & ITimeInterval & IObjectTracki
 			TupleIndexPath scanTimeTPath = TupleIndexPath.fromSchemaIndexPath(currentTimeSchemaPath, currentTimeTuple);
 			Long currentTimeValue = (Long) scanTimeTPath.getTupleObject();
 
-			currentScanTuple.getMetadata().getStart().setMainPoint(currentTimeValue);
+			//currentScanTuple.getMetadata().getStart().setMainPoint(currentTimeValue);
+			currentScanTuple.getMetadata().setStart(new PointInTime(currentTimeValue));
 			TupleIndexPath currentScanTimeTPath = TupleIndexPath.fromSchemaIndexPath(currentScanTimeSchemaPath, currentScanTuple);
 			currentScanTimeTPath.setTupleObject(currentTimeValue);
 		} else {

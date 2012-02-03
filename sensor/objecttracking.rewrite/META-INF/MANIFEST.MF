@@ -16,6 +16,7 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.ruleengine.system,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.6.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/StreamsCarsTransformationRuleService.xml

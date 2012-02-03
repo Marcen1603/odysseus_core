@@ -22,10 +22,8 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
@@ -45,8 +43,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  *
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKey & ITimeInterval & IProbability & IApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
-
+public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
+	
 	SDFAttributeList leftSchema;
 	SDFAttributeList rightSchema;
 	

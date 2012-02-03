@@ -15,18 +15,15 @@
 package de.uniol.inf.is.odysseus.scars.operator.filter.po;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.scars.metadata.IConnectionContainer;
-import de.uniol.inf.is.odysseus.scars.metadata.IObjectTrackingLatency;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
-public abstract class AbstractFilterExpressionPO<M extends IProbability & IObjectTrackingLatency & IConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObjectTrackingLatencyIConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 
 	private String predictedObjectListPath;
 	private String scannedObjectListPath;
