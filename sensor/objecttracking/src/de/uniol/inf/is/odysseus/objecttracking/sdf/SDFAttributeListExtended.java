@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
  * @author André Bolles
  *
  */
+@Deprecated
 public class SDFAttributeListExtended extends SDFAttributeList implements Serializable{
 
 	private static final long serialVersionUID = -6831412045682783890L;
