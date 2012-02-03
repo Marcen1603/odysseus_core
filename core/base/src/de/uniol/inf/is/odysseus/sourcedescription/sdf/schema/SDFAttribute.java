@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
@@ -50,7 +50,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * @param attributeName
 	 */
 	public SDFAttribute(String sourceName, String attributeName, SDFDatatype dt) {
-		super(sourceName,attributeName, dt);
+		super(sourceName, attributeName, dt);
 	}
 
 	/**
@@ -61,8 +61,9 @@ public class SDFAttribute extends SDFSchemaElement implements
 	public SDFAttribute(SDFAttribute attribute) {
 		super(attribute);
 	}
-	
-	public SDFAttribute(String newSourceName, String newAttributeName, SDFAttribute sdfAttribute) {
+
+	public SDFAttribute(String newSourceName, String newAttributeName,
+			SDFAttribute sdfAttribute) {
 		super(newSourceName, newAttributeName, sdfAttribute);
 	}
 
@@ -87,7 +88,6 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getURIWithoutQualName();
 	}
 
-
 	/**
 	 * Returns the name of the attribute without source information. To get the
 	 * complete name use getURI oder getSourceName()
@@ -99,9 +99,10 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return getQualName();
 	}
 
-//	public void setCovariance(List<?> cov) {
-//		this.covariance = cov;
-//	}
+	// SDFAttribute is immutable!!
+	// public void setCovariance(List<?> cov) {
+	// this.covariance = cov;
+	// }
 
 	public List<?> getCovariance() {
 		return this.covariance;
@@ -118,7 +119,8 @@ public class SDFAttribute extends SDFSchemaElement implements
 	public boolean equalsCQL(SDFElement attr) {
 		// TODO: WOFUER DER AUSKOMMENTIERTE CODE? damit kann es sein, dass
 		// sourcename mit attributename verglichen wird ...
-		if (this.getURIWithoutQualName() != null && attr.getURIWithoutQualName() != null) {
+		if (this.getURIWithoutQualName() != null
+				&& attr.getURIWithoutQualName() != null) {
 			if (!this.getSourceName().equals(attr.getURIWithoutQualName())) {
 				return false;
 			}
@@ -126,7 +128,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 		}
 		return this.getAttributeName().equals(attr.getQualName());
 		// else {
-		// 
+		//
 		// // Combinations
 		// // TODO: Problem is: name can be as sourceName or as attributeName
 		// String t1 =
@@ -196,7 +198,6 @@ public class SDFAttribute extends SDFSchemaElement implements
 		return new SDFAttribute(newSourceName, newAttributeName, this);
 	}
 
-
 	@Override
 	public int compareTo(SDFAttribute o) {
 		int comp = 0;
@@ -225,7 +226,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 	// private String getURI() {
 	// return toString();
 	// }
-	//	
+	//
 	// // TODO: Anpassen!
 	// private String getURI(boolean prettyPrint) {
 	// return getURI(prettyPrint, ".");
@@ -238,8 +239,5 @@ public class SDFAttribute extends SDFSchemaElement implements
 	public String toPointString() {
 		return getPointURI();
 	}
-
-
-
 
 }

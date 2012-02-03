@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Queryparser for Event, Condition, Action Queries. Pattern for queries: ON
