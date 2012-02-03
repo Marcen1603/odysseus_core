@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="xith3d.jar" sourcepath="src/xith3d-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/xith3d.plugin/javadoc/xith3d-doc.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="jagatoo.jar" sourcepath="src/jagatoo-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/xith3d.plugin/doc/jagatoo-doc.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="joal.jar"/>
+	<classpathentry exported="true" kind="lib" path="gluegen-rt.jar"/>
+	<classpathentry exported="true" kind="lib" path="jogl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://jogamp.org/deployment/jogamp-next/javadoc/jogl/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="jinput.jar"/>
+	<classpathentry exported="true" kind="lib" path="lwjgl.jar"/>
+	<classpathentry exported="true" kind="lib" path="openmali.jar" sourcepath="src/openmali-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/xith3d.plugin/javadoc/openmali-doc.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="jops.jar"/>
+	<classpathentry exported="true" kind="lib" path="joode.jar"/>
+	<classpathentry exported="true" kind="lib" path="xpal-joode.jar"/>
+	<classpathentry exported="true" kind="lib" path="vorbis.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom.jar"/>
+	<classpathentry exported="true" kind="lib" path="stax-1.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="stax-api.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

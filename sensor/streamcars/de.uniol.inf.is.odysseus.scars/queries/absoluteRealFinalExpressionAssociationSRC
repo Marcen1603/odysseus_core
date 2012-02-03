@@ -1,0 +1,79 @@
+// Konstanten
+#DEFINE ip 127.0.0.1:5002 // Ip-Adresse der JDVE-Maschine, 127.0.0.1:5001 lässt DummySource generieren
+
+
+// Quellendefinitionen
+#PARSER CQL
+#TRANSCFG StreamCars
+#QUERY
+CREATE SENSOR radarSensor (
+    RECORD( scan,
+        ATTRIBUTE(timestamp, STARTTIMESTAMP)
+        LIST( cars,
+            RECORD( car,
+                ATTRIBUTE(type, INTEGER)
+                ATTRIBUTE(id, INTEGER)
+                ATTRIBUTE(laneid, INTEGER)
+                ATTRIBUTE(posx, MV FLOAT       (radarSensor.scan:cars:car:posx*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posy, MV FLOAT      ( 0.0 ,
+                                                radarSensor.scan:cars:car:posy*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(posz, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:posz*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(roll, MV FLOAT      ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:roll*10/100 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 )
+                          )
+                ATTRIBUTE(pitch, MV FLOAT     ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:pitch*10/100 ,
+                                                0.0 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(heading, MV FLOAT   ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:heading*10/100 ,
+                                                0.0 )
+                         )
+                ATTRIBUTE(velocity, MV FLOAT  ( 0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                0.0 ,
+                                                radarSensor.scan:cars:car:velocity*10/100 )
+                         )
+                ATTRIBUTE(length, FLOAT)
+                ATTRIBUTE(width, FLOAT)
+            )
+        )
+    ),
+    radarSensor.scan:cars
+) FROM CHANNEL ${ip}

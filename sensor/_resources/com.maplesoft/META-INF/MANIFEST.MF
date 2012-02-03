@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Maplesoft
+Bundle-SymbolicName: com.maplesoft
+Bundle-Version: 1.0.0
+Export-Package: com.maplesoft.externalcall,
+ com.maplesoft.openmaple

@@ -1,0 +1,179 @@
+
+*** SENSORENDEFINITIONEN ***
+
+CREATE SENSOR radarSensor (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
+		LIST( cars, 
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL 127.0.0.1:5001
+
+CREATE SENSOR radarSensor2 (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
+		LIST( cars, 
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL 127.0.0.1:5001
+
+CREATE SENSOR timer (
+	ATTRIBUTE(timestamp, STARTTIMESTAMP)
+) FROM CHANNEL 127.0.0.1:5001
+
+CREATE SENSOR radarSensor (
+	RECORD( scan,
+		ATTRIBUTE(timestamp, STARTTIMESTAMP)
+		LIST( cars, 
+			RECORD( car,
+				ATTRIBUTE(type, INTEGER)
+				ATTRIBUTE(id, INTEGER)
+				ATTRIBUTE(laneid, INTEGER)
+				ATTRIBUTE(posx, MV FLOAT 		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posy, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(posz, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(roll, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(pitch, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(heading, MV FLOAT		0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(velocity, MV FLOAT	0.0 0.0 0.0 0.0 0.0 0.0 0.0)
+				ATTRIBUTE(length, FLOAT)
+				ATTRIBUTE(width, FLOAT)
+			)
+		)
+	)
+) FROM CHANNEL 192.168.0.1:5001
+
+LOGICAL PLAN : 
+
+PREDICTION( 
+	ACCESS( timer ), 
+	SET-PREDICTION-OR(
+		ACCESS(radarSensor),
+		radarSensor.scan:cars,
+		radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * ( radarSensor.scan:timestamp - timer.timestamp) ; WHERE radarSensor.scan:cars:car:id > 0;
+	),
+	radarSensor.scan:cars
+)
+
+*** LOGISCHER PLAN MIT SET-PREDICTION-OR ***
+
+LOGICAL PLAN : 
+SET-PREDICTION-OR(
+	ACCESS(radarSensor),
+	radarSensor.scan:cars,
+	radarSensor.scan:cars:car:posx := radarSensor.scan:cars:car:posx * t; WHERE radarSensor.scan:cars:car:id > 0;
+);
+	
+*** Zyklische Anfrage ***
+LOGICAL PLAN : 
+PROJECTION(
+	JOIN(
+		SET-PREDICTION(
+			SLIDING-TIME-WINDOW(
+				BROKER(a),
+				15,
+				1,
+				a.timestamp
+			),
+			a.pos := a.pos + a.speed * (-a.timestamp) + a.speed * t; WHERE a.id > 0.0;
+		),
+		SET-PREDICTION(
+			SLIDING-TIME-WINDOW(
+				ACCESS(linearMove AS b),
+				10,
+				1,
+				b.timestamp
+			),
+			b.pos := b.pos + b.speed * (-b.timestamp) + b.speed * t; WHERE b.id > 0.0 ;
+		),
+		a.timestamp < b.timestamp AND (a.pos - b.pos) < 0.1 AND (a.pos - b.pos) > -0.1,
+		0
+	),			
+	a.timestamp a.id a.pos a.speed a.timestamp b.timestamp b.id b.pos b.speed
+);
+
+BROKER(a,
+	RSELECTION(
+		BROKER(a, QUEUE (RPROJECTION(ACCESS(linearMove as c), c.timestamp))), a.timestamp > 20));
+
+BROKER(a, RPROJECTION(ACCESS(linearMove as d), d.timestamp));
+
+------------------------------------------
+
+LOGICAL PLAN : 
+ASSOCIATION-GEN (
+	ACCESS (radarSensor),
+	ACCESS (radarSensor2),
+	radarSensor.scan:cars,
+	radarSensor2.scan:cars
+)
+
+Info: port 0 ist scannedObjects, port 1 ist predicted
+
+INFO: Die Generation hat als definierte Ausgabe: 
+RECORD( association,
+		ATTRIBUTE(timestamp, LONG)
+		LIST( predictedObjects, 
+			...
+		)
+		LIST( scannedObjects, 
+			...
+		)
+	)
+
+LOGICAL PLAN : 
+ASSOCIATION-EVAL (
+	ACCESS (sensorA),
+	EVALUATEID,
+	param1 := value1; param2 := value2;,
+	association.scan:newObjects,
+	association.scan:predictedObjects,
+	association.scan:newObjects.car := association.scan:predictedObjects.car;
+)
+
+LOGICAL PLAN : 
+ASSOCIATION-SEL (
+	ACCESS (sensorA),
+	associationSelection,
+	association.scan:newObjects,
+	association.scan:predictedObjects
+)
+
+LOGICAL PLAN :
+ASSOCIATION-SRC ( testAssociation, 1 )
+
+LOGICAL PLAN :
+FILTER(
+	<ASSOCIATION-EVAL>,
+	association.scan:newObjects,
+	association.scan:predictedObjects,
+	KALMAN
+)
