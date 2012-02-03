@@ -25,8 +25,12 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 /**
+ * 
+ * FIXME: THIS CLASS MUST BE UPDATED TO THE NEW SdfAttributeList that can contain arbitrary objects
+ * 
  * In this SDFAttributeList metadata about the schema can be carried.
  * This can be for example PredictionFunctions or something else.
  * 
@@ -38,6 +42,10 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	private static final long serialVersionUID = -6831412045682783890L;
 
 	private Map<SDFAttributeListMetadataTypes, Object> metadata;
+
+	private SDFDatatype datatypeHACK;
+
+	private SDFUnit unitHACK;
 	
 	public SDFAttributeListExtended(String URI) {
 		super(URI);
@@ -70,11 +78,28 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	}
 
 
+	private void setUnit(SDFUnit unit) {
+		this.unitHACK = unit;
+	}
+
+	@Override
+	public SDFUnit getUnit() {
+		return unitHACK;
+	}
+	
+	private void setDatatype(SDFDatatype datatype) {
+		this.datatypeHACK = datatype;
+	}
+	
+	@Override
+	public SDFDatatype getDatatype() {
+		return datatypeHACK;
+	}
+
+	
+	
 	private SDFAttribute copyDeep(SDFAttribute attribute) {
-		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype());
-		copy.setDatatype(attribute.getDatatype().clone()); // copies subschema too
-		copy.setCovariance(attribute.getCovariance());
-		copy.setUnit(attribute.getUnit());
+		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype(), attribute.getUnit(), null, attribute.getCovariance());
 		return copy;
 	}
 	
@@ -90,7 +115,8 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	}
 	
 	private void redAttrSourceName(SDFAttribute attr, String newSourceName){
-		attr.setSourceName(newSourceName);
+		// FIXME: SET SOURCE NAME IS NOT ALLOWED!!
+		//attr.setSourceName(newSourceName);
 		if(attr.getDatatype().hasSchema()){
 			for(SDFAttribute subAttr: attr.getDatatype().getSubSchema()){
 				this.redAttrSourceName(subAttr, newSourceName);
@@ -99,13 +125,13 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 	}
 	
 	public SDFAttributeListExtended(SDFAttribute[] attributes1) {
-		super(attributes1);
+		super("",attributes1);
 		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
 	}
 	
 	
 	public SDFAttributeListExtended(Collection<SDFAttribute> attributes1) {
-		super(attributes1);
+		super("",attributes1);
 		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
 	}
 	

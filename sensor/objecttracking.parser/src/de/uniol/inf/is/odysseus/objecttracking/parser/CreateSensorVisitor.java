@@ -14,7 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
@@ -35,7 +37,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateSensorVisitor extends AbstractDefaultVisitor {
@@ -101,17 +105,16 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList();
+		SDFAttributeList complexAttrSchema = new SDFAttributeList("");
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(this, data);
 			complexAttrSchema.add(attr);
 		}
 
 		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
-		GlobalState.getActiveDatadictionary().addDatatype(this.name + "." + attrName, recordType);
+		dd.addDatatype(this.name + "." + attrName, recordType, user);
 		
-		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName);
-		recordAttribute.setDatatype(recordType);
+		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName, recordType);
 		
 		return recordAttribute;
 	}
@@ -126,7 +129,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList();
+		SDFAttributeList complexAttrSchema = new SDFAttributeList("");
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute listedAttribute = (SDFAttribute) node.jjtGetChild(i)
 					.jjtAccept(this, data);
@@ -134,10 +137,9 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		}
 
 		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
-		GlobalState.getActiveDatadictionary().addDatatype(this.name + "." + attrName, listType);
+		dd.addDatatype(this.name + "." + attrName, listType, user);
 		
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
-		attribute.setDatatype(listType);
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName,listType);
 		
 		return attribute;
 	}
@@ -147,22 +149,28 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
 
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName);
+		SDFDatatype datatype = null;
+		List<?> cov = null;
+		SDFUnit unit = null;
+		Map<String, SDFDatatypeConstraint> constraints = new HashMap<String, SDFDatatypeConstraint>();
 		
-		if(GlobalState.getActiveDatadictionary().existsDatatype(astAttrType.getType())){
-			attribute.setDatatype(GlobalState.getActiveDatadictionary().getDatatype(astAttrType.getType()));
+		
+		if(dd.existsDatatype(astAttrType.getType())){
+			datatype = dd.getDatatype(astAttrType.getType());
 	
-			if (attribute.getDatatype().isMeasurementValue()
+			if (datatype.isMeasurementValue()
 					&& astAttrType.jjtGetNumChildren() > 0) {
-				attribute
-						.setCovariance((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+				cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data);
 	
 			}
 	
-			if (attribute.getDatatype().isDate())
-				attribute.addDtConstraint("format", astAttrType.getDateFormat());
+			if (datatype.isDate())
+				constraints.put("format", astAttrType.getDateFormat());
 		}
 
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName, datatype, unit, constraints, cov);
+
+		
 		return attribute;
 	}
 
