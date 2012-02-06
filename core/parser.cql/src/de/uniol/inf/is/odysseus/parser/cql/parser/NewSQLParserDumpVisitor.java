@@ -662,4 +662,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 			throws QueryParseException {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTIfExists node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
 }

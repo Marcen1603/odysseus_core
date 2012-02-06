@@ -2706,7 +2706,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) DropStreamStatement */
   try {
-/*@egen*/  (    < K_DROP >  | < K_DETACH >  | < K_REMOVE >  )  < K_STREAM > Identifier()/*@bgen(jjtree)*/
+/*@egen*/  (    < K_DROP >  | < K_DETACH >  | < K_REMOVE >  )  < K_STREAM > Identifier()  [ IfExists() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -2778,7 +2778,19 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void DropRoleStatement() :{/*@bgen(jjtree) DropRoleStatement */
+/*@egen*/}void IfExists():{/*@bgen(jjtree) IfExists */
+  ASTIfExists jjtn000 = new ASTIfExists(JJTIFEXISTS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) IfExists */
+  try {
+/*@egen*/  <K_IF > <K_EXISTS >/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}  void DropRoleStatement() :{/*@bgen(jjtree) DropRoleStatement */
   ASTDropRoleStatement jjtn000 = new ASTDropRoleStatement(JJTDROPROLESTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

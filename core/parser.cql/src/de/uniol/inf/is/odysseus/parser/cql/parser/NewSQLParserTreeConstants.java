@@ -113,12 +113,13 @@ public interface NewSQLParserTreeConstants
   public int JJTDROPSTREAMSTATEMENT = 107;
   public int JJTDROPVIEWSTATEMENT = 108;
   public int JJTCREATEROLESTATEMENT = 109;
-  public int JJTDROPROLESTATEMENT = 110;
-  public int JJTGRANTROLESTATEMENT = 111;
-  public int JJTREVOKEROLESTATEMENT = 112;
-  public int JJTGRANTSTATEMENT = 113;
-  public int JJTIDENTIFIERLIST = 114;
-  public int JJTREVOKESTATEMENT = 115;
+  public int JJTIFEXISTS = 110;
+  public int JJTDROPROLESTATEMENT = 111;
+  public int JJTGRANTROLESTATEMENT = 112;
+  public int JJTREVOKEROLESTATEMENT = 113;
+  public int JJTGRANTSTATEMENT = 114;
+  public int JJTIDENTIFIERLIST = 115;
+  public int JJTREVOKESTATEMENT = 116;
 
 
   public String[] jjtNodeName = {
@@ -232,6 +233,7 @@ public interface NewSQLParserTreeConstants
     "DropStreamStatement",
     "DropViewStatement",
     "CreateRoleStatement",
+    "IfExists",
     "DropRoleStatement",
     "GrantRoleStatement",
     "RevokeRoleStatement",
@@ -240,4 +242,4 @@ public interface NewSQLParserTreeConstants
     "RevokeStatement",
   };
 }
-/* JavaCC - OriginalChecksum=df0dfed8e09b641cc44fbad1d4a0a3a3 (do not edit this line) */
+/* JavaCC - OriginalChecksum=d5f1cde75fab39d3e1593965fddacfd7 (do not edit this line) */

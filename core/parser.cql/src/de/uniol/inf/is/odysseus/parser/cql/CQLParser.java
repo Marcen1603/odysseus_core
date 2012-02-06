@@ -933,7 +933,19 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTDropStreamStatement node, Object data)
 			throws QueryParseException {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		dataDictionary.removeViewOrStream(streamname, caller);
+		boolean ifExists = false;
+		if(node.jjtGetNumChildren()>=2){
+			if(node.jjtGetChild(1) instanceof ASTIfExists){
+				ifExists = true;
+			}
+		}
+		if(ifExists){
+			if(dataDictionary.containsViewOrStream(streamname, caller)){
+				dataDictionary.removeViewOrStream(streamname, caller);
+			}
+		}else{
+			dataDictionary.removeViewOrStream(streamname, caller);
+		}
 		return null;
 	}
 
@@ -1439,6 +1451,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sink.subscribeToSource(transformMeta, 0, 0, null);
 		dataDictionary.addSink(sinkName, sink, caller);
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTIfExists node, Object data) throws QueryParseException {	
 		return null;
 	}
 

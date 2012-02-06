@@ -19,9 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 
 public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
@@ -787,21 +785,26 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTFileSink node, Object data)
 			throws QueryParseException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTSocketSink node, Object data)
 			throws QueryParseException {
-		// TODO Auto-generated method stub
+	
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTFileSource node, Object data)
 			throws QueryParseException {
-		// TODO Auto-generated method stub
+	
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTIfExists node, Object data) throws QueryParseException {
 		return null;
 	}
 }
