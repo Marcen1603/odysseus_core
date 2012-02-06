@@ -23,6 +23,7 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
 
+
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -30,8 +31,10 @@ http://odysseus.offis.uni-oldenburg.de/
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
       <plugin id="com.ibm.icu"/>
@@ -104,6 +107,8 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
@@ -111,8 +116,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.webservice.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.application.storing.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
    </features>
 
 
