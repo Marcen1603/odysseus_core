@@ -141,14 +141,14 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	public static void main(String[] args) {
-		String q = "SELECT * FROM A";
+		String q = "SELECT ContextStore(bla) AS bla, moin FROM A";
 		// String q = "SELECT A.b, C.d FROM Q RANGE 10000 ADVANCE 10, C AS Q
 		// WHERE c.a > 2 AND c.b < 1 GROUP BY C.d, A.b";
 		@SuppressWarnings("unused")
 		NewSQLParser p = new NewSQLParser(new StringReader(q));
 		try {
 			NewSQLParser.Statement().childrenAccept(
-					new NewSQLParserDumpVisitor(), null);
+					new NewSQLParserDumpVisitor(), null);			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (QueryParseException e) {
@@ -665,6 +665,16 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTIfExists node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTCreateContextStore node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
+
+	@Override
+	public Object visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 }

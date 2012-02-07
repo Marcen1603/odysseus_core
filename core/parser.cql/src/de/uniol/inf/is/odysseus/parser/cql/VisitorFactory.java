@@ -34,12 +34,16 @@ public class VisitorFactory {
 		return instance;
 	}
 	
-	public synchronized boolean setVisitor(IVisitor visitor, String name){
+	public void removeVisitor(String name){
+		this.visitorMap.remove(name);
+	}
+	
+	public boolean setVisitor(IVisitor visitor, String name){
 		visitorMap.put(name, visitor);
 		return true;
 	}
 	
-	public synchronized IVisitor getVisitor(String name){
+	public IVisitor getVisitor(String name){
 		return visitorMap.get(name);
 	}
 	
