@@ -14,13 +14,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 	private final static String MERGE_BELIEFE_GRID = "MERGEBELIEFEGRID";
 	private final static String MERGE_PLAUSABILITY_GRID = "MERGEPLAUSABILITYGRID";
-	private final static String PMERGE = "PMERGE";
 
 	private static Collection<String> names = new LinkedList<String>();
 	{
 		names.add(MERGE_BELIEFE_GRID);
 		names.add(MERGE_PLAUSABILITY_GRID);
-		names.add(PMERGE);
 	}
 
 	@Override
