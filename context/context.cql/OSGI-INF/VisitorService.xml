@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.context.cql">
+   <implementation class="de.uniol.inf.is.odysseus.context.cql.ContextVisitor"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.parser.cql.IVisitor"/>
+   </service>
+</scr:component>

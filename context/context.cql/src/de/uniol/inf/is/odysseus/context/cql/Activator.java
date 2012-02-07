@@ -1,6 +1,4 @@
-package de.uniol.inf.is.odysseus.context;
-
-import java.util.logging.Logger;
+package de.uniol.inf.is.odysseus.context.cql;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -19,7 +17,6 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		Logger.getLogger("Context Store").info("Starting context store...");
 	}
 
 	/*

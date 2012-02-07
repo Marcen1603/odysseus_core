@@ -14,17 +14,25 @@
   */
 
 package de.uniol.inf.is.odysseus.context.store;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.mep.IFunction;
+import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 06.02.2012
  */
-public interface IContextStore<Key, Value> {
-	
-	public void insert(Key key, Value value);
-	
-	public void remove(Key key);
-	
-	public Value get(Key key);
+public class ContextStoreFunctionProvider implements IFunctionProvider {
+
+	@Override
+	public List<IFunction<?>> getFunctions() {		
+		List<IFunction<?>> functions = new ArrayList<>();
+		functions.add(new ContextStoreFunction());
+		return functions;
+	}
 
 }
