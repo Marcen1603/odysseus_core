@@ -28,5 +28,4 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model.impl;x-internal:=true,
  de.uniol.inf.is.odysseus.wrapper.base.pool,
  de.uniol.inf.is.odysseus.wrapper.base.logicaloperator
-Require-Bundle: de.uniol.inf.is.odysseus,
- org.junit
+Require-Bundle: de.uniol.inf.is.odysseus
