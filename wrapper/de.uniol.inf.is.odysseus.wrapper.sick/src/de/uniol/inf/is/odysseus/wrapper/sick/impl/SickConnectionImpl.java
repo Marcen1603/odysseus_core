@@ -94,7 +94,6 @@ public class SickConnectionImpl implements SickConnection {
 		private void onMessage(final String message)
 				throws SickReadErrorException {
 			final String[] data = message.split(" ");
-
 			if (message.startsWith(SickConnectionImpl.SRA)) {
 				if (SickConnectionImpl.LCM_STATE.equalsIgnoreCase(data[1])) {
 					final int dirtyness = Integer.parseInt(data[2]);
@@ -236,37 +235,36 @@ public class SickConnectionImpl implements SickConnection {
 							throw new SickReadErrorException(message);
 						}
 						if (this.record) {
-							
+
 							if (System.currentTimeMillis() > recordEnd) {
 								this.record = false;
 							}
-							
+
 							if (this.background == null) {
 								this.background = new Background(measurement);
 							}
-							
-							this.background = Background.merge(this.background,	measurement);
+
+							this.background = Background.merge(this.background,
+									measurement);
 						} else {
 
-							
-							//FIXME
-							Calendar calendar = Calendar
-									.getInstance(TimeZone
-											.getTimeZone("UTC"));
+							// FIXME
+							Calendar calendar = Calendar.getInstance(TimeZone
+									.getTimeZone("UTC"));
 							this.timestamp = calendar.getTimeInMillis();
-//							if ((this.clock == 0)
-//									|| (this.clock > measurement
-//											.getPowerUpDuration())) {
-//								Calendar calendar = Calendar
-//										.getInstance(TimeZone
-//												.getTimeZone("UTC"));
-//								this.timestamp = calendar.getTimeInMillis();
-//								this.clock = measurement.getPowerUpDuration();
-//							} else {
-//								this.timestamp += (measurement
-//										.getPowerUpDuration() - this.clock) / 1000;
-//								this.clock = measurement.getPowerUpDuration();
-//							}
+							// if ((this.clock == 0)
+							// || (this.clock > measurement
+							// .getPowerUpDuration())) {
+							// Calendar calendar = Calendar
+							// .getInstance(TimeZone
+							// .getTimeZone("UTC"));
+							// this.timestamp = calendar.getTimeInMillis();
+							// this.clock = measurement.getPowerUpDuration();
+							// } else {
+							// this.timestamp += (measurement
+							// .getPowerUpDuration() - this.clock) / 1000;
+							// this.clock = measurement.getPowerUpDuration();
+							// }
 							this.connection.onMeasurement(measurement,
 									this.timestamp);
 
@@ -290,48 +288,56 @@ public class SickConnectionImpl implements SickConnection {
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
 
-			try {
-				this.channel = SocketChannel.open();
-				final InetSocketAddress address = new InetSocketAddress(
-						this.host, this.port);
-				this.channel.connect(address);
-				this.channel.configureBlocking(true);
-				final CharsetDecoder decoder = this.charset.newDecoder();
-				this.onOpen();
-				final ByteBuffer buffer = ByteBuffer.allocateDirect(64 * 1024);
-				int nbytes = 0;
-				int pos = 0;
-				int size = 0;
+				try {
+					this.channel = SocketChannel.open();
+					final InetSocketAddress address = new InetSocketAddress(
+							this.host, this.port);
+					this.channel.connect(address);
+					this.channel.configureBlocking(true);
+					final CharsetDecoder decoder = this.charset.newDecoder();
 
-				while (!Thread.currentThread().isInterrupted()) {
-					while ((nbytes = this.channel.read(buffer)) > 0) {
-						size += nbytes;
-						for (int i = pos; i < size; i++) {
-							// for (int i = 0; i < size; i++) {
-							if (buffer.get(i) == SickConnectionImpl.END) {
-								buffer.position(i + 1);
-								buffer.flip();
-								final CharBuffer charBuffer = decoder
-										.decode(buffer);
-								try {
-									Calendar calendar = Calendar
-											.getInstance(TimeZone
-													.getTimeZone("UTC"));
-									this.onMessage(charBuffer.subSequence(1,
-													charBuffer.length() - 1)
+					final ByteBuffer buffer = ByteBuffer
+							.allocateDirect(64 * 1024);
+					int nbytes = 0;
+					int pos = 0;
+					int size = 0;
+					this.onOpen();
+					while (!Thread.currentThread().isInterrupted()) {
+						if (this.channel.isConnected()) {
+							while ((nbytes = this.channel.read(buffer)) > 0) {
+								size += nbytes;
+								for (int i = pos; i < size; i++) {
+									if (buffer.get(i) == SickConnectionImpl.END) {
+										buffer.position(i + 1);
+										buffer.flip();
+										try {
+											final CharBuffer charBuffer = decoder
+													.decode(buffer);
+											this.onMessage(charBuffer
+													.subSequence(
+															1,
+															charBuffer.length() - 1)
 													.toString());
-								} catch (final Exception e) {
-									if (SickConnectionImpl.LOG.isDebugEnabled()) {
-										SickConnectionImpl.LOG.debug(
-												e.getMessage(), e);
-										this.dumpPackage(buffer);
+										} catch (final Exception e) {
+											if (SickConnectionImpl.LOG
+													.isDebugEnabled()) {
+												SickConnectionImpl.LOG.debug(
+														e.getMessage(), e);
+												this.dumpPackage(buffer);
+											}
+										}
+										buffer.limit(size);
+
+										buffer.compact();
+										size -= (i + 1);
+										pos = 0;
+										i = 0;
 									}
 								}
 								pos++;
 							}
-						} 
+						}
 					}
-				}
 					this.onClose();
 					SickConnectionImpl.LOG.info("SICK connection interrupted");
 				} catch (final Exception e) {
@@ -368,16 +374,16 @@ public class SickConnectionImpl implements SickConnection {
 
 		private float substractBackground(final int index, final float value) {
 			if (this.background != null) {
-				
-				//5999f = 6m and 0.7m Radios of the Scanner!
-				// if((value > 5999f && value < 700f) | value > this.background.getDistance(index)){
-				 if(value > 5999f || value > this.background.getDistance(index)){
-					 return 0f;
-				 }
-				 else{
+
+				// 5999f = 6m and 0.7m Radios of the Scanner!
+				// if((value > 5999f && value < 700f) | value >
+				// this.background.getDistance(index)){
+				if (value > 5999f || value > this.background.getDistance(index)) {
+					return 0f;
+				} else {
 					return value;
-				 }
-			
+				}
+
 			} else {
 				return value;
 			}
