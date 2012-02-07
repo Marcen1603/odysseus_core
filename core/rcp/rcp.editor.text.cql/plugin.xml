@@ -323,6 +323,12 @@
          <keyword  name="METADATA">
          </keyword>
          <keyword  name="FILE">
+         </keyword>
+         <keyword
+               name="IF">
+         </keyword>
+         <keyword
+               name="ATTACH">
          </keyword>         
       </group>
    </extension>
