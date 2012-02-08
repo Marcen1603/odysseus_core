@@ -401,7 +401,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		
 		SDFDatatype recordType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
-		dataDictionary.addDatatype(recordType.getURI(), recordType, caller);
+		dataDictionary.addDatatype(recordType.getURI(), recordType);
 		
 		SDFAttribute recordAttribute = new SDFAttribute(data.toString(), attrName, recordType);
 		
@@ -426,7 +426,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		
 		SDFDatatype listType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
-		dataDictionary.addDatatype(listType.getURI(), listType, caller);
+		dataDictionary.addDatatype(listType.getURI(), listType);
 		
 		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName, listType);
 		

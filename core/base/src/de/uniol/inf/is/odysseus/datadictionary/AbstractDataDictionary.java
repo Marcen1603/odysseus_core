@@ -424,17 +424,18 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// Datatype Management
 	// ----------------------------------------------------------------------------
 
-	@Override
-	public void addDatatype(String name, SDFDatatype dt, ISession caller) {
-		if (hasPermission(caller, DataDictionaryPermission.ADD_DATATYPE)) {
-			addDatatype(name, dt);
-		} else {
-			throw new PermissionException("User " + caller.getUser().getName()
-					+ " has not the permission to create new data types");
-		}
-	}
+//	@Override
+//	public void addDatatype(String name, SDFDatatype dt, ISession caller) {
+//		if (hasPermission(caller, DataDictionaryPermission.ADD_DATATYPE)) {
+//			addDatatype(name, dt);
+//		} else {
+//			throw new PermissionException("User " + caller.getUser().getName()
+//					+ " has not the permission to create new data types");
+//		}
+//	}
 
-	private void addDatatype(String name, SDFDatatype dt) {
+	@Override
+	public void addDatatype(String name, SDFDatatype dt) {
 		if (!this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();

@@ -114,7 +114,8 @@ public interface IDataDictionary {
 
 	String getSourceType(String sourcename);
 	
-	public void addDatatype(String name, SDFDatatype dt, ISession caller);
+//	public void addDatatype(String name, SDFDatatype dt, ISession caller);
+	public void addDatatype(String name, SDFDatatype dt);
 	
 	public SDFDatatype getDatatype(String name);
 	public Set<String> getDatatypes();

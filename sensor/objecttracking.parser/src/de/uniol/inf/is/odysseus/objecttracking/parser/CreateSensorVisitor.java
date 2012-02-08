@@ -112,7 +112,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		}
 
 		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
-		dd.addDatatype(this.name + "." + attrName, recordType, user);
+		dd.addDatatype(this.name + "." + attrName, recordType);
 		
 		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName, recordType);
 		
@@ -137,7 +137,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		}
 
 		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
-		dd.addDatatype(this.name + "." + attrName, listType, user);
+		dd.addDatatype(this.name + "." + attrName, listType);
 		
 		SDFAttribute attribute = new SDFAttribute(this.name, attrName,listType);
 		

@@ -55,7 +55,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, attributes);
-		dd.addDatatype(name, newType, caller);
+		dd.addDatatype(name, newType);
 
 		return data;
 	}
