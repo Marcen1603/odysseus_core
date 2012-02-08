@@ -26,8 +26,6 @@ public abstract class SDFSchemaElement extends SDFElement {
 	final private SDFDatatype datatype;
 	final private Map<String, SDFDatatypeConstraint> dtConstraints;
 	final private SDFUnit unit;
-
-	
 	
 	public SDFSchemaElement(String sourceName, String name, SDFDatatype datatype) {
 		this(sourceName,name,datatype,null, null);
@@ -71,10 +69,6 @@ public abstract class SDFSchemaElement extends SDFElement {
 	public SDFDatatype getDatatype() {
 		return datatype;
 	}
-
-//	public void addDtConstraint(String uri, SDFDatatypeConstraint dtConstraint) {
-//		this.dtConstraints.put(uri, dtConstraint);
-//	}
 
 	public SDFDatatypeConstraint getDtConstraint(String uri) {
 		return dtConstraints.get(uri);

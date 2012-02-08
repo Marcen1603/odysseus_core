@@ -28,16 +28,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 /**
- * 
- * FIXME: THIS CLASS MUST BE UPDATED TO THE NEW SdfAttributeList that can contain arbitrary objects
- * 
+ *  
  * In this SDFAttributeList metadata about the schema can be carried.
  * This can be for example PredictionFunctions or something else.
  * 
  * @author André Bolles
  *
  */
-@Deprecated
 public class SDFAttributeListExtended extends SDFAttributeList implements Serializable{
 
 	private static final long serialVersionUID = -6831412045682783890L;
@@ -104,26 +101,31 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		return copy;
 	}
 	
-	/**
-	 * recursively sets the source name for each attribute to
-	 * newSourceName
-	 * @param newSourceName
-	 */
-	public void redefineSourceName(String newSourceName){
-		for(int i = 0; i<this.getAttributeCount(); i++){
-			this.redAttrSourceName(this.getAttribute(i), newSourceName);
-		}
-	}
-	
-	private void redAttrSourceName(SDFAttribute attr, String newSourceName){
-		// FIXME: SET SOURCE NAME IS NOT ALLOWED!!
-		//attr.setSourceName(newSourceName);
-		if(attr.getDatatype().hasSchema()){
-			for(SDFAttribute subAttr: attr.getDatatype().getSubSchema()){
-				this.redAttrSourceName(subAttr, newSourceName);
-			}
-		}
-	}
+//	/**
+//	 * recursively sets the source name for each attribute to
+//	 * newSourceName
+//	 * @param newSourceName
+//	 */
+//	public SDFAttributeListExtended redefineSourceName(String newSourceName){
+//		SDFAttributeListExtended redefinedSet = new SDFAttributeListExtended();
+//		
+//		for(int i = 0; i<this.getAttributeCount(); i++){
+//			redefinedSet.add(redAttrSourceName(this.getAttribute(i), newSourceName));
+//		}
+//		
+//		return redefinedSet;
+//	}
+//	
+//	private SDFAttribute redAttrSourceName(SDFAttribute attr, String newSourceName){
+//		SDFAttribute newAttribute = new SDFAttribute(newSourceName, attr.getAttributeName(), attr);
+//		if(attr.getDatatype().hasSchema()){
+//			
+//			for(SDFAttribute subAttr: attr.getDatatype().getSubSchema()){
+//				   this.redAttrSourceName(subAttr, newSourceName);
+//			}
+//		}
+//		return newAttribute;
+//	}
 	
 	public SDFAttributeListExtended(SDFAttribute[] attributes1) {
 		super("",attributes1);
