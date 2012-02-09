@@ -69,54 +69,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	protected IStore<String, IUser> sinkFromUser;
 
 	public AbstractDataDictionary() {
-		// streamDefinitions = new MemoryStore<String, ILogicalOperator>();
-		// viewOrStreamFromUser = new MemoryStore<String, IUser>();
-		// viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-		// entityMap = new MemoryStore<String, SDFEntity>();
-		// entityFromUser = new MemoryStore<String, IUser>();
-		// sourceTypeMap = new MemoryStore<String, String>();
-		// datatypes = new MemoryStore<String, SDFDatatype>();
-		// sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
-		// sinkFromUser = new MemoryStore<String, IUser>();
-		// savedQueries = new MemoryStore<IQuery, IUser>();
-
 	}
 
 	protected void initDatatypes() {
 		/**
 		 * fill in the built-in datatypes
 		 */
-
 		if (datatypes.entrySet().size() == 0) {
-
-			addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
-			addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
-			addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
-			addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
-					SDFDatatype.END_TIMESTAMP);
-			addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
-			addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
-			addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-			addDatatype(SDFDatatype.SPATIAL_LINE.getURI(),
-					SDFDatatype.SPATIAL_LINE);
-			addDatatype(SDFDatatype.SPATIAL_MULTI_LINE.getURI(),
-					SDFDatatype.SPATIAL_MULTI_LINE);
-			addDatatype(SDFDatatype.SPATIAL_MULTI_POINT.getURI(),
-					SDFDatatype.SPATIAL_MULTI_POINT);
-			addDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(),
-					SDFDatatype.SPATIAL_MULTI_POLYGON);
-			addDatatype(SDFDatatype.SPATIAL_POINT.getURI(),
-					SDFDatatype.SPATIAL_POINT);
-			addDatatype(SDFDatatype.SPATIAL_POLYGON.getURI(),
-					SDFDatatype.SPATIAL_POLYGON);
-			addDatatype(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
-			addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
-					SDFDatatype.START_TIMESTAMP);
-			addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
-			addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-			addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
-			addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
-			addDatatype(SDFDatatype.GRID.getURI(), SDFDatatype.GRID);
+			SDFDatatype.registerDefaultTypes(this);
 		}
 	}
 

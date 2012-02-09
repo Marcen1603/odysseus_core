@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 import java.io.Serializable;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
 /**
@@ -39,5 +40,7 @@ public interface IParameter<T> extends Serializable {
 	public boolean isMandatory();
 	public void setAttributeResolver(IAttributeResolver resolver);
 	public IAttributeResolver getAttributeResolver();
+	public void setDataDictionary(IDataDictionary dd);
+	public IDataDictionary getDataDictionary();
 	public void clear();
 }

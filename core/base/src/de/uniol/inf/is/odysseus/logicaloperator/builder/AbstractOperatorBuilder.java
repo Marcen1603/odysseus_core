@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeReso
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -201,6 +200,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		IAttributeResolver attributeResolver = buildAttributeResolver(inputOps);
 		for (IParameter<?> parameter : parameters) {
 			parameter.setAttributeResolver(attributeResolver);
+			parameter.setDataDictionary(dataDictionary);
 		}
 	}
 

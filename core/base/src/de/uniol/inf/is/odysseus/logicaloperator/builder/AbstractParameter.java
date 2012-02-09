@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 
@@ -30,6 +31,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private REQUIREMENT requirement;
 	private T value;
 	private IAttributeResolver resolver;
+	private IDataDictionary dd;
 	private final List<Exception> errors;
 	protected Object inputValue;
 
@@ -135,6 +137,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public void setAttributeResolver(IAttributeResolver resolver) {
 		this.resolver = resolver;
+	}
+	
+	@Override
+	public IDataDictionary getDataDictionary() {
+		return dd;
+	}
+	
+	@Override
+	public void setDataDictionary(IDataDictionary dd) {
+		this.dd = dd;
 	}
 
 	@Override
