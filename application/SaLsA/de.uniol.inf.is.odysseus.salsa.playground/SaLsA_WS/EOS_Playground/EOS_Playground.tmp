@@ -1,0 +1,140 @@
+LmsScouter = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111', 'record:200'], adapter = 'Sick'})  
+///LmsScouter = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Rot_Scooter = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,-60.0,180.0), -43.00)']},LmsScouter))
+
+LmsEOS = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+///LmsEOS = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Rot_EOS = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(scan, 43.00)']},LmsEOS))
+
+CombinedLms = UNION(Rot_EOS,Rot_Scooter)
+
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, CombinedLms))
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 40.0)']}, CombinedLms))
+
+Unested_Lms1 = UNNEST({attribute = 'scan'}, Segments_Lms1)
+LineFilter_Lms1 = SELECT({predicate = RelationalPredicate('SpatialIsLine(scan)')},Unested_Lms1)
+
+///ConvexHull_Lms1 = MAP({expressions = ['SpatialConvexHull(scan)']},LineFilter_Lms1)
+
+sink = VPOLYGONSINK(LineFilter_Lms1)
+
+
+
+// 25.01.2012
+// Beide Scanner Rechts
+
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+#QUERY
+
+/// LMS1 Scanner
+///Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms1 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,200.0,316.0), 0.00)']},Lms1)
+Rename_Lms1 = RENAME({aliases = ['scan']}, Rot_Lms1)
+
+Window_Lms1 = WINDOW({type = 'time', size = 50, advance = 50}, Rename_Lms1)
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 20.0)']}, Window_Lms1))
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms1))
+
+
+Lms2 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms2 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, -421.0,-330.0),0.00)']},Lms2)
+Rename_Lms2 = RENAME({aliases = ['scan']}, Rot_Lms2)
+
+Window_Lms2 = WINDOW({type = 'time', size = 50, advance = 50}, Rename_Lms2)
+Segments_Lms2 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms2))
+
+InsertPunctuation =  punctuation({ratio = 20},Segments_Lms1,Segments_Lms2)
+Combined = UNION(InsertPunctuation,Segments_Lms2)
+
+
+Unested_All = UNNEST({attribute = 'scan'}, Combined)
+
+ConvexHull_All = MAP({expressions = ['SpatialConvexHull(scan)']},Unested_All)
+
+sink = VPOLYGONSINK(ConvexHull_All)
+
+
+
+// Seperate Views
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+#QUERY
+
+/// LMS1 Scanner
+///Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms1 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,200.0,316.0), 0.00)']},Lms1)
+Rename_Lms1 = RENAME({aliases = ['scan']}, Rot_Lms1)
+
+Window_Lms1 = WINDOW({type = 'time', size = 50, advance = 50}, Rename_Lms1)
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 20.0)']}, Window_Lms1))
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms1))
+
+Unested_Lms1 = UNNEST({attribute = 'scan'}, Segments_Lms1)
+LineFilter_Lms1 = SELECT({predicate = RelationalPredicate('SpatialIsLine(scan)')},Unested_Lms1)
+
+ConvexHull_Lms1 = MAP({expressions = ['SpatialConvexHull(scan)']},LineFilter_Lms1)
+
+sink_Lms1 = VPOLYGONSINK(ConvexHull_Lms1)
+
+
+Lms2 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms2 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, -421.0,-330.0),0.00)']},Lms2)
+Rename_Lms2 = RENAME({aliases = ['scan']}, Rot_Lms2)
+
+Window_Lms2 = WINDOW({type = 'time', size = 50, advance = 50}, Rename_Lms2)
+Segments_Lms2 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms2))
+
+Unested_Lms2 = UNNEST({attribute = 'scan'}, Segments_Lms2)
+LineFilter_Lms2 = SELECT({predicate = RelationalPredicate('SpatialIsLine(scan)')},Unested_Lms2)
+
+ConvexHull_Lms2 = MAP({expressions = ['SpatialConvexHull(scan)']},LineFilter_Lms2)
+
+sink_Lms2 = VPOLYGONSINK(ConvexHull_Lms2)
+
+
+
+17.01.2012
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+#QUERY
+LmsScouter = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111', 'record:200'], adapter = 'Sick'})  
+///LmsScouter = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.0.10', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Rot_Scooter = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,-80.0,250.0), -43.00)']},LmsScouter))
+
+LmsEOS = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+///LmsEOS = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Rot_EOS = RENAME({aliases = ['scan']}, MAP({expressions = ['RotateViewPoint(scan, 43.00)']},LmsEOS))
+
+
+InsertPunctuation =  punctuation({ratio = 10},Rot_Scooter,Rot_EOS)
+
+CombinedLms = UNION(Rot_EOS,InsertPunctuation)
+
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, CombinedLms))
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 20.0)']}, CombinedLms))
+
+Unested_Lms1 = UNNEST({attribute = 'scan'}, Segments_Lms1)
+///LineFilter_Lms1 = SELECT({predicate = RelationalPredicate('SpatialIsLine(scan)')},Unested_Lms1)
+
+///ConvexHull_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['SpatialConvexHull(scan)']},LineFilter_Lms1))
+
+sink2 = VPOLYGONSINK(Unested_Lms1)
+
+///MergeWindow = window({type='time', size= 50 , advance = 100},  ConvexHull_Lms1)
+
+///MergedPolygon = AGGREGATE({aggregations = [['PMERGE','scan','scan','tuple']] }, MergeWindow) 
+
+///sink = VPOLYGONSINK(MergedPolygon)

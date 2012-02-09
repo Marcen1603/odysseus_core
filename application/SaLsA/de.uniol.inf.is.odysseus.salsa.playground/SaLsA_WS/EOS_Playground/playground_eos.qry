@@ -1,0 +1,54 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+#QUERY
+
+/// LMS1 Scanner
+///Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms1 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,200.0,316.0), 0.00)']},Lms1)
+Rename_Lms1 = RENAME({aliases = ['scan']}, Rot_Lms1)
+
+Window_Lms1 = WINDOW({type = 'time', size = 20, advance = 60}, Rename_Lms1)
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 20.0)']}, Window_Lms1))
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms1))
+
+Lms2 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms2 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, -421.0,-330.0),0.00)']},Lms2)
+Rename_Lms2 = RENAME({aliases = ['scan']}, Rot_Lms2)
+
+Window_Lms2 = WINDOW({type = 'time', size = 20, advance = 60}, Rename_Lms2)
+Segments_Lms2 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms2))
+
+///InsertPunctuation =  punctuation({ratio = 20},Segments_Lms1,Segments_Lms2)
+///Combined = UNION(InsertPunctuation,Segments_Lms2)
+
+NSegments_Lms1 = UDO({class='Scanner',init='Lms1'},Segments_Lms1)
+NSegments_Lms2 = UDO({class='Scanner',init='Lms2'},Segments_Lms2)
+
+
+Combined = UNION(NSegments_Lms1,NSegments_Lms2)
+
+/// UDO MERGE
+///Fusion_L1 = UDO({class='ENVERLOP'},Combined)
+Fusion_L1 = UDO({class='FusionL1', init='50.00'},Combined)
+TOSink = UNNEST({attribute = 'scan'}, Fusion_L1)
+
+/// PMERGE
+///Unested_All = UNNEST({attribute = 'scan'}, Combined)
+///TOSink = AGGREGATE({aggregations = [['PMERGE','scan','scan','tuple']] }, Unested_All) 
+
+
+sink = VPOLYGONSINK(TOSink)
+
+///Checking
+Unested_Check = UNNEST({attribute = 'scan'}, Combined)
+ConvexHull_Check = MAP({expressions = ['SpatialConvexHull(scan)']},Unested_Check)
+sink_Check = VPOLYGONSINK(ConvexHull_Check)
+
+
+
+
