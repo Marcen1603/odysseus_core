@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Proj4j
+Bundle-SymbolicName: org.osgeo.proj4j
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: proj4j-0.1.0.jar
+Export-Package: org.osgeo.proj4j,
+ org.osgeo.proj4j.cmd,
+ org.osgeo.proj4j.datum,
+ org.osgeo.proj4j.io,
+ org.osgeo.proj4j.parser,
+ org.osgeo.proj4j.proj,
+ org.osgeo.proj4j.units,
+ org.osgeo.proj4j.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
