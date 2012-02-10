@@ -1,3 +1,18 @@
+/** Copyright [2011] [The Odysseus Team]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -21,11 +36,13 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class SubGrid extends AbstractFunction<Grid> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFGridDatatype.GRID },
-			{ SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_LINE_STRING,
-				SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
-				SDFSpatialDatatype.SPATIAL_MULTI_POINT,
-				SDFSpatialDatatype.SPATIAL_MULTI_POLYGON,
-				SDFSpatialDatatype.SPATIAL_POINT, SDFSpatialDatatype.SPATIAL_POLYGON },
+			{ SDFSpatialDatatype.SPATIAL_GEOMETRY,
+					SDFSpatialDatatype.SPATIAL_LINE_STRING,
+					SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
+					SDFSpatialDatatype.SPATIAL_MULTI_POINT,
+					SDFSpatialDatatype.SPATIAL_MULTI_POLYGON,
+					SDFSpatialDatatype.SPATIAL_POINT,
+					SDFSpatialDatatype.SPATIAL_POLYGON },
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE },
 			{ SDFDatatype.DOUBLE } };
 	private final static int flags = opencv_imgproc.CV_INTER_LINEAR
