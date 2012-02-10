@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -46,13 +47,16 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		String outputName = value.get(2);
 		SDFAttribute outAttr = null;
 
+		
 		if (value.size() == 4) {
-			outAttr = new SDFAttribute(null, outputName, getDataDictionary()
-					.getDatatype(value.get(3)));
+			IDataDictionary dd =getDataDictionary();
+			SDFDatatype type = dd.getDatatype(value.get(3));
+			outAttr = new SDFAttribute(null, outputName, type);
 		} else {
 			// Fallback to old DOUBLE value for aggregation results
-			outAttr = new SDFAttribute(null, outputName, getDataDictionary()
-					.getDatatype("DOUBLE"));
+			IDataDictionary dd = getDataDictionary();
+			SDFDatatype type = dd.getDatatype("double");
+			outAttr = new SDFAttribute(null, outputName, type);
 		}
 		setValue(new AggregateItem(funcStr, attribute, outAttr));
 	}

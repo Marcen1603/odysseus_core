@@ -43,6 +43,8 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 			ArrayList<T> list = new ArrayList<T>();
 			for (Object o : (List<?>) inputValue) {
 				singleParameter.setInputValue(o);
+				singleParameter.setAttributeResolver(getAttributeResolver());
+				singleParameter.setDataDictionary(getDataDictionary());
 				if (!singleParameter.validate()) {
 					throw new RuntimeException(singleParameter.getErrors().get(
 							0));

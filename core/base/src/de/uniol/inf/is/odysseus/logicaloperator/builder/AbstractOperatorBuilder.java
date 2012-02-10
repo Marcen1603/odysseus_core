@@ -140,6 +140,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(
 					schema);
 			parameter.setAttributeResolver(attributeResolver);
+			parameter.setDataDictionary(getDataDictionary());
 			if (!parameter.validate()) {
 				isValid = false;
 				this.errors.addAll(parameter.getErrors());
