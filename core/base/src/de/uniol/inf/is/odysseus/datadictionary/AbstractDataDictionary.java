@@ -400,8 +400,20 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
 		} else {
+			System.out.println(this.datatypes);
 			throw new IllegalArgumentException("Type '" + name
 					+ "' already exists.");
+		}
+	}
+	
+	@Override
+	public void removeDatatype(String name) {
+		if (this.datatypes.containsKey(name.toLowerCase())) {
+			this.datatypes.remove(name.toLowerCase());
+			fireDataDictionaryChangedEvent();
+		} else {
+			throw new IllegalArgumentException("Type '" + name
+					+ "' not exists.");
 		}
 	}
 
@@ -566,7 +578,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	// -------------------------------------------------------------------------------------
-	// Hilfsmethoden für Rechtemanagement
+	// Hilfsmethoden fï¿½r Rechtemanagement
 	// -------------------------------------------------------------------------------------
 
 	/**

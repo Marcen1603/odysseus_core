@@ -116,6 +116,7 @@ public interface IDataDictionary {
 	
 //	public void addDatatype(String name, SDFDatatype dt, ISession caller);
 	public void addDatatype(String name, SDFDatatype dt);
+	public void removeDatatype(String name);
 	
 	public SDFDatatype getDatatype(String name);
 	public Set<String> getDatatypes();
