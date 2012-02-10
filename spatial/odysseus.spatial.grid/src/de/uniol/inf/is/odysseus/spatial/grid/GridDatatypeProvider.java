@@ -14,14 +14,14 @@ public class GridDatatypeProvider {
 			throws PlanManagementException {
 
 		datadictionary = dataDictionary;
-		if (datadictionary.getDatatype(SDFGridDatatype.GRID.getURI()) == null) {
+		if (!datadictionary.existsDatatype(SDFGridDatatype.GRID.getURI())) {
 			datadictionary.addDatatype(SDFGridDatatype.GRID.getURI(),
 					SDFGridDatatype.GRID);
 		}
 	}
 
 	public void unbindDictionary(IDataDictionary dd) {
-		if (datadictionary.getDatatype(SDFGridDatatype.GRID.getURI()) != null) {
+		if (datadictionary.existsDatatype(SDFGridDatatype.GRID.getURI())) {
 			datadictionary.removeDatatype(SDFGridDatatype.GRID.getURI());
 		}
 		datadictionary = null;

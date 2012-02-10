@@ -12,8 +12,8 @@ public class SpatialDatatypeProvider {
 
 	protected void bindDataDictionary(IDataDictionary dd) {
 		datadictionary = dd;
-		if (datadictionary.getDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY
-				.getURI()) == null) {
+		if (!datadictionary.existsDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY
+				.getURI())) {
 			datadictionary.addDatatype(
 					SDFSpatialDatatype.SPATIAL_COORDINATE.getURI(),
 					SDFSpatialDatatype.SPATIAL_COORDINATE);
@@ -54,8 +54,8 @@ public class SpatialDatatypeProvider {
 	}
 
 	protected void unbindDataDictionary(IDataDictionary dd) {
-		if (datadictionary.getDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY
-				.getURI()) != null) {
+		if (datadictionary.existsDatatype(SDFSpatialDatatype.SPATIAL_GEOMETRY
+				.getURI())) {
 			dd.removeDatatype(SDFSpatialDatatype.SPATIAL_COORDINATE.getURI());
 			dd.removeDatatype(SDFSpatialDatatype.SPATIAL_COORDINATE_SEQUENCE
 					.getURI());
