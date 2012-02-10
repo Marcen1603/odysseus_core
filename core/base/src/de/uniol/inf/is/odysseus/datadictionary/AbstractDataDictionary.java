@@ -492,7 +492,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public IQuery getQuery(int id, ISession caller) {
-		if (hasPermission(caller, ExecutorPermission.ADD_QUERY)) {
+		if (hasPermission(caller, ExecutorPermission.ADD_QUERY, ExecutorPermission.objectURI)) {
 			return this.savedQueries.get(id);
 		} else {
 			return null;
