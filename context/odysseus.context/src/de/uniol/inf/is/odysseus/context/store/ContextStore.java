@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -46,7 +46,7 @@ public class ContextStore<T> {
 
 	private HashMap<String, ContextStoreEntry<T>> stores = new HashMap<>();
 
-	public void createStore(String name, SDFAttributeList schema) throws ContextManagementException {
+	public void createStore(String name, SDFSchema schema) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
 		} else {
@@ -55,7 +55,7 @@ public class ContextStore<T> {
 		}
 	}
 
-	public SDFAttributeList getStoreSchema(String storeName) throws ContextManagementException{
+	public SDFSchema getStoreSchema(String storeName) throws ContextManagementException{
 		if(storeExists(storeName)){
 			return this.stores.get(storeName).getSchema();
 		}else{

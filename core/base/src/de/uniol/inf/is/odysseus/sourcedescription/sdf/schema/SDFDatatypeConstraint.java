@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
-public class SDFDatatypeConstraint extends SDFSchemaElement {
+public class SDFDatatypeConstraint extends SDFElement {
 	/**
 	 * 
 	 */
@@ -24,7 +24,7 @@ public class SDFDatatypeConstraint extends SDFSchemaElement {
 	private String cType = null;
 	
 	public SDFDatatypeConstraint(String URI, String cType) {
-		super(URI, (SDFDatatype)null);
+		super(URI);
 		this.cType = cType;
 	}
 

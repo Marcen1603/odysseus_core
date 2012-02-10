@@ -18,7 +18,7 @@
 //
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
 //
@@ -44,7 +44,7 @@
 //	 * 
 //	 * @deprecated Wird nirgends verwendet
 //	 */
-//	public void initAttributePaths( SDFAttributeList schema ) {
+//	public void initAttributePaths( SDFSchema schema ) {
 //		this.attributeIntPaths = new int[this.attributePaths.size()][];
 //		
 //		for( int i = 0; i < this.attributePaths.size(); i++ ) {
@@ -60,7 +60,7 @@
 //	/**
 //	 * @deprecated Wird nur in Methoden verwendet, die nirgends verwendet werden
 //	 */
-//	private void findNext(SDFAttributeList list, String[] path, int index, int[] indices) {
+//	private void findNext(SDFSchema list, String[] path, int index, int[] indices) {
 //		String attrToFind = path[index];
 //		for( int i = 0; i < list.getAttributeCount(); i++ ) {
 //			SDFAttribute attr = list.get(i);
@@ -83,7 +83,7 @@
 //	/**
 //	 * @deprecated Wird nirgends verwendet
 //	 */
-//	public void initTarget( String targetAttributeName, SDFAttributeList schema ) {
+//	public void initTarget( String targetAttributeName, SDFSchema schema ) {
 //		String[] parts = targetAttributeName.split("\\.");
 //		targetPath = new int[parts.length];
 //		findNext( schema, parts, 0, targetPath);

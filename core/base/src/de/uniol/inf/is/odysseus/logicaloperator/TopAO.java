@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.Subscription;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
@@ -68,7 +68,7 @@ public class TopAO extends UnaryLogicalOp {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 

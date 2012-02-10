@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "BINDING")
 public class SinkAO extends AbstractLogicalOperator {
@@ -43,7 +43,7 @@ public class SinkAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.getOutputSchema(0);
 	}
 
@@ -54,7 +54,7 @@ public class SinkAO extends AbstractLogicalOperator {
 	 * getOutputSchema(int)
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema(final int port) {
+	public SDFSchema getOutputSchema(final int port) {
 		return this.getInputSchema(port);
 	}
 

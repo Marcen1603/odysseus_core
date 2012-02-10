@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "PRIOIDJOIN", minInputPorts = 2, maxInputPorts = 2)
 public class PrioIdJoinAO extends AbstractLogicalOperator implements
@@ -71,10 +71,10 @@ public class PrioIdJoinAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList outputSchema = new SDFAttributeList("");
+	public SDFSchema getOutputSchema() {
+		SDFSchema outputSchema = new SDFSchema("");
 		for (LogicalSubscription l : getSubscribedToSource()) {
-			outputSchema = SDFAttributeList.union(outputSchema, l.getSchema());
+			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
 			outputSchema.addAttributes(l.getSchema());
 		}
 		return outputSchema;

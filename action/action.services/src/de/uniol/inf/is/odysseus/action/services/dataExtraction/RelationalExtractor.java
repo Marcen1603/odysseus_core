@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Extractor for relational tuples.
@@ -49,7 +49,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 	@SuppressWarnings({"rawtypes"})
 	@Override
 	public Object extractAttribute(Object attributeIdentifier, Object element,
-			SDFAttributeList schema) throws DataextractionException {
+			SDFSchema schema) throws DataextractionException {
 		for (int i=0; i<schema.getAttributeCount(); i++){
 			SDFAttribute attribute = schema.get(i);
 			//check for uri since it is unique

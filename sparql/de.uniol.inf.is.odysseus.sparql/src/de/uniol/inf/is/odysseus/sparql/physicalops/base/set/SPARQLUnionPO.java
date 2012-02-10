@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
 import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Andre Bolles
@@ -96,8 +96,8 @@ public class SPARQLUnionPO<M extends IClone> extends AbstractPipe<NodeList<M>, N
 			
 			if(port == 0){
 				NodeList<M> attrs = new NodeList<M>();
-				SDFAttributeList outAttrs = this.ao.getOutputSchema();
-				SDFAttributeList leftAttrs = this.ao.getInputSchema(0);
+				SDFSchema outAttrs = this.ao.getOutputSchema();
+				SDFSchema leftAttrs = this.ao.getInputSchema(0);
 				
 				// the number of the actual attribute to add
 				for(int i = 0; i<outAttrs.size(); i++){
@@ -123,8 +123,8 @@ public class SPARQLUnionPO<M extends IClone> extends AbstractPipe<NodeList<M>, N
 			else if(port == 1){
 				// fill the attributes correctly
 				NodeList<M> attrs = new NodeList<M>();
-				SDFAttributeList outAttrs = this.ao.getOutputSchema();
-				SDFAttributeList rightAttrs = this.ao.getInputSchema(1);
+				SDFSchema outAttrs = this.ao.getOutputSchema();
+				SDFSchema rightAttrs = this.ao.getInputSchema(1);
 				
 				// the number of the actual attribute to add
 				for(int i = 0; i<outAttrs.size(); i++){

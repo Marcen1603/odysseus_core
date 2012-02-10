@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1)
 public class BufferAO extends UnaryLogicalOp {
@@ -40,7 +40,7 @@ public class BufferAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 

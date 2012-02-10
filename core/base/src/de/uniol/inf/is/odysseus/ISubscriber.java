@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus;
  */
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 public interface ISubscriber<T, S extends ISubscription<T>> {
@@ -34,7 +34,7 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 * A -> B
 	 *
 	 */
-	public void subscribeToSource(T source, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	public void subscribeToSource(T source, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	
 	/**
 	 * Removes a subscription installed by the methods
@@ -52,7 +52,7 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	/**
 	 * Removes a subscription installed by {@link ISubscriber#subscribeTo(Object, int, int)}.
 	 */
-	public void unsubscribeFromSource(T source, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	public void unsubscribeFromSource(T source, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	public Collection<S> getSubscribedToSource();
 	public S getSubscribedToSource(int i);
 }

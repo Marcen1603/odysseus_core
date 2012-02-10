@@ -14,7 +14,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.UnaryLogicalOp;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowType;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This class represents a slice operator, that will be used for evaluating
@@ -72,8 +72,8 @@
 //        this.setInputSchema(po.getOutputSchema());
 //
 //        if (po != null){
-//            SDFAttributeList l1 = po.getOutputSchema();		
-//            SDFAttributeList jList = new SDFAttributeList();
+//            SDFSchema l1 = po.getOutputSchema();		
+//            SDFSchema jList = new SDFSchema();
 //            jList.addAttributes(l1);
 //            this.setOutputSchema(jList);
 //        }

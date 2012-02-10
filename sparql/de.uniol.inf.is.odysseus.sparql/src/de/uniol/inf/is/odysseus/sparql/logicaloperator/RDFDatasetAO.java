@@ -6,7 +6,7 @@
 //
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AccessAO;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class RDFDatasetAO extends AccessAO {
 //
@@ -45,7 +45,7 @@
 //	
 //	private void calcOutputVars(){
 //		if (sourceVar != null){
-//			SDFAttributeList out = new SDFAttributeList();
+//			SDFSchema out = new SDFSchema();
 //			out.add(new SDFAttribute(sourceVar.getName()));
 //			this.setOutputSchema(out);
 //		}

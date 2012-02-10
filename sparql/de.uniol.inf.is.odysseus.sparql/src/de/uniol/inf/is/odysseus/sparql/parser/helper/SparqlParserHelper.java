@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 @SuppressWarnings({"rawtypes"})
@@ -22,10 +22,10 @@ public class SparqlParserHelper {
 	public static JoinAO createJoin(ILogicalOperator left, ILogicalOperator right){
 		JoinAO join = new JoinAO();
 		
-		SDFAttributeList leftSchema = left.getOutputSchema();
-		SDFAttributeList rightSchema = right.getOutputSchema();
+		SDFSchema leftSchema = left.getOutputSchema();
+		SDFSchema rightSchema = right.getOutputSchema();
 		  
-		SDFAttributeList commonVars = SparqlParserHelper.getCommonVariables(leftSchema, rightSchema);
+		SDFSchema commonVars = SparqlParserHelper.getCommonVariables(leftSchema, rightSchema);
 		
 		IPredicate joinPred = SparqlParserHelper.createJoinPredicate(commonVars, leftSchema, rightSchema);
 		
@@ -70,10 +70,10 @@ public class SparqlParserHelper {
 	 * {?y :pred  ?x
 	 *  ?y :pred2 ?x}
 	 */
-	private static IPredicate createJoinPredicate(SDFAttributeList commonVars, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	private static IPredicate createJoinPredicate(SDFSchema commonVars, SDFSchema leftSchema, SDFSchema rightSchema){
 		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
-//		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
+//		SDFSchema outputSchema = SDFSchema.union(leftSchema, rightSchema);
 //		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
 //		
 //		
@@ -125,8 +125,8 @@ public class SparqlParserHelper {
 	 * @param rightSchema
 	 * @return
 	 */
-	private static SDFAttributeList getCommonVariables(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
-		SDFAttributeList commonSchema = new SDFAttributeList("");
+	private static SDFSchema getCommonVariables(SDFSchema leftSchema, SDFSchema rightSchema){
+		SDFSchema commonSchema = new SDFSchema("");
 		for(SDFAttribute leftAttr: leftSchema){
 			for(SDFAttribute rightAttr: rightSchema){
 				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){

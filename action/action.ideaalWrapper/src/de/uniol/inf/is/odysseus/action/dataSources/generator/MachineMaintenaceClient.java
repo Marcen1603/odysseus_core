@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.action.dataSources.generator.TupleGenerator.GeneratorType;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class MachineMaintenaceClient extends ISourceClient {
 	private long frequency;
@@ -47,7 +47,7 @@ public class MachineMaintenaceClient extends ISourceClient {
 	}
 
 	@Override
-	public SDFAttributeList getSchema() {
+	public SDFSchema getSchema() {
 		return this.tupleGenerator.getSchema();
 	}
 

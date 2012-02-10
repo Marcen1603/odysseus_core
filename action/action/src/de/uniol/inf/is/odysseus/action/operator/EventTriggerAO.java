@@ -21,7 +21,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Logical Operator for an EventDetectionSink
@@ -54,7 +54,7 @@ public class EventTriggerAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(0);
 	}
 	

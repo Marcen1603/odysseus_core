@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingPredicateInitializer {
@@ -38,7 +38,7 @@ public class ObjectTrackingPredicateInitializer {
 		}
 	}
 	
-	public static void visitPredicates(IPredicate predicate, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	public static void visitPredicates(IPredicate predicate, SDFSchema leftSchema, SDFSchema rightSchema){
 		Stack<IPredicate> predicateStack = new Stack<IPredicate>();
 		predicateStack.push(predicate);
 		
@@ -56,7 +56,7 @@ public class ObjectTrackingPredicateInitializer {
 		}
 	}
 	
-	private static void init(IPredicate predicate, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	private static void init(IPredicate predicate, SDFSchema leftSchema, SDFSchema rightSchema){
 		if(predicate instanceof IRelationalPredicate) {
 			// We can always init with the left and right input schema.
 			// There are two cases:

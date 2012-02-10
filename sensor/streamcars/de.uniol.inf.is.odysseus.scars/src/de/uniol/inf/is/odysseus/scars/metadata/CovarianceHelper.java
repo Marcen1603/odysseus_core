@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class CovarianceHelper {
 
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private CovarianceMapper mapper;
 	private IStreamCarsExpression expression;
 	
@@ -35,21 +35,21 @@ public class CovarianceHelper {
 		this.restrictedVariables = copy.restrictedVariables;
 	}
 	
-	public CovarianceHelper(SDFAttributeList schema) {
+	public CovarianceHelper(SDFSchema schema) {
 		this.schema = schema;
 		this.mapper = new CovarianceMapper(this.schema);
 		this.expression = null;
 		restrictedVariables = null;
 	}
 
-	public CovarianceHelper(IStreamCarsExpression expression, SDFAttributeList schema) {
+	public CovarianceHelper(IStreamCarsExpression expression, SDFSchema schema) {
 		this.schema = schema;
 		this.mapper = new CovarianceMapper(this.schema);
 		this.expression = expression;
 		restrictedVariables = null;
 	}
 	
-	public CovarianceHelper(String[] restrictedVariables, SDFAttributeList schema) {
+	public CovarianceHelper(String[] restrictedVariables, SDFSchema schema) {
 		this.schema = schema;
 		this.mapper = new CovarianceMapper(this.schema);
 		this.expression = null;
@@ -76,7 +76,7 @@ public class CovarianceHelper {
 		return resultMatrix;
 	}
 
-	public double[][] getCovarianceForAttributes(double[][] initialCovarianceMatrix, SDFAttributeList schema) {
+	public double[][] getCovarianceForAttributes(double[][] initialCovarianceMatrix, SDFSchema schema) {
 		List<IStreamCarsExpressionVariable> variables = this.expression.getVariables();
 		ArrayList<Integer> attributePositions = new ArrayList<Integer>();
 		for (int i = 0; i < variables.size(); i++) {

@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.ISubscribable;
 import de.uniol.inf.is.odysseus.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Interface for data sources in a query graph.
@@ -93,7 +93,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	public void atomicReplaceSink(
 			List<PhysicalSubscription<ISink<? super T>>> remove,
 			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-			SDFAttributeList schema);
+			SDFSchema schema);
 
 	/**
 	 * Removes a subscription to this source and subscribes several sinks in the
@@ -114,7 +114,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	public void atomicReplaceSink(
 			PhysicalSubscription<ISink<? super T>> remove,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-			SDFAttributeList schema);
+			SDFSchema schema);
 
 	/**
 	 * Methods to mark (!) Operator as blocked. Can be used by scheduler

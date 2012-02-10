@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class AccessAO extends AbstractLogicalOperator implements
 		OutputSchemaSettable {
@@ -31,7 +31,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 	 * Die Uri der von diesem AccessPO gekapselten Quelle
 	 */
 	private SDFSource source = null;
-	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
+	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
 	private int port;
 	private String host;
@@ -97,22 +97,22 @@ public class AccessAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getOutputSchema(0);
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema(int port) {
+	public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);
 	}
 
@@ -172,10 +172,10 @@ public class AccessAO extends AbstractLogicalOperator implements
 		return true;
 	}
 
-	private Map<Integer, SDFAttributeList> createCleanClone(
-			Map<Integer, SDFAttributeList> old) {
-		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
-		for (Entry<Integer, SDFAttributeList> e : old.entrySet()) {
+	private Map<Integer, SDFSchema> createCleanClone(
+			Map<Integer, SDFSchema> old) {
+		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
 			copy.put(e.getKey(), e.getValue().clone());
 		}
 		return copy;

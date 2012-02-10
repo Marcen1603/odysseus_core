@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.mining.NonNumericAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -130,9 +130,9 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 * ()
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 
-		SDFAttributeList outputSchema = new SDFAttributeList("Cluster");
+		SDFSchema outputSchema = new SDFSchema("Cluster");
 		SDFAttribute id = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
 		outputSchema.add(id);
 		outputSchema.addAll(getInputSchema().clone());
@@ -146,12 +146,12 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 * getOutputSchema(int)
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema(int port) {
+	public SDFSchema getOutputSchema(int port) {
 
 		if (port == 0) {
 			return getOutputSchema();
 		} else {
-			SDFAttributeList clusterSchema = new SDFAttributeList("Cluster");
+			SDFSchema clusterSchema = new SDFSchema("Cluster");
 			SDFAttribute idA = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
 			clusterSchema.add(idA);
 			SDFAttribute idCount = new SDFAttribute(null,"cluster_count", SDFDatatype.LONG);

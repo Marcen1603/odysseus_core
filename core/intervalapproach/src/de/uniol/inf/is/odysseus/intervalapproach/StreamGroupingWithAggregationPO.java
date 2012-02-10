@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IMetaAttributeContainer<Q>>
 		extends AggregateTIPO<Q, R, W> {
@@ -41,15 +41,15 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	static final Logger logger = LoggerFactory.getLogger(StreamGroupingWithAggregationPO.class);
 	
 	final private ITransferArea<W, W> transferArea;
-	private final Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>>();
+	private final Map<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
 
 	public StreamGroupingWithAggregationPO(
-			SDFAttributeList inputSchema,
-			SDFAttributeList outputSchema,
+			SDFSchema inputSchema,
+			SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations,
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
 			IGroupProcessor<R, W> grProcessor) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		setGroupProcessor(grProcessor);
@@ -67,10 +67,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	public StreamGroupingWithAggregationPO(
-			SDFAttributeList inputSchema,
-			SDFAttributeList outputSchema,
+			SDFSchema inputSchema,
+			SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 		transferArea = new TITransferArea<W, W>(1);
 		transferArea.setSourcePo(this);
@@ -97,9 +97,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_done() {
 		// Drain all groups
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().iterator();
 			produceResults(results, entry.getKey());
 		}
@@ -121,10 +121,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// Create group ID from input object
 		Integer groupID = getGroupProcessor().getGroupID(object);
 		// Find or create sweep area for group
-		DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+		DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 				.get(groupID);
 		if (sa == null) {
-			sa = new DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>();
+			sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
 			groups.put(groupID, sa);
 		//	System.out.println("Created new Sweep Area for group id " + groupID);
 		}
@@ -139,7 +139,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		createOutputCounter++;
 		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
 			createOutputCounter = 0;
-			for (DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
+			for (DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa : groups
 					.values()) {
 				updateSA(sa, timestamp);
 			}
@@ -147,21 +147,21 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}
 		
 		// Extract all Elements before current Time!
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
 			produceResults(results, entry.getKey());
 		}
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		PointInTime border = timestamp;
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
-			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> iter = entry
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> iter = entry
 					.getValue().peekElementsContaing(timestamp, false);
 			while (iter.hasNext()) {
-				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> v = iter
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> v = iter
 						.next();
 				if (v.getMetadata().getStart().before(border)) {
 					border = v.getMetadata().getStart();
@@ -171,7 +171,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		transferArea.newHeartbeat(border, 0);
 
 //		System.out.println(this+"Found Bordertime "+border+" at timestamp "+timestamp);
-//		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+//		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 //				.entrySet()){
 //			System.out.println(entry.getKey()+" "+entry.getValue());
 //		}
@@ -181,12 +181,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	private synchronized void produceResults(
-			Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> results,
+			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Integer groupID) {
 		while (results.hasNext()) {
-			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> e = results
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
-			PairMap<SDFAttributeList, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
+			PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
 			W out = getGroupProcessor().createOutputElement(groupID, r);
 			out.setMetadata(e.getMetadata());
 			transferArea.transfer(out);
@@ -205,7 +205,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	 * 
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
-	public Map<Integer, DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+	public Map<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
 	}
 

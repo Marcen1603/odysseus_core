@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.scars.operator.bouncer.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogicalOperator {
 
@@ -39,7 +39,7 @@ public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogi
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.getInputSchema(0);
 	}
 

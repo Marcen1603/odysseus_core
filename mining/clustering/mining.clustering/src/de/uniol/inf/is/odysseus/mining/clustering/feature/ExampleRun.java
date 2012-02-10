@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe.TiltedTimeWindow;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ExampleRun {
 
 	public static void main(String[] args) {
-		SDFAttributeList schema = new SDFAttributeList("dummy");
+		SDFSchema schema = new SDFSchema("dummy");
 		SDFAttribute attributeID = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
 		schema.add(attributeID);
 		SDFAttribute attributeName = new SDFAttribute(null,"name", SDFDatatype.STRING);

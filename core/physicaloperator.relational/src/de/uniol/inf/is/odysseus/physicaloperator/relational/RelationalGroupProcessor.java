@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class RelationalGroupProcessor<T extends IMetaAttribute> implements
         IGroupProcessor<RelationalTuple<T>, RelationalTuple<T>> {
@@ -36,14 +36,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
     int maxId = 0;
     int[] gRestrict = null;
     private final List<SDFAttribute> grAttribs;
-    private final Map<FESortedClonablePair<SDFAttributeList, AggregateFunction>, Integer> aggrOutputPos = new HashMap<FESortedClonablePair<SDFAttributeList, AggregateFunction>, Integer>();
+    private final Map<FESortedClonablePair<SDFSchema, AggregateFunction>, Integer> aggrOutputPos = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, Integer>();
     private final Map<SDFAttribute, Integer> groupOutputPos = new HashMap<SDFAttribute, Integer>();
-    final private SDFAttributeList inputSchema;
-    final private SDFAttributeList outputSchema;
+    final private SDFSchema inputSchema;
+    final private SDFSchema outputSchema;
     final private Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations;
  
-    public RelationalGroupProcessor(SDFAttributeList inputSchema,
-            SDFAttributeList outputSchema,
+    public RelationalGroupProcessor(SDFSchema inputSchema,
+            SDFSchema outputSchema,
             List<SDFAttribute> groupingAttributes,
             Map<SDFAttribute, Map<AggregateFunction, SDFAttribute>> aggregations) {
         super();
@@ -89,7 +89,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
         tupleMap = new HashMap<Integer, RelationalTuple<T>>();
     }
 
-    private int getOutputPos(FESortedClonablePair<SDFAttributeList, AggregateFunction> p) {
+    private int getOutputPos(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
         Integer pos = aggrOutputPos.get(p);
         if (pos == null) {
             Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(p
@@ -113,14 +113,14 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
     @Override
     public RelationalTuple<T> createOutputElement(
             Integer groupID,
-            PairMap<SDFAttributeList, AggregateFunction, RelationalTuple<T>, ?> r) {
+            PairMap<SDFSchema, AggregateFunction, RelationalTuple<T>, ?> r) {
         RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema
                 .size());
 
         // in r stecken alle Aggregate drin
         // notwendig: Finde die Ziel-Position in dem returnTuple
         // ermittelt sich aus dem Attribute und der Aggregatfunktio
-        for (Entry<FESortedClonablePair<SDFAttributeList, AggregateFunction>, RelationalTuple<T>> e : r
+        for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, RelationalTuple<T>> e : r
                 .entrySet()) {
             int pos = getOutputPos(e.getKey());
             returnTuple.setAttribute(pos, e.getValue().getAttribute(0));

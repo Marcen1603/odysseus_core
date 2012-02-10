@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -75,10 +75,10 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	 * ()
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 
 		// define the schema as one attribute for the classifier
-		SDFAttributeList outputSchema = new SDFAttributeList("Classifier");
+		SDFSchema outputSchema = new SDFSchema("Classifier");
 		SDFAttribute classifier = new SDFAttribute(null,"classifier", SDFDatatype.OBJECT);
 		outputSchema.add(classifier);
 		return outputSchema;

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class ProbabilityPredicate<T extends IProbability> extends
 		AbstractPredicate<MVRelationalTuple<T>> {
@@ -73,8 +73,8 @@ public class ProbabilityPredicate<T extends IProbability> extends
 	String leftSource;
 	String rightSource;
 
-	SDFAttributeList leftSchema;
-	SDFAttributeList rightSchema;
+	SDFSchema leftSchema;
+	SDFSchema rightSchema;
 
 	String calculationType;
 
@@ -138,19 +138,19 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		throw new RuntimeException("No copy constructor for ProbabiltyPredicate defined.");
 	}
 
-	public SDFAttributeList getLeftSchema() {
+	public SDFSchema getLeftSchema() {
 		return leftSchema;
 	}
 
-	public void setLeftSchema(SDFAttributeList leftSchema) {
+	public void setLeftSchema(SDFSchema leftSchema) {
 		this.leftSchema = leftSchema;
 	}
 
-	public SDFAttributeList getRightSchema() {
+	public SDFSchema getRightSchema() {
 		return rightSchema;
 	}
 
-	public void setRightSchema(SDFAttributeList rightSchema) {
+	public void setRightSchema(SDFSchema rightSchema) {
 		this.rightSchema = rightSchema;
 	}
 
@@ -448,7 +448,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 	@Override
 	public List<SDFAttribute> getAttributes() {
-		return SDFAttributeList.union(leftSchema, rightSchema);
+		return SDFSchema.union(leftSchema, rightSchema);
 	}
 
 	//@Override

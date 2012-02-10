@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMe
 	//LEFT is data-port and RIGHT is aggregate-port
 	private static final int LEFT = 0;
 	private static final int RIGHT = 1;
-	private SDFAttributeList[] inputSchemas = new SDFAttributeList[2];
+	private SDFSchema[] inputSchemas = new SDFSchema[2];
 	private PointInTime leftMin = PointInTime.getZeroTime();
 	private PointInTime rightMin = PointInTime.getZeroTime();
 
@@ -86,7 +86,7 @@ public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMe
 		}
 	}
 
-	private SDFAttributeList getInputSchema(int port) {
+	private SDFSchema getInputSchema(int port) {
 		if (port > 1 || port < 0) {
 			throw new IllegalArgumentException("there are only two ports!");
 		}
@@ -94,7 +94,7 @@ public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMe
 		return this.inputSchemas[port];
 	}
 
-	public void setInputSchemas(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void setInputSchemas(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.inputSchemas[LEFT] = leftSchema;
 		this.inputSchemas[RIGHT] = rightSchema;
 	}

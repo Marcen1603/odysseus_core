@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public abstract class ComplexRangePredicate<T> extends
 		AbstractRangePredicate<T> {
@@ -57,7 +57,7 @@ public abstract class ComplexRangePredicate<T> extends
 	}
 	
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema){
 		this.left.init(leftSchema, rightSchema);
 		this.right.init(leftSchema, rightSchema);
 	}

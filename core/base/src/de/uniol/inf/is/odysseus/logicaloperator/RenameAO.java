@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	private static final long serialVersionUID = 4218605858465342011L;
-	protected SDFAttributeList outputSchema;
+	protected SDFSchema outputSchema;
 	private List<String> aliases;
 
 	public RenameAO() {
@@ -45,24 +45,24 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	public RenameAO(RenameAO ao) {
 		super(ao);
-		outputSchema = new SDFAttributeList(ao.outputSchema.getURI(), ao.outputSchema);
+		outputSchema = new SDFSchema(ao.outputSchema.getURI(), ao.outputSchema);
 		aliases = ao.aliases;
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema.clone();
 	}
 
 	@Parameter(type = StringParameter.class, isList = true)
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
-		SDFAttributeList inputSchema = getInputSchema();
+		SDFSchema inputSchema = getInputSchema();
 		if (inputSchema.size() != aliases.size()) {
 			throw new IllegalArgumentException(
 					"number of aliases does not match number of input attributes for rename");
 		}
-		this.outputSchema = new SDFAttributeList(inputSchema.getURI());
+		this.outputSchema = new SDFSchema(inputSchema.getURI());
 		Iterator<SDFAttribute> it = inputSchema.iterator();
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.
@@ -79,7 +79,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
@@ -89,7 +89,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if (port == 0) {
 			setOutputSchema(outputSchema);
 		} else {

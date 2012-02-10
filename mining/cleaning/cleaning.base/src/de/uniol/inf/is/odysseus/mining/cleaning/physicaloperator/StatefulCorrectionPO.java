@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful.IBinaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -43,7 +43,7 @@ public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMe
 	private DefaultTISweepArea<Data> sweepAreaForCorrection = new DefaultTISweepArea<Data>();
 	private PointInTime totalMin = PointInTime.getZeroTime();
 
-	private SDFAttributeList[] inputSchemas;
+	private SDFSchema[] inputSchemas;
 	private Data currentValueForCorrection;
 
 	public StatefulCorrectionPO(List<IBinaryCorrection<Data>> corrections) {
@@ -92,7 +92,7 @@ public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMe
 		}
 	}
 
-	private SDFAttributeList getInputSchema(int port) {
+	private SDFSchema getInputSchema(int port) {
 		if (port > 1 || port < 0) {
 			throw new IllegalArgumentException("there are only two ports!");
 		}
@@ -129,7 +129,7 @@ public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMe
 		return new StatefulCorrectionPO<Meta, Data>(this);
 	}
 
-	public void setInputSchemas(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void setInputSchemas(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.inputSchemas[LEFT] = leftSchema;
 		this.inputSchemas[RIGHT] = rightSchema;
 

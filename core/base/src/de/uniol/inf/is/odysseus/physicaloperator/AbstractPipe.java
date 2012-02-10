@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.event.IEventListener;
 import de.uniol.inf.is.odysseus.event.IEventType;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 /**
@@ -248,7 +248,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		this.delegateSink.subscribeToSource(source, sinkInPort, sourceOutPort,
 				schema);
 	}
@@ -274,7 +274,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void unsubscribeFromSource(ISource<? extends R> source,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+			int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		this.delegateSink.unsubscribeFromSource(source, sinkInPort,
 				sourceOutPort, schema);
 	}

@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
  * 
  */
 
-public class SDFAttribute extends SDFSchemaElement implements
+public class SDFAttribute extends SDFElement implements
 		Comparable<SDFAttribute>, Serializable, IClone {
 
 	/**
@@ -40,6 +41,10 @@ public class SDFAttribute extends SDFSchemaElement implements
 	private List<?> covariance;
 
 	private static final long serialVersionUID = -5128455072793206061L;
+	
+	final private SDFDatatype datatype;
+	final private Map<String, SDFDatatypeConstraint> dtConstraints;
+	final private SDFUnit unit;
 
 	/**
 	 * Creates a new SDFAttribute from sourceName and AttributeName
@@ -48,7 +53,10 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * @param attributeName
 	 */
 	public SDFAttribute(String sourceName, String attributeName, SDFDatatype dt) {
-		super(sourceName, attributeName, dt);
+		super(sourceName, attributeName);
+		this.datatype = dt;
+		unit = null;
+		this.dtConstraints = null;
 	}
 
 	/**
@@ -56,24 +64,36 @@ public class SDFAttribute extends SDFSchemaElement implements
 	 * 
 	 * @param attribute
 	 */
-	public SDFAttribute(SDFAttribute attribute) {
-		super(attribute);
+	public SDFAttribute(SDFAttribute copy) {
+		super(copy);
+		this.datatype = copy.datatype;
+		this.dtConstraints = copy.dtConstraints;
+		this.unit = copy.unit;
 	}
 
 	public SDFAttribute(String newSourceName, String newAttributeName,
 			SDFAttribute sdfAttribute) {
-		super(newSourceName, newAttributeName, sdfAttribute);
+		super(newSourceName, newAttributeName);
+		this.datatype = sdfAttribute.datatype;
+		this.dtConstraints = sdfAttribute.dtConstraints;
+		this.unit = sdfAttribute.unit;		
 	}
 
-	public SDFAttribute(String name, String attrName, SDFDatatype datatype,
-			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstrains) {
-		super(name, attrName, datatype, unit, dtConstrains);
+	public SDFAttribute(String sourceName, String attrName, SDFDatatype datatype,
+			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstraints) {
+		super(sourceName,attrName);
+		this.datatype = datatype;
+		this.unit = unit;
+		this.dtConstraints = dtConstraints;
 	}
 
-	public SDFAttribute(String name, String attrName, SDFDatatype attribType,
-			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstrains,
+	public SDFAttribute(String sourceName, String attrName, SDFDatatype attribType,
+			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstraints,
 			List<?> covariance) {
-		super(name, attrName, attribType, unit, dtConstrains);
+		super(sourceName,attrName);
+		this.datatype = attribType;
+		this.unit = unit;
+		this.dtConstraints = dtConstraints;
 		this.covariance = covariance;
 	}
 
@@ -236,6 +256,22 @@ public class SDFAttribute extends SDFSchemaElement implements
 
 	public String toPointString() {
 		return getPointURI();
+	}
+	
+	public SDFDatatype getDatatype() {
+		return datatype;
+	}
+
+	public SDFDatatypeConstraint getDtConstraint(String uri) {
+		return dtConstraints.get(uri);
+	}
+
+	public Collection<SDFDatatypeConstraint> getDtConstraints() {
+		return dtConstraints.values();
+	}
+
+	public SDFUnit getUnit() {
+		return unit;
 	}
 
 }

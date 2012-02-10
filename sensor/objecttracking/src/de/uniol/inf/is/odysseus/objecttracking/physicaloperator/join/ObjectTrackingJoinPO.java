@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 /**
@@ -62,9 +62,9 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 
 	protected ITransferArea<T,T> transferFunction;
 	protected IPredicate<? super T> joinPredicate;
-	protected SDFAttributeList leftInputSchema;
-	protected SDFAttributeList rightInputSchema;
-	protected SDFAttributeList outputSchema;
+	protected SDFSchema leftInputSchema;
+	protected SDFSchema rightInputSchema;
+	protected SDFSchema outputSchema;
 	
 	int counter = 0;
 	public long duration = 0;
@@ -175,7 +175,7 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 		this.metadataMerge = metadataMerge;
 	}
 	
-	public SDFAttributeList getInputSchema(int port){
+	public SDFSchema getInputSchema(int port){
 		if(port == 0){
 			return this.leftInputSchema;
 		}
@@ -185,7 +185,7 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 		return null;
 	}
 	
-	public void setInputSchema(int port, SDFAttributeList schema){
+	public void setInputSchema(int port, SDFSchema schema){
 		if(port == 0){
 			this.leftInputSchema = schema;
 		}
@@ -196,12 +196,12 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema(){
+	public SDFSchema getOutputSchema(){
 		return this.outputSchema;
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outSchema){
+	public void setOutputSchema(SDFSchema outSchema){
 		this.outputSchema = outSchema;
 	}
 

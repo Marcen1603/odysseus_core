@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class JoinTransformationHelper {
@@ -92,12 +92,12 @@ public class JoinTransformationHelper {
 	 * @param neededAttrs In this set the attributes used in predicate are stored
 	 * @return
 	 */
-	public static boolean checkPredicate(IPredicate predicate, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFAttributeList ownSchema, SDFAttributeList otherSchema){
+	public static boolean checkPredicate(IPredicate predicate, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFSchema ownSchema, SDFSchema otherSchema){
 		// TODO nach Umstellung auf MEP auskommenieren
 	    // ===========================================
 		
 		String mepString = predicate.toString();
-		SDFAttributeList outputSchema = SDFAttributeList.union(ownSchema, otherSchema);
+		SDFSchema outputSchema = SDFSchema.union(ownSchema, otherSchema);
 		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
 		SDFExpression expr = new SDFExpression(null, mepString, attrRes);		
 		// ===========================================
@@ -126,7 +126,7 @@ public class JoinTransformationHelper {
 //		return false;
 	}
 	
-	public static boolean checkPredicate(IExpression mepExpr, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFAttributeList ownSchema, SDFAttributeList otherSchema){
+	public static boolean checkPredicate(IExpression mepExpr, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFSchema ownSchema, SDFSchema otherSchema){
 		if(mepExpr instanceof AndOperator){
 			return checkPredicate(((AndOperator)mepExpr).getArgument(0), neededAttrs, ownSchema, otherSchema) &&
 					checkPredicate(((AndOperator)mepExpr).getArgument(1), neededAttrs, ownSchema, otherSchema);
@@ -221,8 +221,8 @@ public class JoinTransformationHelper {
 		ArrayList<SDFAttribute> usedOwnAttributes = new ArrayList<SDFAttribute>();
 		ArrayList<SDFAttribute> usedOtherAttributes = new ArrayList<SDFAttribute>();
 		
-		SDFAttributeList ownSchema = joinPO.getSubscribedToSource(port).getSchema();
-		SDFAttributeList otherSchema = joinPO.getSubscribedToSource(otherPort).getSchema();
+		SDFSchema ownSchema = joinPO.getSubscribedToSource(port).getSchema();
+		SDFSchema otherSchema = joinPO.getSubscribedToSource(otherPort).getSchema();
 		
 		ArrayList<Integer> queryRestrictList = new ArrayList<Integer>(); // restrict list for querying (other schema)
 		ArrayList<Integer> insertRestrictList = new ArrayList<Integer>(); // restrict list for inserting into a sweep area (own schema)

@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchParameter.BatchItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "BATCHPRODCUER", minInputPorts = 0, maxInputPorts = 0)
 public class BatchProducerAO extends AbstractLogicalOperator {
@@ -62,8 +62,8 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		return new SDFAttributeList("");
+	public SDFSchema getOutputSchema() {
+		return new SDFSchema("");
 	}
 
 	public List<Integer> getElementCounts() {

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
@@ -83,7 +83,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
      * each only if the variable is available. e. g. a triple pattern
      * ?x :pred ?y results in a schema |x|y|
      */
-    private SDFAttributeList outputSchema;
+    private SDFSchema outputSchema;
     
     /**
      * The restrict list defines which attributes of an input tuple
@@ -144,8 +144,8 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         return retval;
     }
     
-	private SDFAttributeList calcOutputSchema(){
-		SDFAttributeList outputSchema = new SDFAttributeList("");
+	private SDFSchema calcOutputSchema(){
+		SDFSchema outputSchema = new SDFSchema("");
 		if (triple.getSubject().isVariable()){
 			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(),SDFDatatype.STRING);
 			outputSchema.add(subject);
@@ -201,7 +201,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 //	}
 	
 	public void initPredicate(){
-		SDFAttributeList inputSchema = this.getInputSchema(0);
+		SDFSchema inputSchema = this.getInputSchema(0);
 		System.out.println("TriplePatternMatching.initPredicate: inputSchema = " + inputSchema);
 		
 		IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(inputSchema);
@@ -291,7 +291,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     }
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if(this.outputSchema == null){
 			// the source name must be a unique artificial name, since
 			// every triple pattern needs its own source name.

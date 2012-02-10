@@ -24,17 +24,17 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
 public class CovarianceExpressionMatrix {
 
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private PredictionExpression[][] expressionMatrix;
 	private TupleHelper tupleHelper;
 
-	public CovarianceExpressionMatrix(SDFAttributeList schema) {
+	public CovarianceExpressionMatrix(SDFSchema schema) {
 		this.schema = schema;
 		initialize(this.schema);
 	}
@@ -43,7 +43,7 @@ public class CovarianceExpressionMatrix {
 		this.tupleHelper = new TupleHelper(rootTuple);
 	}
 
-	public void initialize(SDFAttributeList schema) {
+	public void initialize(SDFSchema schema) {
 		this.schema = schema;
 
 		List<SDFAttribute> measurementAttributes = new ArrayList<SDFAttribute>();

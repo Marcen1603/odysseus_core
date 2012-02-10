@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
  * It fills latencyStart and the covariance. The start timestamp must be
@@ -33,9 +33,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings({"rawtypes","unchecked"})
 public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<ObjectTrackingMetadata, MVRelationalTuple<ObjectTrackingMetadata>>{
 
-	SDFAttributeList schema;
+	SDFSchema schema;
 	
-	public ObjectTrackingMetadataFactory(SDFAttributeList schema){
+	public ObjectTrackingMetadataFactory(SDFSchema schema){
 		this.schema = schema;
 	}
 	

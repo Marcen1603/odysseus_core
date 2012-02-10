@@ -24,7 +24,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -63,7 +63,7 @@ public class AttributeResolver implements IAttributeResolver {
 		this.attributes.add(attribute);
 	}
 
-	public void addAttributes(SDFAttributeList list){
+	public void addAttributes(SDFSchema list){
 		for(SDFAttribute attribute : list){
 			addAttribute(attribute);
 		}
@@ -128,7 +128,7 @@ public class AttributeResolver implements IAttributeResolver {
 		throw new IllegalArgumentException("no such attribute: " + sourceName + "." + attributeName);
 	}
 
-	private SDFAttribute findORAttribute(SDFAttributeList list, String[] path, int index) {
+	private SDFAttribute findORAttribute(SDFSchema list, String[] path, int index) {
 		String toFind = path[index];
 		for (SDFAttribute attr : list) {
 			if (attr.getAttributeName().equals(toFind)) {

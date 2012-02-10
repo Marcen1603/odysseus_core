@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -54,7 +54,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		for (LogicalSubscription s : cepAO.getSubscribedToSource()) {
 			String name = cepAO.getInputTypeName(s.getSinkInPort());
 			if (name == null){
-				SDFAttributeList schema = s.getSchema();
+				SDFSchema schema = s.getSchema();
 				name = schema.getURI();
 				if (!types.contains(name)){
 					throw new IllegalArgumentException("Type "+name+" no input for Operator");

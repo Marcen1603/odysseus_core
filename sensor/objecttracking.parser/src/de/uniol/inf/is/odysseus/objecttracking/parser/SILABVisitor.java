@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SILABVisitor implements IVisitor{
@@ -81,7 +81,7 @@ public class SILABVisitor implements IVisitor{
 		
 	}
 	
-	private ILogicalOperator addTimestampAO(ILogicalOperator operator, SDFAttributeList attributes) {
+	private ILogicalOperator addTimestampAO(ILogicalOperator operator, SDFSchema attributes) {
 		TimestampAO timestampAO = new TimestampAO();
 		for(SDFAttribute attr : attributes) {
 			if (attr.getDatatype().equals("StartTimestamp")){

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class IntegrationPipe extends AbstractPipe {
@@ -47,7 +47,7 @@ public class IntegrationPipe extends AbstractPipe {
 
 	@Override
 	public void subscribeToSource(ISource source, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		PhysicalSubscription<ISource> sub = new PhysicalSubscription<ISource>(
 				source, curPort - 1, sourceOutPort, schema);
 		if (!getSubscribedToSource().contains(sub)) {

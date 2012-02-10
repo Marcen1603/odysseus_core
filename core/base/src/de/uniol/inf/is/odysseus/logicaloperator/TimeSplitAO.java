@@ -14,13 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class TimeSplitAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 7650066151075034323L;
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(0);
 	}
 

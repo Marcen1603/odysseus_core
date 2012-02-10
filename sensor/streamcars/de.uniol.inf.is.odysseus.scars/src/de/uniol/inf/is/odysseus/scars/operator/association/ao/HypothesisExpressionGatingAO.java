@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Volker Janz
@@ -48,7 +48,7 @@ public class HypothesisExpressionGatingAO<M extends IProbability> extends UnaryL
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.getInputSchema();
 	}
 

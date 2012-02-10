@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 /**
  * This class deals as container for the prediction functions, needed for the prediction and filtering operators. 
- * Typically it is passed to the operators as metadata of the SDFSchema, in special to the SDFAttributeListExtended, 
- * which has has Key-Value-Pairs, and so for cna be requested with the enum key SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS.
+ * Typically it is passed to the operators as metadata of the SDFSchema, in special to the SDFSchemaExtended, 
+ * which has has Key-Value-Pairs, and so for cna be requested with the enum key SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS.
  * 
  * It holds a Mapping between some predicates (for example to define the right type of object) and the corresponding prediction function.
  * Also it has a special relationship for one default prediction function, which can be set and treated differently from the normal mapping, 

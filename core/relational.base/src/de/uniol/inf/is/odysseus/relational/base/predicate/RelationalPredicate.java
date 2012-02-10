@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -56,15 +56,15 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	protected Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
-	protected SDFAttributeList leftSchema;
-	protected SDFAttributeList rightSchema;
+	protected SDFSchema leftSchema;
+	protected SDFSchema rightSchema;
 
 	public RelationalPredicate(SDFExpression expression) {
 		this.expression = expression;
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 
@@ -97,7 +97,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 		}
 	}
 
-	private int indexOf(SDFAttributeList schema, SDFAttribute attr) {
+	private int indexOf(SDFSchema schema, SDFAttribute attr) {
 		SDFAttribute cqlAttr = getReplacement(attr);
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {

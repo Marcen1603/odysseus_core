@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von Daten- und
@@ -45,26 +45,26 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 	private ILeftMergeFunction<T> dataMerge;
 //	private JoinTISweepArea<T>[] joinAreas;
 	
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
-	private SDFAttributeList resultSchema;
+	private SDFSchema leftSchema;
+	private SDFSchema rightSchema;
+	private SDFSchema resultSchema;
 
-	public SDFAttributeList getLeftSchema() {
+	public SDFSchema getLeftSchema() {
 		return leftSchema;
 	}
 
 
-	public SDFAttributeList getRightSchema() {
+	public SDFSchema getRightSchema() {
 		return rightSchema;
 	}
 
 
-	public SDFAttributeList getResultSchema() {
+	public SDFSchema getResultSchema() {
 		return resultSchema;
 	}
 
 	
-	public LeftJoinTIPO(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema) {
+	public LeftJoinTIPO(SDFSchema leftSchema, SDFSchema rightSchema, SDFSchema resultSchema) {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.resultSchema = resultSchema;

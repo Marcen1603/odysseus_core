@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.event.IEventHandler;
 import de.uniol.inf.is.odysseus.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.planmanagement.IOwnedOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
@@ -44,10 +44,10 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 * Schemarelated methods
 	 * @return
 	 */
-	public SDFAttributeList getOutputSchema();
-	public SDFAttributeList getOutputSchema(int port);
-	public void setOutputSchema(SDFAttributeList outputSchema);
-	public void setOutputSchema(SDFAttributeList outputSchema, int port);
+	public SDFSchema getOutputSchema();
+	public SDFSchema getOutputSchema(int port);
+	public void setOutputSchema(SDFSchema outputSchema);
+	public void setOutputSchema(SDFSchema outputSchema, int port);
 	
 	@Override
 	public IPhysicalOperator clone();

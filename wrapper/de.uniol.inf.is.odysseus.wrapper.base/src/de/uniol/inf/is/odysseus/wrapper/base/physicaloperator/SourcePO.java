@@ -13,20 +13,20 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class SourcePO<T extends IMetaAttribute> extends
         AbstractSource<RelationalTuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);
-    private final SDFAttributeList schema;
+    private final SDFSchema schema;
     private final String adapterName;
     private final Map<String, String> options = new HashMap<String, String>();
 
     /**
      * @param schema
      */
-    public SourcePO(final SDFAttributeList schema, final String adapterName,
+    public SourcePO(final SDFSchema schema, final String adapterName,
             final Map<String, String> options) {
         this.schema = schema;
         this.adapterName = adapterName;
@@ -72,7 +72,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#getOutputSchema()
      */
     @Override
-    public SDFAttributeList getOutputSchema() {
+    public SDFSchema getOutputSchema() {
         return this.schema;
     }
 

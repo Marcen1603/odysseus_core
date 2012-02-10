@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 
@@ -45,14 +45,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
 	
-	SDFAttributeList leftSchema;
-	SDFAttributeList rightSchema;
+	SDFSchema leftSchema;
+	SDFSchema rightSchema;
 	
 	Map<IPredicate, IRangePredicate> rangePredicates;
 	
 	public int compareCounter;
 	
-	public ObjectTrackingJoinSweepArea(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	public ObjectTrackingJoinSweepArea(SDFSchema leftSchema, SDFSchema rightSchema){
 		super();
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;

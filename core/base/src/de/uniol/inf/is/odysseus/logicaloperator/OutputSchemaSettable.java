@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public interface OutputSchemaSettable {
-	public void setOutputSchema(SDFAttributeList outputSchema);
-	public void setOutputSchema(SDFAttributeList outputSchema, int port);
+	public void setOutputSchema(SDFSchema outputSchema);
+	public void setOutputSchema(SDFSchema outputSchema, int port);
 }

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	private boolean timesensitiv = false;
 	protected SDFSource source = null;
 
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 
 	private IDatabaseConnection connection;
 
@@ -61,7 +61,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
@@ -79,7 +79,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema.clone();
 	}
 
@@ -92,7 +92,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if (port == 0) {
 			setOutputSchema(outputSchema);
 		} else {

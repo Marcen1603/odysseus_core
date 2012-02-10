@@ -13,7 +13,7 @@
 //
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.sparql.NaturalJoinAO;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement;
 //
 //import java.util.ArrayList;
@@ -97,12 +97,12 @@
 //    
 //	public void calcOutElements() {
 ////		calcPredicate();
-//		SDFAttributeList l1 = getLeftInputSchema();
-//		SDFAttributeList l2 = getRightInputSchema();
+//		SDFSchema l1 = getLeftInputSchema();
+//		SDFSchema l2 = getRightInputSchema();
 //
 //		if (l1 != null && l2 != null) {
 //
-//			SDFAttributeList jList = new SDFAttributeList();
+//			SDFSchema jList = new SDFSchema();
 //			// Alle von links
 //			jList.addAttributes(l1);
 //			// erg�nzt um die fehlenden von rechts, die noch nicht links drin
@@ -134,7 +134,7 @@
 //		return a.getQualName().equals(b.getQualName());
 //	}
 //
-//	private boolean refersSameVar(SDFAttributeList list, SDFAttribute a) {
+//	private boolean refersSameVar(SDFSchema list, SDFAttribute a) {
 //		for (SDFSchemaElement e : list) {
 //			if (refersSameVar((SDFAttribute) e, a)) {
 //				return true;

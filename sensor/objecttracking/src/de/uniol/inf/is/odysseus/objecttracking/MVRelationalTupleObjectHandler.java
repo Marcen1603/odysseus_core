@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		IObjectHandler<RelationalTuple<M>> {
@@ -33,7 +33,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	ByteBuffer byteBuffer = null;
 	private IAtomicDataHandler[] dataHandler;
 		
-	public MVRelationalTupleObjectHandler(SDFAttributeList schema) {
+	public MVRelationalTupleObjectHandler(SDFSchema schema) {
 		byteBuffer = ByteBuffer.allocate(1024);
 		createDataReader(schema);		
 	}
@@ -53,7 +53,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		byteBuffer.clear();
 	}
 
-	private void createDataReader(SDFAttributeList schema) {
+	private void createDataReader(SDFSchema schema) {
 		this.dataHandler = new IAtomicDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -176,7 +176,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	}
 //	@SuppressWarnings("unchecked")
 //	public static void main(String[] args) throws IOException, ClassNotFoundException {
-//		SDFAttributeList schema = new SDFAttributeList();
+//		SDFSchema schema = new SDFSchema();
 //		SDFAttribute a = new SDFAttribute("a_int");
 //		a.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("Integer"));
 //		schema.add(a);

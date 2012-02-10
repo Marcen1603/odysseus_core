@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Works the same way as JoinTIPO, but only the left elements are passed
@@ -69,18 +69,18 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 
 	protected ITransferArea<T,T> transferFunction;
 	
-	protected SDFAttributeList outputSchema;
+	protected SDFSchema outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	private int otherport = 0;
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema;
 	}
 

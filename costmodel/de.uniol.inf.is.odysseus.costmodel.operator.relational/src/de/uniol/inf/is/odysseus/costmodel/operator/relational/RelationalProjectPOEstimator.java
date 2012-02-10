@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings("rawtypes")
 public class RelationalProjectPOEstimator implements IOperatorEstimator<RelationalProjectPO> {
@@ -32,7 +32,7 @@ public class RelationalProjectPOEstimator implements IOperatorEstimator<Relation
 		/** 1. Histograms **/
 		// project has only one input
 		Map<SDFAttribute, IHistogram> inputHistograms = lastOpEstimation.getHistograms();
-		SDFAttributeList outputSchema = instance.getOutputSchema();
+		SDFSchema outputSchema = instance.getOutputSchema();
 
 		// only provide those histograms, which
 		// are projected from this operator

@@ -31,7 +31,7 @@ options {
 	import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 	import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
@@ -682,11 +682,11 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
    {
     RelationalMEPOutputSchemeEntry e = null;
     OutputScheme scheme = new OutputScheme();
-    SDFAttributeList attrList = null;
+    SDFSchema attrList = null;
     if (value != null){
-      attrList= new SDFAttributeList(value.getText());
+      attrList= new SDFSchema(value.getText());
       }else{
-      attrList = new SDFAttributeList("");
+      attrList = new SDFSchema("");
       }
     for (PathAttribute p : retAttr) {
     	String op = p.getAggregation();

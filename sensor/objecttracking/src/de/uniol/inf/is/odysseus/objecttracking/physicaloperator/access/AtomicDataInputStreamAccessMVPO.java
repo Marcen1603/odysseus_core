@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
@@ -42,7 +42,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 	private final String LOGGER_NAME = "AtomicDataInputStreamAccessMVPO";
 
 //	private int limit;
@@ -57,7 +57,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	}
 
 	public AtomicDataInputStreamAccessMVPO(String host, int port,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 		this.hostName = host;
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
@@ -65,7 +65,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		this.outputSchema = schema;
 	}
 
-	private void createDataReader(SDFAttributeList schema) {
+	private void createDataReader(SDFSchema schema) {
 		this.outputSchema = schema;
 		this.dataReader = new IAtomicDataHandler[schema.size()];
 		int i = 0;
@@ -215,7 +215,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 

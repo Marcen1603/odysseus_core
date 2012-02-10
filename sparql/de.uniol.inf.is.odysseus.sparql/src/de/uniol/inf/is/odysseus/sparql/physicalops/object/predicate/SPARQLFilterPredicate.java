@@ -13,20 +13,20 @@
 //import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 //import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class SPARQLFilterPredicate<T extends IClone> extends AbstractPredicate<NodeList<T>>{
 //
-//	private SDFAttributeList inputElems;
+//	private SDFSchema inputElems;
 //	private List<Expr> exprs;
 //	
-//	public SPARQLFilterPredicate(Expr ex, SDFAttributeList input){
+//	public SPARQLFilterPredicate(Expr ex, SDFSchema input){
 //		this.inputElems = input;
 //		this.exprs = new ArrayList<Expr>();
 //		this.exprs.add(ex);
 //	}
 //	
-//	public SPARQLFilterPredicate(List<Expr> exprs, SDFAttributeList input){
+//	public SPARQLFilterPredicate(List<Expr> exprs, SDFSchema input){
 //		this.exprs = exprs;
 //		this.inputElems = input;
 //	}

@@ -4,7 +4,7 @@
 //
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.SelectAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class SparqlFilterAO extends SelectAO {
 //
@@ -34,8 +34,8 @@
 //		this.setInputSchema(po.getOutputSchema());
 //		
 //		if (po != null){
-//			SDFAttributeList l1 = po.getOutputSchema();		
-//			SDFAttributeList jList = new SDFAttributeList();
+//			SDFSchema l1 = po.getOutputSchema();		
+//			SDFSchema jList = new SDFSchema();
 //			jList.addAttributes(l1);
 //			this.setOutputSchema(jList);
 //		}

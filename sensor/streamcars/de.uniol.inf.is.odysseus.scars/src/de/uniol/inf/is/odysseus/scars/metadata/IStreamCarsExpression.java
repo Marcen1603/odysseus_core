@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Die IStreamCarsExpression dient zur Kapsellung eines mathematischen Ausdrucks.
@@ -64,14 +64,14 @@ public interface IStreamCarsExpression {
 	 * 
 	 * @param schemata
 	 */
-	public void init(SDFAttributeList...schemata);
+	public void init(SDFSchema...schemata);
 	
 	/**
 	 * 
 	 * @param schema
 	 * @param index
 	 */
-	public void replaceVaryingIndex(SDFAttributeList schema, int index);
+	public void replaceVaryingIndex(SDFSchema schema, int index);
 	
 	/**
 	 * 
@@ -79,7 +79,7 @@ public interface IStreamCarsExpression {
 	 * @param index
 	 * @param copy
 	 */
-	public void replaceVaryingIndex(SDFAttributeList schema, int index, boolean copy);
+	public void replaceVaryingIndex(SDFSchema schema, int index, boolean copy);
 	
 	/**
 	 * 
@@ -100,7 +100,7 @@ public interface IStreamCarsExpression {
 	 * @param schema
 	 * @param tuple
 	 */
-	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple);
+	public void bindTupleValues(SDFSchema schema, MVRelationalTuple<?> tuple);
 	
 
 	public void reset();

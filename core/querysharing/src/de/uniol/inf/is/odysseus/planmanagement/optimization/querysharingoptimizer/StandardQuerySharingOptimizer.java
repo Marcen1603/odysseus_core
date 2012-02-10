@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
@@ -185,7 +185,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			//System.out.println("op1-Name: " + op1.getName());
 
 			// Schema- und Portinformationen der alten Verbindung in Erfahrung bringen
-			SDFAttributeList schema = sub.getSchema();
+			SDFSchema schema = sub.getSchema();
 			int sinkInPort = sub.getSinkInPort();
 			int sourceOutPort = sub.getSourceOutPort();
 

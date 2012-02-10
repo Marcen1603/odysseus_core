@@ -15,7 +15,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AggregateAO;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AggregateFunction;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class RDFNodeGroupingHelper extends GroupingHelper<NodeList> {
 //
@@ -68,7 +68,7 @@
 //	private int getOutputPos(FESortedPair<SDFAttribute, AggregateFunction> p){
 //		Integer pos = aggrOutputPos.get(p); 
 //		if (pos == null){
-//			SDFAttributeList outputSchema = getAggregateAO().getOutputSchema();
+//			SDFSchema outputSchema = getAggregateAO().getOutputSchema();
 //			Map<AggregateFunction, SDFAttribute> funcs = getAggregateAO().getAggregationFunctions(p.getE1());
 //			SDFAttribute outAttr = funcs.get(p.getE2());
 //			pos = outputSchema.indexOf(outAttr);

@@ -7,14 +7,14 @@ import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.predicate.NodeListCompatiblePredicate;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.predicate.SPARQLFilterPredicate;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class NodeListLeftMergeFunction<M extends IClone> extends LeftMergeFunction<NodeList<M>> {
 	
 	public NodeListLeftMergeFunction(
-			SDFAttributeList leftSchema, 
-			SDFAttributeList rightSchema, 
-			SDFAttributeList resultSchema){
+			SDFSchema leftSchema, 
+			SDFSchema rightSchema, 
+			SDFSchema resultSchema){
 		
 		super(leftSchema, rightSchema, resultSchema);
 	}

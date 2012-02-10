@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttributeContainer<Q>, W extends IClone>
 		extends AggregatePO<Q, R, W> {
@@ -40,12 +40,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	class _Point implements Comparable<_Point> {
 		public PointInTime point;
 		private boolean isStartPoint;
-		PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
+		PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg;
 
 		public _Point(
 				PointInTime p,
 				boolean isStartPoint,
-				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg) {
 			this.point = p;
 			this.isStartPoint = isStartPoint;
 			this.element_agg = element_agg;
@@ -122,10 +122,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	}
 
 	public AggregateTIPO(
-			SDFAttributeList inputSchema,
-			SDFAttributeList outputSchema,
+			SDFSchema inputSchema,
+			SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
-			Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations) {
+			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
 	}
 
@@ -145,14 +145,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	// Methode nach [Kr�mer] Algorithmus 9 bzw. 10 funktioniert leider nicht
 	// korrekt. Deswegen eigene Version
 	protected synchronized void updateSA(
-			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
 		R e_probe = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
 
 		// Extract elements in this sweep area that overlaps the time interval
 		// of elem
-		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
+		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
 				.extractOverlaps(t_probe);
 		// No overlapping --> INIT: new Partial Aggregate
 		if (!qualifies.hasNext()) {
@@ -164,7 +164,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			// Determine the list of all points of the overlapped elements in
 			// the sweep area
 			while (qualifies.hasNext()) {
-				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 						.next();
 				ITimeInterval t_agg = element_agg.getMetadata();
 				// Add the points with corresponding partial aggregates and info
@@ -185,7 +185,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			if (iter.hasNext()) {
 				p1 = iter.next();
 			}
-			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1.element_agg;
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1.element_agg;
 			while (iter.hasNext()) {
 				p2 = iter.next();
 
@@ -277,23 +277,23 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	// Updates SA by splitting all partial aggregates before split point
 	@SuppressWarnings("unchecked")
 	protected synchronized void updateSA(
-			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			PointInTime splitPoint) {
 
 		ITimeInterval t_probe = new TimeInterval(splitPoint, splitPoint.plus(1));
 
 		// Determine elements in this sweep area containing splitpoint
-		Iterator<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
+		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = sa
 				.extractOverlaps(t_probe);
 		while (qualifies.hasNext()) {
-			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> element_agg = qualifies
 					.next();
 			if (element_agg.getMetadata().getStart().before(splitPoint)) {
 				// TODO: Is removal necessary or is update of metadata enough?
 				// Remove current element
 				// sa.remove(element_agg);
 				// and split into two new elements
-				PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>(
+				PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> copy = new PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>(
 						element_agg, true);
 
 				copy.setMetadata((Q) element_agg.getMetadata().clone());
@@ -306,9 +306,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		}
 	}
 
-	private PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
-			DefaultTISweepArea<PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			PairMap<SDFAttributeList, AggregateFunction, IPartialAggregate<R>, Q> elem,
+	private PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> saInsert(
+			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> elem,
 			Q t) {
 		// System.out.println("SA Insert "+elem+" "+t);
 		elem.setMetadata(t);

@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.scars.util.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.util.server.IServer;
 import de.uniol.inf.is.odysseus.scars.util.server.NIOServer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeIntervalLatency<IPredicate<MVRelationalTuple<M>>>>
@@ -158,8 +158,8 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList schema = new SDFAttributeList("");
+	public SDFSchema getOutputSchema() {
+		SDFSchema schema = new SDFSchema("");
 		SDFAttribute attr0 = new SDFAttribute("","Odysseus latency median", SDFDatatype.LONG);
 		SDFAttribute attr1 = new SDFAttribute("","Objecttracking latency median", SDFDatatype.LONG);
 		SDFAttribute attr2 = new SDFAttribute("","Odysseus latency",SDFDatatype.LONG);
@@ -352,7 +352,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 
 		// iterate over schema and calculate size of byte buffer
 		int bufferSize = 0;
-		SDFAttributeList schema = this.getSubscribedToSource(0).getSchema();
+		SDFSchema schema = this.getSubscribedToSource(0).getSchema();
 		TupleIterator iterator = new TupleIterator(object, schema);
 		for (TupleInfo info : iterator) {
 			// atomare typen beachten, komplexe �bergehen

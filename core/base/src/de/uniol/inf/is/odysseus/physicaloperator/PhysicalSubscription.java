@@ -18,7 +18,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
 import de.uniol.inf.is.odysseus.Subscription;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class PhysicalSubscription<K> extends Subscription<K> {
 
@@ -26,7 +26,7 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	private boolean done;
 	private int openCalls = 0;
 	
-	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public PhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
 		done = false;
 	}

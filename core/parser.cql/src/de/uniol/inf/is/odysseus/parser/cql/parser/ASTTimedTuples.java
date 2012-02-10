@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class ASTTimedTuples extends SimpleNode {
 	public ASTTimedTuples(int id) {
@@ -38,7 +38,7 @@ public class ASTTimedTuples extends SimpleNode {
 	}
 
 	@SuppressWarnings("unchecked")
-	public RelationalTuple<ITimeInterval>[] getTuples(SDFAttributeList schema) {
+	public RelationalTuple<ITimeInterval>[] getTuples(SDFSchema schema) {
 		RelationalTuple<ITimeInterval>[] tuples = new RelationalTuple[jjtGetNumChildren()];
 		for (int i = 0; i < jjtGetNumChildren(); ++i) {
 			tuples[i] = ((ASTTimedTuple) jjtGetChild(i)).getTuple(schema);

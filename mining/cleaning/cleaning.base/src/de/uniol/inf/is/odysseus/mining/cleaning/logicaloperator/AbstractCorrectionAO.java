@@ -21,7 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public abstract class AbstractCorrectionAO<T, C extends ICorrection<T>> extends BinaryLogicalOp implements OutputSchemaSettable{
 
 	private static final long serialVersionUID = -139230577687015814L;
-	private SDFAttributeList outputschema;
+	private SDFSchema outputschema;
 	private List<C> corrections = new ArrayList<C>();
 
 	
@@ -47,19 +47,19 @@ public abstract class AbstractCorrectionAO<T, C extends ICorrection<T>> extends 
 	
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.outputschema;
 	}
 	
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputschema = outputSchema;
 		
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if(port>0){
 			throw new UnsupportedOperationException("no ports greater than 0 supported");
 		}

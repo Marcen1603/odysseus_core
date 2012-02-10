@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -34,7 +34,7 @@ public abstract class AbstractSimpleRelationalCorrection implements IUnaryCorrec
 	}
 	
 	@Override
-	public void init(SDFAttributeList schema) {			
+	public void init(SDFSchema schema) {			
 		for(int i=0;i<schema.size();i++){
 			if(schema.get(i).getAttributeName().equals(attributeName)){
 				this.attributePosition = i;

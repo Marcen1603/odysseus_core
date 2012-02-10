@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateContextStore;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -42,9 +42,9 @@ public class ContextVisitor implements IVisitor {
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary);
-		csv.setAttributes(new SDFAttributeList("ContextStore."+name));
+		csv.setAttributes(new SDFSchema("ContextStore."+name));
 		csv.visit(definitions, null);
-		SDFAttributeList schema = csv.getAttributes();
+		SDFSchema schema = csv.getAttributes();
 		try {
 			ContextStore.getInstance().createStore(name, schema);			
 		} catch (ContextManagementException e) {		

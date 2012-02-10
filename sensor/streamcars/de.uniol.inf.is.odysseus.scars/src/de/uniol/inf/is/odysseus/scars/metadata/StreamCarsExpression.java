@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -105,13 +105,13 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 
 	@Override
-	public void init(SDFAttributeList... schemata) {
-		for(SDFAttributeList schema : schemata) {
+	public void init(SDFSchema... schemata) {
+		for(SDFSchema schema : schemata) {
 			initAttributePaths(schema);
 		}
 	}
 
-	protected void initAttributePaths(SDFAttributeList schema) {
+	protected void initAttributePaths(SDFSchema schema) {
 		for(IStreamCarsExpressionVariable var : variables) {
 			var.init(schema);
 		}
@@ -121,7 +121,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 
 	@Override
-	public void replaceVaryingIndex(SDFAttributeList schema, int index) {
+	public void replaceVaryingIndex(SDFSchema schema, int index) {
 		for(IStreamCarsExpressionVariable var : variables) {
 			if(var.isSchemaVariable(schema)) var.replaceVaryingIndex(index);
 		}
@@ -131,7 +131,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 
 	@Override
-	public void replaceVaryingIndex(SDFAttributeList schema, int index, boolean copy) {
+	public void replaceVaryingIndex(SDFSchema schema, int index, boolean copy) {
 		for(IStreamCarsExpressionVariable var : variables) {
 			if(var.isSchemaVariable(schema)) var.replaceVaryingIndex(index, copy);
 		}
@@ -150,7 +150,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 	
 	@Override
-	public void bindTupleValues(SDFAttributeList schema, MVRelationalTuple<?> tuple) {
+	public void bindTupleValues(SDFSchema schema, MVRelationalTuple<?> tuple) {
 		for(IStreamCarsExpressionVariable var : variables) {
 			if(var.isSchemaVariable(schema)) {
 				var.bindTupleValue(tuple);
@@ -198,7 +198,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 
 //	public static void main(String[] args) {
-//		SDFAttributeList scan = new SDFAttributeList();
+//		SDFSchema scan = new SDFSchema();
 //
 //		SDFAttribute list = new SDFAttribute("a.list");
 //		list.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("List"));
@@ -216,7 +216,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 //		SDFAttribute z = new SDFAttribute("z");
 //		z.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
 //
-//		SDFAttributeList time = new SDFAttributeList();
+//		SDFSchema time = new SDFSchema();
 //
 //		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
 //		currentTime.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));

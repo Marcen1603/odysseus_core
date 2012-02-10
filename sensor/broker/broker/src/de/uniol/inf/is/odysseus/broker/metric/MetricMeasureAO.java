@@ -15,14 +15,14 @@
 package de.uniol.inf.is.odysseus.broker.metric;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 public class MetricMeasureAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 4253188596531819983L;
 	/** The queue schema. */
-	private SDFAttributeList schema = null;
+	private SDFSchema schema = null;
 	private String onAttribute;	
 
 	public MetricMeasureAO(String onAttribute){
@@ -35,11 +35,11 @@ public class MetricMeasureAO extends AbstractLogicalOperator{
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.schema;
 	}
 	
-	public void setOutputSchema(SDFAttributeList schema){
+	public void setOutputSchema(SDFSchema schema){
 		this.schema = schema;
 	}		
 

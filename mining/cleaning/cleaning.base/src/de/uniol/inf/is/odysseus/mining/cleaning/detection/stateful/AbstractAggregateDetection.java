@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -64,12 +64,12 @@ public abstract class AbstractAggregateDetection implements IBinaryDetection<Rel
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.internalInit(leftSchema, rightSchema);		
 		this.predicate.init(leftSchema, rightSchema);
 	}
 
-	private void internalInit(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	private void internalInit(SDFSchema leftSchema, SDFSchema rightSchema) {
 		try {	
 			AttributeResolver attributeResolver = new AttributeResolver();			
 			attributeResolver.addAttributes(leftSchema);

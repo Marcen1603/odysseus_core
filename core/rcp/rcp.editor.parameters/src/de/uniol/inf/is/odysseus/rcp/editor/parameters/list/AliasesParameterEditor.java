@@ -46,12 +46,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractListParameterEditor
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.AliasChangeWindow;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class AliasesParameterEditor extends AbstractListParameterEditor<String> implements IParameterEditor {
 	
 	private Map<String, String> aliases;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	
 	public AliasesParameterEditor() {
 	}
@@ -124,7 +124,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 	}
 
 	// läd die Aliases aus dem Operator
-	private Map<String, String> load(SDFAttributeList schema, List<String> value) {
+	private Map<String, String> load(SDFSchema schema, List<String> value) {
 		
 		HashMap<String, String> aliases = new HashMap<String, String>();
 		

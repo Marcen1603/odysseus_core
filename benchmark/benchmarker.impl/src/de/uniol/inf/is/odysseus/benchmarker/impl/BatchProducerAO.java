@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class BatchProducerAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 730372057392120823L;
@@ -50,8 +50,8 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		return new SDFAttributeList("");
+	public SDFSchema getOutputSchema() {
+		return new SDFSchema("");
 	}
 
 	public List<Integer> getElementCounts() {

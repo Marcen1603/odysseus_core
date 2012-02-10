@@ -23,42 +23,42 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 
 /**
  *  
- * In this SDFAttributeList metadata about the schema can be carried.
+ * In this SDFSchema metadata about the schema can be carried.
  * This can be for example PredictionFunctions or something else.
  * 
  * @author André Bolles
  *
  */
-public class SDFAttributeListExtended extends SDFAttributeList implements Serializable{
+public class SDFSchemaExtended extends SDFSchema implements Serializable{
 
 	private static final long serialVersionUID = -6831412045682783890L;
 
-	private Map<SDFAttributeListMetadataTypes, Object> metadata;
+	private Map<SDFSchemaMetadataTypes, Object> metadata;
 
 	private SDFDatatype datatypeHACK;
 
 	private SDFUnit unitHACK;
 	
-	public SDFAttributeListExtended(String URI) {
+	public SDFSchemaExtended(String URI) {
 		super(URI);
-		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
+		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
 	}
 
-	public SDFAttributeListExtended() {
+	public SDFSchemaExtended() {
 		super("");
-		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
+		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
 	}
 
 	/**
 	 * @param attributes1 The old schema that is to be copied
 	 */
-	public SDFAttributeListExtended(SDFAttributeListExtended attributes1) {
+	public SDFSchemaExtended(SDFSchemaExtended attributes1) {
 		super(attributes1.getURI());
 		this.setDatatype(attributes1.getDatatype());
 		this.setUnit(attributes1.getUnit());
@@ -68,8 +68,8 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		}
 		// copy of schmea metadaten
 		if(attributes1.metadata != null){
-			this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
-			for(Entry<SDFAttributeListMetadataTypes, Object> entry : attributes1.metadata.entrySet()){
+			this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
+			for(Entry<SDFSchemaMetadataTypes, Object> entry : attributes1.metadata.entrySet()){
 				this.metadata.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -80,7 +80,6 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		this.unitHACK = unit;
 	}
 
-	@Override
 	public SDFUnit getUnit() {
 		return unitHACK;
 	}
@@ -89,7 +88,6 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 		this.datatypeHACK = datatype;
 	}
 	
-	@Override
 	public SDFDatatype getDatatype() {
 		return datatypeHACK;
 	}
@@ -106,8 +104,8 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 //	 * newSourceName
 //	 * @param newSourceName
 //	 */
-//	public SDFAttributeListExtended redefineSourceName(String newSourceName){
-//		SDFAttributeListExtended redefinedSet = new SDFAttributeListExtended();
+//	public SDFSchemaExtended redefineSourceName(String newSourceName){
+//		SDFSchemaExtended redefinedSet = new SDFSchemaExtended();
 //		
 //		for(int i = 0; i<this.getAttributeCount(); i++){
 //			redefinedSet.add(redAttrSourceName(this.getAttribute(i), newSourceName));
@@ -127,34 +125,34 @@ public class SDFAttributeListExtended extends SDFAttributeList implements Serial
 //		return newAttribute;
 //	}
 	
-	public SDFAttributeListExtended(SDFAttribute[] attributes1) {
+	public SDFSchemaExtended(SDFAttribute[] attributes1) {
 		super("",attributes1);
-		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
+		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
 	}
 	
 	
-	public SDFAttributeListExtended(Collection<SDFAttribute> attributes1) {
+	public SDFSchemaExtended(Collection<SDFAttribute> attributes1) {
 		super("",attributes1);
-		this.metadata = new HashMap<SDFAttributeListMetadataTypes, Object>();
+		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
 	}
 	
 	@Override
-	public SDFAttributeListExtended clone(){
-		return new SDFAttributeListExtended(this);
+	public SDFSchemaExtended clone(){
+		return new SDFSchemaExtended(this);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <M> M getMetadata(SDFAttributeListMetadataTypes metadataName){
+	public <M> M getMetadata(SDFSchemaMetadataTypes metadataName){
 		return (M)this.metadata.get(metadataName);
 	}
 	
 	
-	public void setMetadata(SDFAttributeListMetadataTypes metadataName, Object metadata){
+	public void setMetadata(SDFSchemaMetadataTypes metadataName, Object metadata){
 		this.metadata.put(metadataName, metadata);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <M> M removeMetadata(SDFAttributeListMetadataTypes metadataName){
+	public <M> M removeMetadata(SDFSchemaMetadataTypes metadataName){
 		return (M)this.metadata.remove(metadataName);
 	}
 	

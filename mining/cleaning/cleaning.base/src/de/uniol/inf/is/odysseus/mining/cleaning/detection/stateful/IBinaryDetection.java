@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -25,5 +25,5 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public interface IBinaryDetection<T> extends IDetection<T> {
 
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
 }

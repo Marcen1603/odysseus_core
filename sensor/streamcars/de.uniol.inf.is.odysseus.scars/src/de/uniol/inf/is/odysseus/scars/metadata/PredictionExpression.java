@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 /**
@@ -46,7 +46,7 @@ public class PredictionExpression {
 	private String expressionString;
 	/** the input source name of the target attribute */
 	private String targetSource;
-	/** the integer array in which the targetPath is being stored, during initAttributePaths(SDFAttributeList schema) */
+	/** the integer array in which the targetPath is being stored, during initAttributePaths(SDFSchema schema) */
 	private int[] targetPath;
 	/** the target variable name taken from the grammar, inclusive the input source name. */
 	private String targetVarName;
@@ -140,8 +140,8 @@ public class PredictionExpression {
 	 * 
 	 * @param schemata
 	 */
-	public void initAttributePaths(SDFAttributeList...schemata) {
-		for(SDFAttributeList schema : schemata) {
+	public void initAttributePaths(SDFSchema...schemata) {
+		for(SDFSchema schema : schemata) {
 			initAttributePaths(schema);
 		}
 	}
@@ -150,7 +150,7 @@ public class PredictionExpression {
 	 * 
 	 * @param schema
 	 */
-	public void initAttributePaths(SDFAttributeList schema) {
+	public void initAttributePaths(SDFSchema schema) {
 		String sourceName = getSourceName(schema);
 		SchemaHelper helper = new SchemaHelper(schema);
 		List<String> schemaVariables = variableSourceMapping.get(sourceName);
@@ -179,11 +179,11 @@ public class PredictionExpression {
 	 * @param attributeName
 	 * @return
 	 */
-//	protected int[] resolveAttributePath(SDFAttributeList schema, String attributeName) {
+//	protected int[] resolveAttributePath(SDFSchema schema, String attributeName) {
 //		String attr = attributeName.split("\\.", 2)[1];
 //		String[] attrParts = attr.split("\\:");
 //		int[] indices = new int[attrParts.length];
-//		SDFAttributeList current = schema;
+//		SDFSchema current = schema;
 //		
 //		for(int depth=0; depth<attrParts.length; depth++) {
 //			for(int index=0; index<current.getAttributeCount(); index++) {
@@ -205,9 +205,9 @@ public class PredictionExpression {
 	 * @param schema
 	 * @param indices
 	 */
-	protected void replaceWithRelativeIndex(SDFAttributeList schema, int[] indices) {
+	protected void replaceWithRelativeIndex(SDFSchema schema, int[] indices) {
 		boolean isListBefore = false;
-		SDFAttributeList current = schema;
+		SDFSchema current = schema;
 		for(int index=0; index<indices.length; index++) {
 			// maybe current is null, since the last attribute
 			// was of type set with primitive type. In this case
@@ -248,7 +248,7 @@ public class PredictionExpression {
 	 * @param schema
 	 * @return
 	 */
-	public List<String> getAttributeNames(SDFAttributeList schema) {
+	public List<String> getAttributeNames(SDFSchema schema) {
 		List<String> attrNames = variableSourceMapping.get(getSourceName(schema));
 		if(attrNames == null) {
 			return new ArrayList<String>();
@@ -342,7 +342,7 @@ public class PredictionExpression {
 	 * @param schema
 	 * @param index
 	 */
-	public void replaceVaryingAttributeIndex(SDFAttributeList schema, int index) {
+	public void replaceVaryingAttributeIndex(SDFSchema schema, int index) {
 		
 		String sourceName = getSourceName(schema);
 		List<String> schemaVarNames = variableSourceMapping.get(sourceName);
@@ -386,7 +386,7 @@ public class PredictionExpression {
 	 * @param schema
 	 * @return
 	 */
-	public String getSourceName(SDFAttributeList schema) {
+	public String getSourceName(SDFSchema schema) {
 		return schema.getAttribute(0).getSourceName();
 	}
 	
@@ -423,7 +423,7 @@ public class PredictionExpression {
 	}
 	
 //	public static void main(String[] args) {
-//		SDFAttributeList scan = new SDFAttributeList();
+//		SDFSchema scan = new SDFSchema();
 //		
 //		SDFAttribute list = new SDFAttribute("a.list");
 //		list.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("List"));
@@ -441,7 +441,7 @@ public class PredictionExpression {
 //		SDFAttribute z = new SDFAttribute("z");
 //		z.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));
 //		
-//		SDFAttributeList time = new SDFAttributeList();
+//		SDFSchema time = new SDFSchema();
 //		
 //		SDFAttribute currentTime = new SDFAttribute("b.currentTime");
 //		currentTime.setDatatype(SDFDatatypeFactory.createAndReturnDatatype("MV"));

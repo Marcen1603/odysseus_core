@@ -19,7 +19,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -47,13 +47,13 @@ public class UnionAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(LEFT);
 	}
 
 //	@Override
 //	public boolean isValid() {
-//		SDFAttributeList firstSchema = this.getInputSchema(0);
+//		SDFSchema firstSchema = this.getInputSchema(0);
 //		for (int i = 1; i < getNumberOfInputs(); ++i) {
 //			if (!firstSchema.compatibleTo(getInputSchema(i))) {
 //				addError(new IllegalArgumentException(

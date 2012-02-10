@@ -13,19 +13,19 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SinkPool;
 
 public class SinkPO<T extends IMetaAttribute> extends AbstractSink<RelationalTuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SinkPO.class);
-    private final SDFAttributeList schema;
+    private final SDFSchema schema;
     private final String adapterName;
     private final Map<String, String> options = new HashMap<String, String>();
 
     /**
      * @param schema
      */
-    public SinkPO(final SDFAttributeList schema, final String adapterName,
+    public SinkPO(final SDFSchema schema, final String adapterName,
             final Map<String, String> options) {
         this.schema = schema;
         this.adapterName = adapterName;

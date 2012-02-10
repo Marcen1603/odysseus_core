@@ -12,12 +12,12 @@
 //public class SPARQLAvgSum implements Evaluator<NodeList>, Initializer<NodeList>, Merger<NodeList>{
 //
 //	private int pos;
-//	//private SDFAttributeList schema;
+//	//private SDFSchema schema;
 //	boolean isAvg;
 //	
 //	public SPARQLAvgSum(int pos, boolean isAvg){
 //		this.pos = pos;
-//		//this.schema = new SDFAttributeList();
+//		//this.schema = new SDFSchema();
 //		this.isAvg = isAvg;
 ////		SDFAttribute attr = null;
 ////		if (isAvg){

@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public enum NEXMarkStreamType {
@@ -26,18 +26,18 @@ public enum NEXMarkStreamType {
 
 	public final String name;
 
-	static private Map<NEXMarkStreamType, SDFAttributeList> schemaMap = new HashMap<NEXMarkStreamType, SDFAttributeList>();
+	static private Map<NEXMarkStreamType, SDFSchema> schemaMap = new HashMap<NEXMarkStreamType, SDFSchema>();
 
 	private NEXMarkStreamType(String name) {
 		this.name = name;
 	}
 
-	static public SDFAttributeList getSchema(NEXMarkStreamType type) {
-		SDFAttributeList schema = schemaMap.get(type);
+	static public SDFSchema getSchema(NEXMarkStreamType type) {
+		SDFSchema schema = schemaMap.get(type);
 		if (schema == null) {
 			switch (type) {
 			case PERSON:
-				schema = new SDFAttributeList("Person");
+				schema = new SDFSchema("Person");
 				SDFAttribute a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
@@ -54,7 +54,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case AUCTION:
-				schema = new SDFAttributeList("Auction");
+				schema = new SDFSchema("Auction");
 				a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
@@ -75,7 +75,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case BID:
-				schema = new SDFAttributeList("Bid");
+				schema = new SDFSchema("Bid");
 				a = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
 				schema.add(a);
 				a = new SDFAttribute(null,"auction", SDFDatatype.INTEGER);
@@ -88,7 +88,7 @@ public enum NEXMarkStreamType {
 				schema.add(a);
 				break;
 			case CATEGORY:
-				schema = new SDFAttributeList("Category");
+				schema = new SDFSchema("Category");
 				a = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
 				schema.add(a);
 				a = new SDFAttribute(null,"name", SDFDatatype.STRING);

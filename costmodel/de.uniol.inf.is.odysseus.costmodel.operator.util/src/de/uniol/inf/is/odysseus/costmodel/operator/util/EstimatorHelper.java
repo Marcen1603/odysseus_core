@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -129,7 +129,7 @@ public final class EstimatorHelper {
 	 *            soll.
 	 * @return Größe der Tupel in Bytes
 	 */
-	public static int sizeInBytes(SDFAttributeList schema) {
+	public static int sizeInBytes(SDFSchema schema) {
 		if (schema == null)
 			return 0;
 

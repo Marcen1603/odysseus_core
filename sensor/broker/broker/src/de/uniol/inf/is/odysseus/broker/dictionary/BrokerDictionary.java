@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * The {@link BrokerDictionary} contains several information for each broker.
@@ -85,7 +85,7 @@ public class BrokerDictionary {
 	 * @param schema the data schema of the broker
 	 * @param queueSchema the queue schema of the broker
 	 */
-	public void addBroker(String name, SDFAttributeListExtended schema, SDFAttributeList queueSchema) {
+	public void addBroker(String name, SDFSchemaExtended schema, SDFSchema queueSchema) {
 		if (!brokerExists(name)) {
 			BrokerDictionaryEntry entry = new BrokerDictionaryEntry(name, schema, queueSchema);
 			this.brokerlist.put(name, entry);
@@ -134,7 +134,7 @@ public class BrokerDictionary {
 	 * @param brokername the name of the broker
 	 * @return the data schema
 	 */
-	public SDFAttributeListExtended getSchema(String brokername) {
+	public SDFSchemaExtended getSchema(String brokername) {
 		return this.brokerlist.get(brokername).getSchema();
 	}
 
@@ -144,7 +144,7 @@ public class BrokerDictionary {
 	 * @param brokername the name of the broker
 	 * @return the queue schema
 	 */
-	public SDFAttributeList getQueueSchema(String brokername) {
+	public SDFSchema getQueueSchema(String brokername) {
 		return this.brokerlist.get(brokername).getQueueSchema();
 	}
 

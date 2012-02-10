@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -144,7 +144,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		QueryAccessAO access = (QueryAccessAO) this.sources.get(source);
 		if (access == null) {
 			access = new QueryAccessAO(source);
-			// SDFAttributeList attributes = DataDictionary.getInstance()
+			// SDFSchema attributes = DataDictionary.getInstance()
 			// .attributesOfRelation(sourceString);
 			// access.setOutputSchema(attributes);
 			this.sources.put(source, access);
@@ -154,7 +154,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		if (node.hasAlias()) {
 			sourceString = node.getAlias();
 			operator = new RenameAO();
-			SDFAttributeList newSchema = createAliasSchema(node.getAlias(),
+			SDFSchema newSchema = createAliasSchema(node.getAlias(),
 					access);
 			operator.subscribeToSource(access, 0, 0, newSchema);
 		}
@@ -267,10 +267,10 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private SDFAttributeList createAliasSchema(String alias,
+	private SDFSchema createAliasSchema(String alias,
 			ILogicalOperator access) {
 		// Keep the original Type not the alias
-		SDFAttributeList attributes = new SDFAttributeList(access.getOutputSchema().getURI());
+		SDFSchema attributes = new SDFSchema(access.getOutputSchema().getURI());
 		for (SDFAttribute attribute : access.getOutputSchema()) {
 			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,attribute.getAttributeName());
 			//newAttribute.setSourceName(alias);

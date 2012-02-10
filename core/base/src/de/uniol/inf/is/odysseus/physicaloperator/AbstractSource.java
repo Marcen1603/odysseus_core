@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 /**
@@ -53,7 +53,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
-	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
+	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
 	// --------------------------------------------------------------------
@@ -170,22 +170,22 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getOutputSchema(0);
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema(int port) {
+	public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);		
 	}
 	
@@ -396,7 +396,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		if (!this.sinkSubscriptions.contains(sub)) {
@@ -410,7 +410,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void connectSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
@@ -419,14 +419,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(new PhysicalSubscription<ISink<? super T>>(sink,
 				sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
@@ -450,7 +450,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void atomicReplaceSink(
 			List<PhysicalSubscription<ISink<? super T>>> remove,
 			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 //		synchronized (this.sinkSubscriptions) {
 			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
 				unsubscribeSink(sub);
@@ -464,7 +464,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void atomicReplaceSink(
 			PhysicalSubscription<ISink<? super T>> remove,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 //		synchronized (this.sinkSubscriptions) {
 			unsubscribeSink(remove);
 			for (ISink<? super T> sink : sinks) {
@@ -573,10 +573,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 	
 	
-	private Map<Integer, SDFAttributeList> createCleanClone(Map<Integer, SDFAttributeList> old){
-		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
-		for(Entry<Integer, SDFAttributeList> e : old.entrySet()){
-			copy.put(e.getKey(), new SDFAttributeList(e.getValue().getURI(), e.getValue()));
+	private Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old){
+		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+		for(Entry<Integer, SDFSchema> e : old.entrySet()){
+			copy.put(e.getKey(), new SDFSchema(e.getValue().getURI(), e.getValue()));
 		}
 		return copy;
 	}

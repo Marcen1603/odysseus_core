@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionKey
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This operator works the same way as relationalProjectMVPO. It additionally deletes
@@ -39,8 +39,8 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 	
 	int[] restrictList;
 	RealMatrix projectMatrix;
-	SDFAttributeList inputSchema;
-	SDFAttributeList outputSchema;
+	SDFSchema inputSchema;
+	SDFSchema outputSchema;
 	
 	
 	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
@@ -52,7 +52,7 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 		
 	}
 	
-//	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
+//	public ObjectTrackingProjectPO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector, SDFSchema inputSchema, SDFSchema outputSchema) {
 //		super(restrictList, projectMatrix, projectVector, inputSchema, outputSchema);
 //	}
 	

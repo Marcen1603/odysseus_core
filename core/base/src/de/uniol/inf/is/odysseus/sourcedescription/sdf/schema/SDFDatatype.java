@@ -88,7 +88,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * the structure of the datatype. A schema is used if the type is a record
 	 * or a set of complex types that are no beans.
 	 */
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 
 	/**
 	 * A user defined set datatype must have a subdatatype or a schema that
@@ -103,7 +103,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 		super(datatypeName);
 		if (type == SDFDatatype.KindOfDatatype.BASE) {
 			throw new IllegalArgumentException(
@@ -180,7 +180,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		return this.schema != null;
 	}
 
-	public SDFAttributeList getSubSchema() {
+	public SDFSchema getSubSchema() {
 		return this.schema;
 	}
 

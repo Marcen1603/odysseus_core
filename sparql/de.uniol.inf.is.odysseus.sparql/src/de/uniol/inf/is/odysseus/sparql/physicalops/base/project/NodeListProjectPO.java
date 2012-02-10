@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
 import de.uniol.inf.is.odysseus.querytranslation.logicalops.ProjectAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class NodeListProjectPO<T extends IClone> extends AbstractPipe<NodeList<T>, NodeList<T>> {
 
@@ -34,8 +34,8 @@ public class NodeListProjectPO<T extends IClone> extends AbstractPipe<NodeList<T
 
 	
 	protected void initRestrictList(){
-		SDFAttributeList out = ao.getOutputSchema();
-		SDFAttributeList in = ao.getInputSchema();
+		SDFSchema out = ao.getOutputSchema();
+		SDFSchema in = ao.getInputSchema();
 		System.out.print("Project in: ");
 		for(SDFAttribute a: in){
 			System.out.print(a.getQualName() + "; ");

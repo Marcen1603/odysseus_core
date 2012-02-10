@@ -24,11 +24,11 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -57,7 +57,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 //		return true;
 //	}
 	
-	private SDFAttributeList outAttributes;
+	private SDFSchema outAttributes;
 	
 	public ObjectTrackingProjectAO(ObjectTrackingProjectAO projectMVAO) {
 		super(projectMVAO);
@@ -68,7 +68,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		super();
 	}
 
-	public ObjectTrackingProjectAO(SDFAttributeList queryAttributes) {
+	public ObjectTrackingProjectAO(SDFSchema queryAttributes) {
 		super();
 		setOutputSchema(queryAttributes);
 	}
@@ -86,7 +86,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * 
 	 * @param outAttributes the projectionList
 	 */
-	public void setOutAttributes(SDFAttributeList outAttributes){
+	public void setOutAttributes(SDFSchema outAttributes){
 		this.outAttributes = outAttributes;
 	}
 	
@@ -95,18 +95,18 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * and the input schema of the preceding operator.
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema(){
-		SDFAttributeListExtended newOutputSchema = new SDFAttributeListExtended(outAttributes);
-		SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getSubscribedToSource(0).getSchema();
+	public SDFSchema getOutputSchema(){
+		SDFSchemaExtended newOutputSchema = new SDFSchemaExtended(outAttributes);
+		SDFSchemaExtended inputSchema = (SDFSchemaExtended)this.getSubscribedToSource(0).getSchema();
 		
 		Map<IPredicate, IPredictionFunction> newPredFcts = new HashMap<IPredicate, IPredictionFunction>();
 		
 		
-		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+		Map<IPredicate, IPredictionFunction> predFcts = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
 		
 		// maybe the prediction functions have not been set
 		// this can happen, if we use a schema convert operator
-		// in our query plan, that changes to SDFAttributeListExtended
+		// in our query plan, that changes to SDFSchemaExtended
 		// for compatibility with other operators
 		if(predFcts != null){
 			for(Entry<IPredicate, IPredictionFunction> entry : predFcts.entrySet()){
@@ -114,13 +114,13 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 				newPredFcts.put(entry.getKey().clone(), newPredFct);
 			}
 		
-			newOutputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
+			newOutputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, newPredFcts);
 		}
 		
 		return newOutputSchema;
 	}
 	
-	private IPredictionFunction getNewPredictionFunction(SDFAttributeList inputSchema, SDFAttributeList outAttributes, SDFExpression[] oldExprs){
+	private IPredictionFunction getNewPredictionFunction(SDFSchema inputSchema, SDFSchema outAttributes, SDFExpression[] oldExprs){
 		/*
 		 * it is not necessary to test, whether the attributes of the predicate
 		 * are still available since the predicate will not be evaluated again.
@@ -179,7 +179,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * matrix of incoming tuples.
 	 * @return
 	 */
-	public static RealMatrix calcProjectMatrix(int[] restrictList, SDFAttributeListExtended inputSchema){
+	public static RealMatrix calcProjectMatrix(int[] restrictList, SDFSchemaExtended inputSchema){
 		// if there are no measurement values, no covariance matrix
 		// has to be modified, and therefore no project matrix
 		// has to be calculated.
@@ -208,7 +208,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	}
 	
 	public RealMatrix determineProjectMatrix(int[] restrictList){
-		return calcProjectMatrix(restrictList, (SDFAttributeListExtended)this.getInputSchema(0));
+		return calcProjectMatrix(restrictList, (SDFSchemaExtended)this.getInputSchema(0));
 	}
 
 }

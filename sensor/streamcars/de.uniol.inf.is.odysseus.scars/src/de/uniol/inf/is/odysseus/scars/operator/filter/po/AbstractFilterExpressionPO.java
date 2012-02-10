@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
@@ -31,7 +31,7 @@ public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObj
 	private SchemaIndexPath predictedObjectListSIPath;
 	private SchemaIndexPath scannedObjectListSIPath;
 	
-	private SDFAttributeList inputSchema;
+	private SDFSchema inputSchema;
 	
 	private SchemaHelper schemaHelper;
 	
@@ -143,14 +143,14 @@ public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObj
 	/**
 	 * @param inputSchema the inputSchema to set
 	 */
-	public void setInputSchema(SDFAttributeList inputSchema) {
+	public void setInputSchema(SDFSchema inputSchema) {
 		this.inputSchema = inputSchema;
 	}
 
 	/**
 	 * @return the inputSchema
 	 */
-	public SDFAttributeList getInputSchema() {
+	public SDFSchema getInputSchema() {
 		return inputSchema;
 	}
 }

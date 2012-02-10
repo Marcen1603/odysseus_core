@@ -49,7 +49,7 @@ public class SchemaHelper {
 	 */
 	public static final String ATTRIBUTE_SEPARATOR = ":";
 
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private Map<String, SchemaIndexPath> paths = new HashMap<String, SchemaIndexPath>();
 
 	private String sourceName = null;
@@ -68,7 +68,7 @@ public class SchemaHelper {
 	 * @throws IllegalArgumentException
 	 *             Wenn <code>schema</code> <code>null</code> ist.
 	 */
-	public SchemaHelper(SDFAttributeList schema) {
+	public SchemaHelper(SDFSchema schema) {
 		if (schema == null)
 			throw new IllegalArgumentException("schema is null");
 
@@ -93,7 +93,7 @@ public class SchemaHelper {
 	 * 
 	 * @return Schema
 	 */
-	public SDFAttributeList getSchema() {
+	public SDFSchema getSchema() {
 		return schema;
 	}
 
@@ -220,7 +220,7 @@ public class SchemaHelper {
 	//Berechnet alle Pfade im einem Schema und speichert sie in einer <code>Map</code> ab.
 	// Dabei wird rekursiv die Tiefe des Schemas berücksichtigt, sodass auch objektrelationale
 	// Schemata berücksichtigt werden können.
-	private void calculateAllPaths(SDFAttributeList list, List<SchemaIndex> actualPath, String actualAttributeName) {
+	private void calculateAllPaths(SDFSchema list, List<SchemaIndex> actualPath, String actualAttributeName) {
 		for (int index = 0; index < list.getAttributeCount(); index++) {
 			SDFAttribute attribute = list.getAttribute(index);
 			if (sourceName == null)

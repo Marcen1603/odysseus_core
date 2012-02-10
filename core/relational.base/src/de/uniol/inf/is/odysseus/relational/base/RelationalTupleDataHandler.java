@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.SetDataHandler;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -39,11 +39,11 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 		types.add("Tuple");
 	}
 	
-	SDFAttributeList schema;
+	SDFSchema schema;
 	
 	IAtomicDataHandler[] dataHandlers = null;
 	
-	public RelationalTupleDataHandler(SDFAttributeList schema){
+	public RelationalTupleDataHandler(SDFSchema schema){
 		this.schema = schema;
 		this.createDataReader();
 	}

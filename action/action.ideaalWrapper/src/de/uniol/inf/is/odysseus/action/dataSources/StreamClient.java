@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Client writing tuples to client connected to
@@ -38,7 +38,7 @@ public class StreamClient {
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 
-	public StreamClient(Socket connection, SDFAttributeList schema) throws IOException{
+	public StreamClient(Socket connection, SDFSchema schema) throws IOException{
 		this.connection = connection;
 		
 		this.objectHandler = new ObjectHandler<RelationalTuple<IMetaAttribute>>(new RelationalTupleDataHandler(schema));

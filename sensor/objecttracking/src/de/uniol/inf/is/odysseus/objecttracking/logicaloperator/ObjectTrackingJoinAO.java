@@ -29,8 +29,8 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 @SuppressWarnings({"unchecked","rawtypes"})
@@ -50,7 +50,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	 */
 	private static final long serialVersionUID = 713204745616875842L;
 
-	private SDFAttributeListExtended outputSchema;
+	private SDFSchemaExtended outputSchema;
 	
 	private boolean initialized;
 	
@@ -137,7 +137,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		// the output schema contains the attributes
 		// from the left and the attributes from the right.
 		// It also contains the prediction functions from
@@ -145,23 +145,23 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata){
-			outputSchema = new SDFAttributeListExtended();
+			outputSchema = new SDFSchemaExtended();
 			
 			Map<IPredicate, IPredictionFunction> newPredictionFunctions = new HashMap<IPredicate, IPredictionFunction>();
 			
 			// there can only be two input schemas
-			SDFAttributeListExtended leftInputSchema = (SDFAttributeListExtended)getSubscribedToSource(0).getSchema();
-			SDFAttributeListExtended rightInputSchema = (SDFAttributeListExtended)getSubscribedToSource(1).getSchema();
+			SDFSchemaExtended leftInputSchema = (SDFSchemaExtended)getSubscribedToSource(0).getSchema();
+			SDFSchemaExtended rightInputSchema = (SDFSchemaExtended)getSubscribedToSource(1).getSchema();
 			
 			outputSchema.addAttributes(leftInputSchema);
 			outputSchema.addAttributes(rightInputSchema);
 			
-			Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-			Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
+			Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
 			
 			// maybe the prediction functions have not been set
 			// this can happen, if we use a schema convert operator
-			// in our query plan, that changes to SDFAttributeListExtended
+			// in our query plan, that changes to SDFSchemaExtended
 			// for compatibility with other operators
 			// FIXME: Neue PredictionFunctions aus scars-Plugin verwenden
 			if(leftFcts != null && rightFcts != null){
@@ -208,7 +208,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 					}
 				}			
 				recalcOutputSchemata = false;
-				outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
+				outputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
 			}
 		}
 		return outputSchema;
@@ -228,15 +228,15 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		this.initRestrictList();
 		
 		// there can only be two input schemas
-		SDFAttributeListExtended leftInputSchema = (SDFAttributeListExtended)getSubscribedToSource(0).getSchema();
-		SDFAttributeListExtended rightInputSchema = (SDFAttributeListExtended)getSubscribedToSource(1).getSchema();
+		SDFSchemaExtended leftInputSchema = (SDFSchemaExtended)getSubscribedToSource(0).getSchema();
+		SDFSchemaExtended rightInputSchema = (SDFSchemaExtended)getSubscribedToSource(1).getSchema();
 		
-		Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
-		Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);		
+		Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
+		Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);		
 		
 		// maybe the prediction functions have not been set
 		// this can happen, if we use a schema convert operator
-		// in our query plan, that changes to SDFAttributeListExtended
+		// in our query plan, that changes to SDFSchemaExtended
 		// for compatibility with other operators
 		// FIXME: Neue PredictionFunctions aus scars-Plugin verwenden
 		if(leftFcts != null && rightFcts != null){
@@ -267,8 +267,8 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 					generateRangePredicate(((ComplexPredicate)joinPredicate).getLeft(), leftPredFct, rightPredFct, attributeResolver), 
 					generateRangePredicate(((ComplexPredicate)joinPredicate).getRight(), leftPredFct, rightPredFct, attributeResolver));
 		}else if(joinPredicate instanceof RelationalPredicate){
-			SDFAttributeListExtended leftSchema = (SDFAttributeListExtended)getSubscribedToSource(0).getSchema();
-			SDFAttributeListExtended rightSchema = (SDFAttributeListExtended)getSubscribedToSource(1).getSchema();
+			SDFSchemaExtended leftSchema = (SDFSchemaExtended)getSubscribedToSource(0).getSchema();
+			SDFSchemaExtended rightSchema = (SDFSchemaExtended)getSubscribedToSource(1).getSchema();
 			
 			List<SDFAttribute> neededAttributes = ((RelationalPredicate)joinPredicate).getAttributes();
 			String predicateString = joinPredicate.toString();
@@ -400,8 +400,8 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		ArrayList<Integer> tempList = new ArrayList<Integer>();
 		ArrayList<Boolean> fromRightChannelTmp = new ArrayList<Boolean>();
 		
-		SDFAttributeList leftSchema = this.getSubscribedToSource(0).getSchema();
-		SDFAttributeList rightSchema = this.getSubscribedToSource(1).getSchema();
+		SDFSchema leftSchema = this.getSubscribedToSource(0).getSchema();
+		SDFSchema rightSchema = this.getSubscribedToSource(1).getSchema();
 		// first add the positions of the left schema
 		for(int i = 0; i<leftSchema.getAttributeCount(); i++){
 			if(leftSchema.getAttribute(i).getDatatype().isMeasurementValue()){

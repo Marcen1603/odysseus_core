@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
@@ -122,7 +122,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	}
 
 	@Override
-	public boolean isSchemaVariable(SDFAttributeList schema) {
+	public boolean isSchemaVariable(SDFSchema schema) {
 		if(!isSchemaVariable()) return false;
 		return sourceName.equals(getSchemaSourceName(schema));
 	}
@@ -238,7 +238,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	 * @param schema
 	 */
 	@Override
-	public void init(SDFAttributeList schema) {
+	public void init(SDFSchema schema) {
 		if(isSchemaVariable(schema)) {
 			SchemaHelper helper = new SchemaHelper(schema);
 			schemaPath = helper.getSchemaIndexPath(nameWithoutMetadata);
@@ -316,7 +316,7 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	 * @param schema
 	 * @return
 	 */
-	protected String getSchemaSourceName(SDFAttributeList schema) {
+	protected String getSchemaSourceName(SDFSchema schema) {
 		if(schema == null) return NO_SOURCE;
 		return schema.getAttribute(0).getSourceName();
 	}

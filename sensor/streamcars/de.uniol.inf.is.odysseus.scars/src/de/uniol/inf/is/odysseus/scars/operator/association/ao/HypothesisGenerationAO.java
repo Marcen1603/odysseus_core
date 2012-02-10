@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 
@@ -70,7 +70,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	// (analog zur �nderung des Tupels im PO)
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		SchemaHelper helper = null;
 
 		// copy scanned Objects
@@ -101,7 +101,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 		// create new record
 		
-		SDFAttributeList subschema = new SDFAttributeList("");
+		SDFSchema subschema = new SDFSchema("");
 		subschema.add(timestamp);
 		subschema.add(scannedObjects);
 		subschema.add(predictedObjects);
@@ -115,7 +115,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		setSourceName(association, helper.getSourceName());
 
 		// TODO: die metadaten aus dem inputschema mitnehmen
-		SDFAttributeListExtended newSchema = new SDFAttributeListExtended();
+		SDFSchemaExtended newSchema = new SDFSchemaExtended();
 		newSchema.addAttribute(association);
 
 		
@@ -162,7 +162,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		return this.outputPredictedObjListPath;
 	}
 
-	public SDFAttributeList getLeftSchema() {
+	public SDFSchema getLeftSchema() {
 		if (this.getSubscribedToSource(LEFT) != null) {
 			return this.getSubscribedToSource(LEFT).getSchema();
 		} else {
@@ -170,7 +170,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		}
 	}
 
-	public SDFAttributeList getRightSchema() {
+	public SDFSchema getRightSchema() {
 		if (this.getSubscribedToSource(RIGHT) != null) {
 			return this.getSubscribedToSource(RIGHT).getSchema();
 		} else {

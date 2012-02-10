@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful;
 
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -53,7 +53,7 @@ public abstract class AbstractAggregateCorrection implements IBinaryCorrection<R
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		for(int i=0;i<leftSchema.size();i++){
 			if(leftSchema.get(i).getAttributeName().equals(attributeName)){
 				this.attributePosition = i;

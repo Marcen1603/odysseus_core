@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -67,7 +67,7 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(0);
 	}
 

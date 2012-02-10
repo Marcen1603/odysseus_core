@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class PrioIdJoinAO extends AbstractLogicalOperator implements
 		ILogicalOperator {
@@ -56,10 +56,10 @@ public class PrioIdJoinAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList outputSchema = new SDFAttributeList("");
+	public SDFSchema getOutputSchema() {
+		SDFSchema outputSchema = new SDFSchema("");
 		for (LogicalSubscription l : getSubscribedToSource()) {
-			outputSchema = SDFAttributeList.union(outputSchema, l.getSchema());
+			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
 			outputSchema.addAttributes(l.getSchema());
 		}
 		return outputSchema;

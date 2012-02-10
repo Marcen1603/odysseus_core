@@ -5,7 +5,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.store.MemoryStore;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
@@ -17,7 +17,7 @@ public class DataDictionary extends AbstractDataDictionary {
 		streamDefinitions = new MemoryStore<String, ILogicalOperator>();
 		viewOrStreamFromUser = new MemoryStore<String, IUser>();
 		viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-		entityMap = new MemoryStore<String, SDFAttributeList>();
+		entityMap = new MemoryStore<String, SDFSchema>();
 		sourceTypeMap = new MemoryStore<String, String>();
 		entityFromUser = new MemoryStore<String, IUser>();
 		datatypes = new MemoryStore<String, SDFDatatype>();

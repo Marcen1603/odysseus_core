@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.queryexecution.po.base.join.object.merge.IMetada
 import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Implements a merge function for RelationalTuples. A full outer join is
@@ -16,14 +16,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class NodeListMergeFunction<T extends IClone> implements IDataMergeFunction<NodeList<T>> {
 
-	private SDFAttributeList leftSchema;
-	private SDFAttributeList rightSchema;
-	private SDFAttributeList resultSchema;
+	private SDFSchema leftSchema;
+	private SDFSchema rightSchema;
+	private SDFSchema resultSchema;
 	
 
-	public NodeListMergeFunction(SDFAttributeList leftSchema, 
-			SDFAttributeList rightSchema, 
-			SDFAttributeList resultSchema) {
+	public NodeListMergeFunction(SDFSchema leftSchema, 
+			SDFSchema rightSchema, 
+			SDFSchema resultSchema) {
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.resultSchema = resultSchema;

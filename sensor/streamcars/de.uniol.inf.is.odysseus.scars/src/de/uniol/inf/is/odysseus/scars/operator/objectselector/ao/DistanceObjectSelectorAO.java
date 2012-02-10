@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.scars.operator.objectselector.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class DistanceObjectSelectorAO extends UnaryLogicalOp {
 
@@ -43,7 +43,7 @@ public class DistanceObjectSelectorAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 

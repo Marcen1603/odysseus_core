@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 
 import de.uniol.inf.is.odysseus.Subscription;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -35,11 +35,11 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		super();
 	}
 
-	public SDFAttributeList getInputSchema() {
+	public SDFSchema getInputSchema() {
 		return getInputSchema(PORTNUMBER);
 	}
 
-//	public void setInputSchema(SDFAttributeList schema) {
+//	public void setInputSchema(SDFSchema schema) {
 //		setInputSchema(PORTNUMBER, schema);
 //	}
 
@@ -51,13 +51,13 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		return getPhysSubscriptionTo(PORTNUMBER);
 	}
 	
-	public void subscribeTo(ILogicalOperator source, SDFAttributeList inputSchema){
+	public void subscribeTo(ILogicalOperator source, SDFSchema inputSchema){
 		subscribeToSource(source, 0, 0, inputSchema);
 	}
 		
 	@Override
 	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
-			int sourceOutPort, SDFAttributeList inputSchema) {
+			int sourceOutPort, SDFSchema inputSchema) {
 		if (sinkInPort != 0) {
 			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkInPort);
 		}

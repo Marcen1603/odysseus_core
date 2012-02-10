@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
@@ -54,7 +54,7 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 		this.socketAddress = nioServerSocketSource.getSocketAddress();
 	}
 
-	public void setSchema(SDFAttributeList schema) {
+	public void setSchema(SDFSchema schema) {
 		getLogger().debug("SetSchema: " + schema.toString());
 		super.setOutputSchema(schema);
 	}

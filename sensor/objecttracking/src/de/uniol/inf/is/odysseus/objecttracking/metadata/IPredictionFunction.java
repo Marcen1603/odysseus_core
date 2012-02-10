@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -33,11 +33,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
  */
 public interface IPredictionFunction<T extends MetaAttributeContainer<M>, M extends IMetaAttribute> extends IMetaAttribute, IClone{
 
-	public T predictData(SDFAttributeList schema, T object, PointInTime t);
+	public T predictData(SDFSchema schema, T object, PointInTime t);
 	
-	public M predictMetadata(SDFAttributeList schema, T object, PointInTime t);
+	public M predictMetadata(SDFSchema schema, T object, PointInTime t);
 	
-	public T predictAll(SDFAttributeList schema, T object, PointInTime t);
+	public T predictAll(SDFSchema schema, T object, PointInTime t);
 	
 	public void setExpressions(SDFExpression[] expressions);
 	

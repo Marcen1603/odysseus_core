@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -47,7 +47,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	
 	private IPredicate predicate;
 	
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 	
 	public TriplePatternMatchingPO(TriplePatternMatching tpm){
 		this.queryTriple = tpm.getTriple();

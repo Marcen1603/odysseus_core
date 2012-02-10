@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public interface ILogicalOperator extends IOwnedOperator, 
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable, ISerializable{
@@ -34,9 +34,9 @@ public interface ILogicalOperator extends IOwnedOperator,
 	@Override
 	public ILogicalOperator clone();
 	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
-	public SDFAttributeList getOutputSchema();
-	public SDFAttributeList getOutputSchema(int pos);
-	public SDFAttributeList getInputSchema(int pos);	
+	public SDFSchema getOutputSchema();
+	public SDFSchema getOutputSchema(int pos);
+	public SDFSchema getInputSchema(int pos);	
 		
 	public IPredicate<?> getPredicate();	
 	public void setPredicate(IPredicate<?> predicate);
@@ -46,7 +46,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	
 	boolean isAllPhysicalInputSet();
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema);
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	public void clearPhysicalSubscriptions();
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.ui.PolygonScreen;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -23,7 +23,7 @@ public class VisualPolygonSinkPO extends AbstractSink<Object> {
     private final BlockingQueue<Geometry> segments = new LinkedBlockingQueue<Geometry>();
 
     private PolygonScreen screen = new PolygonScreen();
-    private final SDFAttributeList schema;
+    private final SDFSchema schema;
 
     private final Thread painter = new Thread() {
 
@@ -44,7 +44,7 @@ public class VisualPolygonSinkPO extends AbstractSink<Object> {
         }
     };
 
-    public VisualPolygonSinkPO(final SDFAttributeList schema) {
+    public VisualPolygonSinkPO(final SDFSchema schema) {
         this.schema = schema;
         this.screen.repaint();
         this.painter.start();

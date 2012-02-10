@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -34,7 +34,7 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<SDFExpression> expressions;
-	private SDFAttributeList outputSchema = null;
+	private SDFSchema outputSchema = null;
 
 	public MapAO() {
 		super();
@@ -50,7 +50,7 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	private void calcOutputSchema() {
-		outputSchema = new SDFAttributeList(getInputSchema().getURI());
+		outputSchema = new SDFSchema(getInputSchema().getURI());
 		if (expressions != null) {
 			for (SDFExpression expr : expressions) {
 				SDFAttribute attr = null;
@@ -103,7 +103,7 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if (outputSchema == null){
 			calcOutputSchema();
 		}

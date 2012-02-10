@@ -9,10 +9,10 @@
 //
 //public class SPARQLCount extends Count<NodeList> {
 //
-//	//private SDFAttributeList schema;
+//	//private SDFSchema schema;
 //	
 //	public SPARQLCount(int pos){
-////		this.schema = new SDFAttributeList();
+////		this.schema = new SDFSchema();
 ////		SDFAttribute attr = new SDFAttribute("COUNT("+a.getURI(false)+")");
 ////		attr.setDatatype(SDFDatatypeFactory.getDatatype(SDFDatatypes.Number));
 ////		this.schema.add(attr);		

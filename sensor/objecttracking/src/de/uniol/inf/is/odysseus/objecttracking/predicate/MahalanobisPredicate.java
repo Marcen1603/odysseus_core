@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This predicate calculates the mahalanobis distance between two vectors.
@@ -71,7 +71,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 	}
 
 	//@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		// setting the left measurement value positions
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i<leftSchema.size(); i++){

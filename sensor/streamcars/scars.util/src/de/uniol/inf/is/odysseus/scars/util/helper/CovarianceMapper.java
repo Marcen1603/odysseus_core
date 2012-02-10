@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class CovarianceMapper {
 
@@ -28,11 +28,11 @@ public class CovarianceMapper {
 		this.indices = new ArrayList<String>(copy.indices);
 	}
 	
-	public CovarianceMapper( SDFAttributeList schema ) {
+	public CovarianceMapper( SDFSchema schema ) {
 		find(schema, null);
 	}
 	
-	private void find(SDFAttributeList list, String fullAttributeName ) {
+	private void find(SDFSchema list, String fullAttributeName ) {
 		String lastName = fullAttributeName;
 
 		for( SDFAttribute attribute : list ) {

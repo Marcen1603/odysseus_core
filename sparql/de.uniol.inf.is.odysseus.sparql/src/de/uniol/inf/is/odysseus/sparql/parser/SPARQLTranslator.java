@@ -56,7 +56,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.parser.ParseException;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //import de.uniol.inf.is.odysseus.wrapper.SourceType;
 //
 ///**
@@ -309,7 +309,7 @@
 //		if (query.getOrderBy() != null && query.getOrderBy().size() > 0) {
 //			AbstractLogicalOperator oldRoot = root;
 //			List orderBy = query.getOrderBy();
-//			SDFAttributeList sortVars = new SDFAttributeList();
+//			SDFSchema sortVars = new SDFSchema();
 //			boolean[] direction = new boolean[orderBy.size()];
 //
 //			for (int i = 0; i < orderBy.size(); i++) {
@@ -422,7 +422,7 @@
 //
 //			// get the variables mentioned in the select statement
 //			List resultVars = query.getResultVars();
-//			SDFAttributeList selectVars = new SDFAttributeList();
+//			SDFSchema selectVars = new SDFSchema();
 //			for (int i = 0; i < resultVars.size(); i++) {
 //				// the variables are returned as strings.
 //				SDFAttribute selectVar = new SDFAttribute(this.hashCode() + "#"

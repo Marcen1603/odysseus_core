@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple<?>> implements IRelationalPredicate {
@@ -49,7 +49,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 		this.attributePaths = new int[neededAttributes.size()][];
 		this.fromRightChannel = new boolean[neededAttributes.size()];
@@ -76,7 +76,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 		}
 	}
 
-	private int[] indexOf(SDFAttributeList schema, SDFAttribute attr) {
+	private int[] indexOf(SDFSchema schema, SDFAttribute attr) {
 		SDFAttribute cqlAttr = getReplacement(attr);
 		
 		ArrayList<Integer> path = new ArrayList<Integer>();
@@ -89,7 +89,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 		return p;
 	}
 	
-	private boolean findAttribute( SDFAttributeList list, SDFAttribute attr, ArrayList<Integer> path ) {
+	private boolean findAttribute( SDFSchema list, SDFAttribute attr, ArrayList<Integer> path ) {
 		for( int i = 0; i < list.size(); i++ ) {
 			SDFAttribute a = list.get(i);
 			path.add(i);

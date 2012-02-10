@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
@@ -144,7 +144,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
 
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
-		broker.setSchema((SDFAttributeListExtended) result.getOutputSchema());
+		broker.setSchema((SDFSchemaExtended) result.getOutputSchema());
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
 			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
 		}
@@ -259,7 +259,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// parse attributes
-		SDFAttributeListExtended attributes = new SDFAttributeListExtended();
+		SDFSchemaExtended attributes = new SDFSchemaExtended();
 
 		if (node.jjtGetChild(1) instanceof ASTORSchemaDefinition) {
 			SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(1).jjtAccept(this, brokerName);
@@ -291,7 +291,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 		
 		// parse meta attributes
-		SDFAttributeList metaAttributes = new SDFAttributeList("");
+		SDFSchema metaAttributes = new SDFSchema("");
 		if (node.jjtGetNumChildren() > 2) {
 			if (node.jjtGetChild(2) != null) {
 
@@ -363,7 +363,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	 *            the right
 	 * @return true, if successful
 	 */
-	private boolean schemaEquals(SDFAttributeList left, SDFAttributeList right) {
+	private boolean schemaEquals(SDFSchema left, SDFSchema right) {
 		if (left.size() != right.size()) {
 			return false;
 		} else {
@@ -387,7 +387,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		
 		// create a new datatype from this record attribute		
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList(""); 
+		SDFSchema complexAttrSchema = new SDFSchema(""); 
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
 			SDFAttribute attr = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
 			complexAttrSchema.add(attr);
@@ -412,7 +412,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		
 		
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList("");
+		SDFSchema complexAttrSchema = new SDFSchema("");
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
 			SDFAttribute listedAttribute = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
 			complexAttrSchema.add(listedAttribute);

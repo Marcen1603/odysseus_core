@@ -21,7 +21,7 @@ import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
@@ -72,7 +72,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 * SchemaIndexPath im Tupel und geht so tief wie möglich. Alle
 	 * übergeordneten Tupel werden nicht erfasst. Sollen <b>alle</b> Attribute
 	 * in einem Tupel erfasst werden, so sollte der Konstruktor
-	 * <code>TupleIterator(MVRelationalTuple<?>,SDFAttributeList)</code> genutzt
+	 * <code>TupleIterator(MVRelationalTuple<?>,SDFSchema)</code> genutzt
 	 * werden.
 	 * 
 	 * @param tuple
@@ -100,7 +100,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Zum Tupel zugehöriges Schema. Muss vollständig sein, darf
 	 *            nicht <code>null</code> sein.
 	 */
-	public TupleIterator(RelationalTuple<?> tuple, SDFAttributeList completeSchema) {
+	public TupleIterator(RelationalTuple<?> tuple, SDFSchema completeSchema) {
 		this(tuple, completeSchema, Integer.MAX_VALUE);
 	}
 
@@ -126,7 +126,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
 	 *            soll.
 	 */
-	public TupleIterator(RelationalTuple<?> tuple, SDFAttributeList completeSchema, int maxLevels) {
+	public TupleIterator(RelationalTuple<?> tuple, SDFSchema completeSchema, int maxLevels) {
 		this.tuple = tuple;
 		this.maxLevels = maxLevels;
 
@@ -146,7 +146,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 	 * TupleIndexPath im Tupel und geht so tief wie möglich. Alle übergeordneten
 	 * Tupel werden nicht erfasst. Sollen <b>alle</b> Attribute in einem Tupel
 	 * erfasst werden, so sollte der Konstruktor
-	 * <code>TupleIterator(MVRelationalTuple<?>,SDFAttributeList)</code> genutzt
+	 * <code>TupleIterator(MVRelationalTuple<?>,SDFSchema)</code> genutzt
 	 * werden.
 	 * 
 	 * @param tuple

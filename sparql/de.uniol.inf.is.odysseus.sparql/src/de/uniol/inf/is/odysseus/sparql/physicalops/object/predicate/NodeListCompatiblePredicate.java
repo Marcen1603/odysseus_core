@@ -5,14 +5,14 @@
 //import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
 //import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class NodeListCompatiblePredicate<T extends IClone> extends AbstractPredicate<NodeList<T>>{
 //
-//	private SDFAttributeList leftSchema;
-//	private SDFAttributeList rightSchema;
+//	private SDFSchema leftSchema;
+//	private SDFSchema rightSchema;
 //	
-//	public NodeListCompatiblePredicate(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+//	public NodeListCompatiblePredicate(SDFSchema leftSchema, SDFSchema rightSchema){
 //		this.leftSchema = leftSchema;
 //		this.rightSchema = rightSchema;
 //	}

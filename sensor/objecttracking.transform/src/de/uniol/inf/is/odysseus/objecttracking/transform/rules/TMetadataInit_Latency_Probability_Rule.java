@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.factory.ObjectTrackingMe
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -64,7 +64,7 @@ public class TMetadataInit_Latency_Probability_Rule extends AbstractTransformati
 		
 		System.out.println("CREATE MetadataUpdater ObjectTracking.");
 		
-		SDFAttributeList outputSchema = operator.getOutputSchema();//ObjectTrackingTransformationHelper.getOutputSchema(mPO);
+		SDFSchema outputSchema = operator.getOutputSchema();//ObjectTrackingTransformationHelper.getOutputSchema(mPO);
 		
 		
 		IMetadataUpdater mFac = new ObjectTrackingMetadataFactory(outputSchema);

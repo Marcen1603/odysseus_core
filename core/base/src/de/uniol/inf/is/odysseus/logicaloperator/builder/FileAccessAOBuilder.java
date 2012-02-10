@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	private static final long serialVersionUID = 3631495716228164185L;
@@ -67,7 +67,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 
 	private FileAccessAO createNewFileAccessAO(String sourceName) {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
-		SDFAttributeList schema = new SDFAttributeList(sourceName, attributes.getValue());
+		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 
 		
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");

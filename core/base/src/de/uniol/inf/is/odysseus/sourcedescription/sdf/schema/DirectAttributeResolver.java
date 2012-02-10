@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
     private static final long serialVersionUID = 692060392529144987L;
-    protected final SDFAttributeList schema;
+    protected final SDFSchema schema;
 
-    public DirectAttributeResolver(SDFAttributeList schema) {
+    public DirectAttributeResolver(SDFSchema schema) {
         this.schema = schema;
     }
 
@@ -79,7 +79,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 //        return found;
     }
     
-    private SDFAttribute findORAttribute( SDFAttributeList list, String source, String[] path, int index ) throws AmgigiousAttributeException{
+    private SDFAttribute findORAttribute( SDFSchema list, String source, String[] path, int index ) throws AmgigiousAttributeException{
 		String toFind = path[index];
 		SDFAttribute curRoot = null;
 		for( SDFAttribute attr : list ) {
@@ -114,7 +114,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
         // Nothing to do
     }
 
-    public SDFAttributeList getSchema() {
+    public SDFSchema getSchema() {
         return this.schema;
     }
 }

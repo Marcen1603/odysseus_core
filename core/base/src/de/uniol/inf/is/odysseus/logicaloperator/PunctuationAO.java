@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.logicaloperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.LongParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -27,7 +27,7 @@ public class PunctuationAO extends BinaryLogicalOp {
     }
 
     @Override
-    public SDFAttributeList getOutputSchema() {
+    public SDFSchema getOutputSchema() {
         return getInputSchema(LEFT);
     }
 

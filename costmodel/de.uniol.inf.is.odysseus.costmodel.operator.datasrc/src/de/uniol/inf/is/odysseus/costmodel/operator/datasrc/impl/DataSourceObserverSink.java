@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class DataSourceObserverSink<In> extends AbstractSink<In> {
 	
@@ -66,7 +66,7 @@ public class DataSourceObserverSink<In> extends AbstractSink<In> {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return source.getOutputSchema();
 	}
 	

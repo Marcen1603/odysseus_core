@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.scars.operator.filter.ao;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class FilterExpressionCovarianceUpdateAO <M extends IProbabilityGainConnectionContainer> extends UnaryLogicalOp {
 
@@ -44,7 +44,7 @@ public class FilterExpressionCovarianceUpdateAO <M extends IProbabilityGainConne
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.getInputSchema();
 	}
 

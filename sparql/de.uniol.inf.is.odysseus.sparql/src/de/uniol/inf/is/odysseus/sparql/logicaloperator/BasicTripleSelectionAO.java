@@ -4,7 +4,7 @@ import com.hp.hpl.jena.graph.Triple;
 
 import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class BasicTripleSelectionAO extends SelectAO {
@@ -18,7 +18,7 @@ public class BasicTripleSelectionAO extends SelectAO {
 	}
 	
 	public void calcOutElements(){
-		SDFAttributeList l = new SDFAttributeList("");
+		SDFSchema l = new SDFSchema("");
 		if (triple.getSubject().isVariable()){
 			l.add(new SDFAttribute(null,this.hashCode()+"#"+triple.getSubject().getName(), SDFDatatype.STRING));
 		}

@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.serialize.SerializePropertyList;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -128,9 +128,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (int)
 	 */
 	@Override
-	public SDFAttributeList getInputSchema(int pos) {
+	public SDFSchema getInputSchema(int pos) {
 		LogicalSubscription s = subscribedToSource.get(pos);
-		SDFAttributeList ret = null;
+		SDFSchema ret = null;
 		if (s != null) {
 			ret = s.getSchema();
 			if (ret == null) {
@@ -144,7 +144,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema(int pos) {
+	public SDFSchema getOutputSchema(int pos) {
 		return getOutputSchema();
 	}
 
@@ -154,9 +154,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * @see
 	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#setInputSchema
 	 * (int,
-	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
+	 * de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema)
 	 */
-	// public void setInputSchema(int pos, SDFAttributeList schema) {
+	// public void setInputSchema(int pos, SDFSchema schema) {
 	// subscribedTo.get(pos).setInputSchema(schema);
 	// recalcOutputSchemata = true;
 	// }
@@ -211,7 +211,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort, sourceOutPort, schema));
 	}
 
@@ -303,7 +303,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFAttributeList inputSchema) {
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
 		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
 		// Finde den maximalen verwendeten Port
 		if (sinkInPort == -1) {
@@ -332,7 +332,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
 			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
@@ -380,7 +380,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList inputSchema) {
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
@@ -393,7 +393,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
 	}
 
@@ -439,13 +439,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void connectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void connectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
 
 	@Override
-	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}

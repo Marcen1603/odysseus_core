@@ -19,12 +19,12 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
  */
 public interface IRelationalPredicate extends IPredicate<RelationalTuple<?>>{
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
 }

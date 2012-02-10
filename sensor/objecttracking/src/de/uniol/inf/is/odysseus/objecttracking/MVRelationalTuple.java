@@ -26,7 +26,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * A class for multivariate stream processing.
@@ -53,7 +53,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param noOfAttribs
 	 *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
 	 */
-	public MVRelationalTuple(SDFAttributeList schema, String line, char delimiter) {
+	public MVRelationalTuple(SDFSchema schema, String line, char delimiter) {
 		super();
 		// super(schema, line, delimiter);
 		// if(this.getAttribute(3).equals(19.3906)){
@@ -75,7 +75,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 *            enthaelt die Anzahl der Attribute die das Objekt speichern
 	 *            koennen soll
 	 */
-	public MVRelationalTuple(SDFAttributeList schema) {
+	public MVRelationalTuple(SDFSchema schema) {
 		super();
 		this.findMeasurementValuePositions(schema);
 	}
@@ -142,7 +142,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 *            Attributbelegungen des neuen Tuples
 	 */
 	// @Deprecated
-	// public MVRelationalTuple(SDFAttributeList schema, Object... attributes) {
+	// public MVRelationalTuple(SDFSchema schema, Object... attributes) {
 	// if (schema.size() != attributes.length) {
 	// throw new IllegalArgumentException("listsize doesn't match schema");
 	// }
@@ -191,7 +191,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 * @param attributes
 	 *            Attributbelegung des neuen Tuples
 	 */
-	public MVRelationalTuple(Object[] attributes, SDFAttributeList schema) {
+	public MVRelationalTuple(Object[] attributes, SDFSchema schema) {
 		super(attributes);
 		// if(this.getAttribute(3).equals(19.3906)){
 		// try{
@@ -271,7 +271,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 *             setMeasurementValuePositions instead.
 	 */
 	@Deprecated
-	public void findMeasurementValuePositions(SDFAttributeList schema) {
+	public void findMeasurementValuePositions(SDFSchema schema) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < schema.size(); i++) {
 			SDFAttribute attr = schema.get(i);
@@ -335,15 +335,15 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 //	 *             adequate.
 //	 */
 //	@Deprecated
-//	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFAttributeList overwriteSchema, SDFAttributeList originalSchema) {
+//	public MVRelationalTuple restrict(int[] attrList, RealMatrix matrix, RealMatrix b, SDFSchema overwriteSchema, SDFSchema originalSchema) {
 //
 //		MVRelationalTuple newAttrList = null;
 //
-//		// SDFAttributeList newSchema = overwriteSchema;
+//		// SDFSchema newSchema = overwriteSchema;
 //		// if (overwriteSchema == null){
 //		// // Schema anpassen
 //		// if (schema != null){
-//		// newSchema = new SDFAttributeList();
+//		// newSchema = new SDFSchema();
 //		// for (int i: attrList) {
 //		// newSchema.add(getSchema().get(i));
 //		// }
@@ -519,7 +519,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 	 *            enthaelt die Anzahl der Attribute
 	 * @returns Array mit den Attributen
 	 */
-	protected final static Object[] splittLineToAttributes(final String line, final char delimiter, final SDFAttributeList schema) {
+	protected final static Object[] splittLineToAttributes(final String line, final char delimiter, final SDFSchema schema) {
 		String[] attributes = line.split(Pattern.quote(new String(new char[] { delimiter })));
 		// Pattern p = Pattern.compile("(.*)[(" + delimiter + ".*)*");
 		// Matcher m = p.matcher(line);

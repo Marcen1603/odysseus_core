@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 @LogicalOperator(name = "FREQUENT_ITEM", minInputPorts = 1, maxInputPorts = 1)
@@ -37,7 +37,7 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 
 	private List<SDFAttribute> choosenAttributes = new ArrayList<SDFAttribute>();
 
-	private SDFAttributeList outputschema;
+	private SDFSchema outputschema;
 	private boolean recalc = true;
 
 	public enum Strategy {
@@ -70,9 +70,9 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if (recalc) {
-			SDFAttributeList list = new SDFAttributeList("FrequentItem");
+			SDFSchema list = new SDFSchema("FrequentItem");
 			for (SDFAttribute c : this.choosenAttributes) {
 				list.add(c.clone());
 			}
@@ -118,11 +118,11 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 
 	public int[] getRestrictList() {
 		return calcRestrictList(getInputSchema(0),
-				new SDFAttributeList(getInputSchema(0).getURI(),this.getChoosenAttributeList()));
+				new SDFSchema(getInputSchema(0).getURI(),this.getChoosenAttributeList()));
 	}
 
-	private static int[] calcRestrictList(SDFAttributeList in,
-			SDFAttributeList out) {
+	private static int[] calcRestrictList(SDFSchema in,
+			SDFSchema out) {
 		int[] ret = new int[out.size()];
 		int i = 0;
 		for (SDFAttribute a : out) {

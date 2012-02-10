@@ -66,7 +66,7 @@ import de.uniol.inf.is.odysseus.sla.factories.UnitFactory;
 import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -317,7 +317,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	public static void initPredicates(ILogicalOperator curInputAO) {
 		if (curInputAO.getPredicate() != null) {
-			SDFAttributeList rightInputSchema = null;
+			SDFSchema rightInputSchema = null;
 			if (curInputAO.getSubscribedToSource().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
@@ -330,7 +330,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	public static void initPredicate(IPredicate<?> predicate,
-			SDFAttributeList left, SDFAttributeList right) {
+			SDFSchema left, SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {
 			ComplexPredicate<?> compPred = (ComplexPredicate<?>) predicate;
 			initPredicate(compPred.getLeft(), left, right);

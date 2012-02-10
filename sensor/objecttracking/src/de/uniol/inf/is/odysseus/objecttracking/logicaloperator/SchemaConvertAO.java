@@ -16,12 +16,12 @@ package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 /**
- * Converts SDFAttributeList to SDFAttributeListExtended
+ * Converts SDFSchema to SDFSchemaExtended
  * 
  * @author André Bolles
  */
@@ -35,23 +35,23 @@ public class SchemaConvertAO extends RenameAO{
 
 	public SchemaConvertAO(AbstractLogicalOperator po) {
 		super(po);
-		outputSchema = new SDFAttributeListExtended(po.getOutputSchema());
+		outputSchema = new SDFSchemaExtended(po.getOutputSchema());
 	}
 	
 	public SchemaConvertAO(SchemaConvertAO ao){
 		super(ao);
-		outputSchema = new SDFAttributeListExtended(ao.outputSchema);
+		outputSchema = new SDFSchemaExtended(ao.outputSchema);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
-		this.outputSchema = new SDFAttributeListExtended(outputSchema.clone()); // clone() is necessary
+	public void setOutputSchema(SDFSchema outputSchema) {
+		this.outputSchema = new SDFSchemaExtended(outputSchema.clone()); // clone() is necessary
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if(this.outputSchema == null){
-			this.outputSchema = new SDFAttributeListExtended(this.getSubscribedToSource(0).getSchema().clone());
+			this.outputSchema = new SDFSchemaExtended(this.getSubscribedToSource(0).getSchema().clone());
 		}
 		return outputSchema;
 	}

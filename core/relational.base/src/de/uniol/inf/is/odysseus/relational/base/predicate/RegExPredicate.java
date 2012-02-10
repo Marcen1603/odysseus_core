@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -59,7 +59,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		Iterator<SDFAttribute> it = leftSchema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
 			SDFAttribute attr = it.next();
@@ -166,7 +166,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	@Override
 	public List<SDFAttribute> getAttributes() {
-		SDFAttributeList attrList = new SDFAttributeList("");
+		SDFSchema attrList = new SDFSchema("");
 		attrList.add(this.attribute);
 		return Collections.unmodifiableList(attrList);
 	}

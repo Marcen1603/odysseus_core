@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 // author: sven
 public class TestUtil
 {
-  public static void printSchema(SDFAttributeList schema)
+  public static void printSchema(SDFSchema schema)
   {
     for( SchemaInfo info : new SchemaIterator(schema)) {
     	
@@ -43,7 +43,7 @@ public class TestUtil
     }
   }
   
-  public static <M extends IProbability> void printTuple(MVRelationalTuple<M> tuple, SDFAttributeList schema)
+  public static <M extends IProbability> void printTuple(MVRelationalTuple<M> tuple, SDFSchema schema)
   {
     for( TupleInfo info : new TupleIterator(tuple, schema) ) {
     	

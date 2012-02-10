@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 
@@ -212,7 +212,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 */
 	@Override
 	@Deprecated
-	public MVRelationalTuple<M> predictData(SDFAttributeList schema, MVRelationalTuple<M> object, PointInTime t){	
+	public MVRelationalTuple<M> predictData(SDFSchema schema, MVRelationalTuple<M> object, PointInTime t){	
 		counter++;
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
@@ -309,7 +309,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	}
 	
 	@Override
-	public M predictMetadata(SDFAttributeList schem, MVRelationalTuple<M> object, PointInTime t){
+	public M predictMetadata(SDFSchema schem, MVRelationalTuple<M> object, PointInTime t){
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
 		// throw an exception
@@ -472,7 +472,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 * @param schema
 	 */
 	@Deprecated
-	public int[][] getVariables(SDFAttributeList schema){
+	public int[][] getVariables(SDFSchema schema){
 		int[][] tempVars = new int[this.variables.length][]; // this.variables.length = this.expressions.length
 		for(int u =0; u<expressions.length; u++){
 			

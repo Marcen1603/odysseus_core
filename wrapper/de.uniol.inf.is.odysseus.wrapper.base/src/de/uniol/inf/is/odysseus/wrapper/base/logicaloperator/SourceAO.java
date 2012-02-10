@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 import de.uniol.inf.is.odysseus.wrapper.base.Activator;
 
@@ -29,7 +29,7 @@ public class SourceAO extends AbstractLogicalOperator implements
      */
 	private static final long serialVersionUID = 2514000374871326771L;
 
-	private final Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
+	private final Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	private final Map<String, String> options = new HashMap<String, String>();
 	private String adapter;
 
@@ -45,7 +45,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 */
 	public SourceAO(final SourceAO ao) {
 		super(ao);
-		for (final Entry<Integer, SDFAttributeList> entry : ao.outputSchema
+		for (final Entry<Integer, SDFSchema> entry : ao.outputSchema
 				.entrySet()) {
 			this.outputSchema.put(entry.getKey(), entry.getValue().clone());
 		}
@@ -61,7 +61,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * ()
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return this.getOutputSchema(0);
 	}
 
@@ -72,7 +72,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * getOutputSchema(int)
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema(final int port) {
+	public SDFSchema getOutputSchema(final int port) {
 		return this.outputSchema.get(port);
 	}
 
@@ -81,10 +81,10 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable#setOutputSchema
-	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList)
+	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFSchema)
 	 */
 	@Override
-	public void setOutputSchema(final SDFAttributeList outputSchema) {
+	public void setOutputSchema(final SDFSchema outputSchema) {
 		this.setOutputSchema(outputSchema, 0);
 	}
 
@@ -93,11 +93,11 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable#setOutputSchema
-	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFAttributeList,
+	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFSchema,
 	 * int)
 	 */
 	@Override
-	public void setOutputSchema(final SDFAttributeList outputSchema,
+	public void setOutputSchema(final SDFSchema outputSchema,
 			final int port) {
 		this.outputSchema.put(port, outputSchema);
 	}
@@ -112,7 +112,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 */
 	@Parameter(name = "SCHEMA", type = StringParameter.class, isList = true)
 	public void setOutputSchemaWithList(final List<String> schemaAttributes) {
-		final SDFAttributeList schema = new SDFAttributeList("");
+		final SDFSchema schema = new SDFSchema("");
 		for (final String item : schemaAttributes) {
 			final String[] schemaInformation = item.split(":");
 			final SDFAttribute attribute = new SDFAttribute(null,

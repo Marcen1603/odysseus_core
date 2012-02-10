@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
 public class FileSinkAO extends AbstractLogicalOperator {
@@ -78,7 +78,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return null;
 	}
 

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.ITransformationHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardTransformationHelper implements ITransformationHelper{
@@ -133,7 +133,7 @@ public class StandardTransformationHelper implements ITransformationHelper{
 			ISink child = subscription.getTarget();
 			int sinkInPort = subscription.getSinkInPort();
 			int sourceOutPort = subscription.getSourceOutPort();
-			SDFAttributeList schema = subscription.getSchema();
+			SDFSchema schema = subscription.getSchema();
 			
 			oldFather.unsubscribeSink(subscription);
 			newFather.subscribeSink(child, sinkInPort, sourceOutPort, schema);

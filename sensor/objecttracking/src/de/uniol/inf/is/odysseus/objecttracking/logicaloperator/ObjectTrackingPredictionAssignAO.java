@@ -22,11 +22,11 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.LinearProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 @SuppressWarnings({"rawtypes","unchecked","unused"})
 public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
@@ -49,7 +49,7 @@ public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 	 */
 	private IPredictionFunction defaultPredictionFunction;
 	
-	private SDFAttributeListExtended outputSchema;
+	private SDFSchemaExtended outputSchema;
 	
 	/** 
 	 * The first measurement attribute has not necessarily to be the
@@ -133,14 +133,14 @@ public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		this.outputSchema = new SDFAttributeListExtended(this.getInputSchema());
+	public SDFSchema getOutputSchema() {
+		this.outputSchema = new SDFSchemaExtended(this.getInputSchema());
 		HashMap<IPredicate<? super T>, IPredictionFunction> outPredFcts = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : this.predictionFunctions.entrySet()){
 			outPredFcts.put((IPredicate<? super T>)entry.getKey().clone(), (IPredictionFunction)entry.getValue().clone());
 		}
 		outPredFcts.put(new TruePredicate(), this.defaultPredictionFunction);
-		this.outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, this.predictionFunctions);
+		this.outputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, this.predictionFunctions);
 		
 		return this.outputSchema;
 	}

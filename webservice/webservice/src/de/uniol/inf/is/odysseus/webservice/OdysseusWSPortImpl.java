@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -153,7 +153,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
         	IQuery query = executor.getPlan().getQuery(Integer.valueOf(queryID));
-        	SDFAttributeList outputSchema = query.getLogicalPlan().getOutputSchema();
+        	SDFSchema outputSchema = query.getLogicalPlan().getOutputSchema();
         	ObjectFactory factory = new ObjectFactory();
         	
         	SchemaArray schemaArray = factory.createSchemaArray();

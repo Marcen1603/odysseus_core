@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
@@ -68,8 +68,8 @@ public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatenc
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		SDFAttributeList sourceTimeSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema();
-		SDFAttributeList scanSchema = this.getSubscribedToSource(1).getTarget().getOutputSchema();
+		SDFSchema sourceTimeSchema = this.getSubscribedToSource(0).getTarget().getOutputSchema();
+		SDFSchema scanSchema = this.getSubscribedToSource(1).getTarget().getOutputSchema();
 		SchemaHelper helper1 = new SchemaHelper(sourceTimeSchema);
 		currentTimeSchemaPath = helper1.getSchemaIndexPath(helper1.getStartTimestampFullAttributeName());
 		SchemaHelper helper2 = new SchemaHelper(scanSchema);

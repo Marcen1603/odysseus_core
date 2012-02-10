@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scars.util.helper;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
@@ -61,7 +61,7 @@ public class UtilPrinter {
    *           Wenn mindestens einer der angegebenen Parameter <code>null</code>
    *           ist.
    */
-  public static void printTuple(MVRelationalTuple<?> tuple, SDFAttributeList schema, String attributeName) {
+  public static void printTuple(MVRelationalTuple<?> tuple, SDFSchema schema, String attributeName) {
     if (tuple == null)
       throw new IllegalArgumentException("tuple is null");
     if (schema == null)
@@ -108,7 +108,7 @@ public class UtilPrinter {
    * @throws IllegalArgumentException
    *           Wenn das angegebene Schema <code>null</code> ist.
    */
-  public static void printSchema(SDFAttributeList schema) {
+  public static void printSchema(SDFSchema schema) {
     if (schema == null)
       throw new IllegalArgumentException("schema is null");
 

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -38,7 +38,7 @@ public abstract class AbstractRelationalPredicateDetection implements IUnaryDete
 		this.attributeName = attributeName;
 	}
 	
-	protected RelationalPredicate buildPredicate(String predicateString, SDFAttributeList schema) {
+	protected RelationalPredicate buildPredicate(String predicateString, SDFSchema schema) {
 		try {
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(schema);			
 			// build the predicate			
@@ -51,7 +51,7 @@ public abstract class AbstractRelationalPredicateDetection implements IUnaryDete
 		}
 	}	
 	
-	public void init(SDFAttributeList schema){		
+	public void init(SDFSchema schema){		
 		String predicateString = createPredicate();
 		buildPredicate(predicateString, schema);
 		this.predicate.init(schema, null);

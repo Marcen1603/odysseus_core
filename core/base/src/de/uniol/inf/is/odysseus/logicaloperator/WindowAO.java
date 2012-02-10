@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IllegalParameterExceptio
 import de.uniol.inf.is.odysseus.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW")
 public class WindowAO extends UnaryLogicalOp {
@@ -134,7 +134,7 @@ public class WindowAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 

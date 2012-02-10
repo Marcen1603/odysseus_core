@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.context.store;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -24,22 +24,22 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class ContextStoreEntry<T> {
 
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private T value;
 	
 	
-	public ContextStoreEntry(SDFAttributeList schema) {
+	public ContextStoreEntry(SDFSchema schema) {
 		super();
 		this.schema = schema;		
 	}
 
 
-	public SDFAttributeList getSchema() {
+	public SDFSchema getSchema() {
 		return schema;
 	}
 
 
-	public void setSchema(SDFAttributeList schema) {
+	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}
 

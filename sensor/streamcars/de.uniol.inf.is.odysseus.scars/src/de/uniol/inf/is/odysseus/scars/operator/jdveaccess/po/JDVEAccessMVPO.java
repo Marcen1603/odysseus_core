@@ -32,14 +32,14 @@ import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractS
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M> {
 
 	private JDVEData<M> data;
 	private int port;
 	protected MVRelationalTuple<M> buffer;
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
@@ -50,7 +50,7 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		super.setOutputSchema(outputSchema);
 		this.outputSchema = outputSchema;
 	}
@@ -103,7 +103,7 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
@@ -162,10 +162,10 @@ class JDVEData<M extends IProbability> {
 
 	private int port = -1;
 	private DatagramSocket clientSocket;
-	private SDFAttributeList attributeList;
+	private SDFSchema attributeList;
 	private long lastTimestamp;
 
-	public JDVEData(int pPort, SDFAttributeList list) throws SocketException {
+	public JDVEData(int pPort, SDFSchema list) throws SocketException {
 		this.port = pPort;
 		this.clientSocket = new DatagramSocket(this.port);
 		this.clientSocket.setSoTimeout(TIMEOUT);
@@ -209,7 +209,7 @@ class JDVEData<M extends IProbability> {
 		}
 	}
 
-	public MVRelationalTuple<M> parseStart(SDFAttributeList schema, ByteBuffer bb) {
+	public MVRelationalTuple<M> parseStart(SDFSchema schema, ByteBuffer bb) {
 		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
 		base.setAttribute(0, parseNext(schema.get(0), bb));
 		return base;

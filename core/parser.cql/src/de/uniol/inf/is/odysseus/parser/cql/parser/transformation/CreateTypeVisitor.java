@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -41,7 +41,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	String name;
 	private ISession caller;
 	private IDataDictionary dd;
-	SDFAttributeList attributes;
+	SDFSchema attributes;
 
 	public CreateTypeVisitor(ISession user, IDataDictionary dd) {
 		this.caller = user;
@@ -51,7 +51,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		attributes = new SDFAttributeList(name);
+		attributes = new SDFSchema(name);
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, attributes);

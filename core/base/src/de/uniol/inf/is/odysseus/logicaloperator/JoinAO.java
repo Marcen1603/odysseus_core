@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
-	private SDFAttributeList outputSchema = null;
+	private SDFSchema outputSchema = null;
 
 	public JoinAO() {
 		super();
@@ -45,7 +45,7 @@ public class JoinAO extends BinaryLogicalOp {
 
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
-		SDFAttributeList schema = joinPO.getOutputSchema();
+		SDFSchema schema = joinPO.getOutputSchema();
 		if (schema != null) {
 			this.outputSchema = schema.clone();
 		}
@@ -71,12 +71,12 @@ public class JoinAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public synchronized SDFAttributeList getOutputSchema() {
+	public synchronized SDFSchema getOutputSchema() {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata) {
-			outputSchema = new SDFAttributeList("");
+			outputSchema = new SDFSchema("");
 			for (LogicalSubscription l : getSubscribedToSource()) {
-				outputSchema = SDFAttributeList.union(outputSchema, l.getSchema());
+				outputSchema = SDFSchema.union(outputSchema, l.getSchema());
 			}
 			recalcOutputSchemata = false;
 		}

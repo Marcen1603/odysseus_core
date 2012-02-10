@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class SimplePredicateDetection extends AbstractRelationalPredicateDetecti
 
 	private String predicateString;	
 
-	public SimplePredicateDetection(String attributeName, SDFAttributeList schema, String predicateString) {		
+	public SimplePredicateDetection(String attributeName, SDFSchema schema, String predicateString) {		
 		super(attributeName);
 		this.predicateString = predicateString;
 	}

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 
@@ -11,12 +11,12 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 	
 	protected int schemaSize;
 
-	protected SDFAttributeList leftSchema;
-	protected SDFAttributeList rightSchema;
-	protected SDFAttributeList resultSchema;
+	protected SDFSchema leftSchema;
+	protected SDFSchema rightSchema;
+	protected SDFSchema resultSchema;
 
 	
-	public RelationalLeftMergeFunction(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema){
+	public RelationalLeftMergeFunction(SDFSchema leftSchema, SDFSchema rightSchema, SDFSchema resultSchema){
 		this.schemaSize = resultSchema.size();
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;

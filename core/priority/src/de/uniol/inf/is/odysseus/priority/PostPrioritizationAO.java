@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.priority;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class PostPrioritizationAO extends UnaryLogicalOp {
 
@@ -72,7 +72,7 @@ public class PostPrioritizationAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 

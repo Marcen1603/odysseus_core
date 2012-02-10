@@ -3,7 +3,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.JoinAO;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement;
 //
 //public class NaturalJoinAO extends JoinAO {
@@ -36,10 +36,10 @@
 //		this.setInputSchema(1, po2.getOutputSchema());
 //		
 //		if (po1 != null && po2 != null) {
-//			SDFAttributeList l1 = po1.getOutElements();
-//			SDFAttributeList l2 = po2.getOutElements();
+//			SDFSchema l1 = po1.getOutElements();
+//			SDFSchema l2 = po2.getOutElements();
 //
-//			SDFAttributeList jList = new SDFAttributeList();
+//			SDFSchema jList = new SDFSchema();
 //			// Alle von links
 //			jList.addAttributes(l1);
 //			// ergaenzt um die fehlenden von rechts, die noch nicht links drin
@@ -67,7 +67,7 @@
 //		return a.getQualName().equals(b.getQualName());
 //	}
 //
-//	private boolean refersSameVar(SDFAttributeList list, SDFAttribute a) {
+//	private boolean refersSameVar(SDFSchema list, SDFAttribute a) {
 //		for (SDFSchemaElement e : list) {
 //			if (refersSameVar((SDFAttribute) e, a)) {
 //				return true;

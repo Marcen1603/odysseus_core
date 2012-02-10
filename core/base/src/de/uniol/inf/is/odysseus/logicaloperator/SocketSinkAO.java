@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1)
 public class SocketSinkAO extends AbstractLogicalOperator {
@@ -50,7 +50,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(0);
 	}
 

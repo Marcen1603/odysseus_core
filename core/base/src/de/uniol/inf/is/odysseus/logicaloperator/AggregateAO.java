@@ -30,28 +30,28 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1)
 public class AggregateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 2539966167342852544L;
 
-	final private Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations;
+	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
 	final private List<SDFAttribute> groupingAttributes;
-	final private SDFAttributeList outputSchema;
+	final private SDFSchema outputSchema;
 	private int dumpAtValueCount = -1;
 
 	public AggregateAO() {
 		super();
-		aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>();
+		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
-		outputSchema = new SDFAttributeList(getInputSchema()!=null?getInputSchema().getURI():"AGGREGATE");
+		outputSchema = new SDFSchema(getInputSchema()!=null?getInputSchema().getURI():"AGGREGATE");
 	}
 
 	public AggregateAO(AggregateAO op) {
 		super(op);
-		aggregations = new HashMap<SDFAttributeList, Map<AggregateFunction, SDFAttribute>>(
+		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>(
 				op.aggregations);
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
 		outputSchema = op.outputSchema.clone();
@@ -60,12 +60,12 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	public void addAggregation(SDFAttribute attribute,
 			AggregateFunction function, SDFAttribute outAttribute) {
-		SDFAttributeList attributes = new SDFAttributeList("");
+		SDFSchema attributes = new SDFSchema("");
 		attributes.add(attribute);
 		addAggregation(attributes, function, outAttribute);
 	}
 
-	public void addAggregation(SDFAttributeList attributes,
+	public void addAggregation(SDFSchema attributes,
 			AggregateFunction function, SDFAttribute outAttribute) {
 		if (getOutputSchema().contains(outAttribute)) {
 			throw new IllegalArgumentException(
@@ -93,7 +93,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 
 	@GetParameter(name="AGGREGATIONS")
-	public Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> getAggregations() {
+	public Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> getAggregations() {
 		return this.aggregations;
 	}
 
@@ -109,7 +109,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		getOutputSchema().add(attribute);
 	}
 	
-	public void addGroupingAttributes(SDFAttributeList attributes) {
+	public void addGroupingAttributes(SDFSchema attributes) {
 		for (SDFAttribute a : attributes) {
 			addGroupingAttribute(a);
 		}
@@ -141,7 +141,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 

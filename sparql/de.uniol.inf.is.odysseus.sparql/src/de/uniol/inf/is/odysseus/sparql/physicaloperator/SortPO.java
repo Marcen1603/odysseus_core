@@ -18,7 +18,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.SortAO;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This is an operator for OrderBy in an sparql query.
@@ -57,7 +57,7 @@
 //		this.sa.setQueryPredicate(p_query);
 //		
 //		// create the field of attribute indices
-//		SDFAttributeList attToSort = ((SortAO)this.ao).getSortAttrib();
+//		SDFSchema attToSort = ((SortAO)this.ao).getSortAttrib();
 //		boolean[] direction = ((SortAO)this.ao).getAscending();
 //		
 //		int[] indices = new int[attToSort.size()];

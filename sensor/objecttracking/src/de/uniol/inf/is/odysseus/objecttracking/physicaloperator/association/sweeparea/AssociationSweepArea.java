@@ -33,12 +33,12 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class AssociationSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
 //
-//	SDFAttributeList leftSchema;
-//	SDFAttributeList rightSchema;
+//	SDFSchema leftSchema;
+//	SDFSchema rightSchema;
 //	
 //	Map<IPredicate, IRangePredicate> rangePredicates;
 //	
-//	public AssociationSweepArea(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+//	public AssociationSweepArea(SDFSchema leftSchema, SDFSchema rightSchema){
 //		super();
 //		this.leftSchema = leftSchema;
 //		this.rightSchema = rightSchema;

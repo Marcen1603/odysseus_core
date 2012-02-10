@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.util.LoggerHelper;
 
 /**
@@ -104,7 +104,7 @@ public class RelationalRestructHelper {
 
 	public static boolean subsetPredicate(
 			IPredicate<?> predicate,
-			SDFAttributeList attributes) {
+			SDFSchema attributes) {
 
 		final List<String> uris = new ArrayList<String>(attributes
 				.getAttributeCount());
@@ -141,9 +141,9 @@ public class RelationalRestructHelper {
 
 	public static Collection<ILogicalOperator> switchOperator(ProjectAO father,
 			RenameAO son) {
-		SDFAttributeList inputSchema = son.getInputSchema();
-		SDFAttributeList renameOutputSchema = son.getOutputSchema();
-		SDFAttributeList oldOutputSchema = father.getOutputSchema();
+		SDFSchema inputSchema = son.getInputSchema();
+		SDFSchema renameOutputSchema = son.getOutputSchema();
+		SDFSchema oldOutputSchema = father.getOutputSchema();
 		LogicalSubscription toDown = son.getSubscribedToSource(0);
 		LogicalSubscription toUp = father.getSubscription();
 
@@ -154,7 +154,7 @@ public class RelationalRestructHelper {
 		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
 
 		// change attribute names for projection
-		SDFAttributeList newOutputSchema = new SDFAttributeList(oldOutputSchema.getURI());
+		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema.getURI());
 		for (SDFAttribute a : oldOutputSchema) {
 			int pos = son.getOutputSchema().indexOf(a);
 			newOutputSchema.add(inputSchema.get(pos));
@@ -164,7 +164,7 @@ public class RelationalRestructHelper {
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
 		// remove attributes from rename operator that get projected away
-		SDFAttributeList newRenameSchema = new SDFAttributeList(inputSchema.getURI());
+		SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI());
 		Iterator<SDFAttribute> inIt = inputSchema.iterator();
 		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
 		while (inIt.hasNext()) {

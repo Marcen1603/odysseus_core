@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
@@ -269,7 +269,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			if(node.getAggregations().isEmpty()){
 				ProjectAO projectAO = new ProjectAO();
 				
-				SDFAttributeList outputSchema = new SDFAttributeList("");
+				SDFSchema outputSchema = new SDFSchema("");
 				
 				/* In SPARQL Variables are used only for natural joins.
 				 * Odysseus does not provide a natural join and therefore
@@ -716,7 +716,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFAttributeList commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+						SDFSchema commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
 						IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 						join.setPredicate(joinPred);
 						
@@ -729,7 +729,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							
 							// create join predicate
 							// each variable that is in both schemas must be equal
-							SDFAttributeList innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							SDFSchema innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 							IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 							innerJoin.setPredicate(innerJoinPred);
 							
@@ -753,7 +753,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					
 					// create join predicate
 					// each variable that is in both schemas must be equal
-					SDFAttributeList commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+					SDFSchema commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
 					IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 					join.setPredicate(joinPred);
 					
@@ -766,7 +766,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFAttributeList innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						SDFSchema innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 						IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 						innerJoin.setPredicate(innerJoinPred);
 						
@@ -1247,7 +1247,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		boolean isPersistent = node.isPersistent();
 		
 		// the schema
-		SDFAttributeList outputSchema = new SDFAttributeList("");
+		SDFSchema outputSchema = new SDFSchema("");
 		
 		SDFAttribute subject = new SDFAttribute(null,streamName + ".subject", SDFDatatype.STRING);
 		outputSchema.add(subject);
@@ -1353,8 +1353,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	 * @param rightSchema
 	 * @return
 	 */
-	private static SDFAttributeList getCommonVariables(SDFAttributeList leftSchema, SDFAttributeList rightSchema){
-		SDFAttributeList commonSchema = new SDFAttributeList("");
+	private static SDFSchema getCommonVariables(SDFSchema leftSchema, SDFSchema rightSchema){
+		SDFSchema commonSchema = new SDFSchema("");
 		for(SDFAttribute leftAttr: leftSchema){
 			for(SDFAttribute rightAttr: rightSchema){
 				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){
@@ -1373,7 +1373,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	 * {?y :pred  ?x
 	 *  ?y :pred2 ?x}
 	 */
-	private static IPredicate createJoinPredicate(SDFAttributeList commonVars, SDFAttributeList leftSchema, SDFAttributeList rightSchema){
+	private static IPredicate createJoinPredicate(SDFSchema commonVars, SDFSchema leftSchema, SDFSchema rightSchema){
 		// if there are no common vars, the predicate is always true
 		if(commonVars.isEmpty()){
 			return new TruePredicate();
@@ -1381,7 +1381,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		
 //		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
-		SDFAttributeList outputSchema = SDFAttributeList.union(leftSchema, rightSchema);
+		SDFSchema outputSchema = SDFSchema.union(leftSchema, rightSchema);
 		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
 		
 		// create the join predicate as an expression completely parsed in MEP

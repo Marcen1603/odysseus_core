@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractListParameterEditor
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.ComboEditingSupport;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingSupport;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class AggregationsParameterEditor extends AbstractListParameterEditor<AggregateItem> {
 
@@ -63,7 +63,7 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 	
 	private List<AggItem> aggregations = new ArrayList<AggItem>();
 	private TableViewer tableViewer;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 
 	@Override
 	public void createControl(Composite parent) {

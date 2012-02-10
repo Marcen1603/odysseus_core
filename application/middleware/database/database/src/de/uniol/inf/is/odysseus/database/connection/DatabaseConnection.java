@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -81,7 +81,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 	
 
 	@Override
-	public void createTable(String tablename, SDFAttributeList schema) {
+	public void createTable(String tablename, SDFSchema schema) {
 		try {
 			Statement st = connection.createStatement();
 			String table = "CREATE TABLE " + tablename + "(";
@@ -113,8 +113,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public SDFAttributeList getSchema(String tablename) {
-		SDFAttributeList schema = new SDFAttributeList(tablename);
+	public SDFSchema getSchema(String tablename) {
+		SDFSchema schema = new SDFSchema(tablename);
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet rs = meta.getColumns(null, null, tablename, null);
@@ -130,7 +130,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 		return schema;
 	}	
 
-	public boolean equalSchemas(String tablename, SDFAttributeList schema) {
+	public boolean equalSchemas(String tablename, SDFSchema schema) {
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			int i = 0;

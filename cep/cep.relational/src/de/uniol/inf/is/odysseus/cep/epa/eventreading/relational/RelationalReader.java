@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> {
 
@@ -35,7 +35,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 	 *            Das relationale Schema der Tupel, die gelesen werden sollen.
 	 *            
 	 */
-	public RelationalReader(SDFAttributeList scheme, String type) {
+	public RelationalReader(SDFSchema scheme, String type) {
 		super(type);
 		this.scheme = new HashMap<String, Integer>();
 		int i=0;

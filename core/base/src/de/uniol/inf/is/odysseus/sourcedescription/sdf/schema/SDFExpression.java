@@ -185,7 +185,7 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
-	public void initAttributePositions(SDFAttributeList schema) {
+	public void initAttributePositions(SDFSchema schema) {
 		this.attributePositions = new int[this.attributes.size()];
 
 		int j = 0;

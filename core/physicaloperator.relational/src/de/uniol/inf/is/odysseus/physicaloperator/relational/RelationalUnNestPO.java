@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -33,13 +33,13 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
     private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
     private int nestedAttribute;
-    private final SDFAttributeList inputSchema;
+    private final SDFSchema inputSchema;
 
     /**
      * @param schema
      * @param attribute
      */
-    public RelationalUnNestPO(final SDFAttributeList inputSchema, final int nestedAttribute) {
+    public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttribute) {
         this.inputSchema = inputSchema;
         this.nestedAttribute = nestedAttribute;
     }

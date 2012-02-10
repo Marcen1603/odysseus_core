@@ -54,7 +54,7 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -81,11 +81,11 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		this.name = name;
 	}
 
-	public SDFAttributeList getAttributes() {
+	public SDFSchema getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(SDFAttributeList attributes) {
+	public void setAttributes(SDFSchema attributes) {
 		this.attributes = attributes;
 	}
 
@@ -97,13 +97,13 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		this.operator = operator;
 	}
 
-	SDFAttributeList attributes;
+	SDFSchema attributes;
 	ILogicalOperator operator;
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		attributes = new SDFAttributeList(name);
+		attributes = new SDFSchema(name);
 		node.jjtGetChild(1).jjtAccept(this, data);
 		dd.addSourceType(name, "RelationalStreaming");
 		dd.addEntitySchema(name, attributes, caller);
@@ -129,7 +129,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
 		operator = ((List<IQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
-		SDFAttributeList otherAttributes = operator.getOutputSchema();
+		SDFSchema otherAttributes = operator.getOutputSchema();
 
 		if (otherAttributes.size() != this.attributes.size()) {
 			throw new QueryParseException("Query output does not match specified schema for: " + name);

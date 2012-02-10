@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Initializes IRelationalal predicates with the input schemas of a given
@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
-	private final SDFAttributeList leftSchema;
-	private final SDFAttributeList rightSchema;
+	private final SDFSchema leftSchema;
+	private final SDFSchema rightSchema;
 	
 	public InitPredicateFunctor(ILogicalOperator op) {
 		this.leftSchema = op.getInputSchema(0);

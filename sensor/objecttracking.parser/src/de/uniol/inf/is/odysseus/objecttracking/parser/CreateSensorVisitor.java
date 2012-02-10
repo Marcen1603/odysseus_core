@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTChannel;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefault
 import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
@@ -73,16 +73,16 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
 		node.jjtGetChild(3).jjtAccept(this, data);
 
-		SDFAttributeListExtended ex = new SDFAttributeListExtended(
+		SDFSchemaExtended ex = new SDFSchemaExtended(
 				new SDFAttribute[] { rootAttribute });
 
-		SDFAttributeList schema = new SDFAttributeList(name, ex);
+		SDFSchema schema = new SDFSchema(name, ex);
 	
 		dd.addSourceType(name,
 				"ObjectRelationalStreaming");
 		dd.addEntitySchema(name, schema, user);
 
-		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist
+		// TODO: rekursiv ausgeben, was in der SDFSchemaExtended ist
 		// (extra Klasse oder so)
 		// accessao bauen
 		JDVEAccessMVAO source = new JDVEAccessMVAO(new SDFSource(name,
@@ -104,7 +104,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList("");
+		SDFSchema complexAttrSchema = new SDFSchema("");
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(this, data);
 			complexAttrSchema.add(attr);
@@ -128,7 +128,7 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 
 		
-		SDFAttributeList complexAttrSchema = new SDFAttributeList("");
+		SDFSchema complexAttrSchema = new SDFSchema("");
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute listedAttribute = (SDFAttribute) node.jjtGetChild(i)
 					.jjtAccept(this, data);

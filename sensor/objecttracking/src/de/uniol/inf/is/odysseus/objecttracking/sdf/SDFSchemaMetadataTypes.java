@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.sdf;
 
-public enum SDFAttributeListMetadataTypes {
+public enum SDFSchemaMetadataTypes {
 
 	PREDICTION_FUNCTIONS
 }

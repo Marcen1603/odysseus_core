@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.latency;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(name = "CALCLATENCY", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
 public class LatencyCalculationAO extends UnaryLogicalOp {
@@ -33,7 +33,7 @@ public class LatencyCalculationAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(0);
 	}
 

@@ -32,12 +32,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class AttributesParameterEditor extends AbstractParameterEditor implements IParameterEditor {
 
 	private List<Button> checkBoxes = new ArrayList<Button>();
-	private SDFAttributeList attributes;
+	private SDFSchema attributes;
 	
 	public AttributesParameterEditor() {
 	}

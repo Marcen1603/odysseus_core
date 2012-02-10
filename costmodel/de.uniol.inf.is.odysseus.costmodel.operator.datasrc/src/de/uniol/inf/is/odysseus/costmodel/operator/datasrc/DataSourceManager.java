@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.AttributeObserve
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.DataSourceObserverSink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Verwaltet die Beobachtung der Datenquellen. Dabei handelt es sich um eine
@@ -92,7 +92,7 @@ public class DataSourceManager {
 			getLogger().debug("New source added: " + src);
 
 			if (!waitingAttributes.isEmpty()) {
-				SDFAttributeList attributes = src.getOutputSchema();
+				SDFSchema attributes = src.getOutputSchema();
 				List<SDFAttribute> toRemove = new ArrayList<SDFAttribute>();
 				for (SDFAttribute waitingAttribute : waitingAttributes) {
 					if (attributes.contains(waitingAttribute)) {
@@ -233,7 +233,7 @@ public class DataSourceManager {
 
 	private DataSourceObserverSink<?> findSink(SDFAttribute attribute) {
 		for (SourceInfo sourceInfo : sources.values()) {
-			SDFAttributeList attributeList = sourceInfo.observer.getOutputSchema();
+			SDFSchema attributeList = sourceInfo.observer.getOutputSchema();
 			if (attributeList.contains(attribute))
 				return sourceInfo.observer;
 		}

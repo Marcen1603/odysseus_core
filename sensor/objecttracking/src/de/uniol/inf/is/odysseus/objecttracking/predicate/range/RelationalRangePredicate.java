@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateIniti
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -129,7 +129,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	}
 
 	@Override
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema) {
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
 		this.attributePositions = new HashMap<IPredicate, int[]>();
 		this.fromRightChannel = new HashMap<IPredicate, boolean[]>();
 		
@@ -174,7 +174,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		}
 	}
 
-	private int indexOf(SDFAttributeList schema, SDFAttribute cqlAttr) {
+	private int indexOf(SDFSchema schema, SDFAttribute cqlAttr) {
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
 			if (cqlAttr.equalsCQL((SDFAttribute) it.next())) {

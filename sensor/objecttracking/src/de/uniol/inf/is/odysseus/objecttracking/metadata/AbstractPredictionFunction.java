@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 public abstract class AbstractPredictionFunction<T extends MetaAttributeContainer<M>, M extends IMetaAttribute> implements IPredictionFunction<T, M>{
@@ -28,7 +28,7 @@ public abstract class AbstractPredictionFunction<T extends MetaAttributeContaine
 	private static final long serialVersionUID = -7643329010512865920L;
 
 	@Override
-	public T predictAll(SDFAttributeList schema, T object, PointInTime t){
+	public T predictAll(SDFSchema schema, T object, PointInTime t){
 		T predictedData = this.predictData(schema, object, t);
 		predictedData.setMetadata(this.predictMetadata(schema, object, t));
 		

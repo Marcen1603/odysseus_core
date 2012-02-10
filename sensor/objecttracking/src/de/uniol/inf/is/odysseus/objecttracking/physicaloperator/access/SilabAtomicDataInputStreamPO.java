@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Dennis Wiemann
@@ -38,7 +38,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	private AbstractSILABDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 //	private int typeAttribute;
 //	private int timestampAttribute;
 
@@ -54,7 +54,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	}
 	
 	public SilabAtomicDataInputStreamPO(String host, int port,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 		this.hostName = host;
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
@@ -64,7 +64,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 //		this.timestampAttribute = ;
 	}
 	
-	private void createDataReader(SDFAttributeList schema) {
+	private void createDataReader(SDFSchema schema) {
 		this.dataReader = new AbstractSILABDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -178,7 +178,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema(){
+	public SDFSchema getOutputSchema(){
 		return this.outputSchema;
 	}
 	

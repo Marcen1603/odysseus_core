@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 @SuppressWarnings({"rawtypes","unchecked"})
@@ -97,7 +97,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public T predictData(SDFAttributeList schema, T object, PointInTime t) {
+	public T predictData(SDFSchema schema, T object, PointInTime t) {
 		// if there is no prediction function, return
 		// return the original schema
 		if (this.predFct == null) {
@@ -108,7 +108,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public M predictMetadata(SDFAttributeList schema, T object, PointInTime t) {
+	public M predictMetadata(SDFSchema schema, T object, PointInTime t) {
 		// if there is no prediction function,
 		// return the original metadata
 		if (this.predFct == null) {
@@ -119,7 +119,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 	}
 
 	@Override
-	public T predictAll(SDFAttributeList schema, T object, PointInTime t) {
+	public T predictAll(SDFSchema schema, T object, PointInTime t) {
 		return this.predFct.predictAll(schema, object, t);
 	}
 

@@ -7,12 +7,12 @@
 //public class SPARQLMinMax extends MinMax<NodeList> {
 //
 //	int[] attrList = new int[1];
-////	private SDFAttributeList schema;
+////	private SDFSchema schema;
 //
 //	public SPARQLMinMax(int pos, boolean isMax) {
 //		super(isMax);
 //		attrList[0] = pos;
-////		this.schema = new SDFAttributeList();
+////		this.schema = new SDFSchema();
 ////		SDFAttribute attr = null;
 ////		if (isMax){
 ////			attr = new SDFAttribute("MAX("+a.getURI(false)+")");

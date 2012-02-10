@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate;
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.collection.PairMap;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public interface IGroupProcessor<R, W extends IClone> {
 
@@ -26,6 +26,6 @@ public interface IGroupProcessor<R, W extends IClone> {
 	abstract public void init();
 
 	abstract public W createOutputElement(Integer groupID,
-			PairMap<SDFAttributeList, AggregateFunction, W, ?> r);
+			PairMap<SDFSchema, AggregateFunction, W, ?> r);
 
 }

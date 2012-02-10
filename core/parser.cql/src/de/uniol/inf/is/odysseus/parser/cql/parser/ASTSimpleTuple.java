@@ -21,7 +21,7 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 @SuppressWarnings("all")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {
@@ -39,7 +39,7 @@ public class ASTSimpleTuple extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public RelationalTuple getTuple(SDFAttributeList schema) {
+	public RelationalTuple getTuple(SDFSchema schema) {
 		if (schema.size() != jjtGetNumChildren()) {
 			// TODO exceptionhandling anstaendig machen und bessere
 			// fehlermeldungen geben

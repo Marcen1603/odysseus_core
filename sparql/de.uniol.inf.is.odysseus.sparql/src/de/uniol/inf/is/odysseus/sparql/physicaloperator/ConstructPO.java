@@ -14,7 +14,7 @@
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
 //import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Construct;
 //import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This is the sparql construct operator for stream processing. It construct triples
@@ -71,7 +71,7 @@
 //			Node p = null;
 //			Node o = null;
 //			
-//			SDFAttributeList inElements = this.logical.getInputSchema(0);
+//			SDFSchema inElements = this.logical.getInputSchema(0);
 //			// remember: blank nodes are stored as variables
 //			if(t.getSubject().isVariable()){
 //				SDFAttribute subject = new SDFAttribute(this.hashCode() + "#" + ((Var)t.getSubject()).getName());

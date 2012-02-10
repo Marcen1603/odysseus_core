@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von
@@ -68,16 +68,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferArea<T,T> transferFunction;
-	protected SDFAttributeList outputSchema;
+	protected SDFSchema outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema;
 	}
 

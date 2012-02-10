@@ -87,7 +87,7 @@ public class SchemaIterator implements Iterable<SchemaInfo>, Iterator<SchemaInfo
 	 *            Schema, welches vollständig durchlaufen werden soll. Darf
 	 *            nicht <code>null</code> sein.
 	 */
-	public SchemaIterator(SDFAttributeList completeSchema) {
+	public SchemaIterator(SDFSchema completeSchema) {
 		this(completeSchema, Integer.MAX_VALUE);
 	}
 
@@ -105,7 +105,7 @@ public class SchemaIterator implements Iterable<SchemaInfo>, Iterator<SchemaInfo
 	 *            nicht in die Tiefe gegangen. Bei 1 nur die unmittelbaren
 	 *            Subattribute und nicht weiter.
 	 */
-	public SchemaIterator(SDFAttributeList completeSchema, int maxLevels) {
+	public SchemaIterator(SDFSchema completeSchema, int maxLevels) {
 		this.maxLevels = maxLevels;
 
 		SDFAttribute attr = completeSchema.get(0);

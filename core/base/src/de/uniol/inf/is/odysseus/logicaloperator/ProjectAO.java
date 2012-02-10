@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	private static final long serialVersionUID = 5487345119018834806L;
 
-	private SDFAttributeList outputSchema = null;
+	private SDFSchema outputSchema = null;
 
 	public ProjectAO() {
 		super();
@@ -43,7 +43,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	public ProjectAO(ProjectAO ao) {
 		super(ao);
 		if (ao.outputSchema != null)
-			this.outputSchema = new SDFAttributeList(ao.getOutputSchema().getURI(), ao.outputSchema);
+			this.outputSchema = new SDFSchema(ao.getOutputSchema().getURI(), ao.outputSchema);
 	}
 
 	public @Override
@@ -58,23 +58,23 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFAttributeList("");
+		this.outputSchema = new SDFSchema("");
 		this.outputSchema.addAll(outputSchema);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema.clone();
 	}
 	
 	@Override
 	@GetParameter(name ="ATTRIBUTES")
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
-	public static int[] calcRestrictList(SDFAttributeList in,
-			SDFAttributeList out) {
+	public static int[] calcRestrictList(SDFSchema in,
+			SDFSchema out) {
 		int[] ret = new int[out.size()];
 		int i = 0;
 		for (SDFAttribute a : out) {
@@ -94,7 +94,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if (port == 0) {
 			setOutputSchema(outputSchema);
 		} else {

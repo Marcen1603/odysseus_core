@@ -23,7 +23,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 		Object[] values = new Object[this.attributePositions.length];
 		ArrayList<Variable> vars = this.expression.getVariables();
 		for (int i = 0; i < values.length; ++i) {
-			//SDFAttributeList curSchema = this.fromRightChannel[i] ? this.rightSchema : this.leftSchema;
+			//SDFSchema curSchema = this.fromRightChannel[i] ? this.rightSchema : this.leftSchema;
 			// a variable can have only one accepted type, since
 			// the user should have be explicit in defining the
 			// expression, e. g. by using toLong(?x)

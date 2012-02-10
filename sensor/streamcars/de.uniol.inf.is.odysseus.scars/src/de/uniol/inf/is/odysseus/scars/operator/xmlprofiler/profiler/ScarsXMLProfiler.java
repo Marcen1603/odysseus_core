@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class ScarsXMLProfiler {
 
@@ -86,7 +86,7 @@ public class ScarsXMLProfiler {
 		return instances.get(file);
 	}
 
-	public synchronized void  profile(String operator, SDFAttributeList schema, MVRelationalTuple<?> scan) {
+	public synchronized void  profile(String operator, SDFSchema schema, MVRelationalTuple<?> scan) {
 		if(finish) {
 			return;
 		}
@@ -104,8 +104,8 @@ public class ScarsXMLProfiler {
 
 		Element scanRootElement = new Element("ScanRoot");
 		operatorElement.addContent(scanRootElement);
-		if(schema != null && schema instanceof SDFAttributeListExtended) {
-			Object pfc = ((SDFAttributeListExtended) schema).getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+		if(schema != null && schema instanceof SDFSchemaExtended) {
+			Object pfc = ((SDFSchemaExtended) schema).getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
 			if(pfc != null) {
 				addPredictionFunctionContainer(scanRootElement, (PredictionFunctionContainer<?>)pfc);
 			}
@@ -171,7 +171,7 @@ public class ScarsXMLProfiler {
 		}
 	}
 
-	public void addData2(SDFAttributeList rootschema, Element parent, SDFAttribute attr, Object value) {
+	public void addData2(SDFSchema rootschema, Element parent, SDFAttribute attr, Object value) {
 		if(value instanceof MVRelationalTuple<?>) {
 			
 			MVRelationalTuple<?> tuple = (MVRelationalTuple<?>)value;
@@ -184,7 +184,7 @@ public class ScarsXMLProfiler {
 			
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
-				SDFAttributeList schema = attr.getDatatype().getSubSchema();
+				SDFSchema schema = attr.getDatatype().getSubSchema();
 				for(int i=0; i<schema.getAttributeCount(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
 					try {
@@ -197,7 +197,7 @@ public class ScarsXMLProfiler {
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
 				if(attr.getDatatype().hasSchema()){
-					SDFAttributeList schema = attr.getDatatype().getSubSchema();
+					SDFSchema schema = attr.getDatatype().getSubSchema();
 					SDFAttribute childAttr = schema.getAttribute(0);
 					for(int i=0; i<tuple.getAttributeCount(); i++) {
 						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
@@ -259,7 +259,7 @@ public class ScarsXMLProfiler {
 		parent.addContent(metaDataElement);
 	}
 
-//	public void addDataFromList(Element parent, SDFAttributeList schema, MVRelationalTuple<?> tuple) {
+//	public void addDataFromList(Element parent, SDFSchema schema, MVRelationalTuple<?> tuple) {
 //		for(int listIndex=0; listIndex<tuple.getAttributeCount(); listIndex++) {
 //			addData(parent, schema, tuple.getAttribute(listIndex));
 //		}
@@ -373,7 +373,7 @@ public class ScarsXMLProfiler {
 //	public static void main(String[] args) {
 //		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance("D:/test.xml", 0, 2);
 //
-//		SDFAttributeList scan = createScanSchema();
+//		SDFSchema scan = createScanSchema();
 //		MVRelationalTuple<IProbability> scanTuple = createScanTuple(scan);
 //		p.profile("OPERATOR", scan, scanTuple);
 //		p.profile("OPERATOR", scan, scanTuple);
@@ -388,8 +388,8 @@ public class ScarsXMLProfiler {
 //
 //
 //
-//	private static SDFAttributeList createScanSchema() {
-//		SDFAttributeList scan = new SDFAttributeList();
+//	private static SDFSchema createScanSchema() {
+//		SDFSchema scan = new SDFSchema();
 //
 //		SDFAttribute list = new SDFAttribute("a.list");
 //
@@ -437,7 +437,7 @@ public class ScarsXMLProfiler {
 
 
 
-	private static<M extends IProbability> MVRelationalTuple<M> createScanTuple(SDFAttributeList schema) {
+	private static<M extends IProbability> MVRelationalTuple<M> createScanTuple(SDFSchema schema) {
 		MVRelationalTuple<M>[] objList = createObjectList();
 
 		MVRelationalTuple<M> list = new MVRelationalTuple<M>(objList.length);

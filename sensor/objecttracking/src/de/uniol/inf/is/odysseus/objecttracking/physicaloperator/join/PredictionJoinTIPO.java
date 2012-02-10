@@ -56,9 +56,9 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 //
 //	protected ITransferFunction<T> transferFunction;
 //	protected IPredicate<? super T> joinPredicate;
-//	protected SDFAttributeList leftInputSchema;
-//	protected SDFAttributeList rightInputSchema;
-//	protected SDFAttributeList outputSchema;
+//	protected SDFSchema leftInputSchema;
+//	protected SDFSchema rightInputSchema;
+//	protected SDFSchema outputSchema;
 //	
 //	int counter = 0;
 //	public long duration = 0;
@@ -154,7 +154,7 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 //		this.metadataMerge = metadataMerge;
 //	}
 //	
-//	public SDFAttributeList getInputSchema(int port){
+//	public SDFSchema getInputSchema(int port){
 //		if(port == 0){
 //			return this.leftInputSchema;
 //		}
@@ -164,7 +164,7 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 //		return null;
 //	}
 //	
-//	public void setInputSchema(int port, SDFAttributeList schema){
+//	public void setInputSchema(int port, SDFSchema schema){
 //		if(port == 0){
 //			this.leftInputSchema = schema;
 //		}
@@ -174,11 +174,11 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 //		
 //	}
 //	
-//	public SDFAttributeList getOutputSchema(){
+//	public SDFSchema getOutputSchema(){
 //		return this.outputSchema;
 //	}
 //	
-//	public void setOutputSchema(SDFAttributeList outSchema){
+//	public void setOutputSchema(SDFSchema outSchema){
 //		this.outputSchema = outSchema;
 //	}
 //

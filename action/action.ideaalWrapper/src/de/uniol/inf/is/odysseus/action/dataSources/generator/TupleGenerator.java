@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.action.dataSources.generator;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class TupleGenerator {
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private GeneratorType genTyp;
 	private GeneratorConfig config;
 	
@@ -34,7 +34,7 @@ public class TupleGenerator {
 	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
 
 	public TupleGenerator(GeneratorConfig config, GeneratorType type) throws GeneratorException{
-		this.schema = new SDFAttributeList(type.name());
+		this.schema = new SDFSchema(type.name());
 		this.genTyp = type;
 		this.config = config;
 		
@@ -256,7 +256,7 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	public SDFAttributeList getSchema() {
+	public SDFSchema getSchema() {
 		return this.schema;
 	}
 	

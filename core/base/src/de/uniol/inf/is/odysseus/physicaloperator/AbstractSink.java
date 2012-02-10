@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POPortEvent;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -53,7 +53,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	protected int noInputPorts = -1;
 
 	private String name;
-	private Map<Integer, SDFAttributeList> outputSchema = new HashMap<Integer, SDFAttributeList>();
+	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
 	final transient protected List<IOperatorOwner> owners = new IdentityArrayList<IOperatorOwner>();
 
@@ -319,23 +319,23 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getOutputSchema(0);
 	}
 
 	
 	@Override
-	public SDFAttributeList getOutputSchema(int port) {
+	public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
 	
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);		
 	}
 
@@ -400,7 +400,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
-			int sourceOutPort, SDFAttributeList schema) {
+			int sourceOutPort, SDFSchema schema) {
 		
 		if (sinkInPort == -1){
 			sinkInPort = getNextFreeSinkInPort();
@@ -469,7 +469,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void unsubscribeFromSource(ISource<? extends T> source,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+			int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		unsubscribeFromSource(new PhysicalSubscription<ISource<? extends T>>(
 				source, sinkInPort, sourceOutPort, schema));
 	}
@@ -532,9 +532,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return false;
 	}
 	
-	private Map<Integer, SDFAttributeList> createCleanClone(Map<Integer, SDFAttributeList> old){
-		Map<Integer, SDFAttributeList> copy = new HashMap<Integer, SDFAttributeList>();
-		for(Entry<Integer, SDFAttributeList> e : old.entrySet()){
+	private Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old){
+		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+		for(Entry<Integer, SDFSchema> e : old.entrySet()){
 			copy.put(e.getKey(), e.getValue().clone());
 		}
 		return copy;

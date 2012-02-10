@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -33,14 +33,14 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	private int[][] variables;
 	private SDFExpression[] expressions;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 
-	public RelationalMapPO(SDFAttributeList schema, SDFExpression[] expressions) {
+	public RelationalMapPO(SDFSchema schema, SDFExpression[] expressions) {
 		this.schema = schema;
 		init(schema, expressions);
 	}
 
-	private void init(SDFAttributeList schema, SDFExpression[] expressions) {
+	private void init(SDFSchema schema, SDFExpression[] expressions) {
 		this.expressions = new SDFExpression[expressions.length];
 		for (int i = 0; i < expressions.length; ++i) {
 			this.expressions[i] = expressions[i].clone();

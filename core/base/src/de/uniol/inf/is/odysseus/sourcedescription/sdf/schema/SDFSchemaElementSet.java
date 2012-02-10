@@ -20,41 +20,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaElement implements List<T>{ 
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 
-    /**
-	 * 
-	 */
+public class SDFSchemaElementSet<T> extends SDFElement implements List<T>{ 
+
 	private static final long serialVersionUID = 3835214163915421257L;
-	/**
-	 * @uml.property  name="elements"
-	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement"
-	 */
     protected List<T> elements = new ArrayList<T>();
 
 	public SDFSchemaElementSet(String URI) {
-		super(URI, (SDFDatatype)null);
+		super(URI);
 	}
 
 	public SDFSchemaElementSet() {
-		super("TemporaryElement" + System.currentTimeMillis(), (SDFDatatype)null);
+		super("TemporaryElement" + System.currentTimeMillis());
 	}
 
 	/**
      * @param attributes1
      */    
 	public SDFSchemaElementSet(String uri, SDFSchemaElementSet<T> newElements) {
-        super(uri, (SDFDatatype)null);
+        super(uri);
         elements.addAll(newElements);
     }
 	
-	public boolean contains(SDFSchemaElement element){
-		return this.elements.contains(element);
-	}
 	
-	public int indexOf(SDFSchemaElement element){
-		return elements.indexOf(element);
-	}
+//	public boolean contains(T element){
+//		return this.elements.contains(element);
+//	}
+//	
+//	public int indexOf(T element){
+//		return elements.indexOf(element);
+//	}
 
 	
 	@Override
@@ -71,7 +67,7 @@ public class SDFSchemaElementSet<T extends SDFSchemaElement> extends SDFSchemaEl
 	}
 	
 	public void getXMLRepresentation(String indent, StringBuffer xmlRetValue) {
-		for (SDFSchemaElement s: elements){
+		for (T s: elements){
 			xmlRetValue.append(indent);
 			xmlRetValue.append("<SDFSchemaElement>");
 			if (s != null){

@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IChartSettingChangeable, IStreamElementListener<Object> {
@@ -108,7 +108,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	private void initConnection(IStreamConnection<Object> streamConnection) {
-		SDFAttributeList initialSchema = extractSchema(streamConnection);
+		SDFSchema initialSchema = extractSchema(streamConnection);
 		SDFMetaAttributeList metaSchema = extractMetaSchema(streamConnection);
 
 		this.viewSchema = new ViewSchema<T>(initialSchema, metaSchema);
@@ -219,7 +219,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	protected abstract void decorateChart(JFreeChart thechart);
 
-	private SDFAttributeList extractSchema(IStreamConnection<?> streamConnection) {
+	private SDFSchema extractSchema(IStreamConnection<?> streamConnection) {
 		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);
 		return sources[0].getOutputSchema();
 	}

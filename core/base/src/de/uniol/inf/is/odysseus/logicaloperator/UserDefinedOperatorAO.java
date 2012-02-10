@@ -9,14 +9,14 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributePara
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "UDO")
 public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 		OutputSchemaSettable {
 
 	private static final long serialVersionUID = 837012993098327414L;
-	private SDFAttributeList outputSchema = null;
+	private SDFSchema outputSchema = null;
 	private String operatorClass = null;
 	private String initString = null;
 	@SuppressWarnings("rawtypes")
@@ -35,7 +35,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if (outputSchema != null) {
 			return outputSchema;
 		} else {
@@ -69,17 +69,17 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFAttributeList("");
+		this.outputSchema = new SDFSchema("");
 		this.outputSchema.addAll(outputSchema);
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema;
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if (port == 0) {
 			setOutputSchema(outputSchema);
 		} else {

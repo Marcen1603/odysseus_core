@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
@@ -41,7 +41,7 @@ public enum Sensor {
 	private int port;
 	private long interval;
 	private List<String> messages;
-	private static Map<Sensor, SDFAttributeList> schema;
+	private static Map<Sensor, SDFSchema> schema;
 
 	Sensor(String ip, int port, long interval, String[] messages) {
 		this.ip = ip;
@@ -76,12 +76,12 @@ public enum Sensor {
 		return this.messages;
 	}
 
-	public static SDFAttributeList getSchema(Sensor sensor) {
+	public static SDFSchema getSchema(Sensor sensor) {
 		if (schema == null) {
-			schema = new HashMap<Sensor, SDFAttributeList>();
+			schema = new HashMap<Sensor, SDFSchema>();
 
 			// BedBalance
-			SDFAttributeList schema = new SDFAttributeList("Bed");
+			SDFSchema schema = new SDFSchema("Bed");
 			String[] identifiers = { "timestamp", "id", "weight0", "weight1",
 					"weight2", "weight3" };
 			SDFDatatype[] types = { SDFDatatype.LONG, SDFDatatype.INTEGER,
@@ -96,7 +96,7 @@ public enum Sensor {
 			Sensor.schema.put(Sensor.BedBalance, schema);
 
 			// Bed1-Bed4
-			schema = new SDFAttributeList("Bed");
+			schema = new SDFSchema("Bed");
 
 			for (int i = 0; i < 3; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],

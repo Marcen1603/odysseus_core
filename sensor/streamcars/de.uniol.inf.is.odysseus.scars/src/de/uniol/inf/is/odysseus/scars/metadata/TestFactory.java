@@ -15,14 +15,14 @@
 package de.uniol.inf.is.odysseus.scars.metadata;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 // creates objects for test purposes
 // author: sven
 public class TestFactory
 {
   // test objects, set by create
-  public static SDFAttributeList testSchema = null;
+  public static SDFSchema testSchema = null;
   public static MVRelationalTuple<StreamCarsMetaData<Object>> testTuple = null;
   public static double[][] testCovMatrix = null;
   
@@ -110,7 +110,7 @@ public class TestFactory
 //    attr600.setCovariance(maList1);
 //    
 //    // create schema and add schema attributes
-//    TestFactory.testSchema = new SDFAttributeList();
+//    TestFactory.testSchema = new SDFSchema();
 //    TestFactory.testSchema.addAttribute(baseAttr);
 //    baseAttr.addSubattribute(attr0);
 //    baseAttr.addSubattribute(attr1);

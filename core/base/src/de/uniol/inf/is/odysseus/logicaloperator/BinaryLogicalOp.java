@@ -38,11 +38,11 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 		return getSubscribedToSource(RIGHT).getTarget();
 	}
 
-//	public void setLeftInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+//	public void setLeftInput(ILogicalOperator source, SDFSchema inputSchema) {
 //		subscribeTo(source, LEFT, 0, inputSchema);
 //	}
 //
-//	public void setRightInput(ILogicalOperator source, SDFAttributeList inputSchema) {
+//	public void setRightInput(ILogicalOperator source, SDFSchema inputSchema) {
 //		subscribeTo(source, RIGHT, 0, inputSchema);
 //	}	
 	

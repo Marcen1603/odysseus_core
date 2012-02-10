@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.transaction.QueuePortMapping;
 import de.uniol.inf.is.odysseus.broker.transaction.ReadTransaction;
 import de.uniol.inf.is.odysseus.broker.transaction.WriteTransaction;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Represents the knowledge for a broker.  
@@ -33,10 +33,10 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 public class BrokerDictionaryEntry {
 	
 	/** The data schema. */
-	private SDFAttributeListExtended schema = new SDFAttributeListExtended();
+	private SDFSchemaExtended schema = new SDFSchemaExtended();
 	
 	/** The queue schema. */
-	private SDFAttributeList queueSchema = new SDFAttributeList("BrokerQueue");
+	private SDFSchema queueSchema = new SDFSchema("BrokerQueue");
 	
 	/** The broker name. */
 	private String brokerName;	
@@ -115,7 +115,7 @@ public class BrokerDictionaryEntry {
 	 * @param schema Output and input schema of the broker
 	 * @param queueSchema Schema of the queue
 	 */
-	public BrokerDictionaryEntry(String brokername, SDFAttributeListExtended schema, SDFAttributeList queueSchema){
+	public BrokerDictionaryEntry(String brokername, SDFSchemaExtended schema, SDFSchema queueSchema){
 		this.brokerName = brokername;
 		this.schema = schema;		
 		this.queueSchema = queueSchema;	
@@ -178,7 +178,7 @@ public class BrokerDictionaryEntry {
 	 *
 	 * @return The schema
 	 */
-	public SDFAttributeListExtended getSchema() {
+	public SDFSchemaExtended getSchema() {
 		return schema;
 	}
 
@@ -187,7 +187,7 @@ public class BrokerDictionaryEntry {
 	 *
 	 * @return The schema
 	 */
-	public SDFAttributeList getQueueSchema() {
+	public SDFSchema getQueueSchema() {
 		return queueSchema;
 	}
 

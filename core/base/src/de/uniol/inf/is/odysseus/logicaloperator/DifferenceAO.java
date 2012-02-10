@@ -19,7 +19,7 @@
 package de.uniol.inf.is.odysseus.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 
@@ -46,7 +46,7 @@ public class DifferenceAO extends BinaryLogicalOp{
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema(LEFT);
 	}
 

@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 
 public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
@@ -46,7 +46,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 		System.arraycopy(predictionAO.pathToList, 0, this.pathToList, 0, predictionAO.pathToList.length);
 	}
 	
-	public void initListPath(SDFAttributeList inputSchema, String absoluteListNamePath) {
+	public void initListPath(SDFSchema inputSchema, String absoluteListNamePath) {
 		SchemaHelper helper = new SchemaHelper(inputSchema);
 		pathToList = helper.getSchemaIndexPath(absoluteListNamePath).toArray(true);
 	}
@@ -73,9 +73,9 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeListExtended outputSchema = new SDFAttributeListExtended(this.getInputSchema());
-		outputSchema.setMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS, predictionFunctions);
+	public SDFSchema getOutputSchema() {
+		SDFSchemaExtended outputSchema = new SDFSchemaExtended(this.getInputSchema());
+		outputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, predictionFunctions);
 		return outputSchema;
 	}
 }

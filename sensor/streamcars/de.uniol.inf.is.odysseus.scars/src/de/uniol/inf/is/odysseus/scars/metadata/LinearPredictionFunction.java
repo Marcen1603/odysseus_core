@@ -24,19 +24,19 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.scars.util.helper.TypeCaster;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class LinearPredictionFunction<M extends IProbability> implements IPredictionFunction<M>{
 
-	private SDFAttributeList scanSchema;
-	private SDFAttributeList timeSchema;
+	private SDFSchema scanSchema;
+	private SDFSchema timeSchema;
 	private CovarianceMapper mapper;
 	
 	private PredictionExpression[] expressions;
 	private double[][] noiseMatrix;
 	
 	@Override
-	public void init(SDFAttributeList scanSchema, SDFAttributeList timeSchema) {
+	public void init(SDFSchema scanSchema, SDFSchema timeSchema) {
 		this.scanSchema = scanSchema;
 		this.timeSchema = timeSchema;
 		mapper = new CovarianceMapper(scanSchema);

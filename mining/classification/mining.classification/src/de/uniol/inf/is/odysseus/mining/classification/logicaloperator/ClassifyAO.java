@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -66,12 +66,12 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * ()
 	 */
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		if (getLabelPosition() < getInputSchema(1).size()) {
 			return getInputSchema(1);
 		} else {
 			// append the class to the schema if not already in
-			SDFAttributeList outputSchema = new SDFAttributeList("Classify");
+			SDFSchema outputSchema = new SDFSchema("Classify");
 			outputSchema.addAll(getInputSchema(1).clone());
 			SDFAttribute classLabel = new SDFAttribute(null,"class_label", SDFDatatype.OBJECT);
 			outputSchema.add(classLabel);

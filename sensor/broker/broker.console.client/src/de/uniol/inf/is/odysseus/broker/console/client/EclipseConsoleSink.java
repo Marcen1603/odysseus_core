@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.broker.console.ConsoleServerService;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class EclipseConsoleSink extends AbstractSink<Object> {
 
@@ -37,7 +37,7 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		super.setOutputSchema(outputSchema);
 		String[] attrNames = new String[outputSchema.getAttributeCount()];
 		for (int i = 0; i < outputSchema.getAttributeCount(); i++) {
@@ -93,7 +93,7 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 
 	@Override
 	public void subscribeToSource(ISource<? extends Object> source,
-			int sinkInPort, int sourceOutPort, SDFAttributeList schema) {
+			int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		super.subscribeToSource(source, sinkInPort, sourceOutPort, schema);
 		this.setOutputSchema(schema);
 	}

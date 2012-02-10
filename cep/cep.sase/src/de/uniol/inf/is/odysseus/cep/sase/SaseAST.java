@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-10 13:13:14
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-10 14:46:28
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -24,7 +24,7 @@
 	import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 	import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
@@ -2118,11 +2118,11 @@ public class SaseAST extends TreeParser {
 
                         RelationalMEPOutputSchemeEntry e = null;
                         OutputScheme scheme = new OutputScheme();
-                        SDFAttributeList attrList = null;
+                        SDFSchema attrList = null;
                         if (value != null){
-                          attrList= new SDFAttributeList(value.getText());
+                          attrList= new SDFSchema(value.getText());
                           }else{
-                          attrList = new SDFAttributeList("");
+                          attrList = new SDFSchema("");
                           }
                         for (PathAttribute p : retAttr) {
                         	String op = p.getAggregation();

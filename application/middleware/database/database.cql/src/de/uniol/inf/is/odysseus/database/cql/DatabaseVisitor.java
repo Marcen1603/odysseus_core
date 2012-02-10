@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -122,7 +122,7 @@ public class DatabaseVisitor extends CQLParser {
 	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
 		DatabaseSinkAO sink = (DatabaseSinkAO) data;
 		String name = sink.getConnectionName();
-		SDFAttributeList schema = sink.getOutputSchema();
+		SDFSchema schema = sink.getOutputSchema();
 		IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(name);
 		if(con==null){
 			throw new QueryParseException("There is no connection with name \""+name+"\"");

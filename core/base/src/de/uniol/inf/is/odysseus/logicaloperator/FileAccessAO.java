@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class FileAccessAO extends AbstractLogicalOperator implements
 		OutputSchemaSettable {
@@ -28,7 +28,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 	private static final long serialVersionUID = 3955519214402695311L;
 
 	private SDFSource source = null;
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 
 	private String path;
 	private String fileType;
@@ -71,12 +71,12 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 
 	@Override
 	@Parameter(name = "ATTRIBUTES", type = CreateSDFAttributeParameter.class, isList = true)
-	public void setOutputSchema(SDFAttributeList outputSchema) {
+	public void setOutputSchema(SDFSchema outputSchema) {
 		this.outputSchema = outputSchema.clone();
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
@@ -144,7 +144,7 @@ public class FileAccessAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public void setOutputSchema(SDFAttributeList outputSchema, int port) {
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		if (port == 0) {
 			setOutputSchema(outputSchema);
 		} else {

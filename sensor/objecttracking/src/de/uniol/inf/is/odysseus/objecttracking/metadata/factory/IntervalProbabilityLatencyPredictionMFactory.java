@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 @SuppressWarnings({"rawtypes","unchecked"})
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
@@ -38,9 +38,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 @Deprecated
 public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
 
-	SDFAttributeList schema;
+	SDFSchema schema;
 	
-	public IntervalProbabilityLatencyPredictionMFactory(SDFAttributeList schema){
+	public IntervalProbabilityLatencyPredictionMFactory(SDFSchema schema){
 		this.schema = schema;
 	}
 	

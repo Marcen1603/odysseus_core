@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.intervalapproach;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 @LogicalOperator(name = "TimestampToPayload", minInputPorts = 1, maxInputPorts = 1)
@@ -19,13 +19,13 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
-		SDFAttributeList outputSchema = null;
+	public SDFSchema getOutputSchema() {
+		SDFSchema outputSchema = null;
 		if (getInputSchema(0) != null) {
-			outputSchema = new SDFAttributeList(getInputSchema(0).getURI(),
+			outputSchema = new SDFSchema(getInputSchema(0).getURI(),
 					getInputSchema(0));
 		}else{
-			outputSchema = new SDFAttributeList("");
+			outputSchema = new SDFSchema("");
 		}
 
 		SDFAttribute starttimeStamp = new SDFAttribute(null,

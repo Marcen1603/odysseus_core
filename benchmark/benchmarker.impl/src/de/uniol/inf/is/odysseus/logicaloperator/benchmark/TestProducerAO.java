@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchParameter.BatchItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
@@ -34,16 +34,16 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int invertedPriorityRatio = 0;
 	
-	final private SDFAttributeList outputSchema;
+	final private SDFSchema outputSchema;
 
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 	
 	public TestProducerAO() {
-		this.outputSchema = new SDFAttributeList("Dummy");
+		this.outputSchema = new SDFSchema("Dummy");
 		SDFAttribute a = new SDFAttribute(null,"Dummy", SDFDatatype.LONG);
 		outputSchema.add(a);
 	}

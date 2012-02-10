@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -43,18 +43,18 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 				operator.getAggregations());
 		
 		aggregatePO.setGroupProcessor(r);
-		SDFAttributeList inputSchema = aggregatePO.getInputSchema();
+		SDFSchema inputSchema = aggregatePO.getInputSchema();
 		
-		Map<SDFAttributeList, Map<AggregateFunction, SDFAttribute>> aggregations = aggregatePO
+		Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = aggregatePO
 				.getAggregations();
 		
-		for (SDFAttributeList attrList : aggregations.keySet()) {
-			if (SDFAttributeList.subset(attrList, inputSchema)) {
+		for (SDFSchema attrList : aggregations.keySet()) {
+			if (SDFSchema.subset(attrList, inputSchema)) {
 				Map<AggregateFunction, SDFAttribute> funcs = aggregations
 						.get(attrList);
 				for (Entry<AggregateFunction, SDFAttribute> e : funcs
 						.entrySet()) {
-					FESortedClonablePair<SDFAttributeList, AggregateFunction> p = new FESortedClonablePair<SDFAttributeList, AggregateFunction>(
+					FESortedClonablePair<SDFSchema, AggregateFunction> p = new FESortedClonablePair<SDFSchema, AggregateFunction>(
 							attrList, e.getKey());
 					int[] posArray = new int[p.getE1().size()];
 					for (int i = 0; i < p.getE1().size(); ++i) {

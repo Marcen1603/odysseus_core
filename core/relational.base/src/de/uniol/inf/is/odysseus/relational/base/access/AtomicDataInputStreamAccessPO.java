@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -56,7 +56,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	private Object[] attributeData;
 	private boolean isDone;
 	
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	
 	public boolean connectToPipe = false;
 	private Socket socket;
@@ -70,7 +70,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	}
 
 	public AtomicDataInputStreamAccessPO(String host, int port,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 		this.hostName = host;
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
@@ -78,7 +78,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		this.schema = schema;
 	}
 
-	private void createDataReader(SDFAttributeList schema) {
+	private void createDataReader(SDFSchema schema) {
 		this.dataReader = new IAtomicDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {

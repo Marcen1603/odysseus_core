@@ -16,16 +16,16 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.IClone;
 import de.uniol.inf.is.odysseus.physicaloperator.ILeftMergeFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public abstract class LeftMergeFunction<T extends IClone> implements ILeftMergeFunction<T>{
 
-	protected SDFAttributeList leftSchema;
-	protected SDFAttributeList rightSchema;
-	protected SDFAttributeList resultSchema;
+	protected SDFSchema leftSchema;
+	protected SDFSchema rightSchema;
+	protected SDFSchema resultSchema;
 
 	
-	public LeftMergeFunction(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema){
+	public LeftMergeFunction(SDFSchema leftSchema, SDFSchema rightSchema, SDFSchema resultSchema){
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.resultSchema = resultSchema;

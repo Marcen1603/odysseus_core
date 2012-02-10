@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -70,7 +70,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	@Override
 	public SDFDatatype getReturnType() {
 		try {
-			SDFAttributeList schema = ContextStore.getInstance().getStoreSchema(resolveStoreName());
+			SDFSchema schema = ContextStore.getInstance().getStoreSchema(resolveStoreName());
 			AttributeResolver resolver = new AttributeResolver();
 			resolver.addAttributes(schema);
 			SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());

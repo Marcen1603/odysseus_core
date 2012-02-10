@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModelDictionary;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class MarkovAOBuilder extends AbstractOperatorBuilder {
 
@@ -70,7 +70,7 @@ public class MarkovAOBuilder extends AbstractOperatorBuilder {
 		HiddenMarkovModel hmm = HiddenMarkovModelDictionary.getInstance().getHMM(this.hmm.getValue());
 		MarkovAO ao = new MarkovAO(hmm);
 		if(groupBy.hasValue()){
-			SDFAttributeList groupList = new SDFAttributeList("",groupBy.getValue());
+			SDFSchema groupList = new SDFSchema("",groupBy.getValue());
 			ao.addGroupingAttributes(groupList);
 		}
 		for(AggregateItem item : this.aggregations.getValue()){

@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class P2PSinkAO extends P2PAO{
 
@@ -30,7 +30,7 @@ public class P2PSinkAO extends P2PAO{
 	}
 
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 	

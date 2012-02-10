@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Physical Operator calling a list of Actions when an Object is processed
@@ -45,7 +45,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	private Map<Action, List<IActionParameter>> actions;
 	private String type;
 	private Logger logger;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private static IDataExtractor dataExtractor;
 	private static IActuatorBenchmark benchmark;
 
@@ -61,7 +61,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	 * @param actions
 	 * @param type
 	 */
-	public EventTriggerPO(Map<Action, List<IActionParameter>> actions, String type, SDFAttributeList schema) {
+	public EventTriggerPO(Map<Action, List<IActionParameter>> actions, String type, SDFSchema schema) {
 		super();
 		this.actions = actions;
 		this.type = type;

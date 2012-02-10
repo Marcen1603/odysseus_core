@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.action.dataSources.ISourceClient;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -41,7 +41,7 @@ public class SocketSensorClient extends ISourceClient {
 	private int retries = 5;
 	
 	private List<String> messages;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private Sensor sensor;
 	
 	private int tupleID = 0;
@@ -195,7 +195,7 @@ public class SocketSensorClient extends ISourceClient {
 	}
 	
 	@Override
-	public SDFAttributeList getSchema() {
+	public SDFSchema getSchema() {
 		return schema;
 	}
 	

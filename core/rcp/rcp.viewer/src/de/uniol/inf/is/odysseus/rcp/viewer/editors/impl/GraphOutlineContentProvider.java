@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class GraphOutlineContentProvider implements ITreeContentProvider {
 	
@@ -86,8 +86,8 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			return children.toArray();
 		}
 		
-		if (parentElement instanceof SDFAttributeList){
-			SDFAttributeList attributes = (SDFAttributeList) parentElement;
+		if (parentElement instanceof SDFSchema){
+			SDFSchema attributes = (SDFSchema) parentElement;
 			Collection<Object> children = new ArrayList<Object>();
 			for (SDFAttribute a: attributes){
 				children.add(a);

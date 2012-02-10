@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeReso
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
@@ -34,7 +34,7 @@ public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>>
 	private double min;
 	private double max;
 	private RelationalPredicate predicate;
-	private SDFAttributeList inputschema;
+	private SDFSchema inputschema;
 	private String attributeName;
 
 	public OutOfDomainDetection(String attributeName, double min, double max) {
@@ -80,7 +80,7 @@ public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>>
 	}
 
 	@Override
-	public void init(SDFAttributeList inputschema) {
+	public void init(SDFSchema inputschema) {
 		this.inputschema = inputschema;
 		this.internalInit();
 		this.predicate.init(this.inputschema, null);

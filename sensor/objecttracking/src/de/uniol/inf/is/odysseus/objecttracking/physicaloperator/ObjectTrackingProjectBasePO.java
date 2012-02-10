@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This is the superclass of the our project PO.
@@ -42,10 +42,10 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	
 	int[] restrictList;
 	RealMatrix projectMatrix;
-	SDFAttributeList inputSchema;
+	SDFSchema inputSchema;
 	int[] inputMeasurementValuePositions;
 	
-	SDFAttributeList outputSchema;
+	SDFSchema outputSchema;
 	
 	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao){
 		this.restrictList = ao.determineRestrictList();
@@ -69,7 +69,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	}
 	
 //	public ObjectTrackingProjectBasePO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,
-//			SDFAttributeList inputSchema, SDFAttributeList outputSchema) {
+//			SDFSchema inputSchema, SDFSchema outputSchema) {
 //		this.restrictList = restrictList;
 //		this.projectMatrix = projectMatrix;
 //		this.inputSchema = inputSchema;

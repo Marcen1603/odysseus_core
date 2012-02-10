@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeE
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This attribute resolver is the same as the DirectAttributeResolver
@@ -24,7 +24,7 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
 	 */
 	private static final long serialVersionUID = 3220948295115144771L;
 
-	public SPARQLDirectAttributeResolver(SDFAttributeList schema) {
+	public SPARQLDirectAttributeResolver(SDFSchema schema) {
         super(schema);
     }
 

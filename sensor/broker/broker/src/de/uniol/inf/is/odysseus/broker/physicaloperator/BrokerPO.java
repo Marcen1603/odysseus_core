@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * BrokerPO represents the physical implementation of the broker operator.
@@ -60,7 +60,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	private PriorityQueue<TransactionTS> timestampList = new PriorityQueue<TransactionTS>();
 
 	/** The queue schema. */
-	private SDFAttributeList queueSchema;
+	private SDFSchema queueSchema;
 
 	/**
 	 * The waiting buffer caches all elements before it is their chronological
@@ -129,7 +129,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * 
 	 * @param queueSchema the new queue schema
 	 */
-	public void setQueueSchema(SDFAttributeList queueSchema) {
+	public void setQueueSchema(SDFSchema queueSchema) {
 		this.queueSchema = queueSchema;
 	}
 
@@ -138,7 +138,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 	 * 
 	 * @return the queue schema
 	 */
-	public SDFAttributeList getQueueSchema() {
+	public SDFSchema getQueueSchema() {
 		return this.queueSchema;
 	}
 

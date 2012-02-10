@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
@@ -41,11 +41,11 @@ public interface IStreamCarsExpressionVariable {
 
 	public int[] getPath(boolean copy);
 
-	public void init(SDFAttributeList schema);
+	public void init(SDFSchema schema);
 
 	public boolean isSchemaVariable();
 
-	public boolean isSchemaVariable(SDFAttributeList schema);
+	public boolean isSchemaVariable(SDFSchema schema);
 
 	public boolean isVirtual();
 

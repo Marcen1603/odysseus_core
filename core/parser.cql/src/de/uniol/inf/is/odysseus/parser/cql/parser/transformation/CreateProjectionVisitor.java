@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
@@ -55,9 +55,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator top;
 
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-	private SDFAttributeList outputSchema = new SDFAttributeList("");
+	private SDFSchema outputSchema = new SDFSchema("");
 
-	private SDFAttributeList aliasSchema = new SDFAttributeList("");
+	private SDFSchema aliasSchema = new SDFSchema("");
 
 	double[][] projectionMatrix = null;
 
@@ -72,7 +72,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		this.top = top;
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);
 		this.attributeResolver = attributeResolver;
-		SDFAttributeList inputSchema = top.getOutputSchema();
+		SDFSchema inputSchema = top.getOutputSchema();
 
 		// create output schema
 		node.childrenAccept(this, null);
@@ -143,7 +143,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		outputSchema = top.getOutputSchema();
-		aliasSchema = new SDFAttributeList(top.getOutputSchema().getURI());
+		aliasSchema = new SDFSchema(top.getOutputSchema().getURI());
 		for (SDFAttribute attribute : outputSchema) {
 			SDFAttribute attr = (SDFAttribute) attribute;
 			if (attr.getSourceName() != null) {
@@ -247,7 +247,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	/**
 	 * checks wether outputschema contains ambigious identifiers
 	 */
-	private void checkAttributes(SDFAttributeList aliasSchema) {
+	private void checkAttributes(SDFSchema aliasSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
 				throw new IllegalArgumentException("ambigious attribute: " + attribute);
@@ -259,11 +259,11 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		return top;
 	}
 
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return outputSchema;
 	}
 
-	public SDFAttributeList getAliasSchema() {
+	public SDFSchema getAliasSchema() {
 		return aliasSchema;
 	}
 

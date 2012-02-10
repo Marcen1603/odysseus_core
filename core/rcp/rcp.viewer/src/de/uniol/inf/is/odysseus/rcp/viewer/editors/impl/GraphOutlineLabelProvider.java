@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class GraphOutlineLabelProvider implements ILabelProvider {
 
@@ -43,7 +43,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("metadata");
 		}
 
-		if (element instanceof SDFAttributeList) {
+		if (element instanceof SDFSchema) {
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("schema");
 		}
 		
@@ -105,8 +105,8 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			ISubscription<?> s = (ISubscription<?>) element;
 			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
 		}
-		if (element != null && element instanceof SDFAttributeList){				
-			return "OutputSchema ("+((SDFAttributeList)element).getURI()+")";
+		if (element != null && element instanceof SDFSchema){				
+			return "OutputSchema ("+((SDFSchema)element).getURI()+")";
 		}
 
 		if (element != null && element instanceof IPredicate){				

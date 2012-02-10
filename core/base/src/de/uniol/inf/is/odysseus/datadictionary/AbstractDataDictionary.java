@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.store.IStore;
 import de.uniol.inf.is.odysseus.store.StoreException;
@@ -58,7 +58,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	protected IStore<String, ILogicalOperator> streamDefinitions;
 	protected IStore<String, IUser> viewOrStreamFromUser;
 	protected IStore<String, ILogicalOperator> viewDefinitions;
-	protected IStore<String, SDFAttributeList> entityMap;
+	protected IStore<String, SDFSchema> entityMap;
 	protected IStore<String, IUser> entityFromUser;
 	protected IStore<String, String> sourceTypeMap;
 	protected IStore<String, SDFDatatype> datatypes;
@@ -85,7 +85,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// ----------------------------------------------------------------------------
 
 	@Override
-	public void addEntitySchema(String uri, SDFAttributeList entity, ISession caller)
+	public void addEntitySchema(String uri, SDFSchema entity, ISession caller)
 			throws PermissionException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_ENTITY)) {
 			try {
@@ -102,10 +102,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public SDFAttributeList getEntitySchema(String uri, ISession caller)
+	public SDFSchema getEntitySchema(String uri, ISession caller)
 			throws PermissionException {
 		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
-		SDFAttributeList ret = entityMap.get(uri);
+		SDFSchema ret = entityMap.get(uri);
 		if (ret == null) {
 			throw new IllegalArgumentException("no such entity: " + uri);
 		}
@@ -282,7 +282,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		SDFSource source = createSDFSource(viewname);
 		AccessAO ao = new AccessAO(source);
 
-		SDFAttributeList entity = getEntitySchema(viewname, caller);
+		SDFSchema entity = getEntitySchema(viewname, caller);
 		ao.setOutputSchema(entity);
 
 		return ao;

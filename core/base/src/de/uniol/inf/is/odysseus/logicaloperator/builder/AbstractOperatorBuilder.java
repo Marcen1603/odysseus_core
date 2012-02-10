@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -132,9 +132,9 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
-			SDFAttributeList schema = new SDFAttributeList("");
+			SDFSchema schema = new SDFSchema("");
 			for (InputOperatorItem opItem : inputOperators.values()) {
-				schema = SDFAttributeList.union(schema,
+				schema = SDFSchema.union(schema,
 						opItem.operator.getOutputSchema());
 			}
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(
@@ -207,7 +207,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private IAttributeResolver buildAttributeResolver(
 			List<ILogicalOperator> inputOps) {
-		SDFAttributeList attributes = new SDFAttributeList("tmp");
+		SDFSchema attributes = new SDFSchema("tmp");
 		for (ILogicalOperator op : inputOps) {
 			attributes.addAll(op.getOutputSchema());
 		}

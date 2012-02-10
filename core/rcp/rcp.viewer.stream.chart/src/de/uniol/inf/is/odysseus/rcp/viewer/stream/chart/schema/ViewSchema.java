@@ -22,21 +22,21 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public class ViewSchema<T> {
 
-	private SDFAttributeList outputSchema;
+	private SDFSchema outputSchema;
 	private SDFMetaAttributeList metadataSchema;
 
 	private List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
 
 	private List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
 
-	public ViewSchema(SDFAttributeList outputSchema, SDFMetaAttributeList metaSchema) {
+	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema) {
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;
 

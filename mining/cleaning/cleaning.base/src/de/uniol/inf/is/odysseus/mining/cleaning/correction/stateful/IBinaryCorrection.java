@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful;
 
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -24,5 +24,5 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  * Created at: 11.07.2011
  */
 public interface IBinaryCorrection<T> extends ICorrection<T> {
-	public void init(SDFAttributeList leftSchema, SDFAttributeList rightSchema);
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
 }

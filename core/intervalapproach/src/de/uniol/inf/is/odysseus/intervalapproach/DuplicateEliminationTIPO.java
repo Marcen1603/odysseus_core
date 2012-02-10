@@ -42,13 +42,13 @@ public class DuplicateEliminationTIPO<T extends IMetaAttributeContainer<? extend
 	 * the attributelist to emulate the left schema for the
 	 * equality predicate
 	 */
-	//private SDFAttributeList leftPredicateSchema;
+	//private SDFSchema leftPredicateSchema;
 	
 	/**
 	 * the attributelist to emulate the right schema for the
 	 * equality predicate
 	 */
-	//private SDFAttributeList rightPredicateSchema;
+	//private SDFSchema rightPredicateSchema;
 	
 	/**
 	 * the sweep area for this operator;

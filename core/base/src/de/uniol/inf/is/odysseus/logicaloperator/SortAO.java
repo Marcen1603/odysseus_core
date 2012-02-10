@@ -18,7 +18,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Marco Grawunder
@@ -31,7 +31,7 @@ public class SortAO extends UnaryLogicalOp{
 	/**
 	 * @uml.property  name="sortAttrib"
 	 */
-    SDFAttributeList sortAttribs = null; 
+    SDFSchema sortAttribs = null; 
 
     /**
      * tells you if the attribute at the
@@ -44,7 +44,7 @@ public class SortAO extends UnaryLogicalOp{
     /**
      * 
      */
-    public SortAO(SDFAttributeList set) {
+    public SortAO(SDFSchema set) {
         super();
         this.sortAttribs = set;
         setName("SortPO");
@@ -73,7 +73,7 @@ public class SortAO extends UnaryLogicalOp{
      * 
      * @uml.property name="sortAttrib"
      */
-    public SDFAttributeList getSortAttrib() {
+    public SDFSchema getSortAttrib() {
         return sortAttribs;
     }
 
@@ -82,7 +82,7 @@ public class SortAO extends UnaryLogicalOp{
      * 
      * @uml.property name="sortAttrib"
      */
-    public void setSortAttrib(SDFAttributeList sortAttribs) {
+    public void setSortAttrib(SDFSchema sortAttribs) {
         this.sortAttribs = sortAttribs;
     }
 
@@ -100,7 +100,7 @@ public class SortAO extends UnaryLogicalOp{
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 	

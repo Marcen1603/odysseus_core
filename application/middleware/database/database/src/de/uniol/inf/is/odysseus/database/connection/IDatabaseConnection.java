@@ -19,7 +19,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -28,14 +28,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
  */
 public interface IDatabaseConnection {
 
-	public void createTable(String tablename, SDFAttributeList schema);
+	public void createTable(String tablename, SDFSchema schema);
 	public void truncateTable(String tablename);
 	public void dropTable(String tablename);
 	public boolean tableExists(String tablename);
-	public boolean equalSchemas(String tablename, SDFAttributeList schema);	
+	public boolean equalSchemas(String tablename, SDFSchema schema);	
 	public Connection getConnection();	
 	public Map<String, String> getInformation();	
 	public List<String> getTables();
 	public List<String> getSchemas();
-	public SDFAttributeList getSchema(String tablename);
+	public SDFSchema getSchema(String tablename);
 }

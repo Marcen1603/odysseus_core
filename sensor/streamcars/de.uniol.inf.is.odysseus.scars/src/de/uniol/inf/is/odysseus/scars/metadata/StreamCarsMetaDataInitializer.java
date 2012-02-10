@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
@@ -42,7 +42,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	// used by updateMetadata
 	private CovarianceExpressionMatrix covarianceExpressionMatrix;
 
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 	private SchemaIndexPath timeStampSchemaIndexPath;
 	private String objectListPath = "";
 	private SchemaHelper schemaHelper;
@@ -74,7 +74,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 *            schema of the tuples which shall be initialized by this
 	 *            object!
 	 */
-	public StreamCarsMetaDataInitializer(SDFAttributeList schema) {
+	public StreamCarsMetaDataInitializer(SDFSchema schema) {
 		this.schema = schema;
 
 		this.schemaHelper = new SchemaHelper(schema);
@@ -91,7 +91,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 * project group StreamCars.
 	 * <p>
 	 * The meta data used to update tuple is being set by the constructor. See
-	 * {@link #StreamCarsMetaDataInitializer(SDFAttributeList)} for details.
+	 * {@link #StreamCarsMetaDataInitializer(SDFSchema)} for details.
 	 * <p>
 	 * NOTE: It is assumed that the schema used to initialize this object
 	 * represents the schema of the tuple initialized by this method.

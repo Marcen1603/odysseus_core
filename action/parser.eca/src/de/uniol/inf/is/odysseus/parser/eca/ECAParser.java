@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -159,7 +159,7 @@ public class ECAParser implements IQueryParser {
 		return iLogicalOperator;
 	}
 
-	private SDFAttributeList determineSchema(List<IQuery> plan)
+	private SDFSchema determineSchema(List<IQuery> plan)
 			throws QueryParseException {
 		if (!plan.isEmpty()) {
 			if (plan.size() > 1) {
@@ -243,7 +243,7 @@ public class ECAParser implements IQueryParser {
 				// create logical plan and retrieve schema
 				List<IQuery> plan = compiler.translateQuery(
 						interalQuery, lang, user, dataDictionary);
-				SDFAttributeList schema = this.determineSchema(plan);
+				SDFSchema schema = this.determineSchema(plan);
 
 				// extract action part of query
 				String actionString = query.substring(ecaMatcher.start(2),

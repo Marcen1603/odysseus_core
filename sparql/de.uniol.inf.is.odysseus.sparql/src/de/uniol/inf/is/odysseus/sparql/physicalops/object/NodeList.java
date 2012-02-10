@@ -9,7 +9,7 @@
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
 //import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.MetaAttribute;
 //import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>
@@ -98,7 +98,7 @@
 //	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
 //	 *            attrList enthaelt
 //	 */
-//	public NodeList<T> restrict(int[] attrList, SDFAttributeList overwriteSchema) {
+//	public NodeList<T> restrict(int[] attrList, SDFSchema overwriteSchema) {
 //		NodeList<T> newAttrList = new NodeList<T>(attrList.length);
 //
 //		for (int i = 0; i < attrList.length; i++) {

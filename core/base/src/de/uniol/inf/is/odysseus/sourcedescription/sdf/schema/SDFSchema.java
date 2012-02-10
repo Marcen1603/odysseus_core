@@ -22,48 +22,44 @@ import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.IClone;
 
-public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
-        implements Comparable<SDFAttributeList>, Serializable, IClone {
+public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
+        implements Comparable<SDFSchema>, Serializable, IClone {
 
     private static final long serialVersionUID = 5218658682722448980L;
 
-    public SDFAttributeList(String URI) {
+    public SDFSchema(String URI) {
         super(URI);
     }
-
-//    public SDFAttributeList() {
-//        super();
-//    }
 
     /**
      * @param attributes1
      */
-    public SDFAttributeList(String uri, SDFAttributeList attributes1) {
+    public SDFSchema(String uri, SDFSchema attributes1) {
         super(uri, attributes1);
     }
 
-    public SDFAttributeList(String uri, SDFAttribute... attributes1) {
+    public SDFSchema(String uri, SDFAttribute... attributes1) {
         super(uri);
         for (SDFAttribute a : attributes1) {
             this.add(a);
         }
     }
 
-    public SDFAttributeList(String uri, Collection<SDFAttribute> attributes1) {
+    public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
         super(uri);
         super.addAll(attributes1);
     }
 
     @Override
-    public SDFAttributeList clone() {
-        return new SDFAttributeList(this.getURI(), this);
+    public SDFSchema clone() {
+        return new SDFSchema(this.getURI(), this);
     }
 
     public void addAttribute(SDFAttribute attribute) {
         super.add(attribute);
     }
 
-    public void addAttributes(SDFAttributeList attributes) {
+    public void addAttributes(SDFSchema attributes) {
         super.addAll(attributes);
     }
 
@@ -84,8 +80,8 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * @param requiredAttributes2
      * @return
      */
-    public static SDFAttributeList union(SDFAttributeList attributes1,
-            SDFAttributeList attributes2) {
+    public static SDFSchema union(SDFSchema attributes1,
+            SDFSchema attributes2) {
         // Zunaechst die beiden Trivialfaelle, wenn eine der beiden Mengen leer
         // ist,
         // ist die andere das Ergebnise
@@ -96,7 +92,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
             return attributes1;
         }
         String name = getNewName(attributes1, attributes2);
-        SDFAttributeList newSet = new SDFAttributeList(name, attributes1);
+        SDFSchema newSet = new SDFSchema(name, attributes1);
         for (int i = 0; i < attributes2.size(); i++) {
             if (!newSet.contains(attributes2.getAttribute(i))) {
                 newSet.addAttribute(attributes2.getAttribute(i));
@@ -105,8 +101,8 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
         return newSet;
     }
 
-	protected static String getNewName(SDFAttributeList attributes1,
-			SDFAttributeList attributes2) {
+	protected static String getNewName(SDFSchema attributes1,
+			SDFSchema attributes2) {
 		String name = attributes1.getURI().compareToIgnoreCase(attributes2.getURI())>=0?attributes1.getURI()+attributes2.getURI():attributes2.getURI()+attributes1.getURI();
 		return name;
 	}
@@ -118,10 +114,10 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * @param attributes2
      * @return
      */
-    public static SDFAttributeList difference(SDFAttributeList attributes1,
-            SDFAttributeList attributes2) {
+    public static SDFSchema difference(SDFSchema attributes1,
+            SDFSchema attributes2) {
 
-        SDFAttributeList newSet = new SDFAttributeList(attributes1.getURI(), attributes1);
+        SDFSchema newSet = new SDFSchema(attributes1.getURI(), attributes1);
         for (int j = 0; j < attributes2.getAttributeCount(); j++) {
             SDFAttribute nextAttr = attributes2.getAttribute(j);
 
@@ -143,9 +139,9 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      *            Set2
      * @return
      */
-    public static SDFAttributeList intersection(SDFAttributeList attributes1,
-            SDFAttributeList attributes2) {
-        SDFAttributeList newSet = new SDFAttributeList(getNewName(attributes1, attributes2));
+    public static SDFSchema intersection(SDFSchema attributes1,
+            SDFSchema attributes2) {
+        SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2));
         for (int j = 0; j < attributes1.getAttributeCount(); j++) {
             SDFAttribute nextAttr = attributes1.getAttribute(j);
 
@@ -163,13 +159,13 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * @param attribs2
      * @return
      */
-    public static boolean subset(SDFAttributeList attribs1,
-            SDFAttributeList attribs2) {
+    public static boolean subset(SDFSchema attribs1,
+            SDFSchema attribs2) {
         return attribs2.elements.containsAll(attribs1.elements);
     }
 
     public static boolean subset(List<SDFAttribute> attribs1,
-            SDFAttributeList attribs2) {
+            SDFSchema attribs2) {
         return attribs2.elements.containsAll(attribs1);
     }
 
@@ -177,7 +173,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * Checks whether this schema is union compatible to another schema. This
      * means: all the attributes of each schema have the same datatype.
      */
-    public boolean compatibleTo(SDFAttributeList other) {
+    public boolean compatibleTo(SDFSchema other) {
         if (other.size() != size()) {
             return false;
         }
@@ -195,8 +191,8 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * Checks whether this schema is union compatible to another schema. This
      * means: all the attributes of each schema have the same datatype.
      */
-    public static boolean compatible(SDFAttributeList left,
-            SDFAttributeList right) {
+    public static boolean compatible(SDFSchema left,
+            SDFSchema right) {
         return left.compatibleTo(right);
     }
 
@@ -205,7 +201,7 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
-    public int compareTo(SDFAttributeList o) {
+    public int compareTo(SDFSchema o) {
         int comp = 0;
         ListIterator<SDFAttribute> iter = super.listIterator();
         ListIterator<SDFAttribute> oIter = o.listIterator();

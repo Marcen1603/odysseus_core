@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
@@ -60,7 +60,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private ILogicalOperator createNewAccessAO(String sourceName) {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
-		SDFAttributeList schema = new SDFAttributeList(sourceName, attributes.getValue());
+		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 		
 		getDataDictionary().addSourceType(sourceName,
 				"RelationalStreaming");

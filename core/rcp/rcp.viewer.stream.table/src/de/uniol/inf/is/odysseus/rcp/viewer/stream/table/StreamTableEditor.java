@@ -37,12 +37,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class StreamTableEditor implements IStreamEditorType {
 
 	private TableViewer viewer;
-	private SDFAttributeList schema;
+	private SDFSchema schema;
 
 	private List<RelationalTuple<?>> tuples = new ArrayList<RelationalTuple<?>>();
 	private int maxTuplesCount;
@@ -112,7 +112,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	public void punctuationElementRecieved(PointInTime point, int port) {
 	}
 
-	public final SDFAttributeList getSchema() {
+	public final SDFSchema getSchema() {
 		return schema;
 	}
 
@@ -170,7 +170,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		this.viewer = viewer; // kann null sein
 	}
 
-	private void setSchema(SDFAttributeList schema) {
+	private void setSchema(SDFSchema schema) {
 		this.schema = schema; // kann auch null sein!
 	}
 

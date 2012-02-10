@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.broker.logicaloperator;
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * The BrokerAO is an abstract operator for the logical algebra.
@@ -34,13 +34,13 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	private String identifier;
 	
 	/** The data schema. */
-	private SDFAttributeListExtended schema = null;
+	private SDFSchemaExtended schema = null;
 	
 	/** The generated time will be used to distinguish between two BrokerAOs. */
 	private long generatedTime;
 	
 	/** The queue schema. */
-	private SDFAttributeList queueSchema = new SDFAttributeList("BrokerQueue");	
+	private SDFSchema queueSchema = new SDFSchema("BrokerQueue");	
 		
 	/**
 	 * Instantiates a new logical broker.
@@ -73,7 +73,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 * @see de.uniol.inf.is.odysseus.ILogicalOperator#getOutputSchema()
 	 */
 	@Override	
-	public synchronized SDFAttributeListExtended getOutputSchema() {		
+	public synchronized SDFSchemaExtended getOutputSchema() {		
 		return this.schema;		
 	}		
 
@@ -82,9 +82,9 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 *
 	 * @param outputSchema the new schema
 	 */
-	public void setSchema(SDFAttributeList outputSchema) {		
+	public void setSchema(SDFSchema outputSchema) {		
 		//create alias schema
-		SDFAttributeListExtended aliasSchema = new SDFAttributeListExtended(outputSchema);
+		SDFSchemaExtended aliasSchema = new SDFSchemaExtended(outputSchema);
 		// FIXME: AttributeLists are immutable --> Source-Names cannot be changed!
 		//this.schema = aliasSchema.redefineSourceName(this.getIdentifier());
 		throw new RuntimeException("THIS NEEDS TO BE FIXED");
@@ -95,7 +95,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 *
 	 * @return the queue schema
 	 */
-	public SDFAttributeList getQueueSchema() {
+	public SDFSchema getQueueSchema() {
 		return this.queueSchema;
 	}
 	
@@ -104,7 +104,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 *
 	 * @param schema the new queue schema
 	 */
-	public void setQueueSchema(SDFAttributeList schema){
+	public void setQueueSchema(SDFSchema schema){
 		this.queueSchema = schema;
 	}
 	

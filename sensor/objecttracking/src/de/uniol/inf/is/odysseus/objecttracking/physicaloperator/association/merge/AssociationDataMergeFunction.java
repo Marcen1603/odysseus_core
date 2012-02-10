@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionTim
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 public class AssociationDataMergeFunction<M extends IProbabilityPredictionFunctionTimeInterval<RelationalTuple<M>, M>>
@@ -28,19 +28,19 @@ public class AssociationDataMergeFunction<M extends IProbabilityPredictionFuncti
 	 * This is the resultschema of elements
 	 * that have been merged
 	 */
-	SDFAttributeList schema;
+	SDFSchema schema;
 	
 	/**
 	 * This is the schema of the left input stream
 	 */
-	SDFAttributeList leftSchema;
+	SDFSchema leftSchema;
 	
 	/**
 	 * This is the schema of the right input stream
 	 */
-	SDFAttributeList rightSchema;
+	SDFSchema rightSchema;
 	
-	public AssociationDataMergeFunction(SDFAttributeList leftSchema, SDFAttributeList rightSchema, SDFAttributeList resultSchema){
+	public AssociationDataMergeFunction(SDFSchema leftSchema, SDFSchema rightSchema, SDFSchema resultSchema){
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.schema = resultSchema;

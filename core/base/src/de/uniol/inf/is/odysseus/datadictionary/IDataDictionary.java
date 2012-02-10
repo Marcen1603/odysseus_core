@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
@@ -30,10 +30,10 @@ import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
 
 public interface IDataDictionary {
 
-	public void addEntitySchema(String uri, SDFAttributeList entity, ISession user)
+	public void addEntitySchema(String uri, SDFSchema entity, ISession user)
 			throws PermissionException;
 
-	public SDFAttributeList getEntitySchema(String uri, ISession caller)
+	public SDFSchema getEntitySchema(String uri, ISession caller)
 			throws PermissionException;
 
 	/**

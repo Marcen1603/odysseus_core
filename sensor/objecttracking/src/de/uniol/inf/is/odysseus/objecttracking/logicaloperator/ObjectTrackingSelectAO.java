@@ -30,8 +30,8 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.OrRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.RelationalRangePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListMetadataTypes;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleFacade;
 import de.uniol.inf.is.odysseus.objecttracking.util.MapleHack;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 @SuppressWarnings({"unchecked","rawtypes"})
@@ -138,7 +138,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	}
 	
 	@Override
-	public SDFAttributeList getOutputSchema() {
+	public SDFSchema getOutputSchema() {
 		return getInputSchema();
 	}
 	
@@ -152,14 +152,14 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	public void init(IAttributeResolver attributeResolver){
 		this.initRestrictList();
 		
-		if(this.getInputSchema() instanceof SDFAttributeListExtended){
-			SDFAttributeListExtended inputSchema = (SDFAttributeListExtended)this.getInputSchema();
+		if(this.getInputSchema() instanceof SDFSchemaExtended){
+			SDFSchemaExtended inputSchema = (SDFSchemaExtended)this.getInputSchema();
 			
-			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFAttributeListMetadataTypes.PREDICTION_FUNCTIONS);
+			Map<IPredicate, IPredictionFunction> predictionFunctions = (Map<IPredicate, IPredictionFunction>)inputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
 			
 			// maybe the prediction functions have not been set
 			// this can happen, if we use a schema convert operator
-			// in our query plan, that changes to SDFAttributeListExtended
+			// in our query plan, that changes to SDFSchemaExtended
 			// for compatibility with other operators
 			if(predictionFunctions != null){
 				this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
@@ -311,7 +311,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	
 	
 	private void initRestrictList(){
-		this.restrictList = ((SDFAttributeListExtended)this.getInputSchema(0)).getMeasurementAttributePositions();
+		this.restrictList = ((SDFSchemaExtended)this.getInputSchema(0)).getMeasurementAttributePositions();
 	}
 
 	@Override
