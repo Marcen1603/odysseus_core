@@ -212,6 +212,6 @@ public class SDFAttributeList extends SDFSchemaElementSet<SDFAttribute>
         while ((iter.hasNext()) && (oIter.hasNext())) {
             comp &= iter.next().compareTo(oIter.next());
         }
-        return 0;
+        return comp;
     }
 }
