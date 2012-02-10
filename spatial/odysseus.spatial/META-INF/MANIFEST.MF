@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Spatial
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/SpatialDatatypeProvider.xml, OSGI-INF/SpatialFunctionProvider.xml, OSGI-INF/SpatialByteHandler.xml 
@@ -11,5 +11,4 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema
 Require-Bundle: de.uniol.inf.is.odysseus,
  java.topological.suite;bundle-version="1.0.0",
- org.osgeo.proj4j;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datadictionary.mem;bundle-version="1.0.0"
+ org.osgeo.proj4j;bundle-version="1.0.0"

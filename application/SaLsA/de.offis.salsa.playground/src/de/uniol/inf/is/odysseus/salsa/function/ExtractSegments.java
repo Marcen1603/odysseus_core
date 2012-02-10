@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -29,7 +30,13 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
     private final GeometryFactory geometryFactory = new GeometryFactory();
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                SDFDatatype.SPATIAL_MULTI_POINT
+                    SDFSpatialDatatype.SPATIAL_POINT, SDFSpatialDatatype.SPATIAL_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POINT,
+                    SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY
+
             }, {
                 SDFDatatype.DOUBLE
             }
@@ -56,8 +63,8 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.TUPLE;
-                
+        return new SDFDatatype(SDFDatatype.TUPLE.getURI(), SDFDatatype.KindOfDatatype.TUPLE,
+                SDFSpatialDatatype.SPATIAL_GEOMETRY);
     }
 
     @Override

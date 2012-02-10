@@ -7,10 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.salsa.function.BoundingBox;
-import de.uniol.inf.is.odysseus.salsa.function.ClearGrid;
 import de.uniol.inf.is.odysseus.salsa.function.ExtractSegments;
 import de.uniol.inf.is.odysseus.salsa.function.IEPF;
-import de.uniol.inf.is.odysseus.salsa.function.IsGridFree;
 import de.uniol.inf.is.odysseus.salsa.function.IsPedestrian;
 import de.uniol.inf.is.odysseus.salsa.function.MergeGeometries;
 import de.uniol.inf.is.odysseus.salsa.function.ObjectSize;
@@ -43,8 +41,6 @@ public class Activator implements BundleActivator {
             MEP.registerFunction(new BoundingBox());
             MEP.registerFunction(new ObjectSize());
             MEP.registerFunction(new IEPF());
-            MEP.registerFunction(new IsGridFree());
-            MEP.registerFunction(new ClearGrid());
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);
@@ -65,8 +61,6 @@ public class Activator implements BundleActivator {
             MEP.unregisterFunction("BoundingBox");
             MEP.unregisterFunction("ObjectSize");
             MEP.unregisterFunction("IEPF");
-            MEP.unregisterFunction("IsGridFree");
-            MEP.unregisterFunction("ClearGrid");
         }
         catch (final Exception e) {
             Activator.LOG.error(e.getMessage(), e);

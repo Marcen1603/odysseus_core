@@ -25,10 +25,11 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/GridDatatypeProvider.xml, OSGI-INF/GridFunctionProvider.xml, OSGI-INF/AggregationFunctionBuilder.xml, OSGI-INF/TransformationRuleService.xml
-Export-Package: de.uniol.inf.is.odysseus.spatial,
- de.uniol.inf.is.odysseus.spatial.common,
- de.uniol.inf.is.odysseus.spatial.functions,
- de.uniol.inf.is.odysseus.spatial.model
+Export-Package: de.uniol.inf.is.odysseus.spatial.grid.common,
+ de.uniol.inf.is.odysseus.spatial.grid.functions,
+ de.uniol.inf.is.odysseus.spatial.grid,
+ de.uniol.inf.is.odysseus.spatial.grid.model,
+ de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema
 Require-Bundle: java.topological.suite;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus
 Bundle-ClassPath: .,

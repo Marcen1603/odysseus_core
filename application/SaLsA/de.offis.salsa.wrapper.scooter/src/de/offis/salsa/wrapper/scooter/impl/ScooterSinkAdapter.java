@@ -19,7 +19,7 @@ import Ice.InitializationData;
 import Ice.ObjectAdapter;
 import Ice.Properties;
 import Ice.Util;
-import de.uniol.inf.is.odysseus.spatial.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;

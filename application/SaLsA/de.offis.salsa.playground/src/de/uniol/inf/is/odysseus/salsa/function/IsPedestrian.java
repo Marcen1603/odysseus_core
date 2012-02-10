@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -18,7 +19,7 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
     private static Logger LOG = LoggerFactory.getLogger(IsPedestrian.class);
 
     public static final SDFDatatype[] accTypes0 = new SDFDatatype[] {
-        SDFDatatype.SPATIAL
+        SDFSpatialDatatype.SPATIAL_GEOMETRY
     };
     public static final SDFDatatype[] accTypes1 = new SDFDatatype[] {
         SDFDatatype.DOUBLE

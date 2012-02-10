@@ -20,8 +20,6 @@ public class FunctionProvider implements IFunctionProvider {
         final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
         functions.add(new ExtractSegments());
         functions.add(new IEPF());
-        functions.add(new IsGridFree());
-        functions.add(new ClearGrid());
 
         return functions;
     }

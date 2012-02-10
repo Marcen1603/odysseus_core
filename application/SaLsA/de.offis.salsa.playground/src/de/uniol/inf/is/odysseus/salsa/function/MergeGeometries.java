@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -16,14 +17,20 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
     private static final long serialVersionUID = -6160624202251051944L;
     public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
             {
-                    SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
-                    SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
-                    SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
+                    SDFSpatialDatatype.SPATIAL_POINT, SDFSpatialDatatype.SPATIAL_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POINT,
+                    SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY
             },
             {
-                    SDFDatatype.SPATIAL, SDFDatatype.SPATIAL_LINE, SDFDatatype.SPATIAL_MULTI_LINE,
-                    SDFDatatype.SPATIAL_MULTI_POINT, SDFDatatype.SPATIAL_MULTI_POLYGON,
-                    SDFDatatype.SPATIAL_POINT, SDFDatatype.SPATIAL_POLYGON
+                    SDFSpatialDatatype.SPATIAL_POINT, SDFSpatialDatatype.SPATIAL_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_POLYGON, SDFSpatialDatatype.SPATIAL_MULTI_POINT,
+                    SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING,
+                    SDFSpatialDatatype.SPATIAL_MULTI_POLYGON,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
+                    SDFSpatialDatatype.SPATIAL_GEOMETRY
             }
     };
 
@@ -65,6 +72,6 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.SPATIAL;
+        return SDFSpatialDatatype.SPATIAL_GEOMETRY;
     }
 }
