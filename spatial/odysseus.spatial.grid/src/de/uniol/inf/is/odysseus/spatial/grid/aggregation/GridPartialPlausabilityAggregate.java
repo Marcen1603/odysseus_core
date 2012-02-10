@@ -1,24 +1,25 @@
-package de.uniol.inf.is.odysseus.spatial.aggregation;
+package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc;
 
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.spatial.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
+public class GridPartialPlausabilityAggregate<T> implements
+		IPartialAggregate<T> {
 
 	private double count;
 	private final Grid grid;
 	private IplImage image;
 	private IplImage mask;
 
-	public GridPartialBeliefeAggregate(final Grid grid) {
+	public GridPartialPlausabilityAggregate(final Grid grid) {
 		this.count = 1.0;
 		this.grid = new Grid(grid.origin, grid.width * grid.cellsize,
 				grid.depth * grid.cellsize, grid.cellsize, grid.getBuffer());
@@ -35,7 +36,7 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 		OpenCVUtil.gridToImage(this.grid, tmp);
 
 		opencv_imgproc.cvThreshold(tmp, tmp, 100, 0,
-				opencv_imgproc.CV_THRESH_TRUNC);
+				opencv_imgproc.CV_THRESH_TOZERO_INV);
 
 		opencv_core.cvConvertScale(tmp, this.image, 1, 0);
 		opencv_core.cvReleaseImage(tmp);
@@ -46,8 +47,8 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 				opencv_imgproc.CV_THRESH_BINARY);
 	}
 
-	public GridPartialBeliefeAggregate(
-			final GridPartialBeliefeAggregate<T> gridPartialAggregate) {
+	public GridPartialPlausabilityAggregate(
+			final GridPartialPlausabilityAggregate<T> gridPartialAggregate) {
 		this.grid = new Grid(this.grid.origin, this.grid.width
 				* this.grid.cellsize, this.grid.depth * this.grid.cellsize,
 				this.grid.cellsize, gridPartialAggregate.grid.getBuffer());
@@ -63,8 +64,8 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	@Override
-	public GridPartialBeliefeAggregate<T> clone() {
-		return new GridPartialBeliefeAggregate<T>(this);
+	public GridPartialPlausabilityAggregate<T> clone() {
+		return new GridPartialPlausabilityAggregate<T>(this);
 	}
 
 	public void evaluate() {
@@ -109,7 +110,7 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 		OpenCVUtil.gridToImage(grid, tmp);
 
 		opencv_imgproc.cvThreshold(tmp, tmp, 100, 0,
-				opencv_imgproc.CV_THRESH_TRUNC);
+				opencv_imgproc.CV_THRESH_TOZERO_INV);
 
 		opencv_core.cvConvertScale(tmp, merge, 1, 0);
 		opencv_core.cvReleaseImage(tmp);

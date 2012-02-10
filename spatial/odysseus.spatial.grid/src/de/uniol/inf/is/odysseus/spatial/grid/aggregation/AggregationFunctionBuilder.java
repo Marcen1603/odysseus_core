@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.aggregation;
+package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import java.util.Collection;
 import java.util.LinkedList;
