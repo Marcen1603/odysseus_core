@@ -26,8 +26,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
  * This class represents Attributes. Each Attribute can have two parts: A global
  * unique source name and a source unique attribute name.
  * 
- * Each attribute can have a list of subattributes to support NF2 based
- * attributes
  * 
  * @author Marco Grawunder, Andre Bolles
  * 
@@ -177,7 +175,7 @@ public class SDFAttribute extends SDFSchemaElement implements
 				return false;
 		} else if (!covariance.equals(other.covariance))
 			return false;
-		// TODO: Kurzfristiger Hack
+		// TODO: Kurzfristiger Hack (attribute names are equal and only one attribute has a source)
 		if (getSourceName() == null || other.getSourceName() == null) {
 			return true;
 		}
