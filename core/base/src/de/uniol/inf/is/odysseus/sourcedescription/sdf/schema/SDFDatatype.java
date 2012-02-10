@@ -48,42 +48,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 
-//	public static final SDFDatatype SPATIAL_POINT = new SDFDatatype(
-//			"SpatialPoint", SDFDatatype.KindOfDatatype.BEAN,
-//			new SDFAttributeList("Coordinate", new SDFAttribute(null, "x",
-//					SDFDatatype.DOUBLE), new SDFAttribute(null, "y",
-//					SDFDatatype.DOUBLE), new SDFAttribute(null, "z",
-//					SDFDatatype.DOUBLE)));
-//
-//	public static final SDFDatatype SPATIAL_MULTI_POINT = new SDFDatatype(
-//			"SpatialMultiPoint", SDFDatatype.KindOfDatatype.MULTI_VALUE,
-//			SDFDatatype.SPATIAL_POINT);
-//
-//	public static final SDFDatatype SPATIAL_LINE = new SDFDatatype(
-//			"SpatialLine", SDFDatatype.KindOfDatatype.BEAN,
-//			new SDFAttributeList("Line", new SDFAttribute(null, "start",
-//					SDFDatatype.SPATIAL_POINT), new SDFAttribute(null, "end",
-//					SDFDatatype.SPATIAL_POINT)));
-//
-//	public static final SDFDatatype SPATIAL_MULTI_LINE = new SDFDatatype(
-//			"SpatialMultiLine", SDFDatatype.KindOfDatatype.MULTI_VALUE,
-//			SDFDatatype.SPATIAL_LINE);
-//
-//	public static final SDFDatatype SPATIAL_POLYGON = new SDFDatatype(
-//			"SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
-//			new SDFAttributeList("Points", new SDFAttribute(null, "points",
-//					SDFDatatype.SPATIAL_MULTI_POINT)));
-//
-//	public static final SDFDatatype SPATIAL_MULTI_POLYGON = new SDFDatatype(
-//			"SpatialMultiPolygon", SDFDatatype.KindOfDatatype.MULTI_VALUE,
-//			SDFDatatype.SPATIAL_POLYGON);
-//
-//	/**
-//	 * abstract type for spatial objects. Access to subschema is not possible so
-//	 * we treat this type as base type.
-//	 */
-//	public static final SDFDatatype SPATIAL = new SDFDatatype("Spatial");
-
 	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype(
 			"StartTimestamp");
 	public static final SDFDatatype END_TIMESTAMP = new SDFDatatype(
@@ -114,13 +78,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype(
 			"VectorBoolean", SDFDatatype.KindOfDatatype.BASE,
 			SDFDatatype.BOOLEAN);
-
-//	public static final SDFDatatype GRID = new SDFDatatype("Grid",
-//			SDFDatatype.KindOfDatatype.BEAN,
-//			new SDFAttributeList("", new SDFAttribute(null, "origin",
-//					SDFDatatype.SPATIAL_POINT), new SDFAttribute(null,
-//					"cellsize", SDFDatatype.DOUBLE), new SDFAttribute(null,
-//					"grid", SDFDatatype.MATRIX_BYTE)));
 
 	private static final long serialVersionUID = 8585322290347489841L;
 
@@ -165,11 +122,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			SDFDatatype subType) {
 		super(datatypeName);
 
-		// do not check for set. A matrix can also have a subtype
-		// if(type != SDFDatatype.KindOfDatatype.MULTI_VALUE){
-		// throw new
-		// IllegalArgumentException("This constructor is only for MULTI_VALUE datatypes.");
-		// }
 		this.type = type;
 		this.subType = subType;
 
@@ -201,25 +153,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		dd.addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
 		dd.addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
 		dd.addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-//		dd.addDatatype(SDFDatatype.SPATIAL_LINE.getURI(), SDFDatatype.SPATIAL_LINE);
-//		dd.addDatatype(SDFDatatype.SPATIAL_MULTI_LINE.getURI(),
-//				SDFDatatype.SPATIAL_MULTI_LINE);
-//		dd.addDatatype(SDFDatatype.SPATIAL_MULTI_POINT.getURI(),
-//				SDFDatatype.SPATIAL_MULTI_POINT);
-//		dd.addDatatype(SDFDatatype.SPATIAL_MULTI_POLYGON.getURI(),
-//				SDFDatatype.SPATIAL_MULTI_POLYGON);
-//		dd.addDatatype(SDFDatatype.SPATIAL_POINT.getURI(),
-//				SDFDatatype.SPATIAL_POINT);
-//		dd.addDatatype(SDFDatatype.SPATIAL_POLYGON.getURI(),
-//				SDFDatatype.SPATIAL_POLYGON);
-//		dd.addDatatype(SDFDatatype.SPATIAL.getURI(), SDFDatatype.SPATIAL);
 		dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
 				SDFDatatype.START_TIMESTAMP);
 		dd.addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
 		dd.addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
 		dd.addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
 		dd.addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
-//		dd.addDatatype(SDFDatatype.GRID.getURI(), SDFDatatype.GRID);
 	}
 	
 	@Override
@@ -327,40 +266,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 				|| this.isStartTimestamp() || this.isEndTimestamp();
 	}
 
-//	public boolean isSpatial() {
-//		return this.getURI().equals(SPATIAL.getURI()) || this.isPoint()
-//				|| this.isLine() || this.isPolygon() || this.isMultiPoint()
-//				|| this.isMultiLine() || this.isMultiPolygon();
-//	}
-//
-//	public boolean isPoint() {
-//		return this.getURI().equals(SPATIAL_POINT.getURI());
-//	}
-//
-//	public boolean isLine() {
-//		return this.getURI().equals(SPATIAL_LINE.getURI());
-//	}
-//
-//	public boolean isPolygon() {
-//		return this.getURI().equals(SPATIAL_POLYGON.getURI());
-//	}
-//
-//	public boolean isMultiPoint() {
-//		return this.getURI().equals(SPATIAL_MULTI_POINT.getURI());
-//	}
-//
-//	public boolean isMultiLine() {
-//		return this.getURI().equals(SPATIAL_MULTI_LINE.getURI());
-//	}
-//
-//	public boolean isMultiPolygon() {
-//		return this.getURI().equals(SPATIAL_MULTI_POLYGON.getURI());
-//	}
-//
-//	public boolean isGrid() {
-//		return this.getURI().equals(GRID.getURI());
-//	}
-
 	public int getSubattributeCount() {
 		if (this.schema == null) {
 			return 0;
@@ -424,11 +329,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		if (this.equals(other)) {
 			return true;
 		}
-		// String and Object are only compatible to themselfes
-		// else if(left.equals(SDFDatatype.STRING) ||
-		// left.equals(SDFDatatype.OBJECT)){
-		// return false;
-		// }
 		else if (this.isInteger() && other.isNumeric()) {
 			return true;
 		} else if (this.isLong()
@@ -447,15 +347,6 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		} else if (this.isTimestamp()
 				&& (other.isTimestamp() || other.isLong())) {
 			return true;
-//		} else if (this.isSpatial() && (other.isSpatial()) || this.isPoint()
-//				&& (other.isPoint()) || this.isLine() && (other.isLine())
-//				|| this.isPolygon() && other.isPolygon() || this.isMultiPoint()
-//				&& other.isMultiPoint() || this.isMultiLine()
-//				&& other.isMultiLine() || this.isMultiPolygon()
-//				&& other.isMultiPolygon()) {
-//			return true;
-//		} else if (this.isGrid() && other.isGrid()) {
-//			return true;
 		}
 		return false;
 	}
