@@ -19,10 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.management.RuntimeErrorException;
-
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
@@ -55,9 +51,7 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.ISourceDiscovererList
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.listener.SourceListenerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.strategy.StandardIdGenerator;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerListener;
-import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministrationPeerListener, ISourceDiscovererListener,  IDiscoveryServiceProvider {
@@ -337,8 +331,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 	
 	@Override
 	public void addToDD(ISourceAdvertisement adv, IDataDictionary dd, ISession caller) {
-		SDFEntity entity = new SDFEntity(adv.getSourceName());
-		dd.addEntity(adv.getSourceName(), entity, caller);
+		dd.addEntitySchema(adv.getSourceName(), null, caller);
 		
 		AccessAO source = new AccessAO();
 		source.setSource(new SDFSource(adv.getPeerID()+":"+adv.getSourceName(), "P2PSource"));

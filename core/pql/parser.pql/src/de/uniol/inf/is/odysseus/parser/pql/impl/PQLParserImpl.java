@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.util.PrintTreeVisitor;
@@ -244,10 +243,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
       {
         {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
       }
-      SDFEntity entity = new SDFEntity(nameStr);
-      entity.setAttributes(op.getOutputSchema());
       dd.addSourceType(nameStr, "RelationalStreaming");
-      dd.addEntity(nameStr, entity, getUser());
+      dd.addEntitySchema(nameStr, op.getOutputSchema(), getUser());
       if(isSharedSource)
       {
         dd.setStream(nameStr, op, user);

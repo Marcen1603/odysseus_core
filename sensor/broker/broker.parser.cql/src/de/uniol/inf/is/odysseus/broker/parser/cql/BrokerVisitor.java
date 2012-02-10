@@ -18,14 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-
 import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
@@ -52,10 +51,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFAttributeListExtended;
 
 /**
  * The BrokerVisitor provides the implementation of the broker related parts
@@ -156,9 +153,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		broker.subscribeToSource(result, 0, 0, result.getOutputSchema());
 		// make it accessible like a normal source
 		dataDictionary.addSourceType(name, "brokerStreaming");
-		SDFEntity entity = new SDFEntity(name);
-		entity.setAttributes(broker.getOutputSchema());
-		dataDictionary.addEntity(name, entity, caller);
+		dataDictionary.addEntitySchema(name, broker.getOutputSchema(), caller);
 		return broker;
 
 	}
@@ -331,9 +326,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 		// make it accessible like a normal source
 		dataDictionary.addSourceType(brokerName, "brokerStreaming");
-		SDFEntity entity = new SDFEntity(brokerName);
-		entity.setAttributes(attributes);
-		dataDictionary.addEntity(brokerName, entity, caller);
+		dataDictionary.addEntitySchema(brokerName, attributes, caller);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
 		broker.setSchema(attributes);

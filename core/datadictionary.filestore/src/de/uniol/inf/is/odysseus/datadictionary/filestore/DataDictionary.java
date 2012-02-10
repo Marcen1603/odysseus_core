@@ -6,8 +6,8 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.store.FileStore;
 import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
@@ -21,7 +21,7 @@ public class DataDictionary extends AbstractDataDictionary {
 				OdysseusDefaults.get("streamOrViewFromUserFilename"));
 		viewDefinitions = new FileStore<String, ILogicalOperator>(
 				OdysseusDefaults.get("viewDefinitionsFilename"));
-		entityMap = new FileStore<String, SDFEntity>(
+		entityMap = new FileStore<String, SDFAttributeList>(
 				OdysseusDefaults.get("entitiesFilename"));
 		sourceTypeMap = new FileStore<String, String>(
 				OdysseusDefaults.get("sourceTypeMapFilename"));

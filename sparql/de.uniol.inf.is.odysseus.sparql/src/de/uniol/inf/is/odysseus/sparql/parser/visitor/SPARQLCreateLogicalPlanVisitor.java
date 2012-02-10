@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
@@ -127,7 +126,6 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolv
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
@@ -1292,10 +1290,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		accAO.setOutputSchema(outputSchema);
 		
 		// before adding the acces operator, add the corresponding entity
-		SDFEntity entity = new SDFEntity(streamName);
-		entity.setAttributes(outputSchema);
 		dd.addSourceType(streamName, accAO.getSourceType());
-		dd.addEntity(streamName, entity, user);
+		dd.addEntitySchema(streamName, outputSchema, user);
 		
 		TimestampAO op = addTimestampAO(accAO);
 		if(isPersistent){

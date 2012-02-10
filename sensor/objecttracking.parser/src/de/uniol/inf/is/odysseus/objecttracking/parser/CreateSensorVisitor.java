@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -77,11 +76,11 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		SDFAttributeListExtended ex = new SDFAttributeListExtended(
 				new SDFAttribute[] { rootAttribute });
 
-		SDFEntity entity = new SDFEntity(name);
-		entity.setAttributes(ex);
+		SDFAttributeList schema = new SDFAttributeList(name, ex);
+	
 		dd.addSourceType(name,
 				"ObjectRelationalStreaming");
-		dd.addEntity(name, entity, user);
+		dd.addEntitySchema(name, schema, user);
 
 		// TODO: rekursiv ausgeben, was in der SDFAttributeListExtended ist
 		// (extra Klasse oder so)

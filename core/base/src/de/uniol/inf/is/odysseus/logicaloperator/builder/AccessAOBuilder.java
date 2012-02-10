@@ -14,18 +14,15 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
 
 /**
  * @author Jonas Jacobi
@@ -63,14 +60,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private ILogicalOperator createNewAccessAO(String sourceName) {
 		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
-		SDFEntity sdfEntity = new SDFEntity(sourceName);
-		List<SDFAttribute> attributeList = attributes.getValue();
-		SDFAttributeList schema = new SDFAttributeList(sourceName, attributeList);
-		sdfEntity.setAttributes(schema);
-
+		SDFAttributeList schema = new SDFAttributeList(sourceName, attributes.getValue());
+		
 		getDataDictionary().addSourceType(sourceName,
 				"RelationalStreaming");
-		getDataDictionary().addEntity(sourceName, sdfEntity, getCaller());
+		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
 		AccessAO ao = new AccessAO(sdfSource);
 		ao.setHost(host.getValue());

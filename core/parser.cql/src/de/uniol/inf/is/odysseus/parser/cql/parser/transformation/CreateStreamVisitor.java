@@ -57,8 +57,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFEntity;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -107,10 +105,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		attributes = new SDFAttributeList(name);
 		node.jjtGetChild(1).jjtAccept(this, data);
-		SDFEntity entity = new SDFEntity(name);
-		entity.setAttributes(attributes);
 		dd.addSourceType(name, "RelationalStreaming");
-		dd.addEntity(name, entity, caller);
+		dd.addEntitySchema(name, attributes, caller);
 
 		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
