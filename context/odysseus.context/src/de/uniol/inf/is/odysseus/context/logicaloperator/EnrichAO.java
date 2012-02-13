@@ -19,8 +19,11 @@ public class EnrichAO extends AbstractLogicalOperator {
 	List<String> contextStoreNames = new ArrayList<String>();
 	private SDFSchema outputSchema = null;
 
-	public EnrichAO(AbstractLogicalOperator op) {
+	public EnrichAO(EnrichAO op) {
 		super(op);
+		contextStoreNames = new ArrayList<>(op.contextStoreNames);
+		// Eigentlich gar nicht mehr notwendig ... Schemata sind immutable ...
+		outputSchema = new SDFSchema(outputSchema.getURI(), outputSchema.getAttributes());
 	}
 
 	public EnrichAO() {
