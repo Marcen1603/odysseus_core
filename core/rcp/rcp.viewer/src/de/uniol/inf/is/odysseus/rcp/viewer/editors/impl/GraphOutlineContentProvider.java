@@ -131,7 +131,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 //			if( node.getModelNode().getContent().getOutputSchema() != null ) return true;
 		}
 		if( element instanceof Collection<?>) return true;
-		
+		if (element instanceof SDFSchema) return true;
 		if( element instanceof SDFAttribute) {
 			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
 		}
