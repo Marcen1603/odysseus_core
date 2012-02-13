@@ -49,5 +49,5 @@ Bundle-NativeCode: lib/linux/x64/libopencv_core.so ; lib/linux/x64/libopencv_img
   processor=x86,
     lib/macos/x64/opencv_core231.dll ; lib/macos/x64/opencv_imgproc231.dll ; lib/macos/x64/opencv_calib3d231.dll ; lib/macos/x64/opencv_contrib231.dll ; lib/macos/x64/opencv_features2d231.dll ; lib/macos/x64/opencv_flann231.dll ; lib/macos/x64/opencv_gpu231.dll ; lib/macos/x64/opencv_highgui231.dll ; lib/macos/x64/opencv_legacy231.dll ; lib/macos/x64/opencv_ml231.dll ; lib/macos/x64/opencv_objdetect231.dll ;
   osname=macos;
-  processor=x86_64,
+  processor=x86_64
   
