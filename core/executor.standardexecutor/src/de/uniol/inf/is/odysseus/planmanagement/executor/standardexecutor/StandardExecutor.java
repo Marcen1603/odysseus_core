@@ -498,6 +498,7 @@ public class StandardExecutor extends AbstractExecutor implements
 						"Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_REMOVE, queryToRemove));
+				dataDictionary.removeQuery(queryToRemove, caller);
 				this.reloadLog.removeQuery(queryToRemove.getQueryText());
 			} catch (QueryOptimizationException e) {
 				getLogger().warn(
