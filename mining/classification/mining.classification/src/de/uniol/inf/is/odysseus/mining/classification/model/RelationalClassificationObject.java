@@ -78,7 +78,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	 */
 	@Override
 	public int getClassificationAttributeCount() {
-		return restrictedTuple.getAttributeCount();
+		return restrictedTuple.size();
 	}
 
 	/* (non-Javadoc)
@@ -93,7 +93,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	 * @return a tuple with the belonging class
 	 */
 	public RelationalTuple<T> getClassifiedTuple() {
-		if (labelAttributePosition < tuple.getAttributeCount()) {
+		if (labelAttributePosition < tuple.size()) {
 			RelationalTuple<T> newTuple = tuple.clone();
 			newTuple.setAttribute(labelAttributePosition, getClassLabel());
 			return newTuple;

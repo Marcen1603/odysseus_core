@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mining.clustering.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,8 +24,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.mining.NonNumericAttributeException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This class is a super class for logical clustering operators. It specifies
@@ -76,7 +77,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 * 
 	 */
 	public int[] determineRestrictList() {
-		return calcRestrictList(this.getInputSchema(), attributes);
+		return calcRestrictList(this.getInputSchema().getAttributes(), attributes);
 	}
 
 	/**
@@ -91,7 +92,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 *         which should be used for clustering.
 	 */
 
-	public static int[] calcRestrictList(List<SDFAttribute> inputSchema,
+	public static int[] calcRestrictList(Collection<SDFAttribute> inputSchema,
 			List<SDFAttribute> attributes) {
 		int[] ret = new int[attributes.size()];
 		int i = 0;
@@ -131,11 +132,12 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public SDFSchema getOutputSchema() {
-
-		SDFSchema outputSchema = new SDFSchema("Cluster");
+		List<SDFAttribute> elems = new ArrayList<SDFAttribute>();
 		SDFAttribute id = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
-		outputSchema.add(id);
-		outputSchema.addAll(getInputSchema().clone());
+		elems.add(id);
+		elems.addAll(getInputSchema().clone().getAttributes());
+		SDFSchema outputSchema = new SDFSchema("Cluster", elems);
+
 		return outputSchema;
 	}
 
@@ -151,12 +153,13 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 		if (port == 0) {
 			return getOutputSchema();
 		} else {
-			SDFSchema clusterSchema = new SDFSchema("Cluster");
+			List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
 			SDFAttribute idA = new SDFAttribute(null,"cluster_id", SDFDatatype.INTEGER);
-			clusterSchema.add(idA);
+			attribs.add(idA);
 			SDFAttribute idCount = new SDFAttribute(null,"cluster_count", SDFDatatype.LONG);
-			clusterSchema.add(idCount);
-			clusterSchema.addAll(attributes);
+			attribs.add(idCount);
+			attribs.addAll(attributes);
+			SDFSchema clusterSchema = new SDFSchema("Cluster", attribs);
 			return clusterSchema;
 		}
 	}

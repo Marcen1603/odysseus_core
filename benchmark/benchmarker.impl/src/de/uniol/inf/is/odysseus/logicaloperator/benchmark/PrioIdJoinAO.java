@@ -72,10 +72,11 @@ public class PrioIdJoinAO extends AbstractLogicalOperator implements
 
 	@Override
 	public SDFSchema getOutputSchema() {
-		SDFSchema outputSchema = new SDFSchema("");
+		SDFSchema outputSchema = null;
 		for (LogicalSubscription l : getSubscribedToSource()) {
 			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
-			outputSchema.addAttributes(l.getSchema());
+			// TODO: Warum wurde das schema doppelt hinzugefügt?? (MG)
+			//outputSchema.addAttributes(l.getSchema());
 		}
 		return outputSchema;
 	}

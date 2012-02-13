@@ -86,7 +86,7 @@ public abstract class AbstractAttributeEvaluationMeasure<T extends IMetaAttribut
 	 * @return the index of the attribute to be used or null if not to split
 	 */
 	public Integer getSplitAttribute(DataCube<T> statistics) {
-		if (statistics.getAttributeCount() < 2) {
+		if (statistics.size() < 2) {
 			// partitions with less than two tuples can not be split
 			return null;
 		}
@@ -95,7 +95,7 @@ public abstract class AbstractAttributeEvaluationMeasure<T extends IMetaAttribut
 		double secondQuality = 0D;
 
 		// get the best two attributes
-		for (int i = 0; i < statistics.getAttributeCount(); i++) {
+		for (int i = 0; i < statistics.size(); i++) {
 			Double quality = getEvaluationMeasure(statistics, i);
 			if (quality > bestQuality) {
 				secondQuality = bestQuality;

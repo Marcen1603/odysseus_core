@@ -326,7 +326,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 
 		if (entry.obj instanceof RelationalTuple && pointer.size() <= maxLevels) {
 			RelationalTuple<?> t = (RelationalTuple<?>) entry.obj;
-			int size = t.getAttributeCount();
+			int size = t.size();
 
 			if (entry.index == size) {
 				// Listenende erreicht

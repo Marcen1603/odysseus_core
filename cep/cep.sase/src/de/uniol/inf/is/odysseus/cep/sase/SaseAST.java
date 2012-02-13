@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-10 14:46:28
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-13 11:38:24
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -2118,12 +2118,8 @@ public class SaseAST extends TreeParser {
 
                         RelationalMEPOutputSchemeEntry e = null;
                         OutputScheme scheme = new OutputScheme();
-                        SDFSchema attrList = null;
-                        if (value != null){
-                          attrList= new SDFSchema(value.getText());
-                          }else{
-                          attrList = new SDFSchema("");
-                          }
+                        List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
+                        
                         for (PathAttribute p : retAttr) {
                         	String op = p.getAggregation();
                         	String a = p.getStatename();
@@ -2141,14 +2137,15 @@ public class SaseAST extends TreeParser {
                         	SDFAttribute attr = new SDFAttribute(null,e.getLabel(), SDFDatatype.STRING);
                         	attrList.add(attr);
                         }
+                        SDFSchema outputSchema = new SDFSchema(value.getText()!=null?value.getText():"", attrList);;
                         cepAo.getStateMachine().setOutputScheme(scheme);
-                        cepAo.setOutputSchema(attrList);
+                        cepAo.setOutputSchema(outputSchema);
                        
 
                     }
                     break;
                 case 2 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:712:3: 
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:709:3: 
                     {
                     }
                     break;

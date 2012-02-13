@@ -40,7 +40,7 @@ public class LabdataToCSV {
 		while(true) {
 			RelationalTuple tuple = (RelationalTuple) in.readObject();
 			writer.write(tuple.getAttribute(0).toString());
-			for(int i = 1; i < tuple.getAttributeCount(); ++i) {
+			for(int i = 1; i < tuple.size(); ++i) {
 				writer.write(",");
 				writer.write(tuple.getAttribute(i).toString());
 			}

@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -27,8 +28,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
 
     private static final long serialVersionUID = 5218658682722448980L;
 
-    public SDFSchema(String URI) {
-        super(URI);
+    protected SDFSchema(String URI) {
+    	super(URI);
     }
 
     /**
@@ -38,16 +39,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
         super(uri, attributes1);
     }
 
-    public SDFSchema(String uri, SDFAttribute... attributes1) {
+    public SDFSchema(String uri, SDFAttribute attribute, SDFAttribute... attributes1) {
         super(uri);
+        elements.add(attribute);
         for (SDFAttribute a : attributes1) {
-            this.add(a);
+            elements.add(a);
         }
     }
 
     public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
-        super(uri);
-        super.addAll(attributes1);
+        super(uri, attributes1);
     }
 
     @Override
@@ -55,22 +56,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
         return new SDFSchema(this.getURI(), this);
     }
 
-    public void addAttribute(SDFAttribute attribute) {
-        super.add(attribute);
-    }
-
-    public void addAttributes(SDFSchema attributes) {
-        super.addAll(attributes);
-    }
-
-    public int getAttributeCount() {
-        return super.size();
-    }
-
     public SDFAttribute getAttribute(int index) {
         return super.get(index);
     }
 
+    public List<SDFAttribute> getAttributes(){
+    	return Collections.unmodifiableList(elements);
+    }
+    
     public int indexOf(SDFAttribute attribute) {
         return super.indexOf(attribute);
     }
@@ -85,17 +78,17 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
         // Zunaechst die beiden Trivialfaelle, wenn eine der beiden Mengen leer
         // ist,
         // ist die andere das Ergebnise
-        if (attributes1 == null || attributes1.getAttributeCount() == 0) {
+        if (attributes1 == null || attributes1.size() == 0) {
             return attributes2;
         }
-        if (attributes2 == null || attributes2.getAttributeCount() == 0) {
+        if (attributes2 == null || attributes2.size() == 0) {
             return attributes1;
         }
         String name = getNewName(attributes1, attributes2);
         SDFSchema newSet = new SDFSchema(name, attributes1);
         for (int i = 0; i < attributes2.size(); i++) {
             if (!newSet.contains(attributes2.getAttribute(i))) {
-                newSet.addAttribute(attributes2.getAttribute(i));
+                newSet.elements.add(attributes2.getAttribute(i));
             }
         }
         return newSet;
@@ -118,11 +111,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
             SDFSchema attributes2) {
 
         SDFSchema newSet = new SDFSchema(attributes1.getURI(), attributes1);
-        for (int j = 0; j < attributes2.getAttributeCount(); j++) {
+        for (int j = 0; j < attributes2.size(); j++) {
             SDFAttribute nextAttr = attributes2.getAttribute(j);
 
             if (newSet.contains(nextAttr)) {
-                newSet.remove(nextAttr);
+                newSet.elements.remove(nextAttr);
             }
         }
 
@@ -142,11 +135,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute>
     public static SDFSchema intersection(SDFSchema attributes1,
             SDFSchema attributes2) {
         SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2));
-        for (int j = 0; j < attributes1.getAttributeCount(); j++) {
+        for (int j = 0; j < attributes1.size(); j++) {
             SDFAttribute nextAttr = attributes1.getAttribute(j);
 
             if (attributes2.contains(nextAttr)) {
-                newSet.addAttribute(nextAttr);
+                newSet.elements.add(nextAttr);
             }
         }
         return newSet;

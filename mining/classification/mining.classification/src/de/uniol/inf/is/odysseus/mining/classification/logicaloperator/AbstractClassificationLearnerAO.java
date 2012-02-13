@@ -79,7 +79,7 @@ public abstract class AbstractClassificationLearnerAO extends UnaryLogicalOp {
 	 * @return the positions
 	 */
 	public int[] determineRestrictList() {
-		return calcRestrictList(this.getInputSchema(), attributes);
+		return calcRestrictList(this.getInputSchema().getAttributes(), attributes);
 	}
 
 	/**

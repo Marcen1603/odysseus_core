@@ -14,6 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -101,10 +104,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 
 		// create new record
 		
-		SDFSchema subschema = new SDFSchema("");
-		subschema.add(timestamp);
-		subschema.add(scannedObjects);
-		subschema.add(predictedObjects);
+		SDFSchema subschema = new SDFSchema("",timestamp,scannedObjects,predictedObjects);
 		
 		SDFDatatype recordType = new SDFDatatype(null, SDFDatatype.KindOfDatatype.TUPLE, subschema);
 		SDFAttribute association = new SDFAttribute("",ASSOCIATION_RECORD_NAME,recordType);
@@ -115,8 +115,9 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 		setSourceName(association, helper.getSourceName());
 
 		// TODO: die metadaten aus dem inputschema mitnehmen
-		SDFSchemaExtended newSchema = new SDFSchemaExtended();
-		newSchema.addAttribute(association);
+		List<SDFAttribute> newSchemaAttributes = new ArrayList<SDFAttribute>();
+		newSchemaAttributes.add(association);
+		SDFSchemaExtended newSchema = new SDFSchemaExtended(newSchemaAttributes);
 
 		
 		this.outputPredictedObjListPath = this.outputPredictedObjListPath.replace(oldSource, helper.getSourceName());

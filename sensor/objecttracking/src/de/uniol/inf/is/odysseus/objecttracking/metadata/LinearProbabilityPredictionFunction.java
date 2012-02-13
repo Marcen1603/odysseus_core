@@ -239,7 +239,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 			long se = System.currentTimeMillis();
 			
 			Object[] values = new Object[object.getAttributes().length];
-			for(int i = 0; i<object.getAttributeCount(); i++){
+			for(int i = 0; i<object.size(); i++){
 				values[i] = object.getAttribute(i);
 			}
 
@@ -356,7 +356,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 //		int[] restrictList = new int[metadata.getCovariance().length];
 //		
 //		int counter = 0;
-//		for(int i = 0; i<schema.getAttributeCount(); i++){
+//		for(int i = 0; i<schema.size(); i++){
 //			if(SDFDatatypes.isMeasurementValue(schema.getAttribute(i).getDatatype())){
 //				restrictList[counter++] = i;
 //			}

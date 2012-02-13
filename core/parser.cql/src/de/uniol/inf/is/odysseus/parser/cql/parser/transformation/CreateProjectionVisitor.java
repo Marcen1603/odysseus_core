@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
@@ -42,9 +41,9 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -52,36 +51,41 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	private AttributeResolver attributeResolver;
 
-	private ILogicalOperator top;
+	private ILogicalOperator _top;
 
 	private List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-	private SDFSchema outputSchema = new SDFSchema("");
+	private SDFSchema _outputSchema = null;
+	List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 
-	private SDFSchema aliasSchema = new SDFSchema("");
+	private SDFSchema _aliasSchema = null;
+	List<SDFAttribute> aliasAttributes = new ArrayList<SDFAttribute>();
 
 	double[][] projectionMatrix = null;
 
 	double[] projectionVector = null;
 
 
-	public CreateProjectionVisitor() {
+	public CreateProjectionVisitor(ILogicalOperator top, AttributeResolver attributeResolver) {
+		this._top = top;
+		this.attributeResolver = attributeResolver;
 	}
 
-	// TODO kompletten visitor draus machen, ohne diese methode
-	public AbstractLogicalOperator createProjection(ASTSelectStatement statement, ILogicalOperator top, AttributeResolver attributeResolver) throws QueryParseException {
-		this.top = top;
+	// TODO: This is the only valid Entry point ... how can the other elements be set to private?? 
+	public Object visit(ASTSelectStatement statement, Object data) throws QueryParseException {
+
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);
-		this.attributeResolver = attributeResolver;
-		SDFSchema inputSchema = top.getOutputSchema();
 
-		// create output schema
+		// create output schema (with different visit-Methods)
 		node.childrenAccept(this, null);
+		
 		// validate output schema
-		checkAttributes(aliasSchema);
+		checkAttributes(aliasAttributes);
 
+		SDFSchema inputSchema = _top.getOutputSchema();
+		_outputSchema = new SDFSchema(inputSchema.getURI(), outputAttributes);
 		// create operator: if there is a need for a project/map operator,
 		// create one and set top operator to it
-		if (!outputSchema.equals(inputSchema) || projectionMatrix != null) {
+		if (!_outputSchema.equals(inputSchema) || projectionMatrix != null) {
 			// if there are no mathematical expressions, a simple ProjectAO will
 			// do, otherwise a Map operator is needed
 			if (expressions.isEmpty()) {
@@ -89,10 +93,10 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 				if (projectionMatrix == null) {
 					ProjectAO project = new ProjectAO();
-					project.subscribeTo(top, inputSchema);
-					project.setOutputSchema(outputSchema);
+					project.subscribeTo(_top, inputSchema);
+					project.setOutputSchema(_outputSchema);
 					// project.updateRestrictList();
-					top = project;
+					_top = project;
 				} else {
 
 					// TODO: Behandlung, wenn kein Visitor gefunden wird
@@ -103,12 +107,12 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 						throw new QueryParseException("Invalid use of multivariate projection -- Missing plug-in!!!.");
 					}
 					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
-					top = (ILogicalOperator) v.visit(null, null, this);
+					_top = (ILogicalOperator) v.visit(null, null, this);
 				}
-				((OutputSchemaSettable) top).setOutputSchema(outputSchema);
+				((OutputSchemaSettable) _top).setOutputSchema(_outputSchema);
 			} else {
 				MapAO map = new MapAO();
-				map.subscribeTo(top, inputSchema);
+				map.subscribeTo(_top, inputSchema);
 				
 				
 				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(expressions);
@@ -129,29 +133,30 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 //					}
 //				}
 //				map.setExpressions(outputExpressions);
-				top = map;
+				_top = map;
 			}
 
 		}
 		RenameAO rename = new RenameAO();
-		rename.subscribeTo(top, top.getOutputSchema());
-		rename.setOutputSchema(this.aliasSchema);
+		rename.subscribeTo(_top, _top.getOutputSchema());
+		rename.setOutputSchema(new SDFSchema(_top.getOutputSchema().getURI(), this.aliasAttributes));
 
-		return rename;
+		_top = rename;
+		return _top;
 	}
 
 	@Override
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
-		outputSchema = top.getOutputSchema();
-		aliasSchema = new SDFSchema(top.getOutputSchema().getURI());
-		for (SDFAttribute attribute : outputSchema) {
+		outputAttributes = _top.getOutputSchema().getAttributes();
+		aliasAttributes = new ArrayList<SDFAttribute>();
+		for (SDFAttribute attribute : outputAttributes) {
 			SDFAttribute attr = (SDFAttribute) attribute;
 			if (attr.getSourceName() != null) {
 				// Create new Attribute without sourcepart
 				SDFAttribute newAttribute = attr.clone(null, attr.getAttributeName());
-				aliasSchema.add(newAttribute);
+				aliasAttributes.add(newAttribute);
 			} else {
-				aliasSchema.add(attr);
+				aliasAttributes.add(attr);
 			}
 		}
 		return null;
@@ -189,11 +194,11 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.DOUBLE);
 			}
-			outputSchema.add(attribute);
-			aliasSchema.add(attribute);
+			outputAttributes.add(attribute);
+			aliasAttributes.add(attribute);
 		} else {
 			SDFAttribute attribute = (SDFAttribute) node.jjtAccept(this, null);
-			outputSchema.add(attribute);
+			outputAttributes.add(attribute);
 			SDFAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
 				// copy other attributes like datatypes
@@ -203,7 +208,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				aliasAttribute = attribute;
 			}
-			aliasSchema.add(aliasAttribute);
+			aliasAttributes.add(aliasAttribute);
 		}
 		return null;
 	}
@@ -247,7 +252,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	/**
 	 * checks wether outputschema contains ambigious identifiers
 	 */
-	private void checkAttributes(SDFSchema aliasSchema) {
+	private void checkAttributes(List<SDFAttribute> aliasSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
 				throw new IllegalArgumentException("ambigious attribute: " + attribute);
@@ -256,15 +261,15 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	}
 
 	public ILogicalOperator getTop() {
-		return top;
+		return _top;
 	}
 
 	public SDFSchema getOutputSchema() {
-		return outputSchema;
+		return _outputSchema;
 	}
 
 	public SDFSchema getAliasSchema() {
-		return aliasSchema;
+		return _aliasSchema;
 	}
 
 	public double[][] getProjectionMatrix() {

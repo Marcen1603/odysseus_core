@@ -11,6 +11,8 @@ package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
@@ -18,9 +20,9 @@ import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -145,18 +147,18 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     }
     
 	private SDFSchema calcOutputSchema(){
-		SDFSchema outputSchema = new SDFSchema("");
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		if (triple.getSubject().isVariable()){
 			SDFAttribute subject = new SDFAttribute(this.sourceName, triple.getSubject().getName(),SDFDatatype.STRING);
-			outputSchema.add(subject);
+			attrs.add(subject);
 		}
 		if (triple.getPredicate().isVariable()){
 			SDFAttribute predicate = new SDFAttribute(this.sourceName, triple.getPredicate().getName(),SDFDatatype.STRING);
-			outputSchema.add(predicate);
+			attrs.add(predicate);
 		}
 		if (triple.getObject().isVariable()){
 			SDFAttribute object  = new SDFAttribute(this.sourceName, triple.getObject().getName(),SDFDatatype.STRING);
-			outputSchema.add(object);
+			attrs.add(object);
 		}
 // Wozu braucht man das?
 //		if (getInputAO() != null && getInputSchema() != null){
@@ -167,16 +169,17 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		if(this.graphVar != null && this.stream_name != null){
 			boolean alreadyAdded = false;
 			SDFAttribute graphVarAtt = new SDFAttribute(this.sourceName, this.graphVar.getName(),SDFDatatype.STRING);
-			for(SDFAttribute a : outputSchema){
+			for(SDFAttribute a : attrs){
 				if(a.getQualName().equals(graphVarAtt.getQualName())){
 					alreadyAdded = true;
 				}
 			}
 			if(!alreadyAdded){
-				outputSchema.add(graphVarAtt);
+				attrs.add(graphVarAtt);
 			}
 		}
 		
+		outputSchema = new SDFSchema("", attrs);
 		return outputSchema;
 	}
 	

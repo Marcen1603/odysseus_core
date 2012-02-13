@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
@@ -84,11 +85,11 @@ public class BatchProducer extends
 	
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
-		SDFMetaAttributeList metalist = super.getMetaAttributeSchema();
+		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
 		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(IntervalLatencyPriority.class);
 		if(!metalist.contains(mataAttribute)){
 			metalist.add(mataAttribute);
 		}
-		return metalist;
+		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(),metalist);
 	}		
 }

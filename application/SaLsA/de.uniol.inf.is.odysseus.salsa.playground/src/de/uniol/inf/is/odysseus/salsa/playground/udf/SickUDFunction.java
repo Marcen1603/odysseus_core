@@ -23,7 +23,7 @@ public class SickUDFunction<R> implements IUserDefinedFunction<R, R> {
 		
 		//System.out.println(name);
 		intuple = intuple.append(name);
-		//System.out.println("Attributes:" +intuple.getAttributeCount());
+		//System.out.println("Attributes:" +intuple.size());
 
 		return (R)intuple;
 	}

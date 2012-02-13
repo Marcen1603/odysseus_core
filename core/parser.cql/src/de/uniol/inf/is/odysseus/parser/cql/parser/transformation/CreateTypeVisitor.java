@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +28,9 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -41,7 +42,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	String name;
 	private ISession caller;
 	private IDataDictionary dd;
-	SDFSchema attributes;
+	List<SDFAttribute> attributes;
 
 	public CreateTypeVisitor(ISession user, IDataDictionary dd) {
 		this.caller = user;
@@ -51,10 +52,10 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		attributes = new SDFSchema(name);
+		attributes = new ArrayList<SDFAttribute>();
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
-		
-		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, attributes);
+		SDFSchema typeSchema = new SDFSchema(name, attributes);
+		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, typeSchema);
 		dd.addDatatype(name, newType);
 
 		return data;

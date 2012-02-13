@@ -15,13 +15,16 @@
 
 package de.uniol.inf.is.odysseus.mining.clustering.feature;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe.TiltedTimeWindow;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -30,11 +33,14 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 public class ExampleRun {
 
 	public static void main(String[] args) {
-		SDFSchema schema = new SDFSchema("dummy");
+		
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		SDFAttribute attributeID = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
-		schema.add(attributeID);
+		attrs.add(attributeID);
 		SDFAttribute attributeName = new SDFAttribute(null,"name", SDFDatatype.STRING);
-		schema.add(attributeName);
+		attrs.add(attributeName);
+
+		SDFSchema schema = new SDFSchema("dummy", attrs);
 
 		ISnapshotMergeFunction<ClusteringFeature<RelationalTuple<ITimeInterval>>> datamergeFunction = new RelationalTIClusteringFeatureMergeFunction<ITimeInterval>();
 

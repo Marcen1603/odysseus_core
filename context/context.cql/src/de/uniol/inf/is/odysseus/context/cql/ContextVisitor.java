@@ -42,9 +42,8 @@ public class ContextVisitor implements IVisitor {
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary);
-		csv.setAttributes(new SDFSchema("ContextStore."+name));
 		csv.visit(definitions, null);
-		SDFSchema schema = csv.getAttributes();
+		SDFSchema schema = new SDFSchema("ContextStore."+name,csv.getAttributes());
 		try {
 			ContextStore.getInstance().createStore(name, schema);			
 		} catch (ContextManagementException e) {		

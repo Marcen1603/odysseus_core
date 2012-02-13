@@ -14,6 +14,9 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +38,7 @@ public class UnNestAO extends UnaryLogicalOp {
     private static final long serialVersionUID = -5918972476973244744L;
     private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
     private SDFAttribute attribute;
-    private SDFSchema outputSchema = new SDFSchema("UNNEST");
+    private SDFSchema outputSchema = null;
 
     /**
      * 
@@ -69,21 +72,22 @@ public class UnNestAO extends UnaryLogicalOp {
     @Override
     public SDFSchema getOutputSchema() {
         if (outputSchema == null || recalcOutputSchemata) {
-            outputSchema = new SDFSchema("UNNEST");
-            for (int i = 0; i < getInputSchema().getAttributeCount(); i++) {
+        	List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+            for (int i = 0; i < getInputSchema().size(); i++) {
                 if ((getInputSchema().getAttribute(i).equals(attribute))
                         && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {
                     SDFSchema subschema = getInputSchema().getAttribute(i).getDatatype()
                             .getSubSchema();
-                    for (int j = 0; j < subschema.getAttributeCount(); j++) {
-                        this.outputSchema.add(subschema.get(j));
+                    for (int j = 0; j < subschema.size(); j++) {
+                        attrs.add(subschema.get(j));
                     }
                 }
                 else {
-                    this.outputSchema.add(getInputSchema().get(i));
+                    attrs.add(getInputSchema().get(i));
                 }
             }
             recalcOutputSchemata = false;
+            outputSchema = new SDFSchema("UNNEST", attrs);
             LOG.debug("Set output schema to: {}", outputSchema);
         }
         return outputSchema;

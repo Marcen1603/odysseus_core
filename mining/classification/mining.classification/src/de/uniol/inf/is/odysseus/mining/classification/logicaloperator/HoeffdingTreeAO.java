@@ -78,9 +78,7 @@ public class HoeffdingTreeAO extends AbstractClassificationLearnerAO {
 	public SDFSchema getOutputSchema() {
 
 		// define the schema as one attribute for the classifier
-		SDFSchema outputSchema = new SDFSchema("Classifier");
-		SDFAttribute classifier = new SDFAttribute(null,"classifier", SDFDatatype.OBJECT);
-		outputSchema.add(classifier);
+		SDFSchema outputSchema = new SDFSchema("Classifier", new SDFAttribute(null,"classifier", SDFDatatype.OBJECT));
 		return outputSchema;
 	}
 

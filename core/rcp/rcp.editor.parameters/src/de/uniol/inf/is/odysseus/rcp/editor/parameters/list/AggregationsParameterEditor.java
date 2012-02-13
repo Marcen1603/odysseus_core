@@ -272,8 +272,8 @@ public class AggregationsParameterEditor extends AbstractListParameterEditor<Agg
 	}
 	
 	private String[] getAttributeList() {
-		String[] list = new String[schema.getAttributeCount()];
-		for( int i = 0; i < schema.getAttributeCount(); i++) {
+		String[] list = new String[schema.size()];
+		for( int i = 0; i < schema.size(); i++) {
 			list[i]= schema.getAttribute(i).getAttributeName(); 
 		}
 		return list;

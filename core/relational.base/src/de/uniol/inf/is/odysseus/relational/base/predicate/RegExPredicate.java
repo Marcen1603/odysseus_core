@@ -17,6 +17,7 @@
  */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -166,7 +167,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	@Override
 	public List<SDFAttribute> getAttributes() {
-		SDFSchema attrList = new SDFSchema("");
+		List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();				
 		attrList.add(this.attribute);
 		return Collections.unmodifiableList(attrList);
 	}

@@ -50,7 +50,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 	@Override
 	public Object extractAttribute(Object attributeIdentifier, Object element,
 			SDFSchema schema) throws DataextractionException {
-		for (int i=0; i<schema.getAttributeCount(); i++){
+		for (int i=0; i<schema.size(); i++){
 			SDFAttribute attribute = schema.get(i);
 			//check for uri since it is unique
 			try {

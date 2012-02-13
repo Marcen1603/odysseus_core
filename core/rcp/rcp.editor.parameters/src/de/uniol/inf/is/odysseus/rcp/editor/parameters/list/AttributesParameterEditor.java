@@ -62,8 +62,8 @@ public class AttributesParameterEditor extends AbstractParameterEditor implement
 			attributes = op.getOutputSchema();
 			
 			// Checkboxes
-			if( attributes != null && attributes.getAttributeCount() > 0) {
-				for( int i = 0; i < attributes.getAttributeCount(); i++ ) {
+			if( attributes != null && attributes.size() > 0) {
+				for( int i = 0; i < attributes.size(); i++ ) {
 					// Checkbox für jedes Attribut
 					Button button = new Button( container, SWT.CHECK );
 					button.setText(attributes.getAttribute(i).getSourceName() + "." + attributes.getAttribute(i).getAttributeName());

@@ -160,7 +160,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
         	//initialize schemaElement list
         	List<SchemaElementType> schemaElements = schemaArray.getSchemaElement();
         	
-        	for (int i=0; i<outputSchema.getAttributeCount(); i++){
+        	for (int i=0; i<outputSchema.size(); i++){
         		SDFAttribute attribute = outputSchema.getAttribute(i);
         		
         		SchemaElementType schemaElement = factory.createSchemaElementType();

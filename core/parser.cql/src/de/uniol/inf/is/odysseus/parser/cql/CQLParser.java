@@ -249,9 +249,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-			top = new CreateProjectionVisitor().createProjection(statement,
-					top, attributeResolver);
-
+//			top = new CreateProjectionVisitor().createProjection(statement,
+//					top, attributeResolver);
+			
+			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(top, attributeResolver);
+			projectionVisitor.visit(statement, null);
+			top = projectionVisitor.getTop();
+			
 			try {
 				Class<?> prioVisitor = Class
 						.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");

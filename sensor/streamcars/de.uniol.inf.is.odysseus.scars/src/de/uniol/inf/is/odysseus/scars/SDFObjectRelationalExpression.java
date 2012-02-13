@@ -62,7 +62,7 @@
 //	 */
 //	private void findNext(SDFSchema list, String[] path, int index, int[] indices) {
 //		String attrToFind = path[index];
-//		for( int i = 0; i < list.getAttributeCount(); i++ ) {
+//		for( int i = 0; i < list.size(); i++ ) {
 //			SDFAttribute attr = list.get(i);
 //			if( attr.getAttributeName().equals(attrToFind)) {
 //				indices[index] = i;

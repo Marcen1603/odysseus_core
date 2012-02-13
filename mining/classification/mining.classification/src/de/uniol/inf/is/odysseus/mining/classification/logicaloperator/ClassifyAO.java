@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.mining.classification.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
@@ -23,8 +24,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This class represents a logical classify operator used to classify tuples of
@@ -71,10 +72,11 @@ public class ClassifyAO extends BinaryLogicalOp {
 			return getInputSchema(1);
 		} else {
 			// append the class to the schema if not already in
-			SDFSchema outputSchema = new SDFSchema("Classify");
-			outputSchema.addAll(getInputSchema(1).clone());
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+			attrs.addAll(getInputSchema(1).clone().getAttributes());
 			SDFAttribute classLabel = new SDFAttribute(null,"class_label", SDFDatatype.OBJECT);
-			outputSchema.add(classLabel);
+			attrs.add(classLabel);
+			SDFSchema outputSchema = new SDFSchema("Classify", attrs);
 			return outputSchema;
 		}
 	}
@@ -109,7 +111,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * @return the positions
 	 */
 	public int[] determineRestrictList() {
-		return calcRestrictList(this.getInputSchema(1), attributes);
+		return calcRestrictList(this.getInputSchema(1).getAttributes(), attributes);
 	}
 
 	/**
@@ -138,7 +140,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 *            the schema holding the attributes to determine the positions
 	 * @return the positions of the attributes
 	 */
-	public static int[] calcRestrictList(List<SDFAttribute> in,
+	public static int[] calcRestrictList(Collection<SDFAttribute> in,
 			List<SDFAttribute> out) {
 		int[] ret = new int[out.size()];
 		int i = 0;

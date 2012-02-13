@@ -56,7 +56,7 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 			classifier = object.getAttribute(0);
 		} else {
 			// predict the class if the tuple is not already classified
-			if (!(labelPosition < object.getAttributeCount())
+			if (!(labelPosition < object.size())
 					|| object.getAttribute(labelPosition) != null) {
 				processNext(new RelationalClassificationObject<T>(object,
 						restrictList, labelPosition));

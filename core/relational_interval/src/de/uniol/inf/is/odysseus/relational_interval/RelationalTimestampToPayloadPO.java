@@ -18,9 +18,9 @@ public class RelationalTimestampToPayloadPO extends
 
 	@Override
 	protected void process_next(RelationalTuple<ITimeInterval> object, int port) {
-		int inputSize = object.getAttributeCount();
+		int inputSize = object.size();
 		RelationalTuple<ITimeInterval> out = new RelationalTuple<ITimeInterval>(
-				object.getAttributeCount()+2);
+				object.size()+2);
 		
 		for (int i=0;i<inputSize;i++){
 			out.setAttribute(i, object.getAttribute(i));

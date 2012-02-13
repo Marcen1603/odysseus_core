@@ -186,7 +186,7 @@ public class PredictionExpression {
 //		SDFSchema current = schema;
 //		
 //		for(int depth=0; depth<attrParts.length; depth++) {
-//			for(int index=0; index<current.getAttributeCount(); index++) {
+//			for(int index=0; index<current.size(); index++) {
 //				SDFAttribute a = current.get(index);
 //				if(a.getAttributeName().equals(attrParts[depth])) {
 //					indices[depth] = index;

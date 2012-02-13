@@ -111,7 +111,7 @@ public class ScarsXMLProfiler {
 			}
 		}
 		addMetadata(scanRootElement, scan);
-		for(int i=0; i<schema.getAttributeCount(); i++) {
+		for(int i=0; i<schema.size(); i++) {
 			addData2(schema, scanRootElement, schema.getAttribute(i), scan.getAttribute(i));
 		}
 
@@ -185,7 +185,7 @@ public class ScarsXMLProfiler {
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
 				SDFSchema schema = attr.getDatatype().getSubSchema();
-				for(int i=0; i<schema.getAttributeCount(); i++) {
+				for(int i=0; i<schema.size(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
 					try {
 						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
@@ -199,7 +199,7 @@ public class ScarsXMLProfiler {
 				if(attr.getDatatype().hasSchema()){
 					SDFSchema schema = attr.getDatatype().getSubSchema();
 					SDFAttribute childAttr = schema.getAttribute(0);
-					for(int i=0; i<tuple.getAttributeCount(); i++) {
+					for(int i=0; i<tuple.size(); i++) {
 						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));
 					}
 				}
@@ -260,7 +260,7 @@ public class ScarsXMLProfiler {
 	}
 
 //	public void addDataFromList(Element parent, SDFSchema schema, MVRelationalTuple<?> tuple) {
-//		for(int listIndex=0; listIndex<tuple.getAttributeCount(); listIndex++) {
+//		for(int listIndex=0; listIndex<tuple.size(); listIndex++) {
 //			addData(parent, schema, tuple.getAttribute(listIndex));
 //		}
 //	}

@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,9 +55,9 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -67,6 +68,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
 	private ISession caller;
 	private IDataDictionary dd;
+	
+	List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+	ILogicalOperator operator;
 
 	public CreateStreamVisitor(ISession user, IDataDictionary dd) {
 		this.caller = user;
@@ -81,12 +85,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		this.name = name;
 	}
 
-	public SDFSchema getAttributes() {
+	public List<SDFAttribute> getAttributes() {
 		return attributes;
-	}
-
-	public void setAttributes(SDFSchema attributes) {
-		this.attributes = attributes;
 	}
 
 	public ILogicalOperator getOperator() {
@@ -97,16 +97,14 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		this.operator = operator;
 	}
 
-	SDFSchema attributes;
-	ILogicalOperator operator;
-
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		attributes = new SDFSchema(name);
+		
 		node.jjtGetChild(1).jjtAccept(this, data);
+		SDFSchema outschema = new SDFSchema(name,attributes);
 		dd.addSourceType(name, "RelationalStreaming");
-		dd.addEntitySchema(name, attributes, caller);
+		dd.addEntitySchema(name, outschema, caller);
 
 		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
@@ -118,7 +116,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
 		FixedSetAccessAO newPO = new FixedSetAccessAO(dd.createSDFSource(name), node.getTuples(attributes));
-		newPO.setOutputSchema(attributes);
+		SDFSchema outputSchema = new SDFSchema(name, attributes);
+		newPO.setOutputSchema(outputSchema);
 		dd.setStream(name, newPO, caller);
 		return null;
 	}
@@ -252,7 +251,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	private void initSource(AccessAO source, String host, int port) {
 		source.setPort(port);
 		source.setHost(host);
-		source.setOutputSchema(this.attributes);
+		source.setOutputSchema(new SDFSchema(name, this.attributes));
 	}
 
 	@Override
@@ -291,7 +290,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		FileAccessAO source = new FileAccessAO(new SDFSource(name,type));
 		source.setPath(filename);
 		source.setFileType(type);
-		source.setOutputSchema(this.attributes);
+		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		ILogicalOperator op = addTimestampAO(source);
 		dd.setStream(name, op, caller);
 		return data;
@@ -333,7 +332,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		OutputSchemaSettable ao = (OutputSchemaSettable) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
-		ao.setOutputSchema(this.attributes);
+		ao.setOutputSchema(new SDFSchema(name, attributes));
 		return addTimestampAO((ILogicalOperator) ao);
 	}
 

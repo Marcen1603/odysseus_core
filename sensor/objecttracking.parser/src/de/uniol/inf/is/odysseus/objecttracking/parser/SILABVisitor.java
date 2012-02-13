@@ -67,11 +67,12 @@ public class SILABVisitor implements IVisitor{
 //			source.setHost(host);
 //			source.setOutputSchema(this.attributes);
 //		} else {
-			source = new AccessAO(new SDFSource(((CreateStreamVisitor)baseObject).getName(),
+			String name = ((CreateStreamVisitor)baseObject).getName();
+			source = new AccessAO(new SDFSource(name,
 					"RelationalSILABInputStreamAccessPO"));
 			source.setPort(port);
 			source.setHost(host);
-			source.setOutputSchema(((CreateStreamVisitor)baseObject).getAttributes());
+			source.setOutputSchema(new SDFSchema(name, ((CreateStreamVisitor)baseObject).getAttributes()));
 			
 			
 //		}

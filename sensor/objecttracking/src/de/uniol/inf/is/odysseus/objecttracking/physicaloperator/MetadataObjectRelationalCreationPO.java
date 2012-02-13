@@ -51,7 +51,7 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 			}
 			if( tuple instanceof MVRelationalTuple<?>) {
 				MVRelationalTuple<M> t = (MVRelationalTuple<M>) tuple;
-				for( int i = 0; i < t.getAttributeCount(); i++ ) {
+				for( int i = 0; i < t.size(); i++ ) {
 					assignMetadata(t.getAttribute(i));
 				}
 			}

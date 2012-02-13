@@ -39,8 +39,8 @@ public class EclipseConsoleSink extends AbstractSink<Object> {
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema) {
 		super.setOutputSchema(outputSchema);
-		String[] attrNames = new String[outputSchema.getAttributeCount()];
-		for (int i = 0; i < outputSchema.getAttributeCount(); i++) {
+		String[] attrNames = new String[outputSchema.size()];
+		for (int i = 0; i < outputSchema.size(); i++) {
 			attrNames[i] = outputSchema.getAttribute(i).getAttributeName();
 		}
 		if(!isConnected){

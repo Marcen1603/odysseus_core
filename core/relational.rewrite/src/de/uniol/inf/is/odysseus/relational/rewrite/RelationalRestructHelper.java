@@ -53,7 +53,7 @@ public class RelationalRestructHelper {
 	static String LOGGER_NAME = RelationalRestructHelper.class.toString();
 
 	public static boolean containsAllSources(ILogicalOperator op, Set<?> sources) {
-		List<SDFAttribute> schema = op.getOutputSchema();
+		Collection<SDFAttribute> schema = op.getOutputSchema().getAttributes();
 		Set<?> schemaSources = sourcesOfAttributes(schema);
 		for (Object source : sources) {
 			if (!schemaSources.contains(source)) {
@@ -84,7 +84,7 @@ public class RelationalRestructHelper {
 		return sources;
 	}
 
-	public static Set<?> sourcesOfAttributes(List<?> attributes) {
+	public static Set<?> sourcesOfAttributes(Collection<?> attributes) {
 		HashSet<String> sources = new HashSet<String>();
 		for (Object attribute : attributes) {
 			sources.add(((SDFAttribute) attribute).getSourceName());
@@ -107,7 +107,7 @@ public class RelationalRestructHelper {
 			SDFSchema attributes) {
 
 		final List<String> uris = new ArrayList<String>(attributes
-				.getAttributeCount());
+				.size());
 		for (SDFAttribute curAttr : attributes) {
 			uris.add(curAttr.getPointURI());
 		}
@@ -154,26 +154,28 @@ public class RelationalRestructHelper {
 		father.subscribeTo(toDown.getTarget(), toDown.getSchema());
 
 		// change attribute names for projection
-		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema.getURI());
+		List<SDFAttribute> newOutputAttributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : oldOutputSchema) {
 			int pos = son.getOutputSchema().indexOf(a);
-			newOutputSchema.add(inputSchema.get(pos));
+			newOutputAttributes.add(inputSchema.get(pos));
 		}
+		SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema.getURI(), newOutputAttributes);
 		father.setOutputSchema(newOutputSchema);
 
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
 		// remove attributes from rename operator that get projected away
-		SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI());
 		Iterator<SDFAttribute> inIt = inputSchema.iterator();
 		Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		while (inIt.hasNext()) {
 			SDFAttribute nextIn = inIt.next();
 			SDFAttribute nextOut = outIt.next();
 			if (newOutputSchema.contains(nextIn)) {
-				newRenameSchema.add(nextOut);
+				attrs.add(nextOut);
 			}
 		}
+		SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI(), attrs);
 		son.setOutputSchema(newRenameSchema);
 
 		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0, son

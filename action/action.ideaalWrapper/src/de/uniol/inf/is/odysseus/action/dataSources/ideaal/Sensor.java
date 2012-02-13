@@ -14,14 +14,15 @@
  */
 package de.uniol.inf.is.odysseus.action.dataSources.ideaal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 
 /**
@@ -80,8 +81,8 @@ public enum Sensor {
 		if (schema == null) {
 			schema = new HashMap<Sensor, SDFSchema>();
 
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			// BedBalance
-			SDFSchema schema = new SDFSchema("Bed");
 			String[] identifiers = { "timestamp", "id", "weight0", "weight1",
 					"weight2", "weight3" };
 			SDFDatatype[] types = { SDFDatatype.LONG, SDFDatatype.INTEGER,
@@ -91,18 +92,20 @@ public enum Sensor {
 			for (int i = 0; i < identifiers.length; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],
 						types[i]);
-				schema.add(attribute);
+				attrs.add(attribute);
 			}
+			SDFSchema schema = new SDFSchema("BedBalance", attrs);
 			Sensor.schema.put(Sensor.BedBalance, schema);
 
 			// Bed1-Bed4
-			schema = new SDFSchema("Bed");
+			attrs.clear();
 
 			for (int i = 0; i < 3; i++) {
 				SDFAttribute attribute = new SDFAttribute(null, identifiers[i],
 						types[i]);
-				schema.add(attribute);
+				attrs.add(attribute);
 			}
+			schema = new SDFSchema("Bed", attrs);
 
 			Sensor.schema.put(Sensor.Bed1, schema);
 			Sensor.schema.put(Sensor.Bed2, schema);

@@ -682,12 +682,8 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
    {
     RelationalMEPOutputSchemeEntry e = null;
     OutputScheme scheme = new OutputScheme();
-    SDFSchema attrList = null;
-    if (value != null){
-      attrList= new SDFSchema(value.getText());
-      }else{
-      attrList = new SDFSchema("");
-      }
+    List<SDFAttribute> attrList = new ArrayList<SDFAttribute>();
+    
     for (PathAttribute p : retAttr) {
     	String op = p.getAggregation();
     	String a = p.getStatename();
@@ -705,8 +701,9 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     	SDFAttribute attr = new SDFAttribute(null,e.getLabel(), SDFDatatype.STRING);
     	attrList.add(attr);
     }
+    SDFSchema outputSchema = new SDFSchema(value.getText()!=null?value.getText():"", attrList);;
     cepAo.getStateMachine().setOutputScheme(scheme);
-    cepAo.setOutputSchema(attrList);
+    cepAo.setOutputSchema(outputSchema);
    }
   |
   ;

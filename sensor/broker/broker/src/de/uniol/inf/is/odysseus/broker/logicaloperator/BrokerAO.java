@@ -40,7 +40,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	private long generatedTime;
 	
 	/** The queue schema. */
-	private SDFSchema queueSchema = new SDFSchema("BrokerQueue");	
+	private SDFSchema queueSchema = null;	
 		
 	/**
 	 * Instantiates a new logical broker.
@@ -84,7 +84,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 */
 	public void setSchema(SDFSchema outputSchema) {		
 		//create alias schema
-		SDFSchemaExtended aliasSchema = new SDFSchemaExtended(outputSchema);
+		SDFSchemaExtended aliasSchema = new SDFSchemaExtended(outputSchema.getAttributes());
 		// FIXME: AttributeLists are immutable --> Source-Names cannot be changed!
 		//this.schema = aliasSchema.redefineSourceName(this.getIdentifier());
 		throw new RuntimeException("THIS NEEDS TO BE FIXED");

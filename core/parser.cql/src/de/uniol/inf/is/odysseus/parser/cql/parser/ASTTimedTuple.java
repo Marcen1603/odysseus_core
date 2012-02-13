@@ -16,10 +16,12 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class ASTTimedTuple extends SimpleNode {
 	public ASTTimedTuple(int id) {
@@ -38,7 +40,7 @@ public class ASTTimedTuple extends SimpleNode {
 	}
 
 	@SuppressWarnings("unchecked")
-	public RelationalTuple<ITimeInterval> getTuple(SDFSchema schema) {
+	public RelationalTuple<ITimeInterval> getTuple(List<SDFAttribute> schema) {
 		RelationalTuple<ITimeInterval> tuple = ((ASTSimpleTuple) jjtGetChild(1))
 				.getTuple(schema);
 		tuple.setMetadata(((ASTTimeInterval) jjtGetChild(0)).getInterval());

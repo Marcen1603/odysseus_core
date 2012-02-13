@@ -74,7 +74,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 
 	@Override
 	public SDFSchema getOutputSchema() {
-		SDFSchemaExtended outputSchema = new SDFSchemaExtended(this.getInputSchema());
+		SDFSchemaExtended outputSchema = new SDFSchemaExtended(this.getInputSchema().getAttributes());
 		outputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, predictionFunctions);
 		return outputSchema;
 	}

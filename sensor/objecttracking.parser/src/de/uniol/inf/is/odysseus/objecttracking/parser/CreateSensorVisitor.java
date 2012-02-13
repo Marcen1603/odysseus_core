@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,9 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 
 		node.jjtGetChild(3).jjtAccept(this, data);
 
-		SDFSchemaExtended ex = new SDFSchemaExtended(
-				new SDFAttribute[] { rootAttribute });
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		attrs.add(rootAttribute);
+		SDFSchemaExtended ex = new SDFSchemaExtended(attrs);
 
 		SDFSchema schema = new SDFSchema(name, ex);
 	
@@ -104,11 +106,12 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		SDFSchema complexAttrSchema = new SDFSchema("");
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(this, data);
-			complexAttrSchema.add(attr);
+			attrs.add(attr);
 		}
+		SDFSchema complexAttrSchema = new SDFSchema("", attrs);
 
 		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
 		dd.addDatatype(this.name + "." + attrName, recordType);
@@ -127,14 +130,15 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTListDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 
-		
-		SDFSchema complexAttrSchema = new SDFSchema("");
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 			SDFAttribute listedAttribute = (SDFAttribute) node.jjtGetChild(i)
 					.jjtAccept(this, data);
-			complexAttrSchema.add(listedAttribute);
+			attrs.add(listedAttribute);
 		}
+		SDFSchema complexAttrSchema = new SDFSchema("",attrs);
 
+		
 		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
 		dd.addDatatype(this.name + "." + attrName, listType);
 		

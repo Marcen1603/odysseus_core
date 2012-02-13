@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,15 +63,17 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 			throw new IllegalArgumentException(
 					"number of aliases does not match number of input attributes for rename");
 		}
-		this.outputSchema = new SDFSchema(inputSchema.getURI());
 		Iterator<SDFAttribute> it = inputSchema.iterator();
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.
 			SDFAttribute attribute = it.next().clone(null,str);
 //			attribute.setAttributeName(str);
 //			attribute.setSourceName(null);
-			this.outputSchema.add(attribute);
+			attrs.add(attribute);
 		}
+		this.outputSchema = new SDFSchema(inputSchema.getURI(), attrs);
+
 	}
 	
 	@GetParameter(name="setAliases")

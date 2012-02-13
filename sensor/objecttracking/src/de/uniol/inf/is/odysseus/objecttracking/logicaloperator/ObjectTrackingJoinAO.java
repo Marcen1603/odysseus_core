@@ -145,7 +145,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata){
-			outputSchema = new SDFSchemaExtended();
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			
 			Map<IPredicate, IPredictionFunction> newPredictionFunctions = new HashMap<IPredicate, IPredictionFunction>();
 			
@@ -153,8 +153,8 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 			SDFSchemaExtended leftInputSchema = (SDFSchemaExtended)getSubscribedToSource(0).getSchema();
 			SDFSchemaExtended rightInputSchema = (SDFSchemaExtended)getSubscribedToSource(1).getSchema();
 			
-			outputSchema.addAttributes(leftInputSchema);
-			outputSchema.addAttributes(rightInputSchema);
+			attrs.addAll(leftInputSchema.getAttributes());
+			attrs.addAll(rightInputSchema.getAttributes());
 			
 			Map<IPredicate, IPredictionFunction> leftFcts = (Map<IPredicate, IPredictionFunction>) leftInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
 			Map<IPredicate, IPredictionFunction> rightFcts = (Map<IPredicate, IPredictionFunction>) rightInputSchema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
@@ -207,6 +207,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 						newPredictionFunctions.put(newPredicate, newFunction);
 					}
 				}			
+				outputSchema = new SDFSchemaExtended(attrs);
 				recalcOutputSchemata = false;
 				outputSchema.setMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS, newPredictionFunctions);
 			}
@@ -403,7 +404,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		SDFSchema leftSchema = this.getSubscribedToSource(0).getSchema();
 		SDFSchema rightSchema = this.getSubscribedToSource(1).getSchema();
 		// first add the positions of the left schema
-		for(int i = 0; i<leftSchema.getAttributeCount(); i++){
+		for(int i = 0; i<leftSchema.size(); i++){
 			if(leftSchema.getAttribute(i).getDatatype().isMeasurementValue()){
 				tempList.add(i);
 				fromRightChannelTmp.add(false);
@@ -411,7 +412,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		}
 		
 		// then add the positions of the right schema
-		for(int i = 0; i<rightSchema.getAttributeCount(); i++){
+		for(int i = 0; i<rightSchema.size(); i++){
 			if(rightSchema.getAttribute(i).getDatatype().isMeasurementValue()){
 				tempList.add(i);
 				fromRightChannelTmp.add(true);

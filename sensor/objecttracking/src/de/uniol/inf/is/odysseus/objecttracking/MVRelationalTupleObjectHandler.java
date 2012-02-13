@@ -153,7 +153,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	
 	@Override
 	public void put(RelationalTuple<M> relationalTuple) {
-		if (relationalTuple.getAttributeCount() != dataHandler.length){
+		if (relationalTuple.size() != dataHandler.length){
 			throw new IllegalArgumentException("Incompatible Relational Tuple");
 		}
 		synchronized(byteBuffer){

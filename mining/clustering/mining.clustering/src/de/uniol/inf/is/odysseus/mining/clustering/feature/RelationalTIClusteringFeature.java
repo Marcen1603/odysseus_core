@@ -30,9 +30,9 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	private void createRelationalTuple(RelationalTuple<M> tuple){
-		RelationalTuple<M> linearSum = new RelationalTuple<M>(tuple.getAttributeCount());
-		RelationalTuple<M> squareSum = new RelationalTuple<M>(tuple.getAttributeCount());		
-		for(int i=0;i<tuple.getAttributeCount();i++){
+		RelationalTuple<M> linearSum = new RelationalTuple<M>(tuple.size());
+		RelationalTuple<M> squareSum = new RelationalTuple<M>(tuple.size());		
+		for(int i=0;i<tuple.size();i++){
 			if(tuple.getAttribute(i) instanceof Number){
 				linearSum.setAttribute(i, 0);
 				squareSum.setAttribute(i, 0);			
@@ -45,7 +45,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		this.setLinearSum(linearSum);
 		this.setSquareSum(squareSum);
 		super.setNumberOfPoints(1);		
-		for(int i=0;i<tuple.getAttributeCount();i++){						
+		for(int i=0;i<tuple.size();i++){						
 			addToSum(i, tuple, this.getLinearSum(), false);
 			addToSum(i, tuple, this.getSquareSum(), true);
 		}
@@ -55,10 +55,10 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	public void add(RelationalTuple<M> tuple){
 		RelationalTuple<M> linearSum = super.getLinearSum();
 		RelationalTuple<M> squareSum = super.getSquareSum();
-		if(linearSum.getAttributeCount()!=tuple.getAttributeCount() || squareSum.getAttributeCount() != tuple.getAttributeCount()){
+		if(linearSum.size()!=tuple.size() || squareSum.size() != tuple.size()){
 			throw new RuntimeException("Number of attributes are not equal");
 		}
-		for(int i=0;i<tuple.getAttributeCount();i++){			
+		for(int i=0;i<tuple.size();i++){			
 			addToSum(i, tuple, this.getLinearSum(), false);
 			addToSum(i, tuple, this.getSquareSum(), true);
 		}		
@@ -68,7 +68,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	
 	@Override
 	public ClusteringFeature<RelationalTuple<M>> merge(ClusteringFeature<RelationalTuple<M>> other) {
-		for(int i=0;i<other.getLinearSum().getAttributeCount();i++){
+		for(int i=0;i<other.getLinearSum().size();i++){
 			this.addToSum(i, other.getLinearSum(), this.getLinearSum(), false);
 			this.addToSum(i, other.getSquareSum(), this.getSquareSum(), false);
 		}

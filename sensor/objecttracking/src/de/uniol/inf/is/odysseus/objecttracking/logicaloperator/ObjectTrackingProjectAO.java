@@ -96,7 +96,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 */
 	@Override
 	public SDFSchema getOutputSchema(){
-		SDFSchemaExtended newOutputSchema = new SDFSchemaExtended(outAttributes);
+		SDFSchemaExtended newOutputSchema = new SDFSchemaExtended(outAttributes.getAttributes());
 		SDFSchemaExtended inputSchema = (SDFSchemaExtended)this.getSubscribedToSource(0).getSchema();
 		
 		Map<IPredicate, IPredictionFunction> newPredFcts = new HashMap<IPredicate, IPredictionFunction>();
@@ -128,7 +128,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		 * to use.
 		 */
 		IPredictionFunction newPredFct = new LinearProbabilityPredictionFunction();
-		SDFExpression[] newExprs = new SDFExpression[outAttributes.getAttributeCount()];
+		SDFExpression[] newExprs = new SDFExpression[outAttributes.size()];
 		
 		int[] restrictList = ProjectAO.calcRestrictList(inputSchema, outAttributes);
 		for(int i = 0; i<restrictList.length; i++){

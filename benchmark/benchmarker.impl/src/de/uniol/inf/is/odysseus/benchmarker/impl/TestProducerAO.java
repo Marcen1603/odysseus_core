@@ -38,9 +38,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	}
 	
 	public TestProducerAO() {
-		this.outputSchema = new SDFSchema("Dummy");
-		SDFAttribute a = new SDFAttribute(null,"Dummy", SDFDatatype.LONG);
-		outputSchema.add(a);
+		this.outputSchema = new SDFSchema("Dummy", new SDFAttribute(null,"Dummy", SDFDatatype.LONG));
 	}
 
 	@SuppressWarnings("unchecked")

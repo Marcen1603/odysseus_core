@@ -45,15 +45,15 @@ public class SDFSchemaExtended extends SDFSchema implements Serializable{
 
 	private SDFUnit unitHACK;
 	
-	public SDFSchemaExtended(String URI) {
-		super(URI);
-		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
-	}
-
-	public SDFSchemaExtended() {
-		super("");
-		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
-	}
+//	public SDFSchemaExtended(String URI) {
+//		super(URI);
+//		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
+//	}
+//
+//	public SDFSchemaExtended() {
+//		super("");
+//		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
+//	}
 
 	/**
 	 * @param attributes1 The old schema that is to be copied
@@ -63,8 +63,8 @@ public class SDFSchemaExtended extends SDFSchema implements Serializable{
 		this.setDatatype(attributes1.getDatatype());
 		this.setUnit(attributes1.getUnit());
 		// deep copy for SDFAttributes and the subattributes 
-		for(int i=0; i<attributes1.getAttributeCount(); i++) {
-			this.add(copyDeep(attributes1.get(i)));
+		for(int i=0; i<attributes1.size(); i++) {
+			this.elements.add(copyDeep(attributes1.get(i)));
 		}
 		// copy of schmea metadaten
 		if(attributes1.metadata != null){
@@ -107,7 +107,7 @@ public class SDFSchemaExtended extends SDFSchema implements Serializable{
 //	public SDFSchemaExtended redefineSourceName(String newSourceName){
 //		SDFSchemaExtended redefinedSet = new SDFSchemaExtended();
 //		
-//		for(int i = 0; i<this.getAttributeCount(); i++){
+//		for(int i = 0; i<this.size(); i++){
 //			redefinedSet.add(redAttrSourceName(this.getAttribute(i), newSourceName));
 //		}
 //		
@@ -125,10 +125,10 @@ public class SDFSchemaExtended extends SDFSchema implements Serializable{
 //		return newAttribute;
 //	}
 	
-	public SDFSchemaExtended(SDFAttribute[] attributes1) {
-		super("",attributes1);
-		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
-	}
+//	public SDFSchemaExtended(SDFAttribute[] attributes1) {
+//		super("",attributes1);
+//		this.metadata = new HashMap<SDFSchemaMetadataTypes, Object>();
+//	}
 	
 	
 	public SDFSchemaExtended(Collection<SDFAttribute> attributes1) {

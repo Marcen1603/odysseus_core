@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.physicaloperator;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
@@ -88,11 +90,11 @@ public class MetadataCreationPO<M extends IMetaAttribute, In extends IMetaAttrib
 		
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
-		SDFMetaAttributeList metalist = super.getMetaAttributeSchema();
+		List<SDFMetaAttribute> metalist = new ArrayList<SDFMetaAttribute>(super.getMetaAttributeSchema().getAttributes());
 		SDFMetaAttribute mataAttribute = new SDFMetaAttribute(type);
 		if(!metalist.contains(mataAttribute)){
 			metalist.add(mataAttribute);
 		}
-		return metalist;
+		return new SDFMetaAttributeList(super.getMetaAttributeSchema().getURI(), metalist);
 	}		
 }

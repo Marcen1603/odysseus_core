@@ -310,7 +310,7 @@ public class ECAParser implements IQueryParser {
 								// check if schema contains attribute
 								boolean attributeFound = false;
 								ArrayList<Integer> possibleMatches = new ArrayList<Integer>();
-								for (int i = 0; i < schema.getAttributeCount(); i++) {
+								for (int i = 0; i < schema.size(); i++) {
 									SDFAttribute attribute = schema.get(i);
 									// check for uri since it is unique
 									String uri = attribute.getPointURI();

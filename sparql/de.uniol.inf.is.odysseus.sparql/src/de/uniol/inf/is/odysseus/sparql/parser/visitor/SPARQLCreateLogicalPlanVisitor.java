@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAdditiveExpression;
@@ -124,6 +124,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.Aggregation;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.INode;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.SparqlParserHelper;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -269,7 +270,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			if(node.getAggregations().isEmpty()){
 				ProjectAO projectAO = new ProjectAO();
 				
-				SDFSchema outputSchema = new SDFSchema("");
+				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 				
 				/* In SPARQL Variables are used only for natural joins.
 				 * Odysseus does not provide a natural join and therefore
@@ -282,13 +283,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				for(Variable curVar: node.getResultVars()){
 					for(SDFAttribute curAttr: inputForProjection.getOutputSchema()){
 						if(curAttr.getAttributeName().equals(curVar.getName())){
-							outputSchema.add(curAttr);
+							attrs.add(curAttr);
 							break;
 						}
 					}
 				}
 				
-				projectAO.setOutputSchema(outputSchema);
+				projectAO.setOutputSchema(new SDFSchema("", attrs));
 				logOp = projectAO;
 			}
 			else{
@@ -716,7 +717,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFSchema commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+						SDFSchema commonVars = SparqlParserHelper.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
 						IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 						join.setPredicate(joinPred);
 						
@@ -729,7 +730,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							
 							// create join predicate
 							// each variable that is in both schemas must be equal
-							SDFSchema innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+							SDFSchema innerCommonVars = SparqlParserHelper.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 							IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 							innerJoin.setPredicate(innerJoinPred);
 							
@@ -753,7 +754,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 					
 					// create join predicate
 					// each variable that is in both schemas must be equal
-					SDFSchema commonVars = getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
+					SDFSchema commonVars = SparqlParserHelper.getCommonVariables(join.getInputSchema(0), join.getInputSchema(1));
 					IPredicate joinPred = createJoinPredicate(commonVars, join.getInputSchema(0), join.getInputSchema(1));
 					join.setPredicate(joinPred);
 					
@@ -766,7 +767,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 						
 						// create join predicate
 						// each variable that is in both schemas must be equal
-						SDFSchema innerCommonVars = getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
+						SDFSchema innerCommonVars = SparqlParserHelper.getCommonVariables(innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 						IPredicate innerJoinPred = createJoinPredicate(innerCommonVars, innerJoin.getInputSchema(0), innerJoin.getInputSchema(1));
 						innerJoin.setPredicate(innerJoinPred);
 						
@@ -833,7 +834,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			join.subscribeToSource(rightIn, 1, 0, rightIn.getOutputSchema());
 			
 			IPredicate joinPred = createJoinPredicate(
-					getCommonVariables(leftIn.getOutputSchema(), rightIn.getOutputSchema()),
+					SparqlParserHelper.getCommonVariables(leftIn.getOutputSchema(), rightIn.getOutputSchema()),
 					leftIn.getOutputSchema(),
 					rightIn.getOutputSchema());
 			join.setPredicate(joinPred);
@@ -854,7 +855,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 				innerJoin.subscribeToSource(innerRightIn, 1, 0, innerRightIn.getOutputSchema());
 				
 				IPredicate innerJoinPred = createJoinPredicate(
-						getCommonVariables(join.getOutputSchema(), innerRightIn.getOutputSchema()),
+						SparqlParserHelper.getCommonVariables(join.getOutputSchema(), innerRightIn.getOutputSchema()),
 						join.getOutputSchema(),
 						innerRightIn.getOutputSchema());
 				innerJoin.setPredicate(innerJoinPred);
@@ -1246,17 +1247,13 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		String streamName = node.getStreamName();
 		boolean isPersistent = node.isPersistent();
 		
-		// the schema
-		SDFSchema outputSchema = new SDFSchema("");
-		
+		// the schema		
 		SDFAttribute subject = new SDFAttribute(null,streamName + ".subject", SDFDatatype.STRING);
-		outputSchema.add(subject);
-		
 		SDFAttribute predicate = new SDFAttribute(null,streamName + ".predicate", SDFDatatype.STRING);
-		outputSchema.add(predicate);
-		
 		SDFAttribute object = new SDFAttribute(null,streamName + ".object", SDFDatatype.STRING);
-		outputSchema.add(object);
+		
+		SDFSchema outputSchema = new SDFSchema("", subject, predicate, object);
+
 		
 		AccessAO accAO = null;
 		if(child instanceof ASTSocket){
@@ -1343,29 +1340,6 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		return attribute;
 	}
 	
-	
-	/**
-	 * Returns a list of attributes, that occur in both schemas.
-	 * The even indices contain the attributes of the left schema.
-	 * The odd (even +1 ) indices contain the attributes of the right schema.
-	 * 
-	 * @param leftSchema
-	 * @param rightSchema
-	 * @return
-	 */
-	private static SDFSchema getCommonVariables(SDFSchema leftSchema, SDFSchema rightSchema){
-		SDFSchema commonSchema = new SDFSchema("");
-		for(SDFAttribute leftAttr: leftSchema){
-			for(SDFAttribute rightAttr: rightSchema){
-				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){
-					commonSchema.add(leftAttr);
-					commonSchema.add(rightAttr);
-				}
-			}
-		}
-		return commonSchema;
-	}
-	
 	/**
 	 * Creates a join predicate of the form
 	 * a.y = b.y AND a.x = b.x from two triple patterns
@@ -1386,7 +1360,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		
 		// create the join predicate as an expression completely parsed in MEP
 		String exprStr = "";
-		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
+		for(int i = 0; i<commonVars.size(); i += 2){
 			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
 			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
 			if(i > 0){

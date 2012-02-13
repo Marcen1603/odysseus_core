@@ -35,23 +35,23 @@ public class SchemaConvertAO extends RenameAO{
 
 	public SchemaConvertAO(AbstractLogicalOperator po) {
 		super(po);
-		outputSchema = new SDFSchemaExtended(po.getOutputSchema());
+		outputSchema = new SDFSchemaExtended(po.getOutputSchema().getAttributes());
 	}
 	
 	public SchemaConvertAO(SchemaConvertAO ao){
 		super(ao);
-		outputSchema = new SDFSchemaExtended(ao.outputSchema);
+		outputSchema = new SDFSchemaExtended(ao.outputSchema.getAttributes());
 	}
 	
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = new SDFSchemaExtended(outputSchema.clone()); // clone() is necessary
+		this.outputSchema = new SDFSchemaExtended(outputSchema.clone().getAttributes()); // clone() is necessary
 	}
 	
 	@Override
 	public SDFSchema getOutputSchema() {
 		if(this.outputSchema == null){
-			this.outputSchema = new SDFSchemaExtended(this.getSubscribedToSource(0).getSchema().clone());
+			this.outputSchema = new SDFSchemaExtended(this.getSubscribedToSource(0).getSchema().clone().getAttributes());
 		}
 		return outputSchema;
 	}

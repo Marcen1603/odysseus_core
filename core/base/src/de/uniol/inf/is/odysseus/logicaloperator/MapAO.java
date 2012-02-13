@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,8 +24,8 @@ import de.uniol.inf.is.odysseus.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.mep.IExpression;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -50,8 +51,8 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	private void calcOutputSchema() {
-		outputSchema = new SDFSchema(getInputSchema().getURI());
 		if (expressions != null) {
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (SDFExpression expr : expressions) {
 				SDFAttribute attr = null;
 
@@ -81,7 +82,7 @@ public class MapAO extends UnaryLogicalOp {
 							mepExpression.getReturnType());
 				}
 
-				outputSchema.add(attr);
+				attrs.add(attr);
 
 				// Alles Quatsch :-)
 				//
@@ -93,6 +94,7 @@ public class MapAO extends UnaryLogicalOp {
 				// outputSchema.add(new SDFAttribute(expr.toString()));
 				// }
 			}
+			outputSchema = new SDFSchema(getInputSchema().getURI(), attrs);
 		}
 	}
 

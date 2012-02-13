@@ -49,7 +49,7 @@ public class QualityMetadataCreation<M extends Quality> extends
         }
         else {
             RelationalTuple<M> tuple = (RelationalTuple<M>) object;
-            for (int i = 0; i < tuple.getAttributeCount(); i++) {
+            for (int i = 0; i < tuple.size(); i++) {
                 assignMetadata(tuple.getAttribute(i));
             }
         }

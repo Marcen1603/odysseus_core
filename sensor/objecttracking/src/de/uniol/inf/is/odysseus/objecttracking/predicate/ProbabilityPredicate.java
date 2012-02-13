@@ -448,7 +448,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 
 	@Override
 	public List<SDFAttribute> getAttributes() {
-		return SDFSchema.union(leftSchema, rightSchema);
+		return SDFSchema.union(leftSchema, rightSchema).getAttributes();
 	}
 
 	//@Override

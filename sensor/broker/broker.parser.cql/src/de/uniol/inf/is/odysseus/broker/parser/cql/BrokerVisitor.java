@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -259,8 +260,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		}
 
 		// parse attributes
-		SDFSchemaExtended attributes = new SDFSchemaExtended();
-
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		if (node.jjtGetChild(1) instanceof ASTORSchemaDefinition) {
 			SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(1).jjtAccept(this, brokerName);
 			attributes.add(rootAttribute);
@@ -289,9 +289,10 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				attributes.add(attribute);
 			}
 		}
+		SDFSchemaExtended schema = new SDFSchemaExtended(attributes);
 		
+		List<SDFAttribute> metaAttributes = new ArrayList<SDFAttribute>();
 		// parse meta attributes
-		SDFSchema metaAttributes = new SDFSchema("");
 		if (node.jjtGetNumChildren() > 2) {
 			if (node.jjtGetChild(2) != null) {
 
@@ -323,14 +324,15 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 				}
 			}
 		}
+		SDFSchema metaAttributSchema = new SDFSchema("", metaAttributes);
 
 		// make it accessible like a normal source
 		dataDictionary.addSourceType(brokerName, "brokerStreaming");
-		dataDictionary.addEntitySchema(brokerName, attributes, caller);
+		dataDictionary.addEntitySchema(brokerName, schema, caller);
 		// create the broker
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
-		broker.setSchema(attributes);
-		broker.setQueueSchema(metaAttributes);
+		broker.setSchema(schema);
+		broker.setQueueSchema(metaAttributSchema);
 		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
 
 		// set the broker view in the data dictionary
@@ -387,12 +389,13 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		
 		// create a new datatype from this record attribute		
 		
-		SDFSchema complexAttrSchema = new SDFSchema(""); 
+		List<SDFAttribute> complexAttrList = new ArrayList<SDFAttribute>();
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
 			SDFAttribute attr = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
-			complexAttrSchema.add(attr);
+			complexAttrList.add(attr);
 		}
 		
+		SDFSchema complexAttrSchema = new SDFSchema("", complexAttrList); 
 		SDFDatatype recordType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
 		dataDictionary.addDatatype(recordType.getURI(), recordType);
 		
@@ -410,14 +413,14 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTListDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		
-		
-		
-		SDFSchema complexAttrSchema = new SDFSchema("");
+		List<SDFAttribute> complexAttrList = new ArrayList<SDFAttribute>();
 		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
 			SDFAttribute listedAttribute = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
-			complexAttrSchema.add(listedAttribute);
+			complexAttrList.add(listedAttribute);
 		}
-		
+
+		SDFSchema complexAttrSchema = new SDFSchema("", complexAttrList);
+
 		SDFDatatype listType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
 		dataDictionary.addDatatype(listType.getURI(), listType);
 		

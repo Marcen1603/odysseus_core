@@ -105,7 +105,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 		}
 
 		// deep copy for objectrelationals
-		for (int i = 0; i < getAttributeCount(); i++) {
+		for (int i = 0; i < size(); i++) {
 			Object attribute = getAttribute(i);
 			if (attribute instanceof MVRelationalTuple) {
 				setAttribute(i, new MVRelationalTuple<T>((MVRelationalTuple<T>) attribute)); // recursive
@@ -462,7 +462,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
 
 	@SuppressWarnings({"unchecked","rawtypes"})
 	public int compareTo(MVRelationalTuple<T> tuple) {
-		int min = tuple.getAttributeCount();
+		int min = tuple.size();
 		if (min > this.attributes.length) {
 			min = this.attributes.length;
 		}

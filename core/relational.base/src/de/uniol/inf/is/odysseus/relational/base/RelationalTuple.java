@@ -91,7 +91,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		setAttribute(pos, stringValue);
 	}
 
-	public final int getAttributeCount() {
+	public final int size() {
 		return this.attributes.length;
 	}
 
@@ -215,7 +215,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	@SuppressWarnings("unchecked")
 	@Override
 	public final int compareTo(RelationalTuple<?> c) {
-		int min = c.getAttributeCount();
+		int min = c.size();
 		if (min > this.attributes.length) {
 			min = this.attributes.length;
 		}

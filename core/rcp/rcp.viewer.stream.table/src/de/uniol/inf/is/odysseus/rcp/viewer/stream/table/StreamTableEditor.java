@@ -83,7 +83,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		if (hasSchema() && getSchema().getAttributeCount() > 0) {
+		if (hasSchema() && getSchema().size() > 0) {
 			TableColumnLayout tableColumnLayout = new TableColumnLayout();
 			parent.setLayout(tableColumnLayout);
 
@@ -139,8 +139,8 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	protected void createTableColumns(TableViewer tableViewer, TableColumnLayout layout) {
-		final int weight = 1000 / getSchema().getAttributeCount();
-		for (int i = 0; i < getSchema().getAttributeCount(); i++) {
+		final int weight = 1000 / getSchema().size();
+		for (int i = 0; i < getSchema().size(); i++) {
 			SDFAttribute attribute = getSchema().getAttribute(i);
 
 			TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);

@@ -142,7 +142,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	@SuppressWarnings("unchecked")
 	@Override
 	public RelationalTuple<T> getLabeledTuple() {
-		Object[] attributes = new Object[tuple.getAttributeCount() + 1];
+		Object[] attributes = new Object[tuple.size() + 1];
 		attributes[0] = getClusterId();
 
 		System.arraycopy(tuple.getAttributes(), 0, attributes, 1,
@@ -160,7 +160,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 */
 	@Override
 	public int getClusterAttributeCount() {
-		return restrictedTuple.getAttributeCount();
+		return restrictedTuple.size();
 	}
 
 	/*

@@ -114,7 +114,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 	}
 
 	public SDFSchema getSchema(String tablename) {
-		SDFSchema schema = new SDFSchema(tablename);
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet rs = meta.getColumns(null, null, tablename, null);
@@ -122,11 +122,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 				String name = rs.getString("COLUMN_NAME");
 				SDFDatatype dt = DatatypeRegistry.getInstance().getSDFDatatype(rs.getInt("DATA_TYPE"));
 				SDFAttribute a = new SDFAttribute(null,name, dt);
-				schema.add(a);
+				attrs.add(a);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		SDFSchema schema = new SDFSchema(tablename, attrs);
 		return schema;
 	}	
 

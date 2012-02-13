@@ -74,7 +74,7 @@ public class JoinAO extends BinaryLogicalOp {
 	public synchronized SDFSchema getOutputSchema() {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata) {
-			outputSchema = new SDFSchema("");
+			outputSchema = null;
 			for (LogicalSubscription l : getSubscribedToSource()) {
 				outputSchema = SDFSchema.union(outputSchema, l.getSchema());
 			}

@@ -137,7 +137,7 @@ public class DataCube<T extends IMetaAttribute> {
 	 * 
 	 * @return the number of attributes
 	 */
-	public int getAttributeCount() {
+	public int size() {
 		return attributeCount;
 	}
 

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -39,7 +40,6 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
@@ -270,13 +270,14 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	private SDFSchema createAliasSchema(String alias,
 			ILogicalOperator access) {
 		// Keep the original Type not the alias
-		SDFSchema attributes = new SDFSchema(access.getOutputSchema().getURI());
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
 			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias,attribute.getAttributeName());
 			//newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
-		return attributes;
+		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), attributes);
+		return schema;
 	}	
 
 	@Override

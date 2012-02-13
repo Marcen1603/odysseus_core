@@ -159,15 +159,12 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 
 	@Override
 	public SDFSchema getOutputSchema() {
-		SDFSchema schema = new SDFSchema("");
+		
 		SDFAttribute attr0 = new SDFAttribute("","Odysseus latency median", SDFDatatype.LONG);
 		SDFAttribute attr1 = new SDFAttribute("","Objecttracking latency median", SDFDatatype.LONG);
 		SDFAttribute attr2 = new SDFAttribute("","Odysseus latency",SDFDatatype.LONG);
 		SDFAttribute attr3 = new SDFAttribute("","Objecttracking latency", SDFDatatype.LONG);
-		schema.add(attr0);
-		schema.add(attr1);
-		schema.add(attr2);
-		schema.add(attr3);
+		SDFSchema schema = new SDFSchema("",attr0,attr1,attr2,attr3);
 		return schema;
 	}
 
@@ -411,7 +408,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 					.equals("List")) {
 				@SuppressWarnings("unchecked")
 				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
-				buffer.putLong(tuple.getAttributeCount());
+				buffer.putLong(tuple.size());
 			}
 		}
 

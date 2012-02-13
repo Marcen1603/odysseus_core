@@ -32,11 +32,13 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
  */
 public class BrokerDictionaryEntry {
 	
+	// TODO: DIESE KLASSE MUSS ÜBERARBEITET WERDEN!!
 	/** The data schema. */
-	private SDFSchemaExtended schema = new SDFSchemaExtended();
+	private SDFSchemaExtended schema = null;
 	
 	/** The queue schema. */
-	private SDFSchema queueSchema = new SDFSchema("BrokerQueue");
+	// TODO: diese Variable wird gar nicht wirklich verwendet! Ist immer leere Liste/null
+	final private SDFSchema queueSchema;
 	
 	/** The broker name. */
 	private String brokerName;	
@@ -106,7 +108,9 @@ public class BrokerDictionaryEntry {
 	 */
 	public BrokerDictionaryEntry(String brokername){
 		this.brokerName = brokername;			
+		queueSchema = null;
 	}
+	
 	
 	/**
 	 * Creates a new instance for the given name and schemas.

@@ -15,6 +15,10 @@
 package de.uniol.inf.is.odysseus.sourcedescription.sdf.schema;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
@@ -25,24 +29,29 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 	public SDFMetaAttributeList() {
 	}
 
-	public SDFMetaAttributeList(SDFMetaAttributeList attributes1) {
-		super("",attributes1);
+	public SDFMetaAttributeList(String uri, SDFMetaAttributeList attributes1) {
+		super(uri,attributes1);
 	}
 
+	public SDFMetaAttributeList(String uri, Collection<SDFMetaAttribute> attributes1) {
+		super(uri, attributes1);
+	}
+
+	
 	public SDFSchema convertToSDFSchema(){
-		SDFSchema list = new SDFSchema("");
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for(SDFMetaAttribute metaattribute : this){
 			Class<?> metaClass = metaattribute.getMetaAttributeClass();
 			for(Method m : metaClass.getMethods()){
 				SDFDatatype returnSDFType = getAccordingSDFDataType(m.getReturnType());
 				if((m.getParameterTypes().length==0) && (returnSDFType!=null)){
 					SDFAttribute a = new SDFAttribute(metaClass.getName(), m.getName(), returnSDFType);
-					list.add(a);
+					attrs.add(a);
 				}
 			}
 		}
 		
-		return list;		
+		return new SDFSchema("", attrs);		
 	}
 
 	public static SDFMetaAttributeList union(SDFMetaAttributeList attributes1, SDFMetaAttributeList attributes2) {
@@ -52,10 +61,11 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 		if (attributes2 == null || attributes2.size() == 0) {
 			return attributes1;
 		}
-		SDFMetaAttributeList newSet = new SDFMetaAttributeList(attributes1);
+		// TODO: Change name to union
+		SDFMetaAttributeList newSet = new SDFMetaAttributeList("",attributes1);
 		for (int i = 0; i < attributes2.size(); i++) {
 			if (!newSet.contains(attributes2.get(i))) {
-				newSet.add(attributes2.get(i));
+				newSet.elements.add(attributes2.get(i));
 			}
 		}
 		return newSet;
@@ -76,4 +86,8 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 		}
 		return null;
 	}
+	
+    public Collection<SDFMetaAttribute> getAttributes(){
+    	return Collections.unmodifiableCollection(elements);
+    }
 }

@@ -221,7 +221,7 @@ public class SchemaHelper {
 	// Dabei wird rekursiv die Tiefe des Schemas berücksichtigt, sodass auch objektrelationale
 	// Schemata berücksichtigt werden können.
 	private void calculateAllPaths(SDFSchema list, List<SchemaIndex> actualPath, String actualAttributeName) {
-		for (int index = 0; index < list.getAttributeCount(); index++) {
+		for (int index = 0; index < list.size(); index++) {
 			SDFAttribute attribute = list.getAttribute(index);
 			if (sourceName == null)
 				sourceName = attribute.getSourceName();

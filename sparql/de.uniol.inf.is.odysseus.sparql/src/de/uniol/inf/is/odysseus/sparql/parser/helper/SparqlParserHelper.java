@@ -78,7 +78,7 @@ public class SparqlParserHelper {
 //		
 //		
 //		String exprStr = "";
-//		for(int i = 0; i<commonVars.getAttributeCount(); i += 2){
+//		for(int i = 0; i<commonVars.size(); i += 2){
 //			SDFAttribute curLeftAttr = commonVars.get(i); // even indices contain the attributes of the left schema
 //			SDFAttribute curRightAttr = commonVars.get(i+1); // odd (even + 1) indices contain the attributes of the right schema
 //			exprStr += curLeftAttr.getURI() + " = " + curRightAttr.getURI();			
@@ -125,16 +125,16 @@ public class SparqlParserHelper {
 	 * @param rightSchema
 	 * @return
 	 */
-	private static SDFSchema getCommonVariables(SDFSchema leftSchema, SDFSchema rightSchema){
-		SDFSchema commonSchema = new SDFSchema("");
+	public static SDFSchema getCommonVariables(SDFSchema leftSchema, SDFSchema rightSchema){
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for(SDFAttribute leftAttr: leftSchema){
 			for(SDFAttribute rightAttr: rightSchema){
 				if(leftAttr.getAttributeName().equals(rightAttr.getAttributeName())){
-					commonSchema.add(leftAttr);
-					commonSchema.add(rightAttr);
+					attrs.add(leftAttr);
+					attrs.add(rightAttr);
 				}
 			}
 		}
-		return commonSchema;
+		return new SDFSchema("", attrs);
 	}
 }

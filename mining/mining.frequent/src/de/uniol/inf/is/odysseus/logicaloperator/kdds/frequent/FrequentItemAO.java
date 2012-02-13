@@ -72,13 +72,13 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 	@Override
 	public SDFSchema getOutputSchema() {
 		if (recalc) {
-			SDFSchema list = new SDFSchema("FrequentItem");
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (SDFAttribute c : this.choosenAttributes) {
-				list.add(c.clone());
+				attrs.add(c.clone());
 			}
 			SDFAttribute a = new SDFAttribute(null,"itemcount", SDFDatatype.INTEGER);
-			list.add(a);
-			this.outputschema = list;
+			attrs.add(a);
+			this.outputschema = new SDFSchema("FrequentItem", attrs);
 			recalc = false;
 		}
 		return this.outputschema;

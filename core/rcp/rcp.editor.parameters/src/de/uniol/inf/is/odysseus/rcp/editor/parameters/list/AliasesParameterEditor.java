@@ -66,7 +66,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 		AbstractOperatorBuilder builder = (AbstractOperatorBuilder)getOperatorBuilder();
 		if( builder.hasInputOperator(0) ) {
 			schema = builder.getInputOperator(0).getOutputSchema();
-			if( schema != null && schema.getAttributeCount() > 0 ) {
+			if( schema != null && schema.size() > 0 ) {
 				
 				// Aliases laden
 				aliases = load(schema, getValue());
@@ -128,7 +128,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 		
 		HashMap<String, String> aliases = new HashMap<String, String>();
 		
-		for( int i = 0; i < schema.getAttributeCount(); i++) {
+		for( int i = 0; i < schema.size(); i++) {
 			SDFAttribute attribute = schema.getAttribute(i);
 			String attributeName = attribute.getAttributeName();
 			
@@ -198,7 +198,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 			// garantiert das nicht, daher wird explizit
 			// eine neue Liste erzeugt
 			List<String> list = new ArrayList<String>();
-			for( int i = 0; i < schema.getAttributeCount(); i++ ) {
+			for( int i = 0; i < schema.size(); i++ ) {
 				list.add( aliases.get(schema.getAttribute(i).getAttributeName()));
 			}
 			setValue(list);

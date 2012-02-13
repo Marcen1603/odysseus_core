@@ -14,11 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.action.dataSources.generator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class TupleGenerator {
 	private SDFSchema schema;
@@ -34,84 +37,84 @@ public class TupleGenerator {
 	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
 
 	public TupleGenerator(GeneratorConfig config, GeneratorType type) throws GeneratorException{
-		this.schema = new SDFSchema(type.name());
 		this.genTyp = type;
 		this.config = config;
 		
 		this.datamodel = ScenarioDatamodel.getInstance();
 				
 		//generate schema
-		
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		//timestamp attribute for all types
 		SDFAttribute attribute = new SDFAttribute(null,"timestamp", SDFDatatype.LONG);
-		this.schema.add(attribute);
+		attrs.add(attribute);
 		
 		switch(type){
 		case Factory:
 			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			break;
 			
 		case Machine:
 			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"factoryId", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"name", SDFDatatype.STRING);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			break;
 			
 		case Install_Pure:
 			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			break;
 			
 		case Install_DB:
 			attribute = new SDFAttribute(null,"id", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"limit1", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"limit2", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"pastUsageTime", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			break;
 			
 		case Usage:
 			attribute = new SDFAttribute(null,"machineId", SDFDatatype.INTEGER);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			attribute = new SDFAttribute(null,"rate", SDFDatatype.DOUBLE);
-			this.schema.add(attribute);
+			attrs.add(attribute);
 			
 			break;
 		default:
 			throw new GeneratorException("Unknown tuple type");
 		}
+		this.schema = new SDFSchema(type.name(), attrs);
 		
 	}
 	

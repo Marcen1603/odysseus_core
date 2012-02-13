@@ -114,14 +114,14 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 	
 	public void request(String request){
 		if (this.isOpen()) {
-			RelationalTuple tuple = new RelationalTuple<ITimeInterval>(this.getOutputSchema().getAttributeCount());
+			RelationalTuple tuple = new RelationalTuple<ITimeInterval>(this.getOutputSchema().size());
 			ITimeInterval metadata = null;
 			
 			String[] values = request.split(";");
 			boolean transferTuple = true;
 			
-			if(values.length == this.getOutputSchema().getAttributeCount()){
-				for(int i = 0; i < this.getOutputSchema().getAttributeCount(); i++){
+			if(values.length == this.getOutputSchema().size()){
+				for(int i = 0; i < this.getOutputSchema().size(); i++){
 						//getLogger().debug(i + ":" + values[i] + " " + this.getOutputSchema().get(i).getDatatype().getQualName());
 						if(this.getOutputSchema().get(i).getDatatype().getQualName().equalsIgnoreCase("String")){
 							tuple.addAttributeValue(i, values[i].toString());
@@ -182,7 +182,7 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 
 			}
 			else{
-				getLogger().debug(values.length + " != " + this.getOutputSchema().getAttributeCount());
+				getLogger().debug(values.length + " != " + this.getOutputSchema().size());
 			}
 		}
 	}
