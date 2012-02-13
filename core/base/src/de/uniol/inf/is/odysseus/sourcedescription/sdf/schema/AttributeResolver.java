@@ -135,7 +135,7 @@ public class AttributeResolver implements IAttributeResolver {
 				if (index == path.length - 1) {
 					return attr;
 				} else if (attr.getDatatype().hasSchema()) {
-					return findORAttribute(attr.getDatatype().getSubSchema(), path, index + 1);
+					return findORAttribute(attr.getDatatype().getSchema(), path, index + 1);
 				}
 			}
 		}

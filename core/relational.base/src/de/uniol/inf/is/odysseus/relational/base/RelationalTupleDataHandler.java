@@ -141,7 +141,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler{
 				this.dataHandlers[i++] = handler;
 			}
 			else if(type.isTuple()){
-				RelationalTupleDataHandler handler = new RelationalTupleDataHandler(type.getSubSchema());
+				RelationalTupleDataHandler handler = new RelationalTupleDataHandler(type.getSchema());
 				this.dataHandlers[i++] = handler;
 			}
 			else if(type.isMultiValue()){

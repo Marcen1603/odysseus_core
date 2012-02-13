@@ -77,7 +77,7 @@ public class UnNestAO extends UnaryLogicalOp {
                 if ((getInputSchema().getAttribute(i).equals(attribute))
                         && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {
                     SDFSchema subschema = getInputSchema().getAttribute(i).getDatatype()
-                            .getSubSchema();
+                            .getSchema();
                     for (int j = 0; j < subschema.size(); j++) {
                         attrs.add(subschema.get(j));
                     }

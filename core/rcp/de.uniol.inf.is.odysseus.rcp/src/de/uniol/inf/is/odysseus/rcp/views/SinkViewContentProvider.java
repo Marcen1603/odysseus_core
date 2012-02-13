@@ -56,7 +56,7 @@ public class SinkViewContentProvider implements ITreeContentProvider {
 		}
 		if( parentElement instanceof SDFAttribute ) {
 			if(((SDFAttribute)parentElement).getDatatype().hasSchema()){
-				return ((SDFAttribute)parentElement).getDatatype().getSubSchema().toArray();
+				return ((SDFAttribute)parentElement).getDatatype().getSchema().toArray();
 			}
 		}
 		return null;

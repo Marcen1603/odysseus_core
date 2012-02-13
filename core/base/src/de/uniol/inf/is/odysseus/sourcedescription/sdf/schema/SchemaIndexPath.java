@@ -103,7 +103,7 @@ public class SchemaIndexPath {
 			SDFAttribute tempAttr = null;
 			
 			if(att.getDatatype().hasSchema()){
-				tempAttr = att.getDatatype().getSubSchema().getAttribute(0);
+				tempAttr = att.getDatatype().getSchema().getAttribute(0);
 			}
 			else{
 				tempAttr = att;
@@ -114,8 +114,8 @@ public class SchemaIndexPath {
 			return new SchemaIndexPath(i, att2);
 		} else {
 			// seems that there must be subschema
-			i.add(new SchemaIndex(index, att.getDatatype().getSubSchema().getAttribute(index)));
-			SDFAttribute att2 = to.getDatatype().getSubSchema().getAttribute(index);
+			i.add(new SchemaIndex(index, att.getDatatype().getSchema().getAttribute(index)));
+			SDFAttribute att2 = to.getDatatype().getSchema().getAttribute(index);
 			return new SchemaIndexPath(i, att2);
 		}
 	}

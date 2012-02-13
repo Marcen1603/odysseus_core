@@ -242,7 +242,7 @@ public class SchemaHelper {
 			paths.put(fullAttributeName, new SchemaIndexPath(copy(actualPath), attribute));
 
 			if(attribute.getDatatype().hasSchema()){
-				calculateAllPaths(attribute.getDatatype().getSubSchema(), actualPath, fullAttributeName);
+				calculateAllPaths(attribute.getDatatype().getSchema(), actualPath, fullAttributeName);
 			}
 
 			actualPath.remove(actualPath.size() - 1);

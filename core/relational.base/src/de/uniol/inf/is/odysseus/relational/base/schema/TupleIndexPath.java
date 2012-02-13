@@ -312,7 +312,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			}
 			if (lastListIndex == indices.size() - 1) {
 				// seems that there must be subattributes
-				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSubSchema().getAttribute(0);
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSchema().getAttribute(0);
 				indices.add(new TupleIndex(tuple, 0, lastAttribute));
 				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
 				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();
@@ -334,7 +334,7 @@ public class TupleIndexPath implements Iterable<TupleInfo>, Iterator<TupleInfo> 
 			}
 			if (lastListIndex == indices.size() - 1) {
 				// seems that there must be subattributes
-				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSubSchema().getAttribute(0);
+				SDFAttribute lastAttribute = schemaIndexPath.getLastSchemaIndex().getAttribute().getDatatype().getSchema().getAttribute(0);
 				indices.add(new TupleIndex(obj, 0, lastAttribute));
 				List<SchemaIndex> idx = schemaIndexPath.getSchemaIndices();
 				List<SchemaIndex> newIdx = new ArrayList<SchemaIndex>();

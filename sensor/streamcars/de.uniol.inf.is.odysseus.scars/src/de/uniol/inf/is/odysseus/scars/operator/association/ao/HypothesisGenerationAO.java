@@ -129,8 +129,8 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	private SDFAttribute setSourceName(SDFAttribute attribute, String sourceName) {
 		// FIXME: attribute.setSourceName(sourceName);
 		
-		if(attribute.getDatatype().getSubSchema() != null){
-			for (SDFAttribute attSdfAttribute : attribute.getDatatype().getSubSchema()) {
+		if(attribute.getDatatype().getSchema() != null){
+			for (SDFAttribute attSdfAttribute : attribute.getDatatype().getSchema()) {
 				setSourceName(attSdfAttribute, sourceName);
 			}
 		}

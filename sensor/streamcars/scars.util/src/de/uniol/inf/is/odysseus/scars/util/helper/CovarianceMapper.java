@@ -47,7 +47,7 @@ public class CovarianceMapper {
 			}
 			
 			if(attribute.getDatatype().isComplex() && attribute.getDatatype().hasSchema()){
-				find(attribute.getDatatype().getSubSchema(), lastName);
+				find(attribute.getDatatype().getSchema(), lastName);
 			}
 		}
 	}

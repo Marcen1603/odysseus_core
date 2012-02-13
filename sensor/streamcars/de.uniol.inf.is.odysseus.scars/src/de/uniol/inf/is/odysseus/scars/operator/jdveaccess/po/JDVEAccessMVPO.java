@@ -217,10 +217,10 @@ class JDVEData<M extends IProbability> {
 
 	public MVRelationalTuple<M> parseRecord(SDFAttribute attribute, ByteBuffer bb) {
 		if(attribute.getDatatype().hasSchema()){
-			int count = attribute.getDatatype().getSubSchema().size();
+			int count = attribute.getDatatype().getSchema().size();
 			MVRelationalTuple<M> recordTuple = new MVRelationalTuple<M>(count);
 			for (int i = 0; i < count; i++) {
-				Object obj = parseNext(attribute.getDatatype().getSubSchema().getAttribute(i), bb);
+				Object obj = parseNext(attribute.getDatatype().getSchema().getAttribute(i), bb);
 				recordTuple.setAttribute(i, obj);
 			}
 			return recordTuple;
@@ -236,7 +236,7 @@ class JDVEData<M extends IProbability> {
 
 		List<Object> objects = new ArrayList<Object>((int)count);
 		for (int i = 0; i < count; i++) {
-			Object obj = parseNext(attribute.getDatatype().getSubSchema().getAttribute(0), bb); // FIXME: getAttribute(0) richtig?
+			Object obj = parseNext(attribute.getDatatype().getSchema().getAttribute(0), bb); // FIXME: getAttribute(0) richtig?
 			objects.add(obj);
 //			recordTuple.setAttribute(i, obj);
 		}

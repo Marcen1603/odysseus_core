@@ -128,7 +128,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		// the schema can be null, if it is a set of
 		// base type elements
 		if (this.subType.type != SDFDatatype.KindOfDatatype.BASE) {
-			this.schema = this.subType.getSubSchema();
+			this.schema = this.subType.getSchema();
 		}
 	}
 
@@ -180,7 +180,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		return this.schema != null;
 	}
 
-	public SDFSchema getSubSchema() {
+	public SDFSchema getSchema() {
 		return this.schema;
 	}
 

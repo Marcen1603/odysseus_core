@@ -184,7 +184,7 @@ public class ScarsXMLProfiler {
 			
 			if(attr.getDatatype().getQualName().equals("Record")) {
 				
-				SDFSchema schema = attr.getDatatype().getSubSchema();
+				SDFSchema schema = attr.getDatatype().getSchema();
 				for(int i=0; i<schema.size(); i++) {
 					SDFAttribute childAttr = schema.getAttribute(i);
 					try {
@@ -197,7 +197,7 @@ public class ScarsXMLProfiler {
 			} else if (attr.getDatatype().getQualName().equals("List")) {
 				
 				if(attr.getDatatype().hasSchema()){
-					SDFSchema schema = attr.getDatatype().getSubSchema();
+					SDFSchema schema = attr.getDatatype().getSchema();
 					SDFAttribute childAttr = schema.getAttribute(0);
 					for(int i=0; i<tuple.size(); i++) {
 						addData2(null, tupleElement, childAttr, tuple.getAttribute(i));

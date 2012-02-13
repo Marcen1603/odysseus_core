@@ -158,7 +158,7 @@ public class SchemaIterator implements Iterable<SchemaInfo>, Iterator<SchemaInfo
 				if (index.getAttribute().getDatatype().isMultiValue()) {
 					SDFAttribute tempAttr = null;
 					if(index.getAttribute().getDatatype().hasSchema()){
-						tempAttr = index.getAttribute().getDatatype().getSubSchema().getAttribute(0);
+						tempAttr = index.getAttribute().getDatatype().getSchema().getAttribute(0);
 					}
 					else {
 						tempAttr = index.getAttribute();
@@ -167,7 +167,7 @@ public class SchemaIterator implements Iterable<SchemaInfo>, Iterator<SchemaInfo
 					insideList.push(true);
 				} else {
 					// seem that there must be subattributes
-					schemaIndices.push(new SchemaIndex(counter.peek(), index.getAttribute().getDatatype().getSubSchema().getAttribute(counter.peek())));
+					schemaIndices.push(new SchemaIndex(counter.peek(), index.getAttribute().getDatatype().getSchema().getAttribute(counter.peek())));
 					insideList.push(insideList.peek());
 				}
 				Integer c = counter.pop();

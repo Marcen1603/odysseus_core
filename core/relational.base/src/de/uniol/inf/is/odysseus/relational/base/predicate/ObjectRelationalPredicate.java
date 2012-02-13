@@ -99,7 +99,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 			else{
 				boolean found = false;
 				if(a.getDatatype().hasSchema()){
-					found = findAttribute(a.getDatatype().getSubSchema(), attr, path);
+					found = findAttribute(a.getDatatype().getSchema(), attr, path);
 				}
 				if(!found){
 					path.remove(path.size() - 1); // remove the last entry, because it is wrong

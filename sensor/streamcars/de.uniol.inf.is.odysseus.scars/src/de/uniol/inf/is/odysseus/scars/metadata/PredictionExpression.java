@@ -239,7 +239,7 @@ public class PredictionExpression {
 			// that in the following line we can set current to null without
 			// the danger of a NullpointerException, this this must be the 
 			// last run of the loop.
-			current = attr.getDatatype().getSubSchema();
+			current = attr.getDatatype().getSchema();
 		}
 	}
 	

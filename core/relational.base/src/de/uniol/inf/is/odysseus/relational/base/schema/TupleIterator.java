@@ -341,7 +341,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 
 				if (index.getAttribute().getDatatype().isMultiValue()) {
 					if(index.getAttribute().getDatatype().hasSchema()){
-						schemaIndices.push(new SchemaIndex(0, index.getAttribute().getDatatype().getSubSchema().getAttribute(0)));
+						schemaIndices.push(new SchemaIndex(0, index.getAttribute().getDatatype().getSchema().getAttribute(0)));
 					}
 					else{
 						schemaIndices.push(new SchemaIndex(0, index.getAttribute())); // FIXME: Ich hoffe, dass das stimmt.
@@ -349,7 +349,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 					insideList.push(true);
 				} else {
 					// seems that there must be subattributes
-					schemaIndices.push(new SchemaIndex(entry.index, index.getAttribute().getDatatype().getSubSchema().getAttribute(entry.index)));
+					schemaIndices.push(new SchemaIndex(entry.index, index.getAttribute().getDatatype().getSchema().getAttribute(entry.index)));
 					insideList.push(insideList.peek());
 				}
 
