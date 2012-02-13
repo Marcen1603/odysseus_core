@@ -68,6 +68,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	public SDFAttribute findAttribute(String attributeName) {
+		// TODO: Mit SchemaHelper abgleichen ...
 		String[] split = attributeName.split(Pattern.quote("."));
 		List<String> splitted = new LinkedList<String>();
 		for (String s : split) {
