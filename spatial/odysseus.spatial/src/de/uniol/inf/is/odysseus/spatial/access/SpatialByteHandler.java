@@ -33,12 +33,15 @@ import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandle
 public class SpatialByteHandler extends AbstractAtomicDataHandler{
 	static protected List<String> types = new ArrayList<String>();
 	static{
+		types.add("SpatialGeometry");
+		types.add("SpatialGeometryCollection");
+
 		types.add("SpatialPoint");
-		types.add("SpatialLine");
+		types.add("SpatialLineString");
 		types.add("SpatialPolygon");
 		
 		types.add("SpatialMultiPoint");
-		types.add("SpatialMultiLine");
+		types.add("SpatialMultiLineString");
 		types.add("SpatialMutliPolygon");
 	}
 	

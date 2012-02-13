@@ -14,7 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.spatial.functions;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -22,8 +24,10 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 
 /**
  * @author Stephan Jansen <stephan.jansen@offis.de>
+ * 
+ * Function to return geometries that are LineStrings as SpatialLineString
  */
-public class ST_SetSRID extends AbstractFunction<Geometry> {
+public class AsLineString extends AbstractFunction<Geometry> {
 
 	/**
 	 * 
@@ -36,21 +40,11 @@ public class ST_SetSRID extends AbstractFunction<Geometry> {
 	@Override
 	public int getArity() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 1;
 	}
 
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{
-    	{
-        	SDFSpatialDatatype.SPATIAL_POINT, 
-        	SDFSpatialDatatype.SPATIAL_LINE_STRING, 
-        	SDFSpatialDatatype.SPATIAL_POLYGON,
-        	SDFSpatialDatatype.SPATIAL_MULTI_POINT,
-        	SDFSpatialDatatype.SPATIAL_MULTI_LINE_STRING, 
-        	SDFSpatialDatatype.SPATIAL_MULTI_POLYGON, 
-        	SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION,
-        	SDFSpatialDatatype.SPATIAL_GEOMETRY 
-    	},
-    	{SDFDatatype.INTEGER}
+    public static final SDFDatatype[] accTypes = new SDFDatatype[]{
+    	SDFSpatialDatatype.SPATIAL_GEOMETRY, SDFSpatialDatatype.SPATIAL_LINE_STRING
     };
 	
 	/* (non-Javadoc)
@@ -65,7 +59,7 @@ public class ST_SetSRID extends AbstractFunction<Geometry> {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		else{
-			return accTypes[argPos];
+			return accTypes;
 		}
 	}
 
@@ -74,21 +68,19 @@ public class ST_SetSRID extends AbstractFunction<Geometry> {
 	 */
 	@Override
 	public String getSymbol() {
-		return "ST_SetSRID";
+		return "AsLineString";
 	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
-	public Geometry getValue() {
-		Geometry sourceGeom = (Geometry) this.getInputValue(0);
-		Geometry targetGeom = (Geometry) sourceGeom.clone();
-		if (this.getInputValue(1) instanceof Double)
-			targetGeom.setSRID(((Double)this.getInputValue(1)).intValue());
+	public LineString getValue() {
+		Geometry g = (Geometry) this.getInputValue(0);
+		if (g instanceof LineString)
+			return (LineString) g.clone();
 		else
-			targetGeom.setSRID((Integer)this.getInputValue(1));
-	    return targetGeom;
+			return g.getFactory().createLineString(new Coordinate[0]);
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +89,7 @@ public class ST_SetSRID extends AbstractFunction<Geometry> {
 	@Override
 	public SDFDatatype getReturnType() {
 		// TODO Auto-generated method stub
-		return SDFSpatialDatatype.SPATIAL_GEOMETRY;
+		return SDFSpatialDatatype.SPATIAL_LINE_STRING;
 	}
 
 }

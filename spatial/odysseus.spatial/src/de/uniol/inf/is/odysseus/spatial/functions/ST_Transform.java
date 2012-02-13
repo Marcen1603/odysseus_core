@@ -90,7 +90,7 @@ public class ST_Transform extends AbstractFunction<Geometry> {
 	@Override
 	public Geometry getValue() {
 		Geometry sourceGeom = ((Geometry)this.getInputValue(0));
-		Geometry targetGeom = sourceGeom.getFactory().createGeometry(sourceGeom);
+		Geometry targetGeom = (Geometry) sourceGeom.clone();
 		if (this.getInputValue(1) instanceof Double)
 			targetGeom.setSRID(((Double)this.getInputValue(1)).intValue());
 		else
