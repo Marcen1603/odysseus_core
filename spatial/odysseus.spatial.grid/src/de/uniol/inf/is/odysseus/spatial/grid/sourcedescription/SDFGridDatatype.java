@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema;
 
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -40,12 +40,12 @@ public class SDFGridDatatype extends SDFDatatype {
 	}
 
 	public SDFGridDatatype(String datatypeName, KindOfDatatype type,
-			SDFAttributeList schema) {
+			SDFSchema schema) {
 		super(datatypeName, type, schema);
 	}
 
 	public static final SDFDatatype GRID = new SDFDatatype("Grid",
-			SDFDatatype.KindOfDatatype.BEAN, new SDFAttributeList("",
+			SDFDatatype.KindOfDatatype.BEAN, new SDFSchema("",
 					new SDFAttribute(null, "origin",
 							SDFSpatialDatatype.SPATIAL_POINT),
 					new SDFAttribute(null, "cellsize", SDFDatatype.DOUBLE),

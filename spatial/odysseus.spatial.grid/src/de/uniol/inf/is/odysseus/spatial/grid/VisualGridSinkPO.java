@@ -31,17 +31,17 @@ import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttributeList;
+import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
 	private CanvasFrame canvas;
-	private final SDFAttributeList schema;
+	private final SDFSchema schema;
 	private final AtomicBoolean pause = new AtomicBoolean(false);
 
-	public VisualGridSinkPO(final SDFAttributeList schema) {
+	public VisualGridSinkPO(final SDFSchema schema) {
 		this.schema = schema;
 	}
 
