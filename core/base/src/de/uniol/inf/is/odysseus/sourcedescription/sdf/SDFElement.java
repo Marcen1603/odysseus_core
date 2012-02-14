@@ -196,7 +196,9 @@ public class SDFElement implements Serializable, IClone {
 				ret[0] = URI.substring(0, sharpPos);
 				ret[2] = "#";
 			} else {
-				sharpPos = URI.lastIndexOf("."); // secondary qualifier if present
+				sharpPos = URI.indexOf("."); // secondary qualifier if present,
+				// use first occurrence in this case to allow path expressions like source.attribute.subattribute 
+				//				sharpPos = URI.lastIndexOf("."); // secondary qualifier if present
 				if (sharpPos > 0) {
 					ret[2] = ".";
 					ret[1] = URI.substring(sharpPos + 1);
