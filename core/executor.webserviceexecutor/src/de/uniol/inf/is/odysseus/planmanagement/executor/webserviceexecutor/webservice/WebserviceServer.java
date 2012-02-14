@@ -28,7 +28,6 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Endpoint;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
@@ -44,9 +43,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
-
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 
 /**
@@ -60,22 +57,22 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 public class WebserviceServer {
 
 	public static void startServer() {
-		WebserviceServer server = new WebserviceServer();		
+		WebserviceServer server = new WebserviceServer();
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus", server);
 		if (endpoint.isPublished()) {
 			Logger.getAnonymousLogger().log(Level.FINE, "Webservice published!");
 		}
 	}
 
-	protected IExecutor getExecutor(){
+	protected IExecutor getExecutor() {
 		return ExecutorServiceBinding.getExecutor();
 	}
-	
+
 	@WebResult(name = "securitytoken")
 	public StringResponse login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
 		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
 		if (user != null) {
-			String token = SessionManagement.getInstance().createNewSession(user);
+			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
 			return response;
 		} else {
@@ -86,8 +83,8 @@ public class WebserviceServer {
 	public Response addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
-			ISession user = loginWithSecurityToken(securityToken);			
-			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,transCfg);
+			ISession user = loginWithSecurityToken(securityToken);
+			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, transCfg);
 			return new Response(true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
@@ -111,27 +108,25 @@ public class WebserviceServer {
 		}
 
 	}
-	
-	public StringListResponse getInstalledQueries(@WebParam(name="securitytoken") String securityToken){
+
+	public StringListResponse getInstalledQueries(@WebParam(name = "securitytoken") String securityToken) {
 		StringListResponse response = new StringListResponse(true);
-		try{
-			loginWithSecurityToken(securityToken);			
-			for(IQuery q : ExecutorServiceBinding.getExecutor().getPlan().getQueries()){
+		try {
+			loginWithSecurityToken(securityToken);
+			for (IQuery q : ExecutorServiceBinding.getExecutor().getPlan().getQueries()) {
 				response.addResponseValue(q.getQueryText());
 			}
 			return response;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringListResponse(false);
 		}
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws WebserviceException {
-		if (SessionManagement.getInstance().isValidSession(securityToken)) {
-			// TODO: ---> Session initalisieren, kein User mehr
-			//ISession user = SessionManagement.getInstance().getUser(securityToken);
-			//return user;
-			return null;
+		ISession session = UserManagement.getSessionmanagement().login(securityToken);
+		if (session != null) {
+			return session;
 		} else {
 			throw new WebserviceException("Security token unknown! You have to login first to obtain a security token!");
 		}
@@ -289,8 +284,7 @@ public class WebserviceServer {
 		return new StringListResponse(false);
 	}
 
-	public Response setScheduler(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "scheduler") String scheduler,
-			@WebParam(name = "scheduler_strategy") String schedulerStrategy) {
+	public Response setScheduler(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "scheduler") String scheduler, @WebParam(name = "scheduler_strategy") String schedulerStrategy) {
 		try {
 			loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().setScheduler(scheduler, schedulerStrategy);
@@ -343,23 +337,24 @@ public class WebserviceServer {
 		}
 	}
 
-	public SimpleGraph getPlan(@WebParam(name ="securitytoken") String securityToken){
-		try{
+	@SuppressWarnings("unchecked")
+	public SimpleGraph getPlan(@WebParam(name = "securitytoken") String securityToken) {
+		try {
 			SimpleGraph graph = new SimpleGraph();
-			//loginWithSecurityToken(securityToken);
-			IPlan plan = ExecutorServiceBinding.getExecutor().getPlan();		
+			// loginWithSecurityToken(securityToken);
+			IPlan plan = ExecutorServiceBinding.getExecutor().getPlan();
 			int idCounter = 0;
-			for(IPhysicalOperator op : plan.getRoots()){
-				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();		
+			for (IPhysicalOperator op : plan.getRoots()) {
+				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
 				visitor.setIdCounter(idCounter);
 				@SuppressWarnings("rawtypes")
 				AbstractGraphWalker walker = new AbstractGraphWalker();
-				walker.prefixWalkPhysical(op, visitor);			
-				graph.addRootNode(visitor.getResult());	
+				walker.prefixWalkPhysical(op, visitor);
+				graph.addRootNode(visitor.getResult());
 				idCounter = visitor.getIdCounter();
 			}
 			return graph;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
