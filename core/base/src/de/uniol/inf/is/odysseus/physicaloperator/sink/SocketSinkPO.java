@@ -34,6 +34,9 @@ public class SocketSinkPO extends AbstractSink<Object> {
 
 	public SocketSinkPO(int serverPort, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, IObjectHandler objectHandler) {
 		listener = new SinkConnectionListener(serverPort, sinkStreamHandlerBuilder, subscribe, useNIO, loginNeeded);
+		if (objectHandler == null){
+			throw new IllegalArgumentException("ObjectHandler cannot be null!");
+		}
 		this.objectHandler = objectHandler;
 		listener.start();
 	}
