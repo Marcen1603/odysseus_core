@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.sink.ObjectSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -31,9 +32,15 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 					.getSinkName());
 
 			if (socketSinkPO == null) {
-
+				
+				ISinkStreamHandlerBuilder streamHandler = getStreamHandler(operator.getSinkType());
+				
+				if (streamHandler == null){
+					throw new TransformationException("No Handler for sink type "+operator.getSinkType()+" found.");
+				}
+				
 				socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
-						getStreamHandler(operator.getSinkType()), false,
+						streamHandler, false,
 						operator.isLoginNeeded(), null);
 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
