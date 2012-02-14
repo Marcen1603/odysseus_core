@@ -58,7 +58,7 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFSchema("", this.outputSchema);
+		this.outputSchema = new SDFSchema("", outputSchema);
 	}
 	
 	@Override
