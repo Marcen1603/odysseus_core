@@ -18,7 +18,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 	@Override
 	public ISession login(final String username, final byte[] password) {
 		final IUser user = userDAO.findByName(username);
-		if (user.isActive() && user.validatePassword(password)) {
+		if (user != null && user.isActive() && user.validatePassword(password)) {
 			return updateSessionStore(user);
 		}
 		return null;
