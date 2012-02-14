@@ -4,8 +4,8 @@ import de.uniol.inf.is.odysseus.usermanagement.policy.LogoutPolicy;
 
 abstract public class AbstractSessionManagement<USER extends IUser> implements ISessionManagement {
 
-	protected IGenericDAO<USER,String> userDAO;
-	
+	protected IGenericDAO<USER, String> userDAO;
+
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
 	/*
@@ -23,7 +23,16 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 		}
 		return null;
 	}
-	
+
+	public ISession login(String token) {
+		for (ISession session : this.sessionStore.values()) {
+			if (session.getToken().equals(token)) {
+				return session;
+			}
+		}
+		return null;
+	}
+
 	protected ISession updateSessionStore(final IUser user) {
 		if (this.sessionStore.containsKey(user.getId())) {
 			this.sessionStore.remove(user.getId());
@@ -32,7 +41,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 		this.sessionStore.put(session.getId(), session);
 		return session;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -67,5 +76,5 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 		}
 		return false;
 	}
-	
+
 }

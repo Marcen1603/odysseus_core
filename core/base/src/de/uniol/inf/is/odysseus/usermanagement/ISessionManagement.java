@@ -36,4 +36,6 @@ public interface ISessionManagement {
 	 * @return
 	 */
 	boolean isValid(ISession session, ISession caller);
+	
+	ISession login(String token);
 }

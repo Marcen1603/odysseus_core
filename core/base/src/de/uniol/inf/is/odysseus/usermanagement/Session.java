@@ -14,6 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.usermanagement;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -28,6 +30,8 @@ public class Session implements ISession {
     private final IUser user;
     private final long start;
     private long end;
+    private String token = "";
+    
 
     public Session(final IUser user) {
         this.user = user;
@@ -72,4 +76,18 @@ public class Session implements ISession {
             this.end = System.currentTimeMillis() + SESSION_TIMEOUT;
         }
     }
+
+	@Override
+	public String getToken() {
+		if(token.isEmpty()){
+			token = createToken();
+		}
+		return token;
+	}
+	
+	
+	private String createToken() {
+		SecureRandom random = new SecureRandom();
+		return new BigInteger(130, random).toString(32);
+	}
 }
