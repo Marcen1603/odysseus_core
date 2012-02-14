@@ -248,6 +248,15 @@ public class StateMachine<E> implements Serializable {
 		return str;
 	}
 
+	public boolean containsNegativeStates() {
+		for (State s: states){
+			if (s.isNegated()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public State getLastState() {
 		return states.get(states.size());
 	}
@@ -319,5 +328,6 @@ public class StateMachine<E> implements Serializable {
 
 		return set;
 	}
+
 
 }

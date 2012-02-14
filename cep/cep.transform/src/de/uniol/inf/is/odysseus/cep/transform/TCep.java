@@ -65,7 +65,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		IComplexEventFactory complexEventFactory = new RelationalCreator();
 		CepOperator cepPO = null;
 		try {
-			cepPO = new CepOperator(cepAO.getStateMachine(), rMap,
+			cepPO = new CepOperator(m, cepAO.getSecondStateMachine(), rMap,
 					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
 							.getSubscribedToSource().size()),
 					new TITransferArea(cepAO.getSubscribedToSource().size()));

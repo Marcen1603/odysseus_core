@@ -231,6 +231,7 @@ List<String> sourceNames = new ArrayList<String>();
     		}
     	}
     }
+    cepAo.prepareNegation();
     $op = cepAo;
    }
   ;
@@ -248,7 +249,7 @@ List<State> states = new LinkedList<State>();
   
    {
     if (states.size() > 0) {
-    	states.add(new State("<ACCEPTING>", "", null, true));
+    	states.add(new State("<ACCEPTING>", "", null, true, false));
     	StateMachine sm = cepAo.getStateMachine();
     	sm.setStates(states);
     	sm.setInitialState(states.get(0).getId());
@@ -295,8 +296,6 @@ state[List<State> states, List<String> sourceNames]
   ^(STATE statename=NAME attrName=NAME not=NOTSIGN?)
   
    {
-    if (not != null)
-    	throw new RuntimeException("Negative states not supported now!");
     String _statename = statename.getText();
     if (!sourceNames.contains(_statename)) {
     	sourceNames.add(_statename);
@@ -307,7 +306,8 @@ state[List<State> states, List<String> sourceNames]
     simpleState.add(_statename);
     if (simpleAttributeState.get(_attributeName) == null) {
     	simpleAttributeState.put(_attributeName, _statename);
-    	states.add(new State(_attributeName, _attributeName, _statename, false));
+    	State state = new State(_attributeName, _attributeName, _statename, false, not!=null); 
+    	states.add(state);
     } else {
     	throw new RuntimeException("Double attribute definition " + _attributeName);
     }
@@ -316,8 +316,6 @@ state[List<State> states, List<String> sourceNames]
   ^(KSTATE statename=NAME attrName=NAME not=NOTSIGN?)
   
    {
-    if (not != null)
-    	throw new RuntimeException("Negative states not supported now!");
     String _statename = statename.getText();
     String _attributeName = attrName.getText();
     // getLogger().debug("Kleene Zustand "+_statename+" "+_attributeName);
@@ -326,9 +324,9 @@ state[List<State> states, List<String> sourceNames]
     if (kleeneAttributeState.get(_attributeName) == null) {
     	kleeneAttributeState.put(_attributeName, _statename);
     	states.add(new State(_attributeName + "[1]", _attributeName, _statename,
-    			false));
+    			false, not!=null));
     	states.add(new State(_attributeName + "[i]", _attributeName, _statename,
-    			false));
+    			false, not!=null));
     } else {
     	throw new RuntimeException("Double attribute definition " + _attributeName);
     }

@@ -18,8 +18,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 
 /**
@@ -37,18 +35,25 @@ public class State implements Serializable{
 	 * eindeutig sein. Darf nur Buchstaben und Ziffern beinhalten, wobei das
 	 * erste Zeichen ein Buchstabe sein muss. Darf kein leerer String sein.
 	 */
-	private String id;
-	private String var;
-	private String type;
+	final private String id;
+	final private String var;
+	final private String type;
 	/**
 	 * Gibt an, ob ein Zustand ein Endzustand ist oder nicht.
 	 */
-	private boolean accepting;
+	final private boolean accepting;
+
+	/**
+	 * If a state is negated (e.g. event should not occur), a special
+	 * handling is necessary
+	 */
+	final private boolean negated;
+
 	/**
 	 * Liste aller von einem Zustand ausgehenden Transitionen. Sollte nicht null
 	 * sein.
 	 */
-	private List<Transition> transitions = new LinkedList<Transition>();
+	final private List<Transition> transitions;
 
 	/**
 	 * Erzeugt einen neuen Automatenzustand
@@ -62,24 +67,37 @@ public class State implements Serializable{
 	 * @param outgoingTransitions
 	 *            Liste der vom Zustand ausgehenden Transitionen. Nicht null.
 	 */
-	public State(String id, String var, String type, boolean accepting,
-			List<Transition> outgoingTransitions) {
-		setId(id);
-		setAccepting(accepting);
-		setTransitions(outgoingTransitions);
-		setVar(var);
-	}
-
 	public State(String id, String var, String type, boolean accepting) {
-		setId(id);
-		setAccepting(accepting);
-		setVar(var);
-		setType(type);
+		this.id = id;
+		this.accepting = accepting;
+		this.transitions = new LinkedList<Transition>();
+		this.var = var;
+		this.negated = false;
+		this.type = null;
 	}
 
-	public State() {
+	public State(String id, String var, String type, boolean accepting, boolean negated) {
+		this.id = id;
+		this.accepting = accepting;
+		this.var = var;
+		this.type = type;
+		this.transitions = new LinkedList<Transition>();
+		this.negated = negated;
 	}
-	
+
+	public State(State otherState, boolean copyTransition){
+		this.id = otherState.id;
+		this.accepting = otherState.accepting;
+		this.var = otherState.var;
+		this.type = otherState.type;
+		if (copyTransition){
+			this.transitions = new LinkedList<Transition>(otherState.transitions);
+		}else{
+			this.transitions = new LinkedList<Transition>();
+		}
+		this.negated = otherState.negated;
+	}
+		
 
 	/**
 	 * Gibt die automatenweit eindeutige ID des Zustands zurück.
@@ -92,34 +110,12 @@ public class State implements Serializable{
 	}
 
 	/**
-	 * Setzt die ID des Zustands. Die Zustands-ID muss im gesamten Automaten
-	 * eindeutig sein.
-	 * 
-	 * @param id
-	 *            Die neue automatenweit eindeutige Zustands-ID.
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
 	 * Gibt an, ob es sich bei einem Zustand um einen Endzustand handelt.
 	 * 
 	 * @return True, wenn der Zustand ein Endzustand ist, sonst False.
 	 */
 	public boolean isAccepting() {
 		return accepting;
-	}
-
-	/**
-	 * Setzt, ob der Zustand ein Endzustand ist.
-	 * 
-	 * @param accepting
-	 *            True, wenn der Zustand als Endzustand markiert werden soll,
-	 *            sonst False.
-	 */
-	public void setAccepting(boolean accepting) {
-		this.accepting = accepting;
 	}
 
 	/**
@@ -138,19 +134,6 @@ public class State implements Serializable{
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Setzt die Liste mit den ausgehenden Transitionen des Zustands.
-	 * 
-	 * @param outgoingTransitions
-	 *            Liste, die alle vom Zustand ausgehenden Transitionen enthält.
-	 *            Nicht null.
-	 */
-	@XmlElementWrapper(name = "transitions") 
-	@XmlElement(name = "transition")
-	public void setTransitions(List<Transition> outgoingTransitions) {
-		this.transitions = outgoingTransitions;
 	}
 	
 	public void addTransition(Transition t){
@@ -183,14 +166,6 @@ public class State implements Serializable{
 		return var;
 	}
 
-	public void setVar(String var) {
-		this.var = var;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -217,6 +192,8 @@ public class State implements Serializable{
 		return true;
 	}
 
-	
+	public boolean isNegated() {
+		return negated;
+	}
 	
 }

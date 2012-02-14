@@ -30,27 +30,21 @@ public class Transition implements Serializable{
 	/**
 	 * Die im gesamten Automaten eindeutige ID der Transition.
 	 */
-	private String id;
+	final private String id;
 	/**
 	 * Referenz auf den Folgezustand. Darf während der Verarbeitung durch den
 	 * EPA nicht null sein. Muss zudem ein Zustandsobjekt aus der Menge der
 	 * Zustandsmenge des Automaten sein.
 	 */
-	private State nextState;
+	final private State nextState;
 	/**
 	 * Die Transitionsbedingung
 	 */
-	private ICepCondition condition;
+	final private ICepCondition condition;
 	/**
 	 * Die Automatenausgabe / Aktion für die Transition
 	 */
-	private EAction action;
-
-	/**
-	 * Default-Konstruktor
-	 */
-	public Transition() {
-	}
+	final private EAction action;
 
 	/**
 	 * Erstellt ein neues Transitionsobjekt
@@ -85,17 +79,6 @@ public class Transition implements Serializable{
 	}
 
 	/**
-	 * Setzt die ID der Transition.
-	 * 
-	 * @param id
-	 *            Die neue ID der Transition, die im gesamten Automaten
-	 *            eindeutig sein muss.
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
 	 * Liefert den Folgezustand der Transition.
 	 * 
 	 * @return Folgezustand der Transition, nicht null. Der gelieferte Zustand
@@ -103,19 +86,6 @@ public class Transition implements Serializable{
 	 */
 	public State getNextState() {
 		return nextState;
-	}
-
-	
-	/**
-	 * Setzt den Folgezustand der Transition.
-	 * 
-	 * @param nextState
-	 *            Der neue Folgezustand der Transition. Darf nicht null sein.
-	 *            Das übergebene Objekt muss auch in der Liste der Zustände im
-	 *            Automaten vorhanden sein.
-	 */
-	public void setNextState(State nextState) {
-		this.nextState = nextState;
 	}
 
 	/**
@@ -128,32 +98,12 @@ public class Transition implements Serializable{
 	}
 
 	/**
-	 * Setzt eine neue Transitionsbedingung.
-	 * 
-	 * @param condition
-	 *            Die neue Transitionsbedingung, nicht null.
-	 */
-	public void setCondition(AbstractCondition condition) {
-		this.condition = condition;
-	}
-
-	/**
 	 * Liefert die Action (Mealy-Ausgabe) der Transition
 	 * 
 	 * @return Die Action der Transition.
 	 */
 	public EAction getAction() {
 		return action;
-	}
-
-	/**
-	 * Setzt eine neue Action (Mealy-Ausgabe) für die Transition.
-	 * 
-	 * @param action
-	 *            Die neue Action der Transition, nicht null.
-	 */
-	public void setAction(EAction action) {
-		this.action = action;
 	}
 
 	@Override
@@ -187,12 +137,6 @@ public class Transition implements Serializable{
 	
 	public void negateExpression() {
 		getCondition().negate();
-	}
-
-
-	public String prettyPrint() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

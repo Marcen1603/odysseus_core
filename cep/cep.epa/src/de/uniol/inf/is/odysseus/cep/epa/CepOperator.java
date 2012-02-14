@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.cep.epa;
 
 import java.util.ArrayList;
@@ -72,26 +72,16 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	protected IInputStreamSyncArea<R> inputStreamSyncArea;
 	protected ITransferArea<R, W> outputTransferFunction;
 
-	// removed for performance improvements
-	// /**
-	// * Referenz auf den Verzweigungsspeicher
-	// */
-	// private BranchingBuffer<R> branchingBuffer;
 	/**
-	 * Liste aller Automaten-Instanzen, die gerade vom EPA verarbeitet werden
+	 * Liste aller Automaten-Instanzen, die gerade verarbeitet werden
 	 */
-	private LinkedList<StateMachineInstance<R>> smInstances;
+	private Map<StateMachine<R>, LinkedList<StateMachineInstance<R>>> smInstances;
 	/**
 	 * Der Automat, der das zu suchende Event-Muster sowie die Event-Aggregation
 	 * und die Struktur des Zwischenspeichers enthält
 	 */
-	private StateMachine<R> stateMachine;
-	
-	/**
-	 * Referenz auf die globale, automaten?ergreifende Symboltabelle
-	 */
-	//private SymbolTable<R> symTab;
-	
+	private List<StateMachine<R>> stateMachines;
+
 	/**
 	 * EventAgent
 	 */
@@ -124,16 +114,24 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 *             Invarianten einhält.
 	 */
 	public CepOperator(StateMachine<R> stateMachine,
+			StateMachine<R> secondStateMachine,
 			Map<Integer, IEventReader<R, R>> eventReader,
 			IComplexEventFactory<R, W> complexEventFactory, boolean validate,
 			IInputStreamSyncArea<R> inputStreamSyncArea,
 			ITransferArea<R, W> outputTransferFunction) throws Exception {
 		super();
-		this.stateMachine = stateMachine;
+		this.stateMachines = new ArrayList<StateMachine<R>>();
+		stateMachines.add(stateMachine);
+		if (secondStateMachine != null) {
+			stateMachines.add(secondStateMachine);
+		}
+
 		this.complexEventFactory = complexEventFactory;
 		this.eventReader = eventReader;
-		this.smInstances = new LinkedList<StateMachineInstance<R>>();
-		// this.branchingBuffer = new BranchingBuffer<R>();
+		smInstances = new HashMap<StateMachine<R>, LinkedList<StateMachineInstance<R>>>();
+		for (StateMachine<R> m : stateMachines) {
+			smInstances.put(m, new LinkedList<StateMachineInstance<R>>());
+		}
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferFunction = outputTransferFunction;
 	}
@@ -169,88 +167,88 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public void process_internal(R event, int port) {
-		synchronized (smInstances) {
-			if (logger.isDebugEnabled())
-				logger.debug("-------------------> NEXT EVENT from "
-						+ eventReader.get(port).getType() + ": " + event + " "
-						+ port);
-			// if (logger.isDebugEnabled())
-			// logger.debug(this.getStats());
+		for (StateMachine<R> sm : stateMachines) {
+			LinkedList<StateMachineInstance<R>> currentSmInstances = smInstances.get(sm);
+			synchronized (currentSmInstances) {
+				if (logger.isDebugEnabled())
+					logger.debug("-------------------> NEXT EVENT from "
+							+ eventReader.get(port).getType() + ": " + event
+							+ " " + port);
+				// if (logger.isDebugEnabled())
+				// logger.debug(this.getStats());
 
-			// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob
-			// mindestens
-			// die Typbedingung erfuellt ist
-			boolean createNewInstance = false;
-			for (Transition transition : this.stateMachine.getInitialState()
-					.getTransitions()) {
+				// Bevor ueberhaupt eine Instanz angelegt wird, testen, ob
+				// mindestens
+				// die Typbedingung erfuellt ist
+				boolean createNewInstance = false;
+				for (Transition transition : sm
+						.getInitialState().getTransitions()) {
 
-				if (transition.getCondition().checkEventTypeWithPort(port)) {
-					createNewInstance = true;
-					break;
-				}
-			}
-			LinkedList<W> complexEvents = null;
-			if (createNewInstance) {
-				logger.debug("Created New Initial Instance");
-				StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
-						this.stateMachine, getEventReader().get(port).getTime(
-								event));
-				addInstance(newInstance);
-			}
-			if (event == null)
-				throw new InvalidEventException(
-						"The event to be processed is null.");
-
-			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
-			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
-			validateTransitions(event, outdatedInstances, branchedInstances,
-					port);
-			addInstances(branchedInstances);
-			complexEvents = validateFinalStates(outdatedInstances, port);
-			removeInstances(outdatedInstances);
-			if (complexEvents.size() > 0) {
-				for (W e : complexEvents) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Created Event: " + e);
+					if (transition.getCondition().checkEventTypeWithPort(port)) {
+						createNewInstance = true;
+						break;
 					}
-					outputTransferFunction.transfer(e);
 				}
+				LinkedList<W> complexEvents = null;
+				if (createNewInstance) {
+					logger.debug("Created New Initial Instance");
+					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
+							sm, getEventReader().get(port)
+									.getTime(event));
+					addInstance(sm, newInstance);
+				}
+				if (event == null)
+					throw new InvalidEventException(
+							"The event to be processed is null.");
 
+				LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
+				LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
+				validateTransitions(event, outdatedInstances,
+						branchedInstances, port);
+				addInstances(sm, branchedInstances);
+				complexEvents = validateFinalStates(outdatedInstances, port);
+				removeInstances(sm, outdatedInstances);
+				if (complexEvents.size() > 0) {
+					for (W e : complexEvents) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Created Event: " + e);
+						}
+						outputTransferFunction.transfer(e);
+					}
+
+				}
 			}
 		}
 	}
 
-	private void removeInstances(
-			LinkedList<StateMachineInstance<R>> instances) {
-		for (StateMachineInstance<R> i:instances){
-			removeInstance(i);
+	private void removeInstances(StateMachine<R> sm, LinkedList<StateMachineInstance<R>> instances) {
+		for (StateMachineInstance<R> i : instances) {
+			removeInstance(sm, i);
 		}
 	}
 
-	private void addInstances(
-			LinkedList<StateMachineInstance<R>> instances) {
-		for (StateMachineInstance<R> i:instances){
-			addInstance(i);
+	private void addInstances(StateMachine<R> sm, LinkedList<StateMachineInstance<R>> instances) {
+		for (StateMachineInstance<R> i : instances) {
+			addInstance(sm ,i);
 		}
 	}
 
-	private void addInstance(StateMachineInstance<R> stateMachineInstance) {
-		// TODO: Events
+	private void addInstance(StateMachine<R> sm, StateMachineInstance<R> stateMachineInstance) {
 		this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
-		smInstances.add(stateMachineInstance);
+		smInstances.get(sm).add(stateMachineInstance);
 	}
 
-	private void removeInstance(StateMachineInstance<R> stateMachineInstance) {
-		// TODO: Events
-		smInstances.remove(stateMachineInstance);
+	private void removeInstance(StateMachine<R> sm, StateMachineInstance<R> stateMachineInstance) {
+		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
+		smInstances.get(sm).remove(stateMachineInstance);
 	}
 
-	
 	private void validateTransitions(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
 		for (StateMachineInstance<R> instance : this.getInstances()) {
+			StateMachine<R> sm = instance.getStateMachine();
 			if (logger.isDebugEnabled())
 				logger.debug("Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
@@ -267,11 +265,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 
 				// Check Time
-				if (stateMachine.getWindowSize() > 0) {
+				if (sm.getWindowSize() > 0) {
 					if (!transition.getCondition().checkTime(
 							instance.getStartTimestamp(),
 							eventReader.get(port).getTime(event),
-							stateMachine.getWindowSize())) {
+							sm.getWindowSize())) {
 						outofWindow = true;
 						// logger.debug(instance + " Out of Window ...");
 						continue;
@@ -358,15 +356,15 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		// logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
 		for (CepVariable varName : transition.getCondition().getVarNames()) {
 
-			//logger.debug("Setting Value for "+varName);
+			// logger.debug("Setting Value for "+varName);
 
 			Object newValue = null;
 			if (varName.isActEventName()) {
 				newValue = this.eventReader.get(port).getValue(
 						varName.getVariableName(), object);
 
-//				 logger.debug("Setze " + varName + " auf " + newValue +
-//				 " from " + object);
+				// logger.debug("Setze " + varName + " auf " + newValue +
+				// " from " + object);
 
 				if (newValue == null) {
 					return false;
@@ -409,20 +407,21 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 				// Werte in den Symboltabellen der JEP-Ausdrücke im
 				// Ausgabeschema setzen:
-				for (IOutputSchemeEntry entry : this.stateMachine
+				for (IOutputSchemeEntry entry : this.stateMachines.get(0)
 						.getOutputScheme().getEntries()) {
 
 					for (CepVariable varName : entry.getVarNames()) {
 						Object value = getValue(-1, instance, varName);
-						if (value != null){
+						if (value != null) {
 							entry.setValue(varName, value);
-						}else{
-							logger.warn("Variable "+varName+" has no value!");
+						} else {
+							logger.warn("Variable " + varName
+									+ " has no value!");
 						}
 					}
 				}
 				complexEvents.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachine.getOutputScheme(),
+						this.stateMachines.get(0).getOutputScheme(),
 						instance.getMatchingTrace(),
 						instance.getSymTab(),
 						new PointInTime(getEventReader().get(port).getTime(
@@ -455,14 +454,14 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			// String[] split = varName.split(CepVariable.getSeperator());
 			// int index = split[2].isEmpty() ? -1 : Integer.parseInt(split[2]);
 			MatchedEvent<R> event = instance.getMatchingTrace().getEvent(
-					varName.getStateIdentifier() , varName.getIndex());
+					varName.getStateIdentifier(), varName.getIndex());
 			if (event != null) {
 				IEventReader<R, ?> eventR = this.eventReader.get(port);
 				if (port > 0) {
 					eventR = this.eventReader.get(port);
 				} else {
 					// For final Results ... find Event-Reader
-					String type = stateMachine.getState(
+					String type = this.stateMachines.get(0).getState(
 							varName.getStateIdentifier()).getType();
 					for (IEventReader<R, ?> r : eventReader.values()) {
 						if (r.getType().equals(type)) {
@@ -525,11 +524,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * @return Den Automaten, der das zu suchende Event-Muster definiert.
 	 */
 	public StateMachine<R> getStateMachine() {
-		return stateMachine;
+		return this.stateMachines.get(0);
 	}
-	
+
 	/**
 	 * This is the getter for the CEPEventAgent.
+	 * 
 	 * @return the CEPEventAgent
 	 */
 	public CEPEventAgent getCEPEventAgent() {
@@ -551,7 +551,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * @return Liste der Automateninstanzen.
 	 */
 	public List<StateMachineInstance<R>> getInstances() {
-		return Collections.unmodifiableList(smInstances);
+		return Collections.unmodifiableList(smInstances.get(this.stateMachines.get(0)));
 	}
 
 	/**
@@ -596,22 +596,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	// return outdated;
 	// }
 
-	/**
-	 * Liefert Statistiken zum aktuellen Zustand des EPA.
-	 * 
-	 * @return
-	 */
-	public String getStats() {
-		String str = "";
-		str = str + "#instances:" + this.smInstances.size() + " ";
-		// str = str + "#branch trees:"
-		// + this.branchingBuffer.getBranches().size();
-		return str;
-	}
+
 
 	@Override
 	public CepOperator<R, W> clone() {
-		return new CepOperator<R,W>(this);
+		return new CepOperator<R, W>(this);
 	}
 
 	@Override
