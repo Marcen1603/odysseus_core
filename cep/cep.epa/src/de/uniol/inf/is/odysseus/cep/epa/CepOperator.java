@@ -167,9 +167,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public void process_internal(R event, int port) {
-		for (StateMachine<R> sm : stateMachines) {
-			LinkedList<StateMachineInstance<R>> currentSmInstances = smInstances.get(sm);
-			synchronized (currentSmInstances) {
+		synchronized (stateMachines) {
+			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
+			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
+			for (StateMachine<R> sm : stateMachines) {
+
 				if (logger.isDebugEnabled())
 					logger.debug("-------------------> NEXT EVENT from "
 							+ eventReader.get(port).getType() + ": " + event
@@ -181,74 +183,79 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				// mindestens
 				// die Typbedingung erfuellt ist
 				boolean createNewInstance = false;
-				for (Transition transition : sm
-						.getInitialState().getTransitions()) {
+				for (Transition transition : sm.getInitialState()
+						.getTransitions()) {
 
 					if (transition.getCondition().checkEventTypeWithPort(port)) {
 						createNewInstance = true;
 						break;
 					}
 				}
-				LinkedList<W> complexEvents = null;
 				if (createNewInstance) {
 					logger.debug("Created New Initial Instance");
 					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
-							sm, getEventReader().get(port)
-									.getTime(event));
+							sm, getEventReader().get(port).getTime(event));
 					addInstance(sm, newInstance);
 				}
 				if (event == null)
 					throw new InvalidEventException(
 							"The event to be processed is null.");
 
-				LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
-				LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
-				validateTransitions(event, outdatedInstances,
+				validateTransitions(sm, event, outdatedInstances,
 						branchedInstances, port);
 				addInstances(sm, branchedInstances);
-				complexEvents = validateFinalStates(outdatedInstances, port);
-				removeInstances(sm, outdatedInstances);
-				if (complexEvents.size() > 0) {
-					for (W e : complexEvents) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Created Event: " + e);
-						}
-						outputTransferFunction.transfer(e);
-					}
 
+			}
+			LinkedList<W> complexEvents = null;
+			complexEvents = validateFinalStates(outdatedInstances, port);
+			
+			for (StateMachine<R> sm : stateMachines) {
+				removeInstances(sm, outdatedInstances);
+			}
+			
+			if (complexEvents.size() > 0) {
+				for (W e : complexEvents) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Created Event: " + e);
+					}
+					outputTransferFunction.transfer(e);
 				}
+
 			}
 		}
 	}
 
-	private void removeInstances(StateMachine<R> sm, LinkedList<StateMachineInstance<R>> instances) {
+	private void removeInstances(StateMachine<R> sm,
+			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
 			removeInstance(sm, i);
 		}
 	}
 
-	private void addInstances(StateMachine<R> sm, LinkedList<StateMachineInstance<R>> instances) {
+	private void addInstances(StateMachine<R> sm,
+			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
-			addInstance(sm ,i);
+			addInstance(sm, i);
 		}
 	}
 
-	private void addInstance(StateMachine<R> sm, StateMachineInstance<R> stateMachineInstance) {
+	private void addInstance(StateMachine<R> sm,
+			StateMachineInstance<R> stateMachineInstance) {
 		this.agent.fireCEPEvent(CEPEvent.ADD_MASCHINE, stateMachineInstance);
 		smInstances.get(sm).add(stateMachineInstance);
 	}
 
-	private void removeInstance(StateMachine<R> sm, StateMachineInstance<R> stateMachineInstance) {
+	private void removeInstance(StateMachine<R> sm,
+			StateMachineInstance<R> stateMachineInstance) {
 		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
 
-	private void validateTransitions(R event,
+	private void validateTransitions(StateMachine<R> sm, R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
-		for (StateMachineInstance<R> instance : this.getInstances()) {
-			StateMachine<R> sm = instance.getStateMachine();
+		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
 			if (logger.isDebugEnabled())
 				logger.debug("Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
@@ -384,20 +391,49 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private LinkedList<W> validateFinalStates(
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
-		for (StateMachineInstance<R> instance : getInstances()) {
-			// if (logger.isDebugEnabled()) {
-			// logger.debug("Testing for final state in " + instance);
-			// }
+		
+		if (stateMachines.size() > 1) {
+			// First test if the second machine reaches final state
+			for (StateMachineInstance<R> instance : getInstances(stateMachines.get(1))) {
+				
+				/*
+				 * Durch das Markieren der veralteten Automateninstanzen und das
+				 * nachträgliche entfernen, kann instance bereits veraltet sein.
+				 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
+				 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
+				 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um
+				 * das zu verhindern, müssen diese Instanzen bei der Verarbeitung
+				 * übersprungen werden.
+				 */
+				if (outdatedInstances.contains(instance))
+					continue;
+				
+				if (instance.getCurrentState().isAccepting()) { 
+					if (logger.isDebugEnabled()) {
+						logger.debug("Reached final state in negative instance " + instance);
+					}
+					// if there is an accepting instance in the first list, DO NOT FIRE! 
+					for (StateMachineInstance<R> negativeInstance : getInstances(stateMachines.get(0))) {
+						if (outdatedInstances.contains(negativeInstance))
+							continue;
+						
+						// TODO: It should be any instance, because they all consumed the same events, in the same order
+						if (negativeInstance.getCurrentState().isAccepting()){
+							break;
+						}
+						// No accepting instance found --> fire event
+						createEvent(outdatedInstances, port, complexEvents, negativeInstance);
+						outdatedInstances.add(instance);
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		for (StateMachineInstance<R> instance : getInstances(stateMachines.get(0))) {
 
-			/*
-			 * Durch das Markieren der veralteten Automateninstanzen und das
-			 * nachträgliche entfernen, kann instance bereits veraltet sein.
-			 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
-			 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
-			 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um
-			 * das zu verhindern, müssen diese Instanzen bei der Verarbeitung
-			 * übersprungen werden.
-			 */
 			if (outdatedInstances.contains(instance))
 				continue;
 
@@ -405,42 +441,42 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (logger.isDebugEnabled()) {
 					logger.debug("Reached final state in " + instance);
 				}
-				// Werte in den Symboltabellen der JEP-Ausdrücke im
-				// Ausgabeschema setzen:
-				for (IOutputSchemeEntry entry : this.stateMachines.get(0)
-						.getOutputScheme().getEntries()) {
-
-					for (CepVariable varName : entry.getVarNames()) {
-						Object value = getValue(-1, instance, varName);
-						if (value != null) {
-							entry.setValue(varName, value);
-						} else {
-							logger.warn("Variable " + varName
-									+ " has no value!");
-						}
-					}
-				}
-				complexEvents.add(this.complexEventFactory.createComplexEvent(
-						this.stateMachines.get(0).getOutputScheme(),
-						instance.getMatchingTrace(),
-						instance.getSymTab(),
-						new PointInTime(getEventReader().get(port).getTime(
-								instance.getMatchingTrace().getLastEvent()
-										.getEvent()))));
-				/*
-				 * An dieser Stelle muss die Instanz, die zum Complex Event
-				 * geführt hat, als veraltet markiert werden. Je nach
-				 * Consumption-Mode müssen auch die verwandten Instanzen als
-				 * veraltet markiert werden.
-				 */
-				// Hmmm Dont know
-				// outdatedInstances.addAll(this
-				// .getRemovableInstancesByConsumptionMode(instance));
-				// better this?
-				outdatedInstances.add(instance);
+				createEvent(outdatedInstances, port, complexEvents, instance);
 			}
 		}
 		return complexEvents;
+	}
+
+	private void createEvent(
+			LinkedList<StateMachineInstance<R>> outdatedInstances, int port,
+			LinkedList<W> complexEvents, StateMachineInstance<R> instance) {
+		// Werte in den Symboltabellen der MEP-Ausdruecke im
+		// Ausgabeschema setzen:
+		for (IOutputSchemeEntry entry : this.stateMachines.get(0)
+				.getOutputScheme().getEntries()) {
+
+			for (CepVariable varName : entry.getVarNames()) {
+				Object value = getValue(-1, instance, varName);
+				if (value != null) {
+					entry.setValue(varName, value);
+				} else {
+					logger.warn("Variable " + varName
+							+ " has no value!");
+				}
+			}
+		}
+		complexEvents.add(this.complexEventFactory.createComplexEvent(
+				this.stateMachines.get(0).getOutputScheme(),
+				instance.getMatchingTrace(),
+				instance.getSymTab(),
+				new PointInTime(getEventReader().get(port).getTime(
+						instance.getMatchingTrace().getLastEvent()
+								.getEvent()))));
+		/*
+		 * An dieser Stelle muss die Instanz, die zum Complex Event
+		 * gefuehrt hat, als veraltet markiert werden. 
+		 */
+		outdatedInstances.add(instance);
 	}
 
 	private Object getValue(int port, StateMachineInstance<R> instance,
@@ -461,8 +497,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					eventR = this.eventReader.get(port);
 				} else {
 					// For final Results ... find Event-Reader
-					String type = this.stateMachines.get(0).getState(
-							varName.getStateIdentifier()).getType();
+					String type = this.stateMachines.get(0)
+							.getState(varName.getStateIdentifier()).getType();
 					for (IEventReader<R, ?> r : eventReader.values()) {
 						if (r.getType().equals(type)) {
 							eventR = r;
@@ -523,8 +559,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * 
 	 * @return Den Automaten, der das zu suchende Event-Muster definiert.
 	 */
-	public StateMachine<R> getStateMachine() {
-		return this.stateMachines.get(0);
+	public List<StateMachine<R>> getStateMachines() {
+		return Collections.unmodifiableList(stateMachines);
 	}
 
 	/**
@@ -550,8 +586,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * 
 	 * @return Liste der Automateninstanzen.
 	 */
-	public List<StateMachineInstance<R>> getInstances() {
-		return Collections.unmodifiableList(smInstances.get(this.stateMachines.get(0)));
+	public List<StateMachineInstance<R>> getInstances(StateMachine<R> sm) {
+		return Collections.unmodifiableList(smInstances.get(sm));
 	}
 
 	/**
@@ -595,8 +631,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	// }
 	// return outdated;
 	// }
-
-
 
 	@Override
 	public CepOperator<R, W> clone() {
