@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.jfreechart;bundle-version="1.0.0"
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.datadictionary,

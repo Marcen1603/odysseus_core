@@ -8,6 +8,7 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
          <menu
                icon="icons/monitor.png"
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
                label="Charts">
             <command
                   commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowBarChartCommand"
@@ -89,14 +90,16 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
          <menu
                icon="icons/monitor.png"
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
                label="Charts">
          </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor?after=additions">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
          <menu
                icon="icons/monitor.png"
+               id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"
                label="Charts">
          </menu>
       </menuContribution>
