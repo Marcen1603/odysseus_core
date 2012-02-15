@@ -94,10 +94,11 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		byte[] binData = this.writer.write((Geometry)data);
-		byte[] dataAndLength = new byte[binData.length];
 		
 		// split integer into 4 bytes
 		byte[] length = this.intToByteArray(binData.length);
+		
+		byte[] dataAndLength = new byte[binData.length + length.length];
 		
 		// first put length
 		System.arraycopy(length, 0, dataAndLength, 0, length.length);
@@ -140,7 +141,11 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 	public int memSize(Object attribute) {
 		if(attribute instanceof Geometry){
 			byte[] binData = this.writer.write((Geometry)attribute);
-			return binData.length;
+			// split integer into 4 bytes
+			byte[] length = this.intToByteArray(binData.length);
+			byte[] dataAndLength = new byte[binData.length + length.length];
+			
+			return dataAndLength.length;
 		}
 		
 		if(attribute instanceof Polygon){

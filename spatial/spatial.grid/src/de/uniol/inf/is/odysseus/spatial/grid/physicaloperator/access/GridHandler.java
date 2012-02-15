@@ -95,8 +95,9 @@ public class GridHandler extends AbstractAtomicDataHandler {
 
 	@Override
 	public int memSize(Object attribute) {
-		// TODO Auto-generated method stub
-		return 0;
+		Grid grid = (Grid) attribute;
+		return (Integer.SIZE / 8) * 3 + (Short.SIZE / 8) * 3 + grid.getBuffer().capacity();
 	}
+
 
 }
