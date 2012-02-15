@@ -28,3 +28,4 @@ Export-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.window,
  de.uniol.inf.is.odysseus.logicaloperator.intervalapproach
 Bundle-Activator: de.uniol.inf.is.odysseus.intervalapproach.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

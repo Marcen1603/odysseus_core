@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.Variable;
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.EqualsOperator;
@@ -177,21 +176,21 @@ public class JoinTransformationHelper {
 		return false;
 	}
 	
-	/**
-	 * Checks if expr is of the form (a == b AND b == c AND d == f AND ...)
-	 * @param expr
-	 * @return
-	 */
-	private static boolean checkMEPExpression(IExpression expr){
-		if(expr instanceof AndOperator){
-			return checkMEPExpression(((AndOperator)expr).getArgument(0)) && checkMEPExpression(((AndOperator)expr).getArgument(1));
-		}
-		if((expr instanceof IFunction) && (expr instanceof EqualsOperator)){
-			return true;
-		}
-		return false;
-	}
-	
+//	/**
+//	 * Checks if expr is of the form (a == b AND b == c AND d == f AND ...)
+//	 * @param expr
+//	 * @return
+//	 */
+//	private static boolean checkMEPExpression(IExpression expr){
+//		if(expr instanceof AndOperator){
+//			return checkMEPExpression(((AndOperator)expr).getArgument(0)) && checkMEPExpression(((AndOperator)expr).getArgument(1));
+//		}
+//		if((expr instanceof IFunction) && (expr instanceof EqualsOperator)){
+//			return true;
+//		}
+//		return false;
+//	}
+//	
 	/**
 	 * This method calculates the restrict lists for HashJoinSweepAreas.
 	 * @param joinPO

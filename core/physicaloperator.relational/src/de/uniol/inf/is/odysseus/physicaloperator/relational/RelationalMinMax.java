@@ -23,6 +23,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalMinMax extends MinMax<RelationalTuple<?>,RelationalTuple<?>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 571119114462961967L;
+
 	int[] attrList = new int[1];
 
 	static Map<Boolean, Map<Integer, RelationalMinMax>> instances = new HashMap<Boolean, Map<Integer,RelationalMinMax>>();

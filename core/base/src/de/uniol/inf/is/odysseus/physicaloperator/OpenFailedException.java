@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.physicaloperator;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.Plan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 

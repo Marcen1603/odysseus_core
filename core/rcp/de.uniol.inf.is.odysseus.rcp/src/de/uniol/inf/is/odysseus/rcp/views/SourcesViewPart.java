@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class SourcesViewPart extends ViewPart implements
 		IDataDictionaryListener, IUserManagementListener {

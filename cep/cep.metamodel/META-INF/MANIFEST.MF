@@ -16,3 +16,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.sourcedescription.sdf,
  de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  org.slf4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

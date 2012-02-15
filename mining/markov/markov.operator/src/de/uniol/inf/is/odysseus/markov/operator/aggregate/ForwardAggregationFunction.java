@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class ForwardAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9078982639010201605L;
 	private HiddenMarkovModel hmm;
 	
 	public ForwardAggregationFunction(HiddenMarkovModel hmm) {

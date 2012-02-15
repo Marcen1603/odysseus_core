@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 
 abstract public class Count<R, W> extends AbstractAggregateFunction<R, W> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8658668731513975755L;
+
 	protected Count() {
 		super("COUNT");
 	}

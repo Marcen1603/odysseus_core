@@ -22,3 +22,4 @@ Export-Package: de.uniol.inf.is.odysseus.loadshedding,
  de.uniol.inf.is.odysseus.loadshedding.monitoring
 Service-Component: OSGI-INF/LoadSheddingBufferPlacement.xml
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

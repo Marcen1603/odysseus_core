@@ -9,14 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Dimension;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Location;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class GeometryPartialAggregate<T> implements IPartialAggregate<T>,

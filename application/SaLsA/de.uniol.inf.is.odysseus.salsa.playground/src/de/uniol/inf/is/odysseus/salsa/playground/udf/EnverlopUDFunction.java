@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @UserDefinedFunction(name = "ENVERLOP")
-public class EnverlopUDFunction<R> implements IUserDefinedFunction<R, R> {
+public class EnverlopUDFunction implements IUserDefinedFunction<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
 	String init = null;
 
@@ -20,7 +20,8 @@ public class EnverlopUDFunction<R> implements IUserDefinedFunction<R, R> {
 	}
 
 	@Override
-	public R process(R in, int port) {
+	public RelationalTuple<? extends IMetaAttribute> process(
+			RelationalTuple<? extends IMetaAttribute> in, int port) {
 		RelationalTuple<IMetaAttribute> intuple = (RelationalTuple<IMetaAttribute>) in;
 		
 		for (int i = 0; i < ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).size(); i++) {
@@ -31,7 +32,7 @@ public class EnverlopUDFunction<R> implements IUserDefinedFunction<R, R> {
 		}
 		
 		//intuple.setAttribute(0, mergetupleList);
-		return (R) intuple;
+		return intuple;
 	}
 
 

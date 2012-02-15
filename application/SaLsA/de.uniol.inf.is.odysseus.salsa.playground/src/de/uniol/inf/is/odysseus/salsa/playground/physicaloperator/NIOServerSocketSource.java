@@ -6,7 +6,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +14,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 
 public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSource<RelationalTuple<ITimeInterval>>{
@@ -97,7 +94,7 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 	
 	@Override
 	public AbstractSource<RelationalTuple<ITimeInterval>> clone() {
-		return new NIOServerSocketSource(this);
+		return new NIOServerSocketSource<T>(this);
 	}
 
 	public Selector getSelector() {
@@ -114,7 +111,7 @@ public class NIOServerSocketSource<T extends IMetaAttribute> extends AbstractSou
 	
 	public void request(String request){
 		if (this.isOpen()) {
-			RelationalTuple tuple = new RelationalTuple<ITimeInterval>(this.getOutputSchema().size());
+			RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(this.getOutputSchema().size());
 			ITimeInterval metadata = null;
 			
 			String[] values = request.split(";");

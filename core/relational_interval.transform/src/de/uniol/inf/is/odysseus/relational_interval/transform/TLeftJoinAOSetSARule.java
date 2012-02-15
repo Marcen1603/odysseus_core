@@ -20,19 +20,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.collection.Pair;
+import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 
+@SuppressWarnings({"rawtypes"})
 public class TLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIPO> {
 	
 	@Override
@@ -40,6 +40,7 @@ public class TLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIP
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(LeftJoinTIPO joinPO, TransformationConfiguration transformConfig) {
 //		JoinPersistentSweepArea[] areas = new JoinPersistentSweepArea[2];
@@ -73,7 +74,7 @@ public class TLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIP
 		// path to the source, use
 		// a hash sweep area
 		// otherwise use a JoinTISweepArea
-		IPredicate pred = joinPO.getJoinPredicate();
+		//IPredicate pred = joinPO.getJoinPredicate();
 		
 		areas[0] = new JoinTISweepArea();
 		areas[1] = new JoinTISweepArea();

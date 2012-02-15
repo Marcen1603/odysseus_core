@@ -16,8 +16,6 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 

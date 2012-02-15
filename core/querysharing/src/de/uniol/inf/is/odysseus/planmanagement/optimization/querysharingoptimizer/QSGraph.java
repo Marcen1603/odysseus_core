@@ -34,6 +34,7 @@ public class QSGraph {
 		this.connections = connections;		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	protected void addVertice(IPhysicalOperator po) {
 		// TODO: Ordnungsgem‰ﬂge Beschriftung des Operators ermitteln
 		// Irgendwas der Form "Bezeichner <-- expression + input"
@@ -41,6 +42,7 @@ public class QSGraph {
 		if(po instanceof SelectPO) {
 			IPredicate<?> pred = ((SelectPO<?>)po).getPredicate();
 			if(pred instanceof IPredicate) {
+				@SuppressWarnings("unchecked")
 				List<SDFAttribute> attlist = ((IPredicate)pred).getAttributes();
 				System.out.println(((IPredicate)pred).toString());
 				for(SDFAttribute a : attlist) {

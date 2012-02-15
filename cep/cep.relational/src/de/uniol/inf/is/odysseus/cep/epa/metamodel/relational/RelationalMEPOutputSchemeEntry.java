@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalMEPOutputSchemeEntry extends MEPOutputSchemeEntry {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8110127726206981797L;
+
 	public RelationalMEPOutputSchemeEntry(String expression){
 		super(expression);
 	}

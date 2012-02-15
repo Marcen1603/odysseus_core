@@ -16,3 +16,4 @@ Bundle-ClassPath: xalan.jar,.
 Export-Package: de.uniol.inf.is.odysseus.nexmark.generator
 Require-Bundle: de.uniol.inf.is.odysseus,
  org.eclipse.core.runtime;bundle-version="3.7.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

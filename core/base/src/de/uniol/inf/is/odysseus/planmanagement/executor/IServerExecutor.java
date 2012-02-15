@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * This Interface contains all methods from the executor that are accessable if

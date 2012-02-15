@@ -25,6 +25,7 @@ public class StandardP2PBidGenerator implements IP2PBidGenerator {
 	 * Anschließend werden die Komponenten (Speicherkosten und Prozessorkosten)
 	 * addiert. Das Ergebnis ist das Gebot.
 	 */
+	@SuppressWarnings("restriction")
 	public double generateBid(IAdmissionControl sender, ICost actSystemLoad, ICost queryCost, ICost maxCost) {
 
 		if (actSystemLoad instanceof OperatorCost) {

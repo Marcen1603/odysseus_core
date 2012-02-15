@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.handler;
 
-import javax.swing.DefaultListModel;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.ExtendedPeerAdvertisement;
-import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IGuiUpdater;

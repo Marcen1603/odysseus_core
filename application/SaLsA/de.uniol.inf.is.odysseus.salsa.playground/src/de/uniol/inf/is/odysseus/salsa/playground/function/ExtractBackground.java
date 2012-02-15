@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
  */
 public class ExtractBackground<T> extends AbstractFunction<Geometry> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4406353913819971437L;
+
 	@Override
 	public int getArity() {
 		return 0;

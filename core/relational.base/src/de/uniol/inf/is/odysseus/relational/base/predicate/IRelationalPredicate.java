@@ -14,8 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;

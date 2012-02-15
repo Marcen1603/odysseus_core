@@ -52,6 +52,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * @param event
 	 *            is the event.
 	 */
+	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		// get the CepOperator
@@ -72,7 +73,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			operator.getCEPEventAgent().addCEPEventListener(
 					listView.getListener());
 			// add the instances of the operator
-			for (StateMachine sm : operator.getStateMachines()) {
+			for (@SuppressWarnings("rawtypes") StateMachine sm : operator.getStateMachines()) {
 				for (Object instance : operator.getInstances(sm)) {
 					CEPInstance newInstance = new CEPInstance(
 							(StateMachineInstance<?>) instance);

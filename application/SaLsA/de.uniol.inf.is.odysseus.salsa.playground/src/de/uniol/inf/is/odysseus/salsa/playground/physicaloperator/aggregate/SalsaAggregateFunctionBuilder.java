@@ -6,13 +6,6 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.AggregationBean;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.AggregationJSR223;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAvgSum;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalCount;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMinMax;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalNest;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalStdDev;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.salsa.playground.physicaloperator.aggregate.functions.RelationalPolygonAggregation;
 

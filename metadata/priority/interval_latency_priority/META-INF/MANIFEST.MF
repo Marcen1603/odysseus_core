@@ -11,3 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.osgi.framework
 Export-Package: de.uniol.inf.is.odysseus.interval_latency_priority
 Bundle-Activator: de.uniol.inf.is.odysseus.interval_latency_priority.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -22,7 +22,12 @@ package GridPublishSubscribe;
 
 public final class GridPublisherPrxHelper extends Ice.ObjectPrxHelperBase implements GridPublisherPrx
 {
-    public void
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3862575084683998262L;
+
+	public void
     subscribe(GridSubscriberPrx sub)
     {
         subscribe(sub, null, false);

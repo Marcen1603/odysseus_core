@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.physicaloperator.access;
 
 import java.io.IOException;
-import java.nio.file.ClosedFileSystemException;
-
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 
 public class RouterConnection implements IAccessConnection, IConnectionListener {

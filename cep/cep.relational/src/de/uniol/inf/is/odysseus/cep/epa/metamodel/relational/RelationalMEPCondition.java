@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalMEPCondition extends MEPCondition {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4946780822305422013L;
+
 	public RelationalMEPCondition(String jepExpression){
 		super(jepExpression);
 	}

@@ -24,6 +24,10 @@ import de.uniol.inf.is.odysseus.mep.Variable;
 
 public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6442137580076153969L;
 	IExpression<?> expression;
 	protected Map<CepVariable, Variable> symbolTable = new HashMap<CepVariable, Variable>();
 	

@@ -14,3 +14,4 @@ Require-Bundle: de.uniol.inf.is.odysseus
 Service-Component: OSGI-INF/simpledynamicpriorityscheduling.xml, OSGI-INF/staticpriorityplanscheduling.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.priorityscheduler,
  de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -15,3 +15,4 @@ Built-By: ceki
 Implementation-Version: 1.5.6
 Bundle-Description: The slf4j log4j-12 binding
 Archiver-Version: Plexus Archiver
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

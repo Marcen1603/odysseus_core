@@ -22,7 +22,12 @@ package TelemetriePublishSubscribe;
 
 public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase implements TelemetrieSubscriberPrx
 {
-    public void
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8160446058670624206L;
+
+	public void
     _notify(Pose p)
     {
         _notify(p, null, false);

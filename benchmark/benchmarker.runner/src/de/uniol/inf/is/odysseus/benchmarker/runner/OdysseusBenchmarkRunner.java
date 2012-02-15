@@ -62,6 +62,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 		try {
 			initArgs(arguments, args);
 
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			ServiceTracker t = new ServiceTracker(ctx,
 					IBenchmark.class.getName(), null);
 			t.open();

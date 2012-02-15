@@ -19,6 +19,11 @@ package de.uniol.inf.is.odysseus.usermanagement;
  */
 public class StreamAlreadyExistException extends Exception {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5471414752101907686L;
+
+	/**
      * 
      */
     public StreamAlreadyExistException() {

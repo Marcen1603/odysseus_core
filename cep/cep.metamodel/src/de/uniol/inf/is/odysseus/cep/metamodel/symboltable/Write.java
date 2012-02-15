@@ -21,6 +21,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPart
 @SuppressWarnings({"rawtypes"})
 public class Write<R> extends AbstractAggregateFunction<R, R> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4490710243269539616L;
 	private static Write instance;
 
 	private Write() {

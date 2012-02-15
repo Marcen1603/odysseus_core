@@ -13,7 +13,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class RelationalNth extends Nth<RelationalTuple<?>, RelationalTuple<?>> {
 
-    private final static Map<Integer, RelationalNth> instances = new HashMap<Integer, RelationalNth>();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8236978756283300379L;
+	private final static Map<Integer, RelationalNth> instances = new HashMap<Integer, RelationalNth>();
 
     static public RelationalNth getInstance(Integer n) {
         RelationalNth instance = instances.get(n);

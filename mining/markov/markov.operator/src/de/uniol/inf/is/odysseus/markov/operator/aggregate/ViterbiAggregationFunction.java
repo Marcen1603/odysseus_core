@@ -10,6 +10,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class ViterbiAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6157305306298530863L;
 	private HiddenMarkovModel hmm;	
 	
 	public ViterbiAggregationFunction(HiddenMarkovModel hmm) {

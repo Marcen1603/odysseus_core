@@ -23,4 +23,5 @@ Export-Package: de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.relational.base.schema
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

@@ -66,3 +66,4 @@ Bundle-Classpath: com.springsource.org.apache.log4j-1.2.15.jar
 Build-Jdk: 1.6.0
 Archiver-Version: Plexus Archiver
 Built-By: ubuntu
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

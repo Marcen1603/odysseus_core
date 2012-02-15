@@ -24,10 +24,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.ObjectTrackingProjectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule; 
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class TObjectTrackingProjectAORule extends AbstractTransformationRule<ObjectTrackingProjectAO>{

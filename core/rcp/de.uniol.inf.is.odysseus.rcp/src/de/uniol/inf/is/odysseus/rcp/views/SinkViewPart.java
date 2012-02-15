@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 /**
  * 

@@ -70,7 +70,7 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 					// the corresponding CepOperator
 					MachineTreeItem item = (MachineTreeItem) selectedObject;
 					for (CepOperator<?, ?> operator : view.getOperators()) {
-						for (StateMachine sm : operator.getStateMachines()) {
+						for (@SuppressWarnings("rawtypes") StateMachine sm : operator.getStateMachines()) {
 							if (sm.equals(item.getContent())) {
 								operator.getCEPEventAgent()
 										.removeCEPEventListener(

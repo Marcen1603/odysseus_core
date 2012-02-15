@@ -55,7 +55,6 @@ import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanExporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.IOperatorPlanImporter;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;

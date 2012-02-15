@@ -25,6 +25,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class RelationalNest extends AbstractListAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9172869315418294224L;
 	private int[] restrictList;
 
 	public RelationalNest(int[] restrictList){

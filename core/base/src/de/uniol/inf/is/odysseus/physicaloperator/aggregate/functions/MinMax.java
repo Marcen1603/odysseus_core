@@ -19,6 +19,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 
 abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggregateFunction<R, W>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7793230815454083728L;
 	boolean isMax = true;
 	
 	protected MinMax(boolean isMax) {

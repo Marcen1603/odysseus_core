@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Singleton class for saving all created service level agreements and looking

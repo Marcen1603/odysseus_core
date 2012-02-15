@@ -10,7 +10,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class RelationalFirst extends First<RelationalTuple<?>, RelationalTuple<?>> {
 
-    private static RelationalFirst instance;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9099860331313991458L;
+	private static RelationalFirst instance;
 
     private RelationalFirst() {
         super();

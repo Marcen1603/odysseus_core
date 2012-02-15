@@ -7,7 +7,12 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 abstract public class Last<R, W> extends AbstractAggregateFunction<R, W> {
-    protected Last() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4460706645733648643L;
+
+	protected Last() {
         super("LAST");
     }
 

@@ -23,6 +23,10 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 abstract public class AbstractCondition implements ICepCondition {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1739660261038759580L;
+	/**
 	 * Textuelle Repraesentation der Transitionsbedingung.
 	 */
 	private String label;

@@ -30,3 +30,5 @@ Service-Component: OSGI-INF/component.xml, OSGI-INF/VisitorService.xml
 Require-Bundle: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.intervalapproach
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

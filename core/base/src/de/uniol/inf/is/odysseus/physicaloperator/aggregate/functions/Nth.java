@@ -7,7 +7,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 abstract public class Nth<R, W> extends AbstractAggregateFunction<R, W> {
-    private int n;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3840479318065114625L;
+	private int n;
 
     protected Nth(int n) {
         super("NTH");

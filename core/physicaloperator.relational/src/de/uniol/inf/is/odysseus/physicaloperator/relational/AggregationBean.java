@@ -37,6 +37,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class AggregationBean extends
 		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -911617324088128058L;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	/** The bean instance */
 	private Object bean;

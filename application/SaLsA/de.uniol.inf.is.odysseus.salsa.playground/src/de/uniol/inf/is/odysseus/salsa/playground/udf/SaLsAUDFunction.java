@@ -1,19 +1,11 @@
 package de.uniol.inf.is.odysseus.salsa.playground.udf;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.SDFElement;
-
 //@UserDefinedFunction(name="salsatransform")
 //public class SaLsAUDFunction<R> implements
 //		IUserDefinedFunction<R, R> {
@@ -50,15 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Dimension;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Location;
 
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @UserDefinedFunction(name = "FusionL1")
 public class SaLsAUDFunction<R> implements IUserDefinedFunction<R, R> {

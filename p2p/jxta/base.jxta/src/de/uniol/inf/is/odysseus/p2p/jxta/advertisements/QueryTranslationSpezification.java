@@ -33,7 +33,6 @@ import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class QueryTranslationSpezification extends Advertisement implements
 		Serializable, Comparable {

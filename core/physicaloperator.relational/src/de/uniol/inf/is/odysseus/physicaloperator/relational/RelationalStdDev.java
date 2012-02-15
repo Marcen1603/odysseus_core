@@ -10,6 +10,10 @@ public class RelationalStdDev
 		extends
 		AbstractListAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8289285906323304991L;
 	final int attribPos;
 
 	public RelationalStdDev(int[] pos) {

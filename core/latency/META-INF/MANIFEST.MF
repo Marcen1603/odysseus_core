@@ -15,3 +15,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Export-Package: de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.logicaloperator.latency
 Bundle-Activator: de.uniol.inf.is.odysseus.latency.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

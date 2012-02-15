@@ -9,6 +9,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class RelationalRate extends
 		Rate<RelationalTuple<?>, RelationalTuple<?>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2723042267161464535L;
 	private static RelationalRate instance;
 
 	private RelationalRate() {

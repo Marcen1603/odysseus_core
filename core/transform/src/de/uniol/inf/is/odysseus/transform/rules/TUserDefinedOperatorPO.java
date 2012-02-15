@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.logicaloperator.UserDefinedOperatorAO;
-import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.UserDefinedOperatorPO;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

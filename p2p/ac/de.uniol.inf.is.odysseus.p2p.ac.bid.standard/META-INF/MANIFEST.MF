@@ -9,3 +9,4 @@ Import-Package: de.uniol.inf.is.odysseus.ac,
  de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.p2p.ac.bid
 Service-Component: OSGI-INF/StandardP2PBidGenerator.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

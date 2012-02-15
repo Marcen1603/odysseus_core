@@ -83,6 +83,7 @@ public class OdysseusBenchmarkUtil extends Thread {
 				// oder ob BenchmarkRun alle erforderlichen Einstellungen hat
 				if (benchmarkParam.isRunnable() && !isAbortProzess()) {
 					try {
+						@SuppressWarnings({ "rawtypes", "unchecked" })
 						ServiceTracker t = new ServiceTracker(ctx, IBenchmark.class.getName(), null);
 						t.open();
 						int wait = 100;

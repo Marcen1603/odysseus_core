@@ -19,3 +19,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Service-Component: OSGI-INF/singlethreadscheduler_rrstrat.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;version="2.0.0"
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

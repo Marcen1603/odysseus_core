@@ -22,7 +22,12 @@ package TelemetriePublishSubscribe;
 
 public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements TelemetriePublisher
 {
-    protected void
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3387300980982115766L;
+
+	protected void
     ice_copyStateFrom(Ice.Object __obj)
         throws java.lang.CloneNotSupportedException
     {

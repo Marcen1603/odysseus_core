@@ -22,3 +22,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j
 Service-Component: OSGI-INF/singleschedulermanager.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

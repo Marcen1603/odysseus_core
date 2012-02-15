@@ -10,7 +10,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class RelationalLast extends Last<RelationalTuple<?>, RelationalTuple<?>> {
 
-    private static RelationalLast instance;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7968553167073220101L;
+	private static RelationalLast instance;
 
     private RelationalLast() {
         super();

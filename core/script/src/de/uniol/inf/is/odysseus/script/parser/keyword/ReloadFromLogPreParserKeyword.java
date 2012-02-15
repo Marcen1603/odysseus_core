@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 

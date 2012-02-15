@@ -43,6 +43,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class AggregationJSR223 extends
 		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8769334296558938027L;
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public static final String KEY_ATTRIBUTE = "attr";

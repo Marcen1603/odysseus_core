@@ -8,6 +8,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 abstract public class Rate<R extends MetaAttributeContainer<?>, W extends MetaAttributeContainer<?>>
 		extends AbstractAggregateFunction<R, W> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7073964618277613915L;
+
 	protected Rate() {
 		super("RATE");
 	}

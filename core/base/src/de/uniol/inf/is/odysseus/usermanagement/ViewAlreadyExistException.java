@@ -21,6 +21,11 @@ public class ViewAlreadyExistException extends Exception {
 
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7903992932148607127L;
+
+	/**
      * 
      */
     public ViewAlreadyExistException() {

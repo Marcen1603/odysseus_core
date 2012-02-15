@@ -19,6 +19,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartia
 
 abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunction<R,W> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8085619521442098537L;
+
 	protected AbstractListAggregation(String name) {
 		super(name);
 	}

@@ -22,6 +22,10 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 @SuppressWarnings({"rawtypes"})
 public class RelationalCount extends Count<RelationalTuple<?>, RelationalTuple<?>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -788185013111220731L;
 	private static RelationalCount instance;
 
 	private RelationalCount(){

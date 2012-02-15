@@ -20,7 +20,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful.IBinaryDetection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;

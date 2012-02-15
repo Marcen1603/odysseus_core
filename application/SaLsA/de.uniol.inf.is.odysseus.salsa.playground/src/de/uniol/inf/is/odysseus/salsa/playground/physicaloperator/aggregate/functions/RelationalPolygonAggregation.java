@@ -4,14 +4,16 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractListAggregation;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class RelationalPolygonAggregation
 		extends
 		AbstractGeometryAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9112610790613631712L;
 	private int[] restrictList;
 
 	public RelationalPolygonAggregation(int[] restrictList){

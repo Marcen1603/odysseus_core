@@ -48,3 +48,5 @@ Export-Package: de.uniol.inf.is.odysseus.benchmarker.impl,
  de.uniol.inf.is.odysseus.logicaloperator.benchmark
 Bundle-ClassPath: ostermillerutils_1_07_00.jar,
  .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+ 

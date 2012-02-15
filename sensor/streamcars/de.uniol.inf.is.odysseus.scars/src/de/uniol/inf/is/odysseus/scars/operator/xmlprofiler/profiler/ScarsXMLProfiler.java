@@ -502,6 +502,7 @@ public class ScarsXMLProfiler {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static List<List<?>> createObjectCovarianz() {
 		List<List<?>> cov = new ArrayList<List<?>>(4);
 		ArrayList<Double> row0 = new ArrayList<Double>(4);

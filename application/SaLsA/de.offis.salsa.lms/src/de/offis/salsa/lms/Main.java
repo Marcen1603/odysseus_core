@@ -2,10 +2,6 @@ package de.offis.salsa.lms;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import de.offis.salsa.lms.impl.SickConnectionImpl;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

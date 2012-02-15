@@ -14,3 +14,4 @@ Bundle-Classpath: com.springsource.slf4j.api-1.5.6.jar
 Build-Jdk: 1.6.0_05
 Bundle-Description: The slf4j API
 Built-By: ceki
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

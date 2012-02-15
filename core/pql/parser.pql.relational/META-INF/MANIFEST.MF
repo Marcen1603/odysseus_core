@@ -12,3 +12,4 @@ Import-Package: de.uniol.inf.is.odysseus.predicate,
  org.osgi.framework;version="1.5.0"
 Export-Package: de.uniol.inf.is.odysseus.parser.pql.relational
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.relational.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

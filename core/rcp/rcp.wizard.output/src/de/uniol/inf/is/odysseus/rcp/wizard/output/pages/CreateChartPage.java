@@ -19,10 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart;

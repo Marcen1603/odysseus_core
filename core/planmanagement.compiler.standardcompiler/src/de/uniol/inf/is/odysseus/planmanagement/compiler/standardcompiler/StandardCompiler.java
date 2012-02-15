@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 

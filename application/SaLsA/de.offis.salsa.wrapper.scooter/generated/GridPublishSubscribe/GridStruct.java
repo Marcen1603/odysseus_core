@@ -22,7 +22,12 @@ package GridPublishSubscribe;
 
 public class GridStruct implements java.lang.Cloneable, java.io.Serializable
 {
-    public long timestamp;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6780532705012638903L;
+
+	public long timestamp;
 
     public double x;
 

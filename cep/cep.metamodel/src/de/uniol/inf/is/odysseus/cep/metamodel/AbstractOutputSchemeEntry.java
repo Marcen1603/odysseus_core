@@ -25,6 +25,10 @@ import de.uniol.inf.is.odysseus.cep.metamodel.exception.UndefinedExpressionLabel
 abstract public class AbstractOutputSchemeEntry implements IOutputSchemeEntry{
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1475755508894213201L;
+	/**
 	 * textuelle Darstellung des Ausdrucks
 	 */
 	private String label;

@@ -16,3 +16,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j
 Service-Component: OSGI-INF/BiggestQueueFactory.xml, OSGI-INF/RoundRobinIterFactory.xml, OSGI-INF/RoundRobinNoIterFactory.xml
 Require-Bundle: de.uniol.inf.is.odysseus
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

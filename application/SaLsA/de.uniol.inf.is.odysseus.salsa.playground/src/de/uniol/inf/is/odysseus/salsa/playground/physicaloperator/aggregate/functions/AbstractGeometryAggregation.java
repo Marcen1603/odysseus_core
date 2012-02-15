@@ -2,9 +2,13 @@ package de.uniol.inf.is.odysseus.salsa.playground.physicaloperator.aggregate.fun
 
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractListAggregation;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
 
 abstract class AbstractGeometryAggregation<R, W> extends AbstractListAggregation<R, W> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1818420032865729036L;
 
 	protected AbstractGeometryAggregation(String name) {
 		super(name);

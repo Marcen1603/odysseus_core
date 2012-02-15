@@ -29,11 +29,9 @@ import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry.State
 import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
@@ -161,6 +159,7 @@ public class RecordingController {
 		fireChangedEvent();
 	}
 	
+	@SuppressWarnings("unused")
 	private void deployPlayingQueries(RecordEntry record) throws PlanManagementException{
 		
 		

@@ -33,10 +33,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 

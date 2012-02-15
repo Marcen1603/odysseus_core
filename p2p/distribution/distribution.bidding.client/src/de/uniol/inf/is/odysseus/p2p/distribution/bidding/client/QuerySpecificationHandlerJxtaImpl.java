@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;

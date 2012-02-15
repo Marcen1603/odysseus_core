@@ -16,6 +16,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions;
 
 abstract public class AbstractAggregateFunction<R,W> implements IAggregateFunction<R,W> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1420819068822674498L;
 	String name = "";
 	
 	@Override

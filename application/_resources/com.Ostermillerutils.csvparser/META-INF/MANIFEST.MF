@@ -4,3 +4,4 @@ Bundle-Name: Csvparser
 Bundle-SymbolicName: com.Ostermillerutils.csvparser
 Bundle-Version: 1.0.0.qualifier
 Export-Package: com.Ostermiller.util;version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

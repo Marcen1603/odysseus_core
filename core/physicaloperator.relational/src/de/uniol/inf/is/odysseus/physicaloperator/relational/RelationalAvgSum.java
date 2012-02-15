@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class RelationalAvgSum extends AvgSum<RelationalTuple<?>, RelationalTuple<?>>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7768784425424062403L;
+
 	private int pos;
 
 	static Map<Boolean, Map<Integer, RelationalAvgSum>> instances = new HashMap<Boolean, Map<Integer,RelationalAvgSum>>();

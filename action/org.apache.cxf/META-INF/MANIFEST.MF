@@ -26,3 +26,4 @@ Export-Package: org.apache.cxf.binding,
  org.apache.cxf.jaxws.endpoint.dynamic,
  org.apache.cxf.service,
  org.apache.cxf.service.model
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

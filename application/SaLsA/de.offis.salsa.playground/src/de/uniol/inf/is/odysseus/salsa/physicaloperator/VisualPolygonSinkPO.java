@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.salsa.physicaloperator;
 
 
 import java.util.concurrent.BlockingQueue;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.vividsolutions.jts.geom.Geometry;

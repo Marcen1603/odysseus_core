@@ -6,3 +6,4 @@ Bundle-Version: 1.0.1.qualifier
 Fragment-Host: de.uniol.inf.is.odysseus.action.services;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.action.actuator.impl
 Import-Package: de.uniol.inf.is.odysseus.action.demoapp
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

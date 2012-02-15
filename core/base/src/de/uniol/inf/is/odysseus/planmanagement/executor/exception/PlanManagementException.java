@@ -14,8 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.executor.exception;
 
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-
 /**
  * PlanManagementException describes an {@link Exception} which occurs during
  * plan management.

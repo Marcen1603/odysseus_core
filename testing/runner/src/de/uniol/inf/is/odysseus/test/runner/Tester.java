@@ -23,7 +23,9 @@ public class Tester implements IApplication {
 		final BundleContext ctx = Activator.context;
 		
 		new Thread() {
+			@SuppressWarnings("unchecked")
 			public void run() {
+				@SuppressWarnings("rawtypes")
 				ServiceTracker t = new ServiceTracker(ctx,
 						ITestComponent.class.getName(), null);
 				t.open();

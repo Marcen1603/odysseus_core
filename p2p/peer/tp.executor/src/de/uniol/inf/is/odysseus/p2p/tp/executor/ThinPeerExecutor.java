@@ -10,19 +10,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.IThinPeer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.IThinPeerListener;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
@@ -32,23 +27,13 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionC
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
-import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
 public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 

@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator.serialize;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * 
@@ -37,6 +36,7 @@ public class JSONSerializeStrategy extends AbstractSerializerStrategy<String> {
 		return s;
 	}
 
+	@SuppressWarnings("unused")
 	private String serializeProperties(Map<String, ISerializeProperty<?>> values) {
 		String s = "";
 //		String sep = "";

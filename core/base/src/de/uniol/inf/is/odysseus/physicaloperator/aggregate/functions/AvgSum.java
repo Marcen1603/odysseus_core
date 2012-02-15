@@ -18,6 +18,10 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.Abstrac
 
 abstract public class AvgSum<R, W> extends AbstractAggregateFunction<R, W>{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2341630908327295104L;
 	boolean isAvg;
 	
 	protected AvgSum(boolean isAvg) {

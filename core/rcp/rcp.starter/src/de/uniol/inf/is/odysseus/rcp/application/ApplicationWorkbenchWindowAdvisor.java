@@ -15,8 +15,6 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;

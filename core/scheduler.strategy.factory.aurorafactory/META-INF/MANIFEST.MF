@@ -17,3 +17,4 @@ Import-Package: de.uniol.inf.is.odysseus,
 Service-Component: OSGI-INF/AuroraMinCostIterFactory.xml, OSGI-INF/AuroraMinLatencyIterFactory.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

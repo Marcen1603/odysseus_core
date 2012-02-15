@@ -29,6 +29,10 @@ public abstract class MEPCondition extends AbstractCondition{
 
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6018967395205581050L;
+	/**
 	 * Referenz auf den Ausdruck der Transitionsbedingung
 	 */
 	private IExpression<Boolean> expression;

@@ -22,7 +22,12 @@ package GridPublishSubscribe;
 
 public abstract class _GridPublisherDisp extends Ice.ObjectImpl implements GridPublisher
 {
-    protected void
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 705513138339822456L;
+
+	protected void
     ice_copyStateFrom(Ice.Object __obj)
         throws java.lang.CloneNotSupportedException
     {

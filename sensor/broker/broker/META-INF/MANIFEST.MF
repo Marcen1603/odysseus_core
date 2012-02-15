@@ -32,3 +32,4 @@ Export-Package: de.uniol.inf.is.odysseus.broker;uses:="org.osgi.framework",
  de.uniol.inf.is.odysseus.broker.physicaloperator.association;uses:="de.uniol.inf.is.odysseus.metadata,de.uniol.inf.is.odysseus.intervalapproach",
  de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;uses:="de.uniol.inf.is.odysseus.predicate",
  de.uniol.inf.is.odysseus.broker.transaction;uses:="de.uniol.inf.is.odysseus"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

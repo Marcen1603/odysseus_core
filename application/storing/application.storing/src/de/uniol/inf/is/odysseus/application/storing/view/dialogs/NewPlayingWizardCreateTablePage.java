@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable10Editor;
 import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizardPage;
 
 /**
