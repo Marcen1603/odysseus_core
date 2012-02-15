@@ -31,7 +31,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IServerExecutor executor = ExecutorHandler.getExecutor();
+		IServerExecutor executor = (IServerExecutor)ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		if (parameter != null && !parameter.equalsIgnoreCase("NONE")) {
@@ -47,7 +47,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IServerExecutor executor = ExecutorHandler.getExecutor();
+		IServerExecutor executor = (IServerExecutor) ExecutorHandler.getExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 		List<IQueryBuildSetting<?>> config = executor

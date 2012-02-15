@@ -15,15 +15,14 @@
 package de.uniol.inf.is.odysseus.script.executor;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 
 /**
- * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verfügung
+ * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verfï¿½gung
  * gestellten <code>IExecutor</code>. Der Nutzer kann damit die aktuelle
- * Instanz der Klasse bekommen, falls benötigt.
+ * Instanz der Klasse bekommen, falls benï¿½tigt.
  * <p>
  * Der Declative Service ruft die Methoden <code>bindExecutor()</code> und
- * <code>unbindExecutor</code> selbstständig auf. Der Nutzer sollte sie nicht
+ * <code>unbindExecutor</code> selbststï¿½ndig auf. Der Nutzer sollte sie nicht
  * explizit aufrufen.
  * 
  * @author Timo Michelsen
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
  */
 public class ExecutorHandler {
 
-	private static IServerExecutor executor;
+	private static IExecutor executor;
 
 	/**
 	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
@@ -46,14 +45,14 @@ public class ExecutorHandler {
 	 *            <code>null</code> sein.
 	 */
 	public void bindExecutor(IExecutor e) {
-		executor = (IServerExecutor) e;
+		executor =  e;
 	}
 
 	/**
 	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
 	 * <code>IExecutor</code> auf <code>null</code> gesetzt. Der
 	 * Parameter wird ignoriert. Ab sofort liefert die statische Methode
-	 * <code>getExecutor()</code> ausschließlich <code>null</code>.
+	 * <code>getExecutor()</code> ausschlieï¿½lich <code>null</code>.
 	 * <p>
 	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
 	 * 
@@ -67,13 +66,13 @@ public class ExecutorHandler {
 
 	/**
 	 * Liefert den aktuellen, vom Declarative Service gelieferten
-	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs könnte
-	 * <code>null</code> zurückgegeben werden.
+	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs kï¿½nnte
+	 * <code>null</code> zurï¿½ckgegeben werden.
 	 * 
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder
 	 *         <code>null</code>.
 	 */
-	public static IServerExecutor getExecutor() {
+	public static IExecutor getExecutor() {
 		return executor;
 	}
 	
