@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
@@ -133,5 +134,22 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler{
 	@Override
 	final public List<String> getSupportedDataTypes() {
 		return types;
+	}
+
+	@Override
+	public int memSize(Object attribute) {
+		if(attribute instanceof Geometry){
+			byte[] binData = this.writer.write((Geometry)attribute);
+			return binData.length;
+		}
+		
+		if(attribute instanceof Polygon){
+			byte[] binData = this.writer.write((Geometry)attribute);
+			return binData.length;
+		}
+		
+		
+		
+		return 0;
 	}
 }

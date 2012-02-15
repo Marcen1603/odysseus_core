@@ -93,4 +93,10 @@ public class GridHandler extends AbstractAtomicDataHandler {
 		return types;
 	}
 
+	@Override
+	public int memSize(Object attribute) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
