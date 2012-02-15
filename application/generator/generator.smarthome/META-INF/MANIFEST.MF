@@ -4,6 +4,6 @@ Bundle-Name: Smarthome
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.generator.smarthome
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.generator.smarthome.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.generator,
  org.osgi.framework;version="1.6.0"

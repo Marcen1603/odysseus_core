@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Data Dictionary
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.datadictionary.filestore
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.datadictionary,
  de.uniol.inf.is.odysseus.logicaloperator,

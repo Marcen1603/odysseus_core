@@ -4,7 +4,7 @@ Bundle-Name: Estimator
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.estimator
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
- JavaSE-1.7
+ JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
  de.uniol.inf.is.odysseus.costmodel.operator.util,

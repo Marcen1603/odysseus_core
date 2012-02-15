@@ -130,7 +130,8 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor">
+            allPopups="true"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.GraphEditor?after=additions">
          <command
                commandId="de.uniol.inf.is.odysseus.cep.cepviewer.addcommand"
                label="Add to CEPViewer"
