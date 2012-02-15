@@ -112,17 +112,17 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 		buffer.put(binData);
 	}
 
-	private byte[] intToByteArray(int number) {
-		byte[] data = new byte[4];
-
-		for (int i = 0; i < 4; ++i) {
-			int shift = i << 3; // i * 8
-			data[3 - i] = (byte) ((number & (0xff << shift)) >>> shift);
-		}
-
-		return data;
-
-	}
+//	private byte[] intToByteArray(int number) {
+//		byte[] data = new byte[4];
+//
+//		for (int i = 0; i < 4; ++i) {
+//			int shift = i << 3; // i * 8
+//			data[3 - i] = (byte) ((number & (0xff << shift)) >>> shift);
+//		}
+//
+//		return data;
+//
+//	}
 
 	// private int byteArrayToInt(byte[] data){
 	// // byte[] -> int
