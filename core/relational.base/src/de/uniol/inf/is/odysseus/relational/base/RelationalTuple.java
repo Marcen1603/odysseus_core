@@ -302,54 +302,6 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 		return ret.toString();
 	}
 
-	public int memSize(boolean calcNew) {
-		if (this.valueChanged|| calcNew) {
-			memSize = calcSize();
-		}
-		return memSize;
-	}
-
-	private int calcBaseTypeSize(Object attObject) {
-		if (attObject == null)
-			return 0;
-		if (attObject instanceof Integer)
-			return Integer.SIZE / 8;
-		if (attObject instanceof Double)
-			return Double.SIZE / 8;
-		if (attObject instanceof Long)
-			return Long.SIZE / 8;
-		if (attObject instanceof String)
-			return ((String) attObject).length() * 2 // Unicode!
-					+ Integer.SIZE / 8; // F�r die L�ngeninformation (evtl.
-										// anders machen?)
-		if (attObject instanceof RelationalTuple<?>)
-			return ((RelationalTuple<?>) attObject).memSize(true);
-
-		throw new IllegalArgumentException("Illegal Relation Attribute Type " + attObject);
-
-	}
-
-	private int calcSize() {
-		int size = 0;
-		for (Object attObject : attributes) {
-			size = size + calcSize(attObject);
-		}
-		return size;
-	}
-
-	private int calcSize(Object attObject) {
-		int size = 0;
-		if (attObject instanceof Collection) {
-			for (Object e : ((Collection<?>) attObject)) {
-				size += calcSize(e);
-			}
-
-		} else {
-			size += calcBaseTypeSize(attObject);
-		}
-		return size;
-	}
-
 	// -----------------------------------------------------------------
 	// Konstruktoren
 	// -----------------------------------------------------------------

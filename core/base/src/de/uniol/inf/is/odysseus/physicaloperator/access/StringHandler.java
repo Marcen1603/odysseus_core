@@ -63,4 +63,11 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public int memSize(Object attribute) {
+		return ((String) attribute).length() * 2 // Unicode!
+				+ Integer.SIZE / 8; // F�r die L�ngeninformation (evtl.
+									// anders machen?)
+	}
 }

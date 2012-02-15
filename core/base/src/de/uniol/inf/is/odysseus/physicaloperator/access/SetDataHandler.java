@@ -95,6 +95,16 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public int memSize(Object data) {
+		int size = 0;
+		ArrayList<?> values = (ArrayList<?>)data;
+		for(Object v: values){
+			size+=this.handler.memSize(v);
+		}
+		return size;
+	}
 
 	
 }

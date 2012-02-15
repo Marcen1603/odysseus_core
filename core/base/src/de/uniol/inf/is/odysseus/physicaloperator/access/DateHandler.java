@@ -61,4 +61,11 @@ public class DateHandler extends AbstractAtomicDataHandler {
 	final public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public int memSize(Object attribute) {
+		return Long.SIZE / 8;
+	}
+	
+	
 }

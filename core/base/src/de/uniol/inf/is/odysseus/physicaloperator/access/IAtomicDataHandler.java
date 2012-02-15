@@ -27,4 +27,5 @@ public interface IAtomicDataHandler {
 	public void writeData(ByteBuffer buffer, Object data);
 	public void setStream(ObjectInputStream stream);
 	public List<String> getSupportedDataTypes();
+	public int memSize(Object attribute);
 }

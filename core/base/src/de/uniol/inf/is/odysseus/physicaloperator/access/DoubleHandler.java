@@ -58,4 +58,9 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	final public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public int memSize(Object attribute) {
+		return Double.SIZE / 8;
+	}
 }

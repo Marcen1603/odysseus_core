@@ -158,9 +158,12 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		}
 		synchronized(byteBuffer){
 			
-			if (relationalTuple.memSize(true) > byteBuffer.capacity()){
-				byteBuffer = ByteBuffer.allocate(relationalTuple.memSize(false)*2);	
+			int size = memSize(relationalTuple);
+
+			if (size > byteBuffer.capacity()) {
+				byteBuffer = ByteBuffer.allocate(size * 2);
 			}
+			
 			byteBuffer.clear();
 			
 			for (int i=0;i<dataHandler.length;i++){
@@ -168,6 +171,15 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 			}
 			byteBuffer.flip();
 		}
+	}
+	
+	public int memSize(Object attribute) {
+		RelationalTuple<?> r = (RelationalTuple<?>) attribute;
+		int size = 0;
+		for (int i = 0; i < dataHandler.length; i++) {
+			size += dataHandler[i].memSize(r.getAttribute(i));
+		}
+		return size;
 	}
 	
 	@Override
