@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  * 
  * @author Jonas Jacobi, Wolf Bauer, Tobias Witt
  */
-@SuppressWarnings({"rawtypes"})
 public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	
 	// ------------------------------------------------------------------------

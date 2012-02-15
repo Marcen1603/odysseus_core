@@ -29,6 +29,11 @@ public class QueryPlanModificationEvent extends
 
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1357672002490265346L;
+
+	/**
 	 * Constructor of QueryPlanModificationEvent.
 	 * 
 	 * @param sender

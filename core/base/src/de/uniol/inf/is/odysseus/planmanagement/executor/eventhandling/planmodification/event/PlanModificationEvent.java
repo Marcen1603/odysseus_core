@@ -28,6 +28,10 @@ public class PlanModificationEvent extends
 		AbstractPlanModificationEvent<IPlan> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1752702553996685067L;
+	/**
 	 * ID for an event after reoptimizing the execution plan.
 	 */
 	public static String PLAN_REOPTIMIZE = "PLAN_REOPTIMIZE";

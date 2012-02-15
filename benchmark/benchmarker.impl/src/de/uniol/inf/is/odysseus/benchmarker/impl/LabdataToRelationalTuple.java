@@ -48,6 +48,7 @@ public class LabdataToRelationalTuple {
 				new FileReader(inputFilename));
 		ObjectOutputStream o = new ObjectOutputStream(new FileOutputStream(
 				outputFilename));
+		@SuppressWarnings("unused")
 		int lineCount = 0;
 		String line = null;
 		LinkedList<RelationalTuple<ITimeInterval>> l = new LinkedList<RelationalTuple<ITimeInterval>>();

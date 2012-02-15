@@ -34,6 +34,11 @@ public abstract class AbstractPlanExecutionEvent<ValueType> extends
 		AbstractEvent<IPlanScheduling, ValueType> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7796234610202092460L;
+
+	/**
 	 * Constructor of AbstractPlanModificationEvent.
 	 * 
 	 * @param sender

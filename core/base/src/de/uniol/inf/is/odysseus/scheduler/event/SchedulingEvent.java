@@ -20,6 +20,11 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 
 public class SchedulingEvent extends AbstractEvent<IScheduler, String> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3730813628316861446L;
+
 	public enum SchedulingEventType implements IEventType {
 		SCHEDULING_STARTED, SCHEDULING_STOPPED
 	}

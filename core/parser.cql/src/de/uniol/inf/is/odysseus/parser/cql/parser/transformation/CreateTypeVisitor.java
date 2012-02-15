@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 public class CreateTypeVisitor extends AbstractDefaultVisitor {
 
 	String name;
+	@SuppressWarnings("unused")
 	private ISession caller;
 	private IDataDictionary dd;
 	List<SDFAttribute> attributes;

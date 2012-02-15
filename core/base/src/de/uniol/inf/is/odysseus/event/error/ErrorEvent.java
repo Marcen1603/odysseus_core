@@ -24,6 +24,10 @@ import de.uniol.inf.is.odysseus.event.AbstractEvent;
  */
 public class ErrorEvent extends AbstractEvent<IErrorEventHandler, Exception> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2071315230776352622L;
 	private String message;
 
 	/**

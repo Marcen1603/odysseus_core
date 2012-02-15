@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanScheduling;
 public class PlanExecutionEvent extends AbstractPlanExecutionEvent<PlanExecutionEventType> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3096579196303382242L;
+
+	/**
 	 * Constructor of PlanExecutionEvent.
 	 * 
 	 * @param sender

@@ -33,6 +33,11 @@ public abstract class AbstractPlanModificationEvent<ValueType> extends
 		AbstractEvent<IPlanManager, ValueType> {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4475352367511458949L;
+
+	/**
 	 * Constructor of AbstractPlanModificationEvent.
 	 * 
 	 * @param sender

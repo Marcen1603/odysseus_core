@@ -77,8 +77,7 @@ public class NexmarkStaticClientHandler extends Thread {
 	private NodeIterator xpathNodeIterator = null;
 
 	private long newStart = 0;
-	private long lastStart = 0;
-	private int subpoint = 0;
+	//private long lastStart = 0;
 
 	// private Socket connection;
 
@@ -249,15 +248,15 @@ public class NexmarkStaticClientHandler extends Thread {
 			// gleich ist
 			// auch den zweiten Wert verwenden!
 			newStart = System.currentTimeMillis();
-			if (lastStart == newStart) {
-				subpoint++;
-			} else {
-				subpoint = 0;
-			}
+//			if (lastStart == newStart) {
+//				subpoint++;
+//			} else {
+//				subpoint = 0;
+//			}
 			retval = new Container<Node, ITimeInterval>(n);
 			retval.setMetadata(new TimeInterval(new PointInTime(newStart),
 					new PointInTime()));
-			lastStart = newStart;
+			//lastStart = newStart;
 		}
 
 		return retval;

@@ -249,13 +249,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			aggregationVisitor.visit(statement, null);
 			top = aggregationVisitor.getResult();
 
-//			top = new CreateProjectionVisitor().createProjection(statement,
-//					top, attributeResolver);
-			
-			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(top, attributeResolver);
+			// top = new CreateProjectionVisitor().createProjection(statement,
+			// top, attributeResolver);
+
+			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(
+					top, attributeResolver);
 			projectionVisitor.visit(statement, null);
 			top = projectionVisitor.getTop();
-			
+
 			try {
 				Class<?> prioVisitor = Class
 						.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
@@ -333,8 +334,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
-	public static void initPredicate(IPredicate<?> predicate,
-			SDFSchema left, SDFSchema right) {
+	public static void initPredicate(IPredicate<?> predicate, SDFSchema left,
+			SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {
 			ComplexPredicate<?> compPred = (ComplexPredicate<?>) predicate;
 			initPredicate(compPred.getLeft(), left, right);
@@ -938,16 +939,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		boolean ifExists = false;
-		if(node.jjtGetNumChildren()>=2){
-			if(node.jjtGetChild(1) instanceof ASTIfExists){
+		if (node.jjtGetNumChildren() >= 2) {
+			if (node.jjtGetChild(1) instanceof ASTIfExists) {
 				ifExists = true;
 			}
 		}
-		if(ifExists){
-			if(dataDictionary.containsViewOrStream(streamname, caller)){
+		if (ifExists) {
+			if (dataDictionary.containsViewOrStream(streamname, caller)) {
 				dataDictionary.removeViewOrStream(streamname, caller);
 			}
-		}else{
+		} else {
 			dataDictionary.removeViewOrStream(streamname, caller);
 		}
 		return null;
@@ -960,7 +961,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		dataDictionary.removeViewOrStream(viewname, caller);
 		return null;
 	}
-
 
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data)
@@ -1005,7 +1005,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			// UserManagement.getInstance().deleteRole(rolename, caller);
+			IRole role = UserManagement.getUsermanagement().findRole(rolename,
+					caller);
+			if (role != null) {
+				UserManagement.getUsermanagement().deleteRole(role, caller);
+			}
 		} catch (Exception e) {
 			throw new QueryParseException(e);
 		}
@@ -1054,8 +1058,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			}
 		}
-		IRole role = UserManagement.getUsermanagement().findRole(userName, caller);
-		if (role != null){
+		IRole role = UserManagement.getUsermanagement().findRole(userName,
+				caller);
+		if (role != null) {
 			for (IPermission action : operations) {
 
 				if (PermissionFactory.needsNoObject(action)) {
@@ -1070,7 +1075,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1296,7 +1301,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName, caller);
 		// Append plan to input and update subscriptions
-		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName, caller);
+		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName,
+				caller);
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		// if database -> be sure, that the schemas are equal
@@ -1459,13 +1465,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTIfExists node, Object data) throws QueryParseException {	
+	public Object visit(ASTIfExists node, Object data)
+			throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateContextStore node, Object data) throws QueryParseException {
-		IVisitor visitor = VisitorFactory.getInstance().getVisitor("de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
+	public Object visit(ASTCreateContextStore node, Object data)
+			throws QueryParseException {
+		IVisitor visitor = VisitorFactory.getInstance().getVisitor(
+				"de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.visit(node, data, this);
@@ -1473,7 +1482,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTContextStoreType node, Object data) throws QueryParseException {
+	public Object visit(ASTContextStoreType node, Object data)
+			throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}

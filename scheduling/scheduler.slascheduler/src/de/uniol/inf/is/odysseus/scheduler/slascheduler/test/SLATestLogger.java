@@ -85,7 +85,7 @@ public class SLATestLogger {
 	public static void initCSVLogger(String id, int maxMessages, int skip, String... csvHeader) {
 		SLATestLoggerData data = new SLATestLoggerData(id, maxMessages, skip);
 		csvData.put(id, data);
-		logCSV(id, csvHeader);
+		logCSV(id, (Object[])csvHeader);
 	}
 
 	public static void init() {

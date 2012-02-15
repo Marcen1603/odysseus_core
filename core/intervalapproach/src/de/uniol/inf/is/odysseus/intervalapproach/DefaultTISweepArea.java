@@ -86,12 +86,12 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	public void purgeElements(T element, Order order) {
 		synchronized (elements) {
 			Iterator<T> it = this.elements.iterator();
-			int i = 0;
+			//int i = 0;
 
 			while (it.hasNext()) {
 				T cur = it.next();
 				if (getRemovePredicate().evaluate(cur, element)) {
-					++i;
+				//	++i;
 					it.remove();
 				}
 

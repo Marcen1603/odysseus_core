@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
+@SuppressWarnings("unused")
 public class LoginWindow {
 
 	private static final String TITLE_TEXT = "Odysseus RCP Login";

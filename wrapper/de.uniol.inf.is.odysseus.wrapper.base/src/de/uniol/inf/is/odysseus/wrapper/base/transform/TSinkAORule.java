@@ -24,7 +24,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
     @Override
     public void execute(final SinkAO operator, final TransformationConfiguration config) {
         try {
-            final SinkPO<?> po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
+        	final SinkPO<?> po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);

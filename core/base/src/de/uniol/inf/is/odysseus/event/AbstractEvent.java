@@ -14,6 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.event;
 
+import java.io.Serializable;
+
 
 /**
  * This object is a base class for creating events.
@@ -26,7 +28,12 @@ package de.uniol.inf.is.odysseus.event;
  *            Type of the value which this event could have.
  */
 public abstract class AbstractEvent<SenderType, ValueType> implements
-		IEvent<SenderType, ValueType> {
+		IEvent<SenderType, ValueType>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1296884007501377799L;
 
 	/**
 	 * The value of this event.

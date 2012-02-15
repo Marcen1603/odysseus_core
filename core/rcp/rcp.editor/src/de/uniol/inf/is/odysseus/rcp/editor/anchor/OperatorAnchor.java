@@ -47,13 +47,13 @@ public class OperatorAnchor extends AbstractConnectionAnchor {
 
 		getOwner().translateToAbsolute(r);
 
-		float dWidth = ((float)r.width / (float)( maxNumber + 1 ) ) * number;
+		long dWidth = Math.round(((float)r.width / (float)( maxNumber + 1 ) ) * number);
 		if( type == Type.INPUT ) {
 			// unten
-			return new Point(r.x + dWidth, r.y + r.height);
+			return new Point(Math.round(r.x + dWidth), Math.round(r.y + r.height));
 		} else {
 			// oben
-			return new Point(r.x + dWidth, r.y);
+			return new Point(Math.round(r.x + dWidth), Math.round(r.y));
 		}
 	}
 

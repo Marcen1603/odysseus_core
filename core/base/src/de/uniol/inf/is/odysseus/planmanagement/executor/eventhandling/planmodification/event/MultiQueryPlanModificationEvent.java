@@ -30,6 +30,10 @@ public class MultiQueryPlanModificationEvent extends
 		AbstractPlanModificationEvent<ArrayList<IQuery>> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2252621233834834416L;
+	/**
 	 * ID for an event after adding queries.
 	 */
 	public static String QUERIES_ADD = "QUERIES_ADD";
