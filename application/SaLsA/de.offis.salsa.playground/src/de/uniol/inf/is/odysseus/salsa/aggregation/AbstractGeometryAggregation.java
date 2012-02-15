@@ -9,6 +9,11 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractLis
  */
 abstract class AbstractGeometryAggregation<R, W> extends AbstractListAggregation<R, W> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7950868202294034595L;
+
     protected AbstractGeometryAggregation(String name) {
         super(name);
     }

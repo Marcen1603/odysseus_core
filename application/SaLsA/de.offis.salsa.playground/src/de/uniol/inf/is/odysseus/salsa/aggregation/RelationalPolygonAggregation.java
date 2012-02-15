@@ -13,6 +13,10 @@ public class RelationalPolygonAggregation
         extends
         AbstractGeometryAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6131919686476873342L;
     private int[] restrictList;
 
     public RelationalPolygonAggregation(int[] restrictList) {
