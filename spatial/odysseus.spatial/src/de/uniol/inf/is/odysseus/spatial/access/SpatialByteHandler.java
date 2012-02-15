@@ -97,21 +97,19 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		byte[] binData = this.writer.write((Geometry) data);
-
-		// split integer into 4 bytes
-		byte[] length = this.intToByteArray(binData.length);
-
-		byte[] dataAndLength = new byte[binData.length + length.length];
-
-		// first put length
-		System.arraycopy(length, 0, dataAndLength, 0, length.length);
-
-		// then put data
-		System.arraycopy(binData, 0, dataAndLength, length.length,
-				binData.length);
-
+//
+//		// split integer into 4 bytes
+//		byte[] length = this.intToByteArray(binData.length);
+//		byte[] dataAndLength = new byte[binData.length + length.length];
+//
+//		// first put length
+//		System.arraycopy(length, 0, dataAndLength, 0, length.length);
+//		// then put data
+//		System.arraycopy(binData, 0, dataAndLength, length.length, binData.length);
+//		
+		buffer.putInt(binData.length);
 		// put the data into the byte buffer
-		buffer.put(dataAndLength);
+		buffer.put(binData);
 	}
 
 	private byte[] intToByteArray(int number) {
@@ -145,7 +143,8 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 	public int memSize(Object attribute) {
 		int size = 0;
 
-		/*	The GeometryCollection handles the MultiPoint, MultiLine, and MultiPolygon as well.
+		/*	
+		 * The GeometryCollection handles the MultiPoint, MultiLine, and MultiPolygon as well.
 		 * 
 		 */
 		if (attribute instanceof GeometryCollection) {
