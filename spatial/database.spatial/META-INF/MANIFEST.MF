@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.uniol.inf.is.odysseus.database.spatial.Spatial
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.database.spatial;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/SpatialDataTypeMappingHandler.xml 
+Require-Bundle: de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
+ java.topological.suite;bundle-version="1.0.0"
+Import-Package: de.uniol.inf.is.odysseus.datadictionary,
+ org.osgi.framework;version="1.6.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.database.spatial.Activator
