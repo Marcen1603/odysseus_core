@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary.DatabaseType;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.DataTypeMappingHandlerRegistry;
+import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
@@ -150,27 +151,29 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 			for (SDFAttribute attribute : this.getOutputSchema()) {
 				SDFDatatype datatype = attribute.getDatatype();
 				Object attributeValue = tuple.getAttribute(i);
-				DatabaseType mapping = DatabaseConnectionDictionary.getInstance().getDatabaseType(datatype);
-				switch (mapping) {
-				case Boolean:
-					this.preparedStatement.setBoolean(i + 1, (Boolean) attributeValue);
-					break;
-				case Integer:
-					this.preparedStatement.setInt(i + 1, (Integer) attributeValue);
-					break;
-				case Double:
-					this.preparedStatement.setDouble(i + 1, (Double) attributeValue);
-					break;
-				case Float:
-					this.preparedStatement.setFloat(i + 1, (Float) attributeValue);
-					break;
-				case Long:
-					this.preparedStatement.setLong(i + 1, (Long) attributeValue);
-					break;
-				case String:
-					this.preparedStatement.setString(i + 1, (String) attributeValue);
-					break;
-				}
+//				DatabaseType mapping = DatabaseConnectionDictionary.getInstance().getDatabaseType(datatype);
+//				switch (mapping) {
+//				case Boolean:
+//					this.preparedStatement.setBoolean(i + 1, (Boolean) attributeValue);
+//					break;
+//				case Integer:
+//					this.preparedStatement.setInt(i + 1, (Integer) attributeValue);
+//					break;
+//				case Double:
+//					this.preparedStatement.setDouble(i + 1, (Double) attributeValue);
+//					break;
+//				case Float:
+//					this.preparedStatement.setFloat(i + 1, (Float) attributeValue);
+//					break;
+//				case Long:
+//					this.preparedStatement.setLong(i + 1, (Long) attributeValue);
+//					break;
+//				case String:
+//					this.preparedStatement.setString(i + 1, (String) attributeValue);
+//					break;				
+//				}
+				IDataTypeMappingHandler handler = DataTypeMappingHandlerRegistry.getDataHandler(datatype.getURI());
+				handler.mapValue(this.preparedStatement, i + 1, attributeValue);
 				i++;
 			}
 			this.preparedStatement.addBatch();
