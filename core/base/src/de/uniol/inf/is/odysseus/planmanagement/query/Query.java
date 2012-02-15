@@ -872,7 +872,13 @@ public class Query extends AbstractMonitoringDataProvider implements IQuery {
 
 	@Override
 	public int compareTo(IQuery query) {
-		return Integer.compare(this.id, query.getID());
+		if (this.id < query.getID()){
+			return -1;
+		}
+		if (this.id > query.getID()){
+			return 1;
+		}
+		return 0;
 	}
 
 	@Override
