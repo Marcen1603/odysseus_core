@@ -47,6 +47,7 @@ public class ECAParserTest implements CommandProvider {
 	private IExecutor executor;
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
+	@SuppressWarnings("unused")
 	private ICompiler compiler;
 	// TODO: Create Session !
 	ISession user = null;

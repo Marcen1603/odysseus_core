@@ -77,6 +77,7 @@ public class DescriptiveStatistics {
 		isEvaluated = true;
 		double accum = 0.0;
 		double dev = 0.0;
+		@SuppressWarnings("unused")
 		double accum2 = 0.0;
 		this.mean = ((double) this.sum) / this.count;
 		Arrays.sort(this.values);

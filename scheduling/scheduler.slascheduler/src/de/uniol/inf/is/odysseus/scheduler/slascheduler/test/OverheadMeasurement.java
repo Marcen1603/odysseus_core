@@ -8,8 +8,10 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.test;
 public class OverheadMeasurement {
 	
 	private long startTS;
+	@SuppressWarnings("unused")
 	private long totalTime;
 	private long outputTS;
+	@SuppressWarnings("unused")
 	private int calls;
 	
 	private final long waitingTimeForOutput = 1000000000;

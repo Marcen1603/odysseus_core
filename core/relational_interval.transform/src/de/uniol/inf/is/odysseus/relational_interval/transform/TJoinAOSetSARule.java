@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.persistentqueries.HashJoinSweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -50,7 +49,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 		// path to the source, use
 		// a hash sweep area
 		// otherwise use a JoinTISweepArea
-		IPredicate pred = joinPO.getJoinPredicate();
+		//IPredicate pred = joinPO.getJoinPredicate();
 		
 		areas[0] = new JoinTISweepArea();
 		areas[1] = new JoinTISweepArea();

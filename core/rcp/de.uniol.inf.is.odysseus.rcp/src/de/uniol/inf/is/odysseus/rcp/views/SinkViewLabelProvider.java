@@ -51,8 +51,6 @@ public class SinkViewLabelProvider implements ILabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof Entry) {
-			@SuppressWarnings("unchecked")
-			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>) element;
 			return ImageManager.getInstance().get("source");
 		}
 		if (element instanceof SDFAttribute) {
