@@ -67,7 +67,13 @@ public abstract class Bid implements Serializable, IBid {
 
 	@Override
 	public int compareTo(IBid o) {
-		return Integer.compare(getBidValue(), o.getBidValue());
+		if (this.getBidValue() < o.getBidValue()){
+			return -1;
+		}
+		if (this.getBidValue() > o.getBidValue()){
+			return 1;
+		}
+		return 0;
 	}
 
 }
