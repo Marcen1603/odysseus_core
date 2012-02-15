@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.cep.cepviewer.command;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.MachineTreeItem;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 
 /**
  * This class defines the handler which is called if an entry of should be
@@ -68,12 +69,14 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 					// if the selection is a machine, remove the Listener from
 					// the corresponding CepOperator
 					MachineTreeItem item = (MachineTreeItem) selectedObject;
-					for (CepOperator<?,?> operator : view.getOperators()) {
-						if (operator.getStateMachine()
-								.equals(item.getContent())) {
-							operator.getCEPEventAgent().removeCEPEventListener(
-									view.getListener());
-							break;
+					for (CepOperator<?, ?> operator : view.getOperators()) {
+						for (StateMachine sm : operator.getStateMachines()) {
+							if (sm.equals(item.getContent())) {
+								operator.getCEPEventAgent()
+										.removeCEPEventListener(
+												view.getListener());
+								break;
+							}
 						}
 					}
 					// remove the machine and all instances of the machine from
