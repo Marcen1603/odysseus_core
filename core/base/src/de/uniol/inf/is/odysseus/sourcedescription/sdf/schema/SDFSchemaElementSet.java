@@ -50,15 +50,7 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T>{
 
 	@Override
 	public String toString() {
-		StringBuffer ret = new StringBuffer("[");
-		for (int i = 0; i < elements.size(); i++) {
-			if (get(i)!=null){
-				ret.append(get(i) + " ");
-			}else{
-				ret.append("<null> ");
-			}
-		}
-		return ret.toString() + "]";
+		return ""+elements;
 	}
 	
 	public void getXMLRepresentation(String indent, StringBuffer xmlRetValue) {
@@ -83,7 +75,21 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T>{
 
 	@Override
 	public boolean equals(Object o) {
-		return elements.equals(o);
+		if (!(o instanceof SDFSchemaElementSet)){
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		SDFSchemaElementSet<T> otherSet = (SDFSchemaElementSet<T>) o;
+		if (otherSet.size() != elements.size()){
+			return false;
+		}
+		Iterator<T> other = otherSet.iterator();
+		for (T e:elements){
+			if (!e.equals(other.next())){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public T get(int index) {
@@ -92,7 +98,11 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T>{
 
 	@Override
 	public int hashCode() {
-		return elements.hashCode();
+		int hashCode = 0;
+		for (T e:elements){
+			hashCode+=e.hashCode();
+		}
+		return hashCode;
 	}
 
 	public int indexOf(Object elem) {

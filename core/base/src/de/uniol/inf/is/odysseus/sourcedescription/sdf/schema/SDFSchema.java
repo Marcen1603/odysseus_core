@@ -278,5 +278,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 		return comp;
 	}
+	
+
 
 }

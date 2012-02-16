@@ -151,9 +151,12 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
                 for (Entry<AggregateFunction, SDFAttribute> e : funcs
                         .entrySet()) {
                     // Achtung! Das Eingabeattribut, nicht das Ausgabeattribut
-                    IPartialAggregate<R> pa = getInitFunction(
-                            new FESortedClonablePair<SDFSchema, AggregateFunction>(
-                                    attrList, e.getKey())).init(element);
+                	FESortedClonablePair<SDFSchema, AggregateFunction> toFind = new FESortedClonablePair<SDFSchema, AggregateFunction>(attrList, e.getKey());
+                	IInitializer<R> initFktn = getInitFunction(toFind);
+                	if (initFktn == null){
+                		throw new RuntimeException("Aggregation runtime error ");
+                	}
+                    IPartialAggregate<R> pa = initFktn.init(element);
                     ret.put(attrList, e.getKey(), pa);
                 }
             }

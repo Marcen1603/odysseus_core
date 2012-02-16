@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBui
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -69,6 +70,9 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					}
 					IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
 					IAggregateFunctionBuilder builder = registry.getBuilder(transformConfig.getDataType(),p.getE2().getName());
+					if (builder == null){
+						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
+					}
 					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray);
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
