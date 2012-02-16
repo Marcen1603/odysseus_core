@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttrDefinition;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTORSchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRecordEntryDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -54,8 +56,8 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	public void setUser(ISession user) {
 		this.user = user;
 	}
-	
-	public void setDataDictionary(IDataDictionary dd){
+
+	public void setDataDictionary(IDataDictionary dd) {
 		this.dd = dd;
 	}
 
@@ -79,9 +81,8 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		SDFSchemaExtended ex = new SDFSchemaExtended(attrs);
 
 		SDFSchema schema = new SDFSchema(name, ex);
-	
-		dd.addSourceType(name,
-				"ObjectRelationalStreaming");
+
+		dd.addSourceType(name, "ObjectRelationalStreaming");
 		dd.addEntitySchema(name, schema, user);
 
 		// TODO: rekursiv ausgeben, was in der SDFSchemaExtended ist
@@ -93,7 +94,11 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		source.setHost(host);
 		source.setOutputSchema(ex);
 		source.setObjectListPath(objectListPath);
-		dd.setView(name, source, user);
+		try {
+			dd.setView(name, source, user);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return null;
 	}
 
@@ -105,19 +110,26 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		
+
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
-			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(this, data);
+			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(
+					this, data);
 			attrs.add(attr);
 		}
 		SDFSchema complexAttrSchema = new SDFSchema("", attrs);
 
-		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
-		dd.addDatatype(this.name + "." + attrName, recordType);
-		
-		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName, recordType);
-		
+		SDFDatatype recordType = new SDFDatatype(this.name + "." + attrName,
+				SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
+		try {
+			dd.addDatatype(this.name + "." + attrName, recordType);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
+
+		SDFAttribute recordAttribute = new SDFAttribute(this.name, attrName,
+				recordType);
+
 		return recordAttribute;
 	}
 
@@ -136,14 +148,18 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 					.jjtAccept(this, data);
 			attrs.add(listedAttribute);
 		}
-		SDFSchema complexAttrSchema = new SDFSchema("",attrs);
+		SDFSchema complexAttrSchema = new SDFSchema("", attrs);
 
-		
-		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
-		dd.addDatatype(this.name + "." + attrName, listType);
-		
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName,listType);
-		
+		SDFDatatype listType = new SDFDatatype(this.name + "." + attrName,
+				SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
+		try {
+			dd.addDatatype(this.name + "." + attrName, listType);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
+
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName, listType);
+
 		return attribute;
 	}
 
@@ -156,24 +172,25 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		List<?> cov = null;
 		SDFUnit unit = null;
 		Map<String, SDFDatatypeConstraint> constraints = new HashMap<String, SDFDatatypeConstraint>();
-		
-		
-		if(dd.existsDatatype(astAttrType.getType())){
+
+		try {
 			datatype = dd.getDatatype(astAttrType.getType());
-	
-			if (datatype.isMeasurementValue()
-					&& astAttrType.jjtGetNumChildren() > 0) {
-				cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data);
-	
-			}
-	
-			if (datatype.isDate())
-				constraints.put("format", astAttrType.getDateFormat());
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
 		}
 
-		SDFAttribute attribute = new SDFAttribute(this.name, attrName, datatype, unit, constraints, cov);
+		if (datatype.isMeasurementValue()
+				&& astAttrType.jjtGetNumChildren() > 0) {
+			cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data);
 
-		
+		}
+
+		if (datatype.isDate())
+			constraints.put("format", astAttrType.getDateFormat());
+
+		SDFAttribute attribute = new SDFAttribute(this.name, attrName,
+				datatype, unit, constraints, cov);
+
 		return attribute;
 	}
 

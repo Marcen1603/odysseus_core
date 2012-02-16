@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
@@ -51,7 +52,11 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 			throw new RuntimeException("ambigious name of view: " + viewName);
 		}
 		dd.addSourceType(viewName, "RelationalStreaming");
-		dd.setView(viewName, operator, caller);
+		try {
+			dd.setView(viewName, operator, caller);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		
 		return null;
 	}

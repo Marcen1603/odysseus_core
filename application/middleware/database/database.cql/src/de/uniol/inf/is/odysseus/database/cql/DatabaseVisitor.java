@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.database.cql;
 
 import java.sql.SQLException;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
@@ -84,7 +85,11 @@ public class DatabaseVisitor extends CQLParser {
 		}
 
 		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive, waitMillis);
-		getDataDictionary().setStream(name, source, getCaller());
+		try {
+			getDataDictionary().setStream(name, source, getCaller());
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return source;
 
 	}
@@ -114,7 +119,11 @@ public class DatabaseVisitor extends CQLParser {
 		DatabaseSinkAO sinkAO = new DatabaseSinkAO(sinkName, connectionName, tableName, drop, truncate);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sinkAO.subscribeToSource(transformMeta, 0, 0, null);
-		getDataDictionary().addSink(sinkName, sinkAO, getCaller());
+		try {
+			getDataDictionary().addSink(sinkName, sinkAO, getCaller());
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return null;
 	}
 

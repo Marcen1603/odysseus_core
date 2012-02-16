@@ -145,20 +145,25 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	public static void registerDefaultTypes(IDataDictionary dd) {
 
-		dd.addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
-		dd.addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
-		dd.addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
-		dd.addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
-				SDFDatatype.END_TIMESTAMP);
-		dd.addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
-		dd.addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
-		dd.addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-		dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
-				SDFDatatype.START_TIMESTAMP);
-		dd.addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
-		dd.addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-		dd.addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
-		dd.addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
+		try {
+			dd.addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
+			dd.addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
+			dd.addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
+			dd.addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
+					SDFDatatype.END_TIMESTAMP);
+			dd.addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
+			dd.addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
+			dd.addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
+			dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
+					SDFDatatype.START_TIMESTAMP);
+			dd.addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
+			dd.addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
+			dd.addDatatype(SDFDatatype.TIMESTAMP.getURI(),
+					SDFDatatype.TIMESTAMP);
+			dd.addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

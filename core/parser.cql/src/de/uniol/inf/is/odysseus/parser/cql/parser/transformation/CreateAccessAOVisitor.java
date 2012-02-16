@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -73,7 +74,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		if (dd.existsSource(sourceString)){
 		
-		SDFSource source = dd.createSDFSource(sourceString);
+		SDFSource source;
+		try {
+			source = dd.createSDFSource(sourceString);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		if (source.getSourceType().equals("RelationalStreaming")) {
 			relationalStreamingSource(node, source, sourceString);
 			return null;
@@ -164,7 +170,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private void relationalStreamingSource(ASTSimpleSource node,
 			SDFSource source, String sourceName) {
-		ILogicalOperator access = dd.getViewOrStream(sourceName, caller);
+		ILogicalOperator access;
+		try {
+			access = dd.getViewOrStream(sourceName, caller);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		
 
 		ILogicalOperator inputOp = access;

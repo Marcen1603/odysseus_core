@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.broker.parser.cql;
 
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.broker.dictionary.BrokerDictionary;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAO;
 import de.uniol.inf.is.odysseus.broker.logicaloperator.BrokerAOFactory;
 import de.uniol.inf.is.odysseus.broker.metric.MetricMeasureAO;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
@@ -48,6 +49,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -69,15 +71,15 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 
 	public BrokerVisitor() {
 	}
-	
-	public void setUser(ISession user){
+
+	public void setUser(ISession user) {
 		this.caller = user;
 	}
-	
-	public void setDataDictionary(IDataDictionary dd){
+
+	public void setDataDictionary(IDataDictionary dd) {
 		this.dataDictionary = dd;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -90,20 +92,25 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTBrokerSource node, Object data) {
 		BrokerAO readFromBroker = null;
 		if (node.jjtGetChild(0) instanceof ASTBrokerSimpleSource) {
-			readFromBroker = (BrokerAO) visit((ASTBrokerSimpleSource) node.jjtGetChild(0), data);
+			readFromBroker = (BrokerAO) visit(
+					(ASTBrokerSimpleSource) node.jjtGetChild(0), data);
 		} else if (node.jjtGetChild(0) instanceof ASTBrokerAsSource) {
-			readFromBroker = (BrokerAO) visit((ASTBrokerAsSource) node.jjtGetChild(0), data);
+			readFromBroker = (BrokerAO) visit(
+					(ASTBrokerAsSource) node.jjtGetChild(0), data);
 		}
 		if (node.jjtGetNumChildren() > 1) {
 			if (node.jjtGetChild(1) != null) {
 				if (node.jjtGetChild(1) instanceof ASTBrokerQueue) {
-					ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node.jjtGetChild(1).jjtGetChild(0);
+					ASTComplexSelectStatement statement = (ASTComplexSelectStatement) node
+							.jjtGetChild(1).jjtGetChild(0);
 					CQLParser parser = new CQLParser();
 					parser.setUser(caller);
-					AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser.visit(statement, null);
+					AbstractLogicalOperator topOfQueue = (AbstractLogicalOperator) parser
+							.visit(statement, null);
 					if (readFromBroker != null) {
 						// queue - writing is always on port 1
-						readFromBroker.subscribeToSource(topOfQueue, 1, 0, topOfQueue.getOutputSchema());
+						readFromBroker.subscribeToSource(topOfQueue, 1, 0,
+								topOfQueue.getOutputSchema());
 					}
 				}
 			}
@@ -139,15 +146,18 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		String name = ident.getName();
 
 		// parse the nested substatement
-		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node.jjtGetChild(0);
+		ASTComplexSelectStatement childNode = (ASTComplexSelectStatement) node
+				.jjtGetChild(0);
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
-		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(childNode, null);
+		AbstractLogicalOperator result = (AbstractLogicalOperator) v.visit(
+				childNode, null);
 
 		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
 		broker.setSchema((SDFSchemaExtended) result.getOutputSchema());
 		if (!BrokerDictionary.getInstance().brokerExists(name)) {
-			BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
+			BrokerDictionary.getInstance().addBroker(name,
+					broker.getOutputSchema(), broker.getQueueSchema());
 		}
 
 		// connect the source to broker
@@ -185,7 +195,8 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	private Object getSimpleSource(Node node, Object data) {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {
-			BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
+			BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(
+					brokerName);
 			return broker;
 		} else {
 			throw new RuntimeException("Broker " + brokerName + " not exists");
@@ -221,24 +232,35 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		// parse first nested statement
 		CQLParser v = new CQLParser();
 		v.setUser(caller);
-		AbstractLogicalOperator topOfSelectStatementOperator = (AbstractLogicalOperator) v.visit(statement, null);
+		AbstractLogicalOperator topOfSelectStatementOperator = (AbstractLogicalOperator) v
+				.visit(statement, null);
 
-		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
+		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(
+				brokerName);
 		// add the schemas from existing one
 		if (!BrokerDictionary.getInstance().brokerExists(brokerName)) {
-			throw new RuntimeException("Broker with name \"" + brokerName + "\" not found. You have to create one first.");
+			throw new RuntimeException("Broker with name \"" + brokerName
+					+ "\" not found. You have to create one first.");
 		}
 		broker.setSchema(BrokerDictionary.getInstance().getSchema(brokerName));
-		broker.setQueueSchema(BrokerDictionary.getInstance().getQueueSchema(brokerName));
+		broker.setQueueSchema(BrokerDictionary.getInstance().getQueueSchema(
+				brokerName));
 
 		// check schemas
-		if (!schemaEquals(topOfSelectStatementOperator.getOutputSchema(), broker.getOutputSchema())) {
-			String message = "Schema to insert: " + topOfSelectStatementOperator.getOutputSchema().toString() + "\n";
-			message = message + "Schema of Broker: " + broker.getOutputSchema().toString();
-			throw new RuntimeException("Statement and broker do not have the same schema.\n" + message);
+		if (!schemaEquals(topOfSelectStatementOperator.getOutputSchema(),
+				broker.getOutputSchema())) {
+			String message = "Schema to insert: "
+					+ topOfSelectStatementOperator.getOutputSchema().toString()
+					+ "\n";
+			message = message + "Schema of Broker: "
+					+ broker.getOutputSchema().toString();
+			throw new RuntimeException(
+					"Statement and broker do not have the same schema.\n"
+							+ message);
 		}
 		// connect the nested statement into the broker
-		broker.subscribeToSource(topOfSelectStatementOperator, 0, 0, topOfSelectStatementOperator.getOutputSchema());
+		broker.subscribeToSource(topOfSelectStatementOperator, 0, 0,
+				topOfSelectStatementOperator.getOutputSchema());
 		return broker;
 
 	}
@@ -256,70 +278,100 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		String brokerName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// check first if name already exists
 		if (BrokerDictionary.getInstance().brokerExists(brokerName)) {
-			throw new RuntimeException("There is already a broker named \"" + brokerName + "\".");
+			throw new RuntimeException("There is already a broker named \""
+					+ brokerName + "\".");
 		}
 
 		// parse attributes
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		if (node.jjtGetChild(1) instanceof ASTORSchemaDefinition) {
-			SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(1).jjtAccept(this, brokerName);
+			SDFAttribute rootAttribute = (SDFAttribute) node.jjtGetChild(1)
+					.jjtAccept(this, brokerName);
 			attributes.add(rootAttribute);
 		} else {
-			ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node.jjtGetChild(1);
-			for (int i = 0; i < attributeDe.jjtGetNumChildren(); i++) {
-				ASTAttributeDefinition attrNode = (ASTAttributeDefinition) attributeDe.jjtGetChild(i);
-				String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
-				SDFUnit unit = null;
-				List<?> cov = null;
-				Map<String, SDFDatatypeConstraint> dtContraints = new HashMap<String, SDFDatatypeConstraint>();
+			ASTAttributeDefinitions attributeDe = (ASTAttributeDefinitions) node
+					.jjtGetChild(1);
+			try {
 
-				
-				ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
-				SDFDatatype datatype = dataDictionary.getDatatype(astAttrType.getType());
-				if (datatype.isDate()) {
-					dtContraints.put("format", astAttrType.getDateFormat());
+				for (int i = 0; i < attributeDe.jjtGetNumChildren(); i++) {
+					ASTAttributeDefinition attrNode = (ASTAttributeDefinition) attributeDe
+							.jjtGetChild(i);
+					String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0))
+							.getName();
+					SDFUnit unit = null;
+					List<?> cov = null;
+					Map<String, SDFDatatypeConstraint> dtContraints = new HashMap<String, SDFDatatypeConstraint>();
+
+					ASTAttributeType astAttrType = (ASTAttributeType) attrNode
+							.jjtGetChild(1);
+					SDFDatatype datatype;
+					datatype = dataDictionary
+							.getDatatype(astAttrType.getType());
+					if (datatype.isDate()) {
+						dtContraints.put("format", astAttrType.getDateFormat());
+					}
+					if (datatype.isMeasurementValue()
+							&& astAttrType.jjtGetNumChildren() > 0) {
+						cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(
+								this, data);
+
+					}
+					SDFAttribute attribute = new SDFAttribute(brokerName,
+							attrName, datatype, unit, dtContraints, cov);
+
+					attributes.add(attribute);
 				}
-				if (datatype.isMeasurementValue()
-						&& astAttrType.jjtGetNumChildren() > 0) {
-					cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data);
-
-				}
-				SDFAttribute attribute = new SDFAttribute(brokerName, attrName,datatype,unit, dtContraints, cov);
-
-				attributes.add(attribute);
+			} catch (DataDictionaryException e) {
+				throw new QueryParseException(e.getMessage());
 			}
+
 		}
 		SDFSchemaExtended schema = new SDFSchemaExtended(attributes);
-		
+
 		List<SDFAttribute> metaAttributes = new ArrayList<SDFAttribute>();
 		// parse meta attributes
 		if (node.jjtGetNumChildren() > 2) {
 			if (node.jjtGetChild(2) != null) {
 
-				if( node.jjtGetChild(2) instanceof ASTAttributeDefinitions ) {
-					ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node.jjtGetChild(2);
+				if (node.jjtGetChild(2) instanceof ASTAttributeDefinitions) {
+					ASTAttributeDefinitions metaAttributeDe = (ASTAttributeDefinitions) node
+							.jjtGetChild(2);
 					for (int i = 0; i < metaAttributeDe.jjtGetNumChildren(); i++) {
-						ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe.jjtGetChild(i);
-						String attrName = ((ASTIdentifier) attrNode.jjtGetChild(0)).getName();
-						
-						ASTAttributeType astAttrType = (ASTAttributeType) attrNode.jjtGetChild(1);
+						ASTAttributeDefinition attrNode = (ASTAttributeDefinition) metaAttributeDe
+								.jjtGetChild(i);
+						String attrName = ((ASTIdentifier) attrNode
+								.jjtGetChild(0)).getName();
+
+						ASTAttributeType astAttrType = (ASTAttributeType) attrNode
+								.jjtGetChild(1);
 						SDFUnit unit = null;
 						List<?> cov = null;
 						Map<String, SDFDatatypeConstraint> dtContraints = new HashMap<String, SDFDatatypeConstraint>();
-						SDFDatatype datatype =  dataDictionary.getDatatype(astAttrType.getType());
+				
+						SDFDatatype datatype;
+						try {
+							datatype = dataDictionary.getDatatype(astAttrType
+									.getType());
+						} catch (Exception e) {
+							throw new QueryParseException(e.getMessage());
+						}
 						if (datatype.isDate()) {
-							dtContraints.put("format", astAttrType.getDateFormat());
+							dtContraints.put("format",
+									astAttrType.getDateFormat());
 						}
 						if (datatype.isMeasurementValue()
 								&& astAttrType.jjtGetNumChildren() > 0) {
-							cov = ((List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+							cov = ((List<?>) astAttrType.jjtGetChild(0)
+									.jjtAccept(this, data));
 
 						}
-						SDFAttribute attribute = new SDFAttribute(brokerName, attrName, datatype, unit, dtContraints, cov);
+						SDFAttribute attribute = new SDFAttribute(brokerName,
+								attrName, datatype, unit, dtContraints, cov);
 						metaAttributes.add(attribute);
 					}
-				} else if( node.jjtGetChild(2) instanceof ASTORSchemaDefinition) {
-					SDFAttribute rootAttribute = (SDFAttribute)node.jjtGetChild(2).jjtAccept(this, brokerName);
+				} else if (node.jjtGetChild(2) instanceof ASTORSchemaDefinition) {
+					SDFAttribute rootAttribute = (SDFAttribute) node
+							.jjtGetChild(2).jjtAccept(this, brokerName);
 					metaAttributes.add(rootAttribute);
 				}
 			}
@@ -330,17 +382,23 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 		dataDictionary.addSourceType(brokerName, "brokerStreaming");
 		dataDictionary.addEntitySchema(brokerName, schema, caller);
 		// create the broker
-		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
+		BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(
+				brokerName);
 		broker.setSchema(schema);
 		broker.setQueueSchema(metaAttributSchema);
-		BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
+		BrokerDictionary.getInstance().addBroker(brokerName,
+				broker.getOutputSchema(), broker.getQueueSchema());
 
 		// set the broker view in the data dictionary
 		// used for procedural parser
 		BrokerDictionary.getInstance().setLogicalPlan(brokerName, broker);
 
 		// Is this necessary any more?
-		dataDictionary.setView(brokerName, broker, caller);
+		try {
+			dataDictionary.setView(brokerName, broker, caller);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 
 		return broker;
 	}
@@ -370,14 +428,15 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 			return false;
 		} else {
 			for (int i = 0; i < left.size(); i++) {
-				if (!left.get(i).getAttributeName().equals(right.get(i).getAttributeName())) {
+				if (!left.get(i).getAttributeName()
+						.equals(right.get(i).getAttributeName())) {
 					return false;
 				}
 			}
 			return true;
 		}
 	}
-	
+
 	@Override
 	public Object visit(ASTORSchemaDefinition node, Object data) {
 		return node.jjtGetChild(0).jjtAccept(this, data);
@@ -386,21 +445,28 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTRecordDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		
-		// create a new datatype from this record attribute		
-		
+
+		// create a new datatype from this record attribute
+
 		List<SDFAttribute> complexAttrList = new ArrayList<SDFAttribute>();
-		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
-			SDFAttribute attr = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
+		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
+			SDFAttribute attr = (SDFAttribute) node.jjtGetChild(i).jjtAccept(
+					this, data);
 			complexAttrList.add(attr);
 		}
-		
-		SDFSchema complexAttrSchema = new SDFSchema("", complexAttrList); 
-		SDFDatatype recordType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
-		dataDictionary.addDatatype(recordType.getURI(), recordType);
-		
-		SDFAttribute recordAttribute = new SDFAttribute(data.toString(), attrName, recordType);
-		
+
+		SDFSchema complexAttrSchema = new SDFSchema("", complexAttrList);
+		SDFDatatype recordType = new SDFDatatype(data.toString() + "."
+				+ attrName, SDFDatatype.KindOfDatatype.TUPLE, complexAttrSchema);
+		try {
+			dataDictionary.addDatatype(recordType.getURI(), recordType);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
+
+		SDFAttribute recordAttribute = new SDFAttribute(data.toString(),
+				attrName, recordType);
+
 		return recordAttribute;
 	}
 
@@ -412,20 +478,28 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTListDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		
+
 		List<SDFAttribute> complexAttrList = new ArrayList<SDFAttribute>();
-		for( int i = 1; i < node.jjtGetNumChildren(); i++ ) {
-			SDFAttribute listedAttribute = (SDFAttribute)node.jjtGetChild(i).jjtAccept(this, data);
+		for (int i = 1; i < node.jjtGetNumChildren(); i++) {
+			SDFAttribute listedAttribute = (SDFAttribute) node.jjtGetChild(i)
+					.jjtAccept(this, data);
 			complexAttrList.add(listedAttribute);
 		}
 
 		SDFSchema complexAttrSchema = new SDFSchema("", complexAttrList);
 
-		SDFDatatype listType = new SDFDatatype(data.toString()+"."+attrName, SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
-		dataDictionary.addDatatype(listType.getURI(), listType);
-		
-		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName, listType);
-		
+		SDFDatatype listType = new SDFDatatype(
+				data.toString() + "." + attrName,
+				SDFDatatype.KindOfDatatype.MULTI_VALUE, complexAttrSchema);
+		try {
+			dataDictionary.addDatatype(listType.getURI(), listType);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
+
+		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName,
+				listType);
+
 		return attribute;
 	}
 
@@ -433,22 +507,28 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTAttrDefinition node, Object data) {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		
-		SDFDatatype datatype = dataDictionary.getDatatype(astAttrType.getType());
+
+		SDFDatatype datatype;
+		try {
+			datatype = dataDictionary
+					.getDatatype(astAttrType.getType());
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		List<?> cov = null;
 		Map<String, SDFDatatypeConstraint> dtconstr = new HashMap<String, SDFDatatypeConstraint>();
 		SDFUnit unit = null;
-		
+
 		if (datatype.isMeasurementValue()
 				&& astAttrType.jjtGetNumChildren() > 0) {
 			cov = (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data);
 
 		}
-		if (datatype.isDate()) 
+		if (datatype.isDate())
 			dtconstr.put("format", astAttrType.getDateFormat());
-		
-		
-		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName, datatype, unit, dtconstr, cov);
+
+		SDFAttribute attribute = new SDFAttribute(data.toString(), attrName,
+				datatype, unit, dtconstr, cov);
 		return attribute;
 	}
 }

@@ -103,11 +103,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public SDFSchema getEntitySchema(String uri, ISession caller)
-			throws PermissionException {
+			throws PermissionException, DataDictionaryException {
 		checkAccessRights(uri, caller, DataDictionaryPermission.GET_ENTITY);
 		SDFSchema ret = entityMap.get(uri);
 		if (ret == null) {
-			throw new IllegalArgumentException("no such entity: " + uri);
+			throw new DataDictionaryException("no such entity: " + uri);
 		}
 		return ret;
 	}
@@ -139,10 +139,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public String getSourceType(String sourcename) {
+	public String getSourceType(String sourcename) throws DataDictionaryException {
 		String value = sourceTypeMap.get(sourcename);
 		if (value == null) {
-			throw new IllegalArgumentException("missing source type for: "
+			throw new DataDictionaryException("missing source type for: "
 					+ sourcename);
 		}
 		return value;
@@ -150,7 +150,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	// no restric
 	@Override
-	public SDFSource createSDFSource(String sourcename) {
+	public SDFSource createSDFSource(String sourcename) throws DataDictionaryException {
 		String type = getSourceType(sourcename);
 		SDFSource source = new SDFSource(sourcename, type);
 
@@ -170,10 +170,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setView(String viewname, ILogicalOperator topOperator,
-			ISession caller) {
+			ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_VIEW)) {
 			if (viewDefinitions.containsKey(viewname)) {
-				throw new RuntimeException("View " + viewname
+				throw new DataDictionaryException("View " + viewname
 						+ " already exists. Drop First");
 			}
 			try {
@@ -247,14 +247,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	@Override
 	public void setStream(String streamname, ILogicalOperator plan,
-			ISession caller) {
+			ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STREAM)) {
 			if (!this.entityMap.containsKey(streamname)) {
-				throw new RuntimeException("No entity for " + streamname
+				throw new DataDictionaryException("No entity for " + streamname
 						+ ". Add entity before adding access operator.");
 			}
 			if (streamDefinitions.containsKey(streamname)) {
-				throw new RuntimeException("Stream " + streamname
+				throw new DataDictionaryException("Stream " + streamname
 						+ " already exists. Remove First");
 			}
 			try {
@@ -272,11 +272,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public AccessAO getStream(String viewname, ISession caller) {
+	public AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException {
 		checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
 
 		if (!this.streamDefinitions.containsKey(viewname)) {
-			throw new IllegalArgumentException("no such view: " + viewname);
+			throw new DataDictionaryException("no such view: " + viewname);
 		}
 
 		SDFSource source = createSDFSource(viewname);
@@ -334,7 +334,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public ILogicalOperator getViewOrStream(String viewname, ISession caller) {
+	public ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException {
 		if (this.viewDefinitions.containsKey(viewname)) {
 			return getView(viewname, caller);
 		} else {
@@ -395,34 +395,34 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 //	}
 
 	@Override
-	public void addDatatype(String name, SDFDatatype dt) {
+	public void addDatatype(String name, SDFDatatype dt) throws DataDictionaryException {
 		if (!this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
 		} else {
 			System.out.println(this.datatypes);
-			throw new IllegalArgumentException("Type '" + name
+			throw new DataDictionaryException("Type '" + name
 					+ "' already exists.");
 		}
 	}
 	
 	@Override
-	public void removeDatatype(String name) {
+	public void removeDatatype(String name) throws DataDictionaryException {
 		if (this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.remove(name.toLowerCase());
 			fireDataDictionaryChangedEvent();
 		} else {
-			throw new IllegalArgumentException("Type '" + name
+			throw new DataDictionaryException("Type '" + name
 					+ "' not exists.");
 		}
 	}
 
 	@Override
-	public SDFDatatype getDatatype(String dtName) {
+	public SDFDatatype getDatatype(String dtName) throws DataDictionaryException {
 		if (this.datatypes.containsKey(dtName.toLowerCase())) {
 			return this.datatypes.get(dtName.toLowerCase());
 		} else {
-			throw new IllegalArgumentException("No such datatype: " + dtName);
+			throw new DataDictionaryException("No such datatype: " + dtName);
 		}
 	}
 
@@ -441,27 +441,27 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// ----------------------------------------------------------------------------
 
 	@Override
-	public void addSink(String sinkname, ILogicalOperator sink, ISession caller) {
+	public void addSink(String sinkname, ILogicalOperator sink, ISession caller) throws DataDictionaryException {
 		if (!this.sinkDefinitions.containsKey(sinkname)) {
 			this.sinkDefinitions.put(sinkname, sink);
 			this.sinkFromUser.put(sinkname, caller.getUser());
 			fireDataDictionaryChangedEvent();
 		} else {
-			throw new IllegalArgumentException("Sink name already used");
+			throw new DataDictionaryException("Sink name already used");
 		}
 	}
 
 	@Override
-	public ILogicalOperator getSinkTop(String sinkname, ISession caller) {
+	public ILogicalOperator getSinkTop(String sinkname, ISession caller) throws DataDictionaryException {
 		if (this.sinkDefinitions.containsKey(sinkname)) {
 			return sinkDefinitions.get(sinkname);
 		} else {
-			throw new IllegalArgumentException("No such sink defined");
+			throw new DataDictionaryException("No such sink defined");
 		}
 	}
 
 	@Override
-	public ILogicalOperator getSinkInput(String sinkname, ISession caller) {
+	public ILogicalOperator getSinkInput(String sinkname, ISession caller) throws DataDictionaryException {
 		ILogicalOperator sinkTop = getSinkTop(sinkname, caller);
 		ILogicalOperator ret = sinkTop;
 		while (ret.getSubscribedToSource().size() > 0) {

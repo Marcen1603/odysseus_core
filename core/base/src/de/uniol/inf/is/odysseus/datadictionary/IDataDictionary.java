@@ -34,7 +34,7 @@ public interface IDataDictionary {
 			throws PermissionException;
 
 	public SDFSchema getEntitySchema(String uri, ISession caller)
-			throws PermissionException;
+			throws PermissionException, DataDictionaryException;
 
 	/**
 	 * returns the username from the creator of the given entity
@@ -50,18 +50,18 @@ public interface IDataDictionary {
 	public void addSourceType(String sourcename, String sourcetype);
 
 	// no restric
-	public SDFSource createSDFSource(String sourcename);
+	public SDFSource createSDFSource(String sourcename) throws DataDictionaryException;
 
 	// no restric
 	public boolean emptySourceTypeMap();
 
 	public void setView(String viewname, ILogicalOperator topOperator,
-			ISession caller);
+			ISession caller) throws DataDictionaryException;
 
 	// no restric
 	public boolean isView(String name);
 
-	public void setStream(String streamname, ILogicalOperator plan, ISession caller);
+	public void setStream(String streamname, ILogicalOperator plan, ISession caller) throws DataDictionaryException;
 
 	public ILogicalOperator getStreamForTransformation(String name, ISession caller);
 
@@ -70,7 +70,7 @@ public interface IDataDictionary {
 
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller);
 
-	public ILogicalOperator getViewOrStream(String viewname, ISession caller);
+	public ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;
 
 	public Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 	public Set<Entry<String, ILogicalOperator>> getViews(ISession caller);	
@@ -112,29 +112,29 @@ public interface IDataDictionary {
 
 	boolean isCreatorOfObject(String caller, String objecturi);
 
-	String getSourceType(String sourcename);
+	String getSourceType(String sourcename) throws DataDictionaryException;
 	
 //	public void addDatatype(String name, SDFDatatype dt, ISession caller);
-	public void addDatatype(String name, SDFDatatype dt);
-	public void removeDatatype(String name);
+	public void addDatatype(String name, SDFDatatype dt) throws DataDictionaryException;
+	public void removeDatatype(String name) throws DataDictionaryException;
 	
-	public SDFDatatype getDatatype(String name);
+	public SDFDatatype getDatatype(String name) throws DataDictionaryException;
 	public Set<String> getDatatypes();
 	
 	public boolean existsDatatype(String dtName);
 
-	void addSink(String sinkname, ILogicalOperator sink, ISession caller);
+	void addSink(String sinkname, ILogicalOperator sink, ISession caller) throws DataDictionaryException;
 	
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
-	ILogicalOperator getSinkTop(String sinkname, ISession caller);
-	ILogicalOperator getSinkInput(String sinkname, ISession caller);
+	ILogicalOperator getSinkTop(String sinkname, ISession caller) throws DataDictionaryException;
+	ILogicalOperator getSinkInput(String sinkname, ISession caller) throws DataDictionaryException;
 
 	boolean existsSink(String sinkname);
 
 	ILogicalOperator getView(String viewname, ISession caller);
 
-	AccessAO getStream(String viewname, ISession caller);
+	AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException;
 
 
 }

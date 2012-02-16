@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -57,7 +58,11 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		SDFSchema typeSchema = new SDFSchema(name, attributes);
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, typeSchema);
-		dd.addDatatype(name, newType);
+		try {
+			dd.addDatatype(name, newType);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 
 		return data;
 	}
@@ -99,7 +104,12 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		
 		if(this.dd.existsDatatype(astAttrType.getType())){
 			
-			SDFDatatype attribType = this.dd.getDatatype(astAttrType.getType());
+			SDFDatatype attribType;
+			try {
+				attribType = this.dd.getDatatype(astAttrType.getType());
+			} catch (DataDictionaryException e) {
+				throw new QueryParseException(e.getMessage());
+			}
 			
 			if (attribType.isDate()) {
 				dtConstrains.put("format", astAttrType.getDateFormat());

@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -77,7 +79,11 @@ public class SILABVisitor implements IVisitor{
 			
 //		}
 		ILogicalOperator op = addTimestampAO(source, source.getOutputSchema());
-		dd.setStream(((CreateStreamVisitor)baseObject).getName(), op, user);
+		try {
+			dd.setStream(((CreateStreamVisitor)baseObject).getName(), op, user);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return data;
 		
 	}

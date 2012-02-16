@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
@@ -115,8 +117,13 @@ public class SourceAO extends AbstractLogicalOperator implements
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		for (final String item : schemaAttributes) {
 			final String[] schemaInformation = item.split(":");
-			final SDFAttribute attribute = new SDFAttribute(null,
-					schemaInformation[0], Activator.getDataDictionary().getDatatype(schemaInformation[1]));
+			SDFAttribute attribute;
+			try {
+				attribute = new SDFAttribute(null,
+						schemaInformation[0], Activator.getDataDictionary().getDatatype(schemaInformation[1]));
+			} catch (DataDictionaryException e) {
+				throw new QueryParseException(e.getMessage());
+			}
 			attrs.add(attribute);
 		}
 		// TODO: Add Sourcename to Attributes ... e.g. collect Attributes

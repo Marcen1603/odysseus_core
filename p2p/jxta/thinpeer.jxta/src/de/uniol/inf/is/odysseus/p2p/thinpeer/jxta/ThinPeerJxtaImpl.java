@@ -27,6 +27,7 @@ import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
@@ -335,7 +336,12 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 		
 		AccessAO source = new AccessAO();
 		source.setSource(new SDFSource(adv.getPeerID()+":"+adv.getSourceName(), "P2PSource"));
-		dd.setStream(adv.getSourceName(), source, caller);
+		try {
+			dd.setStream(adv.getSourceName(), source, caller);
+		} catch (DataDictionaryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

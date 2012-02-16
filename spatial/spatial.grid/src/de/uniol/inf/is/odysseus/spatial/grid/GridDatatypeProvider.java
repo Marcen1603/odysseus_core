@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.spatial.grid;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
@@ -28,14 +29,22 @@ public class GridDatatypeProvider {
 			throws PlanManagementException {
 		datadictionary = dataDictionary;
 		if (!datadictionary.existsDatatype(SDFGridDatatype.GRID.getURI())) {
-			datadictionary.addDatatype(SDFGridDatatype.GRID.getURI(),
-					SDFGridDatatype.GRID);
+			try {
+				datadictionary.addDatatype(SDFGridDatatype.GRID.getURI(),
+						SDFGridDatatype.GRID);
+			} catch (DataDictionaryException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public void unbindDictionary(IDataDictionary dd) {
 		if (datadictionary.existsDatatype(SDFGridDatatype.GRID.getURI())) {
-			datadictionary.removeDatatype(SDFGridDatatype.GRID.getURI());
+			try {
+				datadictionary.removeDatatype(SDFGridDatatype.GRID.getURI());
+			} catch (DataDictionaryException e) {
+				e.printStackTrace();
+			}
 		}
 		datadictionary = null;
 	}

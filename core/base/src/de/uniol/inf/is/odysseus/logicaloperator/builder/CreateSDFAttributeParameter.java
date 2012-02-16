@@ -16,7 +16,9 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class CreateSDFAttributeParameter extends
@@ -37,7 +39,12 @@ public class CreateSDFAttributeParameter extends
 			throw new IllegalArgumentException(
 					"Wrong number of inputs for SDFAttribute. Expecting id and datatype.");
 		}
-		SDFAttribute attribute = new SDFAttribute(null,list.get(0), dd.getDatatype(list.get(1)));
+		SDFAttribute attribute;
+		try {
+			attribute = new SDFAttribute(null,list.get(0), dd.getDatatype(list.get(1)));
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		setValue(attribute);
 	}
 

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
@@ -185,7 +187,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           {
             if (true)
             {
-              if (true) {if (true) throw new IllegalArgumentException("query parameters can only be defined for root operators, not for: " + queryName);}
+              if (true) {if (true) throw new QueryParseException("query parameters can only be defined for root operators, not for: " + queryName);}
             }
           }
         }
@@ -222,7 +224,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       break;
     case 20:
       jj_consume_token(20);
-          isView = true;
+      isView = true;
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -233,34 +235,41 @@ public class PQLParserImpl implements PQLParserImplConstants {
     String nameStr = name.image.toUpperCase();
     if (namedOps.containsKey(nameStr))
     {
-      {if (true) throw new IllegalArgumentException("multiple definition of '" + nameStr + "'");}
+      {if (true) throw new QueryParseException("multiple definition of '" + nameStr + "'");}
     }
-    if (isView || isSharedSource)
+    try
     {
-      nameStr = name.image;
-      IDataDictionary dd = getDataDictionary();
-      if (dd.containsViewOrStream(nameStr, getUser()))
+      if (isView || isSharedSource)
       {
-        {if (true) throw new IllegalArgumentException("multiple definition of view '" + nameStr + "'");}
+        nameStr = name.image;
+        IDataDictionary dd = getDataDictionary();
+        if (dd.containsViewOrStream(nameStr, getUser()))
+        {
+          {if (true) throw new QueryParseException("multiple definition of view '" + nameStr + "'");}
+        }
+        dd.addSourceType(nameStr, "RelationalStreaming");
+        dd.addEntitySchema(nameStr, op.getOutputSchema(), getUser());
+        if (isSharedSource)
+        {
+          dd.setStream(nameStr, op, user);
+        }
+        else
+        {
+          dd.setView(nameStr, op, user);
+        }
+        //get access operator for view, so other operators don't get subscribed
+        //to top operator of the view
+        op = dd.getViewOrStream(nameStr, getUser());
       }
-      dd.addSourceType(nameStr, "RelationalStreaming");
-      dd.addEntitySchema(nameStr, op.getOutputSchema(), getUser());
-      if(isSharedSource)
-      {
-        dd.setStream(nameStr, op, user);
-          }
       else
       {
-        dd.setView(nameStr, op, user);
+        namedOpParameters.put(nameStr.toUpperCase(), parameters);
+        namedOps.put(nameStr.toUpperCase(), op);
       }
-      //get access operator for view, so other operators don't get subscribed
-      //to top operator of the view
-      op = dd.getViewOrStream(nameStr, getUser());
     }
-    else
+    catch (DataDictionaryException e)
     {
-      namedOpParameters.put(nameStr.toUpperCase(), parameters);
-      namedOps.put(nameStr.toUpperCase(), op);
+      {if (true) throw new QueryParseException(e.getMessage());}
     }
   }
 
@@ -300,14 +309,13 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        if (getDataDictionary().containsViewOrStream(identifier.image, getUser()))
-        {
+        try{
           op = getDataDictionary().getViewOrStream(identifier.image, getUser());
-        }
-        else
+        }catch(DataDictionaryException e)
         {
-          {if (true) throw new IllegalArgumentException("no such operator: " + identifier.image);}
-        }
+          {if (true) throw new QueryParseException("no such operator: " + identifier.image);}
+                }
+
       }
       {if (true) return op;}
         break;

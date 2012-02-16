@@ -14,11 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -51,7 +53,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
 		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
-			return getDataDictionary().getViewOrStream(sourceName, getCaller());
+			try {
+				return getDataDictionary().getViewOrStream(sourceName, getCaller());
+			} catch (DataDictionaryException e) {
+				throw new QueryParseException(e.getMessage());
+			}
 		}
 		ILogicalOperator ao = createNewAccessAO(sourceName);
 

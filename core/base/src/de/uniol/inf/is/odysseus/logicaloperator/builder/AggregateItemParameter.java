@@ -16,7 +16,9 @@ package de.uniol.inf.is.odysseus.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
@@ -47,16 +49,22 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		String outputName = value.get(2);
 		SDFAttribute outAttr = null;
 
-		
-		if (value.size() == 4) {
-			IDataDictionary dd =getDataDictionary();
-			SDFDatatype type = dd.getDatatype(value.get(3));
-			outAttr = new SDFAttribute(null, outputName, type);
-		} else {
-			// Fallback to old DOUBLE value for aggregation results
-			IDataDictionary dd = getDataDictionary();
-			SDFDatatype type = dd.getDatatype("double");
-			outAttr = new SDFAttribute(null, outputName, type);
+		try {
+			if (value.size() == 4) {
+				IDataDictionary dd = getDataDictionary();
+				SDFDatatype type;
+
+				type = dd.getDatatype(value.get(3));
+
+				outAttr = new SDFAttribute(null, outputName, type);
+			} else {
+				// Fallback to old DOUBLE value for aggregation results
+				IDataDictionary dd = getDataDictionary();
+				SDFDatatype type = dd.getDatatype("double");
+				outAttr = new SDFAttribute(null, outputName, type);
+			}
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
 		}
 		setValue(new AggregateItem(funcStr, attribute, outAttr));
 	}

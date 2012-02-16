@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
@@ -616,7 +618,12 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							}
 							
 							// get the access ao for the named stream
-							ILogicalOperator accessAO = this.dd.getViewOrStream(namedStream, this.user);
+							ILogicalOperator accessAO;
+							try {
+								accessAO = this.dd.getViewOrStream(namedStream, this.user);
+							} catch (DataDictionaryException e) {
+								throw new QueryParseException(e.getMessage());
+							}
 							
 							// get the window for the named stream
 							WindowAO win = null;
@@ -655,7 +662,12 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							List<ILogicalOperator> topOps = new ArrayList<ILogicalOperator>();
 							for(int di = 0; di<this.defaultStreams.size(); di++){
 								ILogicalOperator top = null;
-								ILogicalOperator accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
+								ILogicalOperator accessAO;
+								try {
+									accessAO = this.dd.getViewOrStream(this.defaultStreams.get(di).getStreamName(), this.user);
+								} catch (DataDictionaryException e) {
+									throw new QueryParseException(e.getMessage());
+								}
 								if(explicitWindow != null){
 									explicitWindow.subscribeTo(accessAO, accessAO.getOutputSchema());
 									top = explicitWindow;
@@ -1281,7 +1293,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			
 		}
 		else{
-			throw new RuntimeException("No access specification (Socket|Channel|CSV) given for stream definition.");
+			throw new QueryParseException("No access specification (Socket|Channel|CSV) given for stream definition.");
 		}
 		
 		accAO.setOutputSchema(outputSchema);
@@ -1294,7 +1306,11 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		if(isPersistent){
 			op.setUsingNoTime(true);
 		}
-		this.dd.setStream(node.getStreamName(), op, this.user);
+		try {
+			this.dd.setStream(node.getStreamName(), op, this.user);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		
 		((LinkedList)data).addFirst(op);
 					

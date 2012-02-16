@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -55,13 +56,19 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		String sourceName = this.sourceName.getValue();
-		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
-			return getDataDictionary().getViewOrStream(sourceName, getCaller());
+		FileAccessAO ao;
+
+		try {
+			if (getDataDictionary().containsViewOrStream(sourceName,
+					getCaller())) {
+				return getDataDictionary().getViewOrStream(sourceName,
+						getCaller());
+			}
+			ao = createNewFileAccessAO(sourceName);
+			getDataDictionary().setView(sourceName, ao, getCaller());
+		} catch (Exception e) {
+			throw new QueryParseException(e.getMessage());
 		}
-
-		FileAccessAO ao = createNewFileAccessAO(sourceName);
-
-		getDataDictionary().setView(sourceName, ao, getCaller());
 		return ao;
 	}
 

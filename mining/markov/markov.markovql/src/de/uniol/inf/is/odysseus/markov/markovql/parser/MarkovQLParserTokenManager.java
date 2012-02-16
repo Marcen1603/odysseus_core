@@ -2,7 +2,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 import java.util.List;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-@SuppressWarnings("all")
+
 /** Token Manager. */
 public class MarkovQLParserTokenManager implements MarkovQLParserConstants
 {

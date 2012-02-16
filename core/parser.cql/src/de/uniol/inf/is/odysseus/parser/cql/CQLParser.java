@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
@@ -1299,10 +1300,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ASTSelectStatement statement = (ASTSelectStatement) node.jjtGetChild(1);
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
 
-		ILogicalOperator sink = dataDictionary.getSinkTop(sinkName, caller);
+		ILogicalOperator sink;
 		// Append plan to input and update subscriptions
-		ILogicalOperator sinkInput = dataDictionary.getSinkInput(sinkName,
-				caller);
+		ILogicalOperator sinkInput;
+		try {
+			sink = dataDictionary.getSinkTop(sinkName, caller);
+			sinkInput = dataDictionary.getSinkInput(sinkName, caller);
+		} catch (Exception e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		// if database -> be sure, that the schemas are equal
@@ -1442,7 +1448,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		ILogicalOperator sink = new FileSinkAO(filename, type,
 				writeAfterElements, printMetadata);
-		dataDictionary.addSink(sinkName, sink, caller);
+		try {
+			dataDictionary.addSink(sinkName, sink, caller);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return null;
 	}
 
@@ -1460,7 +1470,11 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				sinkName);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sink.subscribeToSource(transformMeta, 0, 0, null);
-		dataDictionary.addSink(sinkName, sink, caller);
+		try {
+			dataDictionary.addSink(sinkName, sink, caller);
+		} catch (DataDictionaryException e) {
+			throw new QueryParseException(e.getMessage());
+		}
 		return null;
 	}
 

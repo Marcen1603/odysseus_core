@@ -46,6 +46,7 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 	import de.uniol.inf.is.odysseus.usermanagement.ISession;
 	import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+	import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
 		
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -191,7 +192,11 @@ this.attachSources = attachSources;
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
   
    {
-    dd.setView(n.getText(), q, user);
+    try{
+        dd.setView(n.getText(), q, user);
+    }catch(DataDictionaryException e){
+        throw new QueryParseException(e.getMessage());
+    }
     getLogger().debug("Created New View " + n + " " + q);
     $op = q;
    }
