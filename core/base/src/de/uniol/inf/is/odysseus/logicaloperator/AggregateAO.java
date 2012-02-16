@@ -40,7 +40,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
 	final private List<SDFAttribute> groupingAttributes;
 	private SDFSchema outputSchema;
-	final private List<SDFAttribute> outputAttributList = new ArrayList<SDFAttribute>();
+	final private List<SDFAttribute> outputAttributList;
 	private boolean recalcOutputSchema = true;
 	private int dumpAtValueCount = -1;
 
@@ -48,6 +48,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		super();
 		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
+		outputAttributList = new ArrayList<SDFAttribute>();
 	}
 
 	public AggregateAO(AggregateAO op) {
@@ -55,6 +56,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>(
 				op.aggregations);
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
+		outputAttributList = new ArrayList<SDFAttribute>(op.outputAttributList);
 		outputSchema = op.outputSchema.clone();
 		dumpAtValueCount = op.dumpAtValueCount;
 	}
