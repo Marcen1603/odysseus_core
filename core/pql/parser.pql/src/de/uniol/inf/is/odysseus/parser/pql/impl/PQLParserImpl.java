@@ -309,13 +309,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator op = namedOps.get(identifier.image.toUpperCase());
       if (op == null)
       {
-        try{
+        try
+        {
           op = getDataDictionary().getViewOrStream(identifier.image, getUser());
-        }catch(DataDictionaryException e)
+        }
+        catch (DataDictionaryException e)
         {
           {if (true) throw new QueryParseException("no such operator: " + identifier.image);}
-                }
-
+        }
       }
       {if (true) return op;}
         break;
