@@ -45,7 +45,8 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 	import de.uniol.inf.is.odysseus.usermanagement.ISession;
-	
+	import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+		
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
 }
@@ -221,13 +222,13 @@ List<String> sourceNames = new ArrayList<String>();
     	int port = 0;
     	for (String sn : sourceNames) {
     		getLogger().debug("Bind " + sn + " to Port " + port);
-    		ILogicalOperator ao = dd.getViewOrStream(sn, user);
-    		if (ao != null) {
+    		try {
+    			ILogicalOperator ao = dd.getViewOrStream(sn, user);
     			cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
     			cepAo.setInputTypeName(port, sn);
     			port++;
-    		} else {
-    			throw new RuntimeException("Source " + sn + " not found");
+    		} catch (Exception e) {
+    			throw new QueryParseException("Source/View " + sn + " not found");
     		}
     	}
     }
@@ -237,8 +238,9 @@ List<String> sourceNames = new ArrayList<String>();
   ;
 
 patternPart[CepAO cepAo, List<String> sourceNames]
-: ^(PATTERN seqPatternPart[cepAo, sourceNames])
-;
+  :
+  ^(PATTERN seqPatternPart[cepAo, sourceNames])
+  ;
 
 seqPatternPart[CepAO cepAo, List<String> sourceNames]
 @init {
@@ -306,7 +308,8 @@ state[List<State> states, List<String> sourceNames]
     simpleState.add(_statename);
     if (simpleAttributeState.get(_attributeName) == null) {
     	simpleAttributeState.put(_attributeName, _statename);
-    	State state = new State(_attributeName, _attributeName, _statename, false, not!=null); 
+    	State state = new State(_attributeName, _attributeName, _statename, false,
+    			not != null);
     	states.add(state);
     } else {
     	throw new RuntimeException("Double attribute definition " + _attributeName);
@@ -324,9 +327,9 @@ state[List<State> states, List<String> sourceNames]
     if (kleeneAttributeState.get(_attributeName) == null) {
     	kleeneAttributeState.put(_attributeName, _statename);
     	states.add(new State(_attributeName + "[1]", _attributeName, _statename,
-    			false, not!=null));
+    			false, not != null));
     	states.add(new State(_attributeName + "[i]", _attributeName, _statename,
-    			false, not!=null));
+    			false, not != null));
     } else {
     	throw new RuntimeException("Double attribute definition " + _attributeName);
     }
@@ -414,6 +417,7 @@ List assignExpressions = new ArrayList();
     				String fullExpression = tranformAttributesToMetamodell(ce, s);
     				t.appendAND(fullExpression);
     				compareIter.remove();
+    
     			}
     		}// while
     		Iterator<AssignExpression> assignIter = assignExpressions.iterator();
@@ -430,6 +434,14 @@ List assignExpressions = new ArrayList();
     			}
     		}
     	}
+    }
+    if (compareExpressions.size() > 0) {
+      StringBuffer errorHelper = new StringBuffer();
+      for (AttributeExpression exp: compareExpressions){
+        errorHelper.append("\nAttributes "+exp.getAttributes()+" in "+ exp.getFullExpression()+" correspond to no state!");
+      }
+    	throw new QueryParseException("One or more expressions are not valid "
+    			+ errorHelper);
     }
     
     List<State> states = stmachine.getStates();
@@ -451,7 +463,7 @@ List assignExpressions = new ArrayList();
     			ignore.appendAND("false");
     			break;
     		case PARTITION_CONTIGUITY:
-    			throw new RuntimeException(
+    			throw new QueryParseException(
     					"PARTITION_CONTIGUITY not implemented yet");
     			//break;
     		case SKIP_TILL_ANY_MATCH:
@@ -696,10 +708,12 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     			+ "." + path));
     	scheme.append(e);
     	// TODO: Set correct Datatypes
-    	SDFAttribute attr = new SDFAttribute(null,e.getLabel(), SDFDatatype.STRING);
+    	SDFAttribute attr = new SDFAttribute(null, e.getLabel(), SDFDatatype.STRING);
     	attrList.add(attr);
     }
-    SDFSchema outputSchema = new SDFSchema(value.getText()!=null?value.getText():"", attrList);;
+    SDFSchema outputSchema = new SDFSchema(
+    		value.getText() != null ? value.getText() : "", attrList);
+    ;
     cepAo.getStateMachine().setOutputScheme(scheme);
     cepAo.setOutputSchema(outputSchema);
    }

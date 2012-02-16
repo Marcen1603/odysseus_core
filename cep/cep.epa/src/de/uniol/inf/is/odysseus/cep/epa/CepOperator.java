@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
+import de.uniol.inf.is.odysseus.cep.metamodel.ICepCondition;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
@@ -366,7 +367,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private boolean updateVariables(R object, StateMachineInstance<R> instance,
 			Transition transition, int port) {
 		// logger.debug("Update Variables in "+transition.getCondition()+" --> "+transition.getCondition().getVarNames());
-		for (CepVariable varName : transition.getCondition().getVarNames()) {
+		ICepCondition cond = transition.getCondition();
+		for (CepVariable varName : cond.getVarNames()) {
 
 			// logger.debug("Setting Value for "+varName);
 
@@ -383,6 +385,11 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				}
 			} else { // historic
 				newValue = getValue(port, instance, varName);
+			}
+			// I think, this can only happend, if there is an error in
+			// the expression (wrong var name used)
+			if (newValue == null){
+				return false;
 			}
 			// Set Value in Expression to evaluate
 			transition.getCondition().setValue(varName, newValue);
@@ -408,6 +415,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			for(State negBeforeFinal: negState) {
 				for (StateMachineInstance<R> instance : outofWindowInstances) {
 					if (instance.getCurrentState().equals(negBeforeFinal)){
+						logger.debug("Instance terminated with negative last state --> fire");
 						createEvent(outdatedInstances, port, complexEvents,
 								instance);	
 						// Hint: The corresponding automata is already outdated,

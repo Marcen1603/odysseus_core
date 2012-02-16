@@ -175,7 +175,7 @@ public class Router extends Thread implements IConnection {
 				//e1.printStackTrace();
 			}catch(ConnectException ce){
 				//ce.printStackTrace();
-				getLogger().debug("Connection refused. "+ce.getMessage());
+				getLogger().error("Connection refused. "+ce.getMessage());
 				notifyConnectionListeners(ConnectionMessageReason.ConnectionRefused);
 			}
 			catch(IOException ioe){

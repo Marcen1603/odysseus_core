@@ -15,16 +15,9 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
 import java.util.ArrayList;
-
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.AbstractTreeList;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.CEPEventListener;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
-import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
-import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
-import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
-import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -36,6 +29,15 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.AbstractTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.CEPEventListener;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.NormalTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.QueryTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.list.StatusTreeList;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
+import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
+import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
@@ -51,7 +53,7 @@ public class CEPListView extends ViewPart {
 	// the event listener
 	private CEPEventListener listener;
 	// the list of CepOperators handled by the CEPViewer
-	private ArrayList<CepOperator<?, ?>> operators;
+	private List<CepOperator<?, ?>> operators;
 	// the widgets for the list view.
 	private Label infoLabel;
 	private NormalTreeList normalList;
@@ -211,8 +213,8 @@ public class CEPListView extends ViewPart {
 	 * 
 	 * @return the list of handled CepOperators
 	 */
-	public ArrayList<CepOperator<?, ?>> getOperators() {
-		return operators;
+	public List<CepOperator<?, ?>> getOperators() {
+		return Collections.unmodifiableList(operators);
 	}
 
 	/**
@@ -231,6 +233,10 @@ public class CEPListView extends ViewPart {
 	 */
 	public StatusTreeList getStatusList() {
 		return statusList;
+	}
+
+	public void add(CepOperator<?, ?> operator) {
+		this.operators.add(operator);
 	}
 
 }

@@ -102,8 +102,8 @@ public class CepAO<T> extends AbstractLogicalOperator implements
 			secondStateMachine.setInitialState(newStates.get(0).getId());
 			secondStateMachine.getSymTabScheme(true);
 
-			System.err.println(firstStateMachine);
-			System.err.println(secondStateMachine);
+//			System.err.println(firstStateMachine);
+//			System.err.println(secondStateMachine);
 		}
 
 	}

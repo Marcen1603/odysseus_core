@@ -69,7 +69,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 				throw new CEPListViewNotFoundException();
 			}
 			// initialize ICEPEventListener
-			listView.getOperators().add(operator);
+			listView.add(operator);
 			operator.getCEPEventAgent().addCEPEventListener(
 					listView.getListener());
 			// add the instances of the operator
