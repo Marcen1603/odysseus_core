@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.cep.epa.exceptions.ConditionEvaluationException;
 import de.uniol.inf.is.odysseus.cep.epa.exceptions.InvalidEventException;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.IOutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
@@ -169,6 +170,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	public void process_internal(R event, int port) {
 		synchronized (stateMachines) {
 			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
+			LinkedList<StateMachineInstance<R>> outofWindowInstances = new LinkedList<StateMachineInstance<R>>();
 			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 			for (StateMachine<R> sm : stateMachines) {
 
@@ -202,17 +204,18 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							"The event to be processed is null.");
 
 				validateTransitions(sm, event, outdatedInstances,
-						branchedInstances, port);
+						outofWindowInstances, branchedInstances, port);
 				addInstances(sm, branchedInstances);
 
 			}
 			LinkedList<W> complexEvents = null;
-			complexEvents = validateFinalStates(outdatedInstances, port);
-			
+			complexEvents = validateFinalStates(outdatedInstances,
+					outofWindowInstances, port);
+
 			for (StateMachine<R> sm : stateMachines) {
 				removeInstances(sm, outdatedInstances);
 			}
-			
+
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
 					if (logger.isDebugEnabled()) {
@@ -253,23 +256,17 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private void validateTransitions(StateMachine<R> sm, R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
+			LinkedList<StateMachineInstance<R>> outofWindowInstances,
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
 		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
 			if (logger.isDebugEnabled())
 				logger.debug("Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
-			boolean outofWindow = false;
+			boolean outOfTime = false;
 
 			for (Transition transition : instance.getCurrentState()
 					.getTransitions()) {
-				// logger.debug("Evaluating: " + transition + " on event " +
-				// event);
-				// Terminate if out of Window
-				if (outofWindow) {
-					this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, instance);
-					break;
-				}
 
 				// Check Time
 				if (sm.getWindowSize() > 0) {
@@ -277,9 +274,12 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							instance.getStartTimestamp(),
 							eventReader.get(port).getTime(event),
 							sm.getWindowSize())) {
-						outofWindow = true;
 						// logger.debug(instance + " Out of Window ...");
-						continue;
+						this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED,
+								instance);
+						outofWindowInstances.add(instance);
+						outOfTime = true;
+						break;
 					}
 				}
 				/**
@@ -314,36 +314,41 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 									+ transition.getCondition(), e);
 				}
 			} // for (Transition transition...)
-			if (transitionsToTake.isEmpty()) {
-				if (logger.isDebugEnabled())
-					logger.debug("No transition on " + instance);
+			if (!outOfTime) {
+				if (transitionsToTake.isEmpty()) {
+					if (logger.isDebugEnabled())
+						logger.debug("No transition on " + instance);
 
-				// no transition on this instance, mark for removal
-				outdatedInstances.add(instance);
-				// this.branchingBuffer.removeBranch(instance);
-			} else {
-				if (transitionsToTake.size() == 1) {
-					// execute transition
-					instance.takeTransition(transitionsToTake.remove(0), event,
-							eventReader.get(port));
-					this.agent.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
+					// no transition on this instance, mark for removal
+					outdatedInstances.add(instance);
+					// this.branchingBuffer.removeBranch(instance);
 				} else {
-					// execute possible further transitions on new instances
-					// because it must be cloned from current instance,
-					// make takeTransition on current instance last
-					while (transitionsToTake.size() > 1) {
-						StateMachineInstance<R> newInstance = instance.clone();
-						Transition toTake = transitionsToTake.remove(0);
-						newInstance.takeTransition(toTake, event,
-								eventReader.get(port));
-						// this.branchingBuffer.addBranch(instance,
-						// newInstance);
-						branchedInstances.add(newInstance);
+					if (transitionsToTake.size() == 1) {
+						// execute transition
+						instance.takeTransition(transitionsToTake.remove(0),
+								event, eventReader.get(port));
+						this.agent
+								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
+					} else {
+						// execute possible further transitions on new instances
+						// because it must be cloned from current instance,
+						// make takeTransition on current instance last
+						while (transitionsToTake.size() > 1) {
+							StateMachineInstance<R> newInstance = instance
+									.clone();
+							Transition toTake = transitionsToTake.remove(0);
+							newInstance.takeTransition(toTake, event,
+									eventReader.get(port));
+							// this.branchingBuffer.addBranch(instance,
+							// newInstance);
+							branchedInstances.add(newInstance);
+						}
+						// Now its save to update current Transition
+						instance.takeTransition(transitionsToTake.remove(0),
+								event, eventReader.get(port));
+						this.agent
+								.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 					}
-					// Now its save to update current Transition
-					instance.takeTransition(transitionsToTake.remove(0), event,
-							eventReader.get(port));
-					this.agent.fireCEPEvent(CEPEvent.CHANGE_STATE, instance);
 				}
 			}
 			if (logger.isDebugEnabled()) {
@@ -389,50 +394,76 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	private LinkedList<W> validateFinalStates(
-			LinkedList<StateMachineInstance<R>> outdatedInstances, int port) {
+			LinkedList<StateMachineInstance<R>> outdatedInstances,
+			LinkedList<StateMachineInstance<R>> outofWindowInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
-		
+
 		if (stateMachines.size() > 1) {
+
+			List<State> negState = stateMachines.get(0).getNegativeStateBeforeFinal();
+			// Test outofWindowInstances --> Could be that the last state is
+			// negative,
+			// and the state machine reached the state before this last state in
+			// this case
+			for(State negBeforeFinal: negState) {
+				for (StateMachineInstance<R> instance : outofWindowInstances) {
+					if (instance.getCurrentState().equals(negBeforeFinal)){
+						createEvent(outdatedInstances, port, complexEvents,
+								instance);	
+						// Hint: The corresponding automata is already outdated,
+						// because it does not have this negative state
+						// TODO: What about transisitions?
+					}
+				}
+			}
+
 			// First test if the second machine reaches final state
-			for (StateMachineInstance<R> instance : getInstances(stateMachines.get(1))) {
-				
+			for (StateMachineInstance<R> instance : getInstances(stateMachines
+					.get(1))) {
+
 				/*
 				 * Durch das Markieren der veralteten Automateninstanzen und das
-				 * nachträgliche entfernen, kann instance bereits veraltet sein.
-				 * Diese muss damit als gelöscht gelten, obwohl sie noch in der
-				 * Instanzen-Liste enthalten ist. Eine Verarbeitung solcher
-				 * Instanzen kann eventuell zu fehlerhaftem Verhalten führen. Um
-				 * das zu verhindern, müssen diese Instanzen bei der Verarbeitung
-				 * übersprungen werden.
+				 * nachträgliche entfernen, kann instance bereits veraltet
+				 * sein. Diese muss damit als gelöscht gelten, obwohl sie noch
+				 * in der Instanzen-Liste enthalten ist. Eine Verarbeitung
+				 * solcher Instanzen kann eventuell zu fehlerhaftem Verhalten
+				 * führen. Um das zu verhindern, müssen diese Instanzen bei
+				 * der Verarbeitung übersprungen werden.
 				 */
 				if (outdatedInstances.contains(instance))
 					continue;
-				
-				if (instance.getCurrentState().isAccepting()) { 
+
+				if (instance.getCurrentState().isAccepting()) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Reached final state in negative instance " + instance);
+						logger.debug("Reached final state in negative instance "
+								+ instance);
 					}
-					// if there is an accepting instance in the first list, DO NOT FIRE! 
-					for (StateMachineInstance<R> negativeInstance : getInstances(stateMachines.get(0))) {
+					// if there is an accepting instance in the first list, DO
+					// NOT FIRE!
+					for (StateMachineInstance<R> negativeInstance : getInstances(stateMachines
+							.get(0))) {
 						if (outdatedInstances.contains(negativeInstance))
 							continue;
-						
-						// TODO: It should be any instance, because they all consumed the same events, in the same order
-						if (negativeInstance.getCurrentState().isAccepting()){
+
+						// TODO: It should be any instance, because they all
+						// consumed the same events, in the same order
+						if (negativeInstance.getCurrentState().isAccepting()) {
 							break;
 						}
 						// No accepting instance found --> fire event
-						createEvent(outdatedInstances, port, complexEvents, negativeInstance);
+						createEvent(outdatedInstances, port, complexEvents,
+								negativeInstance);
 						outdatedInstances.add(instance);
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
-		for (StateMachineInstance<R> instance : getInstances(stateMachines.get(0))) {
+
+		for (StateMachineInstance<R> instance : getInstances(stateMachines
+				.get(0))) {
 
 			if (outdatedInstances.contains(instance))
 				continue;
@@ -460,21 +491,21 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (value != null) {
 					entry.setValue(varName, value);
 				} else {
-					logger.warn("Variable " + varName
-							+ " has no value!");
+					logger.warn("Variable " + varName + " has no value!");
 				}
 			}
 		}
-		complexEvents.add(this.complexEventFactory.createComplexEvent(
-				this.stateMachines.get(0).getOutputScheme(),
-				instance.getMatchingTrace(),
-				instance.getSymTab(),
-				new PointInTime(getEventReader().get(port).getTime(
-						instance.getMatchingTrace().getLastEvent()
-								.getEvent()))));
+		complexEvents
+				.add(this.complexEventFactory.createComplexEvent(
+						this.stateMachines.get(0).getOutputScheme(),
+						instance.getMatchingTrace(),
+						instance.getSymTab(),
+						new PointInTime(getEventReader().get(port).getTime(
+								instance.getMatchingTrace().getLastEvent()
+										.getEvent()))));
 		/*
-		 * An dieser Stelle muss die Instanz, die zum Complex Event
-		 * gefuehrt hat, als veraltet markiert werden. 
+		 * An dieser Stelle muss die Instanz, die zum Complex Event gefuehrt
+		 * hat, als veraltet markiert werden.
 		 */
 		outdatedInstances.add(instance);
 	}

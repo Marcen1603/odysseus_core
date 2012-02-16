@@ -66,6 +66,8 @@ public class StateMachine<E> implements Serializable {
 
 	private EEventSelectionStrategy eventSelectionStrategy;
 
+	private List<State> negBefFinal = null;
+
 	public EEventSelectionStrategy getEventSelectionStrategy() {
 		return eventSelectionStrategy;
 	}
@@ -192,6 +194,7 @@ public class StateMachine<E> implements Serializable {
 				}
 			}
 		}
+		calcNegBeforeFinalStates();
 	}
 
 	/**
@@ -327,6 +330,26 @@ public class StateMachine<E> implements Serializable {
 		}
 
 		return set;
+	}
+
+	private void calcNegBeforeFinalStates(){
+		List<State> finalStates = getFinalStates();
+		negBefFinal  = new ArrayList<State>();
+		for (State s:finalStates){
+			List<State> beFinal = getSourceStates(s);
+			for (State bf: beFinal){
+				if (bf.isNegated()){
+					negBefFinal.add(bf);
+				}
+			}
+		}
+	}
+	
+	public synchronized List<State> getNegativeStateBeforeFinal() {
+		if (negBefFinal == null){
+			calcNegBeforeFinalStates();
+		}
+		return negBefFinal;
 	}
 
 
