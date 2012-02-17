@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.mep.functions.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.CeilFunction;
+import de.uniol.inf.is.odysseus.mep.functions.ContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.CosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.DoubleToFloatFunction;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.mep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.mep.functions.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.IfFunction;
+import de.uniol.inf.is.odysseus.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.ModuloOperator;
 import de.uniol.inf.is.odysseus.mep.functions.MultiplicationOperator;
@@ -130,6 +132,10 @@ public class MEP {
 		
 		registerFunction(new ToRadians());
 		registerFunction(new ToDegrees());
+		
+		registerFunction(new LikeFunction());
+		registerFunction(new ContainsFunction());
+		
 	}
 
 	public static void registerFunction(IFunction<?> function) {
