@@ -1,0 +1,10 @@
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\bin\Debug\Odysseus Remote Client.exe.config
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\bin\Debug\Odysseus Remote Client.exe
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\bin\Debug\Odysseus Remote Client.pdb
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\Odysseus_Remote_Client.MainForm.resources
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\Odysseus_Remote_Client.Properties.Resources.resources
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\GenerateResource.read.1.tlog
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\GenerateResource.write.1.tlog
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\Odysseus Remote Client.exe
+E:\Workspace\Odysseus\trunk\application\dotnet_remote_client\Odysseus Remote Client\Odysseus Remote Client\obj\x86\Debug\Odysseus Remote Client.pdb
