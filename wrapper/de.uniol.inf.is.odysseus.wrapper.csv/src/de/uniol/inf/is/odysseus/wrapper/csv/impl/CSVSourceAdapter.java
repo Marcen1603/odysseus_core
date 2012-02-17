@@ -13,6 +13,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
+
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
@@ -30,6 +33,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 
 	@Override
 	protected void doInit(final SourceSpec source) {
+		System.out.println("-------------------------------------------> Start CSV ADAPTER");
 		int port = 4444;
 		if (source.getConfiguration().containsKey("port")) {
 			port = Integer.parseInt(source.getConfiguration().get("port")
@@ -60,6 +64,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 				this.serverSocket = new ServerSocket(port);
 				this.source = source;
 				this.adapter = adapter;
+				System.out.print("Init CSV Adapter on " + port);
 			} catch (final IOException e) {
 				CSVSourceAdapter.LOG.error(e.getMessage(), e);
 			}
@@ -67,6 +72,7 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 
 		@Override
 		public void run() {
+			System.out.print("Start CSV Adapter on " +serverSocket.getLocalSocketAddress().toString());
 			final List<Thread> processingThreads = new ArrayList<Thread>();
 			while (!Thread.currentThread().isInterrupted()) {
 				Socket socket;
@@ -90,12 +96,14 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 			private final Socket server;
 			private final CSVSourceAdapter adapter;
 			private SourceSpec source;
+			private WKTReader reader;
 
 			public CSVProcessor(final SourceSpec source, final Socket server,
 					final CSVSourceAdapter adapter) {
 				this.server = server;
 				this.adapter = adapter;
 				this.source = source;
+				this.reader = new WKTReader();
 			}
 
 			@Override
@@ -108,20 +116,24 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 					if (line != null) {
 						while (((line = reader.readLine()) != null)
 								&& (!Thread.currentThread().isInterrupted())) {
+							//final String[] values = line.split(";");
 							final String[] values = line.split(",");
-								
 							/*
 							 * @FIXME
 							 * System.currentTimeMillis() replace optional by incoming timestamp
 							 * 
 							 */
-							 this.adapter.transfer(this.source, System.currentTimeMillis(), values);
-
+							//final Object[] objects = new Object[1];
+							//objects[0] = this.reader.read(values[0]);
+							
+							//this.adapter.transfer(this.source, System.currentTimeMillis(), objects);
+							this.adapter.transfer(this.source, System.currentTimeMillis(), values);
 						}
 					}
 				} catch (final IOException e) {
 					CSVSourceAdapter.LOG.error(e.getMessage(), e);
 				}
+				
 			}
 		}
 

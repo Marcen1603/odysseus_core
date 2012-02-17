@@ -80,8 +80,11 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 		// the geo data
 		int length = buffer.getInt();
 		byte[] binData = new byte[length];
+		
+		//System.out.println("Read: " + binData.length);
 		buffer.get(binData);
-
+		//System.out.println("Read: " + binData.length);
+		
 		try {
 			return this.reader.read(binData);
 		} catch (ParseException e) {
@@ -97,6 +100,7 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		byte[] binData = this.writer.write((Geometry) data);
+		
 //
 //		// split integer into 4 bytes
 //		byte[] length = this.intToByteArray(binData.length);
@@ -108,6 +112,11 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 //		System.arraycopy(binData, 0, dataAndLength, length.length, binData.length);
 //		
 		buffer.putInt(binData.length);
+		
+		//System.out.println(buffer.capacity());
+		
+		//System.out.println("Send: " + binData.length);
+		
 		// put the data into the byte buffer
 		buffer.put(binData);
 	}

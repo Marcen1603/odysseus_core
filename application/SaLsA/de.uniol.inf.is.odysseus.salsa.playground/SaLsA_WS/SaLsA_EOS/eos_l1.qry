@@ -1,0 +1,12 @@
+#PARSER PQL
+#TRANSCFG Standard 
+#QUERY
+
+
+///Das Geheimnis ist die Standard TransformationConfiguration zu nutzen. ^^
+
+
+ServerSinkSocket = access({source='ServerSinkSocket', host='localhost', port=9999, type='RelationalByteBufferAccessPO', schema = [['scan', 'SpatialPolygon']]})
+sink 			= VPOLYGONSINK(ServerSinkSocket)        
+         
+         
