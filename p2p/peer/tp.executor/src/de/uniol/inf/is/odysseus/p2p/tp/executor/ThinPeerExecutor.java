@@ -68,8 +68,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		if (!sources.contains(adv)){
 			logger.debug("Found new Source "+adv.getPeerID()+" with "+adv.getSourceName());
 			sources.add(adv);
-			// FIXME: No DD on Client-Side
-			//thinPeer.addToDD(adv, getDataDictionary(), caller);
 		}
 	}
 	

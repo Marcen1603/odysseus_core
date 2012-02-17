@@ -111,8 +111,8 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
 		getLogger().debug("Activate Admin Peer");
 
 		// TODO: Nutzer auslesen
-		String username = "";
-		String password = "";
+		String username = "System";
+		String password = "manager";
 		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
 		P2PUserContext.setActiveSession("",user);
 

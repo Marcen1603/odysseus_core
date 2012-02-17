@@ -41,11 +41,11 @@ public abstract class P2PQuery implements Serializable{
 	public P2PQuery(){
 	}
 	
-	public P2PQuery(String query, String queryID, ISession user) {
-		setDeclarativeQuery(queryID);
-		setId(queryID);
-		this.user = user;
-	}
+//	public P2PQuery(String query, String queryID, ISession user) {
+//		setDeclarativeQuery(queryID);
+//		setId(queryID);
+//		this.user = user;
+//	}
 
 	public void updateWith(P2PQuery query) {
 		this.declarativeQuery = query.getDeclarativeQuery();

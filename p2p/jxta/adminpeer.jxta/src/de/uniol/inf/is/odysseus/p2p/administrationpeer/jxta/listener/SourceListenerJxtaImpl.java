@@ -25,18 +25,22 @@ import net.jxta.protocol.DiscoveryResponseMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.jxta.AdministrationPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.ISourceListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * Operator-Peers mit Quellen werden separat ausgeschrieben, so dass diese
  * gesondert gesucht und eingetragen werden
  * 
- * @author Mart KÃ¶hler
+ * @author Mart Koehler, Marco Grawunder
  * 
  */
 public class SourceListenerJxtaImpl implements ISourceListener,
@@ -48,6 +52,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	private int WAIT_TIME = 10000;
 
 	private IExecutor executor;
+	private IDataDictionary dd;
 
 	private AdministrationPeerJxtaImpl administrationPeerJxtaImpl;
 
@@ -61,6 +66,7 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 	public SourceListenerJxtaImpl(IExecutor executor,
 			AdministrationPeerJxtaImpl administrationPeerJxtaImpl) {
 		this.executor = executor;
+		this.dd = ((IServerExecutor)executor).getDataDictionary();
 		this.administrationPeerJxtaImpl = administrationPeerJxtaImpl;
 	}
 
@@ -96,35 +102,30 @@ public class SourceListenerJxtaImpl implements ISourceListener,
 						
 						// Login des users?
 						String viewname = adv.getSourceName();
-
-						// FIXME: DAS MACHT SO ÜBERHAUPT KEINEN SINN!
 						
 						// Nur eintragen, wenn nicht eh schon vorhanden
-//						if (executor.getDataDictionary().containsViewOrStream(
-//								adv.getSourceName(), caller)) {
-//
-//							String sourceType = adv.getSourceType();
-//
-//
-//							ILogicalOperator topOperator = (ILogicalOperator) AdvertisementTools
-//									.fromBase64String(adv.getLogicalPlan());
-//							SDFEntity entity = (SDFEntity) AdvertisementTools
-//									.fromBase64String(adv.getEntity());
-//
-//							logger.debug("Adding to DD " + adv.getSourceName()
-//									+ " " + sourceType + " as "+entity);
-//							
-//							executor.getDataDictionary().addSourceType(viewname, sourceType);
-//							executor.getDataDictionary().addEntity(viewname, entity, caller);
-//							if (adv.isView()) {
-//								executor.getDataDictionary().setView(viewname, topOperator,
-//										caller);
-//							} else {
-//								executor.getDataDictionary().setStream(viewname, topOperator,
-//										caller);
-//							}
-//						}
-//					} else {
+						if (dd.containsViewOrStream(
+								adv.getSourceName(), caller)) {
+
+							String sourceType = adv.getSourceType();
+
+
+							ILogicalOperator topOperator = (ILogicalOperator) AdvertisementTools
+									.fromBase64String(adv.getLogicalPlan());
+
+							logger.debug("Adding to DD " + adv.getSourceName()
+									+ " " + sourceType);
+							
+							dd.addSourceType(viewname, sourceType);
+							if (adv.isView()) {
+								dd.setView(viewname, topOperator,
+										caller);
+							} else {
+								dd.setStream(viewname, topOperator,
+										caller);
+							}
+						}
+					} else {
 						return;
 					}
 				} catch (Exception e) {

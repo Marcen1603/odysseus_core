@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryTranslationSpezific
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.UsernameNotExistException;
@@ -168,6 +169,7 @@ public class APQuerySpezificationListenerJxtaImpl implements
 		q.setLanguage(adv.getLanguage());
 		q.setDeclarativeQuery(adv.getQuery());
 		q.setUser(user);
+		q.setDataDictionary(((IServerExecutor)administrationPeerJxtaImpl.getExecutor()).getDataDictionary());
 		q.setResponseSocketThinPeer(pipeAdv);
 		return q;
 	}
