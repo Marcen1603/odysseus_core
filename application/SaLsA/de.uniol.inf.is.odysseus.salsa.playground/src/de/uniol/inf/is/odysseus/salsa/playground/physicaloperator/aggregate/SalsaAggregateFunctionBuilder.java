@@ -13,7 +13,7 @@ public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder 
 
 	private static Collection<String> names = new LinkedList<String>();
 	{
-		names.add("PMERGE");
+	//	names.add("PMERGE");
 //		names.add("AVG");
 //		names.add("SUM");
 //		names.add("COUNT");
@@ -31,7 +31,7 @@ public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder 
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
 		
 		if(key.getName().equalsIgnoreCase("PMERGE")) {
-			aggFunc = new RelationalPolygonAggregation(pos);
+			//aggFunc = new RelationalPolygonAggregation(pos);
 		} 
 //		else if(key.getName().equalsIgnoreCase("Dummy_2")){
 //			
