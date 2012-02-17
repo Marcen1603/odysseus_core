@@ -1,0 +1,44 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa 
+
+/// Nur das query, dass die LMS Scanner anspricht benštigt die salsa TransCFG.(Server)
+/// Der Client braucht immer die StandardCFG
+/// Problem timestamp Ÿbertragung.
+
+#QUERY
+
+/// LMS1 Scanner
+///Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:false'], adapter = 'Sick'})  
+Lms1 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms1 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan,200.0,316.0), 0.00)']},Lms1)
+Rename_Lms1 = RENAME({aliases = ['scan']}, Rot_Lms1)
+
+Window_Lms1 = WINDOW({type = 'time', size = 20, advance = 60}, Rename_Lms1)
+///Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['IEPF(scan, 20.0)']}, Window_Lms1))
+Segments_Lms1 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms1))
+
+Lms2 = ADAPTER({schema = ['scan:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'record:200'], adapter = 'Sick'})  
+
+Rot_Lms2 = MAP({expressions = ['RotateViewPoint(MoveViewPoint(scan, -421.0,-330.0),0.00)']},Lms2)
+Rename_Lms2 = RENAME({aliases = ['scan']}, Rot_Lms2)
+
+Window_Lms2 = WINDOW({type = 'time', size = 20, advance = 60}, Rename_Lms2)
+Segments_Lms2 = RENAME({aliases = ['scan']},MAP({expressions = ['ExtractSegments(scan, 20.0)']}, Window_Lms2))
+
+///InsertPunctuation =  punctuation({ratio = 20},Segments_Lms1,Segments_Lms2)
+///Combined = UNION(InsertPunctuation,Segments_Lms2)
+
+Combined = UNION(Segments_Lms1,Segments_Lms2)
+
+///Output
+Unested 		= UNNEST({attribute = 'scan'}, Combined)
+ConvexHull 		= RENAME({aliases = ['scan']},MAP({expressions = ['SpatialConvexHull(scan)']},Unested))
+poly 			= SELECT({predicate = RelationalPredicate('SpatialIsPolygon(scan)')},RENAME({aliases = ['scan']},MAP({expressions = ['AsPolygon(scan)']},ConvexHull)))
+
+///poly 			= SELECT({predicate = RelationalPredicate('AsPolygon(scan)')},ConvexHull)
+///poly 			= SELECT({predicate = RelationalPredicate('SpatialIsPolygon(scan)')},ConvexHull)
+
+///sink 			= VPOLYGONSINK(poly)
+socket			= SOCKETSINK({SINKNAME='SaLsASink',SINKPORT=9999,SINKTYPE='bytebuffer',LOGINNEEDED='false'},poly)
