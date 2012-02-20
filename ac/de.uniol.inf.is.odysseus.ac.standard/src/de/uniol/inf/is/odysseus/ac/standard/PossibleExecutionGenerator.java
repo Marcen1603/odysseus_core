@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.costmodel.ICost;
 import de.uniol.inf.is.odysseus.costmodel.ICostModel;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Standardimplementierung von {@link IPossibleExecutionGenerator}.
@@ -33,7 +33,7 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 	}
 
 	@Override
-	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IQuery, ICost> queryCosts, ICost maxCost) {
+	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost) {
 
 		List<IPossibleExecution> poss = new ArrayList<IPossibleExecution>();
 
@@ -47,7 +47,7 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
 		int cmp = costSum.compareTo(maxCost);
 		if (cmp == -1 || cmp == 0) {
-			poss.add(new StandardPossibleExecution(queryCosts.keySet(), new ArrayList<IQuery>(), costSum));
+			poss.add(new StandardPossibleExecution(queryCosts.keySet(), new ArrayList<IPhysicalQuery>(), costSum));
 			getLogger().debug("Possible Execution: execute all queries");
 			return poss;
 		}
@@ -57,16 +57,16 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 		ICostModel cm = stdAC.getSelectedCostModelInstance();
 		if( queryCosts.size() == 1 ) {
 			// nur eine Anfrage, die gestoppt werden sollte
-			poss.add(new StandardPossibleExecution(new ArrayList<IQuery>(), queryCosts.keySet(), cm.getZeroCost()));
+			poss.add(new StandardPossibleExecution(new ArrayList<IPhysicalQuery>(), queryCosts.keySet(), cm.getZeroCost()));
 			return poss;
 		}
 
 		// generate exactly one possible execution
 		// brute-force too load-heavy
-		List<IQuery> runningQueries = new ArrayList<IQuery>();
-		List<IQuery> stoppingQueries = new ArrayList<IQuery>();
+		List<IPhysicalQuery> runningQueries = new ArrayList<IPhysicalQuery>();
+		List<IPhysicalQuery> stoppingQueries = new ArrayList<IPhysicalQuery>();
 		ICost actSum = cm.getZeroCost();
-		for( IQuery query : queryCosts.keySet() ) {
+		for( IPhysicalQuery query : queryCosts.keySet() ) {
 			ICost cost = queryCosts.get(query);
 			ICost newSum = actSum.merge(cost);
 			if( newSum.compareTo(maxCost) < 0 ) {

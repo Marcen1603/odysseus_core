@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
@@ -44,7 +44,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	/**
 	 * reference to the related query, required for violationEvent generation
 	 */
-	private IQuery query;
+	private IPhysicalQuery query;
 	/**
 	 * timestamp marking the end of the evaluation window of the sla conformance
 	 * in milliseconds
@@ -75,7 +75,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 *            the related query
 	 */
 	public AbstractSLaConformance(ISLAViolationEventDistributor dist, SLA sla,
-			IQuery query) {
+			IPhysicalQuery query) {
 		this.distributor = dist;
 		this.sla = sla;
 		this.query = query;
@@ -113,7 +113,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		return this.sla;
 	}
 
-	protected IQuery getQuery() {
+	protected IPhysicalQuery getQuery() {
 		return query;
 	}
 

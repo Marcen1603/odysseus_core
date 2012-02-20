@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -67,7 +67,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	protected IStore<String, IUser> entityFromUser;
 	protected IStore<String, String> sourceTypeMap;
 	protected IStore<String, SDFDatatype> datatypes;
-	protected IStore<Integer, IQuery> savedQueries;
+	protected IStore<Integer, ILogicalQuery> savedQueries;
 	protected IStore<Integer, IUser> savedQueriesForUser;
 
 	protected IStore<String, ILogicalOperator> sinkDefinitions;
@@ -489,14 +489,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	// ----------------------------------------------------------------------------
 
 	@Override
-	public void addQuery(IQuery q, ISession caller) {
+	public void addQuery(ILogicalQuery q, ISession caller) {
 		this.savedQueries.put(q.getID(), q);
 		this.savedQueriesForUser.put(q.getID(), caller.getUser());
 
 	}
 
 	@Override
-	public IQuery getQuery(int id, ISession caller) {
+	public ILogicalQuery getQuery(int id, ISession caller) {
 		if (hasPermission(caller, ExecutorPermission.ADD_QUERY, ExecutorPermission.objectURI)) {
 			return this.savedQueries.get(id);
 		} else {
@@ -505,11 +505,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public List<IQuery> getQueries(IUser user, ISession caller) {
-		List<IQuery> queries = new ArrayList<IQuery>();
+	public List<ILogicalQuery> getQueries(IUser user, ISession caller) {
+		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
 		for (Entry<Integer, IUser> e : savedQueriesForUser.entrySet()) {
 			if (e.getValue().equals(user)) {
-				IQuery query = getQuery(e.getKey(), caller);
+				ILogicalQuery query = getQuery(e.getKey(), caller);
 				if (query != null) {
 					queries.add(query);
 				}
@@ -519,7 +519,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 	}
 
 	@Override
-	public void removeQuery(IQuery q, ISession caller) {
+	public void removeQuery(ILogicalQuery q, ISession caller) {
 		this.savedQueries.remove(q.getID());
 		this.savedQueriesForUser.remove(q.getID());
 	}

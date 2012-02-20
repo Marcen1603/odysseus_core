@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Zentrale Schnittstelle der Admission Control in Odysseus. Die aktuelle
@@ -17,22 +17,22 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 public interface IAdmissionControl {
 
 	/**
-	 * Gibt zurück, ob die gegebene {@link IQuery} unter Berücksichtigung der
+	 * Gibt zurück, ob die gegebene {@link ILogicalQuery} unter Berücksichtigung der
 	 * aktuellen Gesamtkosten ausgeführt werden könnte, ohne die maximalen
 	 * Kosten zu übersteigen.
 	 * 
 	 * @param query
-	 *            {@link IQuery}, dessen potenzielle Ausführung geprüft werden
+	 *            {@link ILogicalQuery}, dessen potenzielle Ausführung geprüft werden
 	 *            soll.
 	 * 
-	 * @return <code>true</code>, falls die {@link IQuery} ohne Überschreitung
+	 * @return <code>true</code>, falls die {@link ILogicalQuery} ohne Überschreitung
 	 *         der maximalen Kosten ausgeführt werden kann, sonst
 	 *         <code>false</code>.
 	 */
-	public boolean canStartQuery(IQuery query);
+	public boolean canStartQuery(IPhysicalQuery query);
 
 	/**
-	 * Liefert die aktuelle Kostenschätzung zur gegebenen {@link IQuery} zurück.
+	 * Liefert die aktuelle Kostenschätzung zur gegebenen {@link ILogicalQuery} zurück.
 	 * Liegt keine Kostenschätzung vor (bspw. die Anfrage wurde dem
 	 * Ausführungsplan noch nicht hinzugefügt), wird <code>null</code>
 	 * zurückgegeben.
@@ -42,7 +42,7 @@ public interface IAdmissionControl {
 	 * @return Kostenschätzung als Instanz von {@link ICost}, oder
 	 *         <code>null</code>, falls noch keine Kostenschätzung vorliegt.
 	 */
-	public ICost getCost(IQuery query);
+	public ICost getCost(IPhysicalQuery query);
 
 	/**
 	 * Erzwingt eine erneute Kostenschätzung des Ausführungsplans, sodass die

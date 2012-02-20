@@ -147,6 +147,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	protected synchronized void updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
+		assert(elemToAdd != null);
 		R e_probe = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
 

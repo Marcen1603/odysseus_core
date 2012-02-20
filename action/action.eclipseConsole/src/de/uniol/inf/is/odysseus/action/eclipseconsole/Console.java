@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorManager;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -51,7 +51,7 @@ public class Console implements	org.eclipse.osgi.framework.console.CommandProvid
 		}
 		
 		try {
-			Collection<IQuery> ids = this.executer.addQuery(args[0], "ECA", user,"Standard");
+			Collection<ILogicalQuery> ids = this.executer.addQuery(args[0], "ECA", user,"Standard");
 			ci.println("Query installed successfully. QueryID is <"+ids.iterator().next()+">");
 		} catch (Exception e) {
 			ci.println(e.getMessage());

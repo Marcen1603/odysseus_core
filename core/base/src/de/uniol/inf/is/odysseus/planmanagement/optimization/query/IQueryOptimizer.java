@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query;
 
-import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -25,7 +24,8 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * Describes an object which optimizes a single query. Used for OSGi-services.
@@ -48,7 +48,7 @@ public interface IQueryOptimizer {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public void optimizeQuery(IQueryOptimizable sender, IQuery query,
+	public IPhysicalQuery optimizeQuery(IQueryOptimizable sender, ILogicalQuery query,
 			OptimizationConfiguration parameters, IDataDictionary dd) throws QueryOptimizationException;
 	
 	/**
@@ -67,8 +67,7 @@ public interface IQueryOptimizer {
 	 * @throws OpenFailedException
 	 *             An exception during plan initializing.
 	 */
-	public void postTransformationInit(IQuery query,
-			List<IPhysicalOperator> physicalPlan) throws QueryOptimizationException,
+	public void postTransformationInit(IPhysicalQuery query) throws QueryOptimizationException,
 			OpenFailedException;
 	
 	/**
@@ -90,6 +89,6 @@ public interface IQueryOptimizer {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, IQuery query,
+	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(IQueryOptimizable sender, ILogicalQuery query,
 			OptimizationConfiguration parameters) throws QueryOptimizationException;
 }

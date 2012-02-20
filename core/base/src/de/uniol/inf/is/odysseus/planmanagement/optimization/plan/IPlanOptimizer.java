@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Describes an object which optimizes global plan. Used for OSGi-services.
@@ -46,6 +46,6 @@ public interface IPlanOptimizer {
 	 *             An exception occurred during the optimization.
 	 */
 	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizationConfiguration parameters, List<IQuery> allQueries, IDataDictionary dd)
+			OptimizationConfiguration parameters, List<IPhysicalQuery> allQueries, IDataDictionary dd)
 			throws QueryOptimizationException;
 }

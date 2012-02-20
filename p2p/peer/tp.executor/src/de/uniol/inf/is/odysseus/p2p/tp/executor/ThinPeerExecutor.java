@@ -23,10 +23,9 @@ import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfigur
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
@@ -68,7 +67,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	
 
 	@Override
-	public Collection<IQuery> addQuery(String query, String parserID,
+	public Collection<ILogicalQuery> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		thinPeer.publishQuerySpezification(query, parserID, user);
@@ -151,22 +150,9 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		return null;
 	}
 
-	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<IQuery> startAllClosedQueries(ISession user) {
+	public List<IPhysicalQuery> startAllClosedQueries(ISession user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -220,18 +206,18 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public List<IQuery> translateQuery(String query, String parserID,
+	public List<ILogicalQuery> translateQuery(String query, String parserID,
 			ISession user) throws QueryParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void transform(IQuery query,
+	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
@@ -257,6 +243,21 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	public void reloadStoredQueries(ISession caller) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
+			ISession user, String queryBuildConfigurationName)
+			throws PlanManagementException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

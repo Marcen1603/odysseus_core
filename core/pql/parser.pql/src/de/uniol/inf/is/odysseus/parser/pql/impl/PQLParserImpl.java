@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.InputOperatorItem;
@@ -101,7 +101,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return dd;
   }
 
-  static final public List < IQuery > query() throws ParseException {
+  static final public List < ILogicalQuery > query() throws ParseException {
   Map < String, ILogicalOperator > namedOps = new HashMap < String, ILogicalOperator > ();
   Map < String, Map < String, Object > > namedOpParameters = new HashMap < String, Map < String, Object > > ();
   ILogicalOperator outputStream;
@@ -124,11 +124,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       roots.addAll(findRoots(op));
     }
-    List < IQuery > queries = new ArrayList < IQuery > ();
+    List < ILogicalQuery > queries = new ArrayList < ILogicalQuery > ();
     BeanInfo beanInfo;
     try
     {
-      beanInfo = Introspector.getBeanInfo(IQuery.class);
+      beanInfo = Introspector.getBeanInfo(ILogicalQuery.class);
     }
     catch (IntrospectionException e)
     {
@@ -143,7 +143,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator topOperator = opEntry.getValue();
       if (roots.contains(topOperator))
       {
-        IQuery query = new Query();
+        ILogicalQuery query = new Query();
         // Set Owners for query 
         AbstractTreeWalker walker = new AbstractTreeWalker();
         SetOwnerVisitor visitor = new SetOwnerVisitor(query);

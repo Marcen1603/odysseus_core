@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.bufferplacement.nobuffers;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * @author Jonas Jacobi
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 public class NoBuffersStrategy implements IBufferPlacementStrategy{
 
 	@Override
-	public void addBuffers(IPhysicalOperator plan) {
+	public void addBuffers(IPhysicalQuery plan) {
 	}
 
 	@Override

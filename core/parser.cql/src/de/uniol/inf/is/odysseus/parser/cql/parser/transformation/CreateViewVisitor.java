@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateViewStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CreateViewVisitor extends AbstractDefaultVisitor {
@@ -46,7 +46,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
-		ILogicalOperator operator = ((List<IQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
+		ILogicalOperator operator = ((List<ILogicalQuery>) parser.visit((ASTPriorizedStatement) node.jjtGetChild(1), null)).get(0).getLogicalPlan();
 		
 		if (dd.containsViewOrStream(viewName, caller)) {
 			throw new RuntimeException("ambigious name of view: " + viewName);

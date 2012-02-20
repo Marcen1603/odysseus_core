@@ -6,7 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Schnittstelle für alle Algorithmen, die aus einer Menge von Anfragen (mit
@@ -32,5 +32,5 @@ public interface IPossibleExecutionGenerator {
 	 *            Maximal zulässige Kosten
 	 * @return Liste an möglichen Vorschlägen zur Überlastkompensation.
 	 */
-	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl sender, Map<IQuery, ICost> queryCosts, ICost maxCost);
+	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl sender, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost);
 }

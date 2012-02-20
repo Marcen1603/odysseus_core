@@ -24,12 +24,12 @@ import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 
-	private List<IQuery> plans = new ArrayList<IQuery>();
+	private List<ILogicalQuery> plans = new ArrayList<ILogicalQuery>();
 
 	public MarkovQLVisitor(ISession user, IDataDictionary dd) {
 		
@@ -57,7 +57,7 @@ public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 		return hmm;
 	}	
 
-	public List<IQuery> getPlans() {		
+	public List<ILogicalQuery> getPlans() {		
 		return plans;
 	}
 

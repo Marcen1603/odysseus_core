@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTQuery;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.MarkovQLParser;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class MarkovQLBuilder implements BundleActivator, IQueryParser {
@@ -51,12 +51,12 @@ public class MarkovQLBuilder implements BundleActivator, IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {	
+	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {	
 		return parse(new StringReader(query),user, dd);
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		try {
 			if (this.parser == null) {
 				try {
@@ -72,8 +72,8 @@ public class MarkovQLBuilder implements BundleActivator, IQueryParser {
 			
 			MarkovQLVisitor mqlv = new MarkovQLVisitor(user, dd);
 			mqlv.visit(querie, null);
-			List<IQuery> queries = mqlv.getPlans();
-			for (IQuery query : queries) {
+			List<ILogicalQuery> queries = mqlv.getPlans();
+			for (ILogicalQuery query : queries) {
 				query.setParserId(getLanguage());
 			}
 			return queries;

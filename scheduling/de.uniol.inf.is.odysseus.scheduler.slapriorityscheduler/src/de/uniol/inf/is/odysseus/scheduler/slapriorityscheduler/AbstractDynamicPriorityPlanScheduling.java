@@ -22,7 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -37,10 +40,6 @@ import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator
 import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
-
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPartialPlanScheduling, ISLAViolationEventDistributor {
 	
@@ -53,7 +52,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	private LinkedList<SLAViolationEvent> eventQueue = new LinkedList<SLAViolationEvent>();
 	private List<ISLAViolationEventListener> listeners;
-	private Set<IQuery> extendedQueries = new HashSet<IQuery>();
+	private Set<IPhysicalQuery> extendedQueries = new HashSet<IPhysicalQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
 
 	private final OverheadMeasurement OVERHEAD = new OverheadMeasurement();
@@ -83,7 +82,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			// Init with Base Priority
 			scheduling.getPlan().setCurrentPriority(
 					scheduling.getPlan().getBasePriority());
-			IQuery query = scheduling.getPlan().getQueries().get(0);
+			IPhysicalQuery query = scheduling.getPlan().getQueries().get(0);
 			if (!this.extendedQueries.contains(query)) {
 				// add SLA conformance operator to plan for monitoring
 				this.extendedQueries.add(query);

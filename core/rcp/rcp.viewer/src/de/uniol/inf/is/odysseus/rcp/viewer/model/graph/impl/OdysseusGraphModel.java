@@ -15,24 +15,24 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 
 public class OdysseusGraphModel extends DefaultGraphModel<IPhysicalOperator> implements IOdysseusGraphModel {
 
-	private final IQuery query;
+	private final IPhysicalQuery query;
 	
 	public OdysseusGraphModel() {
 		this(null);
 	}
 	
-	public OdysseusGraphModel( IQuery query ) {
+	public OdysseusGraphModel( IPhysicalQuery query ) {
 		super();
 		this.query = query;
 	}
 	
 	@Override
-	public IQuery getQuery() {
+	public IPhysicalQuery getQuery() {
 		return query;
 	}
 	

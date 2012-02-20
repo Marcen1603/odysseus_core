@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.StandardSMQLParserVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -29,12 +29,12 @@ public class SMQLParserService implements IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		try {
 			if (parser == null) {
 				parser = new SMQLParser(reader);
@@ -47,7 +47,7 @@ public class SMQLParserService implements IQueryParser {
 			walker.print();
 			
 			List<ILogicalOperator> topOperators = walker.getTopOperators();
-			List<IQuery> queries = new ArrayList<IQuery>();
+			List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
 			for(ILogicalOperator op: topOperators){
 				Query query = new Query();
 				query.setParserId(getLanguage());		

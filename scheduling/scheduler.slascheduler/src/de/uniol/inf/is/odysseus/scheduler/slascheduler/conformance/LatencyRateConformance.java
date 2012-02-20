@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -43,7 +43,7 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 	 *            latency threshold that should not be exceeded
 	 */
 	public LatencyRateConformance(ISLAViolationEventDistributor dist, SLA sla,
-			IQuery query, double latencyThreshold) {
+			IPhysicalQuery query, double latencyThreshold) {
 		super(dist, sla, query);
 		this.numberOfViolations = 0;
 		this.totalNumber = 0;

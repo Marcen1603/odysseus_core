@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -124,12 +124,12 @@ public class ECAParser implements IQueryParser {
 		}
 	}
 
-	private List<IQuery> createNewPlan(
+	private List<ILogicalQuery> createNewPlan(
 			HashMap<Action, List<IActionParameter>> actions,
-			List<IQuery> plan) {
+			List<ILogicalQuery> plan) {
 		// not necessary cause top operator is always the one in the plan
 		// this.determineOutputOperator(plan.get(0));
-		IQuery query = plan.get(0);
+		ILogicalQuery query = plan.get(0);
 		ILogicalOperator outputOperator = query.getLogicalPlan();
 
 		// create new sink and subscribe to outputoperator
@@ -159,7 +159,7 @@ public class ECAParser implements IQueryParser {
 		return iLogicalOperator;
 	}
 
-	private SDFSchema determineSchema(List<IQuery> plan)
+	private SDFSchema determineSchema(List<ILogicalQuery> plan)
 			throws QueryParseException {
 		if (!plan.isEmpty()) {
 			if (plan.size() > 1) {
@@ -213,14 +213,14 @@ public class ECAParser implements IQueryParser {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		return null;
 	}
 
 	@Override
-	public List<IQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
@@ -241,7 +241,7 @@ public class ECAParser implements IQueryParser {
 				}
 
 				// create logical plan and retrieve schema
-				List<IQuery> plan = compiler.translateQuery(
+				List<ILogicalQuery> plan = compiler.translateQuery(
 						interalQuery, lang, user, dataDictionary);
 				SDFSchema schema = this.determineSchema(plan);
 

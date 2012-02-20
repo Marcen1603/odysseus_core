@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * central management of scheduling data
@@ -24,7 +24,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * mapping partial plans to their relevant data
 	 * TODO change mapping from pp to query
 	 */
-	private Map<IQuery, SLARegistryInfo> schedData;
+	private Map<IPhysicalQuery, SLARegistryInfo> schedData;
 	/**
 	 * reference to the scheduler owning this registry
 	 */
@@ -36,7 +36,7 @@ public class SLARegistry implements IPlanModificationListener {
 	public SLARegistry(SLAPartialPlanScheduling scheduler) {
 		super();
 		this.scheduler = scheduler;
-		this.schedData = new HashMap<IQuery, SLARegistryInfo>();
+		this.schedData = new HashMap<IPhysicalQuery, SLARegistryInfo>();
 		/*
 		 * the SLARegistry won't be registered as eventlistener to the executor
 		 * because the executor is now available here. instead the 
@@ -82,7 +82,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * @return the scheduling data relevant for the given partial plan or null 
 	 * if no data is stored for the given partial plan
 	 */
-	public SLARegistryInfo getData(IQuery query) {
+	public SLARegistryInfo getData(IPhysicalQuery query) {
 		return this.schedData.get(query);
 	}
 	
@@ -92,7 +92,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * @return the removed scheduling data or null if no scheduling data could 
 	 * be found for the given partial plan.
 	 */
-	private SLARegistryInfo removeSchedData(IQuery query) {
+	private SLARegistryInfo removeSchedData(IPhysicalQuery query) {
 		return this.schedData.remove(query);
 	}
 	
@@ -101,7 +101,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * @param plan the partial plan
 	 * @param data the scheduling data
 	 */
-	private void addSchedData(IQuery query, SLARegistryInfo data) {
+	private void addSchedData(IPhysicalQuery query, SLARegistryInfo data) {
 		this.schedData.put(query, data);
 	}
 
@@ -110,7 +110,7 @@ public class SLARegistry implements IPlanModificationListener {
 		PlanModificationEventType eventType = (PlanModificationEventType)eventArgs.getEventType(); 
 		switch (eventType) {
 		case QUERY_ADDED: {
-			IQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
+			IPhysicalQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
 			
 			SLARegistryInfo data = new SLARegistryInfo();
 			ISLAConformance conformance = new SLAConformanceFactory().
@@ -137,7 +137,7 @@ public class SLARegistry implements IPlanModificationListener {
 			break;
 		}
 		case QUERY_REMOVE: {
-			IQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
+			IPhysicalQuery query = ((QueryPlanModificationEvent)eventArgs).getValue();
 			
 			SLARegistryInfo data = this.removeSchedData(query);
 			
@@ -155,7 +155,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * @return a list of all buffers owned by the query. could be empty, if
 	 * 		the query ownes no buffers 
 	 */
-	private List<IBuffer<?>> findBuffers(IQuery query) {
+	private List<IBuffer<?>> findBuffers(IPhysicalQuery query) {
 		List<IBuffer<?>> buffers = new ArrayList<IBuffer<?>>();
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {

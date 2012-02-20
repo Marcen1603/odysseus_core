@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public class ExecutorHelper implements IPlanModificationListener {
 
@@ -51,7 +51,7 @@ public class ExecutorHelper implements IPlanModificationListener {
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		IQuery query = (IQuery) eventArgs.getValue();
+		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
 				.getEventType())) {
 			getLogger().debug("New query added.");
@@ -69,7 +69,7 @@ public class ExecutorHelper implements IPlanModificationListener {
 		}
 	}
 
-	private List<ISource<?>> getSources(IQuery query) {
+	private List<ISource<?>> getSources(IPhysicalQuery query) {
 		List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();
 

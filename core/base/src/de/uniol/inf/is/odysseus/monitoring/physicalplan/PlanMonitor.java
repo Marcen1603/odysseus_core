@@ -17,12 +17,12 @@ package de.uniol.inf.is.odysseus.monitoring.physicalplan;
 import de.uniol.inf.is.odysseus.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public class PlanMonitor extends AbstractPlanMonitor<Double> {
 
 	@SuppressWarnings("rawtypes")
-	public PlanMonitor(IQuery target, boolean onlyRoots, boolean onlyBuffer,
+	public PlanMonitor(IPhysicalQuery target, boolean onlyRoots, boolean onlyBuffer,
 			String monitoringType, long monitoringPeriod) {
 		super(target, onlyRoots, onlyBuffer, monitoringType);
 		for (IPhysicalOperator p : monitoredOps) {

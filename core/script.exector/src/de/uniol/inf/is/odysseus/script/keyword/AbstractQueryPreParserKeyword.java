@@ -23,13 +23,14 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractQueryPreParserKeyword extends
-AbstractPreParserExecutorKeyword {
+		AbstractPreParserExecutorKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -52,8 +53,8 @@ AbstractPreParserExecutorKeyword {
 						"TransformationConfiguration not set");
 
 		} catch (Exception ex) {
-			throw new OdysseusScriptException(
-					"Exception in query validation ", ex);
+			throw new OdysseusScriptException("Exception in query validation ",
+					ex);
 		}
 	}
 
@@ -63,43 +64,47 @@ AbstractPreParserExecutorKeyword {
 			ISession caller) throws OdysseusScriptException {
 		String parserID = (String) variables.get("PARSER");
 		String transCfg = (String) variables.get("TRANSCFG");
-		ISink defaultSink = variables.get("_defaultSink") != null?(ISink)variables.get("_defaultSink"):null; 
+		ISink defaultSink = variables.get("_defaultSink") != null ? (ISink) variables
+				.get("_defaultSink") : null;
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 		roots.add(defaultSink);
-		
+
 		try {
 			parserID = parserID.trim();
 			transCfg = transCfg.trim();
 			String queryText = parameter.trim();
 
-			Collection<IQuery> queries = ExecutorHandler.getExecutor().addQuery(
-					queryText, parserID, caller, transCfg);
-			
+			Collection<ILogicalQuery> queries = ExecutorHandler.getExecutor()
+					.addQuery(queryText, parserID, caller, transCfg);
+
 			// Append defaultSink to all queries
 			// and make it query root
-			if (defaultSink != null){
-				for (IQuery q: queries){
-					for (IPhysicalOperator p: q.getRoots()){
-						((ISource)p).subscribeSink(defaultSink, 0, 0, p.getOutputSchema());
+			if (defaultSink != null) {
+				for (ILogicalQuery lq : queries) {
+					if (lq instanceof IPhysicalQuery) {
+						IPhysicalQuery q = (IPhysicalQuery) lq;
+						for (IPhysicalOperator p : q.getRoots()) {
+							((ISource) p).subscribeSink(defaultSink, 0, 0,
+									p.getOutputSchema());
+						}
+						q.setRoots(roots);
 					}
-					q.setRoots(roots);
 				}
-				
+
 			}
-			
+
 			if (startQuery()) {
-				for (IQuery q : queries) {
+				for (ILogicalQuery q : queries) {
 					ExecutorHandler.getExecutor().startQuery(q.getID(), caller);
 				}
 			}
-			
+
 			return queries;
 		} catch (Exception ex) {
-			throw new OdysseusScriptException("Query Execution Error",
-					ex);
+			throw new OdysseusScriptException("Query Execution Error", ex);
 		}
 	}
-	
+
 	protected abstract boolean startQuery();
 
 }

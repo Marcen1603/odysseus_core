@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
@@ -41,7 +40,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptim
 import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.PlanMigration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * 
@@ -60,35 +60,40 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 
 	private Map<Integer, PlanMigrationContext> optimizationContext;
-	private Queue<IQuery> pendingRequests;
+	private Queue<IPhysicalQuery> pendingRequests;
 
 	public static final long MONITORING_PERIOD = 30000;
 
 	public StandardOptimizer() {
 		this.optimizationContext = new HashMap<Integer, PlanMigrationContext>();
-		this.pendingRequests = new LinkedList<IQuery>();		
+		this.pendingRequests = new LinkedList<IPhysicalQuery>();
 	}
 
 	@Override
-	public IExecutionPlan optimize(IOptimizable sender, List<IQuery> queries,
+	public IExecutionPlan optimize(IOptimizable sender, List<ILogicalQuery> queries,
+			List<IPhysicalQuery> optimizedQueries,
 			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		if (!queries.isEmpty()) {
-			for (IQuery query : queries) {
-				if (query.getLogicalPlan() != null){
-					this.queryOptimizer.optimizeQuery(sender, query, parameter, dd);
+			for (ILogicalQuery query : queries) {
+				IPhysicalQuery optimized = null;
+				if (query.getLogicalPlan() != null) {
+					optimized = this.queryOptimizer.optimizeQuery(sender,
+							query, parameter, dd);
 				}
-				doPostOptimizationActions(query, parameter);
+				doPostOptimizationActions(optimized, parameter);
+				optimizedQueries.add(optimized);
 			}
-			List<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
+
 			IQuerySharingOptimizer qso = getQuerySharingOptimizer();
-			if(qso != null && parameter.getParameterPerformQuerySharing() != null && parameter.getParameterPerformQuerySharing().getValue()) {
-				qso.applyQuerySharing(newPlan, queries, parameter);
+			if (qso != null
+					&& parameter.getParameterPerformQuerySharing() != null
+					&& parameter.getParameterPerformQuerySharing().getValue()) {
+				qso.applyQuerySharing(optimizedQueries, parameter);
 			}
-			newPlan.addAll(queries);
 
 			IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
-					sender, parameter, newPlan, dd);
+					sender, parameter, optimizedQueries, dd);
 
 			return newExecutionPlan;
 		}
@@ -97,10 +102,11 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IQuery removedQuery, IExecutionPlan executionPlan,
-			OptimizationConfiguration parameter, IDataDictionary dd)
-			throws QueryOptimizationException {
-		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
+			T sender, IPhysicalQuery removedQuery,
+			IExecutionPlan executionPlan, OptimizationConfiguration parameter,
+			IDataDictionary dd) throws QueryOptimizationException {
+		List<IPhysicalQuery> newPlan = new ArrayList<IPhysicalQuery>(
+				sender.getQueries());
 		newPlan.remove(removedQuery);
 
 		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
@@ -109,20 +115,19 @@ public class StandardOptimizer extends AbstractOptimizer {
 		return newExecutionPlan;
 	}
 
-
-
 	@Override
 	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
 			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
-		ArrayList<IQuery> newPlan = new ArrayList<IQuery>(sender.getQueries());
+		List<IPhysicalQuery> newPlan = new ArrayList<IPhysicalQuery>(
+				sender.getQueries());
 		IExecutionPlan newExecutionPlan = this.planOptimizer.optimizePlan(
 				sender, parameter, newPlan, dd);
 		return newExecutionPlan;
 	}
 
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IPhysicalQuery query,
 			IExecutionPlan executionPlan) throws QueryOptimizationException {
 
 		if (query.containsCycles()) {
@@ -193,61 +198,66 @@ public class StandardOptimizer extends AbstractOptimizer {
 		this.optimizationContext.put(query.getID(), context);
 
 		try {
-			// build alternative physical plans
-			getLogger().debug("Building alternative plans.");
-			Map<IPhysicalOperator, ILogicalOperator> alternatives = this.queryOptimizer
-					.createAlternativePlans(sender, query,
-							new OptimizationConfiguration(
-									ParameterDoRewrite.TRUE));
+			if (query.getLogicalQuery() != null) {
 
-			// pick out optimal plan by cost analysis
-			List<IPhysicalOperator> candidates = this
-					.getExecutionCostModel()
-					.getCostCalculator()
-					.pickBest(
-							alternatives.keySet(),
-							this.configuration
-									.getSettingComparePlanCandidates()
-									.getValue());
-			if (candidates.isEmpty()) {
-				getLogger().info(
-						"No alternative plans for query ID " + query.getID());
-				this.optimizationContext.remove(query.getID());
-				return executionPlan;
-			}
+				// build alternative physical plans
+				getLogger().debug("Building alternative plans.");
+				Map<IPhysicalOperator, ILogicalOperator> alternatives = this.queryOptimizer
+						.createAlternativePlans(sender, query.getLogicalQuery(),
+								new OptimizationConfiguration(
+										ParameterDoRewrite.TRUE));
 
-			// calculate migration overhead with every registered strategy
-			List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
-			for (IPhysicalOperator cPlan : candidates) {
-				for (String strategy : this
-						.getRegisteredPlanMigrationStrategies()) {
-					migrationCandidates
-							.add(new PlanMigration(query.getRoots().get(0),
-									cPlan, getPlanMigrationStrategy(strategy)));
+				// pick out optimal plan by cost analysis
+				List<IPhysicalOperator> candidates = this
+						.getExecutionCostModel()
+						.getCostCalculator()
+						.pickBest(
+								alternatives.keySet(),
+								this.configuration
+										.getSettingComparePlanCandidates()
+										.getValue());
+				if (candidates.isEmpty()) {
+					getLogger().info(
+							"No alternative plans for query ID "
+									+ query.getID());
+					this.optimizationContext.remove(query.getID());
+					return executionPlan;
 				}
+
+				// calculate migration overhead with every registered strategy
+				List<PlanMigration> migrationCandidates = new ArrayList<PlanMigration>();
+				for (IPhysicalOperator cPlan : candidates) {
+					for (String strategy : this
+							.getRegisteredPlanMigrationStrategies()) {
+						migrationCandidates.add(new PlanMigration(query
+								.getRoots().get(0), cPlan,
+								getPlanMigrationStrategy(strategy)));
+					}
+				}
+				// pick near optimal plan with acceptable migration cost
+				PlanMigration optimalMigration = this.getMigrationCostModel()
+						.getCostCalculator().pickBest(migrationCandidates);
+				context.setRoot(optimalMigration.getNewPlan());
+				context.setLogicalPlan(alternatives.get(optimalMigration
+						.getNewPlan()));
+				context.setSender(sender);
+
+				// start migration to new plan
+				getLogger().info(
+						"Start migration to new physical plan (query ID "
+								+ query.getID() + ")");
+				ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
+				listOfRoots.add(optimalMigration.getNewPlan());
+				optimalMigration.getStrategy().migrateQuery(this, query,
+						listOfRoots);
+
+				((IServerExecutor) sender).updateExecutionPlan();
+
+				// wait for migration end callback
+				getLogger().info(
+						"Plan migration running (query ID " + query.getID()
+								+ ")");
 			}
-			// pick near optimal plan with acceptable migration cost
-			PlanMigration optimalMigration = this.getMigrationCostModel()
-					.getCostCalculator().pickBest(migrationCandidates);
-			context.setRoot(optimalMigration.getNewPlan());
-			context.setLogicalPlan(alternatives.get(optimalMigration
-					.getNewPlan()));
-			context.setSender(sender);
-
-			// start migration to new plan
-			getLogger().info(
-					"Start migration to new physical plan (query ID "
-							+ query.getID() + ")");
-			ArrayList<IPhysicalOperator> listOfRoots = new ArrayList<IPhysicalOperator>();
-			listOfRoots.add(optimalMigration.getNewPlan());
-			optimalMigration.getStrategy().migrateQuery(this, query,
-					listOfRoots);
-
-			((IServerExecutor) sender).updateExecutionPlan();
-
-			// wait for migration end callback
-			getLogger().info(
-					"Plan migration running (query ID " + query.getID() + ")");
 
 		} catch (Exception e) {
 			// this.optimizationContext.remove(query.getID());
@@ -260,13 +270,13 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 
 	@Override
-	public void handleFinishedMigration(IQuery query) {
+	public void handleFinishedMigration(IPhysicalQuery query) {
 		PlanMigrationContext context = this.optimizationContext.get(query
 				.getID());
 
 		try {
 			// set new logical plan
-			query.setLogicalPlan(context.getLogicalPlan(), false);
+			//query.setLogicalPlan(context.getLogicalPlan(), false);
 
 			// update execution plan
 			((IServerExecutor) context.getSender()).updateExecutionPlan();
@@ -290,7 +300,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 		}
 	}
 
-	private void queueRequest(IQuery query, String reason) {
+	private void queueRequest(IPhysicalQuery query, String reason) {
 		getLogger().warn("Reoptimization request queued. " + reason);
 		if (!this.pendingRequests.contains(query)) {
 			this.pendingRequests.offer(query);
@@ -300,7 +310,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 	@Override
 	public IExecutionPlan reoptimize(IOptimizable sender,
 			IExecutionPlan executionPlan) throws QueryOptimizationException {
-		for (IQuery query : sender.getQueries()) {
+		for (IPhysicalQuery query : sender.getQueries()) {
 			reoptimize(sender, query, executionPlan);
 		}
 		return executionPlan;

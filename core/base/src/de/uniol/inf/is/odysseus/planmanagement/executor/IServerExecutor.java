@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.security.auth.login.Configuration;
 
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 
 /**
@@ -85,10 +85,12 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 
 	@Override
-	List<IQuery> getQueries();
+	Collection<IPhysicalQuery> getQueries();
 
 	// IUserManagement getUserManagement();
 	// ISessionManagement getSessionManagement();
 	IDataDictionary getDataDictionary();
+
+	public void removeAllQueries();
 
 }

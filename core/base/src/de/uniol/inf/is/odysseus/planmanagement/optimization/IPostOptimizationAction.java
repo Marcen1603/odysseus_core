@@ -15,10 +15,10 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization;
 
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public interface IPostOptimizationAction {
 
-	public void run(IQuery query, OptimizationConfiguration parameter);
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter);
 
 }

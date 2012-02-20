@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
-//import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +49,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
@@ -61,7 +60,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 
 	private TableViewer tableViewer;
 
-	private Collection<IQuery> queries = new ArrayList<IQuery>();
+	private Collection<IPhysicalQuery> queries = new ArrayList<IPhysicalQuery>();
 
 	public QueryView() {
 	}
@@ -88,7 +87,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IQuery) cell.getElement())
+				cell.setText(String.valueOf(((IPhysicalQuery) cell.getElement())
 						.getID()));
 			}
 		});
@@ -98,8 +97,8 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 				idColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
+				IPhysicalQuery id1 = (IPhysicalQuery) e1;
+				IPhysicalQuery id2 = (IPhysicalQuery) e2;
 				if (id1.getID() > id2.getID())
 					return 1;
 				else if (id1.getID() < id2.getID())
@@ -117,7 +116,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		statusColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				String text = getQueryStatus((IQuery) cell.getElement());
+				String text = getQueryStatus((IPhysicalQuery) cell.getElement());
 				cell.setText(text);
 			}
 		});
@@ -126,8 +125,8 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		new ColumnViewerSorter(tableViewer, statusColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
+				IPhysicalQuery id1 = (IPhysicalQuery) e1;
+				IPhysicalQuery id2 = (IPhysicalQuery) e2;
 				String s1 = getQueryStatus(id1);
 				String s2 = getQueryStatus(id2);
 
@@ -152,7 +151,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		priorityColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IQuery) cell.getElement())
+				cell.setText(String.valueOf(((IPhysicalQuery) cell.getElement())
 						.getPriority()));
 			}
 		});
@@ -161,8 +160,8 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		new ColumnViewerSorter(tableViewer, priorityColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
+				IPhysicalQuery id1 = (IPhysicalQuery) e1;
+				IPhysicalQuery id2 = (IPhysicalQuery) e2;
 				if (id1.getPriority() > id2.getPriority())
 					return 1;
 				else if (id1.getPriority() < id2.getPriority())
@@ -180,7 +179,10 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		parserIdColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(((IQuery) cell.getElement()).getParserId());
+				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
+				if (query.getLogicalQuery() != null) {
+					cell.setText(query.getLogicalQuery().getParserId());
+				}
 			}
 		});
 		tableColumnLayout.setColumnData(parserIdColumn.getColumn(),
@@ -188,9 +190,14 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		new ColumnViewerSorter(tableViewer, parserIdColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
-				return id1.getParserId().compareToIgnoreCase(id2.getParserId());
+
+				IPhysicalQuery q1 = (IPhysicalQuery) e1;
+				IPhysicalQuery q2 = (IPhysicalQuery) e2;
+				String id1 = q1.getLogicalQuery() != null ? q1
+						.getLogicalQuery().getParserId() : "";
+				String id2 = q2.getLogicalQuery() != null ? q2
+						.getLogicalQuery().getParserId() : "";
+				return id1.compareToIgnoreCase(id2);
 			}
 		};
 
@@ -202,7 +209,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		userColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				IQuery query = (IQuery) cell.getElement();
+				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
 				if (query.getUser() != null)
 					cell.setText(query.getUser().getUser().getName());
 				else
@@ -214,10 +221,13 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		new ColumnViewerSorter(tableViewer, userColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
-				return id1.getUser().getUser().getName()
-						.compareToIgnoreCase(id2.getUser().getUser().getName());
+				IPhysicalQuery id1 = (IPhysicalQuery) e1;
+				IPhysicalQuery id2 = (IPhysicalQuery) e2;
+				String user1 = id1.getUser() != null ? id1.getUser().getUser()
+						.getName() : "[No User]";
+				String user2 = id2.getUser() != null ? id2.getUser().getUser()
+						.getName() : "[No User]";
+				return user1.compareToIgnoreCase(user2);
 			}
 		};
 
@@ -229,7 +239,9 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		queryTextColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				String text = ((IQuery) cell.getElement()).getQueryText();
+				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
+				String text = query.getLogicalQuery() != null ? query
+						.getLogicalQuery().getQueryText() : null;
 				if (text == null) {
 					cell.setText("[No Text]");
 					return;
@@ -245,10 +257,14 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		new ColumnViewerSorter(tableViewer, queryTextColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IQuery id1 = (IQuery) e1;
-				IQuery id2 = (IQuery) e2;
-				return id1.getQueryText().compareToIgnoreCase(
-						id2.getQueryText());
+				IPhysicalQuery q1 = (IPhysicalQuery) e1;
+				IPhysicalQuery q2 = (IPhysicalQuery) e2;
+				String text1 = q1.getLogicalQuery() != null ? q1
+						.getLogicalQuery().getQueryText() : null;
+				String text2 = q2.getLogicalQuery() != null ? q2
+						.getLogicalQuery().getQueryText() : null;
+
+				return text1.compareToIgnoreCase(text2);
 			}
 		};
 
@@ -397,10 +413,10 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
 				.getEventType())) {
-			removeQuery((IQuery) eventArgs.getValue());
+			removeQuery((IPhysicalQuery) eventArgs.getValue());
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
 				.getEventType())) {
-			addQuery((IQuery) eventArgs.getValue());
+			addQuery((IPhysicalQuery) eventArgs.getValue());
 		}
 		refreshTable();
 	}
@@ -417,22 +433,22 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		});
 	}
 
-	private void addQueries(Collection<IQuery> qs) {
+	private void addQueries(Collection<IPhysicalQuery> qs) {
 		queries.addAll(qs);
 		refreshTable();
 	}
 
-	private void removeQuery(IQuery q) {
+	private void removeQuery(IPhysicalQuery q) {
 		queries.remove(q);
 		refreshTable();
 	}
 
-	private void addQuery(IQuery q) {
+	private void addQuery(IPhysicalQuery q) {
 		queries.add(q);
 		refreshTable();
 	}
 
-	private String getQueryStatus(IQuery q) {
+	private String getQueryStatus(IPhysicalQuery q) {
 		if (q.isOpened())
 			return OdysseusNLS.Running;
 		else

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 public class SaseAOBuilder extends AbstractOperatorBuilder {
 
@@ -35,7 +35,7 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 	protected ILogicalOperator createOperatorInternal() {
 		SaseBuilder parser = new SaseBuilder();
 		ILogicalOperator ret = null;
-		List<IQuery> op = parser.parse(query.getValue(), getCaller(),
+		List<ILogicalQuery> op = parser.parse(query.getValue(), getCaller(),
 				getDataDictionary(), false);
 		// I know there is only one operator
 		ret = op.get(0).getLogicalPlan();

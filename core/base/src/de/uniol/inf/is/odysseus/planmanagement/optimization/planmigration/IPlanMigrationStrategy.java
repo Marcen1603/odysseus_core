@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Describes an object which migrates an old and a new execution plan. Used for
@@ -55,7 +55,7 @@ public interface IPlanMigrationStrategy {
 	 * 				new physical plan to migrate to
 	 * @throws QueryOptimizationException
 	 */
-	public void migrateQuery(IOptimizer sender, IQuery runningQuery, 
+	public void migrateQuery(IOptimizer sender, IPhysicalQuery runningQuery, 
 			List<IPhysicalOperator> newPlanRoot) throws QueryOptimizationException;
 	
 	public String getName();

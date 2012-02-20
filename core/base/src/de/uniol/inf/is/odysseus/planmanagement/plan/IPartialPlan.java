@@ -19,7 +19,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public interface IPartialPlan {
 	public long getId();
@@ -42,7 +42,7 @@ public interface IPartialPlan {
 	@Override
 	public String toString();
 	List<IPhysicalOperator> getQueryRoots();
-	List<IQuery> getQueries();
+	List<IPhysicalQuery> getQueries();
 
 
 }

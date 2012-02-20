@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * 
@@ -37,7 +37,7 @@ public class Subplan implements Serializable {
 	private String id;
 	private String peerId = null;
 	String responseSocket;
-	private IQuery query;
+	private IPhysicalQuery query;
 	
 	protected ArrayList<Bid> biddings = new ArrayList<Bid>();
 
@@ -48,11 +48,11 @@ public class Subplan implements Serializable {
 		this.id = id;
 	}
 	
-	public void setQuery( IQuery query ){
+	public void setQuery( IPhysicalQuery query ){
 		this.query = query;
 	}
 	
-	public IQuery getQuery() {
+	public IPhysicalQuery getQuery() {
 		return query;
 	}
 	

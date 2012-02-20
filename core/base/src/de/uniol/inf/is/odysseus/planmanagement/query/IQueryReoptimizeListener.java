@@ -28,5 +28,5 @@ public interface IQueryReoptimizeListener {
 	 * @param sender
 	 *            The query which sends the reoptimze request.
 	 */
-	public void reoptimize(IQuery sender);
+	public void reoptimize(IPhysicalQuery sender);
 }

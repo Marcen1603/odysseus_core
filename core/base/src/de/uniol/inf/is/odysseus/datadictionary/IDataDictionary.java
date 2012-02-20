@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -78,10 +78,10 @@ public interface IDataDictionary {
 	public Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 	public Set<Entry<String, ILogicalOperator>> getViews(ISession caller);	
 
-	public void addQuery(IQuery q, ISession caller);
-	public IQuery getQuery(int id, ISession caller);
-	public List<IQuery> getQueries(IUser user, ISession caller);
-	public void removeQuery(IQuery q, ISession caller);
+	public void addQuery(ILogicalQuery q, ISession caller);
+	public ILogicalQuery getQuery(int id, ISession caller);
+	public List<ILogicalQuery> getQueries(IUser user, ISession caller);
+	public void removeQuery(ILogicalQuery q, ISession caller);
 	
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 	

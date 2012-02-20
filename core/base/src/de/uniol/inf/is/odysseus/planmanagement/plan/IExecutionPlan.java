@@ -30,11 +30,6 @@ public interface IExecutionPlan extends IClone{
 	public List<IPartialPlan> getPartialPlans();
 	
 	public void close();
-	//public void open() throws OpenFailedException;
-
-//	public void initWith(IExecutionPlan newExecutionPlan);
 	public Set<IPhysicalOperator> getRoots();
-//	public void setRoots(List<IPhysicalOperator> roots);
-	public IExecutionPlan clone();
-	
+	public IExecutionPlan clone();	
 }

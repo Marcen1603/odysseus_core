@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.sf.ElementTimeStampSF;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.sf.LastExecutionTimeStampSF;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.sf.QueueSizeSF;
@@ -32,7 +32,7 @@ public class StarvationFreedomFactory {
 	 */
 	public IStarvationFreedom buildStarvationFreedom(
 			String starvationFreedomFuncName, SLARegistryInfo schedData,
-			IQuery query) {
+			IPhysicalQuery query) {
 		if (ELEMENT_TS.equals(starvationFreedomFuncName)) {
 			return new ElementTimeStampSF(query);
 		} else if (LAST_EXEC_TS.equals(starvationFreedomFuncName)) {

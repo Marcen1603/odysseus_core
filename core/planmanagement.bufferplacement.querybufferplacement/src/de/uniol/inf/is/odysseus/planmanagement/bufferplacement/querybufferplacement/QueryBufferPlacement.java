@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public class QueryBufferPlacement implements IBufferPlacementStrategy{
 
@@ -63,8 +64,7 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void addBuffers(IPhysicalOperator plan) {
+	private void addBuffers(IPhysicalOperator plan) {
 		// Place a Buffer between MetaUpdate and every other Subscription
 		if (plan instanceof MetadataUpdatePO){
 			placeBuffer(new BufferedPipe(), (ISource)plan);
@@ -80,6 +80,13 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 			}
 		}
 		
+	}
+
+	@Override
+	public void addBuffers(IPhysicalQuery plan){
+		for (IPhysicalOperator root: plan.getRoots()){
+			addBuffers(root);
+		}
 	}
 
 }

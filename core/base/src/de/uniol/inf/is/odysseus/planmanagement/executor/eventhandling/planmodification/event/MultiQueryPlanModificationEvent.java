@@ -17,17 +17,17 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodif
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * MultiQueryPlanModificationEvent is an event that occurs during modification of
- * the registered execution plan. It refers to a list of {@link IQuery}s.
+ * the registered execution plan. It refers to a list of {@link ILogicalQuery}s.
  * 
  * @author Wolf Bauer
  *
  */
 public class MultiQueryPlanModificationEvent extends
-		AbstractPlanModificationEvent<ArrayList<IQuery>> {
+		AbstractPlanModificationEvent<ArrayList<ILogicalQuery>> {
 	
 	/**
 	 * 
@@ -46,10 +46,10 @@ public class MultiQueryPlanModificationEvent extends
 	 * @param id
 	 *            ID which describes which event occurs.
 	 * @param value
-	 *            List of {@link IQuery} to which this event refers.
+	 *            List of {@link ILogicalQuery} to which this event refers.
 	 */
 	public MultiQueryPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType,
-			ArrayList<IQuery> value) {
+			ArrayList<ILogicalQuery> value) {
 		super(sender,  eventType, value);
 	}
 }

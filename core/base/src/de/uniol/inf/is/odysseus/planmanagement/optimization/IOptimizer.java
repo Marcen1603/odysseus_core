@@ -25,7 +25,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Optimi
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * Defines an object which provides optimization methods. IOptimizer is the base
@@ -56,7 +57,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public IExecutionPlan optimize(IOptimizable sender,
-			List<IQuery> newQueries, OptimizationConfiguration parameter, IDataDictionary dd)
+			List<ILogicalQuery> newQueries, List<IPhysicalQuery> optimizedQueries, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
 	
 	/**
@@ -73,7 +74,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IPhysicalQuery query,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 
@@ -135,7 +136,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan beforeQueryStart(IQuery queryToStart,
+	public IExecutionPlan beforeQueryStart(IPhysicalQuery queryToStart,
 			IExecutionPlan execPlan) throws QueryOptimizationException;
 
 	/**
@@ -149,7 +150,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
+	public IExecutionPlan beforeQueryStop(IPhysicalQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException;
 
 
@@ -173,7 +174,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 *             An exception occurred during optimization.
 	 */
 	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IQuery removedQuery,
+			T sender, IPhysicalQuery removedQuery,
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
 	
@@ -197,7 +198,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @param query
 	 * 			Query that has finished a migration to a new plan.
 	 */
-	public void handleFinishedMigration(IQuery query);
+	public void handleFinishedMigration(IPhysicalQuery query);
 	
 	
 	IQuerySharingOptimizer getQuerySharingOptimizer();

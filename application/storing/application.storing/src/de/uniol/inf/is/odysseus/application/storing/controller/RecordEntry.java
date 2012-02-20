@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.application.storing.Activator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * 
@@ -33,8 +33,8 @@ public class RecordEntry implements Serializable{
 	private String databaseConnection;
 	private String tableName;
 	private String fromStream;
-	private Collection<IQuery> streamToQueries = new ArrayList<IQuery>();
-	private Collection<IQuery> sinkQueries = new ArrayList<IQuery>();
+	private Collection<ILogicalQuery> streamToQueries = new ArrayList<ILogicalQuery>();
+	private Collection<ILogicalQuery> sinkQueries = new ArrayList<ILogicalQuery>();
 	private State state = State.Initialized;
 	private PlayingState playingState = PlayingState.Stopped;
 
@@ -86,20 +86,20 @@ public class RecordEntry implements Serializable{
 		this.tableName = tableName;
 	}
 
-	public void setStreamToQueries(Collection<IQuery> streamToQueries) {
+	public void setStreamToQueries(Collection<ILogicalQuery> streamToQueries) {
 		this.streamToQueries = streamToQueries;
 	}
 
-	public void setSinkQueries(Collection<IQuery> sinkQueries) {
+	public void setSinkQueries(Collection<ILogicalQuery> sinkQueries) {
 		this.sinkQueries = sinkQueries;
 
 	}
 
-	public Collection<IQuery> getSinkQueries() {
+	public Collection<ILogicalQuery> getSinkQueries() {
 		return sinkQueries;
 	}
 
-	public Collection<IQuery> getStreamToQueries() {
+	public Collection<ILogicalQuery> getStreamToQueries() {
 		return streamToQueries;
 	}
 

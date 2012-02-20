@@ -24,15 +24,10 @@ import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.event.EventHandler;
 import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
-import de.uniol.inf.is.odysseus.monitoring.physicalplan.IPlanMonitor;
-import de.uniol.inf.is.odysseus.monitoring.physicalplan.ProcessCallsMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ScheduleMeta;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.scheduler.event.SchedulingEvent.SchedulingEventType;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
@@ -99,37 +94,37 @@ public abstract class AbstractScheduler extends EventHandler implements
 		this.schedulingFactory = schedulingFactory;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public int print(IScheduling s) {
-		List<IQuery> queries = s.getPlan().getQueries();
-		int linesPrinted = queries.size();
-		for (IQuery q : queries) {
-			toPrint.append(System.currentTimeMillis()).append(";");
-			toPrint.append(s.getPlan().getId())
-					.append(";")
-					.append(q.getID() + 1)
-					// sieht besser aus :-)
-					.append(";").append(s.getPlan().getCurrentPriority())
-					.append(";")
-					.append(("" + q.getPenalty()).replace('.', ','))
-					.append(";");
-			// Written Objects
-			IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
-			if (mon != null) {
-				toPrint.append(((ProcessCallsMonitor) mon)
-						.getOverallProcessCallCount());
-			} else {
-				toPrint.append("-1");
-			}
-			toPrint.append(";");
-			ScheduleMeta h = s.getPlan().getScheduleMeta();
-			if (h != null) {
-				h.csvPrint(toPrint);
-			}
-			toPrint.append("\n");
-		}
-		return linesPrinted;
-	}
+//	@SuppressWarnings("rawtypes")
+//	public int print(IScheduling s) {
+//		List<IQuery> queries = s.getPlan().getQueries();
+//		int linesPrinted = queries.size();
+//		for (IQuery q : queries) {
+//			toPrint.append(System.currentTimeMillis()).append(";");
+//			toPrint.append(s.getPlan().getId())
+//					.append(";")
+//					.append(q.getID() + 1)
+//					// sieht besser aus :-)
+//					.append(";").append(s.getPlan().getCurrentPriority())
+//					.append(";")
+//					.append(("" + q.getPenalty()).replace('.', ','))
+//					.append(";");
+//			// Written Objects
+//			IPlanMonitor mon = q.getPlanMonitor("Root Monitor");
+//			if (mon != null) {
+//				toPrint.append(((ProcessCallsMonitor) mon)
+//						.getOverallProcessCallCount());
+//			} else {
+//				toPrint.append("-1");
+//			}
+//			toPrint.append(";");
+//			ScheduleMeta h = s.getPlan().getScheduleMeta();
+//			if (h != null) {
+//				h.csvPrint(toPrint);
+//			}
+//			toPrint.append("\n");
+//		}
+//		return linesPrinted;
+//	}
 
 	public void savePrint() {
 		try {

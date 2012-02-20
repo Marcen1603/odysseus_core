@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
@@ -49,10 +49,10 @@ public class StartQueryCommand extends AbstractHandler implements IHandler {
 
 		int qID;
 
-		List<IQuery> selectedObj = SelectionProvider.getSelection(event);
-		for (IQuery obj : selectedObj) {
-			if (obj instanceof IQuery) {
-				qID = ((IQuery) obj).getID();
+		List<IPhysicalQuery> selectedObj = SelectionProvider.getSelection(event);
+		for (IPhysicalQuery obj : selectedObj) {
+			if (obj instanceof IPhysicalQuery) {
+				qID = ((IPhysicalQuery) obj).getID();
 			} else {
 				logger.error("Cannot find queryID");
 				return null;

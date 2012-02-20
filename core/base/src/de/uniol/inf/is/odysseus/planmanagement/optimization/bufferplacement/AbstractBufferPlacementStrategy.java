@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * 
@@ -44,10 +45,16 @@ public abstract class AbstractBufferPlacementStrategy implements
 		}
 		return _logger;
 	}
-
-	@SuppressWarnings("rawtypes")
+	
 	@Override
-	public void addBuffers(IPhysicalOperator plan) {
+	public void addBuffers(IPhysicalQuery plan){
+		for (IPhysicalOperator root: plan.getRoots()){
+			addBuffers(root);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void addBuffers(IPhysicalOperator plan) {
 		if (plan instanceof IBuffer) {
 			return;
 		}

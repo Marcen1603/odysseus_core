@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
 import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Repräsentiert die Standardimplementierung einer {@link IPossibleExecution}.
@@ -16,8 +16,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
  */
 public class StandardPossibleExecution implements IPossibleExecution {
 
-	private final Collection<IQuery> runningQueries;
-	private final Collection<IQuery> stoppingQueries;
+	private final Collection<IPhysicalQuery> runningQueries;
+	private final Collection<IPhysicalQuery> stoppingQueries;
 	private final ICost costEstimation;
 
 	/**
@@ -28,19 +28,19 @@ public class StandardPossibleExecution implements IPossibleExecution {
 	 * @param stoppingQueries Liste der zu stoppenden Anfragen
 	 * @param costEstimation Kostenschätzung im Falle der Ausführung des Vorschlags.
 	 */
-	public StandardPossibleExecution(Collection<IQuery> runningQueries, Collection<IQuery> stoppingQueries, ICost costEstimation) {
+	public StandardPossibleExecution(Collection<IPhysicalQuery> runningQueries, Collection<IPhysicalQuery> stoppingQueries, ICost costEstimation) {
 		this.runningQueries = runningQueries;
 		this.stoppingQueries = stoppingQueries;
 		this.costEstimation = costEstimation;
 	}
 
 	@Override
-	public Collection<IQuery> getRunningQueries() {
+	public Collection<IPhysicalQuery> getRunningQueries() {
 		return runningQueries;
 	}
 
 	@Override
-	public Collection<IQuery> getStoppingQueries() {
+	public Collection<IPhysicalQuery> getStoppingQueries() {
 		return stoppingQueries;
 	}
 

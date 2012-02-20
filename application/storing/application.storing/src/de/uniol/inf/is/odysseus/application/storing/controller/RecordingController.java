@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.application.storing.model.RecordingStore;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -76,7 +76,7 @@ public class RecordingController {
 				return;
 			}
 		}
-		for (IQuery q : record.getStreamToQueries()) {
+		for (ILogicalQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().startQuery(q.getID(), user);
 			} catch (PlanManagementException e) {
@@ -91,7 +91,7 @@ public class RecordingController {
 	public void pauseRecording(String recordingName) {
 		RecordEntry record = this.recordings.get(recordingName);
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
-		for (IQuery q : record.getStreamToQueries()) {
+		for (ILogicalQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().stopQuery(q.getID(), caller);
 			} catch (PlanManagementException e) {
@@ -105,14 +105,14 @@ public class RecordingController {
 	public void stopRecording(String name) {
 		RecordEntry record = recordings.get(name);
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
-		for (IQuery q : record.getStreamToQueries()) {
+		for (ILogicalQuery q : record.getStreamToQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().removeQuery(q.getID(), user);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
 		}
-		for (IQuery q : record.getSinkQueries()) {
+		for (ILogicalQuery q : record.getSinkQueries()) {
 			try {
 				OdysseusRCPPlugIn.getExecutor().removeQuery(q.getID(), user);
 			} catch (PlanManagementException e) {
@@ -130,8 +130,8 @@ public class RecordingController {
 		String createSink = "CREATE SINK " + sinkName + " AS DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
-		Collection<IQuery> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, "Standard");
-		Collection<IQuery> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, "Standard");
+		Collection<ILogicalQuery> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, "Standard");
+		Collection<ILogicalQuery> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, "Standard");
 		record.clearQueries();
 		record.setSinkQueries(sinkQueries);
 		record.setStreamToQueries(streamToQueries);

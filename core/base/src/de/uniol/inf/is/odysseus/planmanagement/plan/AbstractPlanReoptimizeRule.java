@@ -29,18 +29,18 @@ import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule;
  * 
  */
 public abstract class AbstractPlanReoptimizeRule 
-	implements IReoptimizeRule<IPlan> {
+	implements IReoptimizeRule<IPhysicalPlan> {
 
 	/**
 	 * List of global plans which are informed if this rule is valid.
 	 */
-	protected List<IPlan> reoptimizable = Collections.synchronizedList(new ArrayList<IPlan>());
+	protected List<IPhysicalPlan> reoptimizable = Collections.synchronizedList(new ArrayList<IPhysicalPlan>());
 	
 	/**
 	 * Informs all registered global plans that this rule is valid.
 	 */
 	protected void fireReoptimizeEvent() {
-		for (IPlan reoptimizableType : this.reoptimizable) {
+		for (IPhysicalPlan reoptimizableType : this.reoptimizable) {
 			reoptimizableType.reoptimize();
 		}
 	}
@@ -49,7 +49,7 @@ public abstract class AbstractPlanReoptimizeRule
 	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule#addReoptimieRequester(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void addReoptimieRequester(IPlan reoptimizable) {
+	public void addReoptimieRequester(IPhysicalPlan reoptimizable) {
 		this.reoptimizable.add(reoptimizable);
 	}
 	
@@ -57,7 +57,7 @@ public abstract class AbstractPlanReoptimizeRule
 	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule#removeReoptimieRequester(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void removeReoptimieRequester(IPlan reoptimizable) {
+	public void removeReoptimieRequester(IPhysicalPlan reoptimizable) {
 		this.reoptimizable.remove(reoptimizable);
 	}
 	

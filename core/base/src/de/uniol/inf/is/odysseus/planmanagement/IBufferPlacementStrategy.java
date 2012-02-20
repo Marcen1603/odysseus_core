@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Describes a strategy for buffer placement in physical plans. A buffer is an
@@ -30,7 +30,7 @@ public interface IBufferPlacementStrategy {
 	 * @param plan
 	 *            Physical plan in which buffer should be placend.
 	 */
-	public void addBuffers(IPhysicalOperator plan);
+	public void addBuffers(IPhysicalQuery plan);
 
 	/**
 	 * Returns the name of this strategy. This name should be unique.

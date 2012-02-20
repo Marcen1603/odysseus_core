@@ -22,20 +22,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.uniol.inf.is.odysseus.ISubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	
-	public synchronized void applyQuerySharing(List<IQuery> plan, List<IQuery> newQueries, OptimizationConfiguration conf) {
+	public synchronized void applyQuerySharing(List<IPhysicalQuery> plan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
 		boolean restructuringAllowed;
 		if(conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
 			restructuringAllowed = conf.getParameterAllowRestructuringOfCurrentPlan().getValue();
@@ -52,7 +51,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Sammeln aller im alten Plan enthaltenen physischen Operatoren
 
-		for(IQuery q : plan) {
+		for(IPhysicalQuery q : plan) {
 			for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
 				if(!ipos.contains(ipo)) {
 					ipos.add(ipo);
@@ -62,7 +61,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Sammeln aller in den NEUEN Queries enthaltenen physischen Operatoren
 		if(newQueries != null) {
-			for(IQuery q : newQueries) {	
+			for(IPhysicalQuery q : newQueries) {	
 				for(IPhysicalOperator ipo : q.getPhysicalChilds()) {
 					if(!ipos.contains(ipo)) {
 						ipos.add(ipo);
@@ -85,7 +84,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 //				|| removeIdenticalOperators(ipos, newOps, restructuringAllowed));
 	}
 
-	public void applyQuerySharing(List<IQuery> plan, OptimizationConfiguration conf) {
+	public void applyQuerySharing(List<IPhysicalQuery> plan, OptimizationConfiguration conf) {
 		//Neustrukturierung eines bestehenden Plans ist erlaubt
 		if(conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
 			applyQuerySharing(plan, null, conf);
@@ -216,8 +215,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		int noOwners = owner.size();
 		for(int k = 0; k<noOwners; k++) {
 			IOperatorOwner oo = owner.get(k);
-			((Query)oo).replaceOperator(op1, op2);
-			((Query)oo).replaceRoot(op1, op2);
+			((IPhysicalQuery)oo).replaceOperator(op1, op2);
+			((IPhysicalQuery)oo).replaceRoot(op1, op2);
 		}
 
 		//System.out.println(op1.getName() + "has been replaced by" + op2.getName());
@@ -245,7 +244,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		int noOwners = owner.size();
 		for(int k = 0; k<noOwners; k++) {
 			IOperatorOwner oo = owner.get(k);
-			((Query)oo).addChild(op2);
+			((IPhysicalQuery)oo).addChild(op2);
 
 		}						
 	}

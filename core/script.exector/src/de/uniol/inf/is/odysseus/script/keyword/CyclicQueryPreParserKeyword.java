@@ -19,7 +19,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -65,7 +66,7 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 		
 		List<IQueryBuildSetting<?>> transCfg = executor.getQueryBuildConfiguration(transCfgID).getConfiguration();
 		try {
-			List<IQuery> plans = executor.translateQuery(queries, parserID, caller);
+			List<ILogicalQuery> plans = executor.translateQuery(queries, parserID, caller);
 			
 			// HACK
 			ParameterTransformationConfiguration cfg = null;
@@ -79,10 +80,10 @@ public class CyclicQueryPreParserKeyword extends AbstractPreParserExecutorKeywor
 			if( cfg != null ) {
 				// the last plan is the complete plan
 				// so transform this one
-				IQuery query = plans.get(plans.size() - 1);
-				executor.transform(query, cfg.getValue(), caller);
+				ILogicalQuery query = plans.get(plans.size() - 1);
+				IPhysicalQuery newQuery = executor.transform(query, cfg.getValue(), caller);
 	
-				IQuery addedQuery = executor.addQuery(query.getRoots(), caller, transCfgID);
+				IPhysicalQuery addedQuery = executor.addQuery(newQuery.getRoots(), caller, transCfgID);
 				executor.startQuery(addedQuery.getID(), caller);
 			} 
 

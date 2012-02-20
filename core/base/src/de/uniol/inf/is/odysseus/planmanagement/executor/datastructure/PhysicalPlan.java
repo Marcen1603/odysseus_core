@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.datastructure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,23 +23,22 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Plan represents a map of all registered queries. 
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  *
  */
-public class Plan implements IPlan {
+public class PhysicalPlan implements IPhysicalPlan {
 
 	/**
 	 * Map of all registered queries.
 	 */
-	private Map<Integer, Query> queries;
+	private Map<Integer, IPhysicalQuery> queries;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -53,20 +53,14 @@ public class Plan implements IPlan {
 	/**
 	 * Creates a new Plan.
 	 */
-	public Plan() {
-		queries = Collections.synchronizedMap(new HashMap<Integer, Query>());
+	public PhysicalPlan() {
+		queries = Collections.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#addQuery(de.uniol.inf.is.odysseus.planmanagement.query.IQuery)
-	 */
-	@Override
-	public synchronized boolean addQuery(IQuery query) {
-		if (query == null || queries.containsKey(query.getID())) {
-			return false;
-		}
 
-		this.queries.put(query.getID(), (Query) query);
+	@Override
+	public synchronized boolean addQuery(IPhysicalQuery query) {
+		this.queries.put(query.getID(), query);
 
 		return true;
 	}
@@ -75,7 +69,7 @@ public class Plan implements IPlan {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#removeQuery(int)
 	 */
 	@Override
-	public synchronized Query removeQuery(int queryID) {
+	public synchronized IPhysicalQuery removeQuery(int queryID) {
 		return this.queries.remove(queryID);
 	}
 
@@ -83,7 +77,7 @@ public class Plan implements IPlan {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQuery(int)
 	 */
 	@Override
-	public synchronized Query getQuery(int queryID) {
+	public synchronized IPhysicalQuery getQuery(int queryID) {
 		return this.queries.get(queryID);
 	}
 
@@ -91,8 +85,8 @@ public class Plan implements IPlan {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQueries()
 	 */
 	@Override
-	public synchronized ArrayList<IQuery> getQueries() {
-		return new ArrayList<IQuery>(this.queries.values());
+	public synchronized Collection<IPhysicalQuery> getQueries() {
+		return Collections.unmodifiableCollection(this.queries.values());
 	}
 
 	/* (non-Javadoc)
@@ -158,10 +152,10 @@ public class Plan implements IPlan {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getRoots()
 	 */
 	@Override
-	public ArrayList<IPhysicalOperator> getRoots() {
-		ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+	public List<IPhysicalOperator> getRoots() {
+		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 
-		for (IQuery query : getQueries()) {
+		for (IPhysicalQuery query : getQueries()) {
 			for(IPhysicalOperator curRoot: query.getRoots()){
 				if (!roots.contains(curRoot)) {
 					roots.add(curRoot);

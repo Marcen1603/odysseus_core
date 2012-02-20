@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.monitoring.AbstractMonitoringData;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 @SuppressWarnings("rawtypes")
 public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
@@ -30,7 +30,7 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
 	private boolean onlyRoots;
 	private boolean onlyBuffer;
 
-	public AbstractPlanMonitor(IQuery target, boolean onlyRoots, boolean onlyBuffer, String type) {
+	public AbstractPlanMonitor(IPhysicalQuery target, boolean onlyRoots, boolean onlyBuffer, String type) {
 		super(target, type);
 		this.onlyRoots = onlyRoots;
 		this.onlyBuffer = onlyBuffer;
@@ -67,8 +67,8 @@ public abstract class AbstractPlanMonitor<T> extends AbstractMonitoringData<T>
 	}
 	
 	@Override
-	public IQuery getTarget() {
-		return (IQuery) super.getTarget();
+	public IPhysicalQuery getTarget() {
+		return (IPhysicalQuery) super.getTarget();
 	}
 
 	@SuppressWarnings("unchecked")

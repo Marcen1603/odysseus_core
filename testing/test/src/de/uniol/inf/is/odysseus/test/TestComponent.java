@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -118,9 +117,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 					}
 				}
 				// Stop all queries
-				for (IQuery q : executor.getQueries()) {
-					executor.removeQuery(q.getID(), user);
-				}
+				executor.removeAllQueries();
 				if (errorText != null) {
 					throw new RuntimeException(errorText);
 				}

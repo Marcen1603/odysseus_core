@@ -17,11 +17,9 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
-import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
@@ -31,10 +29,9 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -107,7 +104,7 @@ public interface IExecutor extends IClientPlanManager,
 	 * @return vorl√§ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public Collection<IQuery> addQuery(String query, String parserID,
+	public Collection<ILogicalQuery> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException;
 
@@ -122,7 +119,7 @@ public interface IExecutor extends IClientPlanManager,
 	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException;
 
 	/**
@@ -133,10 +130,9 @@ public interface IExecutor extends IClientPlanManager,
 	 *            physischer Plan der neuen Anfrage
 	 * @param queryBuildConfigurationName
 	 *            Name der zu verwendeden Build-Configuration
-	 * @return vorl‰ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
+	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException;
 
 	/**
@@ -145,7 +141,7 @@ public interface IExecutor extends IClientPlanManager,
 	 * @param user
 	 * @return List of queries that could be started
 	 */
-	public List<IQuery> startAllClosedQueries(ISession user);
+	public List<IPhysicalQuery> startAllClosedQueries(ISession user);
 
 	/**
 	 * Provides a Set of registered buffer placement strategies represented by
@@ -208,10 +204,10 @@ public interface IExecutor extends IClientPlanManager,
 	void logout(ISession caller);
 
 	// Facade for Compiler
-	public List<IQuery> translateQuery(String query, String parserID,
+	public List<ILogicalQuery> translateQuery(String query, String parserID,
 			ISession user) throws QueryParseException;
 
-	public void transform(/* InOut */IQuery query,
+	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException;
 	

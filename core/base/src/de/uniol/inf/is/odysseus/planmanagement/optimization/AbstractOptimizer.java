@@ -36,14 +36,14 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanM
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * AbstractOptimizer implements base optimization functions. It manages services
  * for query optimization, plan optimization, buffer placement and plan
  * migration.
  * 
- * @author Wolf Bauer, Jonas Jacobi
+ * @author Wolf Bauer, Jonas Jacobi, Marco Grawunder
  */
 /**
  * @author Wolf Bauer
@@ -329,14 +329,14 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStartOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan beforeQueryStart(IQuery queryToStart,
+	public IExecutionPlan beforeQueryStart(IPhysicalQuery queryToStart,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return executionPlan;
 	}
 
 	
-	protected void doPostOptimizationActions(IQuery query, OptimizationConfiguration parameter) {
+	protected void doPostOptimizationActions(IPhysicalQuery query, OptimizationConfiguration parameter) {
 		for (IPostOptimizationAction action: postOptimizationActions){
 			getLogger().debug("Do PostOptimizationAction "+action);
 			action.run(query, parameter);
@@ -347,7 +347,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender, IQuery query,
+	public IExecutionPlan reoptimize(IOptimizable sender, IPhysicalQuery query,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
 		return executionPlan;
@@ -367,7 +367,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStopOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan beforeQueryStop(IQuery queryToStop,
+	public IExecutionPlan beforeQueryStop(IPhysicalQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException {
 		return execPlan;
 	}

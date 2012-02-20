@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
 import de.uniol.inf.is.odysseus.sla.SLA;
 
@@ -34,7 +34,7 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 	 *            the related query
 	 */
 	public LatencyAverageConformance(ISLAViolationEventDistributor dist,
-			SLA sla, IQuery query) {
+			SLA sla, IPhysicalQuery query) {
 		super(dist, sla, query);
 		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
 	}

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 public class NewExecutionHandler extends AbstractExecutionHandler<ICompiler> {
 
@@ -42,7 +42,7 @@ public class NewExecutionHandler extends AbstractExecutionHandler<ICompiler> {
 	public void run() {
 		if (getFunction() != null && getPeer() != null
 				&& getExecutionListenerCallback() != null) {
-			List<IQuery> plan = null;
+			List<ILogicalQuery> plan = null;
 			P2PQuery query = getExecutionListenerCallback().getQuery();
 			try {
 				// Translate query
@@ -63,7 +63,7 @@ public class NewExecutionHandler extends AbstractExecutionHandler<ICompiler> {
 			}
 			try {
 				// Restruct Query
-				for (IQuery q : plan) {
+				for (ILogicalQuery q : plan) {
 					ILogicalOperator restructPlan = getFunction().rewritePlan(
 							q.getLogicalPlan(), null);
 					query.addLogicalOperatorplan(restructPlan);

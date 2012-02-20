@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -153,8 +153,9 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     @Override
 	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
         try {
-        	IQuery query = executor.getPlan().getQuery(Integer.valueOf(queryID));
-        	SDFSchema outputSchema = query.getLogicalPlan().getOutputSchema();
+        	IPhysicalQuery query = executor.getPlan().getQuery(Integer.valueOf(queryID));
+        	// TODO: getSchema if more than one root
+        	SDFSchema outputSchema = query.getRoots().get(0).getOutputSchema();
         	ObjectFactory factory = new ObjectFactory();
         	
         	SchemaArray schemaArray = factory.createSchemaArray();

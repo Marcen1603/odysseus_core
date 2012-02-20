@@ -55,9 +55,10 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagement
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
@@ -89,7 +90,7 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	/**
 	 * Alle in Odysseus gespeicherten Anfragen
 	 */
-	protected IPlan plan;
+	protected IPhysicalPlan plan;
 
 	/**
 	 * Der aktuell ausgef�hrte physische Plan
@@ -684,7 +685,7 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	 * ()
 	 */
 	@Override
-	public IPlan getPlan() throws PlanManagementException {
+	public IPhysicalPlan getPlan() throws PlanManagementException {
 		return this.plan;
 	}
 
@@ -796,8 +797,8 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	@Override
 	public void reloadStoredQueries(ISession caller) {
 		if (dataDictionary != null){
-			List<IQuery> q = dataDictionary.getQueries(caller.getUser(), caller);
-			for (IQuery query:q){
+			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(), caller);
+			for (ILogicalQuery query:q){
 				if (query.getQueryText() != null){
 					addQuery(query.getQueryText(), query.getParserId(), caller, query.getBuildConfigName());
 				}else if (query.getLogicalPlan() != null){
@@ -823,16 +824,16 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	
 	// Compiler Facade
 	@Override
-	public List<IQuery> translateQuery(String queries, String parser,
+	public List<ILogicalQuery> translateQuery(String queries, String parser,
 			ISession currentUser) {
 		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary());
 	}
 	
 	@Override
-	public void transform(IQuery query,
+	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
-		getCompiler().transform(query, transformationConfiguration, caller, dataDictionary);
+		return getCompiler().transform(query, transformationConfiguration, caller, dataDictionary);
 	}
 	
 	// DataDictionary Facade

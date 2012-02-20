@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -72,7 +72,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd)
+	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
@@ -86,12 +86,12 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<IQuery> parse(String text, ISession user, IDataDictionary dd)
+	public List<ILogicalQuery> parse(String text, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 		return parse(text, user, dd, true);
 	}
 
-	public List<IQuery> parse(String text, ISession user, IDataDictionary dd,
+	public List<ILogicalQuery> parse(String text, ISession user, IDataDictionary dd,
 			boolean attachSources) throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
@@ -99,9 +99,9 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return processParse(lex, attachSources);
 	}
 
-	private List<IQuery> processParse(SaseLexer lexer, boolean attachSources)
+	private List<ILogicalQuery> processParse(SaseLexer lexer, boolean attachSources)
 			throws QueryParseException {
-		ArrayList<IQuery> retList = new ArrayList<IQuery>();
+		ArrayList<ILogicalQuery> retList = new ArrayList<ILogicalQuery>();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		SaseParser parser = new SaseParser(tokens);
 		SaseParser.start_return ret;
@@ -124,7 +124,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		try {
 			ILogicalOperator ao = walker.start(attachSources);
 			if (ao != null) {
-				IQuery query = new Query();
+				ILogicalQuery query = new Query();
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(ao, true);
 				retList.add(query);

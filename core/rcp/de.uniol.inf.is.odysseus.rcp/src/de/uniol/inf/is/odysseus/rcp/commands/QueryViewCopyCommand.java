@@ -25,7 +25,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
@@ -33,14 +33,13 @@ public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Object obj = SelectionProvider.getSelection(event);
 		List<Object> selections = SelectionProvider.getSelection(event);
 		String text = "";
 		String sep = "";
 		for (Object selection : selections) {
-			if (selection instanceof IQuery) {
-				IQuery query = ((IQuery) obj);
-				text = text + sep + query.getQueryText();
+			if (selection instanceof IPhysicalQuery) {
+				IPhysicalQuery query = (IPhysicalQuery) selection;
+				text = text + sep + query.getLogicalQuery().getQueryText();
 				sep = System.getProperty("line.separator");
 				
 			}

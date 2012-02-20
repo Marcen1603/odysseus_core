@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
 
 /**
@@ -29,7 +29,7 @@ public class QueueSizeSF implements IStarvationFreedom {
 	 * @param plan
 	 *            the partial plan
 	 */
-	public QueueSizeSF(IQuery query) {
+	public QueueSizeSF(IPhysicalQuery query) {
 		super();
 		this.buffers = new ArrayList<IBuffer<?>>();
 		for (IPhysicalOperator po : query.getAllOperators()) {

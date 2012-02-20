@@ -22,11 +22,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
@@ -35,59 +31,15 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.NoTransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
- * StandardPlanOptimizer is the standard plan optimizer used by odysseus. New
- * queries are checked if they've got a physical plan. If not a new one is
- * created. After this check a new execution plan is created based on all
- * registered queries.
+ * StandardPlanOptimizer is the standard plan optimizer used by odysseus. 
  * 
  * @author Wolf Bauer
  * 
  */
 public class StandardPlanOptimizer implements IPlanOptimizer {
-
-	/**
-	 * Checks if each query has a physical plan. If not a new one based on the
-	 * logical plan is created.
-	 * 
-	 * @param sender
-	 *            Plan optimization requester.
-	 * @param queries
-	 *            Queries to check.
-	 * @throws OpenFailedException
-	 *             An {@link Exception} while opening the physical plan of an
-	 *             query.
-	 * @throws TransformationException
-	 *             An {@link Exception} while transforming the logical plan of
-	 *             an query.
-	 * @throws NoTransformationConfiguration
-	 *             An {@link Exception} because no
-	 *             {@link TransformationConfiguration} is set. The
-	 *             {@link TransformationConfiguration} should be set as
-	 *             {@link QueryBuildConfiguration}.
-	 * @throws CompilerException
-	 */
-	private void checkPhysikalPlan(IPlanOptimizable sender, List<IQuery> queries, IDataDictionary dd)
-			throws OpenFailedException, TransformationException,
-			NoTransformationConfiguration, NoCompilerLoadedException {
-
-		// check each query
-		for (IQuery query : queries) {
-			// create a physical plan if none is set
-			if (query.getRoots() == null || query.getRoots().isEmpty()) {
-				sender.getCompiler()
-						.transform(
-								query,
-								query.getBuildParameter()
-										.getTransformationConfiguration(),
-										query.getUser(), dd);
-			}
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -102,16 +54,8 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 */
 	@Override
 	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizationConfiguration parameters, List<IQuery> allQueries, IDataDictionary dd)
+			OptimizationConfiguration parameters, List<IPhysicalQuery> allQueries, IDataDictionary dd)
 			throws QueryOptimizationException {
-
-		// check all queries
-		try {
-			checkPhysikalPlan(sender, allQueries,dd);
-		} catch (Exception e) {
-			throw new QueryOptimizationException(
-					"Error while optimizer checking Queries.", e);
-		}
 
 		// ArrayList<IPhysicalOperator> roots = new
 		// ArrayList<IPhysicalOperator>();
@@ -122,7 +66,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Get Roots, PartialPlans and IIterableSource for the execution plan.
 		// Each query will be one PartialPlan. Duplicated operators will be
 		// ignored.
-		for (IQuery query : allQueries) {
+		for (IPhysicalQuery query : allQueries) {
 			partialPlanSources = new ArrayList<IIterableSource<?>>();
 			// roots.addAll(query.getRoots());
 
@@ -154,9 +98,9 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 			// create a PartialPlan for this query
 			PartialPlan pp = new PartialPlan(partialPlanSources, query
 					.getRoots(), query.getPriority(), query);
-			Set<IQuery> q = new HashSet<IQuery>();
+			Set<IPhysicalQuery> q = new HashSet<IPhysicalQuery>();
 			for (IOperatorOwner owner: owners){
-				q.add((IQuery) owner);
+				q.add((IPhysicalQuery) owner);
 			}
 			pp.setParticipatingQueries(q);
 			partialPlans.add(pp);

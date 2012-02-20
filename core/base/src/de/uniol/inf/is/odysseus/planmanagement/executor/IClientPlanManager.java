@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**

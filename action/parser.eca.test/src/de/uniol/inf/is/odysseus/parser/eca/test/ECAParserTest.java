@@ -35,8 +35,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -149,7 +150,7 @@ public class ECAParserTest implements CommandProvider {
 
 	@SuppressWarnings({"rawtypes"})
 	private void runTestSuite(String query, List<IActionParameter> parameters, CommandInterpreter ci) throws Exception {	
-		List<IQuery> queries = executor.translateQuery(query , "ECA", user);
+		List<ILogicalQuery> queries = executor.translateQuery(query , "ECA", user);
 		ILogicalOperator logicalPlan = queries.get(0).getLogicalPlan();
 		logicalPlan.getOutputSchema();
 		
@@ -198,10 +199,10 @@ public class ECAParserTest implements CommandProvider {
 		ci.println("		++success, number of actions & parameters is correct");
 		
 		//check physical operators
-		IQuery addedQuery = this.executor.addQuery(logicalPlan, user, "Standard");
+		IPhysicalQuery addedQuery = this.executor.addQuery(logicalPlan, user, "Standard");
 		ci.println("	*Testcase3: Check if physical plan is correct");
-		IPlan plan = this.executor.getPlan();
-		IQuery installedQuery = plan.getQuery(addedQuery.getID());
+		IPhysicalPlan plan = this.executor.getPlan();
+		IPhysicalQuery installedQuery = plan.getQuery(addedQuery.getID());
 		IPhysicalOperator physicalOp = installedQuery.getRoots().get(0);
 		if (! (physicalOp.getClass() == EventTriggerPO.class)){
 			throw new Exception("Physical operator root is wrong class: <"+physicalOp.getClass()+">");

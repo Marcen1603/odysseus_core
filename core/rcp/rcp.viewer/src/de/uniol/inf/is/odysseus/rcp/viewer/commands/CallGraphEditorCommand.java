@@ -28,7 +28,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
@@ -47,8 +48,8 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 				for (Object selection : SelectionProvider.getSelection(event)) {
 					// Auswahl holen
 					List<IPhysicalOperator> graph = null;
-					if (selection instanceof IQuery) {
-						IQuery query = (IQuery) selection;
+					if (selection instanceof IPhysicalQuery) {
+						IPhysicalQuery query = (IPhysicalQuery) selection;
 						graph = query.getRoots();
 
 						ISink<?> sink = (ISink<?>) graph.get(0);

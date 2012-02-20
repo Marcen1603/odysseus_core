@@ -40,8 +40,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
@@ -58,9 +58,11 @@ public class WebserviceServer {
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
-		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus", server);
+		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus",
+				server);
 		if (endpoint.isPublished()) {
-			Logger.getAnonymousLogger().log(Level.FINE, "Webservice published!");
+			Logger.getAnonymousLogger()
+					.log(Level.FINE, "Webservice published!");
 		}
 	}
 
@@ -69,8 +71,10 @@ public class WebserviceServer {
 	}
 
 	@WebResult(name = "securitytoken")
-	public StringResponse login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
-		ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
+	public StringResponse login(@WebParam(name = "username") String username,
+			@WebParam(name = "password") String password) {
+		ISession user = UserManagement.getSessionmanagement().login(username,
+				password.getBytes());
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -80,11 +84,15 @@ public class WebserviceServer {
 		}
 	}
 
-	public Response addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
+	public Response addQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "parser") String parser,
+			@WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, transCfg);
+			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,
+					transCfg);
 			return new Response(true);
 		} catch (WebserviceException e) {
 			e.printStackTrace();
@@ -94,11 +102,13 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	public StringListResponse getInstalledSources(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getInstalledSources(
+			@WebParam(name = "securitytoken") String securityToken) {
 		StringListResponse response = new StringListResponse(true);
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			for (Entry<String, ILogicalOperator> e : getExecutor().getStreamsAndViews(user)) {
+			for (Entry<String, ILogicalOperator> e : getExecutor()
+					.getStreamsAndViews(user)) {
 				response.addResponseValue(e.getKey());
 			}
 			return response;
@@ -109,12 +119,16 @@ public class WebserviceServer {
 
 	}
 
-	public StringListResponse getInstalledQueries(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getInstalledQueries(
+			@WebParam(name = "securitytoken") String securityToken) {
 		StringListResponse response = new StringListResponse(true);
 		try {
 			loginWithSecurityToken(securityToken);
-			for (IQuery q : ExecutorServiceBinding.getExecutor().getPlan().getQueries()) {
-				response.addResponseValue(q.getQueryText());
+			for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor()
+					.getPlan().getQueries()) {
+				if (q.getLogicalQuery() != null) {
+					response.addResponseValue(q.getLogicalQuery().getQueryText());
+				}
 			}
 			return response;
 		} catch (Exception e) {
@@ -123,16 +137,21 @@ public class WebserviceServer {
 		}
 	}
 
-	protected ISession loginWithSecurityToken(String securityToken) throws WebserviceException {
-		ISession session = UserManagement.getSessionmanagement().login(securityToken);
+	protected ISession loginWithSecurityToken(String securityToken)
+			throws WebserviceException {
+		ISession session = UserManagement.getSessionmanagement().login(
+				securityToken);
 		if (session != null) {
 			return session;
 		} else {
-			throw new WebserviceException("Security token unknown! You have to login first to obtain a security token!");
+			throw new WebserviceException(
+					"Security token unknown! You have to login first to obtain a security token!");
 		}
 	}
 
-	public Response removeQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
+	public Response removeQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") int queryID) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
@@ -143,7 +162,9 @@ public class WebserviceServer {
 		}
 	}
 
-	public Response startQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
+	public Response startQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") int queryID) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().startQuery(queryID, user);
@@ -155,7 +176,9 @@ public class WebserviceServer {
 
 	}
 
-	public Response stopQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryID") int queryID) {
+	public Response stopQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryID") int queryID) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().stopQuery(queryID, user);
@@ -167,7 +190,8 @@ public class WebserviceServer {
 
 	}
 
-	public Response startExecution(@WebParam(name = "securitytoken") String securityToken) {
+	public Response startExecution(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().startExecution();
@@ -179,7 +203,8 @@ public class WebserviceServer {
 
 	}
 
-	public Response stopExecution(@WebParam(name = "securitytoken") String securityToken) {
+	public Response stopExecution(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().stopExecution();
@@ -190,7 +215,8 @@ public class WebserviceServer {
 		}
 	}
 
-	public BooleanResponse isRunning(@WebParam(name = "securitytoken") String securityToken) {
+	public BooleanResponse isRunning(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			boolean running = ExecutorServiceBinding.getExecutor().isRunning();
@@ -201,17 +227,20 @@ public class WebserviceServer {
 		}
 	}
 
-	public StringResponse getInfos(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getInfos(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringResponse(ExecutorServiceBinding.getExecutor().getInfos(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor()
+					.getInfos(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringResponse("", false);
 		}
 	}
 
-	public Response initialize(@WebParam(name = "securitytoken") String securityToken) {
+	public Response initialize(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().initialize();
@@ -222,20 +251,24 @@ public class WebserviceServer {
 		}
 	}
 
-	public StringListResponse getQueryBuildConfigurationNames(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getQueryBuildConfigurationNames(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringListResponse(ExecutorServiceBinding.getExecutor().getQueryBuildConfigurationNames(), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor()
+					.getQueryBuildConfigurationNames(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new StringListResponse(false);
 	}
 
-	public StringListResponse getSupportedQueryParsers(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getSupportedQueryParsers(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers();
+			Set<String> parsers = ExecutorServiceBinding.getExecutor()
+					.getSupportedQueryParsers();
 			return new StringListResponse(parsers, true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -243,7 +276,8 @@ public class WebserviceServer {
 		return new StringListResponse(false);
 	}
 
-	public Response startAllClosedQueries(@WebParam(name = "securitytoken") String securityToken) {
+	public Response startAllClosedQueries(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().startAllClosedQueries(user);
@@ -254,40 +288,50 @@ public class WebserviceServer {
 		}
 	}
 
-	public StringListResponse getRegisteredBufferPlacementStrategiesIDs(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredBufferPlacementStrategiesIDs(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredBufferPlacementStrategiesIDs(), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor()
+					.getRegisteredBufferPlacementStrategiesIDs(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new StringListResponse(false);
 	}
 
-	public StringListResponse getRegisteredSchedulingStrategies(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredSchedulingStrategies(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulingStrategies(), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor()
+					.getRegisteredSchedulingStrategies(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new StringListResponse(false);
 	}
 
-	public StringListResponse getRegisteredSchedulers(@WebParam(name = "securitytoken") String securityToken) {
+	public StringListResponse getRegisteredSchedulers(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulers(), true);
+			return new StringListResponse(ExecutorServiceBinding.getExecutor()
+					.getRegisteredSchedulers(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new StringListResponse(false);
 	}
 
-	public Response setScheduler(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "scheduler") String scheduler, @WebParam(name = "scheduler_strategy") String schedulerStrategy) {
+	public Response setScheduler(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "scheduler") String scheduler,
+			@WebParam(name = "scheduler_strategy") String schedulerStrategy) {
 		try {
 			loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().setScheduler(scheduler, schedulerStrategy);
+			ExecutorServiceBinding.getExecutor().setScheduler(scheduler,
+					schedulerStrategy);
 			return new Response(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -295,27 +339,32 @@ public class WebserviceServer {
 		}
 	}
 
-	public StringResponse getCurrentSchedulerID(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getCurrentSchedulerID(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulerID(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor()
+					.getCurrentSchedulerID(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringResponse("", false);
 		}
 	}
 
-	public StringResponse getCurrentSchedulingStrategyID(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getCurrentSchedulingStrategyID(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulingStrategyID(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor()
+					.getCurrentSchedulingStrategyID(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringResponse("", false);
 		}
 	}
 
-	public Response updateExecutionPlan(@WebParam(name = "securitytoken") String securityToken) {
+	public Response updateExecutionPlan(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
 			ExecutorServiceBinding.getExecutor().updateExecutionPlan();
@@ -327,10 +376,12 @@ public class WebserviceServer {
 
 	}
 
-	public StringResponse getName(@WebParam(name = "securitytoken") String securityToken) {
+	public StringResponse getName(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringResponse(ExecutorServiceBinding.getExecutor().getName(), true);
+			return new StringResponse(ExecutorServiceBinding.getExecutor()
+					.getName(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringResponse("", false);
@@ -338,11 +389,12 @@ public class WebserviceServer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public SimpleGraph getPlan(@WebParam(name = "securitytoken") String securityToken) {
+	public SimpleGraph getPlan(
+			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			SimpleGraph graph = new SimpleGraph();
 			// loginWithSecurityToken(securityToken);
-			IPlan plan = ExecutorServiceBinding.getExecutor().getPlan();
+			IPhysicalPlan plan = ExecutorServiceBinding.getExecutor().getPlan();
 			int idCounter = 0;
 			for (IPhysicalOperator op : plan.getRoots()) {
 				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();

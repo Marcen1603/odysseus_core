@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Event, marking the violation of an sla
@@ -12,7 +12,7 @@ public class SLAViolationEvent {
 	/**
 	 * the query, the violated sla was defined for
 	 */
-	private IQuery query;
+	private IPhysicalQuery query;
 	/**
 	 * the costs caused by the violation due to predefined penalties
 	 */
@@ -38,7 +38,7 @@ public class SLAViolationEvent {
 	 * @param conformance
 	 *            measured conformnace to sla
 	 */
-	public SLAViolationEvent(IQuery query, double cost, int serviceLevel,
+	public SLAViolationEvent(IPhysicalQuery query, double cost, int serviceLevel,
 			double conformance) {
 		this.query = query;
 		this.cost = cost;
@@ -49,7 +49,7 @@ public class SLAViolationEvent {
 	/**
 	 * @return the query, the violated sla was defined for
 	 */
-	public IQuery getQuery() {
+	public IPhysicalQuery getQuery() {
 		return query;
 	}
 

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Holds context data for a plan migration. Used by {@link StandardOptimizer} to
@@ -31,11 +31,11 @@ class PlanMigrationContext {
 
 	private IPhysicalOperator root;
 	private ILogicalOperator logicalPlan;
-	private IQuery query;
+	private IPhysicalQuery query;
 	private IPlanMigrationStrategy strategy;
 	private IOptimizable sender;
 
-	public PlanMigrationContext(IQuery query) {
+	public PlanMigrationContext(IPhysicalQuery query) {
 		this.query = query;
 	}
 
@@ -55,11 +55,11 @@ class PlanMigrationContext {
 		this.logicalPlan = logicalPlan;
 	}
 
-	IQuery getQuery() {
+	IPhysicalQuery getQuery() {
 		return query;
 	}
 
-	void setQuery(IQuery query) {
+	void setQuery(IPhysicalQuery query) {
 		this.query = query;
 	}
 

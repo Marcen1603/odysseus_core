@@ -15,17 +15,17 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
 
 /**
  * PlanModificationEvent is an event that occurs during modification of
- * the registered execution plan. It refers to an {@link IPlan}.
+ * the registered execution plan. It refers to an {@link IPhysicalPlan}.
  * 
  * @author Wolf Bauer
  *
  */
 public class PlanModificationEvent extends
-		AbstractPlanModificationEvent<IPlan> {
+		AbstractPlanModificationEvent<IPhysicalPlan> {
 
 	/**
 	 * 
@@ -44,10 +44,10 @@ public class PlanModificationEvent extends
 	 * @param id
 	 *            ID which describes which event occurs.
 	 * @param value
-	 *            {@link IPlan} to which this event refers.
+	 *            {@link IPhysicalPlan} to which this event refers.
 	 */
 	public PlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType,
-			IPlan value) {
+			IPhysicalPlan value) {
 		super(sender, eventType, value);
 	}
 }

@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import java.util.List;
+import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public interface IProvidesQueries {
 	/**
@@ -24,5 +24,5 @@ public interface IProvidesQueries {
 	 * 
 	 * @return all currently registered queries in the system.
 	 */
-	public List<IQuery> getQueries();
+	public Collection<IPhysicalQuery> getQueries();
 }

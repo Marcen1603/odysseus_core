@@ -14,7 +14,8 @@ import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
@@ -296,7 +297,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 			for (IScheduling scheduling : this.plans) {
 				// calculate sla conformance for all queries
 				// Attention: it is expected that 1 partial plan contains 1 query
-				IQuery query = scheduling.getPlan().getQueries().get(0);
+				IPhysicalQuery query = scheduling.getPlan().getQueries().get(0);
 				SLARegistryInfo data = this.registry.getData(query);
 				if (data != null) {
 					// first check for sla violation and create event in case of violation
@@ -527,7 +528,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 *         null if no partial plan was found for the given query
 	 */
 	@Deprecated
-	public IPartialPlan getPartialPlan(IQuery query) {
+	public IPartialPlan getPartialPlan(ILogicalQuery query) {
 		for (IScheduling sched : this.plans) {
 			if (sched.getPlan().getQueries().equals(query))
 				return sched.getPlan();

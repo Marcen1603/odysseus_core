@@ -27,18 +27,18 @@ import de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule;
  * 
  */
 public abstract class AbstractQueryReoptimizeRule implements
-		IReoptimizeRule<IQuery> {
+		IReoptimizeRule<IPhysicalQuery> {
 
 	/**
 	 * List of queries which are informed if this rule is valid.
 	 */
-	protected ArrayList<IQuery> reoptimizable;
+	protected ArrayList<IPhysicalQuery> reoptimizable;
 	
 	/**
 	 * Informs all registered queries that this rule is valid.
 	 */
 	protected void fireReoptimizeEvent() {
-		for (IQuery reoptimizableType : this.reoptimizable) {
+		for (IPhysicalQuery reoptimizableType : this.reoptimizable) {
 			reoptimizableType.reoptimize();
 		}
 	}
@@ -47,7 +47,7 @@ public abstract class AbstractQueryReoptimizeRule implements
 	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule#addReoptimieRequester(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void addReoptimieRequester(IQuery reoptimizable) {
+	public void addReoptimieRequester(IPhysicalQuery reoptimizable) {
 		this.reoptimizable.add(reoptimizable);
 	}
 
@@ -55,7 +55,7 @@ public abstract class AbstractQueryReoptimizeRule implements
 	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule#removeReoptimieRequester(de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester)
 	 */
 	@Override
-	public void removeReoptimieRequester(IQuery reoptimizable) {
+	public void removeReoptimieRequester(IPhysicalQuery reoptimizable) {
 		this.reoptimizable.remove(reoptimizable);
 	}
 }

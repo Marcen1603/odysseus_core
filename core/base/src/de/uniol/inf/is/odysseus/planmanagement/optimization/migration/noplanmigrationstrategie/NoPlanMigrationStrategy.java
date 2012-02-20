@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanMigratable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * This is the standard plan migration strategy. No migration is performed. The
@@ -49,6 +49,6 @@ public class NoPlanMigrationStrategy implements IPlanMigrationStrategy {
 
 	@Override
 	public void migrateQuery(IOptimizer sender,
-			IQuery runningQuery, List<IPhysicalOperator> newPlanRoots) {
+			IPhysicalQuery runningQuery, List<IPhysicalOperator> newPlanRoots) {
 	}
 }

@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
@@ -32,7 +34,9 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
@@ -188,7 +192,7 @@ public class StandardCompiler implements ICompiler {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<IQuery> translateQuery(String query,
+	public List<ILogicalQuery> translateQuery(String query,
 			String parserID, ISession user, IDataDictionary dd) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID)
@@ -218,7 +222,7 @@ public class StandardCompiler implements ICompiler {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void transform(IQuery query,
+	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException {
 //		System.err.println("TRANSFORMING QUERY");
 //		
@@ -233,6 +237,7 @@ public class StandardCompiler implements ICompiler {
 //		walker.prefixWalk(query.getLogicalPlan(), visitor);
 //		System.err.println(visitor.getResult());
 
+		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
 		AbstractGraphWalker walker = new AbstractGraphWalker();
 		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
@@ -244,7 +249,10 @@ public class StandardCompiler implements ICompiler {
 //		walker.prefixWalk(copyPlan, visitor);
 //		System.err.println(visitor.getResult());
 
-		query.initializePhysicalRoots(this.transformation.transform(copyPlan, transformationConfiguration, caller, dd));
+		ArrayList<IPhysicalOperator> physicalPlan = this.transformation.transform(copyPlan, transformationConfiguration, caller, dd);
+		
+		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan);
+		return transformedQuery;
 	}
 	
 	/* (non-Javadoc)
@@ -311,13 +319,14 @@ public class StandardCompiler implements ICompiler {
 
 
 	@Override
-	public List<IQuery> translateAndTransformQuery(String query,
+	public List<IPhysicalQuery> translateAndTransformQuery(String query,
 			String parserID, ISession user, IDataDictionary dd, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
-		List<IQuery> translate = translateQuery(query, parserID, user, dd);
-		for (IQuery q:translate){
-			transform(q, transformationConfiguration, user, dd);
+		List<ILogicalQuery> translate = translateQuery(query, parserID, user, dd);
+		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();
+		for (ILogicalQuery q:translate){
+			 translated.add(transform(q, transformationConfiguration, user, dd));
 		}
-		return translate;
+		return translated;
 	}
 
 

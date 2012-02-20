@@ -5,7 +5,7 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.store.FileStore;
@@ -33,7 +33,7 @@ public class DataDictionary extends AbstractDataDictionary {
 				OdysseusDefaults.get("sinkDefinitionsFilename"));
 		sinkFromUser = new FileStore<String, IUser>(
 				OdysseusDefaults.get("sinkDefinitionsUserFilename"));
-		savedQueries = new FileStore<Integer, IQuery>(
+		savedQueries = new FileStore<Integer, ILogicalQuery>(
 				OdysseusDefaults.get("queriesFilename"));
 		savedQueriesForUser = new FileStore<Integer, IUser>(
 				OdysseusDefaults.get("queriesUserFilename"));

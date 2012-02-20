@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * A PartialPlan is a part of the global execution plan. It consist of root
@@ -79,7 +79,7 @@ public class PartialPlan implements IPartialPlan {
 	/**
 	 * 
 	 */
-	private List<IQuery> partOf;
+	private List<IPhysicalQuery> partOf;
 
 	private long planId;
 
@@ -87,7 +87,7 @@ public class PartialPlan implements IPartialPlan {
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
 	final private Map<IIterableSource<?>, Integer> sourceIds;
-	private Set<IQuery> particpatingQueries;
+	private Set<IPhysicalQuery> particpatingQueries;
 
 	/**
 	 * Creates a new PartialPlan.
@@ -101,8 +101,8 @@ public class PartialPlan implements IPartialPlan {
 	 *            Real priorty can change at runtime
 	 */
 	public PartialPlan(List<IIterableSource<?>> iterableSources,
-			List<IPhysicalOperator> roots, int basePriority, IQuery partof,
-			IQuery... otherParts) {
+			List<IPhysicalOperator> roots, int basePriority, IPhysicalQuery partof,
+			IPhysicalQuery... otherParts) {
 		this.iterableSources = new ArrayList<IIterableSource<?>>(
 				iterableSources);
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
@@ -114,9 +114,9 @@ public class PartialPlan implements IPartialPlan {
 		this.roots = roots;
 		this.currentPriority = basePriority;
 		this.basePriority = basePriority;
-		this.partOf = new ArrayList<IQuery>();
+		this.partOf = new ArrayList<IPhysicalQuery>();
 		this.partOf.add(partof);
-		for (IQuery q : otherParts) {
+		for (IPhysicalQuery q : otherParts) {
 			this.partOf.add(q);
 		}
 		planId = planIdCounter++;
@@ -164,7 +164,7 @@ public class PartialPlan implements IPartialPlan {
 	public List<IPhysicalOperator> getQueryRoots() {
 
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
-		for (IQuery q : partOf) {
+		for (IPhysicalQuery q : partOf) {
 			roots.addAll(q.getRoots());
 		}
 	//	getLogger().debug("get Query Roots " + roots);
@@ -172,7 +172,7 @@ public class PartialPlan implements IPartialPlan {
 	}
 
 	@Override
-	public List<IQuery> getQueries() {
+	public List<IPhysicalQuery> getQueries() {
 		return Collections.unmodifiableList(partOf);
 	}
 
@@ -237,11 +237,11 @@ public class PartialPlan implements IPartialPlan {
 		return result.toString();
 	}
 
-	public void setParticipatingQueries(Set<IQuery> q) {
+	public void setParticipatingQueries(Set<IPhysicalQuery> q) {
 		this.particpatingQueries = q;
 	}
 	
-	public Set<IQuery> getParticpatingQueries() {
+	public Set<IPhysicalQuery> getParticpatingQueries() {
 		return Collections.unmodifiableSet(particpatingQueries);
 	}
 

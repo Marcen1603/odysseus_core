@@ -146,35 +146,6 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.leafSources.addAll(leafSources);
 	}
 
-	// Do not open the execution plan. Open each query on its own
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
-	// * #open()
-	// */
-	// @Override
-	// public void open() throws OpenFailedException {
-	// getLogger().debug("Calling Open on "+this);
-	// if (!open) {
-	// Set<IPhysicalOperator> roots = getRoots();
-	// getLogger().debug("Calling Open for " + roots);
-	// for (IPhysicalOperator root : roots) {
-	// if (root.isSink()) {
-	// ((ISink<?>) root).open();
-	// } else {
-	// throw new IllegalArgumentException(
-	// "Open() cannot be called on a source -->" + root);
-	// }
-	//
-	// }
-	// open = true;
-	// }else{
-	// getLogger().warn("Open called on open plan "+this);
-	// }
-	//
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 

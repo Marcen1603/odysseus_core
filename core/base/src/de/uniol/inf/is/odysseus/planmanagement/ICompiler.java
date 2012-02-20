@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -43,10 +44,10 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<IQuery> translateQuery(String query, String parserID, ISession user, IDataDictionary dd)
+	public List<ILogicalQuery> translateQuery(String query, String parserID, ISession user, IDataDictionary dd)
 			throws QueryParseException;
 
-	public List<IQuery> translateAndTransformQuery(String query, String parserID, ISession user, IDataDictionary dd,
+	public List<IPhysicalQuery> translateAndTransformQuery(String query, String parserID, ISession user, IDataDictionary dd,
 			TransformationConfiguration transformationConfiguration)
 			throws QueryParseException, TransformationException;
 //	/**
@@ -82,7 +83,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 * Transforms a query where the logical plan is set into a physical representation that will
 	 * be set in the query object
 	 * 
-	 * @param IQuery
+	 * @param ILogicalQuery
 	 *            containing a logical plan which should be transformed.
 	 * @param transformationConfiguration
 	 *            {@link TransformationConfiguration} for the transformation
@@ -93,7 +94,7 @@ public interface ICompiler extends IInfoProvider, IRewrite {
 	 *             An {@link Exception} which occurs during transformation the
 	 *             query.
 	 */
-	public void transform(/*InOut*/IQuery query, TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException;
+	public IPhysicalQuery transform(ILogicalQuery query, TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException;
 
 //	/**
 //	 * Transforms a logical plan into several semantically equivalent physical

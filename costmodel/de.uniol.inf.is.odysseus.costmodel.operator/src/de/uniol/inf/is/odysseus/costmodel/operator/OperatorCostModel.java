@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
@@ -121,7 +121,7 @@ public class OperatorCostModel implements ICostModel {
 				
 				boolean isRunning = false;
 				for( IOperatorOwner owner : operator.getOwner()) {
-					IQuery query = (IQuery)owner;
+					IPhysicalQuery query = (IPhysicalQuery)owner;
 					if( query.isOpened() ) { 
 						isRunning = true;
 						break;

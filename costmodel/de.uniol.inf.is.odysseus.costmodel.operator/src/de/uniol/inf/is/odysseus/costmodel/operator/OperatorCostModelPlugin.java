@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizationAction {
 
@@ -63,7 +63,7 @@ public class OperatorCostModelPlugin implements BundleActivator, IPostOptimizati
 	}
 
 	@Override
-	public void run(IQuery query, OptimizationConfiguration parameter) {
+	public void run(IPhysicalQuery query, OptimizationConfiguration parameter) {
 		// Bei jeder neuen Anfrage werden "datarate", "selectivity" und
 		// "median_processing_time" an alle Operatoren gehängt.
 		

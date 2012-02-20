@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
@@ -259,18 +259,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private void clearExecutor() {
 		this.sinks.clear();
 		this.executor.getExecutionPlan().close();
-		for (IQuery q : this.executor.getQueries()) {
-			try {
-				this.executor.removeQuery(q.getID(), user);
-			} catch (PlanManagementException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
+		this.executor.removeAllQueries();
 	}
 
 	private int getQueryId(IPhysicalOperator curRoot) {
-		for (IQuery q : this.executor.getQueries()) {
+		for (IPhysicalQuery q : this.executor.getQueries()) {
 			if (q.getRoots().contains(curRoot)) {
 				return q.getID();
 			}

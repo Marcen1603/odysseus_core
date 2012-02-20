@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.IStarvationFreedom;
 
 /**
@@ -32,7 +32,7 @@ public class ElementTimeStampSF implements IStarvationFreedom {
 	 * @param plan
 	 *            the plan
 	 */
-	public ElementTimeStampSF(IQuery query) {
+	public ElementTimeStampSF(IPhysicalQuery query) {
 		super();
 		this.buffers = new ArrayList<IBuffer<?>>();
 		for (IPhysicalOperator po : query.getAllOperators()) {

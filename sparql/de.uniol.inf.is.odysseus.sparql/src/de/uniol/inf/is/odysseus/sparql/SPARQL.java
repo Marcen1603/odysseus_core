@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTQuery;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParser;
@@ -48,7 +48,7 @@ public class SPARQL implements IQueryParser{
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, ISession user, IDataDictionary dd)
+	public synchronized List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user= user;
 //		this.dd = dd;
@@ -62,7 +62,7 @@ public class SPARQL implements IQueryParser{
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, ISession user, IDataDictionary dd)
+	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 		
 //		this.user = user;
@@ -87,10 +87,10 @@ public class SPARQL implements IQueryParser{
 			SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 			System.out.println("Logical plan:\n" + printer.createString(logicalOp));
 	
-			List<IQuery> listOfQueries = new ArrayList<IQuery>();
+			List<ILogicalQuery> listOfQueries = new ArrayList<ILogicalQuery>();
 			// an access ao must not be returned
 			if(!visitor.isCreateStatement()){
-				IQuery query = new Query();
+				ILogicalQuery query = new Query();
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(logicalOp, true);
 				listOfQueries.add(query);

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Standardimplementierung der Admission Control auf Basis von
@@ -42,9 +42,9 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private ICost maxCost;
 	private ICost actCost;
 
-	private Map<IQuery, ICost> queryCosts = new HashMap<IQuery, ICost>();
-	private Map<IQuery, ICost> runningQueryCosts = new HashMap<IQuery, ICost>();
-	private Map<IQuery, Long> timestamps = new HashMap<IQuery, Long>();
+	private Map<IPhysicalQuery, ICost> queryCosts = new HashMap<IPhysicalQuery, ICost>();
+	private Map<IPhysicalQuery, ICost> runningQueryCosts = new HashMap<IPhysicalQuery, ICost>();
+	private Map<IPhysicalQuery, Long> timestamps = new HashMap<IPhysicalQuery, Long>();
 
 	private IPossibleExecutionGenerator generator = new PossibleExecutionGenerator();
 
@@ -60,12 +60,12 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	@Override
-	public ICost getCost(IQuery query) {
+	public ICost getCost(IPhysicalQuery query) {
 		return queryCosts.get(query);
 	}
 
 	@Override
-	public synchronized boolean canStartQuery(IQuery query) {
+	public synchronized boolean canStartQuery(IPhysicalQuery query) {
 
 		if (runningQueryCosts.containsKey(query))
 			return true;
@@ -119,14 +119,14 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		actCost = estimateCost(operators, true);
 
 		// update query estimations
-		Map<IQuery, ICost> map = new HashMap<IQuery, ICost>();
+		Map<IPhysicalQuery, ICost> map = new HashMap<IPhysicalQuery, ICost>();
 		for (IPhysicalOperator op : operators) {
 			List<IOperatorOwner> owners = op.getOwner();
 
 			// find first active owner
-			IQuery query = null;
+			IPhysicalQuery query = null;
 			for (IOperatorOwner owner : owners) {
-				IQuery q = (IQuery) owner;
+				IPhysicalQuery q = (IPhysicalQuery) owner;
 				if (q.isOpened()) {
 					query = q;
 					break;
@@ -148,7 +148,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		runningQueryCosts.putAll(map);
 		queryCosts.putAll(map);
 
-		for (IQuery query : runningQueryCosts.keySet())
+		for (IPhysicalQuery query : runningQueryCosts.keySet())
 			timestamps.put(query, System.currentTimeMillis());
 
 		// check, if system-load is too heavy
@@ -167,7 +167,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	private List<IPhysicalOperator> getAllOperators() {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 
-		for (IQuery query : executor.getQueries())
+		for (IPhysicalQuery query : executor.getQueries())
 			for (IPhysicalOperator op : query.getPhysicalChilds())
 				if (!operators.contains(op) && !op.getClass().getSimpleName().contains("DataSourceObserverSink") && op.getOwner().contains(query))
 					operators.add(op);
@@ -175,7 +175,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return operators;
 	}
 
-	private List<IPhysicalOperator> getAllOperators(IQuery query) {
+	private List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 		// filter
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
@@ -225,7 +225,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	@Override
 	public synchronized void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 
-		IQuery query = (IQuery) eventArgs.getValue();
+		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		List<IPhysicalOperator> operators = getAllOperators(query);
 
 		getLogger().debug("EVENT : " + eventArgs.getEventType());

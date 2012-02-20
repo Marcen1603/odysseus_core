@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.ac;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * {@link IPossibleExecution} stellt ein Vorschlag zur Kompensation einer
@@ -20,7 +20,7 @@ public interface IPossibleExecution {
 	 * 
 	 * @return Anfragen, die ausgeführt werden können.
 	 */
-	public Collection<IQuery> getRunningQueries();
+	public Collection<IPhysicalQuery> getRunningQueries();
 
 	/**
 	 * Liefert alle Anfragen, die zur Überlastkompensation gestoppt
@@ -28,7 +28,7 @@ public interface IPossibleExecution {
 	 * 
 	 * @return Liste von zu stoppenden Anfragen
 	 */
-	public Collection<IQuery> getStoppingQueries();
+	public Collection<IPhysicalQuery> getStoppingQueries();
 
 	/**
 	 * Liefert die Kostenschätzung für den Fall, dass dieser Vorschlag

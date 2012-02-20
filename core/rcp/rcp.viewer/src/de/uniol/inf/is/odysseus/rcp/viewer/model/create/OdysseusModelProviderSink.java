@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
@@ -64,7 +64,7 @@ public final class OdysseusModelProviderSink implements IModelProvider<IPhysical
 	 * @param sink Senke, welcher den Ausgangspunkt der Traversierung des Ablaufplans darstellt.
 	 * @param query Anfrage, woraus die Senke entstanden ist. Kann null sein.
 	 */
-	public OdysseusModelProviderSink( ISink<?> sink, IQuery query ) {
+	public OdysseusModelProviderSink( ISink<?> sink, IPhysicalQuery query ) {
 		if( sink == null ) 
 			throw new IllegalArgumentException("sink is null!");
 		

@@ -31,7 +31,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
@@ -59,8 +59,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			List<Object> selections = SelectionProvider.getSelection(event);
 			nextSelection: for (Object selectedObject : selections) {
 
-				if (selectedObject instanceof IQuery) {
-					IQuery query = (IQuery) selectedObject;
+				if (selectedObject instanceof IPhysicalQuery) {
+					IPhysicalQuery query = (IPhysicalQuery) selectedObject;
 					if (query.getRoots().size() > 0)
 						opForStream = query.getRoots().get(0);
 					else

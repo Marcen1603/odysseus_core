@@ -49,13 +49,12 @@ import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
-
-import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 /**
  * Handle queries
@@ -188,7 +187,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 
 		try {
 			// Plan in Ausf�hrungsplan hinzuf�gen
-			IQuery query = null;
+			IPhysicalQuery query = null;
 			ISession user = P2PUserContext.getActiveSession("");
 
 			boolean result = false;

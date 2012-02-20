@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 public class ProcessCallsMonitor extends AbstractPlanMonitor<Long> implements
 		IPOEventListener {
@@ -31,7 +31,7 @@ public class ProcessCallsMonitor extends AbstractPlanMonitor<Long> implements
 	long overallProcessCallCount = 0;
 	private boolean relativeCallCount;
 
-	public ProcessCallsMonitor(IQuery target, boolean onlyRoots,
+	public ProcessCallsMonitor(IPhysicalQuery target, boolean onlyRoots,
 			boolean onlyBuffer, String type, boolean relativeCallCount) {
 		super(target, onlyRoots, onlyBuffer, type);
 		processCallsPerOperator = new HashMap<IPhysicalOperator, Long>();

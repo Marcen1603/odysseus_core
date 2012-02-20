@@ -52,7 +52,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
@@ -136,7 +136,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		CQLParser parser = new CQLParser();
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
-		operator = ((List<IQuery>) parser.visit(node, null)).get(0)
+		operator = ((List<ILogicalQuery>) parser.visit(node, null)).get(0)
 				.getLogicalPlan();
 		SDFSchema otherAttributes = operator.getOutputSchema();
 

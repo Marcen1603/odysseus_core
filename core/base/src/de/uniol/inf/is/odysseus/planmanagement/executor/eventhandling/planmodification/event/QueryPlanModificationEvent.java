@@ -15,17 +15,18 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 
 /**
  * PlanModificationEvent is an event that occurs during modification of
- * the registered execution plan. It refers to an {@link IQuery}.
+ * the registered execution plan. It refers to an {@link ILogicalQuery}.
  * 
  * @author Wolf Bauer
  *
  */
 public class QueryPlanModificationEvent extends
-		AbstractPlanModificationEvent<IQuery> {
+		AbstractPlanModificationEvent<IPhysicalQuery> {
 
 
 	/**
@@ -41,9 +42,9 @@ public class QueryPlanModificationEvent extends
 	 * @param id
 	 *            ID which describes which event occurs.
 	 * @param value
-	 *            {@link IQuery} to which this event refers.
+	 *            {@link ILogicalQuery} to which this event refers.
 	 */
-	public QueryPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType, IQuery value) {
+	public QueryPlanModificationEvent(IPlanManager sender, PlanModificationEventType eventType, IPhysicalQuery value) {
 		super(sender, eventType, value);
 	}
 }

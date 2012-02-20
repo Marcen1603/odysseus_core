@@ -75,7 +75,8 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.planrules.ReoptimizeTimer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterDefaultRoot;
@@ -90,9 +91,12 @@ import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.PrintGraphVisitor;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ExecutorConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener, IErrorEventListener, ICompilerListener {
+public class ExecutorConsole implements CommandProvider,
+		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener,
+		ICompilerListener {
 
-	private static Logger logger = LoggerFactory.getLogger(ExecutorConsole.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(ExecutorConsole.class);
 
 	private static final String METHOD = "method";
 
@@ -137,7 +141,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	private BenchmarkSink benchmarkSink = null;
 
-	private static class DelegateCommandInterpreter implements CommandInterpreter {
+	private static class DelegateCommandInterpreter implements
+			CommandInterpreter {
 		final private CommandInterpreter ci;
 		int i = 0;
 		final private String[] args;
@@ -206,7 +211,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			for (String arg : args) {
 				if (arg.contains(DELIMITER)) {
 					System.err.println("fixme: argument may not contain '|||'");
-					throw new RuntimeException("fixme: argument may not contain '|||'");
+					throw new RuntimeException(
+							"fixme: argument may not contain '|||'");
 				}
 				builder.append(DELIMITER);
 				builder.append(arg);
@@ -261,7 +267,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 					// Q8
 					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction2 [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" } };
 
-	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(new TransformationConfiguration("relational", ITimeInterval.class));
+	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
+			new TransformationConfiguration("relational", ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
 
@@ -269,30 +276,34 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	private boolean useBrokerConfig = false;
 
-	public void bindScriptParser(IOdysseusScriptParser parser){
+	public void bindScriptParser(IOdysseusScriptParser parser) {
 		this.scriptParser = parser;
 	}
 
 	public void bindExecutor(IExecutor executor) {
 		logger.debug("executor gebunden");
 
-		// TODO: Console funktioniert nur auf dem Server --> das irgendwie klar machen
-		this.executor = (IServerExecutor)executor;
+		// TODO: Console funktioniert nur auf dem Server --> das irgendwie klar
+		// machen
+		this.executor = (IServerExecutor) executor;
 
 		this.executor.addErrorEventListener(this);
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
-		//this.executor.addCompilerListener(this);
-//		try {
-//			System.out.println(executor.getCompiler());
-//			if (executor.getCompiler() != null) {
-//				System.out.println("Rewrite Bound : " + executor.getCompiler().isRewriteBound());
-//				System.out.println("Transformation Bound :" + executor.getCompiler().isTransformationBound());				
-//				this.originalBuildConfig = executor.getQueryBuildConfiguration(defaultBuildConfiguration);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		// this.executor.addCompilerListener(this);
+		// try {
+		// System.out.println(executor.getCompiler());
+		// if (executor.getCompiler() != null) {
+		// System.out.println("Rewrite Bound : " +
+		// executor.getCompiler().isRewriteBound());
+		// System.out.println("Transformation Bound :" +
+		// executor.getCompiler().isTransformationBound());
+		// this.originalBuildConfig =
+		// executor.getQueryBuildConfiguration(defaultBuildConfiguration);
+		// }
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 		// Typically no compiler is loaded here, so the following
 		// code will always break
 
@@ -323,7 +334,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			return parser;
 		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParsers().iterator();
+		Iterator<String> parsers = this.executor.getSupportedQueryParsers()
+				.iterator();
 		if (parsers != null && parsers.hasNext()) {
 			this.parser = parsers.next();
 			return this.parser;
@@ -387,9 +399,12 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(description = "show available buffer placement strategies")
 	public void _lsbuffer(CommandInterpreter ci) {
-		Set<String> bufferList = this.executor.getRegisteredBufferPlacementStrategiesIDs();
+		Set<String> bufferList = this.executor
+				.getRegisteredBufferPlacementStrategiesIDs();
 		if (bufferList != null) {
-			String current = (String) this.executor.getConfiguration().get(ParameterBufferPlacementStrategy.class).getValue().getName();
+			String current = (String) this.executor.getConfiguration()
+					.get(ParameterBufferPlacementStrategy.class).getValue()
+					.getName();
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
@@ -466,13 +481,17 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		if (args != null && args.length > 0) {
 			try {
 				String bufferName = args[0];
-				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs();
+				Set<String> list = this.executor
+						.getRegisteredBufferPlacementStrategiesIDs();
 				if (list.contains(bufferName)) {
-					this.executor.getConfiguration().set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
+					this.executor.getConfiguration().set(
+							new ParameterBufferPlacementStrategy(executor
+									.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
 				} else {
-					this.executor.getConfiguration().set(new ParameterBufferPlacementStrategy());
+					this.executor.getConfiguration().set(
+							new ParameterBufferPlacementStrategy());
 					if ("no strategy".equalsIgnoreCase(bufferName)) {
 						ci.println("Current strategy removed.");
 					} else {
@@ -497,7 +516,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 			if (methodName.startsWith("_")) {
 				if (method.isAnnotationPresent(Help.class)) {
-					methodHelps.put(methodName.substring(1), method.getAnnotation(Help.class));
+					methodHelps.put(methodName.substring(1),
+							method.getAnnotation(Help.class));
 				}
 			}
 		}
@@ -545,10 +565,13 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				usePunctuations = toBoolean(args[0]);
 
 				if (usePunctuations) {
-					trafoConfigParam.getValue().setOption("usePunctuations", true);
+					trafoConfigParam.getValue().setOption("usePunctuations",
+							true);
 				} else {
-					if (trafoConfigParam.getValue().getOption("usePunctuations") != null) {
-						trafoConfigParam.getValue().setOption("usePunctuations", null);
+					if (trafoConfigParam.getValue()
+							.getOption("usePunctuations") != null) {
+						trafoConfigParam.getValue().setOption(
+								"usePunctuations", null);
 					}
 				}
 
@@ -556,7 +579,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("punctuations are " + (usePunctuations ? "activated" : "deactivated"));
+		ci.println("punctuations are "
+				+ (usePunctuations ? "activated" : "deactivated"));
 
 	}
 
@@ -571,10 +595,13 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				useLoadShedding = toBoolean(args[0]);
 
 				if (useLoadShedding) {
-					trafoConfigParam.getValue().setOption("useLoadShedding", true);
+					trafoConfigParam.getValue().setOption("useLoadShedding",
+							true);
 				} else {
-					if (trafoConfigParam.getValue().getOption("useLoadShedding") != null) {
-						trafoConfigParam.getValue().setOption("useLoadShedding", null);
+					if (trafoConfigParam.getValue()
+							.getOption("useLoadShedding") != null) {
+						trafoConfigParam.getValue().setOption(
+								"useLoadShedding", null);
 					}
 				}
 
@@ -582,7 +609,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("Load shedding is " + (useLoadShedding ? "activated" : "deactivated"));
+		ci.println("Load shedding is "
+				+ (useLoadShedding ? "activated" : "deactivated"));
 
 	}
 
@@ -597,10 +625,13 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				useExtPostPriorisation = toBoolean(args[0]);
 
 				if (useExtPostPriorisation) {
-					trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", true);
+					trafoConfigParam.getValue().setOption(
+							"useExtendedPostPriorisation", true);
 				} else {
-					if (trafoConfigParam.getValue().getOption("useExtendedPostPriorisation") != null) {
-						trafoConfigParam.getValue().setOption("useExtendedPostPriorisation", null);
+					if (trafoConfigParam.getValue().getOption(
+							"useExtendedPostPriorisation") != null) {
+						trafoConfigParam.getValue().setOption(
+								"useExtendedPostPriorisation", null);
 					}
 				}
 
@@ -608,7 +639,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("Extended Post Priorisation is " + (useExtPostPriorisation ? "activated" : "deactivated"));
+		ci.println("Extended Post Priorisation is "
+				+ (useExtPostPriorisation ? "activated" : "deactivated"));
 
 	}
 
@@ -659,7 +691,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 
 			try {
-				IQuery query = this.executor.getPlan().getQuery(qnum);
+				IPhysicalQuery query = this.executor.getPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -691,7 +723,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IQuery query = this.executor.getPlan().getQuery(qnum);
+				IPhysicalQuery query = this.executor.getPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -733,7 +765,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		for (String s : q) {
 			try {
 				resetBuildConfig();
-				this.executor.addQuery(s, parser(), currentUser, defaultBuildConfiguration);
+				this.executor.addQuery(s, parser(), currentUser,
+						defaultBuildConfiguration);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -759,7 +792,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		for (String s : q) {
 			try {
 				resetBuildConfig();
-				this.executor.addQuery(s, parser(), currentUser, defaultBuildConfiguration);
+				this.executor.addQuery(s, parser(), currentUser,
+						defaultBuildConfiguration);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -818,11 +852,20 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		try {
 			resetBuildConfig();
 			if (outputputFilename == null || outputputFilename.length() == 0) {
-				this.executor.getQueryBuildConfiguration(defaultBuildConfiguration).getConfiguration().add(new ParameterDefaultRoot(new MySink()));
-				this.executor.addQuery(q, parser(), currentUser, defaultBuildConfiguration);
+				this.executor
+						.getQueryBuildConfiguration(defaultBuildConfiguration)
+						.getConfiguration()
+						.add(new ParameterDefaultRoot(new MySink()));
+				this.executor.addQuery(q, parser(), currentUser,
+						defaultBuildConfiguration);
 			} else {
-				this.executor.getQueryBuildConfiguration(defaultBuildConfiguration).getConfiguration().add(	new ParameterDefaultRoot(new FileSinkPO(outputputFilename, "", -1, true)));
-				this.executor.addQuery(q, parser(), currentUser, defaultBuildConfiguration);
+				this.executor
+						.getQueryBuildConfiguration(defaultBuildConfiguration)
+						.getConfiguration()
+						.add(new ParameterDefaultRoot(new FileSinkPO(
+								outputputFilename, "", -1, true)));
+				this.executor.addQuery(q, parser(), currentUser,
+						defaultBuildConfiguration);
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -840,17 +883,21 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				usePriority = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (usePriority) {
-					trafoConfig = new TransformationConfiguration("relational", ITimeInterval.class, IPriority.class);
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class, IPriority.class);
 				} else {
-					trafoConfig = new TransformationConfiguration("relational", ITimeInterval.class);
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class);
 
 				}
-				this.trafoConfigParam = new ParameterTransformationConfiguration(trafoConfig);
+				this.trafoConfigParam = new ParameterTransformationConfiguration(
+						trafoConfig);
 			}
 		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("priorities are " + (usePriority ? "activated" : "deactivated"));
+		ci.println("priorities are "
+				+ (usePriority ? "activated" : "deactivated"));
 	}
 
 	@Help(parameter = "<on|off>", description = "turn usage of object fusion configuration on|off")
@@ -862,18 +909,27 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				useObjectFusionConfig = toBoolean(args[0]);
 				TransformationConfiguration trafoConfig;
 				if (useObjectFusionConfig) {
-					Class<?> h = Class.forName("de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper");
-					ITransformationHelper helper = (ITransformationHelper) h.newInstance();
-					trafoConfig = new TransformationConfiguration(helper, "relational", ITimeInterval.class.getName(),
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey", "de.uniol.inf.is.odysseus.latency.ILatency",
-							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability", "de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime",
+					Class<?> h = Class
+							.forName("de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper");
+					ITransformationHelper helper = (ITransformationHelper) h
+							.newInstance();
+					trafoConfig = new TransformationConfiguration(
+							helper,
+							"relational",
+							ITimeInterval.class.getName(),
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey",
+							"de.uniol.inf.is.odysseus.latency.ILatency",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability",
+							"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime",
 							"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IConnectionContainer", // ok
 							"de.uniol.inf.is.odysseus.scars.objecttracking.metadata.IGain");
 				} else {
-					trafoConfig = new TransformationConfiguration("relational", ITimeInterval.class);
+					trafoConfig = new TransformationConfiguration("relational",
+							ITimeInterval.class);
 
 				}
-				this.trafoConfigParam = new ParameterTransformationConfiguration(trafoConfig);
+				this.trafoConfigParam = new ParameterTransformationConfiguration(
+						trafoConfig);
 			}
 		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
@@ -884,7 +940,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		ci.println("Object fusion configuration is " + (useObjectFusionConfig ? "activated" : "deactivated"));
+		ci.println("Object fusion configuration is "
+				+ (useObjectFusionConfig ? "activated" : "deactivated"));
 	}
 
 	@Help(parameter = "<on|off>", description = "turn usage of broker configuration on|off")
@@ -895,15 +952,18 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			if (args.length == 1) {
 				useBrokerConfig = toBoolean(args[0]);
 				if (useBrokerConfig) {
-					this.trafoConfigParam.getValue().setOption("IBrokerInterval", true);
+					this.trafoConfigParam.getValue().setOption(
+							"IBrokerInterval", true);
 				} else {
-					this.trafoConfigParam.getValue().removeOption("IBrokerInterval");
+					this.trafoConfigParam.getValue().removeOption(
+							"IBrokerInterval");
 				}
 			}
 		} catch (IllegalArgumentException e) {
 			ci.println(e.getMessage());
 		}
-		ci.println("Broker configuration is " + (useBrokerConfig ? "activated" : "deactivated"));
+		ci.println("Broker configuration is "
+				+ (useBrokerConfig ? "activated" : "deactivated"));
 	}
 
 	public void _waitForBenchmarkResult(CommandInterpreter ci) {
@@ -939,7 +999,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		if (string.equalsIgnoreCase("0")) {
 			return false;
 		}
-		throw new IllegalArgumentException("can't convert '" + string + "' to boolean value");
+		throw new IllegalArgumentException("can't convert '" + string
+				+ "' to boolean value");
 	}
 
 	@Help(parameter = "<query string without CREATE>", description = "CREATE Command\n\tExample: CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )")
@@ -952,7 +1013,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		try {
 			q.append(args[args.length - 1]);
 			resetBuildConfig();
-			this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration);
+			this.executor.addQuery(q.toString(), parser(), currentUser,
+					defaultBuildConfiguration);
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
@@ -969,11 +1031,20 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			resetBuildConfig();
 			if (args[args.length - 1].toUpperCase().equals("<S>")) {
 				q.append(args[args.length - 2]).append(" ");
-				this.executor.getQueryBuildConfiguration(defaultBuildConfiguration).getConfiguration().add(new ParameterDefaultRoot(new MySink()));
-				this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration);
+				this.executor
+						.getQueryBuildConfiguration(defaultBuildConfiguration)
+						.getConfiguration()
+						.add(new ParameterDefaultRoot(new MySink()));
+				this.executor.addQuery(q.toString(), parser(), currentUser,
+						defaultBuildConfiguration);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
-				this.executor.getQueryBuildConfiguration(defaultBuildConfiguration).getConfiguration().add(new ParameterDefaultRoot(new FileSinkPO(args[args.length - 1], "", -1, true)));
-				this.executor.addQuery(q.toString(), parser(), currentUser,  defaultBuildConfiguration);
+				this.executor
+						.getQueryBuildConfiguration(defaultBuildConfiguration)
+						.getConfiguration()
+						.add(new ParameterDefaultRoot(new FileSinkPO(
+								args[args.length - 1], "", -1, true)));
+				this.executor.addQuery(q.toString(), parser(), currentUser,
+						defaultBuildConfiguration);
 
 			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
 				q.append(args[args.length - 2]).append(" ");
@@ -981,7 +1052,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			} else {
 				q.append(args[args.length - 2]).append(" ");
 				q.append(args[args.length - 1]).append(" ");
-				this.executor.addQuery(q.toString(), parser(), currentUser, defaultBuildConfiguration);
+				this.executor.addQuery(q.toString(), parser(), currentUser,
+						defaultBuildConfiguration);
 			}
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -989,7 +1061,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	}
 
 	@Help(parameter = "-q <query string> [S|E] -r [true|false] [-m <true>|<false>]", description = "add query [with console-output-sink|eclipse-outputsink] \n"
-			+ "[with|without restructuring the query plan, default true] \n" + "[with|without metadata set in physical operators]\n"
+			+ "[with|without restructuring the query plan, default true] \n"
+			+ "[with|without metadata set in physical operators]\n"
 			+ "\tExamples:\n\tadd 'CREATE STREAM test ( a INTEGER	) FROM ( ([0,4), 1), ([1,5), 3), ([7,20), 3) )'\n\tadd 'SELECT (a * 2) as value FROM test WHERE a > 2' S")
 	public void _add(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -1006,14 +1079,17 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 	}
 
-	// TODO: noch ein hack, damit man die config auch zur laufzeit �ndern kann.
+	// TODO: noch ein hack, damit man die config auch zur laufzeit �ndern
+	// kann.
 	// Sollte sp�ter nur auf statischen
 	// gemacht werden
 	private void resetBuildConfig() {
 		IQueryBuildConfiguration qbc = this.originalBuildConfig;
-		QueryBuildConfiguration buildConfiguration = new QueryBuildConfiguration(qbc.getConfiguration());
+		QueryBuildConfiguration buildConfiguration = new QueryBuildConfiguration(
+				qbc.getConfiguration());
 		buildConfiguration.set(this.trafoConfigParam);
-		this.executor.getQueryBuildConfigurations().put(defaultBuildConfiguration, qbc);
+		this.executor.getQueryBuildConfigurations().put(
+				defaultBuildConfiguration, qbc);
 	}
 
 	@Help(parameter = "-f <filename> [S|E] [useProp] [-r <true>|<false>] [-m <true>|<false>]", description = "add query declared in <filename> [with console-output-sink] [filepath automatically read from user.files] \n"
@@ -1039,7 +1115,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			BufferedReader br = null;
 			File file = null;
 			try {
-				file = new File(this.path != null ? this.path + filename : filename);
+				file = new File(this.path != null ? this.path + filename
+						: filename);
 				br = new BufferedReader(new FileReader(file));
 			} catch (FileNotFoundException e) {
 				ci.println("File not found: " + file.getAbsolutePath());
@@ -1071,7 +1148,7 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 		}
 	}
-	
+
 	@Help(parameter = "<filename> [useProp]", description = "Add query declared in <filename> [filepath automatically read from user.files, otherwise in current directory]")
 	public void _cyclicQueryFromFile(CommandInterpreter ci) {
 		String[] args = support.getArgs(ci);
@@ -1094,7 +1171,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			BufferedReader br = null;
 			File file = null;
 			try {
-				file = new File(this.path != null ? this.path + filename : filename);
+				file = new File(this.path != null ? this.path + filename
+						: filename);
 				br = new BufferedReader(new FileReader(file));
 			} catch (FileNotFoundException e) {
 				ci.println("File not found: " + file.getAbsolutePath());
@@ -1112,13 +1190,14 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				return;
 			}
 
-			try {			
-				List<IQuery> plans = executor.translateQuery(queries, parser(), currentUser);
+			try {
+				List<ILogicalQuery> plans = executor.translateQuery(queries, parser(),
+						currentUser);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 				AbstractGraphWalker walker = new AbstractGraphWalker();
-				for (IQuery plan : plans) {
+				for (ILogicalQuery plan : plans) {
 					System.out.println("PRINT PARTIAL PLAN: ");
 					walker.prefixWalk(plan.getLogicalPlan(), pv);
 					System.out.println(pv.getResult());
@@ -1128,14 +1207,19 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				}
 
 				// DEBUG:
-				System.out.println("ExecutorConsole: trafoConfigHelper: " + this.trafoConfigParam.getValue().getTransformationHelper());
+				System.out.println("ExecutorConsole: trafoConfigHelper: "
+						+ this.trafoConfigParam.getValue()
+								.getTransformationHelper());
 
 				// the last plan is the complete plan
 				// so transform this one
-				IQuery query = plans.get(plans.size() - 1);
-				executor.transform(query, this.trafoConfigParam.getValue(), currentUser);
+				ILogicalQuery query = plans.get(plans.size() - 1);
+				IPhysicalQuery transQuery = executor.transform(query,
+						this.trafoConfigParam.getValue(), currentUser);
 
-				IQuery addedQuery = this.executor.addQuery(query.getRoots(), currentUser, defaultBuildConfiguration);
+				IPhysicalQuery addedQuery = this.executor.addQuery(
+						transQuery.getRoots(), currentUser,
+						defaultBuildConfiguration);
 				this.executor.startQuery(addedQuery.getID(), currentUser);
 
 			} catch (QueryParseException e1) {
@@ -1155,7 +1239,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	 * @throws Exception
 	 * @throws PlanManagementException
 	 */
-	private void delegateAddQueryCmd(String[] args) throws PlanManagementException, Exception {
+	private void delegateAddQueryCmd(String[] args)
+			throws PlanManagementException, Exception {
 
 		boolean eclipseConsole = false;
 		boolean restructure = false;
@@ -1174,10 +1259,12 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			} else if (args[i].equalsIgnoreCase("S")) {
 				params.add(new ParameterDefaultRoot(new MySink()));
 			} else if (args[i].equalsIgnoreCase("B")) {
-				IBenchmarkResult<ILatency> benchRes = new LatencyBenchmarkResultFactory().createBenchmarkResult();
+				IBenchmarkResult<ILatency> benchRes = new LatencyBenchmarkResultFactory()
+						.createBenchmarkResult();
 				this.benchmarkSink = new BenchmarkSink(benchRes, -1);
 				LatencyCalculationPipe latency = new LatencyCalculationPipe<IMetaAttributeContainer<? extends ILatency>>();
-				latency.subscribeSink(this.benchmarkSink, 0, 0, latency.getOutputSchema());
+				latency.subscribeSink(this.benchmarkSink, 0, 0,
+						latency.getOutputSchema());
 				params.add(new ParameterDefaultRoot(latency));
 			} else if (args[i].equalsIgnoreCase("-m")) {
 				// boolean withMeta = Boolean.getBoolean(args[i + 1]);
@@ -1186,7 +1273,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		}
 
 		params.add(this.trafoConfigParam);
-		params.add(restructure ? ParameterDoRewrite.TRUE : ParameterDoRewrite.FALSE);
+		params.add(restructure ? ParameterDoRewrite.TRUE
+				: ParameterDoRewrite.FALSE);
 
 		IQueryBuildSetting[] paramsArray = new IQueryBuildSetting[params.size()];
 		for (int i = 0; i < params.size(); i++) {
@@ -1197,19 +1285,21 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
 		} else {
-			this.executor.getQueryBuildConfigurations().put(defaultBuildConfiguration, new IQueryBuildConfiguration() {
-				
-				@Override
-				public String getName() {
-					return defaultBuildConfiguration;
-				}
-				
-				@Override
-				public List<IQueryBuildSetting<?>> getConfiguration() {
-					return params;
-				}
-			});
-			this.executor.addQuery(query, parser(), currentUser, defaultBuildConfiguration);
+			this.executor.getQueryBuildConfigurations().put(
+					defaultBuildConfiguration, new IQueryBuildConfiguration() {
+
+						@Override
+						public String getName() {
+							return defaultBuildConfiguration;
+						}
+
+						@Override
+						public List<IQueryBuildSetting<?>> getConfiguration() {
+							return params;
+						}
+					});
+			this.executor.addQuery(query, parser(), currentUser,
+					defaultBuildConfiguration);
 			return;
 		}
 	}
@@ -1234,9 +1324,9 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	public void _lsqueries(CommandInterpreter ci) {
 		addCommand();
 		try {
-			System.out.println("Current registered queries (ID | STARTED | PARSERID):");
-			for (IQuery query : this.executor.getPlan().getQueries()) {
-				ci.println(query.getID() + " | " + query.isOpened() + " | " + query.getParserId());
+			System.out.println("Current registered queries (ID | STARTED):");
+			for (IPhysicalQuery query : this.executor.getPlan().getQueries()) {
+				ci.println(query.getID() + " | " + query.isOpened());
 			}
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -1247,7 +1337,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
 		System.out.println("Current registered sources");
-		for (Entry<String, ILogicalOperator> e : this.executor.getDataDictionary().getStreamsAndViews(currentUser)) {
+		for (Entry<String, ILogicalOperator> e : this.executor
+				.getDataDictionary().getStreamsAndViews(currentUser)) {
 			ci.println(e.getKey() + " | " + e.getValue());
 		}
 	}
@@ -1287,7 +1378,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				return;
 			}
 
-			Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
+			Preferences macrosNode = this.preferences.getSystemPreferences()
+					.node(MACROS_NODE);
 			if (macrosNode.nodeExists(name)) {
 				Preferences macroNode = macrosNode.node(name);
 				macroNode.removeNode();
@@ -1295,7 +1387,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 			ci.println("macro removed");
 		} catch (BackingStoreException e) {
-			ci.println("could not remove macro from backing store: " + e.getMessage());
+			ci.println("could not remove macro from backing store: "
+					+ e.getMessage());
 		} finally {
 			this.preferencesLock.unlock();
 		}
@@ -1311,10 +1404,12 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				return;
 			}
 
-			this.preferences.getSystemPreferences().node(MACROS_NODE).removeNode();
+			this.preferences.getSystemPreferences().node(MACROS_NODE)
+					.removeNode();
 			ci.println("macros cleared");
 		} catch (BackingStoreException e) {
-			ci.println("could not remove macros from backing store: " + e.getMessage());
+			ci.println("could not remove macros from backing store: "
+					+ e.getMessage());
 		} finally {
 			this.preferencesLock.unlock();
 		}
@@ -1455,9 +1550,11 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		try {
 			for (Command command : macro) {
 
-				Method m = this.getClass().getMethod(command.name, CommandInterpreter.class);
+				Method m = this.getClass().getMethod(command.name,
+						CommandInterpreter.class);
 
-				CommandInterpreter delegateCi = new DelegateCommandInterpreter(ci, command.getArgs());
+				CommandInterpreter delegateCi = new DelegateCommandInterpreter(
+						ci, command.getArgs());
 
 				m.invoke(this, delegateCi);
 			}
@@ -1492,13 +1589,15 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 		CommandInterpreter delegateCi;
 		try {
-			ci.println("--- running macro from file: " + file.getAbsolutePath() + " ---");
+			ci.println("--- running macro from file: " + file.getAbsolutePath()
+					+ " ---");
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String commandString = line;
 				System.out.println("Command: " + commandString);
 
-				StringTokenizer tokens = new StringTokenizer(commandString, " \n\t'", true);
+				StringTokenizer tokens = new StringTokenizer(commandString,
+						" \n\t'", true);
 				ArrayList<String> tokenList = new ArrayList<String>();
 				while (tokens.hasMoreTokens()) {
 					String token = tokens.nextToken();
@@ -1512,12 +1611,14 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 							if (!innerToken.endsWith(start)) {
 								complexArgument += innerToken;
 							} else {
-								complexArgument += innerToken.substring(0, innerToken.length() - 1);
+								complexArgument += innerToken.substring(0,
+										innerToken.length() - 1);
 								isEnd = true;
 							}
 						}
 						tokenList.add(complexArgument);
-					} else if (!token.equals(" ") && !token.equals("\n") && !token.equals("\t")) {
+					} else if (!token.equals(" ") && !token.equals("\n")
+							&& !token.equals("\t")) {
 						tokenList.add(token);
 					}
 				}
@@ -1528,20 +1629,24 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 				}
 
 				String[] currentArgs = new String[commandAndArgs.length - 1];
-				System.arraycopy(commandAndArgs, 1, currentArgs, 0, commandAndArgs.length - 1);
+				System.arraycopy(commandAndArgs, 1, currentArgs, 0,
+						commandAndArgs.length - 1);
 				Command command = new Command();
 				command.name = "_" + commandAndArgs[0];
 				command.setArgs(currentArgs);
 
-				Method m = this.getClass().getMethod(command.name, CommandInterpreter.class);
+				Method m = this.getClass().getMethod(command.name,
+						CommandInterpreter.class);
 
-				delegateCi = new DelegateCommandInterpreter(ci, command.getArgs());
+				delegateCi = new DelegateCommandInterpreter(ci,
+						command.getArgs());
 
 				m.invoke(this, delegateCi);
 
 			}
 
-			ci.println("--- macro from file " + file.getAbsolutePath() + " done ---");
+			ci.println("--- macro from file " + file.getAbsolutePath()
+					+ " done ---");
 		} catch (IOException e) {
 			ci.printStackTrace(e);
 			return;
@@ -1578,7 +1683,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			arg = ci.nextArgument();
 		}
 		File file = new File(sb.toString().trim());
-		logger.debug("--- running macro from file: " + file.getAbsolutePath() + " ---");
+		logger.debug("--- running macro from file: " + file.getAbsolutePath()
+				+ " ---");
 
 		BufferedReader in;
 		try {
@@ -1597,7 +1703,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 		} catch (IOException e) {
 			logger.error("Error while reading from file");
 		}
-		logger.debug("--- macro from file " + file.getAbsolutePath() + " done ---");
+		logger.debug("--- macro from file " + file.getAbsolutePath()
+				+ " done ---");
 
 	}
 
@@ -1615,7 +1722,10 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 
 			if (this.macros.containsKey(macroName)) {
-				ci.println("a macro already exists under the name '" + macroName + "'. you have to remove it first (removeMacro " + macroName + ")");
+				ci.println("a macro already exists under the name '"
+						+ macroName
+						+ "'. you have to remove it first (removeMacro "
+						+ macroName + ")");
 				return;
 			}
 			this.currentCommands = new LinkedList<Command>();
@@ -1643,11 +1753,13 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 					return;
 				}
 
-				Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
+				Preferences macrosNode = this.preferences
+						.getSystemPreferences().node(MACROS_NODE);
 				Preferences currentMacroNode = macrosNode.node(currentMacro);
 				Integer i = 0;
 				for (Command command : this.currentCommands) {
-					Preferences commandNode = currentMacroNode.node(i.toString());
+					Preferences commandNode = currentMacroNode.node(i
+							.toString());
 					commandNode.put(METHOD, command.name);
 					commandNode.put(ARGUMENTS, command.getArgsAsString());
 					++i;
@@ -1700,12 +1812,14 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	}
 
 	private void restoreMacros() {
-		Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
+		Preferences macrosNode = this.preferences.getSystemPreferences().node(
+				MACROS_NODE);
 		try {
 			for (String macroName : macrosNode.childrenNames()) {
 				Preferences macroNode = macrosNode.node(macroName);
 				String[] commands = macroNode.childrenNames();
-				List<Command> commandList = new ArrayList<Command>(commands.length);
+				List<Command> commandList = new ArrayList<Command>(
+						commands.length);
 				// command names could be unsorted, so create names
 				// by counting
 				for (int i = 0; i < commands.length; ++i) {
@@ -1735,13 +1849,16 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	private void addQueryWithEclipseConsoleOutput(String query) {
 		try {
 
-			Class<?> eclipseConsoleSink = Class.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
+			Class<?> eclipseConsoleSink = Class
+					.forName("de.uniol.inf.is.odysseus.broker.console.client.EclipseConsoleSink");
 			Object ecs = eclipseConsoleSink.newInstance();
 			IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
 			resetBuildConfig();
-			this.executor.getQueryBuildConfiguration(defaultBuildConfiguration).getConfiguration().add(new ParameterDefaultRoot(ecSink));
-			this.executor.addQuery(query, parser(), currentUser, defaultBuildConfiguration);
+			this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
+					.getConfiguration().add(new ParameterDefaultRoot(ecSink));
+			this.executor.addQuery(query, parser(), currentUser,
+					defaultBuildConfiguration);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {
@@ -1772,7 +1889,8 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 
 		try {
 			if (this.reoptimizeTimer != null) {
-				this.executor.getPlan().removeReoptimzeRule(this.reoptimizeTimer);
+				this.executor.getPlan().removeReoptimzeRule(
+						this.reoptimizeTimer);
 				ci.println("Old ReoptimizeTimer removed.");
 			}
 			this.reoptimizeTimer = new ReoptimizeTimer(period);
@@ -1814,38 +1932,39 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 	public void transformationBound() {
 		System.out.println("Transformation bound");
 	}
-	
+
 	/*
-	 * Test code for simulation of SLA Scheduler
-	 * should be removed after simulation is done
+	 * Test code for simulation of SLA Scheduler should be removed after
+	 * simulation is done
 	 */
-	
+
 	private static final int NUMBER_OF_SIMULATIONS = 10;
-	private static final long SIM_LENGTH = 1800000; //millis
+	private static final long SIM_LENGTH = 1800000; // millis
 	private static final long EXTRA_TIME = 300000; // millis
-//	private static final String SCHED1 = "SLA Scheduler";
+	// private static final String SCHED1 = "SLA Scheduler";
 	private static final String SCHED1 = "SLA Dynamic Priority Scheduler";
 	private static final String SCHED2 = "Round Robin";
-	
+
 	@Help(description = "starts simulation of SLA Scheduler")
 	public void _sim(CommandInterpreter ci) {
-		//load queries
+		// load queries
 		File file1 = new File(OdysseusDefaults.getHomeDir(), "sla.qry");
 		File[] file2 = new File[NUMBER_OF_SIMULATIONS];
 		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
-			file2[i] = new File(OdysseusDefaults.getHomeDir(), "ops" + i +".qry");
+			file2[i] = new File(OdysseusDefaults.getHomeDir(), "ops" + i
+					+ ".qry");
 		}
 		File file3 = new File(OdysseusDefaults.getHomeDir(), "run.qry");
-		
+
 		String query1 = this.readScript(file1);
 		String[] query2 = new String[NUMBER_OF_SIMULATIONS];
 		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
 			query2[i] = this.readScript(file2[i]);
 		}
 		String query3 = this.readScript(file3);
-		
+
 		ci.println("queries loaded");
-				
+
 		for (int i = 0; i < NUMBER_OF_SIMULATIONS; i++) {
 			ci.println("strating simulation run number " + i);
 			// init/refresh scheduling
@@ -1856,16 +1975,18 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			}
 			this.executor.setScheduler("Single Thread Scheduler RR", SCHED2);
 			this.executor.setScheduler(SCHED1, SCHED2);
-			ci.println("scheduler set to: " + this.executor.getCurrentSchedulerID());
+			ci.println("scheduler set to: "
+					+ this.executor.getCurrentSchedulerID());
 			try {
 				this.executor.startExecution();
 			} catch (PlanManagementException e1) {
 				e1.printStackTrace();
 			}
 			System.gc();
-			
+
 			// parse and run queries
-			ISession user = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
+			ISession user = UserManagement.getSessionmanagement().login(
+					"System", "manager".getBytes());
 			try {
 				if (i == 0) {
 					ci.println("parsing and running query :");
@@ -1881,12 +2002,13 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 			}
-			
+
 			ci.println("waiting for timeout...");
-			
-			//init timeout
+
+			// init timeout
 			long startTime = System.currentTimeMillis();
-			while(startTime + SIM_LENGTH + EXTRA_TIME > System.currentTimeMillis()) {
+			while (startTime + SIM_LENGTH + EXTRA_TIME > System
+					.currentTimeMillis()) {
 				try {
 					synchronized (this) {
 						this.wait(60000);
@@ -1895,56 +2017,49 @@ public class ExecutorConsole implements CommandProvider, IPlanExecutionListener,
 					e.printStackTrace();
 				}
 			}
-			
+
 			ci.println("...timeout");
-			
+
 			ci.println("starting clean up");
 			// clear sources
 			List<String> sourceNames = new ArrayList<String>();
-			for (Entry<String, ILogicalOperator> sourceDef : this.executor.getDataDictionary().getStreamsAndViews(user)) {
+			for (Entry<String, ILogicalOperator> sourceDef : this.executor
+					.getDataDictionary().getStreamsAndViews(user)) {
 				sourceNames.add(sourceDef.getKey());
 			}
 			for (String name : sourceNames) {
 				System.out.println("removing source: " + name);
-				this.executor.getDataDictionary().removeViewOrStream(name, user);
+				this.executor.getDataDictionary()
+						.removeViewOrStream(name, user);
 			}
-			
-			//cleanup
-			ArrayList<IQuery> queries;
-			try {
-				queries = new ArrayList<IQuery>(this.executor.getPlan().getQueries());
-				for(IQuery q: queries) {
-					System.out.println("removing query: " + q.getID());
-					this.executor.getPlan().removeQuery(q.getID());
-				}
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			}
-			
+
+			// cleanup
+			this.executor.removeAllQueries();
+
 			System.gc();
-			
+
 			ci.println("finished clean up");
 		}
 
 		// stop execution after time out
 	}
-	
+
 	private String readScript(File file) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		try {
 			FileReader reader = new FileReader(file);
 			int character;
-			
+
 			while ((character = reader.read()) != -1) {
-				sb.append((char)character);
+				sb.append((char) character);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return sb.toString();
 	}
 

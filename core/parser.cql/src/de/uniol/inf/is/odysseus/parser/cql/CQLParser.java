@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateTypeVisit
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateViewVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
@@ -77,7 +77,7 @@ import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
-	private List<IQuery> plans = new ArrayList<IQuery>();
+	private List<ILogicalQuery> plans = new ArrayList<ILogicalQuery>();
 	private ISession caller;
 	private IDataDictionary dataDictionary;
 	private static CQLParser instance = null;
@@ -104,7 +104,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(String query, ISession user,
+	public synchronized List<ILogicalQuery> parse(String query, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
@@ -112,7 +112,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IQuery> parse(Reader reader, ISession user,
+	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
