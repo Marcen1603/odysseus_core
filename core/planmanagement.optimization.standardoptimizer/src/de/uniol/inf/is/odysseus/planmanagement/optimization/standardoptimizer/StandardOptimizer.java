@@ -243,7 +243,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			optimalMigration.getStrategy().migrateQuery(this, query,
 					listOfRoots);
 
-			((IExecutor) sender).updateExecutionPlan();
+			((IServerExecutor) sender).updateExecutionPlan();
 
 			// wait for migration end callback
 			getLogger().info(
@@ -269,7 +269,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			query.setLogicalPlan(context.getLogicalPlan(), false);
 
 			// update execution plan
-			((IExecutor) context.getSender()).updateExecutionPlan();
+			((IServerExecutor) context.getSender()).updateExecutionPlan();
 
 			// reinstall metadata listener
 			doPostOptimizationActions(query, null);

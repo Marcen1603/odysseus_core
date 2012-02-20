@@ -208,13 +208,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public void updateExecutionPlan() throws NoOptimizerLoadedException,
-			QueryOptimizationException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public ISession login(String username, byte[] password) {
 		// TODO Auto-generated method stub
 		return null;

@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonito
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
 
@@ -49,6 +50,16 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException;
 
+	/**
+	 * Updates the execution plan to find new iterable sources, if the plan has
+	 * changed.
+	 * 
+	 * @throws NoOptimizerLoadedException
+	 * @throws QueryOptimizationException
+	 */
+	public void updateExecutionPlan() throws NoOptimizerLoadedException,
+			QueryOptimizationException;
+	
 	/**
 	 * Returns the default System Monitor with an fixed measure period.
 	 * 

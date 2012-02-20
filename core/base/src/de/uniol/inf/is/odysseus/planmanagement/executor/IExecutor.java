@@ -199,16 +199,6 @@ public interface IExecutor extends IClientPlanManager,
 	 */
 	public String getCurrentSchedulingStrategyID();
 
-	/**
-	 * Updates the execution plan to find new iterable sources, if the plan has
-	 * changed.
-	 * 
-	 * @throws NoOptimizerLoadedException
-	 * @throws QueryOptimizationException
-	 */
-	public void updateExecutionPlan() throws NoOptimizerLoadedException,
-			QueryOptimizationException;
-
 	public String getName();
 
 	// Facade
