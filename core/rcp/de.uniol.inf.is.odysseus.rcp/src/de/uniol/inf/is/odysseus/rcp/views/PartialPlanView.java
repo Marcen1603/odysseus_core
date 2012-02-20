@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
@@ -50,7 +51,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 
 	private Collection<IPartialPlan> partialPlans = new HashSet<IPartialPlan>();
 
-	IExecutor executor;
+	IServerExecutor executor;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -152,7 +153,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 				ServiceTracker execTracker = new ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(), IExecutor.class.getName(), null);
 				execTracker.open();
 				try {
-					executor = (IExecutor) execTracker.waitForService(0);
+					executor = (IServerExecutor) execTracker.waitForService(0);
 					if (executor != null) {
 						setExecutionPlan(executor.getExecutionPlan());
 						executor.addPlanModificationListener(PartialPlanView.this);

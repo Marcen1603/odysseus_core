@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface IExecutor extends IPlanManager, IPlanScheduling,
+public interface IExecutor extends IPlanManager,
 		IInfoProvider, IErrorEventHandler, IErrorEventListener{
 	/**
 	 * initialize initialisiert die Ausfuehrungsumgebung. ggf. gehen Anfragen,

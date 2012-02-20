@@ -129,25 +129,27 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 				StatusBarManager.EXECUTOR_ID,
 				OdysseusNLS.Executor + " " + executor.getName() + " "
 						+ OdysseusNLS.Ready);
-		StatusBarManager.getInstance().setMessage(
-				StatusBarManager.SCHEDULER_ID,
-				executor.getCurrentSchedulerID()
-						+ " ("
-						+ executor.getCurrentSchedulingStrategyID()
-						+ ") "
-						+ (executor.isRunning() ? OdysseusNLS.Running
-								: OdysseusNLS.Stopped));
-
 		if (executor instanceof IServerExecutor) {
-			IServerExecutor se = (IServerExecutor) executor; 
+			IServerExecutor se = (IServerExecutor) executor;
+
+			StatusBarManager.getInstance().setMessage(
+					StatusBarManager.SCHEDULER_ID,
+					se.getCurrentSchedulerID()
+							+ " ("
+							+ se.getCurrentSchedulingStrategyID()
+							+ ") "
+							+ (se.isRunning() ? OdysseusNLS.Running
+									: OdysseusNLS.Stopped));
+
 			if (se.getSchedulerManager() != null) {
 				se.getSchedulerManager().subscribeToAll(this);
 				se.getSchedulerManager().getActiveScheduler()
 						.subscribeToAll(this);
 			}
+			// New: Start Scheduler at Query Start
+			se.startExecution();
+
 		}
-		// New: Start Scheduler at Query Start
-		executor.startExecution();
 
 	}
 
@@ -157,30 +159,36 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
-		if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) {
-			((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(this);
-		} else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
-			((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
-		}
+		if (executor instanceof IServerExecutor) {
+			IServerExecutor se = (IServerExecutor) executor;
 
-		if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED
-				|| event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
-				|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED
-				|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
-			try {
-				StatusBarManager.getInstance().setMessage(
-						StatusBarManager.SCHEDULER_ID,
-						executor.getCurrentSchedulerID()
-								+ " ("
-								+ executor.getCurrentSchedulingStrategyID()
-								+ ") "
-								+ (executor.isRunning() ? OdysseusNLS.Running
-										: OdysseusNLS.Stopped));
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
+			if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) {
+				((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(
+						this);
+			} else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
+				((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
+			}
+
+			if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED
+					|| event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
+					|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED
+					|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
+				try {
+					StatusBarManager
+							.getInstance()
+							.setMessage(
+									StatusBarManager.SCHEDULER_ID,
+									se.getCurrentSchedulerID()
+											+ " ("
+											+ se
+													.getCurrentSchedulingStrategyID()
+											+ ") "
+											+ (se.isRunning() ? OdysseusNLS.Running
+													: OdysseusNLS.Stopped));
+				} catch (PlanManagementException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
-
 }

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
  * @author Marco Grawunder
  *
  */
-public interface IServerExecutor extends IExecutor, IOptimizable {
+public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizable {
 	
 	public void addCompilerListener(ICompilerListener compilerListener);
 

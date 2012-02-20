@@ -26,14 +26,15 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.AbstractExecutionHand
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
+import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 public class RunningExecutionHandler extends
-		AbstractExecutionHandler<IExecutor> {
+		AbstractExecutionHandler<IServerExecutor> {
 
 	static Logger logger = LoggerFactory
 			.getLogger(RunningExecutionHandler.class);
@@ -48,7 +49,7 @@ public class RunningExecutionHandler extends
 	}
 
 	@Override
-	public IExecutionHandler<IExecutor> clone() {
+	public IExecutionHandler<IServerExecutor> clone() {
 		return new RunningExecutionHandler(this);
 	}
 
@@ -86,7 +87,7 @@ public class RunningExecutionHandler extends
 		for (Method m : methods) {
 			if (m.getReturnType() == IExecutor.class) {
 				try {
-					setFunction((IExecutor) m.invoke(peer, (Object[]) null));
+					setFunction((IServerExecutor) m.invoke(peer, (Object[]) null));
 					break;
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();

@@ -134,42 +134,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public IExecutionPlan getExecutionPlan() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void startExecution() throws PlanManagementException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void stopExecution() throws PlanManagementException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isRunning() throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void addPlanExecutionListener(IPlanExecutionListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removePlanExecutionListener(IPlanExecutionListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public String getInfos() {
 		// TODO Auto-generated method stub
 		return null;

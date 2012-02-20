@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 
 import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.priority.IPriority;
@@ -40,7 +42,7 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 		return logger;
 	}
 	
-	private IExecutor executor;
+	private IServerExecutor executor;
 
 	protected IAliveHandler aliveHandler;
 
@@ -135,7 +137,7 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 
 	public void bindExecutor(IExecutor executor) {
 		getLogger().info("Binding Executor: "+ executor.getCurrentSchedulerID() +" "+ executor.getCurrentSchedulingStrategyID());
-		this.executor = executor;
+		this.executor = (IServerExecutor)executor;
 	}
 	
 	public void unbindExecutor(IExecutor executor) {
