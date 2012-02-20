@@ -5,6 +5,8 @@ import java.util.List;
 import javax.security.auth.login.Configuration;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
+import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
@@ -21,10 +23,11 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
  * the executor is used on a server
  * 
  * @author Marco Grawunder
- *
+ * 
  */
-public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizable, IPlanManager {
-	
+public interface IServerExecutor extends IExecutor, IPlanScheduling,
+		IOptimizable, IPlanManager, IErrorEventHandler, IErrorEventListener {
+
 	public void addCompilerListener(ICompilerListener compilerListener);
 
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID);
@@ -45,7 +48,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizabl
 	 */
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException;
-	
+
 	/**
 	 * Returns the default System Monitor with an fixed measure period.
 	 * 
@@ -55,7 +58,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizabl
 	 */
 	public ISystemMonitor getDefaultSystemMonitor()
 			throws NoSystemMonitorLoadedException;
-	
+
 	/**
 	 * Creates a new System Monitor with the specified period.
 	 * 
@@ -67,7 +70,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizabl
 	 */
 	public ISystemMonitor newSystemMonitor(long period)
 			throws NoSystemMonitorLoadedException;
-	
+
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 
 	@Override
@@ -76,6 +79,5 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling, IOptimizabl
 	// IUserManagement getUserManagement();
 	// ISessionManagement getSessionManagement();
 	IDataDictionary getDataDictionary();
-
 
 }

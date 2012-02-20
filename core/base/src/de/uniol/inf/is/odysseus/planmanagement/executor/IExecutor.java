@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  * 
  */
 public interface IExecutor extends IClientPlanManager,
-		IInfoProvider, IErrorEventHandler, IErrorEventListener{
+		IInfoProvider{
 	/**
 	 * initialize initialisiert die Ausfuehrungsumgebung. ggf. gehen Anfragen,
 	 * Pläne und Einstellungen verloren.

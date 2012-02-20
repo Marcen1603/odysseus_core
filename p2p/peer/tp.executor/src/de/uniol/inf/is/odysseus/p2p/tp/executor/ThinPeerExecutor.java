@@ -10,8 +10,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
@@ -114,30 +112,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	public String getInfos() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void addErrorEventListener(IErrorEventListener errorEventListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void fireErrorEvent(ErrorEvent eventArgs) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void errorEventOccured(ErrorEvent eventArgs) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
