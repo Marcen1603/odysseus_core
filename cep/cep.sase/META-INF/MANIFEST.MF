@@ -24,6 +24,6 @@ Export-Package: de.uniol.inf.is.odysseus.cep.sase
 Service-Component: OSGI-INF/SaseRelational.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.sase.SaseBuilder
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.uniol.inf.is.odysseus,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  ANTLR3_4;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

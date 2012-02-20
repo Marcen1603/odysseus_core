@@ -22,5 +22,5 @@ Export-Package: de.uniol.inf.is.odysseus.priority,
  de.uniol.inf.is.odysseus.priority.buffer
 Bundle-Activator: de.uniol.inf.is.odysseus.priority.Activator
 Service-Component: OSGI-INF/directinterlinkbufferplacement.xml, OSGI-INF/weakorderbufferplacement.xml, OSGI-INF/strongorderbufferplacement.xml
-Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

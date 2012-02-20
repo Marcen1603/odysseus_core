@@ -26,6 +26,6 @@ Export-Package: de.uniol.inf.is.odysseus.p2p.jxta,
  de.uniol.inf.is.odysseus.p2p.jxta.peer.communication,
  de.uniol.inf.is.odysseus.p2p.jxta.utils
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: de.uniol.inf.is.odysseus,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  apache.commons.codec;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p;bundle-version="1.0.0"

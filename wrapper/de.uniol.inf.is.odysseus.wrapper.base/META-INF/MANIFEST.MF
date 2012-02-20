@@ -28,4 +28,4 @@ Export-Package: de.uniol.inf.is.odysseus.wrapper.base;uses:="de.uniol.inf.is.ody
  de.uniol.inf.is.odysseus.wrapper.base.model,
  de.uniol.inf.is.odysseus.wrapper.base.model.impl;x-internal:=true,
  de.uniol.inf.is.odysseus.wrapper.base.pool;uses:="de.uniol.inf.is.odysseus.wrapper.base.model,de.uniol.inf.is.odysseus.wrapper.base,de.uniol.inf.is.odysseus.wrapper.base.physicaloperator"
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus.core.server

@@ -14,5 +14,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory,
  org.osgi.service.component
 Service-Component: OSGI-INF/ChainIterFactory.xml, OSGI-INF/ChainNoIterFactory.xml
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

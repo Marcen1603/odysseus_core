@@ -9,7 +9,7 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
  org.osgi.service.component,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.junit
 Service-Component: OSGI-INF/SLAScheduler.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,

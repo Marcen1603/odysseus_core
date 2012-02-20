@@ -7,7 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.cep.cepviewer.Activator
 Bundle-Vendor: Christian Menne
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus
+ de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.event,

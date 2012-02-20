@@ -17,5 +17,5 @@ Import-Package: de.uniol.inf.is.odysseus.action.exception,
 Service-Component: OSGI-INF/queryParser.xml
 Export-Package: de.uniol.inf.is.odysseus.parser.eca
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.eca.Activator
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -27,7 +27,7 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql,
  de.uniol.inf.is.odysseus.parser.cql.parser,
  de.uniol.inf.is.odysseus.parser.cql.parser.transformation
 Service-Component: OSGI-INF/component.xml, OSGI-INF/VisitorService.xml
-Require-Bundle: de.uniol.inf.is.odysseus,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.intervalapproach
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

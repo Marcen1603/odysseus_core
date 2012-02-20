@@ -41,5 +41,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  net.jxta.util.documentSerializable,
  org.slf4j
 Service-Component: OSGI-INF/AbstractSplittingStrategy.xml
-Require-Bundle: de.uniol.inf.is.odysseus
+Require-Bundle: de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

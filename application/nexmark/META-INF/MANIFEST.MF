@@ -14,6 +14,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Bundle-ClassPath: xalan.jar,.
 Export-Package: de.uniol.inf.is.odysseus.nexmark.generator
-Require-Bundle: de.uniol.inf.is.odysseus,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  org.eclipse.core.runtime;bundle-version="3.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
