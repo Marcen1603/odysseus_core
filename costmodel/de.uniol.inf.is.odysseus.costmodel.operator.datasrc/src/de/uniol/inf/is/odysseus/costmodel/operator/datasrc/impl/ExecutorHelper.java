@@ -11,36 +11,40 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 
-public class ExecutorHelper implements IPlanModificationListener{
+public class ExecutorHelper implements IPlanModificationListener {
 
 	private static Logger _logger = null;
+
 	protected static Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(ExecutorHelper.class);
 		}
 		return _logger;
 	}
-	
-	
+
 	private IExecutor executor = null;
 
-	public void bindExecutor( IExecutor executor ) {
+	public void bindExecutor(IExecutor executor) {
 		this.executor = executor;
-		this.executor.addPlanModificationListener(this);
-		
+		if (executor instanceof IServerExecutor) {
+			((IServerExecutor) this.executor).addPlanModificationListener(this);
+		}
 		getLogger().debug("Executor bound");
 	}
 
-	public void unbindExecutor( IExecutor executor ) {
-		if( this.executor == executor ) {
-			this.executor.removePlanModificationListener(this);
+	public void unbindExecutor(IExecutor executor) {
+		if (this.executor == executor) {
+			if (executor instanceof IServerExecutor) {
+				((IServerExecutor)this.executor).removePlanModificationListener(this);
+			}
 			this.executor = null;
-			
+
 			getLogger().debug("Executor unbound");
 		}
 	}
@@ -48,29 +52,30 @@ public class ExecutorHelper implements IPlanModificationListener{
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		IQuery query = (IQuery) eventArgs.getValue();
-		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
+		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
+				.getEventType())) {
 			getLogger().debug("New query added.");
-			
-			for( ISource<?> src : getSources(query) ) 
+
+			for (ISource<?> src : getSources(query))
 				DataSourceManager.getInstance().addSource(src);
-				
-			
-		} else if(PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType()) ) {
+
+		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
+				.getEventType())) {
 			getLogger().debug("Query removed");
-			
-			for( ISource<?> src : getSources(query) ) 
+
+			for (ISource<?> src : getSources(query))
 				DataSourceManager.getInstance().removeSource(src);
-				
+
 		}
 	}
-	
+
 	private List<ISource<?>> getSources(IQuery query) {
 		List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();
-		
-		for( IPhysicalOperator op : physicalOperators )
-			if( op instanceof ISource && !(op instanceof ISink))
-				sources.add((ISource<?>)op);
+
+		for (IPhysicalOperator op : physicalOperators)
+			if (op instanceof ISource && !(op instanceof ISink))
+				sources.add((ISource<?>) op);
 		return sources;
 	}
 }

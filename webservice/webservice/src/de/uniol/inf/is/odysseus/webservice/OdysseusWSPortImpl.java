@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -41,7 +42,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 @SuppressWarnings({})                      
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
-	private static IExecutor executor;
+	private static IServerExecutor executor;
 	private static IActuatorFactory actuatorFactory;	
 	
 	/* (non-Javadoc)
@@ -77,7 +78,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	 * @param executor
 	 */
     public void bindExecutor(IExecutor executor) {
-		OdysseusWSPortImpl.executor = executor;
+		OdysseusWSPortImpl.executor = (IServerExecutor)executor;
 	}
     
     /* (non-Javadoc)

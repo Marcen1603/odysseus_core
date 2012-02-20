@@ -24,14 +24,10 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
@@ -110,25 +106,6 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	@Override
 	public void stopQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public IPlan getPlan() throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addPlanModificationListener(IPlanModificationListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removePlanModificationListener(
-			IPlanModificationListener listener) {
 		// TODO Auto-generated method stub
 		
 	}

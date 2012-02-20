@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
+import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * IPlanManager bildet mit IPlanScheduling die Grundlage für die
@@ -26,13 +26,31 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
  * @author wolf
  * 
  */
-public interface IPlanManager extends IClientPlanManager, IPlanModificationHandler {
-
+public interface IClientPlanManager {
 	/**
-	 * getPlan liefert alle in Odysseus registrierten Anfragen.
+	 * removeQuery entfernt eine Anfrage aus Odysseus.
 	 * 
-	 * @return alle in Odysseus registrierten Anfragen
+	 * @param queryID
+	 *            ID der Anfrage
 	 * @throws PlanManagementException
 	 */
-	public IPlan getPlan() throws PlanManagementException;
+	public void removeQuery(int queryID, ISession caller) throws PlanManagementException;
+
+	/**
+	 * startQuery startet eine Anfrage.
+	 * 
+	 * @param queryID
+	 *            ID der Anfrage
+	 * @throws PlanManagementException
+	 */
+	public void startQuery(int queryID, ISession caller) throws PlanManagementException;
+
+	/**
+	 * stopQuery stoppt eine Anfrage und entfernt sie
+	 * 
+	 * @param queryID
+	 * @throws PlanManagementException
+	 */
+	public void stopQuery(int queryID, ISession caller) throws PlanManagementException;
+
 }

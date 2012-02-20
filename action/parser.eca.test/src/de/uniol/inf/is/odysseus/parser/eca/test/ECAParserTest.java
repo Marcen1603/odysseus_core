@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -44,7 +45,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  *
  */
 public class ECAParserTest implements CommandProvider {
-	private IExecutor executor;
+	private IServerExecutor executor;
 	private ExecutorConsole executerConsole;
 	private IActuatorFactory actuatorFactory;
 	@SuppressWarnings("unused")
@@ -135,7 +136,7 @@ public class ECAParserTest implements CommandProvider {
 	
 	
 	public void bindExecutor(IExecutor exec){
-		this.executor = exec;
+		this.executor = (IServerExecutor) exec;
 		
 	}
 
