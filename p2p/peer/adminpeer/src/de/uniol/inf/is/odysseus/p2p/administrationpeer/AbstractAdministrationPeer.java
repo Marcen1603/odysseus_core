@@ -19,7 +19,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.gui.MainWindow;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.handler.IAliveHandler;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.listener.IHotPeerListener;
@@ -155,7 +154,6 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 
 	private void init() {
 		initServerResponseConnection();
-		initWrapperPlanFactory();
 		initOperatorPeerListener();
 		initMessageSender();
 		initQuerySpezificationListener();
@@ -193,13 +191,6 @@ public abstract class AbstractAdministrationPeer extends AbstractOdysseusPeer im
 			gui = new MainWindow(getName());
 	}
 	
-	protected void initWrapperPlanFactory() {
-		try {
-			WrapperPlanFactory.init();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	protected abstract void startNetwork();
 

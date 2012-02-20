@@ -15,8 +15,11 @@
 package de.uniol.inf.is.odysseus.datadictionary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -25,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
@@ -689,5 +694,66 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new NullUserException("Username is empty.");
 		}
 	}
+	
+	// ------------------------------------------------------------------------------
+	// Methods for physical sinks and sources (moved from WrapperPlanFactory)
+	// ------------------------------------------------------------------------------
+	
+	private static Map<String, ISource<?>> sources = new HashMap<String, ISource<?>>();
+	private static Map<String, ISink<?>> sinks = new HashMap<String, ISink<?>>();
+
+	@Override
+	public synchronized ISource<?> getAccessPlan(String uri) {
+		ISource<?> po = sources.get(uri);
+		return po;
+	}
+
+	@Override
+	public synchronized void putAccessPlan(String uri, ISource<?> s) {
+		sources.put(uri, s);
+	}
+	
+	@Override
+	public synchronized Map<String, ISource<?>> getSources() {
+		return sources;
+	}
+
+	@Override
+	public synchronized void clearSources() {
+		sources.clear();
+	}
+
+	@Override
+	public void removeClosedSources() {
+		Iterator<Entry<String, ISource<?>>> it = sources.entrySet().iterator();
+		while(it.hasNext()) {
+			Entry<String, ISource<?>> curEntry = it.next();
+			if (!curEntry.getValue().hasOwner()) {
+				it.remove();
+			}
+		}
+	}
+	
+	@Override
+	public void removeClosedSinks(){
+		Iterator<Entry<String, ISink<?>>> it = sinks.entrySet().iterator();
+		while(it.hasNext()){
+			Entry<String, ISink<?>> curEntry = it.next();
+			if(!curEntry.getValue().hasOwner()){
+				it.remove();
+			}
+		}
+	}
+
+	@Override
+	public ISink<?> getSink(String sinkName) {
+		return sinks.get(sinkName);
+	}
+
+	@Override
+	public void putSink(String name, ISink<?> sinkPO) {
+		sinks.put(name, sinkPO);
+	}
+
 
 }

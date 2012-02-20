@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
@@ -34,7 +33,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.TRACE,"Transform AccessAO: " + accessAO);	
-		ISource<?> accessPO = WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI());
+		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSource().getURI());
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
 		replace(accessAO, accessPO, trafo);		
@@ -45,7 +44,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public boolean isExecutable(AccessAO operator, TransformationConfiguration transformConfig) {		
-		return WrapperPlanFactory.getAccessPlan(operator.getSource().getURI(false)) != null;
+		return getDataDictionary().getAccessPlan(operator.getSource().getURI(false)) != null;
 	}
 
 	@Override

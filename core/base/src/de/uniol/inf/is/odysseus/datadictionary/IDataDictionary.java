@@ -15,11 +15,14 @@
 package de.uniol.inf.is.odysseus.datadictionary;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
@@ -136,5 +139,16 @@ public interface IDataDictionary {
 
 	AccessAO getStream(String viewname, ISession caller) throws DataDictionaryException;
 
+	// ------------------------------------------
+	// Physical sinks and sources (from WrapperPlanFactory)
+	// ------------------------------------------
+	ISource<?> getAccessPlan(String uri);
+	void putAccessPlan(String uri, ISource<?> s);
+	Map<String, ISource<?>> getSources();
+	void clearSources();
+	void removeClosedSources();
+	void removeClosedSinks();
+	ISink<?> getSink(String sinkName);
+	void putSink(String name, ISink<?> sinkPO);
 
 }

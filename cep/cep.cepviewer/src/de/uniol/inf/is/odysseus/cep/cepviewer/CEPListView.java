@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.cep.cepviewer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

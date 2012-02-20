@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -32,7 +31,7 @@ public class TRelationalSocketSinkAORule extends
 			TransformationConfiguration config) {
 
 		// Is this sink already translated?
-		ISink<?> socketSinkPO = WrapperPlanFactory.getSink(operator
+		ISink<?> socketSinkPO = getDataDictionary().getSink(operator
 				.getSinkName());
 
 		if (socketSinkPO == null) {
@@ -46,7 +45,7 @@ public class TRelationalSocketSinkAORule extends
 					objectHandler);
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
-			WrapperPlanFactory.putSink(operator.getName(), socketSinkPO);
+			getDataDictionary().putSink(operator.getName(), socketSinkPO);
 		}
 		Collection<ILogicalOperator> toUpdate = config
 				.getTransformationHelper().replace(operator, socketSinkPO,true);

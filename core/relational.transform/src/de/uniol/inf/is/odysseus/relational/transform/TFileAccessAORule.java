@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -42,7 +41,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator());
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(fileAccessPOName, fileAccessPO);
+		getDataDictionary().putAccessPlan(fileAccessPOName, fileAccessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig
 				.getTransformationHelper().replace(fileAccessAO, fileAccessPO);
 		for (ILogicalOperator o : toUpdate) {
@@ -57,7 +56,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	@Override
 	public boolean isExecutable(FileAccessAO fileAccessAO,
 			TransformationConfiguration trafo) {
-		if (WrapperPlanFactory.getAccessPlan(fileAccessAO.getSource().getURI()) == null) {
+		if (getDataDictionary().getAccessPlan(fileAccessAO.getSource().getURI()) == null) {
 			return true;
 		}
 		return false;

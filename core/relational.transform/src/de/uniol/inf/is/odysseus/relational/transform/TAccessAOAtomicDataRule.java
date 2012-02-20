@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -40,7 +39,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -52,7 +51,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {		
-		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
+		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
 			if(accessAO.getSourceType().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getSourceType().equals("RelationalStreaming")){
 				return true;
 			}

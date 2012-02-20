@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerByteBufferReceiverPO;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -56,7 +55,7 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 		}
 
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO, accessPO);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
@@ -71,7 +70,7 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 		if (operator.getSourceType().equals("RelationalByteBufferAccessPO")) {
 			if (transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 				if (transformConfig.getOption("IBrokerInterval") != null) {
-					if (WrapperPlanFactory.getAccessPlan(operator.getSource().getURI()) == null) {
+					if (getDataDictionary().getAccessPlan(operator.getSource().getURI()) == null) {
 						return true;
 					}
 				}

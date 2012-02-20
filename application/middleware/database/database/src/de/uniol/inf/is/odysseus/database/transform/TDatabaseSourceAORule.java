@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.database.transform;
 
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSourcePO;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -39,12 +38,12 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) {
 		String accessPOName = accessAO.getSource().getURI(false);	
 		ISource<?> accessPO = null;		
-		if (WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null) {
+		if (getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null) {
 			accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.isTimesensitiv(), accessAO.getWaitMillis());
 			accessPO.setOutputSchema(accessAO.getOutputSchema());
-			WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+			getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		} else {
-			accessPO = WrapperPlanFactory.getAccessPlan(accessPOName);
+			accessPO = getDataDictionary().getAccessPlan(accessPOName);
 		}
 
 		replace(accessAO, accessPO, config);

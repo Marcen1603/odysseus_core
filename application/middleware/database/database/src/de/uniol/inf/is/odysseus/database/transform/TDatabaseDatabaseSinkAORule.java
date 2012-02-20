@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.database.transform;
 
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSinkPO;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -37,12 +36,12 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 
 	@Override
 	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) {
-		ISink<?> sinkPO = WrapperPlanFactory.getSink(operator.getSinkName());
+		ISink<?> sinkPO = getDataDictionary().getSink(operator.getSinkName());
 
 		if (sinkPO == null) {
 			sinkPO = new DatabaseSinkPO(operator.getConnectionName(), operator.getTablename(), operator.isDrop(), operator.isTruncate());			
 			sinkPO.setOutputSchema(operator.getOutputSchema());
-			WrapperPlanFactory.putSink(operator.getSinkName(), sinkPO);
+			getDataDictionary().putSink(operator.getSinkName(), sinkPO);
 		}
 		replace(operator, sinkPO, config);		
 		retract(operator);		

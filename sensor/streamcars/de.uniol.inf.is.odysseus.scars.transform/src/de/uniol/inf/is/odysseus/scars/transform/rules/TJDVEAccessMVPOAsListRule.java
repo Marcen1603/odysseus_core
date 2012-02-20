@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.scars.transform.rules;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AbstractSensorAccessPO;
@@ -48,7 +47,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 		}
 		
 		accessPO.setOutputSchema(operator.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -61,7 +60,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		if(operator.getSourceType().equals("JDVEAccessMVPO") &&
-				WrapperPlanFactory.getAccessPlan(operator.getSource().getURI()) == null){
+				getDataDictionary().getAccessPlan(operator.getSource().getURI()) == null){
 			return true;
 		}
 		

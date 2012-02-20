@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
 import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -492,8 +491,8 @@ public class StandardExecutor extends AbstractExecutor implements
 				this.plan.removeQuery(queryToRemove.getID());
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
-				WrapperPlanFactory.removeClosedSources();
-				WrapperPlanFactory.removeClosedSinks();
+				dataDictionary.removeClosedSources();
+				dataDictionary.removeClosedSinks();
 				getLogger().debug(
 						"Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,

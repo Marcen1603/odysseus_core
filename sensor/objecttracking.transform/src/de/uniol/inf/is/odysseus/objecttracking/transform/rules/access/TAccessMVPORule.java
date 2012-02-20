@@ -18,7 +18,6 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.AtomicDataInputStreamAccessMVPO;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -41,7 +40,7 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 		String sourceName = operator.getSource().getURI(false);
 		ISource accessPO = new AtomicDataInputStreamAccessMVPO(operator.getHost(), operator.getPort(), operator.getOutputSchema());
 		accessPO.setOutputSchema(operator.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(sourceName, accessPO);
+		getDataDictionary().putAccessPlan(sourceName, accessPO);
 		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, accessPO);
 
 		for(ILogicalOperator o: toUpdate){
@@ -57,7 +56,7 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		if(operator.getSourceType().equals("RelationalAtomicDataInputStreamAccessMVPO") &&
-				WrapperPlanFactory.getAccessPlan(operator.getSource().getURI()) == null){
+				getDataDictionary().getAccessPlan(operator.getSource().getURI()) == null){
 			return true;
 		}
 		

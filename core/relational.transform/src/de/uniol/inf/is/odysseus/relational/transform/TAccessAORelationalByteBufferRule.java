@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import java.io.IOException;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.access.SizeByteBufferReceiverPO;
@@ -47,7 +46,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 			e.printStackTrace();
 		}
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -58,7 +57,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
+		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
 			if(accessAO.getSourceType().equals("RelationalByteBufferAccessPO")){
 				return true;
 			}

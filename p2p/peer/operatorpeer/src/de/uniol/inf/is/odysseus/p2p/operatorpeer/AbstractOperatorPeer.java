@@ -15,13 +15,10 @@
 package de.uniol.inf.is.odysseus.p2p.operatorpeer;
 
 import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.collection.IPair;
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.gui.MainWindow;
@@ -30,7 +27,6 @@ import de.uniol.inf.is.odysseus.p2p.operatorpeer.handler.ISourceHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.AbstractOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
@@ -106,10 +102,6 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 
 	public IPriority getPriority() {
 		return priority;
-	}
-
-	public Map<String, ISource<?>> getSourcesFromWrapperPlanFactory() {
-		return WrapperPlanFactory.getSources();
 	}
 	
 	public IExecutor getExecutor() {

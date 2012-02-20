@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
@@ -71,7 +70,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 			}
 			
 			insert(source);
-			WrapperPlanFactory.putAccessPlan(sourceName, source);
+			getDataDictionary().putAccessPlan(sourceName, source);
 			for(AccessAO curAO : (List<AccessAO>)accessAOs){
 //				Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(curAO,source);
 //				for (ILogicalOperator o:toUpdate){
@@ -89,7 +88,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI(false))==null){
+		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI(false))==null){
 			ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSource().getURI(), getCaller());
 			if(view!=null){		
 				if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){

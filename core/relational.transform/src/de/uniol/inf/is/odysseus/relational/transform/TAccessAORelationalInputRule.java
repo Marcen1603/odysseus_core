@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
 import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
@@ -43,7 +42,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 		String accessPOName = accessAO.getSource().getURI(false);
 		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
-		WrapperPlanFactory.putAccessPlan(accessPOName, accessPO);
+		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO, accessPO);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -54,7 +53,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration trafo) {
-		if(WrapperPlanFactory.getAccessPlan(accessAO.getSource().getURI()) == null){
+		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
 			if(accessAO.getSourceType().equals("RelationalInputStreamAccessPO")){
 				return true;
 			}
