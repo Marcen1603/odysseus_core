@@ -439,13 +439,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return "start;end";
 	}
 
-	@Override
-	public boolean isValid() {
-		PointInTime current = PointInTime.currentPointInTime();
-		return this.getStart().beforeOrEquals(current)
-				&& this.getEnd().after(current);
-	}
-
 	public static TimeInterval forever() {
 		return forever.clone();
 	}
