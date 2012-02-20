@@ -33,13 +33,6 @@
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.intervalapproach"
          download-size="0"
          install-size="0"
@@ -192,6 +185,20 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.interval.transform"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.core.server"
          download-size="0"
          install-size="0"
          version="0.0.0"
