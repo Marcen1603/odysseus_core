@@ -81,16 +81,6 @@ public class ApplicationTime implements IApplicationTime{
 	}
 
 	@Override
-	public boolean isApplictionTimeValid() {
-		for(ITimeInterval interval: this.intervals){
-			if(!interval.isValid()){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
 	public void removeApplicationInterval(ITimeInterval interval) {
 		this.intervals.remove(interval);
 	}

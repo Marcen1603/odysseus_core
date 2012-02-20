@@ -41,9 +41,6 @@ public interface IApplicationTime extends IMetaAttribute, IClone {
 
 	public void clearApplicationIntervals();
 
-	// other
-	public boolean isApplictionTimeValid();
-
 	@Override
 	public IApplicationTime clone();
 }

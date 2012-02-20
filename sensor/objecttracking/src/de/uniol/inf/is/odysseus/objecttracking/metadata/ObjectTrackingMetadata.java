@@ -50,11 +50,6 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	}
 
 	@Override
-	public boolean isValid() {
-		return streamTime.isValid();
-	}
-
-	@Override
 	public void setEnd(PointInTime point) {
 		streamTime.setEnd(point);
 	}
@@ -209,11 +204,6 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	@Override
 	public ITimeInterval getApplicationInterval(int pos) {
 		return this.appTime.getApplicationInterval(pos);
-	}
-
-	@Override
-	public boolean isApplictionTimeValid() {
-		return this.appTime.isApplictionTimeValid();
 	}
 
 	@Override
