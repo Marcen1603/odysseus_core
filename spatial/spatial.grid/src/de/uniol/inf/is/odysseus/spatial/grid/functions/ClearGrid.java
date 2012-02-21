@@ -16,12 +16,11 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
-import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_imgproc;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_imgproc;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
@@ -71,9 +70,9 @@ public class ClearGrid extends AbstractFunction<Grid> {
 		final Grid result = new Grid(base.origin, base.width * base.cellsize,
 				base.depth * base.cellsize, base.cellsize);
 
-		IplImage baseImage = cvCreateImage(cvSize(base.width, base.depth),
+		IplImage baseImage = IplImage.create(cvSize(base.width, base.depth),
 				IPL_DEPTH_8U, 1);
-		IplImage gridImage = cvCreateImage(cvSize(grid.width, grid.depth),
+		IplImage gridImage = IplImage.create(cvSize(grid.width, grid.depth),
 				IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(base, baseImage);
 		OpenCVUtil.gridToImage(grid, gridImage);
@@ -84,8 +83,8 @@ public class ClearGrid extends AbstractFunction<Grid> {
 		opencv_core.cvAnd(baseImage, gridImage, baseImage, null);
 		OpenCVUtil.imageToGrid(baseImage, result);
 
-		opencv_core.cvReleaseImage(baseImage);
-		opencv_core.cvReleaseImage(gridImage);
+		baseImage.release();
+		gridImage.release();
 
 		return result;
 	}

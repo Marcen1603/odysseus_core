@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.CV_32F;
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
-import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
-import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_INTER_LINEAR;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_WARP_FILL_OUTLIERS;
@@ -79,9 +77,9 @@ public class RotateGrid extends AbstractFunction<Grid> {
 	public Grid getValue() {
 		final Grid grid = (Grid) this.getInputValue(0);
 		Double angle = (Double) this.getInputValue(1);
-		IplImage image = cvCreateImage(cvSize(grid.width, grid.depth),
+		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
 				IPL_DEPTH_8U, 1);
-		IplImage rotatedImage = cvCreateImage(cvSize(grid.width, grid.depth),
+		IplImage rotatedImage = IplImage.create(cvSize(grid.width, grid.depth),
 				IPL_DEPTH_8U, image.nChannels());
 
 		Coordinate origin = grid.origin;
@@ -110,11 +108,12 @@ public class RotateGrid extends AbstractFunction<Grid> {
 		CvMat mapMatrix = CvMat.create(2, 3, CV_32F);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 		cvWarpAffine(image, rotatedImage, mapMatrix, flags, OpenCVUtil.UNKNOWN);
-		cvReleaseImage(image);
+		mapMatrix.release();
+		image.release();
 		image = null;
 		OpenCVUtil.imageToGrid(rotatedImage, rotatedGrid);
 
-		cvReleaseImage(rotatedImage);
+		rotatedImage.release();
 		rotatedImage = null;
 
 		return rotatedGrid;

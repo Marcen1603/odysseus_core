@@ -109,13 +109,13 @@ public class SubGrid extends AbstractFunction<Grid> {
 		final Grid subgrid = new Grid(new Coordinate(originX, originY), width,
 				depth, grid.cellsize);
 
-		IplImage subimage = opencv_core.cvCreateImage(
+		IplImage subimage = IplImage.create(
 				opencv_core.cvSize(subgrid.width, subgrid.depth),
 				opencv_core.IPL_DEPTH_8U, 1);
 		opencv_core.cvSet(subimage, OpenCVUtil.UNKNOWN);
 
 		// Create global grid view
-		IplImage image = opencv_core.cvCreateImage(
+		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
 				opencv_core.IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(grid, image);
@@ -172,7 +172,7 @@ public class SubGrid extends AbstractFunction<Grid> {
 			roiRect.width(roiWidth);
 			roiRect.height(roiDepth);
 
-			IplImage roi = opencv_core.cvCreateImage(
+			IplImage roi = IplImage.create(
 					opencv_core.cvSize(roiRect.width(), roiRect.height()),
 					opencv_core.IPL_DEPTH_8U, 1);
 			opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
@@ -186,16 +186,17 @@ public class SubGrid extends AbstractFunction<Grid> {
 			opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 			opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix,
 					SubGrid.flags, OpenCVUtil.UNKNOWN);
+			mapMatrix.release();
 			opencv_core.cvResetImageROI(subimage);
-			opencv_core.cvReleaseImage(roi);
+			roi.release();
 			roi = null;
 		}
 		OpenCVUtil.imageToGrid(subimage, subgrid);
 
-		opencv_core.cvReleaseImage(image);
+		image.release();
 		image = null;
 
-		opencv_core.cvReleaseImage(subimage);
+		subimage.release();
 		subimage = null;
 		return subgrid;
 	}

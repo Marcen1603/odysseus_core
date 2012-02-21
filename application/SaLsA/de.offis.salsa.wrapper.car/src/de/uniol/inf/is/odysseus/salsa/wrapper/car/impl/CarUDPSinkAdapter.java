@@ -28,7 +28,7 @@ public class CarUDPSinkAdapter extends AbstractSinkAdapter implements
 	private final ByteBuffer buffer;
 
 	public CarUDPSinkAdapter() {
-		buffer = ByteBuffer.allocate(1024 * 1024);
+		buffer = ByteBuffer.allocate(64 * 1024);
 		try {
 			channel = DatagramChannel.open();
 		} catch (IOException e) {

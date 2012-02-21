@@ -86,7 +86,7 @@ public class ToGrid extends AbstractFunction<Grid> {
 		final Coordinate[] coordinates = geometry.getCoordinates();
 
 		final Grid grid = new Grid(new Coordinate(x, y), width, depth, cellsize);
-		IplImage image = opencv_core.cvCreateImage(
+		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
 				opencv_core.IPL_DEPTH_8U, 1);
 
@@ -106,20 +106,21 @@ public class ToGrid extends AbstractFunction<Grid> {
 		cvFillPoly(image, convexHullPoints, new int[] { coordinates.length },
 				1, OpenCVUtil.FREE, 4, 0);
 
+		CvPoint point = new CvPoint(0, 0);
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
 			if ((coordinate.x >= x) && (coordinate.x < x + width)
 					&& (coordinate.y >= y) && (coordinate.y < y + depth)) {
-				CvPoint point = new CvPoint(
-						(int) ((coordinate.x - x) / cellsize), image.height()
-								- (int) ((coordinate.y - y) / cellsize));
+				point.put((int) ((coordinate.x - x) / cellsize), image.height()
+						- (int) ((coordinate.y - y) / cellsize));
 				cvRectangle(image, point, point, OpenCVUtil.OBSTACLE,
 						CV_FILLED, 8, 0);
+
 			}
 		}
 		OpenCVUtil.imageToGrid(image, grid);
 
-		opencv_core.cvReleaseImage(image);
+		image.release();
 		image = null;
 		return grid;
 	}

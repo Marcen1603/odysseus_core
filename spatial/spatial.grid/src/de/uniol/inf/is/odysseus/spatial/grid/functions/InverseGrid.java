@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
-import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -67,13 +66,13 @@ public class InverseGrid extends AbstractFunction<Grid> {
 		final Grid grid = this.getInputValue(0);
 		final Grid inverseGrid = new Grid(grid.origin, grid.width
 				* grid.cellsize, grid.depth * grid.cellsize, grid.cellsize);
-		IplImage image = cvCreateImage(cvSize(grid.width, grid.depth),
+		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
 				IPL_DEPTH_8U, 1);
 
 		OpenCVUtil.gridToImage(grid, image);
 		opencv_core.cvNot(image, image);
 		OpenCVUtil.imageToGrid(image, inverseGrid);
-		opencv_core.cvReleaseImage(image);
+		image.release();
 		return inverseGrid;
 	}
 

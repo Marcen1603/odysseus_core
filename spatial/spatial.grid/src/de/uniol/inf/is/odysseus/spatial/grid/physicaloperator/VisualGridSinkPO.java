@@ -96,12 +96,12 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
 			Grid grid = (Grid) ((RelationalTuple<TimeInterval>) object)
 					.getAttribute(0);
-			IplImage image = opencv_core.cvCreateImage(
+			IplImage image = IplImage.create(
 					opencv_core.cvSize(grid.width, grid.depth),
 					opencv_core.IPL_DEPTH_8U, 1);
 			OpenCVUtil.gridToImage(grid, image);
 			this.canvas.showImage(image);
-			opencv_core.cvReleaseImage(image);
+			image.release();
 			image = null;
 		}
 	}

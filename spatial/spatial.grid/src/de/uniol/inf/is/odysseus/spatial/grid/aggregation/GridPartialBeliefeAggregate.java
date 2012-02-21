@@ -36,14 +36,14 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 		this.count = 1.0;
 		this.grid = new Grid(grid.origin, grid.width * grid.cellsize,
 				grid.depth * grid.cellsize, grid.cellsize, grid.getBuffer());
-		this.image = opencv_core.cvCreateImage(
+		this.image = IplImage.create(
 				opencv_core.cvSize(this.grid.width, this.grid.depth),
 				opencv_core.IPL_DEPTH_16U, 1);
-		this.mask = opencv_core.cvCreateImage(
+		this.mask = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_8U, 1);
 
-		IplImage tmp = opencv_core.cvCreateImage(
+		IplImage tmp = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(this.grid, tmp);
@@ -52,7 +52,7 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 				opencv_imgproc.CV_THRESH_TRUNC);
 
 		opencv_core.cvConvertScale(tmp, this.image, 1, 0);
-		opencv_core.cvReleaseImage(tmp);
+		tmp.release();
 		tmp = null;
 
 		OpenCVUtil.gridToImage(grid, this.mask);
@@ -65,10 +65,10 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 		this.grid = new Grid(this.grid.origin, this.grid.width
 				* this.grid.cellsize, this.grid.depth * this.grid.cellsize,
 				this.grid.cellsize, gridPartialAggregate.grid.getBuffer());
-		this.image = opencv_core.cvCreateImage(
+		this.image = IplImage.create(
 				opencv_core.cvSize(this.grid.width, this.grid.depth),
 				opencv_core.IPL_DEPTH_16U, 1);
-		this.mask = opencv_core.cvCreateImage(
+		this.mask = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_8U, 1);
 		opencv_core.cvCopy(gridPartialAggregate.image, this.image);
@@ -82,7 +82,7 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	public void evaluate() {
-		IplImage image = opencv_core.cvCreateImage(
+		IplImage image = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_8U, 1);
 		opencv_core.cvConvertScale(this.image, image, 1.0 / this.count, 0);
@@ -90,9 +90,9 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 
 		OpenCVUtil.imageToGrid(image, this.grid);
 
-		opencv_core.cvReleaseImage(image);
-		opencv_core.cvReleaseImage(this.image);
-		opencv_core.cvReleaseImage(this.mask);
+		image.release();
+		this.image.release();
+		this.mask.release();
 		image = null;
 		this.image = null;
 		this.mask = null;
@@ -104,7 +104,7 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 
 	public void merge(final Grid grid) {
 		this.count++;
-		IplImage mask = opencv_core.cvCreateImage(
+		IplImage mask = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
 				opencv_core.IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(grid, mask);
@@ -113,11 +113,11 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 				opencv_imgproc.CV_THRESH_BINARY);
 		opencv_core.cvAnd(this.mask, mask, this.mask, null);
 
-		IplImage merge = opencv_core.cvCreateImage(
+		IplImage merge = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_16U, 1);
 
-		IplImage tmp = opencv_core.cvCreateImage(
+		IplImage tmp = IplImage.create(
 				opencv_core.cvSize(this.image.width(), this.image.height()),
 				opencv_core.IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(grid, tmp);
@@ -126,13 +126,13 @@ public class GridPartialBeliefeAggregate<T> implements IPartialAggregate<T> {
 				opencv_imgproc.CV_THRESH_TRUNC);
 
 		opencv_core.cvConvertScale(tmp, merge, 1, 0);
-		opencv_core.cvReleaseImage(tmp);
+		tmp.release();
 		tmp = null;
 
 		opencv_core.cvAdd(this.image, merge, this.image, null);
 
-		opencv_core.cvReleaseImage(merge);
-		opencv_core.cvReleaseImage(mask);
+		merge.release();
+		mask.release();
 		mask = null;
 		merge = null;
 	}

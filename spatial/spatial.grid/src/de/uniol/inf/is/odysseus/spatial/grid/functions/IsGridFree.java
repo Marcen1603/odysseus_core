@@ -85,7 +85,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 		Double depth = (Double) this.getInputValue(3);
 		Double threshold = (Double) this.getInputValue(4);
 
-		IplImage image = opencv_core.cvCreateImage(
+		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
 				opencv_core.IPL_DEPTH_8U, 1);
 		OpenCVUtil.gridToImage(grid, image);
@@ -113,7 +113,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 			roiRect.width(roiWidth);
 			roiRect.height(roiDepth);
 
-			IplImage roi = opencv_core.cvCreateImage(
+			IplImage roi = IplImage.create(
 					opencv_core.cvSize(roiRect.width(), roiRect.height()),
 					opencv_core.IPL_DEPTH_8U, 1);
 
@@ -122,12 +122,12 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 			opencv_core.cvSetImageROI(image, roiRect);
 			opencv_core.cvCopy(image, roi);
 			opencv_core.cvResetImageROI(image);
-			opencv_core.cvReleaseImage(image);
+			image.release();
 
 			opencv_imgproc.cvThreshold(roi, roi, threshold, 255,
 					opencv_imgproc.CV_THRESH_BINARY);
 			CvScalar avg = opencv_core.cvAvg(roi, null);
-			opencv_core.cvReleaseImage(roi);
+			roi.release();
 			if (avg.getVal(0) == 0.0) {
 				free = true;
 			}
