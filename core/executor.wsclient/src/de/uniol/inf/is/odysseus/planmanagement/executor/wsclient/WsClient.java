@@ -274,7 +274,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 
 	@Override
 	public void logout(ISession caller) {
-		// TODO: not implemented in server
 	}
 
 	@Override
