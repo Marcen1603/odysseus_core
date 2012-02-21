@@ -23,10 +23,8 @@ import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
@@ -53,12 +51,9 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 * . OptimizationConfiguration, java.util.List)
 	 */
 	@Override
-	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizationConfiguration parameters, List<IPhysicalQuery> allQueries, IDataDictionary dd)
+	public void optimizePlan(OptimizationConfiguration parameters, IExecutionPlan toOptimize, IDataDictionary dd)
 			throws QueryOptimizationException {
-
-		// ArrayList<IPhysicalOperator> roots = new
-		// ArrayList<IPhysicalOperator>();
+	
 		ArrayList<IPartialPlan> partialPlans = new ArrayList<IPartialPlan>();
 		ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
 		ArrayList<IIterableSource<?>> partialPlanSources;
@@ -66,7 +61,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Get Roots, PartialPlans and IIterableSource for the execution plan.
 		// Each query will be one PartialPlan. Duplicated operators will be
 		// ignored.
-		for (IPhysicalQuery query : allQueries) {
+		for (IPhysicalQuery query : toOptimize.getQueries()) {
 			partialPlanSources = new ArrayList<IIterableSource<?>>();
 			// roots.addAll(query.getRoots());
 
@@ -107,13 +102,10 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 
 		} // for (IQuery query : allQueries)
 
-		// Create a new execution plan with the found informations.
-		ExecutionPlan newPlan = new ExecutionPlan();
-		newPlan.setPartialPlans(partialPlans);
-		newPlan.setLeafSources(leafSources);
-		// newPlan.setRoots(roots);
+		// Update ExecutionPlan with the found informations.
+		toOptimize.setPartialPlans(partialPlans);
+		toOptimize.setLeafSources(leafSources);
 
-		return newPlan;
 	}
 
 }

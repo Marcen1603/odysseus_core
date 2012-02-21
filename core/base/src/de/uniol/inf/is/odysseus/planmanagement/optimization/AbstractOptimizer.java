@@ -29,10 +29,7 @@ import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanExecutionCostModel;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.migration.costmodel.IPlanMigrationCostModel;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.planmigration.IPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
@@ -80,20 +77,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * Registered query optimization service.
 	 */
 	protected IQueryOptimizer queryOptimizer;
-
-	/**
-	 * Registered plan migration services.
-	 */
-	private Map<String, IPlanMigrationStrategy> planMigrationStrategies = new HashMap<String, IPlanMigrationStrategy>();
 	
 	/**
 	 * optional Query-Sharing-Component
 	 */
 	protected IQuerySharingOptimizer querySharingOptimizer = null;
 
-	private IPlanExecutionCostModel executionCostModel;
-	private IPlanMigrationCostModel migrationCostModel;
-	
 	/**
 	 * List of error event listener. If an error occurs these objects should be informed.
 	 */
@@ -194,47 +183,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 			this.queryOptimizer = null;
 		}
 	}
-
-	/**
-	 * Method to bind a {@link IPlanMigrationStrategy}. Used by OSGi.
-	 * 
-	 * @param planMigrationStrategy new {@link IPlanMigrationStrategy} service
-	 */
-	public void bindPlanMigrationStrategy(
-			IPlanMigrationStrategy planMigrationStrategy) {
-		getLogger().debug("Bind planmigration strategy "+planMigrationStrategy.getName());
-		this.planMigrationStrategies.put(planMigrationStrategy.getName(), planMigrationStrategy);
-	}
-
-	/**
-	 * Method to unbind a {@link IPlanMigrationStrategy}. Used by OSGi.
-	 * 
-	 * @param planMigrationStrategy {@link IPlanMigrationStrategy} service to unbind
-	 */
-	public void unbindPlanMigrationStrategy(
-			IPlanMigrationStrategy planMigrationStrategy) {
-		this.planMigrationStrategies.remove(planMigrationStrategy.getName());
-	}
-
-	public void bindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
-		this.executionCostModel = executionCostModel;
-	}
-	
-	public void unbindExecutionCostModel(IPlanExecutionCostModel executionCostModel) {
-		this.executionCostModel = null;
-	}
-	
-	public IPlanExecutionCostModel getExecutionCostModel() {
-		return executionCostModel;
-	}
-	
-	public void bindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
-		this.migrationCostModel = migrationCostModel;
-	}
-	
-	public void unbindMigrationCostModel(IPlanMigrationCostModel migrationCostModel) {
-		this.migrationCostModel = null;
-	}
 	
 	/**
 	 * bindQuerySharingOptimizer bindet eine Querysharing-Komponente ein
@@ -275,9 +223,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return null;
 	}
 	
-	public IPlanMigrationCostModel getMigrationCostModel() {
-		return migrationCostModel;
-	}
 	
 	/**
 	 * Get a formated info string for object. if object not null
@@ -329,10 +274,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStartOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan beforeQueryStart(IPhysicalQuery queryToStart,
+	public void beforeQueryStart(IPhysicalQuery queryToStart,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		return executionPlan;
 	}
 
 	
@@ -347,29 +291,26 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender, IPhysicalQuery query,
+	public void reoptimize(IPhysicalQuery query,
 			IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		return executionPlan;
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#reoptimize(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan reoptimize(IOptimizable sender,
-			IExecutionPlan executionPlan)
+	public void reoptimize(IExecutionPlan executionPlan)
 			throws QueryOptimizationException {
-		return executionPlan;
 	}
 
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer#preStopOptimization(de.uniol.inf.is.odysseus.planmanagement.query.IQuery, de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan)
 	 */
 	@Override
-	public IExecutionPlan beforeQueryStop(IPhysicalQuery queryToStop,
+	public void beforeQueryStop(IPhysicalQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException {
-		return execPlan;
 	}
 
 	/* (non-Javadoc)
@@ -413,14 +354,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return this.bufferPlacementStrategies.get(strategy);
 	}
 	
-	public Set<String> getRegisteredPlanMigrationStrategies(){
-		return this.planMigrationStrategies.keySet();		
-	}
-
-	public IPlanMigrationStrategy getPlanMigrationStrategy(String strategy){
-		return this.planMigrationStrategies.get(strategy);		
-	}
-
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.event.error.IErrorEventHandler#addErrorEventListener(de.uniol.inf.is.odysseus.event.error.IErrorEventListener)

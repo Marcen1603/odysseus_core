@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 public interface IPlanScheduling extends IPlanExecutionHandler {
 
 	/**
-	 * getSealedExecutionPlan liefert den aktuellen physischen Ausführungsplan.
+	 * liefert den aktuellen physischen Ausführungsplan.
 	 * @return den aktuellen physischen Ausführungsplan
 	 */
 	public IExecutionPlan getExecutionPlan();

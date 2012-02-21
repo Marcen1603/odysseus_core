@@ -20,13 +20,14 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Defines an object which provides optimization methods. IOptimizer is the base
@@ -43,29 +44,23 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	/**
 	 * Initializes an optimization if queries should be added.
 	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
+	 * @param executionPlan 
 	 * @param newQueries
 	 *            Queries which should be added.
 	 * @param parameter
 	 *            Parameter for the optimization.
 	 * @param rulesToUse Contains the name of the rules to use during optimization.
 	 *            Rules that are not contained in this set are not used during optimization.
-	 * @return New optimized execution plan.
+	 * @return List of added and translated queries, if any
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan optimize(IOptimizable sender,
-			List<ILogicalQuery> newQueries, List<IPhysicalQuery> optimizedQueries, OptimizationConfiguration parameter, IDataDictionary dd)
+	public List<IPhysicalQuery> optimize(ICompiler compiler, IExecutionPlan executionPlan, List<ILogicalQuery> newQueries, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
 	
 	/**
 	 * Initializes an optimization if a query requests a reoptimization.
 	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
 	 * @param query
 	 *            Query that requests a reoptimization.
 	 * @param executionPlan
@@ -74,24 +69,19 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IOptimizable sender, IPhysicalQuery query,
-			IExecutionPlan executionPlan)
+	public void reoptimize(IPhysicalQuery query,IExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 
 	/**
 	 * Initializes an optimization if a plan requests a reoptimization.
 	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
 	 * @param executionPlan
 	 *            Current execution plan.
 	 * @return New optimized execution plan.
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan reoptimize(IOptimizable sender,
-			IExecutionPlan executionPlan)
+	public void reoptimize(IExecutionPlan executionPlan)
 			throws QueryOptimizationException;
 	
 	
@@ -136,7 +126,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan beforeQueryStart(IPhysicalQuery queryToStart,
+	public void beforeQueryStart(IPhysicalQuery queryToStart,
 			IExecutionPlan execPlan) throws QueryOptimizationException;
 
 	/**
@@ -150,7 +140,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public IExecutionPlan beforeQueryStop(IPhysicalQuery queryToStop,
+	public void beforeQueryStop(IPhysicalQuery queryToStop,
 			IExecutionPlan execPlan) throws QueryOptimizationException;
 
 
@@ -173,33 +163,9 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public <T extends IPlanOptimizable & IPlanMigratable> IExecutionPlan beforeQueryRemove(
-			T sender, IPhysicalQuery removedQuery,
+	public void beforeQueryRemove(IPhysicalQuery removedQuery,
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException;
-	
-	/**
-	 * Initializes an optimization if queries should be migrated.
-	 * 
-	 * @param sender
-	 *            Optimization request sender, which provides informations for
-	 *            the optimization.
-	 * @param parameter
-	 *            Parameter for the optimization.
-	 * @return New optimized execution plan.
-	 * @throws QueryOptimizationException
-	 */
-	public IExecutionPlan beforeQueryMigration(IOptimizable sender,
-			OptimizationConfiguration parameter, IDataDictionary dd) throws QueryOptimizationException;
-	
-	/**
-	 * Handles a callback, when a plan migration has finished.
-	 * 
-	 * @param query
-	 * 			Query that has finished a migration to a new plan.
-	 */
-	public void handleFinishedMigration(IPhysicalQuery query);
-	
 	
 	IQuerySharingOptimizer getQuerySharingOptimizer();
 

@@ -14,38 +14,32 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
  * Describes an object which optimizes global plan. Used for OSGi-services.
  * 
- * @author Wolf Bauer
+ * @author Wolf Bauer, Marco Grawunder
  * 
  */
 public interface IPlanOptimizer {
 	/**
 	 * Optimizes global plan and builds the new execution plan.
 	 * 
-	 * @param sender
+	 * @param compiler
 	 *            Optimize requester which provides informations for the
 	 *            optimization.
-	 * @param allQueries
-	 *            List of all queries that are registered.
+	 * @param toOptimize
+	 *            Current ExecutionPlan.
 	 * @param parameters
 	 *            Parameter that provide additional information for the
 	 *            optimization.
-	 * @return Optimized execution plan.
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during the optimization.
 	 */
-	public IExecutionPlan optimizePlan(IPlanOptimizable sender,
-			OptimizationConfiguration parameters, List<IPhysicalQuery> allQueries, IDataDictionary dd)
+	public void optimizePlan(OptimizationConfiguration parameters, IExecutionPlan toOptimize, IDataDictionary dd)
 			throws QueryOptimizationException;
 }

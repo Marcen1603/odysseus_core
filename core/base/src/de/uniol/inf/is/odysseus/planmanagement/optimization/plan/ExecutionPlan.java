@@ -15,9 +15,12 @@
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -25,14 +28,15 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 
 /**
- * EditableExecutionPlan is an object which is used to store an execution plan.
- * This structure is used for communication between plan management,
- * optimization and scheduling.
+ * This class is used to keep information about queries and 
+ * partial plans together
  * 
  * @author Wolf Bauer, Marco Grawunder
  * 
@@ -70,13 +74,32 @@ public class ExecutionPlan implements IExecutionPlan {
 
 	private Set<IPhysicalOperator> roots = null;
 
+	/**
+	 * Map of all registered queries.
+	 */
+	private Map<Integer, IPhysicalQuery> queries;
+
+	/**
+	 * List of objects which respond to reoptimize requests.
+	 */
+	private List<IPlanReoptimizeListener> reoptimizeListener = Collections
+			.synchronizedList(new ArrayList<IPlanReoptimizeListener>());
+
+	/**
+	 * List of objects which respond to reoptimize requests.
+	 */
+	private List<AbstractPlanReoptimizeRule> reoptimizeRule = Collections
+			.synchronizedList(new ArrayList<AbstractPlanReoptimizeRule>());
+
 	public ExecutionPlan() {
 		partialPlans = new ArrayList<IPartialPlan>();
 		partialPlansNotToSchedule = new ArrayList<IPartialPlan>();
 		leafSources = new ArrayList<IIterableSource<?>>();
+		queries = Collections
+				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>());
 	}
 
-	public ExecutionPlan(ExecutionPlan otherPlan) {
+	private ExecutionPlan(ExecutionPlan otherPlan) {
 		this.open = otherPlan.open;
 		this.leafSources = new ArrayList<IIterableSource<?>>(
 				otherPlan.leafSources);
@@ -86,6 +109,11 @@ public class ExecutionPlan implements IExecutionPlan {
 		if (otherPlan.roots != null) {
 			this.roots = new HashSet<IPhysicalOperator>(otherPlan.roots);
 		}
+		this.queries = Collections
+				.synchronizedMap(new HashMap<Integer, IPhysicalQuery>(
+						otherPlan.queries));
+		this.reoptimizeListener.addAll(otherPlan.reoptimizeListener);
+		this.reoptimizeRule.addAll(otherPlan.reoptimizeRule);
 	}
 
 	/*
@@ -146,31 +174,6 @@ public class ExecutionPlan implements IExecutionPlan {
 		this.leafSources.addAll(leafSources);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.plan.IExecutionPlan
-	 * #close()
-	 */
-	@Override
-	public void close() {
-		if (open) {
-			List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
-			for (IPartialPlan partialPlan : this.partialPlans) {
-				roots.addAll(partialPlan.getQueryRoots());
-			}
-			for (IPhysicalOperator root : roots) {
-				if (root.isSink()) {
-					((ISink<?>) root).close();
-				} else {
-					throw new IllegalArgumentException(
-							"Close() cannot be called on a source -->" + root);
-				}
-
-			}
-			open = false;
-		}
-	}
 
 	@Override
 	public Set<IPhysicalOperator> getRoots() {
@@ -194,5 +197,126 @@ public class ExecutionPlan implements IExecutionPlan {
 	public IExecutionPlan clone() {
 		return new ExecutionPlan(this);
 	}
+
+	@Override
+	public synchronized boolean addQuery(IPhysicalQuery query) {
+		this.queries.put(query.getID(), query);
+
+		return true;
+	}
+	
+	@Override
+	public void addQueries(List<IPhysicalQuery> allQueries) {
+		for (IPhysicalQuery q:allQueries){
+			this.queries.put(q.getID(), q);
+		}
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#removeQuery(int)
+	 */
+	@Override
+	public synchronized IPhysicalQuery removeQuery(int queryID) {
+		return this.queries.remove(queryID);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQuery(int)
+	 */
+	@Override
+	public synchronized IPhysicalQuery getQuery(int queryID) {
+		return this.queries.get(queryID);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlan#getQueries()
+	 */
+	@Override
+	public synchronized Collection<IPhysicalQuery> getQueries() {
+		return Collections.unmodifiableCollection(this.queries.values());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#reoptimize()
+	 */
+	@Override
+	public void reoptimize() {
+		for (IPlanReoptimizeListener reoptimizationListener : this.reoptimizeListener) {
+			reoptimizationListener.reoptimizeRequest(this);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#
+	 * addReoptimizeListener(java.lang.Object)
+	 */
+	@Override
+	public void addReoptimizeListener(
+			IPlanReoptimizeListener reoptimizationListener) {
+		synchronized (this.reoptimizeListener) {
+			if (!this.reoptimizeListener.contains(reoptimizationListener)) {
+				this.reoptimizeListener.add(reoptimizationListener);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#
+	 * removeReoptimizeListener(java.lang.Object)
+	 */
+	@Override
+	public void removeReoptimizeListener(
+			IPlanReoptimizeListener reoptimizationListener) {
+		synchronized (this.reoptimizeListener) {
+			this.reoptimizeListener.remove(reoptimizationListener);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#addReoptimzeRule
+	 * (de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule)
+	 */
+	@Override
+	public void addReoptimzeRule(AbstractPlanReoptimizeRule reoptimizeRule) {
+		synchronized (this.reoptimizeRule) {
+			if (!this.reoptimizeRule.contains(reoptimizeRule)) {
+				this.reoptimizeRule.add(reoptimizeRule);
+				reoptimizeRule.addReoptimieRequester(this);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#
+	 * removeReoptimzeRule
+	 * (de.uniol.inf.is.odysseus.planmanagement.IReoptimizeRule)
+	 */
+	@Override
+	public void removeReoptimzeRule(AbstractPlanReoptimizeRule reoptimizeRule) {
+		synchronized (this.reoptimizeRule) {
+			this.reoptimizeRule.remove(reoptimizeRule);
+			reoptimizeRule.deinitialize();
+		}
+	}
+
 
 }

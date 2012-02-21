@@ -362,8 +362,8 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 					try {
 						// executor = (IExecutor) execTracker.waitForService(0);
 						if (se != null) {
-							if (se.getPlan() != null) {
-								addQueries(se.getPlan().getQueries());
+							if (se.getExecutionPlan() != null) {
+								addQueries(se.getExecutionPlan().getQueries());
 							}
 
 							se.addPlanModificationListener(QueryView.this);

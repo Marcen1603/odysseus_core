@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
@@ -125,7 +125,7 @@ public class WebserviceServer {
 		try {
 			loginWithSecurityToken(securityToken);
 			for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor()
-					.getPlan().getQueries()) {
+					.getExecutionPlan().getQueries()) {
 				if (q.getLogicalQuery() != null) {
 					response.addResponseValue(q.getLogicalQuery().getQueryText());
 				}
@@ -363,19 +363,6 @@ public class WebserviceServer {
 		}
 	}
 
-	public Response updateExecutionPlan(
-			@WebParam(name = "securitytoken") String securityToken) {
-		try {
-			loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().updateExecutionPlan();
-			return new Response(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Response(false);
-		}
-
-	}
-
 	public StringResponse getName(
 			@WebParam(name = "securitytoken") String securityToken) {
 		try {
@@ -394,7 +381,7 @@ public class WebserviceServer {
 		try {
 			SimpleGraph graph = new SimpleGraph();
 			// loginWithSecurityToken(securityToken);
-			IPhysicalPlan plan = ExecutorServiceBinding.getExecutor().getPlan();
+			IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
 			int idCounter = 0;
 			for (IPhysicalOperator op : plan.getRoots()) {
 				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();

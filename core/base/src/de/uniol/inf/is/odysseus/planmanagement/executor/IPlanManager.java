@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationHandler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 
 /**
  * IPlanManager bildet mit IPlanScheduling die Grundlage für die
@@ -34,5 +34,5 @@ public interface IPlanManager extends IClientPlanManager, IPlanModificationHandl
 	 * @return alle in Odysseus registrierten Anfragen
 	 * @throws PlanManagementException
 	 */
-	public IPhysicalPlan getPlan() throws PlanManagementException;
+	public IExecutionPlan getExecutionPlan() throws PlanManagementException;
 }

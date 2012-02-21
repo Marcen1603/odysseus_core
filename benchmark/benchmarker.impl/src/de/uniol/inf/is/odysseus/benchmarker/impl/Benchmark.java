@@ -258,12 +258,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	private void clearExecutor() {
 		this.sinks.clear();
-		this.executor.getExecutionPlan().close();
 		this.executor.removeAllQueries();
 	}
 
 	private int getQueryId(IPhysicalOperator curRoot) {
-		for (IPhysicalQuery q : this.executor.getQueries()) {
+		for (IPhysicalQuery q : this.executor.getExecutionPlan().getQueries()) {
 			if (q.getRoots().contains(curRoot)) {
 				return q.getID();
 			}

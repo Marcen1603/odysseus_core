@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -201,7 +201,7 @@ public class ECAParserTest implements CommandProvider {
 		//check physical operators
 		IPhysicalQuery addedQuery = this.executor.addQuery(logicalPlan, user, "Standard");
 		ci.println("	*Testcase3: Check if physical plan is correct");
-		IPhysicalPlan plan = this.executor.getPlan();
+		IExecutionPlan plan = this.executor.getExecutionPlan();
 		IPhysicalQuery installedQuery = plan.getQuery(addedQuery.getID());
 		IPhysicalOperator physicalOp = installedQuery.getRoots().get(0);
 		if (! (physicalOp.getClass() == EventTriggerPO.class)){

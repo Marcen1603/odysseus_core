@@ -49,7 +49,7 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 			IServerExecutor se = (IServerExecutor) executor;
 			try {
 				ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
-				for (IPhysicalOperator po : se.getPlan().getRoots())
+				for (IPhysicalOperator po : se.getExecutionPlan().getRoots())
 					sinkRoots.add((ISink<?>) po);
 
 				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSink(

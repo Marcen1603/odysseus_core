@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +42,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.IExecutionSetting;
-import de.uniol.inf.is.odysseus.planmanagement.executor.datastructure.PhysicalPlan;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
@@ -55,13 +53,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddExcept
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -203,12 +199,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	@Override
 	protected void initializeIntern(ExecutionConfiguration configuration) {
-		// create a new Plan object
-		this.plan = new PhysicalPlan();
-		// add ReoptimizeListener
-		((PhysicalPlan) this.plan).addReoptimizeListener(this);
-		// create new execution plan object
-		this.executionPlan = new ExecutionPlan();
+		this.executionPlan.addReoptimizeListener(this);
 	}
 
 	/*
@@ -272,7 +263,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	/**
 	 * Optimize new queries and set the resulting execution plan. After setting
 	 * the execution plan all new queries are stored in the global queries
-	 * storage ({@link IPhysicalPlan}).
+	 * storage ({@link IExecutionPlan}).
 	 * 
 	 * @param newQueries
 	 *            Queries to process.
@@ -281,11 +272,11 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private List<IPhysicalQuery> addQueries(List<ILogicalQuery> newQueries,
+	private Collection<IPhysicalQuery> addQueries(List<ILogicalQuery> newQueries,
 			OptimizationConfiguration conf) throws NoOptimizerLoadedException,
 			QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
-		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
+		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		if (newQueries.isEmpty()) {
 			return optimizedQueries;
 		}
@@ -294,15 +285,13 @@ public class StandardExecutor extends AbstractExecutor implements
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			IExecutionPlan exep = getOptimizer().optimize(this, newQueries,
-					optimizedQueries, conf, getDataDictionary());
-
-			setExecutionPlan(exep);
-
+			optimizedQueries = getOptimizer().optimize(getCompiler(), getExecutionPlan(), newQueries,
+					conf, getDataDictionary());
+			executionPlanChanged();
+			
 			// store optimized queries
 
 			for (IPhysicalQuery optimizedQuery : optimizedQueries) {
-				this.plan.addQuery(optimizedQuery);
 				optimizedQuery.addReoptimizeListener(this);
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
@@ -429,9 +418,9 @@ public class StandardExecutor extends AbstractExecutor implements
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
 			newQueries.add(query);
-			List<IPhysicalQuery> addedQueries = addQueries(newQueries,
+			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries,
 					new OptimizationConfiguration(params));
-			return addedQueries.get(0);
+			return addedQueries.iterator().next();
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());
@@ -497,18 +486,18 @@ public class StandardExecutor extends AbstractExecutor implements
 			throws PlanManagementException {
 		getLogger().info("Start remove a query (ID: " + queryID + ").");
 
-		IPhysicalQuery queryToRemove = this.plan.getQuery(queryID);
+		IPhysicalQuery queryToRemove = this.executionPlan.getQuery(queryID);
 		validateUserRight(queryToRemove, caller,
 				ExecutorPermission.REMOVE_QUERY);
 		if (queryToRemove != null && getOptimizer() != null) {
 			try {
 				executionPlanLock.lock();
-				setExecutionPlan(getOptimizer().beforeQueryRemove(this,
-						queryToRemove, this.executionPlan, null,
-						getDataDictionary()));
+				getOptimizer().beforeQueryRemove(queryToRemove, this.executionPlan, null,
+						getDataDictionary());
+				executionPlanChanged();
 				stopQuery(queryToRemove.getID(), caller);
 				getLogger().info("Removing Query " + queryToRemove.getID());
-				this.plan.removeQuery(queryToRemove.getID());
+				this.executionPlan.removeQuery(queryToRemove.getID());
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
 				dataDictionary.removeClosedSources();
@@ -521,7 +510,7 @@ public class StandardExecutor extends AbstractExecutor implements
 					dataDictionary.removeQuery(queryToRemove.getLogicalQuery(), caller);
 					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery().getQueryText());
 				}
-			} catch (QueryOptimizationException e) {
+			} catch (Exception e) {
 				getLogger().warn(
 						"Query not removed. An Error while optimizing occurd (ID: "
 								+ queryID + ").");
@@ -546,7 +535,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	@Override
 	public void startQuery(int queryID, ISession caller) {
-		IPhysicalQuery queryToStart = this.plan.getQuery(queryID);
+		IPhysicalQuery queryToStart = this.executionPlan.getQuery(queryID);
 		validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
 		if (queryToStart.isOpened()) {
 			getLogger().info("Query (ID: " + queryID + ") is already started.");
@@ -556,8 +545,9 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		try {
 			this.executionPlanLock.lock();
-			setExecutionPlan(getOptimizer().beforeQueryStart(queryToStart,
-					this.executionPlan));
+			getOptimizer().beforeQueryStart(queryToStart,
+					this.executionPlan);
+			executionPlanChanged();
 			if (isRunning()) {
 				queryToStart.open();
 				getLogger().debug("Query " + queryID + " started.");
@@ -583,7 +573,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	public List<IPhysicalQuery> startAllClosedQueries(ISession user) {
 		executionPlanLock.lock();
 		List<IPhysicalQuery> started = new LinkedList<IPhysicalQuery>();
-		for (IPhysicalQuery q : plan.getQueries()) {
+		for (IPhysicalQuery q : executionPlan.getQueries()) {
 			if (!q.isOpened()) {
 				startQuery(q.getID(), user);
 				started.add(q);
@@ -639,12 +629,13 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		getLogger().info("Stopping query (ID: " + queryID + ").");
 
-		IPhysicalQuery queryToStop = this.plan.getQuery(queryID);
+		IPhysicalQuery queryToStop = this.executionPlan.getQuery(queryID);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		try {
 			this.executionPlanLock.lock();
-			setExecutionPlan(getOptimizer().beforeQueryStop(queryToStop,
-					this.executionPlan));
+			getOptimizer().beforeQueryStop(queryToStop,
+					this.executionPlan);
+			executionPlanChanged();
 			if (isRunning()) {
 				queryToStop.close();
 				getLogger().debug("Query " + queryID + " stopped.");
@@ -680,8 +671,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		try {
 			if (sender instanceof IPhysicalQuery) {
 				this.executionPlanLock.lock();
-				setExecutionPlan(getOptimizer().reoptimize(this,
-						(IPhysicalQuery) sender, this.executionPlan));
+				getOptimizer().reoptimize(sender, this.executionPlan);
+				executionPlanChanged();
 
 				getLogger().debug("Query " + sender.getID() + " reoptimized.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
@@ -708,17 +699,17 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * # reoptimizeRequest(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan )
 	 */
 	@Override
-	public void reoptimizeRequest(IPhysicalPlan sender) {
+	public void reoptimizeRequest(IExecutionPlan sender) {
 		getLogger().info("Reoptimize request by plan.");
 
-		if (sender instanceof PhysicalPlan) {
+		if (sender instanceof ExecutionPlan) {
 			try {
 				this.executionPlanLock.lock();
-				setExecutionPlan(getOptimizer().reoptimize(this,
-						this.executionPlan));
+				getOptimizer().reoptimize(this.executionPlan);
+				executionPlanChanged();
 				getLogger().debug("Plan reoptimized.");
 				firePlanModificationEvent(new PlanModificationEvent(this,
-						PlanModificationEventType.PLAN_REOPTIMIZE, this.plan));
+						PlanModificationEventType.PLAN_REOPTIMIZE, this.executionPlan));
 			} catch (Exception e) {
 				getLogger()
 						.warn("Plan not reoptimized. An Error while optimizing occurd.");
@@ -732,18 +723,6 @@ public class StandardExecutor extends AbstractExecutor implements
 			return;
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable
-	 * #getRegisteredQueries()
-	 */
-	@Override
-	public Collection<IPhysicalQuery> getQueries() {
-		return Collections.unmodifiableCollection(this.plan.getQueries());
 	}
 
 	/*
@@ -892,23 +871,6 @@ public class StandardExecutor extends AbstractExecutor implements
 		ISystemMonitor monitor = this.systemMonitorFactory.newSystemMonitor();
 		monitor.initialize(period);
 		return monitor;
-	}
-
-	@Override
-	public void updateExecutionPlan() throws NoOptimizerLoadedException,
-			QueryOptimizationException {
-		getLogger().debug("Update Execution Plan.");
-		// synchronize the process
-		this.executionPlanLock.lock();
-		try {
-			setExecutionPlan(this.getOptimizer().beforeQueryMigration(this,
-					new OptimizationConfiguration(ParameterDoRewrite.FALSE),
-					getDataDictionary()));
-		} finally {
-			// end synchronize of the process
-			this.executionPlanLock.unlock();
-		}
-		getLogger().debug("Finished updating Execution Plan.");
 	}
 
 	@Override

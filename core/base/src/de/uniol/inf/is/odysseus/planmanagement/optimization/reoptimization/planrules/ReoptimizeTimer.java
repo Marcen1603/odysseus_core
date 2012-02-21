@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.reoptimization.plan
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.planmanagement.plan.AbstractPlanReoptimizeRule;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
+import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
 
 /**
  * ReoptimizeTimer is a reoptimze rule. After a defined time an reoptimize
@@ -41,7 +41,7 @@ final public class ReoptimizeTimer extends AbstractPlanReoptimizeRule implements
 	 */
 	public ReoptimizeTimer(long time) {
 		this.period = time;
-		this.reoptimizable = new ArrayList<IPhysicalPlan>();
+		this.reoptimizable = new ArrayList<IExecutionPlan>();
 		this.thread = new Thread(this);
 		this.thread.start();
 	}

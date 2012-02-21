@@ -28,5 +28,5 @@ public interface IPlanReoptimizeListener {
 	 * @param sender
 	 *            The global plan which sends the reoptimze request.
 	 */
-	public void reoptimizeRequest(IPhysicalPlan sender);
+	public void reoptimizeRequest(IExecutionPlan sender);
 }

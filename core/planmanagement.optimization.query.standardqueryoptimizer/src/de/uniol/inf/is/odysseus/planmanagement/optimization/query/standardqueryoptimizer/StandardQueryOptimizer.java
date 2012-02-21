@@ -14,24 +14,20 @@
  */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
 
@@ -41,7 +37,7 @@ import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
  * {@link OptimizationConfiguration} a Rewrite is used and buffer are placed by
  * an {@link IBufferPlacementStrategy}.
  * 
- * @author Wolf Bauer, Tobias Witt
+ * @author Wolf Bauer, Tobias Witt, Marco Grawunder
  * 
  */
 public class StandardQueryOptimizer implements IQueryOptimizer {
@@ -54,18 +50,6 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		}
 		return _logger;
 	}
-
-	// /* (non-Javadoc)
-	// * @see
-	// de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer#optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.IQueryOptimizable,
-	// de.uniol.inf.is.odysseus.planmanagement.query.IQuery,
-	// de.uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration.OptimizationConfiguration)
-	// */
-	// @Override
-	// public void optimizeQuery(IQueryOptimizable sender, IQuery query,
-	// OptimizationConfiguration parameters) throws QueryOptimizationException {
-	// optimizeQuery(sender, query, parameters, null);
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -80,17 +64,15 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IPhysicalQuery optimizeQuery(IQueryOptimizable sender, ILogicalQuery query,
-			OptimizationConfiguration parameters, IDataDictionary dd)
-			throws QueryOptimizationException {
-		ICompiler compiler = null;
-		IPhysicalQuery physicalQuery = null;
+	public IPhysicalQuery optimizeQuery(ICompiler compiler,
+			ILogicalQuery query, OptimizationConfiguration parameters,
+			IDataDictionary dd) throws QueryOptimizationException {
 
-		try {
-			compiler = sender.getCompiler();
-		} catch (Exception e) {
-			throw new QueryOptimizationException("Compiler is not loaded.");
+		if (query == null) {
+			throw new QueryOptimizationException("Query has no logical plan!");
 		}
+
+		IPhysicalQuery physicalQuery = null;
 
 		ParameterDoRewrite restruct = parameters.getParameterDoRewrite();
 
@@ -151,75 +133,6 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 						"Exeception while initialize query.", e);
 			}
 		}
-	}
-
-	@Override
-	public Map<IPhysicalOperator, ILogicalOperator> createAlternativePlans(
-			IQueryOptimizable sender, ILogicalQuery query,
-			OptimizationConfiguration parameters)
-			throws QueryOptimizationException {
-
-		throw new RuntimeException(
-				"Does not work at the moment. At Marco: Kannst du das bitte so anpassen, "
-						+ "dass jetzt berücksichtigt wird, dass bei der Transformation jetzt alle Roots (können jetzt ja"
-						+ "auch mehrere sein) eines physischen Anfrageplans zurückgeliefert werden.");
-		// ICompiler compiler = sender.getCompiler();
-		// if (compiler == null) {
-		// throw new QueryOptimizationException("Compiler is not loaded.");
-		// }
-		//
-		// ParameterDoRestruct restruct = parameters.getParameterDoRestruct();
-		// if (restruct == null || restruct != ParameterDoRestruct.TRUE) {
-		// // no restruct allowed
-		// return new HashMap<IPhysicalOperator, ILogicalOperator>(0);
-		// }
-		//
-		// // create working copy of plan
-		// CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new
-		// CopyLogicalGraphVisitor<ILogicalOperator>();
-		// AbstractGraphWalker walker = new AbstractGraphWalker();
-		// walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
-		// ILogicalOperator logicalPlanCopy = copyVisitor.getResult();
-		//
-		// // create logical alternatives
-		// List<ILogicalOperator> logicalAlternatives =
-		// compiler.createAlternativePlans(logicalPlanCopy,
-		// rulesToUse);
-		//
-		// try {
-		// Map<IPhysicalOperator,ILogicalOperator> alternatives = new
-		// HashMap<IPhysicalOperator,ILogicalOperator>();
-		//
-		// for (ILogicalOperator logicalPlan : logicalAlternatives) {
-		// // create alternative physical plans
-		// List<IPhysicalOperator> physicalPlans =
-		// compiler.transformWithAlternatives(logicalPlan,
-		// query.getBuildParameter().getTransformationConfiguration());
-		//
-		// for (IPhysicalOperator physicalPlan : physicalPlans) {
-		// addBuffers(query, physicalPlan);
-		//
-		// // put last sink on top
-		// IPhysicalOperator oldRoot = query.getRoot();
-		// if (oldRoot.isSource()) {
-		// throw new QueryOptimizationException(
-		// "Migration needs a sink only as operator root.");
-		// }
-		// IPhysicalOperator newRoot = oldRoot.clone();
-		// ((ISink)newRoot).subscribeToSource(physicalPlan, 0, 0,
-		// physicalPlan.getOutputSchema());
-		// physicalPlan = newRoot;
-		//
-		// alternatives.put(physicalPlan, logicalPlan);
-		// }
-		// }
-		//
-		// return alternatives;
-		//
-		// } catch (Throwable e) {
-		// throw new QueryOptimizationException(
-		// "Exeception while initialize query.", e);
-		// }
 	}
 
 }

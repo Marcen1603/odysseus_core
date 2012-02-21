@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,16 +51,15 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodifi
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPhysicalPlan;
 import de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener;
-import de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable;
+import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
@@ -68,14 +67,13 @@ import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
- * Ausf�hrungumgebung. Sie �bernimmt die Aufgabe zum einbinden von OSGi-Services
- * innerhalb des Odysseus-Frameworks.
+ * Ausf�hrungumgebung. Sie �bernimmt die Aufgabe zum einbinden von
+ * OSGi-Services innerhalb des Odysseus-Frameworks.
  * 
  * @author wolf
  * 
  */
-public abstract class AbstractExecutor implements IServerExecutor, IScheduleable,
-		ISettingChangeListener, IQueryReoptimizeListener,
+public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
 		IPlanReoptimizeListener {
 
 	protected static Logger _logger = null;
@@ -88,14 +86,9 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	}
 
 	/**
-	 * Alle in Odysseus gespeicherten Anfragen
+	 * Der aktuell ausgefuehrte physische Plan
 	 */
-	protected IPhysicalPlan plan;
-
-	/**
-	 * Der aktuell ausgef�hrte physische Plan
-	 */
-	protected IExecutionPlan executionPlan;
+	final protected IExecutionPlan executionPlan = new ExecutionPlan();
 
 	/**
 	 * Scheduling-Komponente
@@ -116,23 +109,23 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	 * Konfiguration der Ausf�hrungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
-	
-	
+
 	/**
 	 * Nutzer- und Rechteverwaltung
 	 */
 	protected IUserManagement usrMgmt;
 	protected ISessionManagement sessMgmt;
-	
+
 	/**
 	 * Data Dictionary
 	 */
 	protected IDataDictionary dataDictionary;
-	
+
 	/**
 	 * Standard Configurationen
 	 */
-	//protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs = new HashMap<String, List<IQueryBuildSetting<?>>>();
+	// protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs =
+	// new HashMap<String, List<IQueryBuildSetting<?>>>();
 	protected Map<String, IQueryBuildConfiguration> queryBuildConfigs = new HashMap<String, IQueryBuildConfiguration>();
 
 	/**
@@ -226,11 +219,6 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 
 		initializeIntern(configuration);
 
-		if (this.plan == null) {
-			throw new ExecutorInitializeException(
-					"Plan storage not initialized.");
-		}
-
 		if (this.executionPlan == null) {
 			throw new ExecutorInitializeException(
 					"Execution plan storage not initialized.");
@@ -281,10 +269,9 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 		this.schedulerManager = schedulerManager;
 		this.schedulerManager.addErrorEventListener(this);
 		if (this.schedulerManager instanceof IPlanModificationListener) {
-			this.addPlanModificationListener(
-					(IPlanModificationListener)this.schedulerManager);
+			this.addPlanModificationListener((IPlanModificationListener) this.schedulerManager);
 		}
-		
+
 		getLogger().debug("Schedulermanager bound " + schedulerManager);
 	}
 
@@ -330,29 +317,30 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 			getLogger().debug("Compiler unbound " + compiler);
 		}
 	}
-	
 
 	/**
 	 * Binding of predefinded build configurations
+	 * 
 	 * @param config
 	 */
-	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config){			
+	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config) {
 		queryBuildConfigs.put(config.getName(), config);
-		getLogger().debug("Query Build Configuration "+config+" bound");
+		getLogger().debug("Query Build Configuration " + config + " bound");
 	}
-	
+
 	/**
 	 * Unbinding of predefinded build configurations
+	 * 
 	 * @param config
 	 */
-	public void unbindQueryBuildConfiguration(IQueryBuildConfiguration config){
+	public void unbindQueryBuildConfiguration(IQueryBuildConfiguration config) {
 		queryBuildConfigs.remove(config.getName());
 	}
 
 	protected void bindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt == null){
+		if (usrMgmt == null) {
 			usrMgmt = usermanagement;
-		}else{
+		} else {
 			throw new RuntimeException("UserManagement already bound!");
 		}
 	}
@@ -363,9 +351,9 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	}
 
 	protected void bindSessionManagement(ISessionManagement sessionmanagement) {
-		if (sessMgmt == null){
+		if (sessMgmt == null) {
 			sessMgmt = sessionmanagement;
-		}else{
+		} else {
 			throw new RuntimeException("SessionManagement already bound!");
 		}
 	}
@@ -373,25 +361,25 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	protected void unbindSessionManagement(ISessionManagement sessionmanagement) {
 		sessionmanagement = null;
 	}
-	
+
 	protected void bindDataDictionary(IDataDictionary datadictionary) {
-		if (dataDictionary == null){
+		if (dataDictionary == null) {
 			dataDictionary = datadictionary;
-		}else{
+		} else {
 			throw new RuntimeException("DataDictionary already bound!");
 		}
 	}
-	
+
 	protected void unbindDataDictionary(IDataDictionary dd) {
 		dataDictionary = null;
 	}
-	
+
 	// ----------------------------------------------------------------------------------------
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
 	/**
-	 * optimizer liefert der aktuelle Optimierer zur�ck. Sollte keiner vorhanden
-	 * sein, wird eine Exception geworfen.
+	 * optimizer liefert der aktuelle Optimierer zur�ck. Sollte keiner
+	 * vorhanden sein, wird eine Exception geworfen.
 	 * 
 	 * @return aktueller Optimierer
 	 * @throws NoOptimizerLoadedException
@@ -428,47 +416,21 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 		}
 		throw new NoCompilerLoadedException();
 	}
-	
 
 	// ----------------------------------------------------------------------------------------
 	// Execution Plan
 	// ----------------------------------------------------------------------------------------
 
 	/**
-	 * setExecutionPlan setzt den aktuellen Ausf�hrungsplan und aktualisiert das
-	 * Scheduling.
+	 * aktualisiert  das Scheduling.
 	 * 
-	 * @param newExecutionPlan
-	 *            neuer Ausf�hrungsplan
+	 * @throws NoSchedulerLoadedException 
+	 * @throws SchedulerException 
 	 */
-	protected void setExecutionPlan(IExecutionPlan newExecutionPlan) {
-
-		if (newExecutionPlan != null
-				&& !newExecutionPlan.equals(this.executionPlan)) {
-			try {
-				executionPlanLock.lock();
-				getLogger().info("Set execution plan.");
-				// Init current execution plan with newExecutionPlan
-				this.executionPlan = newExecutionPlan.clone();
-				if (isRunning()) {
-					getLogger().info("Set execution plan");
-					// Do not start query automatically anymore. Start each query on its own!
-					//this.executionPlan.open();
-				}
-				getLogger().info("Set execution plan. Refresh Scheduling");
-				getSchedulerManager().refreshScheduling(this.getExecutionPlan());
-				getLogger().info("New execution plan set.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				getLogger().error(
-						"Error while setting new execution plan. "
-								+ e.getMessage());
-				fireErrorEvent(new ErrorEvent(this, ExceptionEventType.ERROR,
-						"Error while setting new execution plan. ", e));
-			} finally {
-				executionPlanLock.unlock();
-			}
-		}
+	@Override
+	public void executionPlanChanged() throws SchedulerException, NoSchedulerLoadedException {
+		getLogger().info("Refresh Scheduling");
+		getSchedulerManager().refreshScheduling(this.getExecutionPlan());
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -528,17 +490,8 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 			getLogger().debug("Scheduler already running.");
 			return;
 		}
-
 		getLogger().info("Start Scheduler.");
-		getLogger().debug(
-				"#PartialPlans: " + this.executionPlan.getPartialPlans().size());
 		try {
-			// Dont start any query at scheduler start! Start each query on its own
-//			this.executionPlan.open();
-//
-//			firePlanExecutionEvent(new PlanExecutionEvent(this,
-//					PlanExecutionEventType.EXECUTION_PREPARED));
-
 			getSchedulerManager().startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
@@ -564,7 +517,7 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 		getLogger().info("Stop Scheduler.");
 		try {
 			getSchedulerManager().stopScheduling();
-			this.executionPlan.close();
+			this.removeAllQueries();
 			// Stopp Router only if it has an instance
 			if (Router.hasInstance()) {
 				Router.getInstance().stopRouting();
@@ -680,18 +633,6 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#getSealedPlan
-	 * ()
-	 */
-	@Override
-	public IPhysicalPlan getPlan() throws PlanManagementException {
-		return this.plan;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#
 	 * getSupportedQueryParser()
 	 */
@@ -772,82 +713,70 @@ public abstract class AbstractExecutor implements IServerExecutor, IScheduleable
 		} // else will be done if compiler is bound
 	}
 
-//	@Override
-//	public void setDefaultBufferPlacementStrategy(String strategy) {
-//		IBufferPlacementStrategy strat = this
-//				.getBufferPlacementStrategy(strategy);
-//		this.configuration.set(new ParameterBufferPlacementStrategy(strat));
-//	}
-	
-//	@Override
-//	public ISessionManagement getSessionManagement() {
-//		return sessMgmt;
-//	}
-	
-//	@Override
-//	public IUserManagement getUserManagement() {
-//		return usrMgmt;
-//	}
-
 	@Override
 	public IDataDictionary getDataDictionary() {
 		return dataDictionary;
 	}
-	
+
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		if (dataDictionary != null){
-			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(), caller);
-			for (ILogicalQuery query:q){
-				if (query.getQueryText() != null){
-					addQuery(query.getQueryText(), query.getParserId(), caller, query.getBuildConfigName());
-				}else if (query.getLogicalPlan() != null){
-					addQuery(query.getLogicalPlan(), caller, query.getBuildConfigName());
-				}else{
-					getLogger().warn("Query "+query+" cannot be loaded");
+		if (dataDictionary != null) {
+			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(),
+					caller);
+			for (ILogicalQuery query : q) {
+				if (query.getQueryText() != null) {
+					addQuery(query.getQueryText(), query.getParserId(), caller,
+							query.getBuildConfigName());
+				} else if (query.getLogicalPlan() != null) {
+					addQuery(query.getLogicalPlan(), caller,
+							query.getBuildConfigName());
+				} else {
+					getLogger().warn("Query " + query + " cannot be loaded");
 				}
 			}
 		}
 	}
-	
+
 	// Session specific delegates
-	
+
 	@Override
 	public ISession login(String username, byte[] password) {
 		return sessMgmt.login(username, password);
 	}
-	
+
 	@Override
 	public void logout(ISession caller) {
 		sessMgmt.logout(caller);
 	}
-	
+
 	// Compiler Facade
 	@Override
 	public List<ILogicalQuery> translateQuery(String queries, String parser,
 			ISession currentUser) {
-		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary());
+		return getCompiler().translateQuery(queries, parser, currentUser,
+				getDataDictionary());
 	}
-	
+
 	@Override
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
-		return getCompiler().transform(query, transformationConfiguration, caller, dataDictionary);
+		return getCompiler().transform(query, transformationConfiguration,
+				caller, dataDictionary);
 	}
-	
+
 	// DataDictionary Facade
 	@Override
 	public ILogicalOperator removeSink(String name, ISession caller) {
-		return getDataDictionary().removeSink(name,caller);
+		return getDataDictionary().removeSink(name, caller);
 	}
-	
+
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
 			ISession caller) {
 		return getDataDictionary().getStreamsAndViews(caller);
 	}
-	
+
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
 		return getDataDictionary().getSinks(caller);

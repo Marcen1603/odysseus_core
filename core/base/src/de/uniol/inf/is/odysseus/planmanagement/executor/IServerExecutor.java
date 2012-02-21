@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor;
 
-import java.util.Collection;
-
 import javax.security.auth.login.Configuration;
 
 import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
@@ -9,15 +7,16 @@ import de.uniol.inf.is.odysseus.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizable;
+import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
+import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
 
 /**
  * This Interface contains all methods from the executor that are accessable if
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.scheduler.IScheduler;
  * 
  */
 public interface IServerExecutor extends IExecutor, IPlanScheduling,
-		IOptimizable, IPlanManager, IErrorEventHandler, IErrorEventListener {
+		IPlanManager, IErrorEventHandler, IErrorEventListener {
 
 	public void addCompilerListener(ICompilerListener compilerListener);
 
@@ -49,16 +48,6 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 */
 	public OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException;
-
-	/**
-	 * Updates the execution plan to find new iterable sources, if the plan has
-	 * changed.
-	 * 
-	 * @throws NoOptimizerLoadedException
-	 * @throws QueryOptimizationException
-	 */
-	public void updateExecutionPlan() throws NoOptimizerLoadedException,
-			QueryOptimizationException;
 	
 	/**
 	 * Returns the default System Monitor with an fixed measure period.
@@ -83,14 +72,15 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			throws NoSystemMonitorLoadedException;
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
+	ICompiler getCompiler();
 
-	@Override
-	Collection<IPhysicalQuery> getQueries();
-
-	// IUserManagement getUserManagement();
-	// ISessionManagement getSessionManagement();
 	IDataDictionary getDataDictionary();
 
 	public void removeAllQueries();
+
+	void executionPlanChanged() throws SchedulerException,
+			NoSchedulerLoadedException;
+
+	public ISchedulerManager getSchedulerManager();
 
 }

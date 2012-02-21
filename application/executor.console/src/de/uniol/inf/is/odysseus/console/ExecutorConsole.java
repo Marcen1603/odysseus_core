@@ -661,7 +661,7 @@ public class ExecutorConsole implements CommandProvider,
 			StringBuffer buff = new StringBuffer();
 			ci.println("Physical plan of all roots: ");
 			int count = 1;
-			for (IPhysicalOperator root : this.executor.getPlan().getRoots()) {
+			for (IPhysicalOperator root : this.executor.getExecutionPlan().getRoots()) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
 					support.dumpPlan((ISink) root, depth, buff);
@@ -691,7 +691,7 @@ public class ExecutorConsole implements CommandProvider,
 			}
 
 			try {
-				IPhysicalQuery query = this.executor.getPlan().getQuery(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -723,7 +723,7 @@ public class ExecutorConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IPhysicalQuery query = this.executor.getPlan().getQuery(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan().getQuery(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -1325,7 +1325,7 @@ public class ExecutorConsole implements CommandProvider,
 		addCommand();
 		try {
 			System.out.println("Current registered queries (ID | STARTED):");
-			for (IPhysicalQuery query : this.executor.getPlan().getQueries()) {
+			for (IPhysicalQuery query : this.executor.getExecutionPlan().getQueries()) {
 				ci.println(query.getID() + " | " + query.isOpened());
 			}
 		} catch (PlanManagementException e) {
@@ -1889,12 +1889,12 @@ public class ExecutorConsole implements CommandProvider,
 
 		try {
 			if (this.reoptimizeTimer != null) {
-				this.executor.getPlan().removeReoptimzeRule(
+				this.executor.getExecutionPlan().removeReoptimzeRule(
 						this.reoptimizeTimer);
 				ci.println("Old ReoptimizeTimer removed.");
 			}
 			this.reoptimizeTimer = new ReoptimizeTimer(period);
-			this.executor.getPlan().addReoptimzeRule(this.reoptimizeTimer);
+			this.executor.getExecutionPlan().addReoptimzeRule(this.reoptimizeTimer);
 			ci.println("ReoptimizeTimer with " + period + " ms period started.");
 		} catch (PlanManagementException e) {
 			System.err.println(e.getMessage());
@@ -1910,7 +1910,7 @@ public class ExecutorConsole implements CommandProvider,
 			return;
 		}
 		try {
-			this.executor.getPlan().removeReoptimzeRule(this.reoptimizeTimer);
+			this.executor.getExecutionPlan().removeReoptimzeRule(this.reoptimizeTimer);
 			this.reoptimizeTimer = null;
 			ci.println("ReoptimizeTimer removed.");
 		} catch (PlanManagementException e) {
