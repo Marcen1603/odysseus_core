@@ -4,5 +4,5 @@ Bundle-Name: Executor Wsclient
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.planmanagement.executor.wsclient
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: de.uniol.inf.is.odysseus;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/wsclient.xml
