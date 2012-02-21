@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.log;bundle-version="1.0.100",
  org.eclipse.ui.ide;bundle-version="3.7.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.rcp,
+Import-Package: de.uniol.inf.is.odysseus.planmanagement.executor,
+ de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.status,
  de.uniol.inf.is.odysseus.rcp.util,
  de.uniol.inf.is.odysseus.usermanagement,
