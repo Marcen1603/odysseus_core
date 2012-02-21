@@ -15,6 +15,8 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,28 +24,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.event.error.IErrorEventListener;
+import javax.xml.namespace.QName;
+
 import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.usermanagement.Session;
 
 /**
  * 
@@ -51,23 +52,37 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  *
  */
 
-public class WsClient implements IExecutor {
-	
-	// init
-	public static void startClient() {
-		WsClient client = new WsClient();
-		client.service = new WebserviceServerService();
-		client.server = client.service.getWebserviceServerPort();
-		// TODO: check if this works
-		client.securitytoken = client.server.login("System", "manager").getResponseValue();
-	}
-	
+public class WsClient implements IExecutor, IClientExecutor{
+
 	// manages the connection to the WebserviceServer
 	WebserviceServerService service;
 	// create handle for WebserviceServer
 	WebserviceServer server;
 	// SecurityToken
 	String securitytoken;
+	
+	@Override
+	public boolean connect(String connectString) {
+		// connectString should look like this:
+		// wsdlLocation#service
+		String[] subConnect = connectString.split("#");
+		if(subConnect.length > 1 && subConnect.length < 3) {
+			try {
+				startClient(new URL(subConnect[0]), new QName(subConnect[1]));
+				return true;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	// init
+	public void startClient(URL wsdlLocation, QName service) {
+		WsClient client = new WsClient();
+		client.service = new WebserviceServerService(wsdlLocation, service);
+	}
 	
 	public WebserviceServerService getWebserviceServerService() {
 		return this.service;
@@ -107,94 +122,11 @@ public class WsClient implements IExecutor {
 	}
 
 	@Override
-	public IPlan getPlan() throws PlanManagementException {
-		// TODO: not implemented this way by server
-		return null;
-	}
-
-	@Override
-	public void addPlanModificationListener(IPlanModificationListener listener) {
-		// TODO: not implemented by server
-	}
-
-	@Override
-	public void removePlanModificationListener(
-			IPlanModificationListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public IExecutionPlan getExecutionPlan() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void startExecution() throws PlanManagementException {
-		if(getWebserviceServer() != null) {
-			getWebserviceServer().startExecution(getSecurityToken());
-		}
-	}
-
-	@Override
-	public void stopExecution() throws PlanManagementException {
-		if(getWebserviceServer() != null) {
-			getWebserviceServer().stopExecution(getSecurityToken());
-		}
-	}
-
-	@Override
-	public boolean isRunning() throws PlanManagementException {
-		if(getWebserviceServer() != null) {
-			// TODO: maybe not the right method on BooleanResponse
-			return getWebserviceServer().isRunning(getSecurityToken()).isSuccessful();
-		}
-		return false;
-	}
-
-	@Override
-	public void addPlanExecutionListener(IPlanExecutionListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removePlanExecutionListener(IPlanExecutionListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public String getInfos() {
 		if(getWebserviceServer() != null) {
 			return getWebserviceServer().getInfos(getSecurityToken()).getResponseValue();
 		}
 		return null;
-	}
-
-	@Override
-	public void addErrorEventListener(IErrorEventListener errorEventListener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void fireErrorEvent(ErrorEvent eventArgs) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void errorEventOccured(ErrorEvent eventArgs) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -245,29 +177,7 @@ public class WsClient implements IExecutor {
 	}
 
 	@Override
-	public Collection<IQuery> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName)
-			throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IQuery addQuery(ILogicalOperator logicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<IQuery> startAllClosedQueries(ISession user) {
+	public List<IPhysicalQuery> startAllClosedQueries(ISession user) {
 		if(getWebserviceServer() != null) {
 			// TODO: this is always null
 			getWebserviceServer().startAllClosedQueries(user.getToken());
@@ -310,7 +220,7 @@ public class WsClient implements IExecutor {
 			// TODO: really specific type?
 			Set<String> schedSet = new HashSet<String>();
 			for(String sched : scheds) {
-				stratSet.add(sched);
+				schedSet.add(sched);
 			}
 			return schedSet;
 		}
@@ -341,7 +251,6 @@ public class WsClient implements IExecutor {
 		return null;
 	}
 
-	@Override
 	public void updateExecutionPlan() throws NoOptimizerLoadedException,
 			QueryOptimizationException {
 		if(getWebserviceServer() != null) {
@@ -359,28 +268,13 @@ public class WsClient implements IExecutor {
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		// TODO Auto-generated method stub
+		this.securitytoken = getWebserviceServer().login(username, new String(password)).getResponseValue();
 		return null;
 	}
 
 	@Override
 	public void logout(ISession caller) {
 		// TODO: not implemented in server
-	}
-
-	@Override
-	public List<IQuery> translateQuery(String query, String parserID,
-			ISession user) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void transform(IQuery query,
-			TransformationConfiguration transformationConfiguration,
-			ISession caller) throws TransformationException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -407,5 +301,44 @@ public class WsClient implements IExecutor {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public IPhysicalQuery transform(ILogicalQuery query,
+			TransformationConfiguration transformationConfiguration,
+			ISession caller) throws TransformationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<ILogicalQuery> addQuery(String query, String parserID,
+			ISession user, String queryBuildConfigurationName)
+			throws PlanManagementException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
+			ISession user, String queryBuildConfigurationName)
+			throws PlanManagementException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ILogicalQuery> translateQuery(String query, String parserID,
+			ISession user) throws QueryParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
