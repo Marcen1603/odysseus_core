@@ -43,6 +43,7 @@ http://odysseus.offis.uni-oldenburg.de/
    </launcher>
 
    <vm>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</windows>
    </vm>
 
    <license>
@@ -73,7 +74,7 @@ http://odysseus.offis.uni-oldenburg.de/
       <plugin id="com.springsource.slf4j.bridge"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
       <plugin id="de.uniol.inf.is.jfreechart"/>
-      <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.args"/>
       <plugin id="de.uniol.inf.is.odysseus.interval.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>

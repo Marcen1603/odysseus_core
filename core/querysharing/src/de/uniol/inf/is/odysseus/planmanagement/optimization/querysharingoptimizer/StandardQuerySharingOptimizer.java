@@ -34,7 +34,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	
-	public synchronized void applyQuerySharing(List<IPhysicalQuery> plan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
+	@Override
+	public synchronized void applyQuerySharing(Collection<IPhysicalQuery> plan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
 		boolean restructuringAllowed;
 		if(conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
 			restructuringAllowed = conf.getParameterAllowRestructuringOfCurrentPlan().getValue();
@@ -84,7 +85,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 //				|| removeIdenticalOperators(ipos, newOps, restructuringAllowed));
 	}
 
-	public void applyQuerySharing(List<IPhysicalQuery> plan, OptimizationConfiguration conf) {
+	@Override
+	public void applyQuerySharing(Collection<IPhysicalQuery> plan, OptimizationConfiguration conf) {
 		//Neustrukturierung eines bestehenden Plans ist erlaubt
 		if(conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
 			applyQuerySharing(plan, null, conf);
