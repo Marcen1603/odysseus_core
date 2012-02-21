@@ -20,7 +20,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.planmanagement.executor.IClientExecutor;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.Login;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 /**
  * This class controls all aspects of the application's execution
@@ -34,6 +37,12 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
+			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+			if(executor instanceof IClientExecutor) {
+				// TODO: hardcoded mit server verbinden
+				((IClientExecutor)executor).connect("lalala");
+			}
+			
 			Login.loginWindow(display, false, false);
 
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
