@@ -11,49 +11,50 @@ import com.vividsolutions.jts.geom.Dimension;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Location;
 
+import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
-public class GeometryPartialAggregate<T> implements IPartialAggregate<T>,
-		Iterable<T> {
 
-	final List<T> notMElems;
-	final List<T> elems;
+public class GeometryPartialAggregate implements IPartialAggregate<RelationalTuple<? extends IMetaAttribute>>, Iterable<RelationalTuple<? extends IMetaAttribute>> {
+
+	final List<RelationalTuple<? extends IMetaAttribute>> notMElems;
+	final List<RelationalTuple<? extends IMetaAttribute>> elems;
 	protected volatile static Logger LOGGER = LoggerFactory
 			.getLogger(GeometryPartialAggregate.class);
 
-	public GeometryPartialAggregate(T elem) {
-		this.elems = new LinkedList<T>();
+	public GeometryPartialAggregate(RelationalTuple<? extends IMetaAttribute> elem) {
+		this.elems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>();
 		this.elems.add(elem);
 
-		this.notMElems = new LinkedList<T>();
+		this.notMElems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>();
 		this.notMElems.add(elem);
 		// LOGGER.debug("Add first Element");
 	}
 
-	public GeometryPartialAggregate(GeometryPartialAggregate<T> p) {
+	public GeometryPartialAggregate(GeometryPartialAggregate p) {
 		// LOGGER.debug("Add first ElementLIST");
-		this.elems = new LinkedList<T>(p.elems);
-		this.notMElems = new LinkedList<T>(p.elems);
+		this.elems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>(p.elems);
+		this.notMElems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>(p.elems);
 	}
 
-	public List<T> getElems() {
+	public List<RelationalTuple<? extends IMetaAttribute>> getElems() {
 		return elems;
 	}
 
-	public GeometryPartialAggregate<T> addElem(T elem) {
+	public GeometryPartialAggregate addElem(RelationalTuple<? extends IMetaAttribute> elem) {
 		boolean merged = false;
-		Geometry geometry = (Geometry) ((RelationalTuple) elem).getAttribute(0);
+		Geometry geometry1 = (Geometry) elem.getAttribute(0);
+		
 		for (int i = 0; i < elems.size(); i++) {
-			RelationalTuple tuple = (RelationalTuple) elems.get(i);
-			Geometry geometry_element = (Geometry) tuple.getAttribute(0);
-			
-			if(geometry.getEnvelope().crosses(geometry_element.getEnvelope())){
+			Geometry geometry2 =  (Geometry) elems.get(i).getAttribute(0);
+		
+			if(geometry1.getEnvelope().crosses(geometry2.getEnvelope())){
 			//if (isCrosses(geometry.getEnvelope().getDimension(),geometry_element.getEnvelope().getDimension())) {
 				merged = true;
-				tuple.setAttribute(0, geometry_element.union(geometry).convexHull());
-				elems.add((T)tuple);
+				elems.get(i).setAttribute(0, geometry2.union(geometry1).convexHull());
+				elems.add(elems.get(i));
 			}
 		}
 		if (!merged) {
@@ -171,12 +172,12 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>,
 	}
 
 	@Override
-	public ElementPartialAggregate<T> clone() {
-		return new ElementPartialAggregate<T>(this);
+	public ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>> clone() {
+		return new ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>>(this);
 	}
 
 	@Override
-	public Iterator<T> iterator() {
+	public Iterator<RelationalTuple<? extends IMetaAttribute>> iterator() {
 		return elems.iterator();
 	}
 
