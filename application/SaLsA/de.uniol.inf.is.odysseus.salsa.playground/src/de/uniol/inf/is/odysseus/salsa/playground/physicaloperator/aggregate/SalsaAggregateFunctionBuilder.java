@@ -22,8 +22,8 @@ public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder 
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
 		
 		if(key.getName().equalsIgnoreCase("L1Merge")) {
-			aggFunc = new RelationalPolygonAggregation(pos);
-		} 
+			aggFunc = new RelationalPolygonAggregation<RelationalTuple<?>, RelationalTuple<?>>(pos);
+		}  
 		
 		else {
 			throw new IllegalArgumentException("No such Aggregatefunction");

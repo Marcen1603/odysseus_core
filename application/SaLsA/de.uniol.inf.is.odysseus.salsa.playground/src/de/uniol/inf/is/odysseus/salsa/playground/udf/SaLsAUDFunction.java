@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.salsa.playground.udf;
 
 import java.util.Iterator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
@@ -122,13 +120,15 @@ public class SaLsAUDFunction extends AbstractSweepArea<RelationalTuple<? extends
 
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
-		throw new NotImplementedException();
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public Iterator<RelationalTuple<? extends IMetaAttribute>> extractElementsBefore(
 			PointInTime time) {
-		throw new NotImplementedException();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
