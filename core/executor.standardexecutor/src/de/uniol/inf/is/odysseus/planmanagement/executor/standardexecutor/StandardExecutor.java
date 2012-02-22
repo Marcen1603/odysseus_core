@@ -386,10 +386,9 @@ public class StandardExecutor extends AbstractExecutor implements
 		getLogger().info(
 				"Start adding Queries. " + query + " for user "
 						+ user.getUser().getName());
-		QueryBuildConfiguration buildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, null);
-		buildConfiguration.set(new ParameterParserID(parserID));
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
+		params.set(new ParameterParserID(parserID));
 		return addQuery(query, parserID, user, params);
 	}
 
