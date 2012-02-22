@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 public class GeometryPartialAggregate<T> implements IPartialAggregate<RelationalTuple<? extends IMetaAttribute>>, Iterable<RelationalTuple<? extends IMetaAttribute>>{
 	
 	final List<RelationalTuple<? extends IMetaAttribute>> elems;
-	final double mDistance = 50.00;
+	final double mDistance = 35.00;
 	
 	
 	public GeometryPartialAggregate(RelationalTuple<? extends IMetaAttribute> elem) {

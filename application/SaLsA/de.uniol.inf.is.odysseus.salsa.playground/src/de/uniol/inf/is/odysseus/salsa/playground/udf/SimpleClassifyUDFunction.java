@@ -32,7 +32,7 @@ public class SimpleClassifyUDFunction implements IUserDefinedFunction<Relational
 		
 		double area = polygon.getArea();
 		
-		if(area > 300 && area < 2000){
+		if(area > 260 && area < 2000){
 			tuple.setAttribute(1, "Human");
 		}
 		
