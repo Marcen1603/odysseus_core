@@ -40,6 +40,7 @@ public class QueryBuildConfiguration extends
 
 	
 	private static final long serialVersionUID = -5018054053257854891L;
+	private final String name;
 
 	/**
 	 * Creates a new set of parameters. If some standard values are not set in
@@ -48,9 +49,10 @@ public class QueryBuildConfiguration extends
 	 * @param parameters
 	 *            New parameter for this set.
 	 */
-	public QueryBuildConfiguration(IQueryBuildSetting<?>[] parameters) {
+	public QueryBuildConfiguration(IQueryBuildSetting<?>[] parameters, String name) {
 		super(parameters);
-
+		this.name = name;
+		
 		if (!contains(ParameterTransformationConfiguration.class)) {
 			set(new ParameterTransformationConfiguration(null));
 		}
@@ -99,12 +101,12 @@ public class QueryBuildConfiguration extends
 	/**
 	 * Creates a new set of parameters with default values.
 	 */
-	public QueryBuildConfiguration() {
-		this(new IQueryBuildSetting[0]);
+	public QueryBuildConfiguration(String name) {
+		this(new IQueryBuildSetting[0], name);
 	}
 
-	public QueryBuildConfiguration(List<IQueryBuildSetting<?>> configuration) {
-		this(configuration.toArray(new IQueryBuildSetting<?>[0]));
+	public QueryBuildConfiguration(List<IQueryBuildSetting<?>> configuration, String name) {
+		this(configuration.toArray(new IQueryBuildSetting<?>[0]), name);
 	}
 
 	/**
@@ -169,5 +171,9 @@ public class QueryBuildConfiguration extends
 	
 	public IDefaultRootStrategy getDefaultRootStrategy(){
 		return (IDefaultRootStrategy)get(ParameterDefaultRootStrategy.class).getValue();
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

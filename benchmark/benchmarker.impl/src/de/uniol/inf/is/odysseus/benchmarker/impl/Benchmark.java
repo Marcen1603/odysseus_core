@@ -183,10 +183,11 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 
 			executor.addErrorEventListener(this);
+			List<IQueryBuildSetting<?>> bp = getBuildParameters();
+			bp.add(new ParameterTransformationConfiguration(trafoConfig));
+			bp.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 			
-			BenchmarkBuildConfiguration qbc = new BenchmarkBuildConfiguration(getBuildParameters());
-			qbc.addSetting(new ParameterTransformationConfiguration(trafoConfig));
-			qbc.addSetting(new ParameterBufferPlacementStrategy(bufferPlacement));
+			BenchmarkBuildConfiguration qbc = new BenchmarkBuildConfiguration(bp);
 								
 			
 			executor.getQueryBuildConfigurations().put(BenchmarkBuildConfiguration.NAME, qbc);
@@ -258,7 +259,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 
 	private void clearExecutor() {
 		this.sinks.clear();
-		this.executor.removeAllQueries();
+		this.executor.removeAllQueries(user);
 	}
 
 	private int getQueryId(IPhysicalOperator curRoot) {

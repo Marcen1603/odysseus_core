@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.AbstractOperatorPeer;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.AliveHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.handler.SourceHandlerJxtaImpl;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
@@ -291,7 +292,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 						new Pair<String, String>(
 								"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
 								"CQL"));
-		List<IQueryBuildSetting<?>> cfg = aPeer.getExecutor()
+		List<IQueryBuildSetting<?>> cfg = ((IServerExecutor)aPeer.getExecutor())
 				.getQueryBuildConfiguration("Standard").getConfiguration();
 		;
 		if (cfg == null) {

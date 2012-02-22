@@ -14,6 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.script.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
+
 
 
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
@@ -42,6 +49,16 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 			//only one parameter
 			return new String[] { parameter, "" };
 		}
+	}
+	
+	protected List<IQueryBuildSetting<?>> getAdditionalTransformationSettings(Map<String, Object> variables){
+		@SuppressWarnings("unchecked")
+		List<IQueryBuildSetting<?>> addSettings =  (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
+		if (addSettings == null){
+			addSettings = new ArrayList<IQueryBuildSetting<?>>();
+			variables.put(TransCfgPreParserKeyword.ADD_TRANS_PARAMS, addSettings);
+		}
+		return addSettings;
 	}
 
 

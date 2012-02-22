@@ -24,6 +24,8 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
+	public static final String SCHEDULER = "SCHEDULER";
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {

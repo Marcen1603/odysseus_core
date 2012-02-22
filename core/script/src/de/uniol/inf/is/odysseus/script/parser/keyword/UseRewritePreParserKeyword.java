@@ -14,35 +14,36 @@
  */
 package de.uniol.inf.is.odysseus.script.parser.keyword;
 
+import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
-/**
- * Auswahl des Parsers
- * 
- * @author Timo Michelsen
- * 
- */
-public class ParserPreParserKeyword extends AbstractPreParserKeyword {
+public class UseRewritePreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String PARSER = "PARSER";
-	
+	public static final String DOREWRITE = "DOREWRITE";
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
-		if (parameter.length() == 0)
-			throw new OdysseusScriptException(
-					"Parameter needed for #PARSER");
-		variables.put(PARSER, parameter);
+
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
-		variables.put(PARSER, parameter);
+
+		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
+		if ("TRUE".equals(parameter.toUpperCase())) {
+			addSettings.add(ParameterDoRewrite.TRUE);
+		} else {
+			addSettings.add(ParameterDoRewrite.FALSE);
+		}
 		return null;
 	}
+
 }

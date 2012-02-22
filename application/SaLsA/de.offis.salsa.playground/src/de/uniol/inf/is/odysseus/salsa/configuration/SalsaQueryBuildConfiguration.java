@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -15,9 +16,8 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.Paramet
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SalsaQueryBuildConfiguration implements IQueryBuildConfiguration {
-    private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
-
+public class SalsaQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
+    
     public SalsaQueryBuildConfiguration() {
         @SuppressWarnings("unchecked")
         TransformationConfiguration trafoconfig = new TransformationConfiguration("relational",
@@ -29,13 +29,19 @@ public class SalsaQueryBuildConfiguration implements IQueryBuildConfiguration {
         settings.add(ParameterShareSimilarOperators.FALSE);
     }
 
-    @Override
-    public List<IQueryBuildSetting<?>> getConfiguration() {
-        return settings;
+
+    public SalsaQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+        settings.addAll(settings);
     }
+
 
     @Override
     public String getName() {
         return "salsa";
+    }
+    
+    @Override
+    public IQueryBuildConfiguration clone() {
+        return new SalsaQueryBuildConfiguration(settings);
     }
 }

@@ -37,6 +37,7 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadFromLogPreParserKeyword.class);
 	public static final String LOG_FILENAME = System.getProperty("user.home") + "/odysseus/reloadlog.store";
+	public static final String RELOADFROMLOG = "RELOADFROMLOG";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {

@@ -15,11 +15,11 @@ package de.uniol.inf.is.odysseus.relational_interval;
   */
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
@@ -28,11 +28,9 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class StandardQueryBuildConfiguration implements
-		IQueryBuildConfiguration {
+public class StandardQueryBuildConfiguration extends
+		AbstractQueryBuildConfiguration {
 
-	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
-	
 	@SuppressWarnings("unchecked")
 	public StandardQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
@@ -44,15 +42,19 @@ public class StandardQueryBuildConfiguration implements
 		settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
-
-	@Override
-	public List<IQueryBuildSetting<?>> getConfiguration() {
-		return settings;
-	}
 	
+	public StandardQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+		settings.addAll(settings);
+	}
+
 	@Override
 	public String getName() {
 		return "Standard";
+	}
+	
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new StandardQueryBuildConfiguration(settings);
 	}
 
 }

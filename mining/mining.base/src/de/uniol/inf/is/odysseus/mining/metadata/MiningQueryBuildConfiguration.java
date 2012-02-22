@@ -13,12 +13,12 @@
   * limitations under the License.
   */
 package de.uniol.inf.is.odysseus.mining.metadata;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -26,9 +26,7 @@ import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.Parame
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class MiningQueryBuildConfiguration implements IQueryBuildConfiguration {
-
-	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
+public class MiningQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
 
 	@SuppressWarnings("unchecked")
 	public MiningQueryBuildConfiguration() {
@@ -38,9 +36,8 @@ public class MiningQueryBuildConfiguration implements IQueryBuildConfiguration {
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 
-	@Override
-	public List<IQueryBuildSetting<?>> getConfiguration() {
-		return settings;
+	public MiningQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+		settings.addAll(settings);
 	}
 
 	@Override
@@ -48,4 +45,9 @@ public class MiningQueryBuildConfiguration implements IQueryBuildConfiguration {
 		return "Standard Mining";
 	}
 
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new MiningQueryBuildConfiguration(settings);
+	}
+	
 }

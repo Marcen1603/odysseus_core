@@ -1086,7 +1086,7 @@ public class ExecutorConsole implements CommandProvider,
 	private void resetBuildConfig() {
 		IQueryBuildConfiguration qbc = this.originalBuildConfig;
 		QueryBuildConfiguration buildConfiguration = new QueryBuildConfiguration(
-				qbc.getConfiguration());
+				qbc.getConfiguration(), qbc.getName());
 		buildConfiguration.set(this.trafoConfigParam);
 		this.executor.getQueryBuildConfigurations().put(
 				defaultBuildConfiguration, qbc);
@@ -1285,19 +1285,6 @@ public class ExecutorConsole implements CommandProvider,
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
 		} else {
-			this.executor.getQueryBuildConfigurations().put(
-					defaultBuildConfiguration, new IQueryBuildConfiguration() {
-
-						@Override
-						public String getName() {
-							return defaultBuildConfiguration;
-						}
-
-						@Override
-						public List<IQueryBuildSetting<?>> getConfiguration() {
-							return params;
-						}
-					});
 			this.executor.addQuery(query, parser(), currentUser,
 					defaultBuildConfiguration);
 			return;
@@ -2034,7 +2021,7 @@ public class ExecutorConsole implements CommandProvider,
 			}
 
 			// cleanup
-			this.executor.removeAllQueries();
+			this.executor.removeAllQueries(user);
 
 			System.gc();
 

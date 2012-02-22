@@ -15,9 +15,9 @@
 
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
@@ -26,28 +26,22 @@ import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryB
  * @author Dennis Geesen
  * Created at: 17.08.2011
  */
-public class BenchmarkBuildConfiguration implements IQueryBuildConfiguration {
+public class BenchmarkBuildConfiguration extends AbstractQueryBuildConfiguration {
 
 	public static final String NAME = "Benchmark Build Configuration";
-	
-	private List<IQueryBuildSetting<?>> parameters = new ArrayList<IQueryBuildSetting<?>>();
-	
+		
 	public BenchmarkBuildConfiguration(List<IQueryBuildSetting<?>> settings){
-		this.parameters.addAll(settings);
-	}
-	
-	public void addSetting(IQueryBuildSetting<?> setting){
-		this.parameters.add(setting);
-	}
-	
-	@Override
-	public List<IQueryBuildSetting<?>> getConfiguration() {		
-		return parameters;
+		this.settings.addAll(settings);
 	}
 
 	@Override
 	public String getName() {
 		return NAME;
+	}
+	
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new BenchmarkBuildConfiguration(settings);
 	}
 
 }

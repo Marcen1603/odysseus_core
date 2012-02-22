@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 public class AddQueryPreParserKeyword extends AbstractQueryPreParserKeyword {
 
+	public static final String QUERY = "QUERY";
+	public static final String ADDQUERY = "ADDQUERY";
+
 	@Override
 	protected boolean startQuery() {
 		return false;

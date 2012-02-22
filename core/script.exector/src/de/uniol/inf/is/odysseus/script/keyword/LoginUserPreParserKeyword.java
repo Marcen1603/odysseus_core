@@ -12,16 +12,18 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
+
+	public static final String LOGIN = "LOGIN";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
@@ -37,7 +39,7 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 		
 		ISession user = null;
 		if (password != null && password.length() > 0){
-			user = UserManagement.getSessionmanagement().login(userName, password.getBytes());
+			user = ExecutorHandler.getExecutor().login(userName, password.getBytes());
 		}
 //		else{
 //			user = UserManagement.getSessionmanagement().login(userName, caller);			

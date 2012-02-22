@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SLAPreParserKeyword extends AbstractPreParserKeyword {
 
+	public static final String SLA = "SLA";
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {

@@ -235,7 +235,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 *             Opening an sink or source failed.
 	 */
 	private List<ILogicalQuery> createQueries(String queryStr, ISession user,
-			String buildConfigName, QueryBuildConfiguration parameters)
+			QueryBuildConfiguration parameters)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		getLogger().debug("Translate Queries.");
@@ -247,7 +247,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		SLA sla = SLADictionary.getInstance().getSLA(slaName);
 		// create for each logical plan an intern query
 		for (ILogicalQuery query : queries) {
-			query.setBuildParameter(buildConfigName, parameters);
+			query.setBuildParameter(parameters.getName(), parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
 			query.setSLA(sla);
@@ -272,9 +272,9 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * @throws QueryOptimizationException
 	 *             An exception during optimization occurred.
 	 */
-	private Collection<IPhysicalQuery> addQueries(List<ILogicalQuery> newQueries,
-			OptimizationConfiguration conf) throws NoOptimizerLoadedException,
-			QueryOptimizationException {
+	private Collection<IPhysicalQuery> addQueries(
+			List<ILogicalQuery> newQueries, OptimizationConfiguration conf)
+			throws NoOptimizerLoadedException, QueryOptimizationException {
 		getLogger().debug("Optimize Queries. Count:" + newQueries.size());
 		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		if (newQueries.isEmpty()) {
@@ -285,10 +285,10 @@ public class StandardExecutor extends AbstractExecutor implements
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			optimizedQueries = getOptimizer().optimize(getCompiler(), getExecutionPlan(), newQueries,
-					conf, getDataDictionary());
+			optimizedQueries = getOptimizer().optimize(getCompiler(),
+					getExecutionPlan(), newQueries, conf, getDataDictionary());
 			executionPlanChanged();
-			
+
 			// store optimized queries
 
 			for (IPhysicalQuery optimizedQuery : optimizedQueries) {
@@ -313,12 +313,12 @@ public class StandardExecutor extends AbstractExecutor implements
 		return optimizedQueries;
 	}
 
-	private List<IPhysicalQuery> addQueries(ArrayList<IPhysicalQuery> newQueries,
-			OptimizationConfiguration conf) {
-		throw new RuntimeException("Adding physical query plans is currently not implemented");		
+	private List<IPhysicalQuery> addQueries(
+			ArrayList<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
+		throw new RuntimeException(
+				"Adding physical query plans is currently not implemented");
 	}
 
-	
 	private QueryBuildConfiguration validateBuildParameters(
 			QueryBuildConfiguration params) {
 		if (params.getTransformationConfiguration() == null) {
@@ -362,23 +362,46 @@ public class StandardExecutor extends AbstractExecutor implements
 		return null;
 	}
 
+
+
+	// ----------------------------------------------------------------------------------------------
+	// ADD QUERY
+	// ----------------------------------------------------------------------------------------------
+	
+	// -----------
+	// QUERYSTRING
+	// -----------
+	
 	@Override
 	public synchronized Collection<ILogicalQuery> addQuery(String query,
-			String parserID, ISession user, String buildConfiguartionName)
+			String parserID, ISession user, String buildConfigurationName)
+			throws PlanManagementException {
+		return addQuery(query, parserID, user, buildConfigurationName, null);
+	}
+	
+	@Override
+	public synchronized Collection<ILogicalQuery> addQuery(String query,
+			String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
 		getLogger().info(
 				"Start adding Queries. " + query + " for user "
 						+ user.getUser().getName());
-		QueryBuildConfiguration buildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfiguartionName);
+		QueryBuildConfiguration buildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, null);
 		buildConfiguration.set(new ParameterParserID(parserID));
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
-		validateBuildParameters(buildConfiguration);
-		try {
-			List<ILogicalQuery> newQueries = createQueries(query, user,
-					buildConfiguartionName, buildConfiguration);
+		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
+		return addQuery(query, parserID, user, params);
+	}
+
+		
+	private synchronized Collection<ILogicalQuery> addQuery(String query,
+			String parserID, ISession user, QueryBuildConfiguration buildConfiguration)
+			throws PlanManagementException {
+		try{
+			List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
 			addQueries(newQueries, new OptimizationConfiguration(
 					buildConfiguration));
-			reloadLog.queryAdded(query, buildConfiguartionName, parserID, user);
+			reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);
 			getLogger().info(
 					"Adding Queries. " + query + " for user "
 							+ user.getUser().getName() + " done.");
@@ -395,23 +418,33 @@ public class StandardExecutor extends AbstractExecutor implements
 			throw e;
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
-	 * .uniol.inf.is.odysseus.base.ILogicalOperator, de.uniol.inf.is.odysseus
-	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
-	 * <?>[])
-	 */
+	
+	// -----------
+	// LOGICALPLAN
+	// -----------
+	
 	@Override
 	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			String buildConfigurationName) throws PlanManagementException {
+		return addQuery(logicalPlan, user, buildConfigurationName,null);
+	}
+
+	@Override
+	public IPhysicalQuery addQuery(
+			ILogicalOperator logicalPlan,
+			ISession user,
+			String buildConfigurationName,
+			List<IQueryBuildSetting<?>> overwriteSetting)
+			throws PlanManagementException {	
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
+		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
+		return addQuery(logicalPlan, user, params);		
+	};
+
+	private IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+			QueryBuildConfiguration params) throws PlanManagementException {
 		try {
-			QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName);
 			ArrayList<ILogicalQuery> newQueries = new ArrayList<ILogicalQuery>();
 			ILogicalQuery query = new Query(logicalPlan, params);
 			query.setUser(user);
@@ -427,32 +460,33 @@ public class StandardExecutor extends AbstractExecutor implements
 			throw new QueryAddException(e);
 		}
 	}
+	
+	// ------------
+	// PHYSICALPLAN
+	// ------------
+	
+	@Override
+	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
+			String buildConfigurationName) throws PlanManagementException {
+		return addQuery(physicalPlan, user, buildConfigurationName,null);
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#addQuery(de
-	 * .uniol.inf.is.odysseus.base.IPhysicalOperator, de.uniol.inf.is.odysseus
-	 * .planmanagement.query.querybuiltparameter.AbstractQueryBuildParameter
-	 * <?>[])
-	 */
 	@Override
 	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
-			ISession user, String buildConfigurationName)
+			ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		try {
-			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName);
+			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 			ArrayList<IPhysicalQuery> newQueries = new ArrayList<IPhysicalQuery>();
 			IPhysicalQuery query = new PhysicalQuery(physicalPlan,
 					queryBuildConfiguration);
 			query.setUser(user);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
-			List<IPhysicalQuery> added = addQueries(newQueries, new OptimizationConfiguration(
-					queryBuildConfiguration));
+			List<IPhysicalQuery> added = addQueries(newQueries,
+					new OptimizationConfiguration(queryBuildConfiguration));
 			return added.get(0);
 		} catch (Exception e) {
 			getLogger().error(
@@ -460,27 +494,41 @@ public class StandardExecutor extends AbstractExecutor implements
 			throw new QueryAddException(e);
 		}
 	}
-
+	
+	// -------------------------------------------------------------------------------------------------
+	// Query Translation Settings
+	// -------------------------------------------------------------------------------------------------
+	
 	private QueryBuildConfiguration buildAndValidateQueryBuildConfigurationFromSettings(
-			String buildConfigurationName) throws QueryAddException {
+			String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting) throws QueryAddException {
 		IQueryBuildConfiguration settings = getQueryBuildConfiguration(buildConfigurationName);
 		if (settings == null) {
 			throw new QueryAddException("Transformation Configuration "
 					+ buildConfigurationName + " not found");
 		}
-		QueryBuildConfiguration config = new QueryBuildConfiguration(settings
-				.getConfiguration().toArray(new IQueryBuildSetting<?>[0]));
+		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(settings.getConfiguration());
+		
+		// TODO: Funktioniert das so???
+		if (overwriteSetting != null){
+			for (IQueryBuildSetting<?> overwrite: overwriteSetting){
+				for (IQueryBuildSetting<?> setting: settings.getConfiguration()){
+					if (overwrite.getClass() == setting.getClass()){
+						newSettings.remove(setting);
+						newSettings.add(overwrite);
+					}
+				}
+			}
+		}
+
+		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), buildConfigurationName);
 		config = validateBuildParameters(config);
 		return config;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#removeQuery
-	 * (int)
-	 */
+
+	// -------------------------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------------------------
+	
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
@@ -492,8 +540,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		if (queryToRemove != null && getOptimizer() != null) {
 			try {
 				executionPlanLock.lock();
-				getOptimizer().beforeQueryRemove(queryToRemove, this.executionPlan, null,
-						getDataDictionary());
+				getOptimizer().beforeQueryRemove(queryToRemove,
+						this.executionPlan, null, getDataDictionary());
 				executionPlanChanged();
 				stopQuery(queryToRemove.getID(), caller);
 				getLogger().info("Removing Query " + queryToRemove.getID());
@@ -507,8 +555,10 @@ public class StandardExecutor extends AbstractExecutor implements
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				if (queryToRemove.getLogicalQuery() != null) {
-					dataDictionary.removeQuery(queryToRemove.getLogicalQuery(), caller);
-					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery().getQueryText());
+					dataDictionary.removeQuery(queryToRemove.getLogicalQuery(),
+							caller);
+					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery()
+							.getQueryText());
 				}
 			} catch (Exception e) {
 				getLogger().warn(
@@ -522,8 +572,10 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public void removeAllQueries() {
-
+	public void removeAllQueries(ISession caller) {
+		for (IPhysicalQuery q: executionPlan.getQueries()){
+			removeQuery(q.getID(), caller);
+		}
 	}
 
 	/*
@@ -545,8 +597,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		try {
 			this.executionPlanLock.lock();
-			getOptimizer().beforeQueryStart(queryToStart,
-					this.executionPlan);
+			getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
 			executionPlanChanged();
 			if (isRunning()) {
 				queryToStart.open();
@@ -633,8 +684,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
 		try {
 			this.executionPlanLock.lock();
-			getOptimizer().beforeQueryStop(queryToStop,
-					this.executionPlan);
+			getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
 			executionPlanChanged();
 			if (isRunning()) {
 				queryToStop.close();
@@ -709,7 +759,8 @@ public class StandardExecutor extends AbstractExecutor implements
 				executionPlanChanged();
 				getLogger().debug("Plan reoptimized.");
 				firePlanModificationEvent(new PlanModificationEvent(this,
-						PlanModificationEventType.PLAN_REOPTIMIZE, this.executionPlan));
+						PlanModificationEventType.PLAN_REOPTIMIZE,
+						this.executionPlan));
 			} catch (Exception e) {
 				getLogger()
 						.warn("Plan not reoptimized. An Error while optimizing occurd.");

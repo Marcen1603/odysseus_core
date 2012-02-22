@@ -22,12 +22,17 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
 
 public abstract class AbstractQueryPreParserKeyword extends
 		AbstractPreParserExecutorKeyword {
@@ -43,11 +48,11 @@ public abstract class AbstractQueryPreParserKeyword extends
 			if (parameter.length() == 0)
 				throw new OdysseusScriptException("Encountered empty query");
 
-			String parserID = (String) variables.get("PARSER");
+			String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 			if (parserID == null)
 				throw new OdysseusScriptException("Parser not set");
 
-			String transCfg = (String) variables.get("TRANSCFG");
+			String transCfg = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 			if (transCfg == null)
 				throw new OdysseusScriptException(
 						"TransformationConfiguration not set");
@@ -62,8 +67,11 @@ public abstract class AbstractQueryPreParserKeyword extends
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
-		String parserID = (String) variables.get("PARSER");
-		String transCfg = (String) variables.get("TRANSCFG");
+		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
+		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
+		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables
+				.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
+
 		ISink defaultSink = variables.get("_defaultSink") != null ? (ISink) variables
 				.get("_defaultSink") : null;
 		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
@@ -71,11 +79,30 @@ public abstract class AbstractQueryPreParserKeyword extends
 
 		try {
 			parserID = parserID.trim();
-			transCfg = transCfg.trim();
+			transCfgName = transCfgName.trim();
 			String queryText = parameter.trim();
 
-			Collection<ILogicalQuery> queries = ExecutorHandler.getExecutor()
-					.addQuery(queryText, parserID, caller, transCfg);
+			IExecutor executor = getExecutor();
+			IServerExecutor serverExec = null;
+			if (executor instanceof IServerExecutor) {
+				serverExec = (IServerExecutor) executor;
+			}
+
+			Collection<ILogicalQuery> queries = null;
+
+			if (addSettings != null) {
+				if (serverExec == null) {
+					throw new QueryParseException(
+							"Additional transformation parameter currently not supported on clients");
+				} else {
+					queries = serverExec.addQuery(queryText, parserID, caller,
+							transCfgName,
+							addSettings);
+				}
+			} else {
+				queries = executor.addQuery(queryText, parserID, caller,
+						transCfgName);
+			}
 
 			// Append defaultSink to all queries
 			// and make it query root
@@ -95,7 +122,7 @@ public abstract class AbstractQueryPreParserKeyword extends
 
 			if (startQuery()) {
 				for (ILogicalQuery q : queries) {
-					ExecutorHandler.getExecutor().startQuery(q.getID(), caller);
+					executor.startQuery(q.getID(), caller);
 				}
 			}
 

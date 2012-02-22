@@ -239,18 +239,6 @@ public class WebserviceServer {
 		}
 	}
 
-	public Response initialize(
-			@WebParam(name = "securitytoken") String securityToken) {
-		try {
-			loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().initialize();
-			return new Response(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Response(false);
-		}
-	}
-
 	public StringListResponse getQueryBuildConfigurationNames(
 			@WebParam(name = "securitytoken") String securityToken) {
 		try {

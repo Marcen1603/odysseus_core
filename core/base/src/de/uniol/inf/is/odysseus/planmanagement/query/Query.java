@@ -104,7 +104,7 @@ public class Query implements ILogicalQuery {
 	/**
 	 * Parameter for building this query.
 	 */
-	transient protected QueryBuildConfiguration parameters = new QueryBuildConfiguration();
+	transient protected QueryBuildConfiguration parameters = new QueryBuildConfiguration("");
 	private String buildConfigName;
 
 

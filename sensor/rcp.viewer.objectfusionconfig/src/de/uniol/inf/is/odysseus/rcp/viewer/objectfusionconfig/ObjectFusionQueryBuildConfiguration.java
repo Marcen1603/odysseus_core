@@ -19,16 +19,15 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.transformation.helper.broker.BrokerTransformationHelper;
 
 
-public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfiguration {
-	
-	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
-	
+public class ObjectFusionQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
+		
 	public ObjectFusionQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
@@ -41,14 +40,20 @@ public class ObjectFusionQueryBuildConfiguration implements IQueryBuildConfigura
 						"de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval",
 						"de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime")));
 	}
-
-	@Override
-	public List<IQueryBuildSetting<?>> getConfiguration() {
-		return settings;
-	}
 	
+	public ObjectFusionQueryBuildConfiguration(
+			List<IQueryBuildSetting<?>> settings) {
+		settings.addAll(settings);
+	}
+
 	@Override
 	public String getName() {
 		return "ObjectFusion";
 	}
+	
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new ObjectFusionQueryBuildConfiguration(settings);
+	}
+
 }

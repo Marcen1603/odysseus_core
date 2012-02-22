@@ -23,22 +23,25 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 /**
  * Realisiert das TRANSCFG-Schlüsselwort für den PreParser. 
  * 
- * @author Timo Michelsen
+ * @author Timo Michelsen, Marco Grawunder
  * 
  */
 public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 
+	public static final String TRANSCFG = "TRANSCFG";
+	public static final String ADD_TRANS_PARAMS = "ADD_TRANS_PARAMS";
+	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #TRANCFG");
 
-		variables.put("TRANSCFG", parameter);
+		variables.put(TRANSCFG, parameter);
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
-		variables.put("TRANSCFG", parameter);
+		variables.put(TRANSCFG, parameter);
 		return null;
 	}
 

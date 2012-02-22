@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 public class StartAllClosedQueriesPreParserKeyword extends
 AbstractPreParserExecutorKeyword {
 
+	public static final String STARTQUERIES = "STARTQUERIES";
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {

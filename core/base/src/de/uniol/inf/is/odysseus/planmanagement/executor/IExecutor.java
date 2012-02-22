@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.planmanagement.executor;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -27,11 +26,10 @@ import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
@@ -46,38 +44,11 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
  */
 public interface IExecutor extends IClientPlanManager,
 		IInfoProvider{
-	/**
-	 * initialize initialisiert die Ausfuehrungsumgebung. ggf. gehen Anfragen,
-	 * Pläne und Einstellungen verloren.
-	 * 
-	 * @throws ExecutorInitializeException
-	 */
-	public void initialize() throws ExecutorInitializeException;
-
-	/**
-	 * getConfiguration liefert die aktuelle Konfiguration der
-	 * AUsfuehrungsumgebung.
-	 * 
-	 * @return die aktuelle Konfiguration der AUsführungsumgebung
-	 */
-	public ExecutionConfiguration getConfiguration();
 
 	/**
 	 * List of predefined registered build configurations
 	 */
 	public Collection<String> getQueryBuildConfigurationNames();
-
-	/**
-	 * Get specific query build configuration
-	 */
-	public IQueryBuildConfiguration getQueryBuildConfiguration(String name);
-
-	/**
-	 * Get all QueryBuildConfigurations
-	 * 
-	 * @return all build configuration
-	 */
-	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations();
 
 	/**
 	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden

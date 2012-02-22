@@ -14,37 +14,54 @@
   */
 package de.uniol.inf.is.odysseus.script.parser.keyword;
 
+import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 
-public class OdysseusDefaultsPreParserKeyword extends AbstractPreParserKeyword {
+public class QuerySharingPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String ODYSSEUS_PARAM = "ODYSSEUS_PARAM";
+	public static final String DOQUERYSHARING = "DOQUERYSHARING";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		// Ignore
 	}
 
+	
+	
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		String[] params = getSimpleParameters(parameter);
-		if (params.length >= 2) {
-			boolean permanently = false;
-			if (params.length == 3) {
-				if ("TRUE".equalsIgnoreCase(params[2])) {
-					permanently = true;
-				}
-			}
-			OdysseusDefaults.set(params[0],params[1],permanently, caller);
+		
+		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
+		
+		if ("TRUE".equals(parameter.toUpperCase())) {
+			addSettings.add(ParameterPerformQuerySharing.TRUE);
+		} else {
+			addSettings.add(ParameterPerformQuerySharing.FALSE);
 		}
+		
+		
+//		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration((String)
+//						variables.get("TRANSCFG")).getConfiguration().clone();
+//		variables.put("QueryBuildConfig",config);
+//		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
+//		if (iter != null){
+//			while (iter.hasNext()) {
+//				IQueryBuildSetting<?> sett = iter.next();
+//				if (sett instanceof ParameterPerformQuerySharing) {
+//					iter.remove();
+//					break;
+//				}
+//			}
 
+//		}
 		return null;
 	}
+
 }

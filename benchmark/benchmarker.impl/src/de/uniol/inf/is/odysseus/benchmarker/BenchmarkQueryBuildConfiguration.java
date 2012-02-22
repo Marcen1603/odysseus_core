@@ -20,17 +20,16 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.metadata.ILatency;
 import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.planmanagement.configuration.AbstractQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
+import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class BenchmarkQueryBuildConfiguration implements
-		IQueryBuildConfiguration {
-
-	private List<IQueryBuildSetting<?>> settings = new ArrayList<IQueryBuildSetting<?>>();
+public class BenchmarkQueryBuildConfiguration extends
+		AbstractQueryBuildConfiguration {
 	
 	@SuppressWarnings("unchecked")
 	public BenchmarkQueryBuildConfiguration() {
@@ -44,14 +43,22 @@ public class BenchmarkQueryBuildConfiguration implements
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 
-	@Override
-	public List<IQueryBuildSetting<?>> getConfiguration() {
-		return settings;
-	}
 	
+	
+	public BenchmarkQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+		settings.addAll(settings);
+	}
+
+
+
 	@Override
 	public String getName() {
 		return "Benchmark";
+	}
+	
+	@Override
+	public IQueryBuildConfiguration clone() {
+		return new BenchmarkQueryBuildConfiguration(settings);
 	}
 
 }

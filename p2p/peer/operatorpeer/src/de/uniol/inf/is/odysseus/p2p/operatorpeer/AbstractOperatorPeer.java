@@ -115,23 +115,11 @@ public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 		try {
 			initServerResponseConnection();
 			((Log)getLog()).setWindow(getGui());
-			initExecutor();
 			initPriorityMode();
 			initMessageSender();
 			initSourceHandler(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-
-	private void initExecutor() {
-		if(this.executor!=null) {
-			try {
-				this.executor.initialize();
-			} catch (ExecutorInitializeException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

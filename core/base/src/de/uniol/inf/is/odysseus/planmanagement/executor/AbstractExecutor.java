@@ -207,14 +207,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return configuration;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor#initialize()
-	 */
-	@Override
-	public void initialize() throws ExecutorInitializeException {
+	private void initialize() throws ExecutorInitializeException {
 		getLogger().debug("Initializing Executor.");
 
 		initializeIntern(configuration);
@@ -517,7 +510,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		getLogger().info("Stop Scheduler.");
 		try {
 			getSchedulerManager().stopScheduling();
-			this.removeAllQueries();
 			// Stopp Router only if it has an instance
 			if (Router.hasInstance()) {
 				Router.getInstance().stopRouting();

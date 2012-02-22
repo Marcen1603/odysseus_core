@@ -12,51 +12,32 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.keyword;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
-public class QuerySharingPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
+
+	public static final String BUFFERPLACEMENT = "BUFFERPLACEMENT";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
-		IExecutor executor = getExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
-		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration((String)
-						variables.get("TRANSCFG")).getConfiguration();
-		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
-		if (iter != null){
-			while (iter.hasNext()) {
-				IQueryBuildSetting<?> sett = iter.next();
-				if (sett instanceof ParameterPerformQuerySharing) {
-					iter.remove();
-					break;
-				}
-			}
-			if ("TRUE".equals(parameter.toUpperCase())){
-				config.add(ParameterPerformQuerySharing.TRUE);
-			}else{
-				config.add(ParameterPerformQuerySharing.FALSE);
-			}
-		}
+		
+		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
+		addSettings.add(new ParameterBufferPlacementStrategy(parameter));
 		return null;
 	}
 

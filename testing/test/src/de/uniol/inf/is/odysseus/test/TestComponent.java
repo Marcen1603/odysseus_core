@@ -117,7 +117,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 					}
 				}
 				// Stop all queries
-				executor.removeAllQueries();
+				executor.removeAllQueries(user);
 				if (errorText != null) {
 					throw new RuntimeException(errorText);
 				}

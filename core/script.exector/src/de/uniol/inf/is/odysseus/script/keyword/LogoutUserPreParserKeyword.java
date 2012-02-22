@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.script.parser.keyword;
+package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
+
+	public static final String LOGOUT = "LOGOUT";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {

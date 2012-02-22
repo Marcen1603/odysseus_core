@@ -130,34 +130,10 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public void initialize() throws ExecutorInitializeException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ExecutionConfiguration getConfiguration() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<String> getQueryBuildConfigurationNames() {
 		if(getWebserviceServer() != null) {
 			return getWebserviceServer().getQueryBuildConfigurationNames(getSecurityToken()).getResponseValue();
 		}
-		return null;
-	}
-
-	@Override
-	public IQueryBuildConfiguration getQueryBuildConfiguration(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

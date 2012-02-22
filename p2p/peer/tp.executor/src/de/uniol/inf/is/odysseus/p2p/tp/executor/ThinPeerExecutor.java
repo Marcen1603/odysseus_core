@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.p2p.tp.executor;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -21,11 +20,9 @@ import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
@@ -114,31 +111,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public void initialize() throws ExecutorInitializeException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public ExecutionConfiguration getConfiguration() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<String> getQueryBuildConfigurationNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IQueryBuildConfiguration getQueryBuildConfiguration(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations() {
 		// TODO Auto-generated method stub
 		return null;
 	}
