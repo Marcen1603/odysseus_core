@@ -76,7 +76,7 @@ public class SpatialIsPolygon extends AbstractFunction<Boolean>{
 	 */
 	@Override
 	public Boolean getValue() {
-		return ((Geometry)this.getInputValue(0)).getGeometryType().equalsIgnoreCase("Polygon");
+		return ((Geometry)this.getInputValue(0)).getGeometryType().equalsIgnoreCase("Polygon") && !((Geometry)this.getInputValue(0)).isEmpty();
 	}
 
 	/* (non-Javadoc)
