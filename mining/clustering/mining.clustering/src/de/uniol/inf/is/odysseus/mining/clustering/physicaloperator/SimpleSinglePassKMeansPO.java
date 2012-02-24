@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 
 /**
@@ -76,7 +76,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	 * Clusters an incoming {@link IClusteringObject} using the simple single
 	 * pass k-means algorithm.
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mining.clustering.AbstractClusteringPO#process_next(de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject,
+	 * @see de.uniol.inf.is.odysseus.mining.clustering.AbstractClusteringPO#process_next(de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject,
 	 *      int)
 	 */
 	@Override
@@ -104,7 +104,7 @@ public class SimpleSinglePassKMeansPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
 	public SimpleSinglePassKMeansPO<T> clone() {

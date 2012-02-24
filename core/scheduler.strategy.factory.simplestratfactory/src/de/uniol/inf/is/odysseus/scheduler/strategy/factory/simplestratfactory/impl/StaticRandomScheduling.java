@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractExecListScheduling;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractExecListScheduling;
 /**
  * Calculates an intial random strategy
  * @author Marco Grawunder

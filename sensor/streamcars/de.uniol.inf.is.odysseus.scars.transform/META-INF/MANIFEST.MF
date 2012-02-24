@@ -4,17 +4,20 @@ Bundle-Name: Transform
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.transform
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scars.transform.Activator
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.datadictionary,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.datadictionary,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement,
+ de.uniol.inf.is.odysseus.core.sdf,
+ de.uniol.inf.is.odysseus.core.sdf.description,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
- de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
  de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access,
- de.uniol.inf.is.odysseus.physicaloperator,
- de.uniol.inf.is.odysseus.planmanagement,
- de.uniol.inf.is.odysseus.planmanagement.configuration,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.scars.metadata,
@@ -40,9 +43,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.scars.operator.test.po,
  de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.ao,
  de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.po,
- de.uniol.inf.is.odysseus.sourcedescription.sdf,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.description,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
@@ -50,3 +50,5 @@ Import-Package: de.uniol.inf.is.odysseus,
  org.slf4j;version="1.5.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/StreamsCarsTransformationRuleService.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

@@ -28,10 +28,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
-import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
-import de.uniol.inf.is.odysseus.usermanagement.IRole;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -44,8 +44,8 @@ import de.uniol.inf.is.odysseus.usermanagement.IUser;
 		@NamedQuery(name = UserImpl.NQ_FIND_BY_NAME, query = "select o from User as o where o.name = :name"), })
 public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 
-	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.User.findAll";
-	public static final String NQ_FIND_BY_NAME = "de.uniol.inf.is.odysseus.usermanagement.domain.User.findByName";
+	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User.findAll";
+	public static final String NQ_FIND_BY_NAME = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User.findByName";
 	private static final long serialVersionUID = -5114286931356318036L;
 
 	private String name;
@@ -70,7 +70,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getName()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User#getName()
 	 */
 	@Override
 	public String getName() {
@@ -120,7 +120,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#isActive()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User#isActive()
 	 */
 	@Override
 	public boolean isActive() {
@@ -138,7 +138,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getRoles()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User#getRoles()
 	 */
 	@Override
 	public List<IRole> getRoles() {
@@ -170,7 +170,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.User#getPrivileges()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User#getPrivileges()
 	 */
 	@Override
 	public List<IPrivilege> getPrivileges() {
@@ -203,7 +203,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.domain.User#validatePassword(
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.User#validatePassword(
 	 * byte[])
 	 */
 	@Override

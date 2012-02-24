@@ -19,13 +19,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.usermanagement.IPermission;
-import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
-import de.uniol.inf.is.odysseus.usermanagement.IRole;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
 
 public class UserViewLabelProvider extends LabelProvider {
 

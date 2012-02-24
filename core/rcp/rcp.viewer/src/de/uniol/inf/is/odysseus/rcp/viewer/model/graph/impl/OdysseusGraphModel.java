@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 
 public class OdysseusGraphModel extends DefaultGraphModel<IPhysicalOperator> implements IOdysseusGraphModel {

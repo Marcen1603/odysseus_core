@@ -114,27 +114,7 @@
             sequence="CTRL+SHIFT+C">
       </key>
    </extension>
-      <extension
-    point="org.eclipse.ui.editors.markerAnnotationSpecification">
-    <specification
-    annotationType="de.uniol.inf.is.odysseus.rcp.editor.highlightannotation"
-    verticalRulerPreferenceKey="highlight.rulers.vertical"
-    textPreferenceKey="highlight.text"
-    colorPreferenceKey="highlight.color"
-    highlightPreferenceKey="highlight.background"
-    textPreferenceValue="false"
-    textStylePreferenceValue="UNDERLINE"
-    overviewRulerPreferenceKey="highlight.rulers.overview"
-    presentationLayer="4"
-    highlightPreferenceValue="true"
-    label="Keyword"
-    icon="icons/friend_co.gif"
-    colorPreferenceValue="253,255,157"
-    verticalRulerPreferenceValue="true"
-    overviewRulerPreferenceValue="true"
-    textStylePreferenceKey="highlight.text.style">
-    </specification>
-    </extension>
+ 
 
 
 </plugin>

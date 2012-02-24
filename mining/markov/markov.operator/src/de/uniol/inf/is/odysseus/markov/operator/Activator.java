@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.markov.operator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAOBuilder;
 
 public class Activator implements BundleActivator {

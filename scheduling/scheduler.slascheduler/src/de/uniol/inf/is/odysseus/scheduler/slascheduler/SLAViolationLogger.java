@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 
 /**
  * Simple implementation of {@link ISLAViolationEventListener} interface for

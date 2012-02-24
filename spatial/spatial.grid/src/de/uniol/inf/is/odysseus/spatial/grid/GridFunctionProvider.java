@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.spatial.grid;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.InverseGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.MoveViewPoint;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.RotateGrid;

@@ -16,8 +16,8 @@ package de.uniol.inf.is.odysseus.logicaloperator.benchmark;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
 import de.uniol.inf.is.odysseus.logicaloperator.benchmark.BatchParameter.BatchItem;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractParameter;
 
 public class BatchParameter extends AbstractParameter<BatchItem> {
 	private static final long serialVersionUID = 1300351843223441540L;

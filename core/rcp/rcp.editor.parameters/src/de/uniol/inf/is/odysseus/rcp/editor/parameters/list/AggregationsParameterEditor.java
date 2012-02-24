@@ -35,13 +35,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AggregateItem;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.AbstractListParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.activator.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.ComboEditingSupport;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingSupport;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class AggregationsParameterEditor extends AbstractListParameterEditor<AggregateItem> {
 

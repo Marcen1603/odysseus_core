@@ -4,7 +4,7 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient"/>
    </service>
-   <reference bind="bindExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
-   <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
+   <reference bind="bindExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
+   <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
    <reference bind="bindBidGenerator" cardinality="0..1" interface="de.uniol.inf.is.odysseus.p2p.ac.bid.IP2PBidGenerator" name="IP2PBidGenerator" policy="dynamic" unbind="unbindBidGenerator"/>
 </scr:component>

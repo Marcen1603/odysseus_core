@@ -14,7 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.mining.clustering.model;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -90,7 +90,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#setClusterId
+	 * de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#setClusterId
 	 * (int)
 	 */
 	@Override
@@ -102,7 +102,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#getClusterId
+	 * de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#getClusterId
 	 * ()
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#
 	 * getAttributes()
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#
 	 * getClusterAttributes()
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#
 	 * getLabeledTuple()
 	 */
 	@SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject#
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject#
 	 * getClusterAttributeCount()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#getMetadata()
+	 * de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer#getMetadata()
 	 */
 	@Override
 	public final T getMetadata() {
@@ -188,8 +188,8 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer#setMetadata
-	 * (de.uniol.inf.is.odysseus.metadata.IMetaAttribute)
+	 * de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer#setMetadata
+	 * (de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttribute)
 	 */
 	@Override
 	public void setMetadata(T metadata) {

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**

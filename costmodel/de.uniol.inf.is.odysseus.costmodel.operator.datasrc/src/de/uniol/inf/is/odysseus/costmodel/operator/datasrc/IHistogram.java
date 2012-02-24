@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.datasrc;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * Repräsentiert ein Histogramm.

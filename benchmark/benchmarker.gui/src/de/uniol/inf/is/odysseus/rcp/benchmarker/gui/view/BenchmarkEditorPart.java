@@ -58,7 +58,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.TextboxVerifier;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.commands.OpenBenchmarkHandler;

@@ -23,13 +23,13 @@ import java.util.HashMap;
 import net.jxta.endpoint.Message;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
-import de.uniol.inf.is.odysseus.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta.OperatorPeerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.listener.IP2PPOEventListener;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
-import de.uniol.inf.is.odysseus.physicaloperator.event.POEvent;
 
 public class P2PPOEventListenerJxtaImpl implements IP2PPOEventListener {
 

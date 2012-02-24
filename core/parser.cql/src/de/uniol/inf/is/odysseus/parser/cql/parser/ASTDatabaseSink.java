@@ -14,8 +14,8 @@ class ASTDatabaseSink extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=465e7bb788977b7cab68e449f4e1004d (do not edit this line) */
+/* JavaCC - OriginalChecksum=e3e2d7eda511ecac58ec001d61313c29 (do not edit this line) */

@@ -17,16 +17,16 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.ParseException;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.ParseException;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 
 public class MepHelper {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static IExpression initMEPExpressionFromLabel(String label, Map<CepVariable, Variable> symbolTable /*INOUT*/) throws ParseException {
-		IExpression expression = MEP.parse(transformToMepVar(label));
+		IExpression expression = MEP.getInstance().parse(transformToMepVar(label));
 		Set<Variable> v = expression.getVariables();
 		for (Variable s : v) {
 			symbolTable.put(transformToOutVar(s.getIdentifier()), s);

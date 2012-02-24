@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.salsa.playground.udf;
 
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 

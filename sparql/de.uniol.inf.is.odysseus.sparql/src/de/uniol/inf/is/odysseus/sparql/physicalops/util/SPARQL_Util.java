@@ -1,4 +1,4 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.util;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.util;
 //
 //import java.util.ArrayList;
 //import java.util.List;
@@ -6,10 +6,10 @@
 //import com.hp.hpl.jena.graph.Node;
 //import com.hp.hpl.jena.graph.Triple;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.MetaTriple;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.MetaTriple;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
 //
 ///**
 // * This class provides some utility methods, that will be used 

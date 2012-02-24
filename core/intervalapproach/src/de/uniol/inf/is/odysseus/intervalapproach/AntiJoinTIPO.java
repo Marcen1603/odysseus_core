@@ -18,20 +18,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.OverlapsPredicate;
-import de.uniol.inf.is.odysseus.logicaloperator.DifferenceAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.MetadataComparator;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.EqualsPredicate;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 ///**
 // * @author Jonas Jacobi
@@ -247,7 +247,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	//
 	// @Override
 	// public
-	// de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode
+	// de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
 	// getOutputMode() {
 	// return OutputMode.INPUT;
 	// }
@@ -261,7 +261,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 

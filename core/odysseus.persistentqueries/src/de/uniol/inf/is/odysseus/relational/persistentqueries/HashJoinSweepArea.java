@@ -20,13 +20,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.collection.Pair;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.util.LinkedMultiHashMap;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;
-import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
 
 /**
  * This sweep area is used for equi joins over non-windowed streams.
@@ -153,7 +153,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 
 	@Override
 	public Iterator<RelationalTuple<? extends ITimeInterval>> query(RelationalTuple<? extends ITimeInterval> element,
-			de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
 		LinkedList<RelationalTuple<? extends ITimeInterval>> result = new LinkedList<RelationalTuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
 			RelationalTuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);

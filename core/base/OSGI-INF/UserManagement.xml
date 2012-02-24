@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.usermanagement.UserManagement">
-   <implementation class="de.uniol.inf.is.odysseus.usermanagement.UserManagement"/>
-   <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
-   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement">
+   <implementation class="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement"/>
+   <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
+   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
 </scr:component>

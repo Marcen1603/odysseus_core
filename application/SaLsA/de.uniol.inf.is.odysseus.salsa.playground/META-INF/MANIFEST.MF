@@ -17,5 +17,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/SalsaAggregateFunctionBuilder.xml, OSGI-INF/TransformRuleService.xml, OSGI-INF/SaLsAFunctionProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.salsa.playground.physicaloperator.aggregate
-Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0" 
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 

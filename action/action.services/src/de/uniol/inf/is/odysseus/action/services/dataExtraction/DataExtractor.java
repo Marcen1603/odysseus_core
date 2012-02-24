@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 /**

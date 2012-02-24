@@ -22,10 +22,10 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
-import de.uniol.inf.is.odysseus.usermanagement.IRole;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class UserViewContentProvider implements IStructuredContentProvider,
 		ITreeContentProvider {

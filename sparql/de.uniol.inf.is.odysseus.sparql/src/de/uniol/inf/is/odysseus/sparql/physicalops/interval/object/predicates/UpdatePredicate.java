@@ -7,12 +7,12 @@
  * and open the template in the editor.
  */
 
-package de.uniol.inf.is.odysseus.sparql.physicalops.interval.object.predicates;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.object.predicates;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.MetaTriple;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.MetaTriple;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
 
 /**
  * This checks if an element s can be an update of s_hat.

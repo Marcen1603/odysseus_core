@@ -7,13 +7,13 @@
 // * and open the template in the editor.
 // */
 //
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import java.util.ArrayList;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.TimeInterval;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.UnaryLogicalOp;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowType;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.TimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.UnaryLogicalOp;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.WindowType;
 //
 ///**
 // * This class represents an ask operator. This operator does not need any fields

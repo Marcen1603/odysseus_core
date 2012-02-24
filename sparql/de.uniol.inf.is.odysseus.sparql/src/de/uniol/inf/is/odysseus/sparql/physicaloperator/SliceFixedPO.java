@@ -1,15 +1,15 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.slice;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.slice;
 //
 //import java.util.Iterator;
 //import java.util.LinkedList;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.intervalbased.TotallyBeforePredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Slice;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.intervalbased.TotallyBeforePredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Slice;
 //
 ///**
 // * This is a slice operator for fixed windows. It produces output

@@ -19,9 +19,9 @@ package de.uniol.inf.is.odysseus.scars.operator.filter.po;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceHelper;

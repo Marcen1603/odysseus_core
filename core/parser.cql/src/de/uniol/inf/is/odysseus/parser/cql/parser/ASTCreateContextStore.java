@@ -14,8 +14,8 @@ class ASTCreateContextStore extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=5a531011e71b9d194b2883c26042e3da (do not edit this line) */
+/* JavaCC - OriginalChecksum=bc7c61ab82c497a8def49f0396176915 (do not edit this line) */

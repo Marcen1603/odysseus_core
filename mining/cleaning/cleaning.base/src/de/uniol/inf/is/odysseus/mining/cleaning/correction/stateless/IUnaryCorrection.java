@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 

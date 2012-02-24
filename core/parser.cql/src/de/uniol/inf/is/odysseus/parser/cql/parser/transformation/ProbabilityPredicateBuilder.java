@@ -16,15 +16,15 @@
 //
 //import java.util.ArrayList;
 //
-//import de.uniol.inf.is.odysseus.predicate.IPredicate;
+//import de.uniol.inf.is.odysseus.core.server.predicate.IPredicate;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractPredicate;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IPredicateBuilder;
-//import de.uniol.inf.is.odysseus.probability.predicate.ProbabilityPredicate;
+//import de.uniol.inf.is.odysseus.core.server.probability.predicate.ProbabilityPredicate;
 //import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 //
 //public class ProbabilityPredicateBuilder implements IPredicateBuilder {
 //

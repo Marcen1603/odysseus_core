@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateItem;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.rcp.editor.parameter.IParameterEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.ComboEditingColumnDefinition;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.SimpleColumnDefinition;

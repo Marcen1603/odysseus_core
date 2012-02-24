@@ -5,10 +5,10 @@ import java.sql.Types;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
 import de.uniol.inf.is.odysseus.database.drivers.MySQLConnectionFactory;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class Activator implements BundleActivator {
 

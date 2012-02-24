@@ -4,10 +4,12 @@ Bundle-Name: SPARQL Transform
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sparql.transform
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.sparql.transform.Activator
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.metadata,
- de.uniol.inf.is.odysseus.planmanagement,
+Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,

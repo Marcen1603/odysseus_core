@@ -26,9 +26,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
-import de.uniol.inf.is.odysseus.usermanagement.IPermission;
-import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -42,9 +42,9 @@ import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
 public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 		IPrivilege {
 	/** Find all privileges */
-	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findAll";
+	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Privilege.findAll";
 	/** Find all privileges for one object */
-	public static final String NQ_FIND_BY_OBJECTURI = "de.uniol.inf.is.odysseus.usermanagement.domain.Privilege.findByObjectURI";
+	public static final String NQ_FIND_BY_OBJECTURI = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Privilege.findByObjectURI";
 
 	private static final long serialVersionUID = 4054608803558374338L;
 	private String objectURI;
@@ -57,7 +57,7 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getPermissions()
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Privilege#getPermissions()
 	 */
 	@Override
 	public Set<IPermission> getPermissions() {
@@ -90,7 +90,7 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.usermanagement.domain.Privilege#getObjectURI()
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Privilege#getObjectURI()
 	 */
 	@Override
 	public String getObjectURI() {

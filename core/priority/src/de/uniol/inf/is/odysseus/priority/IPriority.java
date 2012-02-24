@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.priority;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public interface IPriority extends IMetaAttribute{
 	public byte getPriority();

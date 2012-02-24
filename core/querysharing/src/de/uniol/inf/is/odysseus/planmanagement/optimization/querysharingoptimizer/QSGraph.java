@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimiz
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 
 public class QSGraph {
 	private List<Vertice> vertices = new ArrayList<Vertice>();

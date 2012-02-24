@@ -13,16 +13,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -212,19 +213,19 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		
 		if(!this.triple.getSubject().isVariable()){
 			String exprStr = inputSchema.getAttribute(0).getPointURI() + " == '" + this.triple.getSubject().getName() + "'";
-			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getPredicate().isVariable()){
 			String exprStr = inputSchema.getAttribute(1).getPointURI() + " == '" + this.triple.getPredicate().getName() + "'";
-			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getObject().isVariable()){
 			String exprStr = inputSchema.getAttribute(2).getPointURI() + " == '" + this.triple.getObject().getName() + "'";
-			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}
 		

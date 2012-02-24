@@ -17,15 +17,15 @@ package de.uniol.inf.is.odysseus.rewrite.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.planmanagement.IRewrite;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
-import de.uniol.inf.is.odysseus.util.SimplePlanPrinter;
 
 public class RewriteExecutor implements IRewrite {
 

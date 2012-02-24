@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,52 +26,52 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.ac.IAdmissionListener;
-import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
-import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.monitoring.ISystemMonitor;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.ExecutorPermission;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.ExecutionConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.executor.configuration.IExecutionSetting;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoCompilerLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoSystemMonitorLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.QueryAddException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.SchedulerException;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
+import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
+import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.IExecutionSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoCompilerLoadedException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoSystemMonitorLoadedException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.QueryAddException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.SchedulerException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
+import de.uniol.inf.is.odysseus.core.sla.SLA;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.ExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.Query;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterParserID;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.sla.SLA;
-import de.uniol.inf.is.odysseus.sla.SLADictionary;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.PermissionException;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.util.SetOwnerVisitor;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -121,6 +122,8 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	private IAdmissionReaction admissionReaction = null;
 
+	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
+
 	public void bindAdmissionReaction(IAdmissionReaction reaction) {
 		admissionReaction = reaction;
 	}
@@ -157,7 +160,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -194,7 +197,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * 
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.AbstractExecutor#
 	 * initializeIntern
-	 * (de.uniol.inf.is.odysseus.planmanagement.executor.configuration
+	 * (de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration
 	 * .ExecutionConfiguration)
 	 */
 	@Override
@@ -207,7 +210,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * 
 	 * @seede.uniol.inf.is.odysseus.planmanagement.configuration.
 	 * IValueChangeListener
-	 * #settingChanged(de.uniol.inf.is.odysseus.planmanagement
+	 * #settingChanged(de.uniol.inf.is.odysseus.core.server.planmanagement
 	 * .configuration.IMapValue)
 	 */
 	@Override
@@ -247,7 +250,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		SLA sla = SLADictionary.getInstance().getSLA(slaName);
 		// create for each logical plan an intern query
 		for (ILogicalQuery query : queries) {
-			query.setBuildParameter(parameters.getName(), parameters);
+			setQueryBuildParameters(query,parameters);
 			query.setQueryText(queryStr);
 			query.setUser(user);
 			query.setSLA(sla);
@@ -258,6 +261,12 @@ public class StandardExecutor extends AbstractExecutor implements
 		}
 
 		return queries;
+	}
+
+	private void setQueryBuildParameters(ILogicalQuery query,
+			QueryBuildConfiguration parameters) {
+		queryBuildParameter.put(query,parameters);
+		
 	}
 
 	/**
@@ -285,7 +294,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		this.executionPlanLock.lock();
 		try {
 			// optimize queries and set resulting execution plan
-			optimizedQueries = getOptimizer().optimize(getCompiler(),
+			optimizedQueries = getOptimizer().optimize(this,
 					getExecutionPlan(), newQueries, conf, getDataDictionary());
 			executionPlanChanged();
 
@@ -296,9 +305,12 @@ public class StandardExecutor extends AbstractExecutor implements
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_ADDED, optimizedQuery));
 				if (optimizedQuery.getLogicalQuery() != null) {
+					// TODO: Bisher können nur Namen von Configuration gespeichert werden
+					// es sollten aber echte Configs speicherbar sein!
 					getDataDictionary().addQuery(
 							optimizedQuery.getLogicalQuery(),
-							optimizedQuery.getUser());
+							optimizedQuery.getUser(), 
+							conf.getName());
 				}
 			}
 
@@ -373,14 +385,14 @@ public class StandardExecutor extends AbstractExecutor implements
 	// -----------
 	
 	@Override
-	public synchronized Collection<ILogicalQuery> addQuery(String query,
+	public synchronized Collection<Integer> addQuery(String query,
 			String parserID, ISession user, String buildConfigurationName)
 			throws PlanManagementException {
 		return addQuery(query, parserID, user, buildConfigurationName, null);
 	}
 	
 	@Override
-	public synchronized Collection<ILogicalQuery> addQuery(String query,
+	public synchronized Collection<Integer> addQuery(String query,
 			String parserID, ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
 		getLogger().info(
@@ -393,18 +405,22 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 		
-	private synchronized Collection<ILogicalQuery> addQuery(String query,
+	private synchronized Collection<Integer> addQuery(String query,
 			String parserID, ISession user, QueryBuildConfiguration buildConfiguration)
 			throws PlanManagementException {
 		try{
 			List<ILogicalQuery> newQueries = createQueries(query, user, buildConfiguration);
-			addQueries(newQueries, new OptimizationConfiguration(
+			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries, new OptimizationConfiguration(
 					buildConfiguration));
 			reloadLog.queryAdded(query, buildConfiguration.getName(), parserID, user);
 			getLogger().info(
 					"Adding Queries. " + query + " for user "
 							+ user.getUser().getName() + " done.");
-			return newQueries;
+			Collection<Integer> createdQueries = new ArrayList<Integer>();
+			for (IPhysicalQuery p: addedQueries){
+				createdQueries.add(p.getID());
+			}
+			return createdQueries;
 		} catch (QueryParseException e) {
 			getLogger().error("QueryAddError " + e.getMessage());
 			throw e;
@@ -423,13 +439,13 @@ public class StandardExecutor extends AbstractExecutor implements
 	// -----------
 	
 	@Override
-	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
 			String buildConfigurationName) throws PlanManagementException {
 		return addQuery(logicalPlan, user, buildConfigurationName,null);
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(
+	public Integer addQuery(
 			ILogicalOperator logicalPlan,
 			ISession user,
 			String buildConfigurationName,
@@ -441,7 +457,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		return addQuery(logicalPlan, user, params);		
 	};
 
-	private IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+	private Integer addQuery(ILogicalOperator logicalPlan, ISession user,
 			QueryBuildConfiguration params) throws PlanManagementException {
 		try {
 			ArrayList<ILogicalQuery> newQueries = new ArrayList<ILogicalQuery>();
@@ -452,7 +468,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			newQueries.add(query);
 			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries,
 					new OptimizationConfiguration(params));
-			return addedQueries.iterator().next();
+			return addedQueries.iterator().next().getID();
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());
@@ -465,13 +481,13 @@ public class StandardExecutor extends AbstractExecutor implements
 	// ------------
 	
 	@Override
-	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
 			String buildConfigurationName) throws PlanManagementException {
 		return addQuery(physicalPlan, user, buildConfigurationName,null);
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String buildConfigurationName, List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
 		getLogger().info("Start adding Queries.");
@@ -479,14 +495,15 @@ public class StandardExecutor extends AbstractExecutor implements
 		try {
 			QueryBuildConfiguration queryBuildConfiguration = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 			ArrayList<IPhysicalQuery> newQueries = new ArrayList<IPhysicalQuery>();
-			IPhysicalQuery query = new PhysicalQuery(physicalPlan,
-					queryBuildConfiguration);
+			
+			IPhysicalQuery query = new PhysicalQuery(physicalPlan,queryBuildConfiguration.getDefaultRoot(), 
+					queryBuildConfiguration.getDefaultRootStrategy());
 			query.setUser(user);
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			List<IPhysicalQuery> added = addQueries(newQueries,
 					new OptimizationConfiguration(queryBuildConfiguration));
-			return added.get(0);
+			return added.get(0).getID();
 		} catch (Exception e) {
 			getLogger().error(
 					"Error adding Queries. Details: " + e.getMessage());
@@ -547,6 +564,9 @@ public class StandardExecutor extends AbstractExecutor implements
 				this.executionPlan.removeQuery(queryToRemove.getID());
 				getLogger().info("Removing Ownership " + queryToRemove.getID());
 				queryToRemove.removeOwnerschip();
+				if (queryToRemove.getLogicalQuery() != null){
+					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
+				}
 				dataDictionary.removeClosedSources();
 				dataDictionary.removeClosedSinks();
 				getLogger().debug(
@@ -581,7 +601,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#startQuery
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager#startQuery
 	 * (int)
 	 */
 	@Override
@@ -620,13 +640,13 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public List<IPhysicalQuery> startAllClosedQueries(ISession user) {
+	public Collection<Integer> startAllClosedQueries(ISession user) {
 		executionPlanLock.lock();
-		List<IPhysicalQuery> started = new LinkedList<IPhysicalQuery>();
+		List<Integer> started = new LinkedList<Integer>();
 		for (IPhysicalQuery q : executionPlan.getQueries()) {
 			if (!q.isOpened()) {
 				startQuery(q.getID(), user);
-				started.add(q);
+				started.add(q.getID());
 			}
 		}
 		executionPlanLock.unlock();
@@ -671,7 +691,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.executor.IPlanManager#stopQuery
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager#stopQuery
 	 * (int)
 	 */
 	@Override
@@ -709,8 +729,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.query.IQueryReoptimizeListener
-	 * #reoptimize(de.uniol.inf.is.odysseus.planmanagement.query.IQuery)
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener
+	 * #reoptimize(de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery)
 	 */
 	@Override
 	public void reoptimize(IPhysicalQuery sender) {
@@ -744,8 +764,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.plan.IPlanReoptimizeListener
-	 * # reoptimizeRequest(de.uniol.inf.is.odysseus.planmanagement.plan.IPlan )
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener
+	 * # reoptimizeRequest(de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlan )
 	 */
 	@Override
 	public void reoptimizeRequest(IExecutionPlan sender) {
@@ -957,6 +977,11 @@ public class StandardExecutor extends AbstractExecutor implements
 				stopQuery(query.getID(), query.getUser());
 			}
 		}
+	}
+	
+	@Override
+	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query) {
+		return queryBuildParameter.get(query);
 	}
 
 }

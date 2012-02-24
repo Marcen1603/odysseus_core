@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.rcp.wizard;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 /**
  * 

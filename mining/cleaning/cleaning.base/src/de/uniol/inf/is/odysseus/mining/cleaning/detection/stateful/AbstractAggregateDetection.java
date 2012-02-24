@@ -18,14 +18,15 @@ package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * 
@@ -80,7 +81,7 @@ public abstract class AbstractAggregateDetection implements IBinaryDetection<Rel
 			
 			String predicateString = buildPredicateStirng();
 		
-			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver);
+			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver, MEP.getInstance());
 			this.predicate = new RelationalPredicate(expression);
 		} catch (NoSuchAttributeException ex) {
 			System.err.println("Could not found the attribute \"" + ex.getAttribute() + "\" in schema ");

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.p2p.user;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class P2PUserContext {
 		

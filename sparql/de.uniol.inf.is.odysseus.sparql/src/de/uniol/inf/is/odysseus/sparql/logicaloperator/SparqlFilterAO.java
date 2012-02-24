@@ -1,10 +1,10 @@
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import com.hp.hpl.jenaUpdated.sparql.expr.Expr;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.SelectAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.SelectAO;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class SparqlFilterAO extends SelectAO {
 //

@@ -26,7 +26,7 @@ import java.util.Set;
 //import org.osgi.framework.BundleActivator;
 //import org.osgi.framework.BundleContext;
 //
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFDatatype;
 
 /**
  * 

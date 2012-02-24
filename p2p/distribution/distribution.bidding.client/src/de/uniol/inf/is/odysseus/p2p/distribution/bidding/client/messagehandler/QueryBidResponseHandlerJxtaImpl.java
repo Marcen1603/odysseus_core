@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler;
 
 import net.jxta.endpoint.Message;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.BiddingClient;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.AbstractJxtaMessageHandler;
 import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
@@ -23,7 +24,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListener;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.P2PQuery;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
 
 import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 

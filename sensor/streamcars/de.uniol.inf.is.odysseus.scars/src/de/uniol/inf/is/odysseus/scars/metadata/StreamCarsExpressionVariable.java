@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndex;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * 

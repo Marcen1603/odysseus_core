@@ -1,10 +1,10 @@
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.JoinAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.JoinAO;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchemaElement;
 //
 //public class NaturalJoinAO extends JoinAO {
 //

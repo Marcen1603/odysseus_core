@@ -16,8 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 
 public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	public ASTAllPredicate(int id) {
@@ -38,7 +38,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getTuple()
+	 * @see de.uniol.inf.is.odysseus.core.server.querytranslation.parser.IExistencePredicate#getTuple()
 	 */
 	@Override
 	public ASTTuple getTuple() {
@@ -48,7 +48,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getCompareOperator()
+	 * @see de.uniol.inf.is.odysseus.core.server.querytranslation.parser.IExistencePredicate#getCompareOperator()
 	 */
 	@Override
 	public String getCompareOperator() {
@@ -59,7 +59,7 @@ public class ASTAllPredicate extends AbstractQuantificationPredicate {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.querytranslation.parser.IExistencePredicate#getQuery()
+	 * @see de.uniol.inf.is.odysseus.core.server.querytranslation.parser.IExistencePredicate#getQuery()
 	 */
 	@Override
 	public ASTComplexSelectStatement getQuery() {

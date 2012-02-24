@@ -17,12 +17,12 @@ package de.uniol.inf.is.odysseus.benchmarker.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFMetaAttributeList;
 
 public class TestproducerPO extends
 		AbstractSource<RelationalTuple<IntervalLatencyPriority>>{

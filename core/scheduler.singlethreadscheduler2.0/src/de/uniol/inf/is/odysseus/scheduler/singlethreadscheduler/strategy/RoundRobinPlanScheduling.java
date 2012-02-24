@@ -23,10 +23,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.scheduler.ISchedulingEventListener;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 public class RoundRobinPlanScheduling implements IPartialPlanScheduling,
 		ISchedulingEventListener, IClone {

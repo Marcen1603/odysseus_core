@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.objecttracking;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 

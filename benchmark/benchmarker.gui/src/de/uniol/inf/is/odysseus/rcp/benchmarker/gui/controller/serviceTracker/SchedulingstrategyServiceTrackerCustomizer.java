@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * Diese Klasse holt sich die Schedulingstrategienservices aus Odysseus

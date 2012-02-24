@@ -22,19 +22,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.Variable;
-import de.uniol.inf.is.odysseus.mep.functions.AndOperator;
-import de.uniol.inf.is.odysseus.mep.functions.NotOperator;
-import de.uniol.inf.is.odysseus.mep.functions.OrOperator;
-import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.NotOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
+import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -581,7 +582,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 							.getArgument(1));
 				} else {
 					SDFExpression expr = new SDFExpression(curExpression,
-							expression.getAttributeResolver());
+							expression.getAttributeResolver(), MEP.getInstance());
 					result.add(new RelationalPredicate(expr));
 				}
 			}

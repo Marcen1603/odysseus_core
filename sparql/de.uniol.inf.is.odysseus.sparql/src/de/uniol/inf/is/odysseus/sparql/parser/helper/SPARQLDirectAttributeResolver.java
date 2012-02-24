@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AmgigiousAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AmgigiousAttributeException;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
 
 /**
  * This attribute resolver is the same as the DirectAttributeResolver

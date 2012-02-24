@@ -19,11 +19,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -54,7 +54,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
      */
     @Override
     public RelationalUnNestPO<T> clone() {
@@ -63,7 +63,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#getOutputMode()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
      */
     @Override
     public OutputMode getOutputMode() {
@@ -72,7 +72,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next(java.lang.Object,
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(java.lang.Object,
      * int)
      */
     @SuppressWarnings("unchecked")
@@ -111,7 +111,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
     /*
      * (non-Javadoc)
      * @see
-     * de.uniol.inf.is.odysseus.physicaloperator.ISink#processPunctuation(de.uniol.inf.is.odysseus
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#processPunctuation(de.uniol.inf.is.odysseus.core.server
      * .metadata.PointInTime, int)
      */
     @Override

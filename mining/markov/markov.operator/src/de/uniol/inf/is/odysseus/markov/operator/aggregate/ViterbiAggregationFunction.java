@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.markov.operator.aggregate;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class ViterbiAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>>{

@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.latency;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency>> extends
 		AbstractPipe<R, R> {
@@ -92,7 +92,7 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
 

@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining.classification.model;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -66,7 +66,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.IClassificationObject#getAttributes()
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassificationObject#getAttributes()
 	 */
 	@Override
 	public Object[] getAttributes() {
@@ -74,7 +74,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.IClassificationObject#getClassificationAttributeCount()
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassificationObject#getClassificationAttributeCount()
 	 */
 	@Override
 	public int getClassificationAttributeCount() {
@@ -82,7 +82,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.IClassificationObject#getClassificationAttributes()
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassificationObject#getClassificationAttributes()
 	 */
 	@Override
 	public Object[] getClassificationAttributes() {
@@ -103,7 +103,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.IClassificationObject#getClassLabel()
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassificationObject#getClassLabel()
 	 */
 	@Override
 	public Object getClassLabel() {
@@ -111,7 +111,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.IClassificationObject#setClassLabel(java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassificationObject#setClassLabel(java.lang.Object)
 	 */
 	@Override
 	public void setClassLabel(Object classLabel) {

@@ -1,10 +1,10 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.object.predicate;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.object.predicate;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.join.object.merge.LeftMergeFunction;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.AndPredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.interval.join.object.NodeListLeftMergeFunction;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.join.object.merge.LeftMergeFunction;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.AndPredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.interval.join.object.NodeListLeftMergeFunction;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
 //
 //public class SPARQLLeftJoinPredicate<M extends IClone> extends AndPredicate<NodeList<M>> {
 //	

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.ac.bid;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
  * Schnittstelle für Algorithmen, die Gebote für Teilpläne aus aktuellen Kosten,

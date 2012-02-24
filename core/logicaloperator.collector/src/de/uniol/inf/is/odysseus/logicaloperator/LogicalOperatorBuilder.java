@@ -31,12 +31,13 @@ import org.osgi.framework.BundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.GenericOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.GenericOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 
 public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
@@ -92,7 +93,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	// private void removeBundle(Bundle bundle) {
 	// Enumeration<URL> entries = bundle.findEntries(
-	// "de.uniol.inf.is.odysseus", "*.class", true);
+	// "de.uniol.inf.is.odysseus.core.server", "*.class", true);
 	//
 	// while (entries.hasMoreElements()) {
 	// URL curURL = entries.nextElement();

@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilder;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**

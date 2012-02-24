@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public abstract class AbstractViewableDatatype<T> implements IViewableDatatype<T> {
 

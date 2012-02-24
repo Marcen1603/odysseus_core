@@ -18,13 +18,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingPredicateInitializer {

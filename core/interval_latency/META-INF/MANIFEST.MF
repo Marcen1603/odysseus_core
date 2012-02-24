@@ -3,11 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Interval_latency
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval_latency
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus,
+Import-Package: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
- de.uniol.inf.is.odysseus.metadata,
  org.osgi.framework;version="1.5.0"
 Export-Package: de.uniol.inf.is.odysseus.interval_latency
 Bundle-Activator: de.uniol.inf.is.odysseus.interval_latency.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

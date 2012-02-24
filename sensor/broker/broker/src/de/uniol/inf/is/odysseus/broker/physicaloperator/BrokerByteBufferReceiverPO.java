@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractByteBufferReceiverPO;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IAccessConnection;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnection;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 
 /**
  * The BrokerByteBufferReceiverPO is a physical source which is able to receive elements of type W.
@@ -103,7 +103,7 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractByteBufferReceiverPO<
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.access.IRouterReceiver#process(java.nio.ByteBuffer)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IRouterReceiver#process(java.nio.ByteBuffer)
 	 */
 	@Override
 	public void process(ByteBuffer buffer) {
@@ -171,7 +171,7 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractByteBufferReceiverPO<
 
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#clone()
 	 */
 	@Override
 	public BrokerByteBufferReceiverPO<W> clone()  {

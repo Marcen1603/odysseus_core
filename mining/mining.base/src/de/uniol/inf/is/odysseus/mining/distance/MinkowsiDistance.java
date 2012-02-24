@@ -14,7 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.mining.distance;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * Class to calculate the minkowski distance, also referred to as Lp norm,
@@ -41,10 +41,10 @@ public class MinkowsiDistance<T extends IMetaAttribute> implements IDissimilarit
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.IDissimilarity#
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.IDissimilarity#
 	 * getDissimilarity
-	 * (de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject,
-	 * de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster)
+	 * (de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject,
+	 * de.uniol.inf.is.odysseus.core.server.datamining.clustering.AbstractCluster)
 	 */
 	@Override
 	public Double getDissimilarity(IMetricFunctionValues<T> element, IMetricFunctionValues<T> cluster) {

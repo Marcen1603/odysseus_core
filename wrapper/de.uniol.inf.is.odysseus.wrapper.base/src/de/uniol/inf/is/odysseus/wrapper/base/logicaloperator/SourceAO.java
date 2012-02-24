@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 import de.uniol.inf.is.odysseus.wrapper.base.Activator;
 
@@ -59,7 +59,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getOutputSchema
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getOutputSchema
 	 * ()
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#
 	 * getOutputSchema(int)
 	 */
 	@Override
@@ -82,7 +82,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable#setOutputSchema
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable#setOutputSchema
 	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFSchema)
 	 */
 	@Override
@@ -94,7 +94,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable#setOutputSchema
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable#setOutputSchema
 	 * (de.uniol.inf .is.odysseus.sourcedescription.sdf.schema.SDFSchema,
 	 * int)
 	 */
@@ -168,7 +168,7 @@ public class SourceAO extends AbstractLogicalOperator implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
 	 */
 	@Override
 	public SourceAO clone() {

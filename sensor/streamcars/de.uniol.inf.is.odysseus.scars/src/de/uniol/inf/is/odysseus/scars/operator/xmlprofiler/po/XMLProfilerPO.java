@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.po;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.profiler.ScarsXMLProfiler;
 
 public class XMLProfilerPO<M extends IProbabilityTimeIntervalConnectionContainerPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>>

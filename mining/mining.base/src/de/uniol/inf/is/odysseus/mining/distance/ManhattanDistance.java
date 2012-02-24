@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining.distance;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * Class to calculate the manhattan distance between an IClusteringObject and an

@@ -21,25 +21,25 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.planmanagement.ICompilerListener;
-import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
-import de.uniol.inf.is.odysseus.planmanagement.IRewrite;
-import de.uniol.inf.is.odysseus.planmanagement.ITransformation;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * The StandardCompiler is a standard implementation for {@link ICompiler}. It
@@ -168,7 +168,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -189,7 +189,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<ILogicalQuery> translateQuery(String query,
@@ -205,7 +205,7 @@ public class StandardCompiler implements ICompiler {
 
 
 //	/* (non-Javadoc)
-//	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.ILogicalOperator, de.uniol.inf.is.odysseus.TransformationConfiguration)
+//	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.core.server.ILogicalOperator, de.uniol.inf.is.odysseus.transformationConfiguration)
 //	 */
 //	@SuppressWarnings("unchecked")
 //	@Override
@@ -251,12 +251,12 @@ public class StandardCompiler implements ICompiler {
 
 		ArrayList<IPhysicalOperator> physicalPlan = this.transformation.transform(copyPlan, transformationConfiguration, caller, dd);
 		
-		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan);
+		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan, null, null);
 		return transformedQuery;
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.planmanagement.ICompiler#getSupportedQueryParser()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#getSupportedQueryParser()
 	 */
 	@Override
 	public Set<String> getSupportedQueryParser() {

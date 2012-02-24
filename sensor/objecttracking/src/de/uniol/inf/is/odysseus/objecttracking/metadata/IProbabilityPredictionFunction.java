@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.metadata;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetaAttributeContainer;
 
 /**
  * This interface will be implemented by

@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.action.output;
 
 import de.uniol.inf.is.odysseus.action.exception.AttributeParsingException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * Class representing an attribute of a datastream element.

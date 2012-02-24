@@ -7,14 +7,14 @@
 // * and open the template in the editor.
 // */
 //
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import com.hp.hpl.jenaUpdated.query.Query;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.UnaryLogicalOp;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowType;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.UnaryLogicalOp;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.WindowType;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This class represents a slice operator, that will be used for evaluating

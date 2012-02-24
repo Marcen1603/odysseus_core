@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 abstract public class P2PAO extends UnaryLogicalOp {
 

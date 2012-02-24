@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.ICSVToString;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.MetaAttributeContainer;
-import de.uniol.inf.is.odysseus.util.Primes;
+import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.util.Primes;
 
 /**
  * Klasse repraesentiert ein Tupel im relationalen Modell und dient als

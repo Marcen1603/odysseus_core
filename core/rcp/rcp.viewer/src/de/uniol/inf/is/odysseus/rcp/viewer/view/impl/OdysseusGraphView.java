@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.view.impl;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 

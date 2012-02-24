@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.IOperatorBreakListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.IOperatorBreakManagerListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak;

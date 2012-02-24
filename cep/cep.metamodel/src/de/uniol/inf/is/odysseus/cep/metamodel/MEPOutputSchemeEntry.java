@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.ParseException;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.ParseException;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
 
 public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 

@@ -3,23 +3,25 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Singlescheduling Plug-in
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.event,
- de.uniol.inf.is.odysseus.event.error,
- de.uniol.inf.is.odysseus.physicaloperator,
- de.uniol.inf.is.odysseus.planmanagement,
- de.uniol.inf.is.odysseus.planmanagement.configuration,
- de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification,
- de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event,
- de.uniol.inf.is.odysseus.planmanagement.plan,
- de.uniol.inf.is.odysseus.scheduler;version="2.0.0",
- de.uniol.inf.is.odysseus.scheduler.event,
- de.uniol.inf.is.odysseus.scheduler.exception;version="2.0.0",
- de.uniol.inf.is.odysseus.scheduler.manager;version="2.0.0",
- de.uniol.inf.is.odysseus.scheduler.strategy.factory,
- de.uniol.inf.is.odysseus.util,
+Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.event,
+ de.uniol.inf.is.odysseus.core.server.event.error,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.scheduler,
+ de.uniol.inf.is.odysseus.core.server.scheduler.event,
+ de.uniol.inf.is.odysseus.core.server.scheduler.exception,
+ de.uniol.inf.is.odysseus.core.server.scheduler.manager,
+ de.uniol.inf.is.odysseus.core.server.util,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/singleschedulermanager.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

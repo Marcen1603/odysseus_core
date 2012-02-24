@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicScheduling;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicScheduling;
 
 /**
  * Schedules only <code>IIterableSource</code>s. It will always

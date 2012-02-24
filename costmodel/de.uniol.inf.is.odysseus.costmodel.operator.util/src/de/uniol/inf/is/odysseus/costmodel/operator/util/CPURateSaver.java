@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 
 /**
  * Singleton-Klasse, welcher die Aufgabe hat, die Verarbeitungszeiten der

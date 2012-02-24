@@ -1,12 +1,12 @@
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import java.util.List;
 //
 //import com.hp.hpl.jena.graph.Node_Variable;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AccessAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AccessAO;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class RDFDatasetAO extends AccessAO {
 //

@@ -2,7 +2,7 @@
 package de.uniol.inf.is.odysseus.markov.markovql.parser;
 
 import java.util.List;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 @SuppressWarnings("all")
 
 public class MarkovQLParser/*@bgen(jjtree)*/implements MarkovQLParserTreeConstants, MarkovQLParserConstants {/*@bgen(jjtree)*/

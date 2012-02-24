@@ -14,18 +14,12 @@
  */
 package de.uniol.inf.is.odysseus.script.keyword;
 
-import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class CyclicQueryPreParserKeyword extends
 		AbstractPreParserExecutorKeyword {
@@ -64,55 +58,57 @@ public class CyclicQueryPreParserKeyword extends
 	public Object execute(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
 
-		String queries = parameter;
-		String parserID = (String) variables.get("PARSER");
-		String transCfgID = (String) variables.get("TRANSCFG");
-		
-		if (!(getExecutor() instanceof IServerExecutor))
-			throw new QueryParseException("The keyword "+CYCLICQUERY+" can only be used on server side!");
-		
-		IServerExecutor executor = (IServerExecutor) getExecutor();	
-		
-		@SuppressWarnings("unchecked")
-		List<IQueryBuildSetting<?>> transCfg = (List<IQueryBuildSetting<?>>) variables
-				.get("QueryBuildConfig");
-		if (transCfg == null) {
-			transCfg = executor.getQueryBuildConfiguration(transCfgID)
-					.getConfiguration();
-		}
-		try {
-			List<ILogicalQuery> plans = executor.translateQuery(queries,
-					parserID, caller);
+		throw new QueryParseException("The keyword "+CYCLICQUERY+" can currently not be used!");
 
-			// HACK
-			ParameterTransformationConfiguration cfg = null;
-			for (IQueryBuildSetting<?> s : transCfg) {
-				if (s instanceof ParameterTransformationConfiguration) {
-					cfg = (ParameterTransformationConfiguration) s;
-					break;
-				}
-			}
-
-			if (cfg != null) {
-				// the last plan is the complete plan
-				// so transform this one
-				ILogicalQuery query = plans.get(plans.size() - 1);
-				IPhysicalQuery newQuery = executor.transform(query,
-						cfg.getValue(), caller);
-
-				IPhysicalQuery addedQuery = executor.addQuery(
-						newQuery.getRoots(), caller, transCfgID);
-				executor.startQuery(addedQuery.getID(), caller);
-			}
-
-		} catch (QueryParseException e1) {
-			e1.printStackTrace();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		} catch (Throwable ex) {
-			// ex.printStackTrace();
-		}
-		return null;
+//		String queries = parameter;
+//		String parserID = (String) variables.get("PARSER");
+//		String transCfgID = (String) variables.get("TRANSCFG");
+//		
+//		if (!(getExecutor() instanceof IServerExecutor))
+//			throw new QueryParseException("The keyword "+CYCLICQUERY+" can only be used on server side!");
+//		
+//		IServerExecutor executor = (IServerExecutor) getExecutor();	
+//		
+//		@SuppressWarnings("unchecked")
+//		List<IQueryBuildSetting<?>> transCfg = (List<IQueryBuildSetting<?>>) variables
+//				.get("QueryBuildConfig");
+//		if (transCfg == null) {
+//			transCfg = executor.getQueryBuildConfiguration(transCfgID)
+//					.getConfiguration();
+//		}
+//		try {
+//			List<ILogicalQuery> plans = executor.translateQuery(queries,
+//					parserID, caller);
+//
+//			// HACK
+//			ParameterTransformationConfiguration cfg = null;
+//			for (IQueryBuildSetting<?> s : transCfg) {
+//				if (s instanceof ParameterTransformationConfiguration) {
+//					cfg = (ParameterTransformationConfiguration) s;
+//					break;
+//				}
+//			}
+//
+//			if (cfg != null) {
+//				// the last plan is the complete plan
+//				// so transform this one
+//				ILogicalQuery query = plans.get(plans.size() - 1);
+//				IPhysicalQuery newQuery = executor.transform(query,
+//						cfg.getValue(), caller);
+//
+//				IPhysicalQuery addedQuery = executor.addQuery(
+//						newQuery.getRoots(), caller, transCfgID);
+//				executor.startQuery(addedQuery.getID(), caller);
+//			}
+//
+//		} catch (QueryParseException e1) {
+//			e1.printStackTrace();
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//		} catch (Throwable ex) {
+//			// ex.printStackTrace();
+//		}
+//		return null;
 	}
 
 }

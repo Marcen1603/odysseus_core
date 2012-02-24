@@ -18,9 +18,9 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.AbstractSchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl.RoundRobinScheduling;
 
 

@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
  * Repräsentiert die Abschätzung eines Operators. Darunter fallen (angepasste)

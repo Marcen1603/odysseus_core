@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.priority;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 
 public class Activator implements BundleActivator {
 

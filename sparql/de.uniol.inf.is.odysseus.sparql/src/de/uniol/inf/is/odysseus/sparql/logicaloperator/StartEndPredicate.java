@@ -7,7 +7,7 @@
 // * and open the template in the editor.
 // */
 //
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import com.hp.hpl.jena.graph.Triple;
 //import com.hp.hpl.jenaUpdated.sparql.core.Var;
@@ -15,7 +15,7 @@
 //import com.hp.hpl.jenaUpdated.sparql.engine.binding.BindingMap;
 //import com.hp.hpl.jenaUpdated.sparql.expr.Expr;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
 //
 ///**
 // * This class represents a start/end predicate for a start/end predicate window.

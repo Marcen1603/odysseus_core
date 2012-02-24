@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice package. 
+ * generated in the de.uniol.inf.is.odysseus.core.server.planmanagement.executor.webserviceexecutor.webservice package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -76,7 +76,7 @@ public class ObjectFactory {
     private final static QName _GetQueryBuildConfigurationNames_QNAME = new QName("http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryBuildConfigurationNames");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: de.uniol.inf.is.odysseus.core.server.planmanagement.executor.webserviceexecutor.webservice
      * 
      */
     public ObjectFactory() {

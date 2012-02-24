@@ -3,6 +3,6 @@
    <property name="component.readableName" type="String" value="Chain (Iter)"/>
    <implementation class="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory.ChainSchedulingFactory"/>
     <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory"/>
    </service>
 </scr:component>

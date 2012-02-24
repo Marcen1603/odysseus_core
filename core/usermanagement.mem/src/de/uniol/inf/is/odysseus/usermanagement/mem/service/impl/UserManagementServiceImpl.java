@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.usermanagement.mem.service.impl;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.RoleDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.UserDAO;

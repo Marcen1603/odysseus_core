@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ListPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AbstractListAggregation;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})

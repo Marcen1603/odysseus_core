@@ -3,9 +3,10 @@ package de.uniol.inf.is.odysseus.mining.smql.visitor;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mining.AbstractParameter;
 import de.uniol.inf.is.odysseus.mining.IParameter;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTCleanPhase;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTStreamSQLWindow;
 import de.uniol.inf.is.odysseus.mining.smql.parser.Node;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 

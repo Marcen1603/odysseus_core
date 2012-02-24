@@ -14,22 +14,27 @@
  */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.ParameterDoRewrite;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -51,22 +56,27 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		return _logger;
 	}
 
+	final private Map<IPhysicalQuery, QueryBuildConfiguration> buildConfig = new HashMap<IPhysicalQuery, QueryBuildConfiguration>();;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.query.IQueryOptimizer
-	 * #optimizeQuery(de.uniol.inf.is.odysseus.planmanagement.optimization.
-	 * IQueryOptimizable, de.uniol.inf.is.odysseus.planmanagement.query.IQuery,
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer
+	 * #optimizeQuery(de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.
+	 * IQueryOptimizable, de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery,
 	 * de
 	 * .uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration
 	 * .OptimizationConfiguration, Set<String>)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IPhysicalQuery optimizeQuery(ICompiler compiler,
+	public IPhysicalQuery optimizeQuery(IServerExecutor executor,
 			ILogicalQuery query, OptimizationConfiguration parameters,
 			IDataDictionary dd) throws QueryOptimizationException {
+
+		ICompiler compiler = executor.getCompiler();
+		QueryBuildConfiguration cb = executor.getBuildConfigForQuery(query);
 
 		if (query == null) {
 			throw new QueryOptimizationException("Query has no logical plan!");
@@ -97,10 +107,14 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 
 		try {
 			// create the physical plan
-			physicalQuery = compiler.transform(query, query.getBuildParameter()
-					.getTransformationConfiguration(), query.getUser(), dd);
+
+			physicalQuery = compiler.transform(query,
+					cb.getTransformationConfiguration(), query.getUser(), dd);
+
+			buildConfig.put(physicalQuery, cb);
 
 			postTransformationInit(physicalQuery);
+			buildConfig.remove(physicalQuery);
 		} catch (Throwable e) {
 			throw new QueryOptimizationException(
 					"Exeception while initialize query.", e);
@@ -112,14 +126,16 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	@Override
 	public void postTransformationInit(IPhysicalQuery query)
 			throws QueryOptimizationException, OpenFailedException {
-
-		addBuffers(query);
+		QueryBuildConfiguration bc = buildConfig.get(query);
+		IBufferPlacementStrategy strat = bc.getBufferPlacementStrategy();
+		if (strat != null) {
+			addBuffers(query, strat);
+		}
 	}
 
-	private void addBuffers(IPhysicalQuery query)
+	private void addBuffers(IPhysicalQuery query,
+			IBufferPlacementStrategy bufferPlacementStrategy)
 			throws QueryOptimizationException {
-		IBufferPlacementStrategy bufferPlacementStrategy = query
-				.getBuildParameter().getBufferPlacementStrategy();
 
 		// add Buffer
 		if (bufferPlacementStrategy != null) {

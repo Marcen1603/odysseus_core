@@ -16,8 +16,8 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Die IStreamCarsExpression dient zur Kapsellung eines mathematischen Ausdrucks.

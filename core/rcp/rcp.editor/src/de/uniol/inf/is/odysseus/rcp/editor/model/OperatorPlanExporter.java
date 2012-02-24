@@ -41,8 +41,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
 
 public class OperatorPlanExporter implements IOperatorPlanExporter {
 

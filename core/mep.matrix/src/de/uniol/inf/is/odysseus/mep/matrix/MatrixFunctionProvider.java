@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 
 public class MatrixFunctionProvider implements IFunctionProvider{
 

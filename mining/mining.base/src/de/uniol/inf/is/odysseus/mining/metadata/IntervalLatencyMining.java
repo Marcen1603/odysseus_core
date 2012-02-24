@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.mining.metadata;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class IntervalLatencyMining extends TimeInterval implements ILatency, IMiningMetadata, Serializable {
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Odysseus Studio 2" uid="de.uniol.inf.is.odysseus.studio" id="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio" application="de.uniol.inf.is.odysseus.rcp.starter.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Odysseus Studio 2" uid="de.uniol.inf.is.odysseus.core.server.studio" id="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio" application="de.uniol.inf.is.odysseus.rcp.starter.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/de.uniol.inf.is.odysseus.rcp.starter/icons/128_128.gif"/>
@@ -73,29 +73,29 @@ http://odysseus.offis.uni-oldenburg.de/
       <plugin id="com.springsource.slf4j.bridge"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
       <plugin id="de.uniol.inf.is.jfreechart"/>
-      <plugin id="de.uniol.inf.is.odysseus"/>
-      <plugin id="de.uniol.inf.is.odysseus.args"/>
-      <plugin id="de.uniol.inf.is.odysseus.interval.transform"/>
-      <plugin id="de.uniol.inf.is.odysseus.interval_latency"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.args"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.interval.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.interval_latency"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.julproperties" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.latency"/>
       <plugin id="de.uniol.inf.is.odysseus.latency.transform"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
-      <plugin id="de.uniol.inf.is.odysseus.persistentqueries" fragment=""/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.parser.pql"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.parser.pql.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.persistentqueries" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
-      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.installstandardmetadatalistener"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.standardplanoptimizer"/>
+      <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer."/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp.editor"/>
@@ -112,15 +112,15 @@ http://odysseus.offis.uni-oldenburg.de/
       <plugin id="de.uniol.inf.is.odysseus.relational.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval.transform"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.rewrite"/>
       <plugin id="de.uniol.inf.is.odysseus.ruleengine"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
-      <plugin id="de.uniol.inf.is.odysseus.script.exector"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.script.exector"/>
       <plugin id="de.uniol.inf.is.odysseus.script.parser"/>
-      <plugin id="de.uniol.inf.is.odysseus.stdcfg" fragment=""/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.stdcfg" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>
       <plugin id="javax.transaction" fragment="true"/>
       <plugin id="log4jproperties" fragment="true"/>
@@ -180,7 +180,7 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.core.server.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p.tp.feature" version="1.0.0.qualifier"/>
    </features>
 

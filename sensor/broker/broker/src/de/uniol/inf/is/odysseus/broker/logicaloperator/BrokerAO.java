@@ -16,9 +16,9 @@ package de.uniol.inf.is.odysseus.broker.logicaloperator;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * The BrokerAO is an abstract operator for the logical algebra.
@@ -70,7 +70,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ILogicalOperator#getOutputSchema()
+	 * @see de.uniol.inf.is.odysseus.core.server.ILogicalOperator#getOutputSchema()
 	 */
 	@Override	
 	public synchronized SDFSchemaExtended getOutputSchema() {		
@@ -180,7 +180,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
 	 */
 	@Override 
 	public BrokerAO clone() {	

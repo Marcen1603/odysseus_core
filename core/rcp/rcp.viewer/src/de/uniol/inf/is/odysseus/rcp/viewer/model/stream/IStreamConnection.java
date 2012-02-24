@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.model.stream;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
 
 public interface IStreamConnection<In> {

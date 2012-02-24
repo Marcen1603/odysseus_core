@@ -1,4 +1,4 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.convert;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.convert;
 //
 //import java.util.LinkedList;
 //import java.util.List;
@@ -6,15 +6,15 @@
 //import com.hp.hpl.jena.graph.Triple;
 //import com.hp.hpl.jenaUpdated.sparql.core.Var;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.MetaTriple;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Construct;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.MetaTriple;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Construct;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This is the sparql construct operator for stream processing. It construct triples

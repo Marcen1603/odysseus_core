@@ -27,7 +27,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
-import de.uniol.inf.is.odysseus.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.AbstractEntityImpl;
 
 /**
@@ -46,8 +46,8 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
      * (non-Javadoc)
      * 
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#create
-     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#create
+     * (de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity)
      */
     @Override
     public T create(final T entity) {
@@ -70,8 +70,8 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
      * (non-Javadoc)
      * 
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#delete
-     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#delete
+     * (de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity)
      */
     @Override
     public void delete(final T entity) {
@@ -93,7 +93,7 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
      * (non-Javadoc)
      * 
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#find(java
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#find(java
      * .io.Serializable)
      */
     @Override
@@ -105,7 +105,7 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
      * (non-Javadoc)
      * 
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll()
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#findAll()
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -125,7 +125,7 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
 //     * (non-Javadoc)
 //     * 
 //     * @see
-//     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#findAll
+//     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#findAll
 //     * (java.lang.Integer, java.lang.Integer)
 //     */
 //    @SuppressWarnings("unchecked")
@@ -147,8 +147,8 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
 //     * (non-Javadoc)
 //     * 
 //     * @see
-//     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#refresh
-//     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
+//     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#refresh
+//     * (de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity)
 //     */
 //    @Override
 //    public void refresh(final T entity) {
@@ -169,8 +169,8 @@ abstract public class GenericDAOImpl<T extends AbstractEntityImpl<T>, PK extends
      * (non-Javadoc)
      * 
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.persistence.GenericDAO#update
-     * (de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity)
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.persistence.GenericDAO#update
+     * (de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity)
      */
     @Override
     public void update(T entity) {

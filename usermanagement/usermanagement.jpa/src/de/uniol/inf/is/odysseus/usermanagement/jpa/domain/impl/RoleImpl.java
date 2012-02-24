@@ -26,9 +26,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
-import de.uniol.inf.is.odysseus.usermanagement.IPrivilege;
-import de.uniol.inf.is.odysseus.usermanagement.IRole;
+import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPrivilege;
+import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -43,9 +43,9 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 
 	private static final long serialVersionUID = -3017359149581752836L;
 	/** Find all roles */
-	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.usermanagement.domain.Role.findAll";
+	public static final String NQ_FIND_ALL = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role.findAll";
 	/** Find a specific role by it's name */
-	public static final String NQ_FIND_BY_NAME = "de.uniol.inf.is.odysseus.usermanagement.domain.Role.findByName";
+	public static final String NQ_FIND_BY_NAME = "de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role.findByName";
 	/** The name of the role */
 	private String name;
 	/** The privileges of the role */
@@ -55,7 +55,7 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.Role#getName()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role#getName()
 	 */
 	@Override
 	public String getName() {
@@ -73,7 +73,7 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.usermanagement.domain.Role#getPrivileges()
+	 * @see de.uniol.inf.is.odysseus.core.server.usermanagement.domain.Role#getPrivileges()
 	 */
 	@Override
 	public List<IPrivilege> getPrivileges() {

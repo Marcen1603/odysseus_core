@@ -20,6 +20,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.Solution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTCompareOperator;
@@ -43,13 +51,8 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTS
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTString;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParserVisitor;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.SimpleNode;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * This visitor traverses the abstract syntax tree of a maple result and creates
@@ -62,6 +65,8 @@ import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 @SuppressWarnings({"rawtypes","unchecked"})
 public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 
+	static IExpressionParser expressionParser = MEP.getInstance();
+	
 	@Override
 	public Object visit(SimpleNode node, Object data) {
 		return node.childrenAccept(this, data);
@@ -218,7 +223,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 	public Object visit(ASTSimpleCondition node, Object data) {
 		String expression = node.toString();
 		SDFExpression expr = new SDFExpression(null, expression,
-				(IAttributeResolver) data);
+				(IAttributeResolver) data, expressionParser);
 		RelationalPredicate predicate = new RelationalPredicate(expr);
 
 		return predicate;
@@ -258,9 +263,9 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 		if (leftExpression.trim().equals("t")
 				|| leftExpression.trim().equals("(t)")) {
 			Solution solution = new Solution(new SDFExpression(null,
-					leftExpression.trim(), (IAttributeResolver) data),
+					leftExpression.trim(), (IAttributeResolver) data, expressionParser),
 					compareOperator, new SDFExpression(null, rightExpression,
-							(IAttributeResolver) data));
+							(IAttributeResolver) data, expressionParser));
 			return solution;
 		}
 
@@ -283,9 +288,9 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 			}
 
 			Solution solution = new Solution(new SDFExpression(null,
-					rightExpression.trim(), (IAttributeResolver) data),
+					rightExpression.trim(), (IAttributeResolver) data, expressionParser),
 					compareOperator, new SDFExpression(null, leftExpression,
-							(IAttributeResolver) data));
+							(IAttributeResolver) data, expressionParser));
 			return solution;
 		}
 	}
@@ -294,7 +299,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 	public Object visit(ASTFullSolution node, Object data) {
 		// the first child is the identifier
 		return new Solution(new SDFExpression(null, node.jjtGetChild(0)
-				.toString(), (IAttributeResolver) data), null, null);
+				.toString(), (IAttributeResolver) data, expressionParser), null, null);
 	}
 
 	@Override

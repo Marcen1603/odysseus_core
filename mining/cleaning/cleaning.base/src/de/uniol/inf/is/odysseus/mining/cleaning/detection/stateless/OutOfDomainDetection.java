@@ -15,15 +15,16 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateless;
 
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * 
@@ -50,7 +51,7 @@ public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>>
 			// build the predicate
 			String predicateString = attribute.getAttributeName() + " < " + this.min;
 			predicateString = predicateString + " || " + attribute.getAttributeName() + " > " + this.max;
-			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver);
+			SDFExpression expression = new SDFExpression("", predicateString, attributeResolver, MEP.getInstance());
 			this.predicate = new RelationalPredicate(expression);
 		} catch (NoSuchAttributeException ex) {
 			System.err.println("Could not found the attribute \"" + ex.getAttribute() + "\" in schema ");

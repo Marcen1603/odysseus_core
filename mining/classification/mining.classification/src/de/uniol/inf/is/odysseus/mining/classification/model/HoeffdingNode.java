@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * This class represents a node in a hoeffding tree. It represents leafs and
@@ -310,8 +310,8 @@ public class HoeffdingNode<T extends IMetaAttribute> implements IClassifier<T>, 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.datamining.classification.IClassifier#getClassLabel
-	 * (de.uniol.inf.is.odysseus.datamining.classification.
+	 * de.uniol.inf.is.odysseus.core.server.datamining.classification.IClassifier#getClassLabel
+	 * (de.uniol.inf.is.odysseus.core.server.datamining.classification.
 	 * RelationalClassificationObject)
 	 */
 	@Override

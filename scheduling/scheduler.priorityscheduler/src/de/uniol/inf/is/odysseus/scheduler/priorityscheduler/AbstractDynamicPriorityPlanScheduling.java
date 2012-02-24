@@ -19,9 +19,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPartialPlanScheduling {

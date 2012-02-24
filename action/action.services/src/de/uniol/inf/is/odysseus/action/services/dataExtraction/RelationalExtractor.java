@@ -15,9 +15,9 @@
 package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Extractor for relational tuples.

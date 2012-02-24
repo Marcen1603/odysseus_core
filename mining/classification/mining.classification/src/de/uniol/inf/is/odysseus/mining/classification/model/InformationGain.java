@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.mining.classification.model;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * This class represents a evaluation measure using the information gain

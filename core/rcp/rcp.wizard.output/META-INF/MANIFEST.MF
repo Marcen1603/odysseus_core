@@ -8,8 +8,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.navigator;bundle-version="3.5.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.physicaloperator,
+Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.editor.text,
  de.uniol.inf.is.odysseus.rcp.viewer.editors,
@@ -17,5 +20,4 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts,
  de.uniol.inf.is.odysseus.rcp.wizard,
  de.uniol.inf.is.odysseus.relational.base,
- de.uniol.inf.is.odysseus.script.parser,
- de.uniol.inf.is.odysseus.usermanagement
+ de.uniol.inf.is.odysseus.script.parser

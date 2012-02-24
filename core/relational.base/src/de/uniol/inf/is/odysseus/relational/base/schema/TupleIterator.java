@@ -19,12 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndex;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndex;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Iteratorklasse, um über ein oder mehrere Tuple zu iterieren. Die Tuple können

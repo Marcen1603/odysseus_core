@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sparql.physicalops.base.convert;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.base.convert;
 
 import java.io.StringReader;
 import java.util.LinkedList;
@@ -8,11 +8,11 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.Container;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.metadata.IMetadataFactory;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.MetaTriple;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.Container;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.metadata.IMetadataFactory;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.MetaTriple;
 
 /**
  * This operator convertes timestamped Strings to timestamped triples

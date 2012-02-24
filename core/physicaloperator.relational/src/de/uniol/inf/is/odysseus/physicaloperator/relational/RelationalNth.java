@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.Nth;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.NthPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Nth;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.NthPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**

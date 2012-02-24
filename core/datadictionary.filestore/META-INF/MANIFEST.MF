@@ -4,11 +4,6 @@ Bundle-Name: Data Dictionary
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.datadictionary.filestore
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.datadictionary,
- de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.planmanagement.query,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.store,
- de.uniol.inf.is.odysseus.usermanagement
 Service-Component: OSGI-INF/DataDictionary.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

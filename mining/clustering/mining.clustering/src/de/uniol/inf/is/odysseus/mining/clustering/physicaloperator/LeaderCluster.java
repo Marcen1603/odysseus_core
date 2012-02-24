@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 
@@ -43,7 +43,7 @@ public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T, 
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster#getCenter()
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.AbstractCluster#getCenter()
 	 */
 	@Override
 	public IClusteringObject<T, Object> getCenter() {
@@ -52,7 +52,7 @@ public class LeaderCluster<T extends IMetaAttribute> extends AbstractCluster<T, 
 
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster#addTuple(de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject)
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.clustering.AbstractCluster#addTuple(de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject)
 	 */
 	@Override
 	public void addTuple(IClusteringObject<T, Object> element) {

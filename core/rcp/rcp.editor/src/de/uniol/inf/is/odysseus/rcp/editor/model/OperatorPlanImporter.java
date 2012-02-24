@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -32,10 +30,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 
 public class OperatorPlanImporter implements IOperatorPlanImporter {
@@ -166,27 +160,29 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 	}
 
 	protected Operator loadOperator(Node node) {
-		int x = Integer.valueOf(getAttributeValue(node, "x"));
-		int y = Integer.valueOf(getAttributeValue(node, "y"));
-
-		String builderName = getAttributeValue(node, "builder");
-		IOperatorBuilder builder = null;
-		// FIXME: THIS IS LOCAL ... THE OTHER COULD BE REMOTE!
-		//		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor());
-		builder.setCaller(OdysseusRCPPlugIn.getActiveSession());
-
-		Map<String, Object> parameters = loadParameters(node);
-
-		Set<IParameter<?>> params = builder.getParameters();
-		for (IParameter<?> param : params) {
-			param.setInputValue(parameters.get(param.getName()));
-		}
-
-		Operator operator = new Operator(builder, builderName);
-		operator.setX(x);
-		operator.setY(y);
-
-		return operator;
+//		int x = Integer.valueOf(getAttributeValue(node, "x"));
+//	
+//		int y = Integer.valueOf(getAttributeValue(node, "y"));
+//
+//		String builderName = getAttributeValue(node, "builder");
+//		IOperatorBuilder builder = null;
+	// FIXME: THIS IS LOCAL ... THE OTHER COULD BE REMOTE!
+//		//		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor());
+////		builder.setCaller(OdysseusRCPPlugIn.getActiveSession());
+//
+//		Map<String, Object> parameters = loadParameters(node);
+//
+//		Set<IParameter<?>> params = builder.getParameters();
+//		for (IParameter<?> param : params) {
+//			param.setInputValue(parameters.get(param.getName()));
+//		}
+//
+//		Operator operator = new Operator(builder, builderName);
+//		operator.setX(x);
+//		operator.setY(y);
+//
+//		return operator;
+		return null;
 	}
 
 	private Map<String, Object> loadParameters(Node node) {

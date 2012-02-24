@@ -1,4 +1,4 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.object;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.object;
 //
 //import java.util.ArrayList;
 //import java.util.Iterator;
@@ -6,10 +6,10 @@
 //import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 //import com.hp.hpl.jena.graph.Node;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.MetaAttribute;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.MetaAttribute;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>

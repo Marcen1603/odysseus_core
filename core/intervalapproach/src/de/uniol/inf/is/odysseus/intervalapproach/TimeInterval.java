@@ -18,8 +18,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 
 // TODO: Noch mal ber die Grenzen nachdenken (Wann <=, wann <)
@@ -449,7 +449,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
 	public String csvToString(boolean withMetada) {

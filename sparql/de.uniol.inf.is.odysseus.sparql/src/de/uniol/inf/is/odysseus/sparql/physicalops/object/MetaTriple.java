@@ -1,10 +1,10 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.object;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.object;
 //
 //import com.hp.hpl.jena.graph.Node;
 //import com.hp.hpl.jena.graph.Triple;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.IMetaAttribute;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.IMetaAttribute;
 //
 //public class MetaTriple <T extends IClone> extends Triple implements IMetaAttribute<T>{
 //	

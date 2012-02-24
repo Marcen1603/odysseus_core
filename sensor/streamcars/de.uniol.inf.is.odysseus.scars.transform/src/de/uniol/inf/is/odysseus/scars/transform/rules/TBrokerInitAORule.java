@@ -16,8 +16,8 @@ package de.uniol.inf.is.odysseus.scars.transform.rules;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.scars.operator.brokerinit.ao.BrokerInitAO;
 import de.uniol.inf.is.odysseus.scars.operator.brokerinit.po.BrokerInitPO;

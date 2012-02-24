@@ -3,17 +3,16 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Simplestratfactory
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.collection,
- de.uniol.inf.is.odysseus.monitoring,
- de.uniol.inf.is.odysseus.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator,
- de.uniol.inf.is.odysseus.planmanagement.plan,
- de.uniol.inf.is.odysseus.scheduler,
- de.uniol.inf.is.odysseus.scheduler.strategy,
- de.uniol.inf.is.odysseus.scheduler.strategy.factory,
+Import-Package: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.collection,
+ de.uniol.inf.is.odysseus.core.server.monitoring,
+ de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.scheduler,
+ de.uniol.inf.is.odysseus.core.server.scheduler.strategy,
  org.osgi.service.component,
  org.slf4j
 Service-Component: OSGI-INF/BiggestQueueFactory.xml, OSGI-INF/RoundRobinIterFactory.xml, OSGI-INF/RoundRobinNoIterFactory.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core.server
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

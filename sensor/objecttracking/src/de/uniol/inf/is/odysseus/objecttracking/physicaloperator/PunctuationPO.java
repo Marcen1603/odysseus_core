@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.ILatencyProbabilityTimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 
 /**
  * This operator inserts a punctuation after each x-th element in the
@@ -49,7 +49,7 @@ public class PunctuationPO<T extends IMetaAttributeContainer<M>, M extends ILate
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return AbstractPipe.OutputMode.MODIFIED_INPUT;
 	}
 

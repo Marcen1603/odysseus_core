@@ -2,16 +2,16 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor"/>
    <service>
-       <provide interface="de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor"/>
+       <provide interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor"/>
    </service>
-   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
-   <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
-   <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
-   <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>
-   <reference bind="bindQueryBuildConfiguration" cardinality="0..n" interface="de.uniol.inf.is.odysseus.planmanagement.configuration.IQueryBuildConfiguration" name="IQueryBuildConfiguration" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
-   <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
-   <reference bind="bindAdmissionReaction" cardinality="0..1" interface="de.uniol.inf.is.odysseus.ac.IAdmissionReaction" name="IAdmissionReaction" policy="dynamic" unbind="unbindAdmissionReaction"/>
-   <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
-   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
-   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
+   <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
+   <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
+   <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>
+   <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>
+   <reference bind="bindQueryBuildConfiguration" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration" name="IQueryBuildConfiguration" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
+   <reference bind="bindAdmissionControl" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl" name="IAdmissionControl" policy="dynamic" unbind="unbindAdmissionControl"/>
+   <reference bind="bindAdmissionReaction" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction" name="IAdmissionReaction" policy="dynamic" unbind="unbindAdmissionReaction"/>
+   <reference bind="bindUserManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
+   <reference bind="bindSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement" name="ISessionManagement" policy="dynamic" unbind="unbindSessionManagement"/>
+   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
 </scr:component>

@@ -29,9 +29,9 @@ import net.jxta.socket.JxtaServerSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
 
 public class P2PSinkPO<T> extends AbstractSink<T> {
 

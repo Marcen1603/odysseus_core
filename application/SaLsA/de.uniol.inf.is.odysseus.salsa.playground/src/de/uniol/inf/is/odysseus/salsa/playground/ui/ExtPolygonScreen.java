@@ -6,9 +6,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 

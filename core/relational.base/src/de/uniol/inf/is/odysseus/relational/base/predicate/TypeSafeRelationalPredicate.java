@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	

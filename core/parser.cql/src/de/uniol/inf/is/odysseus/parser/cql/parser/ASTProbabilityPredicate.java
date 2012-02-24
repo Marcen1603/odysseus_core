@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 @SuppressWarnings("all")
 public class ASTProbabilityPredicate extends AbstractPredicate {
   private ArrayList xLow;

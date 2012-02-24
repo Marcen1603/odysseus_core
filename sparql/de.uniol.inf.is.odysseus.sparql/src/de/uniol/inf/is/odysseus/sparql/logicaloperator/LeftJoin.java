@@ -7,14 +7,14 @@
 // * and open the template in the editor.
 // */
 //
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import com.hp.hpl.jenaUpdated.sparql.expr.Expr;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.sparql.NaturalJoinAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchemaElement;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.sparql.NaturalJoinAO;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchemaElement;
 //
 //import java.util.ArrayList;
 //import java.util.List;

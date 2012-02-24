@@ -46,7 +46,7 @@ public class SimpleCalendar {
 	}
 }
 
-// package de.uniol.inf.is.odysseus.evaluation.benchmark.nexmark.generator;
+// package de.uniol.inf.is.odysseus.core.server.evaluation.benchmark.nexmark.generator;
 //
 // /*
 // NEXMark Generator -- Niagara Extension to XMark Data Generator

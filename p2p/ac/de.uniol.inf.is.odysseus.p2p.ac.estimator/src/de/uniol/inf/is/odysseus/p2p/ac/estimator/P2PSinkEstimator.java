@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p.ac.estimator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
@@ -12,7 +13,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base.P2PSinkPO;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 /**
  * Operator-Schätzer für den physischen Operator {@link P2PSinkPO}.

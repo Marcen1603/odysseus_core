@@ -9,7 +9,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak;
 import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreakManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;

@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * OSGI Service Interface for Extractors

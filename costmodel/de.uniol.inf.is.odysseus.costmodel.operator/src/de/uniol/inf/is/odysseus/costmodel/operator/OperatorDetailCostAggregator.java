@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Standardimplementierung der Aggregation der einzelnen Operatorkosten. Alle

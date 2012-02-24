@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.broker.metadata;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * The Interface IBrokerInterval is used to indicate 

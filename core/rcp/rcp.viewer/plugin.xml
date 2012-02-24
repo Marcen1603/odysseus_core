@@ -77,7 +77,7 @@
                   ifEmpty="false"
                   operator="or">
                <instanceof
-                     value="de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery">
+                     value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
                </instanceof>
             </iterate>
          </with>

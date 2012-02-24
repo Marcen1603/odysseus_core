@@ -16,8 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
-import de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class ASTAggregateFunction extends SimpleNode {
 

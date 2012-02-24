@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.costmodel.opcount;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
  * Kosten im Kostenmodell nach Operatorzahl. Die Kosten werden durch die Zahl

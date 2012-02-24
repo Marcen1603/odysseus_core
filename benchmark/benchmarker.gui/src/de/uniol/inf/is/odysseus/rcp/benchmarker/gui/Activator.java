@@ -25,16 +25,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
-import de.uniol.inf.is.odysseus.metadata.MetadataRegistry;
-import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
+import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.BufferplacementstrategyServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.QueryLanguageServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.SchedulerServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.gui.controller.serviceTracker.SchedulingstrategyServiceTrackerCustomizer;
 import de.uniol.inf.is.odysseus.rcp.benchmarker.utils.BenchmarkStoreUtil;
-import de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * The activator class controls the plug-in life cycle

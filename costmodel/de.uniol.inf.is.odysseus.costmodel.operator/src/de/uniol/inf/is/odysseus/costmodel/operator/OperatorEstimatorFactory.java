@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Singleton-Klasse, welcher alle Operatorschätzer verwaltet und anderen Klassen

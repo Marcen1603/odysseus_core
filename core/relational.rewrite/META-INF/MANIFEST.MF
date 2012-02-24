@@ -5,11 +5,17 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.relational.rewrite;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.relational.rewrite.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.planmanagement,
- de.uniol.inf.is.odysseus.planmanagement.optimization.configuration,
- de.uniol.inf.is.odysseus.predicate,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement,
+ de.uniol.inf.is.odysseus.core.predicate,
+ de.uniol.inf.is.odysseus.core.sdf,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.core.server.predicate,
+ de.uniol.inf.is.odysseus.core.server.util,
+ de.uniol.inf.is.odysseus.core.util,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.rewrite.engine,
@@ -17,9 +23,6 @@ Import-Package: de.uniol.inf.is.odysseus,
  de.uniol.inf.is.odysseus.rewrite.rule,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
- de.uniol.inf.is.odysseus.sourcedescription.sdf,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.util,
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.6"
 Service-Component: OSGI-INF/RewriteRuleService.xml

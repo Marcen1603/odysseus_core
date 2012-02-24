@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.markov.operator.logical;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
 
 public class MarkovAO extends AggregateAO{

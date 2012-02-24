@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart;
 
 public class ShowXYBarChartCommand extends AbstractCommand {

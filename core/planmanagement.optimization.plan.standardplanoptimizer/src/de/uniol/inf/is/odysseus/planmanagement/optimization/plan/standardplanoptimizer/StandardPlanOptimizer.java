@@ -19,17 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.plan.PartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.IPlanOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.PartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * StandardPlanOptimizer is the standard plan optimizer used by odysseus. 
@@ -43,9 +43,9 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.planmanagement.optimization.plan.IPlanOptimizer
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.IPlanOptimizer
 	 * #optimizePlan
-	 * (de.uniol.inf.is.odysseus.planmanagement.optimization.IPlanOptimizable,
+	 * (de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanOptimizable,
 	 * de
 	 * .uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration
 	 * . OptimizationConfiguration, java.util.List)

@@ -4,11 +4,11 @@ import java.util.Dictionary;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
+import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * Factory for builing SLA schedulers

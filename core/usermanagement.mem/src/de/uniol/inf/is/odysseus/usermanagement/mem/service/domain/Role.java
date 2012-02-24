@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.domain;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractRole;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractRole;
 
 public class Role extends AbstractRole {
 

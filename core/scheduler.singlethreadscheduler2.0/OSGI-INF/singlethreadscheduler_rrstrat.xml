@@ -3,6 +3,6 @@
    <property name="component.readableName" type="String" value="Single Thread Scheduler RR"/>
    <implementation class="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerFactoryRR"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory"/>
    </service>
 </scr:component>

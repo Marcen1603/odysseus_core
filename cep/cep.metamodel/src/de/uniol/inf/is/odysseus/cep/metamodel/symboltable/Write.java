@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.cep.metamodel.symboltable;
 
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.ElementPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 
 @SuppressWarnings({"rawtypes"})
 public class Write<R> extends AbstractAggregateFunction<R, R> {

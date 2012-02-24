@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.evaluation.ao;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperator{
 

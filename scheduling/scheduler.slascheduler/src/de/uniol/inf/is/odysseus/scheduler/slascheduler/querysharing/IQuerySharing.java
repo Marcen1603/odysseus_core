@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
 /**
  * Interface for considering the effort of query sharing

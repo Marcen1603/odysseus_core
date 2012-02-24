@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlow;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironment<T> {
 	

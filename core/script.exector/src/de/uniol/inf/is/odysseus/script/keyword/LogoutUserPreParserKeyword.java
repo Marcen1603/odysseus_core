@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.usermanagement.UserManagement;
 
 public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 

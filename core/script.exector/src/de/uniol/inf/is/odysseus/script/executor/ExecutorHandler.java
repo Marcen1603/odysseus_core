@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.script.executor;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 
 /**
  * Diese Hilfsklasse verwaltet die vom Declarative Service zur Verf�gung

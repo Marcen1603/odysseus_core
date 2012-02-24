@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 

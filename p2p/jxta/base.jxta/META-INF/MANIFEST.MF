@@ -3,14 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Jxta Implementierung
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.jxta
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus,
+Import-Package: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.event,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.logicaloperator,
  de.uniol.inf.is.odysseus.p2p,
  de.uniol.inf.is.odysseus.p2p.peer,
  de.uniol.inf.is.odysseus.p2p.peer.communication,
  de.uniol.inf.is.odysseus.p2p.queryhandling,
- de.uniol.inf.is.odysseus.physicaloperator.event,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  net.jxta.document,
  net.jxta.endpoint,

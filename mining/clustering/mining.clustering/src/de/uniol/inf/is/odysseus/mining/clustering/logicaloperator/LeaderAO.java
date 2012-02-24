@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.mining.clustering.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 
 /**
  * This class represents the logical operator for the leader algorithm.
@@ -61,7 +61,7 @@ public class LeaderAO extends AbstractClusteringAO {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#clone()
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
 	 */
 	@Override
 	public LeaderAO clone() {

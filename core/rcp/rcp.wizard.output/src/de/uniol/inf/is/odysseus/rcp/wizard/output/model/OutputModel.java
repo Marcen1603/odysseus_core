@@ -21,7 +21,7 @@ import java.util.Scanner;
 
 import org.eclipse.ui.IViewPart;
 
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 
 /**
  * 

@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.metadata;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * The IConnectionContainer contains an connection list where the rated connections between

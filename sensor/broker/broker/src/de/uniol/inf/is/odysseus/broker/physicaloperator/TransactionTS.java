@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 /**
  * The TransactionTS represents a waiting transaction, which has to be execute by the broker.
  * 

@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**

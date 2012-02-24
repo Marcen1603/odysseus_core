@@ -6,14 +6,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class SourcePO<T extends IMetaAttribute> extends
@@ -50,7 +50,7 @@ public class SourcePO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_open()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#process_open()
      */
     @Override
     protected void process_open() throws OpenFailedException {
@@ -59,7 +59,7 @@ public class SourcePO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#process_close()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#process_close()
      */
     @Override
     protected void process_close() {
@@ -69,7 +69,7 @@ public class SourcePO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#getOutputSchema()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#getOutputSchema()
      */
     @Override
     public SDFSchema getOutputSchema() {
@@ -124,7 +124,7 @@ public class SourcePO<T extends IMetaAttribute> extends
 
     /*
      * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#clone()
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#clone()
      */
     @Override
     public SourcePO<T> clone() {

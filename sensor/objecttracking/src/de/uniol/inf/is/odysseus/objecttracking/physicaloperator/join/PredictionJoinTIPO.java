@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.ITimeIntervalProbabilityPredictionFunction;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 
 
 /**
@@ -38,7 +38,7 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 		extends AbstractPipe<T, T> {
 
 	@Override
-	public de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		// TODO Auto-generated method stub
 		return null;
 	}

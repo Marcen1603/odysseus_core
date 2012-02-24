@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 

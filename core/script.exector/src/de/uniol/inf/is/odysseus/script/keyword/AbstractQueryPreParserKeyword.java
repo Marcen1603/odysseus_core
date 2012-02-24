@@ -19,18 +19,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ParserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.TransCfgPreParserKeyword;
 
@@ -88,45 +85,49 @@ public abstract class AbstractQueryPreParserKeyword extends
 				serverExec = (IServerExecutor) executor;
 			}
 
-			Collection<ILogicalQuery> queries = null;
+			Collection<Integer> queriesToStart = null;
 
 			if (addSettings != null) {
 				if (serverExec == null) {
 					throw new QueryParseException(
 							"Additional transformation parameter currently not supported on clients");
 				} else {
-					queries = serverExec.addQuery(queryText, parserID, caller,
+					queriesToStart = serverExec.addQuery(queryText, parserID, caller,
 							transCfgName,
 							addSettings);
+					// Append defaultSink to all queries
+					// and make it query root
+					if (defaultSink != null) {
+						
+						throw new QueryParseException("Default Sink Currently not supported!!");
+						
+//						for (ILogicalQuery lq : queries) {
+//							if (lq instanceof IPhysicalQuery) {
+//								IPhysicalQuery q = (IPhysicalQuery) lq;
+//								for (IPhysicalOperator p : q.getRoots()) {
+//									((ISource) p).subscribeSink(defaultSink, 0, 0,
+//											p.getOutputSchema());
+//								}
+//								q.setRoots(roots);
+//							}
+//						}
+
+					}
 				}
 			} else {
-				queries = executor.addQuery(queryText, parserID, caller,
+				executor.addQuery(queryText, parserID, caller,
 						transCfgName);
 			}
 
-			// Append defaultSink to all queries
-			// and make it query root
-			if (defaultSink != null) {
-				for (ILogicalQuery lq : queries) {
-					if (lq instanceof IPhysicalQuery) {
-						IPhysicalQuery q = (IPhysicalQuery) lq;
-						for (IPhysicalOperator p : q.getRoots()) {
-							((ISource) p).subscribeSink(defaultSink, 0, 0,
-									p.getOutputSchema());
-						}
-						q.setRoots(roots);
-					}
-				}
 
-			}
 
 			if (startQuery()) {
-				for (ILogicalQuery q : queries) {
-					executor.startQuery(q.getID(), caller);
+				for (Integer q : queriesToStart) {
+					executor.startQuery(q, caller);
 				}
 			}
 
-			return queries;
+			return queriesToStart;
 		} catch (Exception ex) {
 			throw new OdysseusScriptException("Query Execution Error", ex);
 		}

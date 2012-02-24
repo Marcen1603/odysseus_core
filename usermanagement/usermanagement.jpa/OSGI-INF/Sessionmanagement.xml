@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="SessionmanagementJPA">
    <implementation class="de.uniol.inf.is.odysseus.usermanagement.jpa.service.impl.SessionManagementServiceImpl"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.usermanagement.ISessionManagement"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement"/>
    </service>
 </scr:component>

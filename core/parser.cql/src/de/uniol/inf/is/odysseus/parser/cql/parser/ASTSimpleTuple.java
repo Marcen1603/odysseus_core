@@ -19,9 +19,9 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 @SuppressWarnings("all")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {

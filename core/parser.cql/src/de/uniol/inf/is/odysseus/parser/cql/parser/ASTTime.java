@@ -14,8 +14,8 @@ class ASTTime extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=2158d12eeed15ec659cf3ebe35d0806e (do not edit this line) */
+/* JavaCC - OriginalChecksum=3d2c74c580a6db4ee4c3a4a812d65ba7 (do not edit this line) */

@@ -6,18 +6,17 @@ Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.action.operator,
  de.uniol.inf.is.odysseus.action.output,
  de.uniol.inf.is.odysseus.action.services.actuator,
- de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.planmanagement,
- de.uniol.inf.is.odysseus.planmanagement.plan,
- de.uniol.inf.is.odysseus.planmanagement.query,
- de.uniol.inf.is.odysseus.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.logicaloperator,
- de.uniol.inf.is.odysseus.planmanagement.executor,
- de.uniol.inf.is.odysseus.console,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
  org.eclipse.osgi.framework.console;version="1.0.0",
  org.osgi.framework
 Service-Component: OSGI-INF/parser.xml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.eca.test.Activator
-Require-Bundle: de.uniol.inf.is.odysseus.core.server
+Require-Bundle: de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

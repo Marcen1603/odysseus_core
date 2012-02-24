@@ -3,7 +3,10 @@ package de.uniol.inf.is.odysseus.markov.markovql;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTEmissions;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTHiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.markovql.parser.ASTIdentifier;
@@ -23,9 +26,6 @@ import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModelDictionary;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class MarkovQLVisitor extends AbstractMarkovQLVisitor{
 

@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
 /**
  * 

@@ -14,11 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractOperatorBuilder;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.PredicateParameter;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 

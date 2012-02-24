@@ -16,13 +16,13 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 
 import java.util.Arrays;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaInfo;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIterator;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaInfo;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIterator;
 
 // some test utils
 // author: sven

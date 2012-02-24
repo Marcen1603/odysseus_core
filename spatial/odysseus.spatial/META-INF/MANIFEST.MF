@@ -9,6 +9,6 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.access,
  de.uniol.inf.is.odysseus.spatial.functions,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema
-Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+Require-Bundle: de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.core,
  java.topological.suite;bundle-version="1.0.0",
  org.osgeo.proj4j;bundle-version="1.0.0"

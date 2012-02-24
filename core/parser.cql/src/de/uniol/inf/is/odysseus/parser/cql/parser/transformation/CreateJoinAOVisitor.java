@@ -18,16 +18,26 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ExistenceAO.Type;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO.Type;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
@@ -46,17 +56,8 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 //creates join operators
 //visit returns the topmost operator of an operator tree:
@@ -162,7 +163,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		if (selectPredicate != null) {
 			// Convert Predicate to single predicate
 			String pred = selectPredicate.toString();
-			SDFExpression expression = new SDFExpression("",pred,this.attributeResolver);
+			SDFExpression expression = new SDFExpression("",pred,this.attributeResolver, MEP.getInstance());
 			RelationalPredicate relSelPred = new RelationalPredicate(expression);
 			SelectAO selectAO = new SelectAO();
 			selectAO.subscribeTo(curInputAO, curInputAO.getOutputSchema());
@@ -339,7 +340,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			tmpResolver.addAttribute((SDFAttribute) attr);
 		}
 		RelationalPredicate predicate = new RelationalPredicate(
-				new SDFExpression("", expression, tmpResolver));
+				new SDFExpression("", expression, tmpResolver, MEP.getInstance()));
 		existsAO.setPredicate(predicate);
 		return existsAO;
 	}

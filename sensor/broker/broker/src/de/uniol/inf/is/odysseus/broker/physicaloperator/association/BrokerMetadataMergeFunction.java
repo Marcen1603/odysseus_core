@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
-import de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * The BrokerMetadataMergeFunction merges two {@link ITimeInterval}. 
@@ -26,14 +26,14 @@ import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
 public class BrokerMetadataMergeFunction implements IMetadataMergeFunction<ITimeInterval>{
 			
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction#init()
+	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction#init()
 	 */
 	@Override
 	public void init() {		
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.metadata.IMetadataMergeFunction#mergeMetadata(java.lang.Object, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction#mergeMetadata(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public ITimeInterval mergeMetadata(ITimeInterval left, ITimeInterval right) {		

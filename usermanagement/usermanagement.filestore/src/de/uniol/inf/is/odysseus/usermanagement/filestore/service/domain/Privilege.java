@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractPrivilege;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractPrivilege;
 
 public class Privilege extends AbstractPrivilege {
 

@@ -14,7 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
@@ -46,7 +46,7 @@ public class KMeansCluster<T extends IMetaAttribute> extends AbstractCluster<T,O
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.datamining.clustering.AbstractCluster#getCenter
+	 * de.uniol.inf.is.odysseus.core.server.datamining.clustering.AbstractCluster#getCenter
 	 * ()
 	 */
 	@Override

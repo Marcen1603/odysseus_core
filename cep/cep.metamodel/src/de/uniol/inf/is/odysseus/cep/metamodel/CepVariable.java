@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.cep.metamodel;
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 /**
  * Cep-Varible mit Moeglichkeiten zur Konvertierung in einen String.

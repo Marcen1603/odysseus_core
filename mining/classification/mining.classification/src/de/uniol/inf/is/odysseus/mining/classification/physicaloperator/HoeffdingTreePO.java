@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.mining.classification.physicaloperator;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.classification.model.AbstractAttributeEvaluationMeasure;
 import de.uniol.inf.is.odysseus.mining.classification.model.HoeffdingNode;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
@@ -92,7 +92,7 @@ public class HoeffdingTreePO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
 	public HoeffdingTreePO<T> clone() {
@@ -102,9 +102,9 @@ public class HoeffdingTreePO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.physicaloperator.
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.physicaloperator.
 	 * AbstractClassificationPO
-	 * #processNext(de.uniol.inf.is.odysseus.datamining.classification
+	 * #processNext(de.uniol.inf.is.odysseus.core.server.datamining.classification
 	 * .RelationalClassificationObject)
 	 */
 	@Override

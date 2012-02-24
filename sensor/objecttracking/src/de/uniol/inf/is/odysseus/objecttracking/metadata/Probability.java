@@ -159,7 +159,7 @@ public class Probability implements IProbability{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
 	public String csvToString(boolean withMetada) {

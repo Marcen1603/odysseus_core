@@ -16,7 +16,8 @@ package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.ProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -24,7 +25,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTMatrixExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 @SuppressWarnings({"rawtypes"})
 public class ProbabilityPredicateVisitor implements IVisitor{

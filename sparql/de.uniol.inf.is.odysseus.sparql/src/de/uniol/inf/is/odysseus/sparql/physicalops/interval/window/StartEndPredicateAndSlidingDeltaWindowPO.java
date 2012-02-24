@@ -7,25 +7,25 @@
  * and open the template in the editor.
  */
 
-package de.uniol.inf.is.odysseus.sparql.physicalops.interval.window;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.window;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import com.hp.hpl.jena.graph.Triple;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.PointInTime;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.OrPredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.intervalbased.TotallyAfterPredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.interval.object.predicates.UpdatePredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.MetaTriple;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowAO;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.StartEndPredicate;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.StartEndPredicateWindow;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.intervalbased.TotallyAfterPredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.interval.object.predicates.UpdatePredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.MetaTriple;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.StartEndPredicate;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.StartEndPredicateWindow;
 
 /**
  * This class represents a start end predicate window reduced by 

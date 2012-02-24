@@ -16,11 +16,11 @@ package de.uniol.inf.is.odysseus.mining.classification.physicaloperator;
 
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.classification.model.IClassifier;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -69,7 +69,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.ISink#processPunctuation(de
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#processPunctuation(de
 	 * .uniol.inf.is.odysseus.metadata.PointInTime, int)
 	 */
 	@Override
@@ -82,7 +82,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#getOutputMode()
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
 	 */
 	@Override
 	public OutputMode getOutputMode() {
@@ -94,7 +94,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next(java
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(java
 	 * .lang.Object, int)
 	 */
 	@Override

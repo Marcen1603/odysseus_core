@@ -18,9 +18,9 @@ import java.util.Dictionary;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.AbstractSchedulingFactory;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.AbstractSchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinCost;
 import de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl.AuroraMinLatency;
 

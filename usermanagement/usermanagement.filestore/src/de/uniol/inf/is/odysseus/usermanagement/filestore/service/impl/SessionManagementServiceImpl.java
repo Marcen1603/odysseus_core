@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractSessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 

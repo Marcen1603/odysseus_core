@@ -20,13 +20,13 @@ import java.util.PriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.collection.IPair;
-import de.uniol.inf.is.odysseus.collection.Pair;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.IInputStreamSyncArea;
-import de.uniol.inf.is.odysseus.physicaloperator.IProcessInternal;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.collection.IPair;
+import de.uniol.inf.is.odysseus.core.server.collection.Pair;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 import java.util.ArrayList;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.distance.IDissimilarity;
 

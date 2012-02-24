@@ -16,11 +16,11 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata.factory;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 /**
  * This class generates a new IntervalProbabilityLatencyPrediction object.
  * It fills latencyStart and the covariance. The start timestamp must be

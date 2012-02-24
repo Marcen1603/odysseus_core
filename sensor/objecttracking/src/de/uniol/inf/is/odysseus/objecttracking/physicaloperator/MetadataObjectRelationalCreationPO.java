@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.physicaloperator.MetadataCreationPO;
 
 public class MetadataObjectRelationalCreationPO<M extends IProbability> extends MetadataCreationPO<M, MVRelationalTuple<M>> {
 

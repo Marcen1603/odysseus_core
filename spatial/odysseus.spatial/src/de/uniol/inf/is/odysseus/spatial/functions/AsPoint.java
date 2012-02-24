@@ -18,8 +18,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
@@ -37,7 +37,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getArity()
 	 */
 	@Override
 	public int getArity() {
@@ -50,7 +50,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getAcceptedTypes(int)
 	 */
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
@@ -67,7 +67,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getSymbol()
 	 */
 	@Override
 	public String getSymbol() {
@@ -77,7 +77,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IExpression#getValue()
 	 */
 	@Override
 	public Point getValue() {
@@ -91,7 +91,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IExpression#getReturnType()
 	 */
 	@Override
 	public SDFDatatype getReturnType() {

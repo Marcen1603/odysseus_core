@@ -25,21 +25,16 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IClientExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.NoOptimizerLoadedException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 /**
  * 
@@ -117,14 +112,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public String getInfos() {
-		if(getWebserviceServer() != null) {
-			return getWebserviceServer().getInfos(getSecurityToken()).getResponseValue();
-		}
-		return null;
-	}
-
-	@Override
 	public Collection<String> getQueryBuildConfigurationNames() {
 		if(getWebserviceServer() != null) {
 			return getWebserviceServer().getQueryBuildConfigurationNames(getSecurityToken()).getResponseValue();
@@ -148,7 +135,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public List<IPhysicalQuery> startAllClosedQueries(ISession user) {
+	public List<Integer> startAllClosedQueries(ISession user) {
 		if(getWebserviceServer() != null) {
 			// TODO: this is always null
 			getWebserviceServer().startAllClosedQueries(user.getToken());
@@ -273,15 +260,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public IPhysicalQuery transform(ILogicalQuery query,
-			TransformationConfiguration transformationConfiguration,
-			ISession caller) throws TransformationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<ILogicalQuery> addQuery(String query, String parserID,
+	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -289,14 +268,14 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -304,11 +283,11 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public List<ILogicalQuery> translateQuery(String query, String parserID,
-			ISession user) throws QueryParseException {
+	public void removeViewOrStream(String name, ISession caller) {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
+
 
 
 }

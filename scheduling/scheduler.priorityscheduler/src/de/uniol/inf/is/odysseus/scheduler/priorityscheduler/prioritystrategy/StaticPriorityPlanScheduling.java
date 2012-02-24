@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 public class StaticPriorityPlanScheduling implements IPartialPlanScheduling {
 

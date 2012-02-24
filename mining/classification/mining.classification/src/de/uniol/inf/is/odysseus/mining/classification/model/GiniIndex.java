@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.mining.classification.model;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * This class represents a evaluation measure using the gini index
@@ -45,7 +45,7 @@ public class GiniIndex<T extends IMetaAttribute> extends AbstractGainMeasure<T> 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.datamining.classification.AbstractGainMeasure
+	 * de.uniol.inf.is.odysseus.core.server.datamining.classification.AbstractGainMeasure
 	 * #getPartitionQuality(java.util.Map)
 	 */
 	@Override

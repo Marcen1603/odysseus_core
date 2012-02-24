@@ -1,7 +1,7 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.object.predicate;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.object.predicate;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.AbstractPredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.AbstractPredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
 //
 //public class NodeListEqualPredicate extends AbstractPredicate<NodeList>{
 //

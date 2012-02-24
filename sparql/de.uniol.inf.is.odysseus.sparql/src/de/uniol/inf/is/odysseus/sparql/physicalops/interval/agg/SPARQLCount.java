@@ -1,11 +1,11 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.agg;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.agg;
 //
 //import com.hp.hpl.jena.graph.Node;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.basefunctions.PartialAggregate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.functions.Count;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.functions.CountPartialAggregate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.basefunctions.PartialAggregate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.functions.Count;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.functions.CountPartialAggregate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
 //
 //public class SPARQLCount extends Count<NodeList> {
 //

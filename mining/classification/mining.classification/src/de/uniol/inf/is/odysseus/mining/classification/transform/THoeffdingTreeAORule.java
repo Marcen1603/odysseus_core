@@ -14,12 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.mining.classification.transform;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.classification.logicaloperator.HoeffdingTreeAO;
 import de.uniol.inf.is.odysseus.mining.classification.model.AbstractAttributeEvaluationMeasure;
 import de.uniol.inf.is.odysseus.mining.classification.model.GiniIndex;
 import de.uniol.inf.is.odysseus.mining.classification.model.InformationGain;
 import de.uniol.inf.is.odysseus.mining.classification.physicaloperator.HoeffdingTreePO;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

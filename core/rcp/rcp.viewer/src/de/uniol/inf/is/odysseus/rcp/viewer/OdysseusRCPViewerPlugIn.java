@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.impl.XMLSymbolConfiguration;

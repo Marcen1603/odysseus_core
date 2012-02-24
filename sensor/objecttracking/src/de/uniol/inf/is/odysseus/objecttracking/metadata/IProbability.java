@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 
 public interface IProbability extends IMetaAttribute, IClone{

@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.p2p.queryhandling;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * 

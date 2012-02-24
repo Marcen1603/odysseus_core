@@ -16,8 +16,8 @@ package de.uniol.inf.is.odysseus.priority.buffer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.BufferedPipe;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 public abstract class AbstractPrioBuffer<T extends IMetaAttributeContainer<? extends IPriority>>

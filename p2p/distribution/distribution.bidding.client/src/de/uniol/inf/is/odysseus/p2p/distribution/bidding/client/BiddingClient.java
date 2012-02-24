@@ -16,14 +16,14 @@ package de.uniol.inf.is.odysseus.p2p.distribution.bidding.client;
 
 
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.p2p.ac.bid.IP2PBidGenerator;
 import de.uniol.inf.is.odysseus.p2p.distribution.bidding.client.messagehandler.QueryBidResponseHandlerJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.AbstractDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationListener;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.QueryExecutionSpezification;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.IMessageHandler;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
 
 public class BiddingClient extends AbstractDistributionClient {
 

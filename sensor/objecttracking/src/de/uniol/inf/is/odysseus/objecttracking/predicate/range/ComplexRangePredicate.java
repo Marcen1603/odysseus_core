@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public abstract class ComplexRangePredicate<T> extends
 		AbstractRangePredicate<T> {

@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.datadictionary.mem;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.store.MemoryStore;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class DataDictionary extends AbstractDataDictionary {
 

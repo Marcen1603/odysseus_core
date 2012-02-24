@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.mining.clustering.physicaloperator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
 
 /**
  * This class represents the physical operator for the leader algorithm.
@@ -77,7 +77,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T, 
 	 * Clusters an incoming {@link IClusteringObject} using the leader
 	 * algorithm.
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mining.clustering.AbstractClusteringPO#process_next(de.uniol.inf.is.odysseus.datamining.clustering.IClusteringObject,
+	 * @see de.uniol.inf.is.odysseus.mining.clustering.AbstractClusteringPO#process_next(de.uniol.inf.is.odysseus.core.server.datamining.clustering.IClusteringObject,
 	 *      int)
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T, 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
 	public LeaderPO<T> clone() {
@@ -155,9 +155,9 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T, 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractSource#
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
 	 * process_isSemanticallyEqual
-	 * (de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator)
+	 * (de.uniol.inf.is.odysseus.core.server.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

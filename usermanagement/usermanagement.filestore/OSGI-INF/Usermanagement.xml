@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="UsermanagementFilestore">
    <implementation class="de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl.UserManagementServiceImpl"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.usermanagement.IUserManagement"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement"/>
    </service>
 </scr:component>

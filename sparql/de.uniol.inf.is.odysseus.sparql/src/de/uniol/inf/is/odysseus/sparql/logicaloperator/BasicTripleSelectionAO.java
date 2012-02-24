@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.hp.hpl.jena.graph.Triple;
 
-import de.uniol.inf.is.odysseus.logicaloperator.OutputSchemaSettable;
-import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 
 public class BasicTripleSelectionAO extends SelectAO implements
 		OutputSchemaSettable {

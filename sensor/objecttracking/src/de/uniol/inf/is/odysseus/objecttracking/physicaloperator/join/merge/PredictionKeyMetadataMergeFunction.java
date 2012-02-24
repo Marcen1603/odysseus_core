@@ -14,10 +14,10 @@
  */
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.merge;
 
-import de.uniol.inf.is.odysseus.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 /**
  * This MergeFunction merges metadata according to the prediction based stream

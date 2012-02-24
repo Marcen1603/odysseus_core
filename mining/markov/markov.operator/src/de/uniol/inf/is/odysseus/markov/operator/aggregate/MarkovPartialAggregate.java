@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.markov.operator.aggregate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 public class MarkovPartialAggregate<R> implements IPartialAggregate<R>{
 	

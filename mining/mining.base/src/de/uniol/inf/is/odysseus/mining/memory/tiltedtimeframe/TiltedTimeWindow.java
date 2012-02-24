@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe;
 
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshot;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.ITimeCapsule;

@@ -23,7 +23,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import de.uniol.inf.is.odysseus.usermanagement.IAbstractEntity;
+import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -43,7 +43,7 @@ abstract public class AbstractEntityImpl<T> implements Serializable, IAbstractEn
      * (non-Javadoc)
      *
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getId()
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity#getId()
      */
     @Override
     public String getId() {
@@ -61,7 +61,7 @@ abstract public class AbstractEntityImpl<T> implements Serializable, IAbstractEn
      * (non-Javadoc)
      *
      * @see
-     * de.uniol.inf.is.odysseus.usermanagement.domain.AbstractEntity#getVersion
+     * de.uniol.inf.is.odysseus.core.server.usermanagement.domain.AbstractEntity#getVersion
      * ()
      */
     @Override

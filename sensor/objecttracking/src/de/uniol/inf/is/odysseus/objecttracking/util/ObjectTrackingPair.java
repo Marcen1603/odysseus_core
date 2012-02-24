@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.util;
 
-import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.core.IClone;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class ObjectTrackingPair<T1 extends IClone, T2 extends IClone> implements Comparable<ObjectTrackingPair>{

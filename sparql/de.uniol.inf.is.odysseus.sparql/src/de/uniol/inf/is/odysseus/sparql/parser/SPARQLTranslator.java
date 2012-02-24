@@ -1,4 +1,4 @@
-//package de.uniol.inf.is.odysseus.sparql.parser;
+//package de.uniol.inf.is.odysseus.core.server.sparql.parser;
 //
 //import java.io.Reader;
 //import java.util.ArrayList;
@@ -33,30 +33,30 @@
 //import com.hp.hpl.jenaUpdated.sparql.syntax.TemplateGroup;
 //import com.hp.hpl.jenaUpdated.sparql.syntax.TemplateTriple;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.ExecutionMode;
-//import de.uniol.inf.is.odysseus.querytranslation.IQueryParser;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AccessAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AggregateAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.ProjectAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.SortAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.sparql.NaturalJoinAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.sparql.SparqlFilterAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.WindowType;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Ask;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Construct;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.DuplicateElimination;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.LeftJoin;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Slice;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.StartEndPredicate;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.StartEndPredicateWindow;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.TriplePatternMatching;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Union;
-//import de.uniol.inf.is.odysseus.querytranslation.parser.ParseException;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.ExecutionMode;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.IQueryParser;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AccessAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AggregateAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.ProjectAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.SortAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.sparql.NaturalJoinAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.sparql.SparqlFilterAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.WindowAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.WindowType;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Ask;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Construct;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.DuplicateElimination;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.LeftJoin;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Slice;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.StartEndPredicate;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.StartEndPredicateWindow;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.TriplePatternMatching;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Union;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.parser.ParseException;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.description.SDFSource;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //import de.uniol.inf.is.odysseus.wrapper.SourceType;
 //
 ///**

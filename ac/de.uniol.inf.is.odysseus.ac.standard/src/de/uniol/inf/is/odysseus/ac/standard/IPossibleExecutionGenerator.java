@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.ac.standard;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * Schnittstelle für alle Algorithmen, die aus einer Menge von Anfragen (mit

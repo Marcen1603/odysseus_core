@@ -6,22 +6,22 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.mep.Constant;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.EqualsOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterEqualsOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterThanOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
+import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.mep.Constant;
-import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.Variable;
-import de.uniol.inf.is.odysseus.mep.functions.EqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.GreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.GreaterThanOperator;
-import de.uniol.inf.is.odysseus.mep.functions.SmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.mep.functions.SmallerThanOperator;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicate;
-import de.uniol.inf.is.odysseus.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * Hilfsklasse, um die Selektivität zu einem gegebenen Prädikat mit gegebenen 

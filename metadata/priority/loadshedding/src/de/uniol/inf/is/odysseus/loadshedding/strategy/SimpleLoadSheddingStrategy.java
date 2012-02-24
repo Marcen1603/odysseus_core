@@ -16,9 +16,9 @@ package de.uniol.inf.is.odysseus.loadshedding.strategy;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.loadshedding.DirectLoadSheddingBuffer;
 import de.uniol.inf.is.odysseus.loadshedding.ILoadSheddingStrategy;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
 
 public class SimpleLoadSheddingStrategy implements ILoadSheddingStrategy{
 	

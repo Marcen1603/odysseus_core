@@ -16,12 +16,12 @@
 //
 //import java.util.Collection;
 //
-//import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-//import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
-//import de.uniol.inf.is.odysseus.datadictionary.WrapperPlanFactory;
-//import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
+//import de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+//import de.uniol.inf.is.odysseus.core.server.datadictionary.WrapperPlanFactory;
+//import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 //import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.access.SilabAtomicDataInputStreamPO;
-//import de.uniol.inf.is.odysseus.physicaloperator.ISource;
+//import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISource;
 //import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 //import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 //import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

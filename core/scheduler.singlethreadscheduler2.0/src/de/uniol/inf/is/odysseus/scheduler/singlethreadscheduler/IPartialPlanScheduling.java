@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
 public interface IPartialPlanScheduling extends IClone{
 

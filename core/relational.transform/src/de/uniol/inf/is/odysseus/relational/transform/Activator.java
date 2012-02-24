@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 
 public class Activator implements BundleActivator {
 

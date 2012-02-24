@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Average;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Number;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Rate;
+import de.uniol.inf.is.odysseus.core.server.sla.scope.Single;
+import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyAverageConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyNumberConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyRateConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencySingleConformance;
-import de.uniol.inf.is.odysseus.sla.SLA;
-import de.uniol.inf.is.odysseus.sla.metric.Latency;
-import de.uniol.inf.is.odysseus.sla.scope.Average;
-import de.uniol.inf.is.odysseus.sla.scope.Number;
-import de.uniol.inf.is.odysseus.sla.scope.Rate;
-import de.uniol.inf.is.odysseus.sla.scope.Single;
 
 /**
  * Factory for building sla conformance objects

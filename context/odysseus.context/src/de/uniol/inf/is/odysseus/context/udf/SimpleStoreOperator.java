@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.context.udf;
 
 import de.uniol.inf.is.odysseus.context.store.ContextStore;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 
 /**
  * 

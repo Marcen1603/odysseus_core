@@ -2,14 +2,14 @@ package de.uniol.inf.is.odysseus.datadictionary.filestore;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.datadictionary.AbstractDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.store.FileStore;
-import de.uniol.inf.is.odysseus.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.store.FileStore;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class DataDictionary extends AbstractDataDictionary {
 
@@ -37,7 +37,9 @@ public class DataDictionary extends AbstractDataDictionary {
 				OdysseusDefaults.get("queriesFilename"));
 		savedQueriesForUser = new FileStore<Integer, IUser>(
 				OdysseusDefaults.get("queriesUserFilename"));
-
+		savedQueriesBuildParameterName = new FileStore<Integer, String>(
+				OdysseusDefaults.get("queriesBuildParamFilename"));
+		
 		initDatatypes();
 	}
 

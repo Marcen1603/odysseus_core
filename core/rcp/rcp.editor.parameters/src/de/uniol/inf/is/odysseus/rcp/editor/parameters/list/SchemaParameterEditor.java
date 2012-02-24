@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.rcp.editor.parameters.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.ComboEditingColumnDefinition;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.SimpleColumnDefinition;
 import de.uniol.inf.is.odysseus.rcp.editor.parameters.editing.TextEditingColumnDefinition;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 
 public class SchemaParameterEditor extends AbstractTableButtonListParameterEditor<SDFAttribute, SDFAttribute, List<String>> {

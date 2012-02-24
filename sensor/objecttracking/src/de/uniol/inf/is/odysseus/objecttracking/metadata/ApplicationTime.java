@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class ApplicationTime implements IApplicationTime{
 
@@ -149,7 +149,7 @@ public class ApplicationTime implements IApplicationTime{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
 	public String csvToString(boolean withMetada) {

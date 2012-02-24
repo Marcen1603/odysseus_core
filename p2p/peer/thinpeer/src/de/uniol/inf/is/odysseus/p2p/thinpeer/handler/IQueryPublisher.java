@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.p2p.thinpeer.handler;
 
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IQueryPublisher {
 	

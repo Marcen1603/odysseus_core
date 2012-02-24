@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.objecttracking.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
-import de.uniol.inf.is.odysseus.metadata.ILatency;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IProbability, ILatency, IApplicationTime, ITimeInterval{
@@ -286,7 +286,7 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
 	public String csvToString(boolean withMetada) {

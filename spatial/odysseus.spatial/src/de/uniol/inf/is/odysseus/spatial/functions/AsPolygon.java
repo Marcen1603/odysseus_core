@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.spatial.functions;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
@@ -36,7 +36,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getArity()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getArity()
 	 */
 	@Override
 	public int getArity() {
@@ -49,7 +49,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getAcceptedTypes(int)
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getAcceptedTypes(int)
 	 */
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
@@ -66,7 +66,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunction#getSymbol()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunction#getSymbol()
 	 */
 	@Override
 	public String getSymbol() {
@@ -76,7 +76,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IExpression#getValue()
 	 */
 	@Override
 	public Polygon getValue() {
@@ -90,7 +90,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getReturnType()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IExpression#getReturnType()
 	 */
 	@Override
 	public SDFDatatype getReturnType() {

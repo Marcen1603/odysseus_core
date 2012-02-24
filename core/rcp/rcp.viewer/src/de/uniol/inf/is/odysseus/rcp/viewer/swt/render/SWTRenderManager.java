@@ -147,7 +147,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#resetPositions
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#resetPositions
 	 * ()
 	 */
 	@Override
@@ -217,7 +217,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#getZoomFactor()
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#getZoomFactor()
 	 */
 	@Override
 	public float getZoomFactor() {
@@ -228,7 +228,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#setZoomFactor
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#setZoomFactor
 	 * (float)
 	 */
 	@Override
@@ -249,7 +249,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#resetZoom()
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#resetZoom()
 	 */
 	@Override
 	public void resetZoom() {
@@ -288,8 +288,8 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#setDisplayedGraph
-	 * (de.uniol.inf.is.odysseus.viewer.view.graph.IGraphView)
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#setDisplayedGraph
+	 * (de.uniol.inf.is.odysseus.core.server.viewer.view.graph.IGraphView)
 	 */
 	@Override
 	public void setDisplayedGraph(IGraphView<C> graph) {
@@ -305,7 +305,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#getDisplayedGraph
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#getDisplayedGraph
 	 * ()
 	 */
 	@Override
@@ -317,7 +317,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#resetGraphOffset
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#resetGraphOffset
 	 * ()
 	 */
 	@Override
@@ -329,7 +329,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.viewer.swt.render.IRenderManager#getGraphOffset
+	 * de.uniol.inf.is.odysseus.core.server.viewer.swt.render.IRenderManager#getGraphOffset
 	 * ()
 	 */
 	@Override

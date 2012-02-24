@@ -14,11 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler;
 
-import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
+import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy.StaticPriorityPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 public class StaticPriorityPlanSchedulingFactory extends AbstractSchedulerFactory {
 

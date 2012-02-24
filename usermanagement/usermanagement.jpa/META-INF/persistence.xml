@@ -4,10 +4,10 @@
 	<persistence-unit name="odysseusPU">
 		<description>Persistence unit for Odysseus</description>
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>de.uniol.inf.is.odysseus.usermanagement.domain.impl.AbstractEntityImpl</class>
-		<class>de.uniol.inf.is.odysseus.usermanagement.domain.impl.UserImpl</class>
-		<class>de.uniol.inf.is.odysseus.usermanagement.domain.impl.PrivilegeImpl</class>
-		<class>de.uniol.inf.is.odysseus.usermanagement.domain.impl.RoleImpl</class>
+		<class>de.uniol.inf.is.odysseus.core.server.usermanagement.domain.impl.AbstractEntityImpl</class>
+		<class>de.uniol.inf.is.odysseus.core.server.usermanagement.domain.impl.UserImpl</class>
+		<class>de.uniol.inf.is.odysseus.core.server.usermanagement.domain.impl.PrivilegeImpl</class>
+		<class>de.uniol.inf.is.odysseus.core.server.usermanagement.domain.impl.RoleImpl</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:derby:odysseusDB;create=true" />

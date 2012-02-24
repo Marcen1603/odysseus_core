@@ -20,8 +20,8 @@ import javax.persistence.Persistence;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractUserManagement;
-import de.uniol.inf.is.odysseus.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.RoleImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.UserImpl;

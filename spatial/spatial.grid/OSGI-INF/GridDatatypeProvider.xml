@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.spatial.grid.GridDatatypeProvider">
    <implementation class="de.uniol.inf.is.odysseus.spatial.grid.GridDatatypeProvider"/>
-   <reference bind="bindDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.datadictionary.IDataDictionary" name="AbstractDataDictionary" policy="dynamic" unbind="unbindDictionary"/>
+   <reference bind="bindDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="AbstractDataDictionary" policy="dynamic" unbind="unbindDictionary"/>
 </scr:component>

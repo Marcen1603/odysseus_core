@@ -29,7 +29,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 
-import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler;
 
 /**
  * @author Andr� Bolles

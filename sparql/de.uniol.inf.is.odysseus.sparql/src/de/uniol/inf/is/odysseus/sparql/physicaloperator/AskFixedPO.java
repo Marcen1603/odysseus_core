@@ -1,19 +1,19 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.convert;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.convert;
 //
 //import java.util.Iterator;
 //import java.util.LinkedList;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.PointInTime;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.TimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.Container;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.IMetaAttribute;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.MetaAttribute;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.intervalbased.LiesInPredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.streaming.sparql.Ask;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.PointInTime;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.TimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.Container;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.IMetaAttribute;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.MetaAttribute;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.intervalbased.LiesInPredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.streaming.sparql.Ask;
 //
 ///**
 // * This is the ask operator for fixed windows in sparql stream processing.

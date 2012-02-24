@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.ac.updater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
 
 /**
  * Ruft regelmäßig die Admission Control auf, um die Kostenschätzungen

@@ -21,9 +21,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.ParseException;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.ParseException;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
 
 public abstract class MEPCondition extends AbstractCondition{
 

@@ -15,11 +15,11 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.transform;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatefulDetectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatefulDetectionPO;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningTimeIntervall;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

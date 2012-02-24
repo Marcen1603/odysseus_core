@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.costmodel.querycount;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.costmodel.ICostModel;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 
 /**
  * Repräsentiert das Kostenmodell nach Anfragezahl.

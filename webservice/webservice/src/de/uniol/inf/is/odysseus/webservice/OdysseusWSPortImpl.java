@@ -21,12 +21,12 @@ import de.uniol.inf.is.odysseus.action.services.actuator.ActionParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * Implementation of the generated webservice
@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.usermanagement.ISession;
                       portName = "OdysseusWSSOAP",
                       targetNamespace = "http://de.uni.ol.inf.is.odysseus/OdysseusWS/",
                       wsdlLocation = "resources/OdysseusWebService.wsdl",
-                      endpointInterface = "de.uniol.inf.is.odysseus.webservice.OdysseusWSPort")
+                      endpointInterface = "de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort")
 @SuppressWarnings({})                      
 public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static long actuatorCount = 0;
@@ -46,7 +46,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	private static IActuatorFactory actuatorFactory;	
 	
 	/* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.webservice.QueryType  query )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#createStatement(de.uniol.inf.is.odysseus.core.server.webservice.QueryType  query )*
      */
 	@Override
 	public int addStatement(QueryType query) throws StatementQueryFault    { 
@@ -54,7 +54,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 			// TODO: User einfuegen, der diese Query ausführt
         	ISession user = null;
 			Integer queryID = executor.addQuery(query.getQuery(), query.getLanguage(), user, "Standard"
-					).iterator().next().getID();
+					).iterator().next();
 			return queryID;
 		} catch (Exception e) {
 			ObjectFactory factory = new ObjectFactory();
@@ -82,7 +82,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 	}
     
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createActuator(de.uniol.inf.is.odysseus.webservice.ActuatorInformation  actuator )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#createActuator(de.uniol.inf.is.odysseus.core.server.webservice.ActuatorInformation  actuator )*
      */
     @Override
 	public java.lang.String createActuator(ActuatorInformation actuator) throws ActuatorFault    {  
@@ -108,7 +108,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     }
 
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#createSource(de.uniol.inf.is.odysseus.webservice.SourceSchema  sourceDescription )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#createSource(de.uniol.inf.is.odysseus.core.server.webservice.SourceSchema  sourceDescription )*
      */
     @Override
 	public java.lang.String createSource(SourceDescription sourceDescription) throws CreateSourceFault    { 
@@ -148,7 +148,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
 
 
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getSchema(java.lang.String  id )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#getSchema(java.lang.String  id )*
      */
     @Override
 	public de.uniol.inf.is.odysseus.webservice.SchemaArray getSchema(java.lang.String queryID) throws QueryIDFault    { 
@@ -181,7 +181,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     }
     
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeActuator(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#removeActuator(de.uniol.inf.is.odysseus.core.server.webservice.ActuatorReducedInformation  actuator )*
      */
     @Override
 	public java.lang.String removeActuator(ActuatorReducedInformation actuator) throws NonExistingActuatorFault    { 
@@ -197,7 +197,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     }
     
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#removeStatement(java.math.BigInteger  queryID )*
      */
     @Override
 	public java.lang.String removeStatement(java.math.BigInteger queryID) throws NonExistingStatementFault    {  
@@ -215,7 +215,7 @@ public class OdysseusWSPortImpl implements OdysseusWSPort {
     }
 
     /* (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.webservice.OdysseusWSPort#getActuatorSchema(de.uniol.inf.is.odysseus.webservice.ActuatorReducedInformation  actuator )*
+     * @see de.uniol.inf.is.odysseus.core.server.webservice.OdysseusWSPort#getActuatorSchema(de.uniol.inf.is.odysseus.core.server.webservice.ActuatorReducedInformation  actuator )*
      */
     @Override
 	public de.uniol.inf.is.odysseus.webservice.ActuatorSchemaArray getActuatorSchema(ActuatorReducedInformation actuator) throws ActuatorDoesNotExistFault    {

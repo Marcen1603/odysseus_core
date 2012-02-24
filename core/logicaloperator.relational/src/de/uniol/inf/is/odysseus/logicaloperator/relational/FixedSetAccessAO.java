@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 
 public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone>> extends AccessAO {
 

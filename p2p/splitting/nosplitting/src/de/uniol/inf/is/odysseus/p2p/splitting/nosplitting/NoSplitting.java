@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.p2p.splitting.nosplitting;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.AdvertisementTools;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSinkAO;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.handler.IExecutionHandler;

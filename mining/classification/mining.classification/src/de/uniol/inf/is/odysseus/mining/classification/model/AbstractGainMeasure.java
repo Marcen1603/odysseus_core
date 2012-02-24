@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.classification.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * This class is an abstract class used to calculate a quality of the
@@ -66,9 +66,9 @@ public abstract class AbstractGainMeasure<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.
 	 * AbstractAttributeEvaluationMeasure
-	 * #getEvaluationMeasure(de.uniol.inf.is.odysseus
+	 * #getEvaluationMeasure(de.uniol.inf.is.odysseus.core.server
 	 * .datamining.classification.DataCube, int)
 	 */
 	@Override

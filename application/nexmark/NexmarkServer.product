@@ -90,7 +90,7 @@ This Software contains parts of the nexmark generator
       <plugin id="com.springsource.slf4j.api"/>
       <plugin id="com.springsource.slf4j.bridge"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.julproperties" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.nexmark"/>

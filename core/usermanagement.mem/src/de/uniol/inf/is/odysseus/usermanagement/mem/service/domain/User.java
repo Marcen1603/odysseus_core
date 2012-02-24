@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.usermanagement.mem.service.domain;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractUser;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUser;
 
 public class User extends AbstractUser {
 

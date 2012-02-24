@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public interface IDataSourceObserverListener<T> {
 

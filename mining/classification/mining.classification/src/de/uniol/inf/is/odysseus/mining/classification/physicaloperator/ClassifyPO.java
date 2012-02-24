@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.mining.classification.physicaloperator;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.classification.model.IClassifier;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -44,7 +44,7 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.physicaloperator.
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.physicaloperator.
 	 * AbstractClassificationPO
 	 * #process_next(de.uniol.inf.is.odysseus.relational.base.RelationalTuple,
 	 * int)
@@ -69,9 +69,9 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.datamining.classification.physicaloperator.
+	 * @see de.uniol.inf.is.odysseus.core.server.datamining.classification.physicaloperator.
 	 * AbstractClassificationPO
-	 * #processNext(de.uniol.inf.is.odysseus.datamining.classification
+	 * #processNext(de.uniol.inf.is.odysseus.core.server.datamining.classification
 	 * .RelationalClassificationObject)
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#clone()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
 	public AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> clone() {

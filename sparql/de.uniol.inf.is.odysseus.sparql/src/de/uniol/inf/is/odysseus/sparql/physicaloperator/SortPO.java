@@ -1,24 +1,24 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.sort;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.sort;
 //
 //import java.util.Collections;
 //import java.util.Iterator;
 //import java.util.LinkedList;
 //import java.util.List;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.ITimeInterval;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.IPredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.intervalbased.OverlapsPredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.predicate.intervalbased.TotallyBeforePredicate;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.SparqlTimestampedSolutionComparator;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.SortAO;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.ITimeInterval;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.IPredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.intervalbased.OverlapsPredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.predicate.intervalbased.TotallyBeforePredicate;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.intervalbased.DefaultTISweepArea;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.SparqlTimestampedSolutionComparator;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.SortAO;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 ///**
 // * This is an operator for OrderBy in an sparql query.

@@ -16,11 +16,11 @@
 //
 //import java.util.List;
 //
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpressionParseException;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpressionParseException;
 //
 //public class SDFObjectRelationalExpression extends SDFExpression {
 //

@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.mep.IExpression;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.mep.Variable;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * 
@@ -62,14 +62,14 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 		}
 
 		try {
-			mepExpression = MEP.parse(expression);
+			mepExpression = MEP.getInstance().parse(expression);
 			Set<Variable> mepVars = mepExpression.getVariables();
 			variables = new ArrayList<IStreamCarsExpressionVariable>(mepVars.size());
 
 			for(Variable var : mepVars) {
 				variables.add(new StreamCarsExpressionVariable(this, var));
 			}
-		} catch (de.uniol.inf.is.odysseus.mep.ParseException e) {
+		} catch (de.uniol.inf.is.odysseus.core.mep.ParseException e) {
 			e.printStackTrace();
 		}
 	}

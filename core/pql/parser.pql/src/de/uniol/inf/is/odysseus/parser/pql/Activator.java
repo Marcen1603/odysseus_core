@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.parser.pql;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter.REQUIREMENT;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
 public class Activator implements BundleActivator {
 

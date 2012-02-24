@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p.ac.bid.standard;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.p2p.ac.bid.IP2PBidGenerator;
 

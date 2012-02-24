@@ -18,7 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
-import de.uniol.inf.is.odysseus.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;

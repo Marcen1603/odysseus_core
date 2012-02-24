@@ -24,22 +24,22 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.planmanagement.IInfoProvider;
-import de.uniol.inf.is.odysseus.planmanagement.configuration.AppEnv;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
-import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent;
-import de.uniol.inf.is.odysseus.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
-import de.uniol.inf.is.odysseus.scheduler.exception.NoSchedulerLoadedException;
-import de.uniol.inf.is.odysseus.scheduler.manager.AbstractSchedulerManager;
-import de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
+import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
+import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
+import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
 /**
  * Standard {@link ISchedulerManager} for odysseus. The manger uses OSGi
@@ -144,7 +144,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * 
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * setActiveScheduler(java.lang.String, java.lang.String,
-	 * de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable)
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
 	 */
 	@Override
 	public void setActiveScheduler(String schedulerToSet,
@@ -224,7 +224,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.planmanagement.IInfoProvider#getInfos()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos()
 	 */
 	@Override
 	public String getInfos() {
@@ -245,7 +245,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#isRunning()
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager#isRunning()
 	 */
 	@Override
 	public boolean isRunning() throws NoSchedulerLoadedException {
@@ -268,7 +268,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#startScheduling
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager#startScheduling
 	 * ()
 	 */
 	@Override
@@ -285,7 +285,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#stopScheduling
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager#stopScheduling
 	 * ()
 	 */
 	@Override
@@ -302,7 +302,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	 * 
 	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
 	 * refreshScheduling
-	 * (de.uniol.inf.is.odysseus.scheduler.manager.IScheduleable)
+	 * (de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
 	 */
 	@Override
 	public void refreshScheduling(IExecutionPlan execPlan)

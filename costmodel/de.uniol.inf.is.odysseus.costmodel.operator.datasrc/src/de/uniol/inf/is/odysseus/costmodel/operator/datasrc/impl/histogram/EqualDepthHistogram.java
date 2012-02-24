@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
 
 public class EqualDepthHistogram implements IHistogram {
 

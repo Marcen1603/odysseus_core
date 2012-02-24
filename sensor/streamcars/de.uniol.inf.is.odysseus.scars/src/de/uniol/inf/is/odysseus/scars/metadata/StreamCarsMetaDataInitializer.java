@@ -16,16 +16,16 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaHelper;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SchemaIndexPath;
 
 /**
  * Initializes tuple (of type {@link MVRelationalTuple}) meta data used by
@@ -61,7 +61,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 * <p>
 	 * As basis for initializing the schema given is used. It is searched for
 	 * measurement value attributes by invoking
-	 * {@link SDFDatatypes#isMeasurementValue(de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype)}
+	 * {@link SDFDatatypes#isMeasurementValue(de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype)}
 	 * for each attribute or subattribute.
 	 * <p>
 	 * Finally, each row of the covariance matrix used by

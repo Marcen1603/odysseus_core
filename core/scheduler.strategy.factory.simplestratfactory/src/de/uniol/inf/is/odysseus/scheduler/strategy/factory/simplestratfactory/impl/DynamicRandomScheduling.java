@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.i
 import java.util.LinkedList;
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.strategy.AbstractDynamicScheduling;;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicScheduling;
 
 /**
  * Selects in every run a random ISource from all sources

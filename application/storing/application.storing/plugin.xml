@@ -172,10 +172,6 @@
                visible="true">
          </separator>
          <command
-               commandId="de.uniol.inf.is.odysseus.application.storing.command2"
-               style="push">
-         </command>
-         <command
                commandId="de.uniol.inf.is.odysseus.application.storing.view.commands.DropRecordingCommand"
                icon="icons/cross.png"
                label="Drop Recording"

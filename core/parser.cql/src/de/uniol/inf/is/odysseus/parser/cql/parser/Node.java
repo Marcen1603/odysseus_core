@@ -34,6 +34,6 @@ interface Node {
   public int jjtGetNumChildren();
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=10aa1bc6d4a236a7930c55e8b88e70bf (do not edit this line) */
+/* JavaCC - OriginalChecksum=c25f1729e6fa5132fbf650ead3a4a037 (do not edit this line) */

@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
-import de.uniol.inf.is.odysseus.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * Used to create IntervalPriorty metadata, if a ITimeInterval is already available inside

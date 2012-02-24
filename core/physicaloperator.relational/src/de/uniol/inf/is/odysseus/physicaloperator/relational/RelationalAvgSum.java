@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSum;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSum;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})

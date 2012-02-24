@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.ac.reaction.LeastLossReaction">
    <implementation class="de.uniol.inf.is.odysseus.ac.reaction.LeastLossReaction"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.ac.IAdmissionReaction"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction"/>
    </service>
 </scr:component>

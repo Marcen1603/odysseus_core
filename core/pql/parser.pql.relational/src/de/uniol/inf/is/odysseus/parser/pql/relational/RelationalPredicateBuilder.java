@@ -14,18 +14,19 @@
  */
 package de.uniol.inf.is.odysseus.parser.pql.relational;
 
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IPredicateBuilder;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
 
 public class RelationalPredicateBuilder implements IPredicateBuilder {
 
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,
 			String predicate) {
-		SDFExpression expression = new SDFExpression("", predicate, resolver);
+		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance());
 		RelationalPredicate pred = new RelationalPredicate(expression);
 		return pred;
 	}

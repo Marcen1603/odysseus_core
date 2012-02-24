@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
-import de.uniol.inf.is.odysseus.store.MemoryStore;
-import de.uniol.inf.is.odysseus.store.StoreException;
-import de.uniol.inf.is.odysseus.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.server.store.StoreException;
+import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
 /**
  * 

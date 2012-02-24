@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.opbreak;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.IClone;
-import de.uniol.inf.is.odysseus.physicaloperator.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.BufferedPipe;
 
 public class BufferedPipeWithListener<T extends IClone> extends BufferedPipe<T> {
 

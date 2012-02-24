@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.p2p.peer.execution.handler;
 
-import de.uniol.inf.is.odysseus.IClone;
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.peer.execution.listener.IExecutionListenerCallback;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;

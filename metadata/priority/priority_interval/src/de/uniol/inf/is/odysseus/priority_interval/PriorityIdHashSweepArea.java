@@ -20,12 +20,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.util.LinkedMultiHashMap;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.util.LinkedMultiHashMap;
 
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends RelationalTuple<K>>
 		implements ITimeIntervalSweepArea<T> {
@@ -87,7 +87,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> extractElements(
 			T element,
-			de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
 		return extractElementsBefore(element.getMetadata().getStart());
 	}
 
@@ -131,7 +131,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public void purgeElements(
 			T element,
-			de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
 		if (element.getMetadata().getPriority() == 0) {
 			purgeElementsBefore(element.getMetadata().getStart());
 		}
@@ -141,7 +141,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> query(
 			T element,
-			de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
 		Number pos = element.getAttribute(externalIdPosition);
 		Collection<T> idFits = this.elements.get(pos.longValue());
 
@@ -163,7 +163,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> queryCopy(
 			T element,
-			de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
 		return query(element, order);
 	}
 

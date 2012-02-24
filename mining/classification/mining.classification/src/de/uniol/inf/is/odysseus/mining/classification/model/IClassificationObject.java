@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining.classification.model;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 /**
  * This interface defines a classification object used to wrap tuples for classification operators
  * 

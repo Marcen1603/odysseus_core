@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webs
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
-import de.uniol.inf.is.odysseus.util.IGraphNodeVisitor;
 
 /**
  * 

@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor;
 
-import de.uniol.inf.is.odysseus.monitoring.physicalplan.ProcessCallsMonitor;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.IPostOptimizationAction;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.ProcessCallsMonitor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class InstallProcessCallsMonitor implements IPostOptimizationAction {
 

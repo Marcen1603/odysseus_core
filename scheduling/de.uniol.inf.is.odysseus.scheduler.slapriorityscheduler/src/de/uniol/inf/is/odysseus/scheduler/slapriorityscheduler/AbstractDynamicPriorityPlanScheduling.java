@@ -25,7 +25,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -36,9 +39,6 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFa
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.OverheadMeasurement;
-import de.uniol.inf.is.odysseus.scheduler.strategy.CurrentPlanPriorityComperator;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.sla.SLA;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPartialPlanScheduling, ISLAViolationEventDistributor {

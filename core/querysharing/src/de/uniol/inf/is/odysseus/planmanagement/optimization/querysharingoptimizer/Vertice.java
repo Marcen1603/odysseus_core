@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.querysharingoptimizer;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class Vertice {
 	private IPhysicalOperator po;

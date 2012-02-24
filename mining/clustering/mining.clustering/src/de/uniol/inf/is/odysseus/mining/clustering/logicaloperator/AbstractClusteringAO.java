@@ -19,13 +19,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.mining.NonNumericAttributeException;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * This class is a super class for logical clustering operators. It specifies
@@ -127,7 +127,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator#getOutputSchema
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getOutputSchema
 	 * ()
 	 */
 	@Override
@@ -144,7 +144,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator#
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#
 	 * getOutputSchema(int)
 	 */
 	@Override

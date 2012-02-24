@@ -16,8 +16,8 @@ package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public interface IHasRangePredicates {	

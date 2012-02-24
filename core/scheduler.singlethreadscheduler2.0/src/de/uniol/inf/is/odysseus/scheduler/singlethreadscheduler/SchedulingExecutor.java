@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.server.scheduler.exception.SchedulingException;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 
 class SchedulingExecutor extends Thread {
 

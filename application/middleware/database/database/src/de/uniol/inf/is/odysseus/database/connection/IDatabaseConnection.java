@@ -19,7 +19,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * 

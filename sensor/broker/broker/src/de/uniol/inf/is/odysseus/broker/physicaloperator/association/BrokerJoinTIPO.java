@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.association;
 
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.physicaloperator.ISweepArea.Order;
 
 
 /**
@@ -44,7 +44,7 @@ public class BrokerJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeCon
 	private int otherport = 0;
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer, int)
+	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer, int)
 	 */
 	@Override
 	protected void process_next(T object, int port) {	

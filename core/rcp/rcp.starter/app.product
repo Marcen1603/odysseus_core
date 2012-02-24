@@ -37,19 +37,19 @@
       <plugin id="com.springsource.slf4j.bridge"/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
       <plugin id="de.uniol.inf.is.jfreechart"/>
-      <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server"/>
       <plugin id="de.uniol.inf.is.odysseus.database"/>
       <plugin id="de.uniol.inf.is.odysseus.database.cql" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.derby"/>
-      <plugin id="de.uniol.inf.is.odysseus.interval.transform"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.derby"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.interval.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.intervalapproach"/>
       <plugin id="de.uniol.inf.is.odysseus.julproperties" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
-      <plugin id="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.logicaloperator.builder"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.logicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.parser.cql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql"/>
-      <plugin id="de.uniol.inf.is.odysseus.parser.pql.relational"/>
-      <plugin id="de.uniol.inf.is.odysseus.persistentqueries"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.parser.pql"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.parser.pql.relational"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.persistentqueries"/>
       <plugin id="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
       <plugin id="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
@@ -68,14 +68,14 @@
       <plugin id="de.uniol.inf.is.odysseus.relational.transform"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval"/>
       <plugin id="de.uniol.inf.is.odysseus.relational_interval.transform"/>
-      <plugin id="de.uniol.inf.is.odysseus.rewrite"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.rewrite"/>
       <plugin id="de.uniol.inf.is.odysseus.ruleengine"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler"/>
       <plugin id="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
       <plugin id="de.uniol.inf.is.odysseus.script.parser"/>
-      <plugin id="de.uniol.inf.is.odysseus.storing"/>
-      <plugin id="de.uniol.inf.is.odysseus.storing.cql" fragment="true"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.storing"/>
+      <plugin id="de.uniol.inf.is.odysseus.core.server.storing.cql" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.transform"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.transaction" fragment="true"/>

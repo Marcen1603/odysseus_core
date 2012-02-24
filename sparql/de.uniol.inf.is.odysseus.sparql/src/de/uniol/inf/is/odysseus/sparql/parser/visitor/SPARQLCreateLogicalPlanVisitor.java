@@ -6,31 +6,33 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.logicaloperator.FileSinkAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.LeftJoinAO;
-import de.uniol.inf.is.odysseus.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.relational.base.predicate.TypeSafeRelationalPredicate;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAdditiveExpression;
@@ -129,7 +131,6 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SparqlParserHelper;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
 /**
@@ -338,8 +339,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							}
 						}
 						
-						de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction physAggFunc = 
-							new de.uniol.inf.is.odysseus.physicaloperator.AggregateFunction(agg.getAggFunc().toString());
+						de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction physAggFunc = 
+							new de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction(agg.getAggFunc().toString());
 						aggAO.addAggregation(aggAttr, physAggFunc, outAttribute(aggAttr.getAttributeName(), agg.getAggFunc()));
 					}
 				}
@@ -886,7 +887,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		if(filterConstraint != null){
 			SelectAO select = new SelectAO();
 			IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(topOfGroupGraphPattern.getOutputSchema());
-			SDFExpression expr = new SDFExpression(null, filterConstraint.toString(), attrRes);
+			SDFExpression expr = new SDFExpression(null, filterConstraint.toString(), attrRes, MEP.getInstance());
 			IPredicate selectPred = new TypeSafeRelationalPredicate(expr);
 			select.setPredicate(selectPred);
 			select.subscribeTo(topOfGroupGraphPattern, topOfGroupGraphPattern.getOutputSchema());
@@ -1387,7 +1388,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 //			exprs.add(expr);
 		}
 		
-		SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
+		SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 		
 		IPredicate retval = new TypeSafeRelationalPredicate(expr);
 		

@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.loadshedding;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 
 /**
  * Encapsulates the functionality to calculate the current system resource capacity and

@@ -1,12 +1,12 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.object;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.object;
 //
 //import java.util.Comparator;
 //
 //import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 //import com.hp.hpl.jena.graph.Node;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
 //
 ///**
 // * This is comparator to be able to sort a List<List<Node>> in the way

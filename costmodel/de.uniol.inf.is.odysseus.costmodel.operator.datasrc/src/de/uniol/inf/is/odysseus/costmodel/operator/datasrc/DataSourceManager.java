@@ -17,12 +17,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.AttributeObserver;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.DataSourceObserverSink;
-import de.uniol.inf.is.odysseus.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * Verwaltet die Beobachtung der Datenquellen. Dabei handelt es sich um eine

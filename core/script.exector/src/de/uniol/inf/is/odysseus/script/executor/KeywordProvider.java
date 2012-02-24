@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.keyword.CyclicQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ExecuteQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
@@ -24,7 +23,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(AddQueryPreParserKeyword.QUERY, AddQueryPreParserKeyword.class);
 		keywords.put(AddQueryPreParserKeyword.ADDQUERY, AddQueryPreParserKeyword.class);
 		keywords.put(ExecuteQueryPreParserKeyword.RUNQUERY, ExecuteQueryPreParserKeyword.class);
-		keywords.put(CyclicQueryPreParserKeyword.CYCLICQUERY, CyclicQueryPreParserKeyword.class);
+	//	keywords.put(CyclicQueryPreParserKeyword.CYCLICQUERY, CyclicQueryPreParserKeyword.class);
 		keywords.put(StartAllClosedQueriesPreParserKeyword.STARTQUERIES, StartAllClosedQueriesPreParserKeyword.class);
 		keywords.put(SchedulerPreParserKeyword.SCHEDULER, SchedulerPreParserKeyword.class);
 		return keywords;

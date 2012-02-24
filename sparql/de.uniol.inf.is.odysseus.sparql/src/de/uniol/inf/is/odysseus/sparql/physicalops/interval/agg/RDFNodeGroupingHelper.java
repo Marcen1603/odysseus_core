@@ -1,21 +1,21 @@
-//package de.uniol.inf.is.odysseus.sparql.physicalops.interval.agg;
+//package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.agg;
 //
 //import java.util.HashMap;
 //import java.util.List;
 //import java.util.Map;
 //import java.util.Map.Entry;
 //
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.GroupingHelper;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.basefunctions.Evaluator;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.basefunctions.Initializer;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.agg.basefunctions.Merger;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.FESortedPair;
-//import de.uniol.inf.is.odysseus.queryexecution.po.base.object.container.PairMap;
-//import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AggregateAO;
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.AggregateFunction;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-//import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.GroupingHelper;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.basefunctions.Evaluator;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.basefunctions.Initializer;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.agg.basefunctions.Merger;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.FESortedPair;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.container.PairMap;
+//import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AggregateAO;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AggregateFunction;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+//import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 //
 //public class RDFNodeGroupingHelper extends GroupingHelper<NodeList> {
 //

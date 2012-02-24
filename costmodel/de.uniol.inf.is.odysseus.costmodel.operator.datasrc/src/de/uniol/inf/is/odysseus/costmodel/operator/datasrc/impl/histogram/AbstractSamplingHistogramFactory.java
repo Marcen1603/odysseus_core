@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 // simple sampling
 public abstract class AbstractSamplingHistogramFactory implements IHistogramFactory {

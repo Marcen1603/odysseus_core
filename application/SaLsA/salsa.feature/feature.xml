@@ -18,7 +18,8 @@
    </license>
 
    <requires>
-      <import plugin="de.uniol.inf.is.odysseus"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="org.junit"/>
       <import plugin="java.topological.suite"/>
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;

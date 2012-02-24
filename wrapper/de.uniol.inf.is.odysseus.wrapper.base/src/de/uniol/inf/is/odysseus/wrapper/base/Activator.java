@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.base;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 
 public class Activator implements BundleActivator {
 

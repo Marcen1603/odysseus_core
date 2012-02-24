@@ -7,14 +7,14 @@
 // * and open the template in the editor.
 // */
 //
-//package de.uniol.inf.is.odysseus.sparql.logicaloperator;
+//package de.uniol.inf.is.odysseus.core.server.sparql.logicaloperator;
 //
 //import java.util.ArrayList;
 //import java.util.List;
 //
 //import com.hp.hpl.jena.graph.Triple;
 //
-//import de.uniol.inf.is.odysseus.querytranslation.logicalops.UnaryLogicalOp;
+//import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.UnaryLogicalOp;
 //
 ///**
 // * This class represents a construct operator. It owns a list of triples

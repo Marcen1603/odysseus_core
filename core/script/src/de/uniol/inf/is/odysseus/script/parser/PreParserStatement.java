@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 public class PreParserStatement {

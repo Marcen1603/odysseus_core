@@ -16,8 +16,8 @@
 
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefaultVisitor;
-import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
 
 public class ASTAnyPredicate extends AbstractQuantificationPredicate {
 	public ASTAnyPredicate(int id) {

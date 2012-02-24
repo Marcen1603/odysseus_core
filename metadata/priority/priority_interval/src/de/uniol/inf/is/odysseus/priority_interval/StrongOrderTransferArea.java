@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
 
 public class StrongOrderTransferArea<K extends ITimeIntervalPriority, R extends IMetaAttributeContainer<K>, W extends IMetaAttributeContainer<K>>
 		extends TITransferArea<R,W> {

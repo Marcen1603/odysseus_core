@@ -14,10 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.mining.clustering.transform;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.clustering.logicaloperator.SimpleSinglePassKMeansAO;
 import de.uniol.inf.is.odysseus.mining.clustering.physicaloperator.SimpleSinglePassKMeansPO;
 import de.uniol.inf.is.odysseus.mining.distance.EuclidianDistance;
-import de.uniol.inf.is.odysseus.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

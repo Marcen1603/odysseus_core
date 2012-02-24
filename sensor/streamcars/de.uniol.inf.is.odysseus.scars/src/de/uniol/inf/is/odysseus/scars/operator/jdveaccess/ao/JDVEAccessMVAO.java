@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
 public class JDVEAccessMVAO extends AccessAO {
 	

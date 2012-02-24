@@ -16,10 +16,10 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.scheduler.AbstractSchedulerFactory;
-import de.uniol.inf.is.odysseus.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
+import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy.RoundRobinPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * Factory for creating {@link SingleThreadSchedulerWithStrategy} instances.
@@ -44,7 +44,7 @@ public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.scheduler.ISchedulerFactory#createScheduler(de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory)
+	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory#createScheduler(de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory)
 	 */
 	@Override
 	public IScheduler createScheduler(

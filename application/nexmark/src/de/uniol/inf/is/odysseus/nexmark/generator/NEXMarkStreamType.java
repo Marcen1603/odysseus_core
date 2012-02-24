@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public enum NEXMarkStreamType {
 	PERSON("person"), AUCTION("auction"), BID("bid"), CATEGORY("category");

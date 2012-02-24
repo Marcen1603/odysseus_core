@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
 
 /**
  * Interface for sla conformance objects

@@ -22,17 +22,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.event.error.ErrorEvent;
-import de.uniol.inf.is.odysseus.event.error.ExceptionEventType;
-import de.uniol.inf.is.odysseus.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IPartialPlan;
-import de.uniol.inf.is.odysseus.scheduler.AbstractScheduler;
-import de.uniol.inf.is.odysseus.scheduler.exception.SchedulingException;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.factory.ISchedulingFactory;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
+import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
+import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractScheduler;
+import de.uniol.inf.is.odysseus.core.server.scheduler.exception.SchedulingException;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
  * SingleThreadScheduler is a scheduler which uses two threads for execution the
@@ -104,7 +104,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.AbstractScheduler#stopScheduling()
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.AbstractScheduler#stopScheduling()
 	 */
 	@Override
 	public synchronized void stopScheduling() {
@@ -123,7 +123,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setPartialPlans(java.util
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setPartialPlans(java.util
 	 * .List)
 	 */
 	@Override
@@ -156,7 +156,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.scheduler.IScheduler#setSources(java.util.List)
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setSources(java.util.List)
 	 */
 	@Override
 	protected synchronized void process_setLeafSources(

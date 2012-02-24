@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
  * 

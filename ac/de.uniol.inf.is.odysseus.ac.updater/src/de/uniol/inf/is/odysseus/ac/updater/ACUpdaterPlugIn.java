@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.ac.updater;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
 
 public class ACUpdaterPlugIn implements BundleActivator {
 

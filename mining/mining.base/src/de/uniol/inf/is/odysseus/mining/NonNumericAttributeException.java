@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * This exception occurs if an attribute's data type is not numeric.

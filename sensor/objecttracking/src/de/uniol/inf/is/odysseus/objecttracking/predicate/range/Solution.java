@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range;
 
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 
 /**
  * This class is the default implemention of the ISolution interface

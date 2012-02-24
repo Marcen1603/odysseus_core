@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.model.stream;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 
 public interface IStreamElementListener<In> {

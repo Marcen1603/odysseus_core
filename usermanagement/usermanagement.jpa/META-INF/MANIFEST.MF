@@ -4,13 +4,15 @@ Bundle-Name: Usermanagement
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.usermanagement.jpa;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
- de.uniol.inf.is.odysseus.datadictionary,
- de.uniol.inf.is.odysseus.planmanagement.executor,
- de.uniol.inf.is.odysseus.usermanagement,
+Import-Package: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
  javax.persistence;jpa="2.0";version="1.1.0",
  org.apache.derby.jdbc;version="10.5.1.1",
  org.osgi.service.component;version="1.1.0",
  org.slf4j;version="1.5.6"
 JPA-PersistenceUnits: odysseusPU
 Service-Component: OSGI-INF/Usermanagement.xml, OSGI-INF/Sessionmanagement.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

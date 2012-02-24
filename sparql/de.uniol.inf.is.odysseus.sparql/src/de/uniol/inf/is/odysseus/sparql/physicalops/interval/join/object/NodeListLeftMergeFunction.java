@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.sparql.physicalops.interval.join.object;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.interval.join.object;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.join.object.merge.IMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.join.object.merge.LeftMergeFunction;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.predicate.NodeListCompatiblePredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.predicate.SPARQLFilterPredicate;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.join.object.merge.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.join.object.merge.LeftMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.predicate.NodeListCompatiblePredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.predicate.SPARQLFilterPredicate;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 
 public class NodeListLeftMergeFunction<M extends IClone> extends LeftMergeFunction<NodeList<M>> {
 	

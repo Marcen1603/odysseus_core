@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.mining.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 public class KnowledgeDiscoveryProcess {
 

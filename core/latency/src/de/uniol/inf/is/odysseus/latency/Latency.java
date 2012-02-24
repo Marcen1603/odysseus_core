@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.latency;
 
-import de.uniol.inf.is.odysseus.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 public class Latency implements ILatency{
 
@@ -86,7 +86,7 @@ public class Latency implements ILatency{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.ICSVToString#csvToString(boolean)
+	 * @see de.uniol.inf.is.odysseus.core.server.ICSVToString#csvToString(boolean)
 	 */
 	@Override
 	public String csvToString(boolean withMetada) {

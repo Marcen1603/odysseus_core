@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.mining.classification.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 /**
  * This class represents an abstract logical operator to be used for classifier

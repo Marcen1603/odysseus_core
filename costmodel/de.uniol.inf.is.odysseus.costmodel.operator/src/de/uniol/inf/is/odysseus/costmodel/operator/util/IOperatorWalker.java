@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.costmodel.operator.util;
 
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 /**
  * Visitor-Klasse, welcher mit {@link GraphWalker} eingesetzt wird.

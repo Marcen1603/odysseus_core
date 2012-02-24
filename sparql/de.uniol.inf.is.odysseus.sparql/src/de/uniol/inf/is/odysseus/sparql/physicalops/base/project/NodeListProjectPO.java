@@ -1,12 +1,12 @@
-package de.uniol.inf.is.odysseus.sparql.physicalops.base.project;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.base.project;
 
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.ProjectAO;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 
 public class NodeListProjectPO<T extends IClone> extends AbstractPipe<NodeList<T>, NodeList<T>> {
 

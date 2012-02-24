@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.parameter;
 
-import de.uniol.inf.is.odysseus.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.AbstractParameter;
-import de.uniol.inf.is.odysseus.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.views.IParameterView;
 
 public abstract class AbstractParameterEditor implements IParameterEditor {

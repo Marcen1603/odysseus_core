@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.mining.memory;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public interface ITimeCapsule<T extends ISnapshot> {
 

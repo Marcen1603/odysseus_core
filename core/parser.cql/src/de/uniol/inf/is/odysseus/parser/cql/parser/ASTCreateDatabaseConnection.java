@@ -14,8 +14,8 @@ class ASTCreateDatabaseConnection extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=660451f8c60f564bd23a045e49b9cb28 (do not edit this line) */
+/* JavaCC - OriginalChecksum=fc953ae8bd257f10b5e6917a4d11d476 (do not edit this line) */

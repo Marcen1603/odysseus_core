@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import de.uniol.inf.is.odysseus.core.server.sla.factories.PenaltyFactory;
+import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
+import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.CostFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.PriorityFunctionFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.StarvationFreedomFactory;
-import de.uniol.inf.is.odysseus.sla.factories.PenaltyFactory;
-import de.uniol.inf.is.odysseus.sla.factories.ScopeFactory;
-import de.uniol.inf.is.odysseus.sla.unit.TimeUnit;
 
 public class GenQueries {
 

@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.cep.epa.eventreading.relational;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> {
 

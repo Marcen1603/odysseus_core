@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.spatial;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometry;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometryCollection;
 import de.uniol.inf.is.odysseus.spatial.functions.AsLineString;

@@ -19,14 +19,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler;
-import de.uniol.inf.is.odysseus.physicaloperator.access.SetDataHandler;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SetDataHandler;
 
 /**
  * @author André Bolles
@@ -52,7 +52,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#readData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData
 	 * ()
 	 */
 	@Override
@@ -79,7 +79,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#readData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData
 	 * (java.nio.ByteBuffer)
 	 */
 	@Override
@@ -109,7 +109,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.access.IAtomicDataHandler#writeData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#writeData
 	 * (java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
@@ -133,7 +133,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.access.AbstractAtomicDataHandler
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler
 	 * #getSupportedDataTypes()
 	 */
 	@Override

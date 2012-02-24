@@ -20,8 +20,8 @@ import javax.persistence.Persistence;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.usermanagement.AbstractSessionManagement;
-import de.uniol.inf.is.odysseus.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.UserImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
 

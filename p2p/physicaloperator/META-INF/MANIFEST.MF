@@ -3,12 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: P2P Physical Operator Base
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.op.physicaloperator
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus,
+Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.access,
  de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.metadata,
  de.uniol.inf.is.odysseus.p2p.jxta.utils,
- de.uniol.inf.is.odysseus.physicaloperator,
- de.uniol.inf.is.odysseus.physicaloperator.access,
  de.uniol.inf.is.odysseus.relational.base,
  net.jxta,
  net.jxta.discovery,

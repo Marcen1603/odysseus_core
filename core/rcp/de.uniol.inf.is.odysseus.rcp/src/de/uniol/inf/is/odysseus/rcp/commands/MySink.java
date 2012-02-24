@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.rcp.commands;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 public class MySink extends AbstractSink<Object> {
 

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mining.model;
 
 import java.util.Collection;
 
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 public interface IPhase {
 

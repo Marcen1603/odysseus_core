@@ -29,12 +29,17 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionControl;
-import de.uniol.inf.is.odysseus.costmodel.ICost;
-import de.uniol.inf.is.odysseus.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.logicaloperator.AlgebraPlanToStringVisitor;
-import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AlgebraPlanToStringVisitor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.OdysseusMessageType;
 import de.uniol.inf.is.odysseus.p2p.ac.bid.IP2PBidGenerator;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IQuerySpecificationHandler;
@@ -50,11 +55,6 @@ import de.uniol.inf.is.odysseus.p2p.peer.IOdysseusPeer;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Lifecycle;
 import de.uniol.inf.is.odysseus.p2p.queryhandling.Subplan;
 import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
-import de.uniol.inf.is.odysseus.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.util.AbstractTreeWalker;
 
 /**
  * Handle queries
@@ -181,7 +181,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		// return false;
 		// }
 
-		IExecutor executor = BiddingClient.getExecutor();
+		IServerExecutor executor = (IServerExecutor) BiddingClient.getExecutor();
 		IAdmissionControl admissionControl = BiddingClient
 				.getAdmissionControl();
 
@@ -196,7 +196,8 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 					result = true;
 				}
 			} else {
-				query = executor.addQuery(subplan.getAo(), user, "Standard");
+				int queryID = executor.addQuery(subplan.getAo(), user, "Standard");
+				query = executor.getExecutionPlan().getQuery(queryID);
 				subplan.setQuery(query);
 
 				result = admissionControl.canStartQuery(query);

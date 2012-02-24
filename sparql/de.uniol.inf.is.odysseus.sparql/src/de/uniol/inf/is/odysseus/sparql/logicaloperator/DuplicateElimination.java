@@ -10,8 +10,8 @@
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 
-import de.uniol.inf.is.odysseus.logicaloperator.UnaryLogicalOp;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 /**
  * This class represents a duplicate elimination.

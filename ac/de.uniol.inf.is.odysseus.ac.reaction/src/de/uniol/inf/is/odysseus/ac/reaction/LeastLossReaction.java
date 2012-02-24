@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.ac.reaction;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.ac.IAdmissionReaction;
-import de.uniol.inf.is.odysseus.ac.IPossibleExecution;
-import de.uniol.inf.is.odysseus.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
+import de.uniol.inf.is.odysseus.core.server.ac.IPossibleExecution;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 
 /**
  * Auswahl eines Vorschlags für die Auflösung einer Überlastung.

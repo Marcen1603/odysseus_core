@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class PointInTimeDatatypeProvider extends AbstractViewableDatatype<Double> {
 

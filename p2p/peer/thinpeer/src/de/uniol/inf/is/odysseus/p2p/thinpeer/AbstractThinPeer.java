@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
@@ -33,7 +34,6 @@ import de.uniol.inf.is.odysseus.p2p.thinpeer.handler.IQueryPublisher;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.IAdministrationPeerDiscoverer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceDiscoverer;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.strategy.IIdGenerator;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public abstract class AbstractThinPeer extends AbstractOdysseusPeer implements
 		IThinPeer {

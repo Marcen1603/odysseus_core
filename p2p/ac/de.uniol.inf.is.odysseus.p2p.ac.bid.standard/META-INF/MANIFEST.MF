@@ -4,8 +4,8 @@ Bundle-Name: Standard
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.ac.bid.standard
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
-Import-Package: de.uniol.inf.is.odysseus.ac,
- de.uniol.inf.is.odysseus.costmodel,
+Import-Package: de.uniol.inf.is.odysseus.core.server.ac,
+ de.uniol.inf.is.odysseus.core.server.costmodel,
  de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.p2p.ac.bid
 Service-Component: OSGI-INF/StandardP2PBidGenerator.xml

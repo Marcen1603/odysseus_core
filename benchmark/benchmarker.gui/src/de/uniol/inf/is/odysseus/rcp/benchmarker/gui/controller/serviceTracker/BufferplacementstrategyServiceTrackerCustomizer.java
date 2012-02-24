@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import de.uniol.inf.is.odysseus.planmanagement.IBufferPlacementStrategy;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 
 /**
  * Diese Klasse holt sich die Bufferplacementstrategieservices aus Odysseus

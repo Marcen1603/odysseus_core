@@ -21,10 +21,10 @@ import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
 import net.jxta.protocol.DiscoveryResponseMsg;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.jxta.advertisements.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.jxta.IDiscoveryServiceProvider;
 import de.uniol.inf.is.odysseus.p2p.thinpeer.listener.ISourceDiscoverer;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 public class SourceListenerJxtaImpl implements ISourceDiscoverer,
 		DiscoveryListener {

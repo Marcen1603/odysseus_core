@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.scars.metadata;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
 
 public interface IPredictionFunction<M extends IProbability> {
 	

@@ -24,9 +24,9 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
 import de.uniol.inf.is.odysseus.application.storing.view.dialogs.StartNewRecordingDialog;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.usermanagement.ISession;
 
 
 /**

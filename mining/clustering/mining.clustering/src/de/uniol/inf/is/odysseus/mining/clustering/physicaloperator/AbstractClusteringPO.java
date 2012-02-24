@@ -19,14 +19,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
 import de.uniol.inf.is.odysseus.mining.distance.IDissimilarity;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -78,7 +78,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.ISink#processPunctuation(de
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.ISink#processPunctuation(de
 	 * .uniol.inf.is.odysseus.metadata.PointInTime, int)
 	 */
 	@Override
@@ -91,7 +91,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#getOutputMode()
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
 	 */
 	@Override
 	public OutputMode getOutputMode() {
@@ -141,7 +141,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	 * further processing through an concrete implementation.
 	 * 
 	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe#process_next(java.lang.Object,
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(java.lang.Object,
 	 *      int)
 	 */
 	protected void process_next(RelationalTuple<T> object, int port) {

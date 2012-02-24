@@ -1,21 +1,21 @@
-package de.uniol.inf.is.odysseus.sparql.physicalops.base.set;
+package de.uniol.inf.is.odysseus.core.server.sparql.physicalops.base.set;
 
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.monitor.metadata.IMonitoringData;
-import de.uniol.inf.is.odysseus.monitor.metadata.MemoryUsage;
-import de.uniol.inf.is.odysseus.monitor.metadata.MemoryUsageMonitoringDataFactory;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.IClone;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.PointInTime;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.operators.AbstractPipe;
-import de.uniol.inf.is.odysseus.queryexecution.po.base.set.UnionHelper;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.object.NodeList;
-import de.uniol.inf.is.odysseus.queryexecution.po.sparql.util.SPARQL_Util;
-import de.uniol.inf.is.odysseus.querytranslation.logicalops.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.monitor.metadata.IMonitoringData;
+import de.uniol.inf.is.odysseus.core.server.monitor.metadata.MemoryUsage;
+import de.uniol.inf.is.odysseus.core.server.monitor.metadata.MemoryUsageMonitoringDataFactory;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.IClone;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.object.sweeparea.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.operators.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.base.set.UnionHelper;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.object.NodeList;
+import de.uniol.inf.is.odysseus.core.server.queryexecution.po.sparql.util.SPARQL_Util;
+import de.uniol.inf.is.odysseus.core.server.querytranslation.logicalops.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema;
 
 /**
  * @author Andre Bolles

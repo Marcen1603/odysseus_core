@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-21 17:18:09
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-02-23 17:22:02
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -20,12 +20,12 @@
 	import java.util.HashMap;
 	import java.util.Iterator;
 	
-	import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-	import de.uniol.inf.is.odysseus.logicaloperator.ILogicalOperator;
+	import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+	import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 	import de.uniol.inf.is.odysseus.cep.CepAO;
-	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
-	import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
+	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 	import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 	import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
@@ -37,9 +37,9 @@
 	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-	import de.uniol.inf.is.odysseus.usermanagement.ISession;
-	import de.uniol.inf.is.odysseus.planmanagement.QueryParseException;
-	import de.uniol.inf.is.odysseus.datadictionary.DataDictionaryException;
+	import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+	import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 		
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;

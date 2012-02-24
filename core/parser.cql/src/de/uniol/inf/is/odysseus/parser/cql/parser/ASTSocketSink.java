@@ -14,8 +14,8 @@ class ASTSocketSink extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.planmanagement.QueryParseException {
+  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=cb8258b27d002fc74c7c7fc6168e9b8f (do not edit this line) */
+/* JavaCC - OriginalChecksum=cd1764ee626327b18b68b7af4819e10e (do not edit this line) */

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.kdds.frequent.physical;
 import java.util.List;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class SpaceSavingFrequentItem<T extends RelationalTuple<?>> extends AbstractFrequentPO<T> {

@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.prioritystrategy;
 
+import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler.AbstractDynamicPriorityPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.strategy.IScheduling;
 
 public class SimpleDynamicPriorityPlanScheduling extends
 		AbstractDynamicPriorityPlanScheduling {

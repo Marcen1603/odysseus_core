@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.costmodel.operator.datasrc.evaluation;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualWidthHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualWidthHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.FreedmanDiaconisRule;
@@ -9,8 +11,6 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHisto
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IIntervalCountEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.ISampling;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.LastNSampling;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFDatatype;
 
 public class EqualWidthHistogramCutTest {
 

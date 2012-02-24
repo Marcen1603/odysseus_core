@@ -20,15 +20,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.planmanagement.ICompiler;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.AbstractOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.configuration.OptimizationConfiguration;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
-import de.uniol.inf.is.odysseus.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.AbstractOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * 
@@ -52,13 +52,13 @@ public class StandardOptimizer extends AbstractOptimizer {
 	}
 
 	@Override
-	public List<IPhysicalQuery> optimize(ICompiler compiler, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
+	public List<IPhysicalQuery> optimize(IServerExecutor executor, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
 			OptimizationConfiguration parameter, IDataDictionary dd)
 			throws QueryOptimizationException {
 		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 		if (!queries.isEmpty()) {
 			for (ILogicalQuery query : queries) {
-				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(compiler, query, parameter, dd);
+				IPhysicalQuery optimized = this.queryOptimizer.optimizeQuery(executor, query, parameter, dd);
 				doPostOptimizationActions(optimized, parameter);
 				optimizedQueries.add(optimized);
 			}

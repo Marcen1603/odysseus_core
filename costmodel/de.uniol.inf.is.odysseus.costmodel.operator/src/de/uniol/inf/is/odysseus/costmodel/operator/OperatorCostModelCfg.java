@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 
 /**
  * Singleton-Klasse zur Konfiguration des Kostenmodells nach Operatoreigenschaften.

@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.usermanagement.mem.service.dao;
 
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.store.MemoryStore;
-import de.uniol.inf.is.odysseus.usermanagement.AbstractStoreDAO;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Privilege;
 
 public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {

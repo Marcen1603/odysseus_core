@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.salsa.playground.logicaloperator;
 
-import de.uniol.inf.is.odysseus.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.sourcedescription.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ExtSaLsAPolygonSink")
 public class ExtSaLsAPolygonSinkAO extends AbstractLogicalOperator  {

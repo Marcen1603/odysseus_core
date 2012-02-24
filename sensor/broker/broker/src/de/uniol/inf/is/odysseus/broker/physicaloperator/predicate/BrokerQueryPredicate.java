@@ -14,9 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttributeContainer;
-import de.uniol.inf.is.odysseus.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 
 /**
  * The BrokerQueryPredicate represents the query predicate for a SweepArea.
@@ -52,7 +52,7 @@ public class BrokerQueryPredicate<T extends IMetaAttributeContainer<ITimeInterva
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.predicate.IPredicate#evaluate(java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.server.predicate.IPredicate#evaluate(java.lang.Object)
 	 */
 	@Override
 	public boolean evaluate(T input) {
@@ -60,7 +60,7 @@ public class BrokerQueryPredicate<T extends IMetaAttributeContainer<ITimeInterva
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.predicate.IPredicate#evaluate(java.lang.Object, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.server.predicate.IPredicate#evaluate(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean evaluate(T left, T right) {		 

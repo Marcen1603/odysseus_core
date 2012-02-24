@@ -5,15 +5,15 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.scars.util
 Bundle-Version: 1.0.0.0
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.sdf,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.objecttracking,
  de.uniol.inf.is.odysseus.objecttracking.metadata,
- de.uniol.inf.is.odysseus.physicaloperator,
  de.uniol.inf.is.odysseus.relational.base,
- de.uniol.inf.is.odysseus.relational.base.schema,
- de.uniol.inf.is.odysseus.sourcedescription.sdf,
- de.uniol.inf.is.odysseus.sourcedescription.sdf.schema
+ de.uniol.inf.is.odysseus.relational.base.schema
 Export-Package: de.uniol.inf.is.odysseus.scars.util.helper,
  de.uniol.inf.is.odysseus.scars.util.server
 Require-Bundle: de.uniol.inf.is.odysseus.core.server
