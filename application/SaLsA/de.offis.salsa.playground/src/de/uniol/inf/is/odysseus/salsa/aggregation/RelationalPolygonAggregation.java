@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.salsa.aggregation;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
