@@ -18,12 +18,17 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 	@Override
 	protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException,
 			ClassNotFoundException {
-		try {
-			return BundleClassLoading.findClass(desc.getName(), Activator.getBundleContext().getBundle());
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (desc != null) {
+			try {
+				return BundleClassLoading.findClass(desc.getName(), Activator
+						.getBundleContext().getBundle());
+			} catch (Exception e) {
+				System.err.println("OsgiObjectInputStream" + e.getMessage());
+			}
+			return super.resolveClass(desc);
+		}else{
+			throw new ClassNotFoundException();
 		}
-		return super.resolveClass(desc);
 	}
 
 }
