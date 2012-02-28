@@ -22,8 +22,10 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.Connect;
 import de.uniol.inf.is.odysseus.rcp.Login;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 
 /**
  * This class controls all aspects of the application's execution
@@ -37,13 +39,20 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) {
 		Display display = PlatformUI.createDisplay();
 		try {
+			// TODO: use a servicetracker instead of sleep...
+			Thread.sleep(3000);
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if(executor instanceof IClientExecutor) {
-				// TODO: hardcoded mit server verbinden
-				String wsdlLocation = "http://localhost:9669/odysseus";
-				String service = "WebserviceServer";
+				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
+				String service = "WebserviceServerService";
+				String serviceNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/";
+				// TODO: Wo woll das sonst passieren?
+				ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
+				ConnectPreferencesManager.getInstance().setService(service);
+				ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
 				// string format is wsdlLocation#service
-				((IClientExecutor)executor).connect(wsdlLocation + ";" + service);
+				//((IClientExecutor)executor).connect(wsdlLocation + ";" + service);
+				Connect.connectWindow(display, false, false);
 			}
 			
 			Login.loginWindow(display, false, false);
