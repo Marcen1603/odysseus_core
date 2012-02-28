@@ -31,7 +31,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.rcp.Connect;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
+import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
+
+/**
+ * 
+ * @author Merlin Wasmann
+ *
+ */
 
 @SuppressWarnings("unused")
 public class ClientConnectionWindow {
@@ -40,6 +48,7 @@ public class ClientConnectionWindow {
 
 	private static final String WSDLLOCATION_TEXT = "WSDL Location";
 	private static final String SERVICE_TEXT = "Service";
+	private static final String NAMESPACE_TEXT = "Service Namespace";
 
 	private static final String OK_BUTTON_TEXT = "OK";
 	private static final String CANCEL_BUTTON_TEXT = "Cancel";
@@ -48,8 +57,10 @@ public class ClientConnectionWindow {
 
 	private Label wsdlLocationLabel;
 	private Label serviceLabel;
+	private Label serviceNamespaceLabel;
 	private Text wsdlLocationInput;
 	private Text serviceInput;
+	private Text serviceNamespaceInput;
 	private Button okButton;
 	private Button cancelButton;
 
@@ -62,7 +73,8 @@ public class ClientConnectionWindow {
 		this(parent, "", cancelOK);
 	}
 
-	public ClientConnectionWindow(Display parent, String wsdlLocation, boolean cancelOK) {
+	public ClientConnectionWindow(Display parent, String wsdlLocation,
+			boolean cancelOK) {
 		Assert.isNotNull(wsdlLocation);
 		Assert.isNotNull(parent);
 		startWsdlLocation = wsdlLocation;
@@ -102,7 +114,7 @@ public class ClientConnectionWindow {
 		});
 
 		createInput(wnd);
-		
+
 		createButtons(wnd);
 
 		wnd.layout();
@@ -124,6 +136,12 @@ public class ClientConnectionWindow {
 		wsdlLocationInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		wsdlLocationInput.setText(startWsdlLocation);
 		wsdlLocationInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		serviceNamespaceLabel = new Label(comp, SWT.NONE);
+		serviceNamespaceLabel.setText(OdysseusNLS.ServiceNamespace + ":");
+		serviceNamespaceInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		serviceNamespaceInput.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
 
 		serviceLabel = new Label(comp, SWT.NONE);
 		serviceLabel.setText(OdysseusNLS.WebService + ":");
@@ -148,6 +166,8 @@ public class ClientConnectionWindow {
 	private void markRed() {
 		wsdlLocationLabel.setForeground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_RED));
+		serviceNamespaceLabel.setForeground(Display.getCurrent()
+				.getSystemColor(SWT.COLOR_RED));
 		serviceLabel.setForeground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_RED));
 	}
@@ -180,11 +200,25 @@ public class ClientConnectionWindow {
 			}
 		});
 	}
-	
+
 	// TODO: trying to connect to server
 	public void tryToConnect() {
-		
+		if (Connect.realConnect(wsdlLocationInput.getText(),
+				serviceInput.getText(), serviceNamespaceInput.getText())) {
+			this.connected = true;
+
+			// TODO: autologinkram...
+			// if(autoConnectCheck.getSelection()) {
+			// ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocationInput.getText());
+			// ConnectPreferencesManager.getInstance().setService(serviceInput.getText());
+			// }
+			// ConnectPreferencesManager.getInstance().setAutoConnect(autoConnectCheck.getSelection());
+			// ConnectPreferencesManager.getInstance().save();
+
+			wnd.dispose();
+		} else {
+			this.connected = false;
+			markRed();
+		}
 	}
-	
-	// TODO: class Connect analog zu login
 }

@@ -1,3 +1,18 @@
+/** Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.uniol.inf.is.odysseus.rcp;
 
 import org.eclipse.swt.widgets.Display;
@@ -11,6 +26,12 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.ClientConnectionWindow;
+
+/**
+ * 
+ * @author Merlin Wasmann
+ *
+ */
 
 public class Connect {
 
@@ -31,11 +52,12 @@ public class Connect {
 		// fetch data from prefs
 		String wsdlLocation = ConnectPreferencesManager.getInstance()
 				.getWsdlLocation();
+		String serviceNamespace = ConnectPreferencesManager.getInstance().getServiceNamespace();
 		String service = ConnectPreferencesManager.getInstance().getService();
 
-		if (wsdlLocation.length() > 0 && service.length() > 0 && !forceShow
+		if (wsdlLocation.length() > 0 && service.length() > 0 && serviceNamespace.length() > 0 && !forceShow
 				&& ConnectPreferencesManager.getInstance().getAutoConnect()) {
-			if (!realConnect(wsdlLocation, service)) {
+			if (!realConnect(wsdlLocation, service, serviceNamespace)) {
 				ClientConnectionWindow wnd = new ClientConnectionWindow(parent,
 						wsdlLocation, cancelOK);
 				wnd.show();
@@ -47,13 +69,13 @@ public class Connect {
 		}
 	}
 
-	public static boolean realConnect(String wsdlLocation, String service) {
+	public static boolean realConnect(String wsdlLocation, String service, String serviceNamespace) {
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 
 		boolean connected = false;
 		if (executor instanceof IClientExecutor) {
 			connected = ((IClientExecutor) executor).connect(wsdlLocation + ";"
-					+ service);
+					+ serviceNamespace + ";" + service);
 		}
 
 		if (connected) {

@@ -14,12 +14,17 @@
   */
 package de.uniol.inf.is.odysseus.rcp.util;
 
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+
+/**
+ * 
+ * @author Merlin Wasmann
+ *
+ */
 
 public class ConnectPreferencesManager {
 	
@@ -30,7 +35,7 @@ public class ConnectPreferencesManager {
 	
 	@SuppressWarnings("deprecation")
 	private ConnectPreferencesManager() {
-		prefs = (Preferences) new ConfigurationScope().getNode(OdysseusRCPPlugIn.PLUGIN_ID);
+		prefs = new ConfigurationScope().getNode(OdysseusRCPPlugIn.PLUGIN_ID);
 		connectPrefs = prefs.node("connect");
 	}
 	
@@ -49,12 +54,20 @@ public class ConnectPreferencesManager {
 		return connectPrefs.get("service", "");
 	}
 	
+	public String getServiceNamespace() {
+		return connectPrefs.get("serviceNamespace", "");
+	}
+	
 	public void setWdslLocation(String loc) {
 		connectPrefs.put("wsdlLocation", loc);
 	}
 	
 	public void setService(String service) {
 		connectPrefs.put("service", service);
+	}
+	
+	public void setServiceNamespace(String ns) {
+		connectPrefs.put("serviceNamespace", ns);
 	}
 	
 	public boolean getAutoConnect() {
