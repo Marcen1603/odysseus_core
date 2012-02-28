@@ -31,8 +31,11 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
+import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientSession;
+import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientUser;
 
 
 /**
@@ -93,13 +96,15 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@Override
 	public ISession login(String username, byte[] password) {
 		this.securitytoken = getWebserviceServer().login(username, new String(password)).getResponseValue();
-		return null;
+		IUser user = new WsClientUser(username, password, true);
+		WsClientSession session = new WsClientSession(user);
+		session.setToken(this.securitytoken);
+		return session;
 	}
 	
 	@Override
 	public void removeQuery(int queryID, ISession caller)
 			throws PlanManagementException {
-		// TODO: maybe not needed
 		if(getWebserviceServer() != null) {
 			getWebserviceServer().removeQuery(caller.getToken(), queryID);
 		}
