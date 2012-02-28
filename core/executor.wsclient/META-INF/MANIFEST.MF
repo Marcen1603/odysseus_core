@@ -9,3 +9,4 @@ Service-Component: OSGI-INF/wsclient.xml
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.usermanagement
+ 
