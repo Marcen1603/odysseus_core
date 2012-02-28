@@ -56,7 +56,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public boolean connect(String connectString) {
 		// connectString should look like this:
 		// wsdlLocation#service
-		String[] subConnect = connectString.split("#");
+		String[] subConnect = connectString.split(";");
 		if(subConnect.length > 1 && subConnect.length < 3) {
 			try {
 				startClient(new URL(subConnect[0]), new QName(subConnect[1]));
@@ -132,7 +132,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 			throws PlanManagementException {
 		if(getWebserviceServer() != null) {
 			List<String> parsers = getWebserviceServer().getSupportedQueryParsers(getSecurityToken()).getResponseValue();
-			// TODO: really a specific type?
 			Set<String> parserSet = new HashSet<String>();
 			for(String parser : parsers) {
 				parserSet.add(parser);
@@ -155,7 +154,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public Set<String> getRegisteredBufferPlacementStrategiesIDs() {
 		if(getWebserviceServer() != null) {
 			List<String> ids = getWebserviceServer().getRegisteredBufferPlacementStrategiesIDs(getSecurityToken()).getResponseValue();
-			// TODO: really specific type?
 			Set<String> idSet = new HashSet<String>();
 			for(String id : ids) {
 				idSet.add(id);
@@ -169,7 +167,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public Set<String> getRegisteredSchedulingStrategies() {
 		if(getWebserviceServer() != null) {
 			List<String> strats = getWebserviceServer().getRegisteredSchedulingStrategies(getSecurityToken()).getResponseValue();
-			// TODO: really specific type?
 			Set<String> stratSet = new HashSet<String>();
 			for(String strat : strats) {
 				stratSet.add(strat);
@@ -183,7 +180,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public Set<String> getRegisteredSchedulers() {
 		if(getWebserviceServer() != null) {
 			List<String> scheds = getWebserviceServer().getRegisteredSchedulingStrategies(getSecurityToken()).getResponseValue();
-			// TODO: really specific type?
 			Set<String> schedSet = new HashSet<String>();
 			for(String sched : scheds) {
 				schedSet.add(sched);
@@ -229,14 +225,14 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public Collection<ILogicalQuery> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
-		// TODO Auto-generated method stub
+		// TODO implement me
 		return null;
 	}
 
 	@Override
 	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException {
-		// TODO Auto-generated method stub
+		// TODO not implemented by server yet
 		return null;
 	}
 
@@ -244,7 +240,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
-		// TODO Auto-generated method stub
+		// TODO not implemented by server yet
 		return null;
 	}
 
