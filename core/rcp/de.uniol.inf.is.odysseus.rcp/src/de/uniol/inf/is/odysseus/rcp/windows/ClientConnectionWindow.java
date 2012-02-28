@@ -183,10 +183,6 @@ public class ClientConnectionWindow {
 	
 	// TODO: trying to connect to server
 	public void tryToConnect() {
-		// check if wsdlLocation is an URL
-		// TODO: find something better than invent new or exception handling
-		
-		// TODO: muss der client nicht noch iwo gemanaged werden
 		
 	}
 	
