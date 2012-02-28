@@ -25,8 +25,6 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.springsource.org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
-      <import plugin="com.springsource.slf4j.api" version="1.5.6" match="perfect"/>
       <import plugin="javax.mail"/>
       <import plugin="org.eclipse.net4j.jms.api"/>
       <import plugin="javax.servlet"/>
@@ -38,14 +36,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.julproperties"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
          unpack="false"/>
 
    <plugin
@@ -132,13 +122,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="log4jproperties"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="org.apache.commons.collections"
          download-size="0"
          install-size="0"
@@ -146,36 +129,11 @@
          unpack="false"/>
 
    <plugin
-         id="com.springsource.slf4j.bridge"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="Commons.Math"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="com.springsource.slf4j.log4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
-         id="com.springsource.org.apache.log4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.springsource.slf4j.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"
@@ -204,5 +162,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

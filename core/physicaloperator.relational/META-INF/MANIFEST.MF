@@ -21,7 +21,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.relational.base.access,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.5.6"
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.physicaloperator.relational
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/RelationalAggregateFunctionBuilder.xml

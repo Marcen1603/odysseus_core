@@ -14,14 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOBuilder;
@@ -52,17 +46,7 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-	public void start(BundleContext context) throws Exception {
-		// bring all logging frameworks together
-		URL logging = context.getBundle().getResource("logging.properties");
-		if (logging != null) {
-			//only if fragment was loaded 	
-			InputStream inputStream = logging.openStream();
-			LogManager.getLogManager().readConfiguration(inputStream); 
-			SLF4JBridgeHandler.install();
-		}else{
-			Logger.getAnonymousLogger().config("logging.properties not found. using normal java.util.logging.");
-		}
+	public void start(BundleContext context) throws Exception {		
 		// Add default Functions
 //		for (IFunction function : functions) {
 //			MEP.registerFunction(function);
