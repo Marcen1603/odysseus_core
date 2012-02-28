@@ -11,7 +11,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  javax.persistence;jpa="2.0";version="1.1.0",
  org.apache.derby.jdbc;version="10.5.1.1",
  org.osgi.service.component;version="1.1.0",
- org.slf4j;version="1.5.6"
+ org.slf4j
 JPA-PersistenceUnits: odysseusPU
 Service-Component: OSGI-INF/Usermanagement.xml, OSGI-INF/Sessionmanagement.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

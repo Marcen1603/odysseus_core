@@ -10,7 +10,7 @@ Import-Package: de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.intervalapproach,
- org.slf4j;version="1.5.6"
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.epa.event,
  de.uniol.inf.is.odysseus.cep.epa.eventgeneration,

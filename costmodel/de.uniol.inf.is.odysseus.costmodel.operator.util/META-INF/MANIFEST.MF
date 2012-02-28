@@ -25,6 +25,6 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.osgi.framework,
- org.slf4j;version="1.5.6"
+ org.slf4j
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.operator.util.OperatorCostModelUtilPlugIn
