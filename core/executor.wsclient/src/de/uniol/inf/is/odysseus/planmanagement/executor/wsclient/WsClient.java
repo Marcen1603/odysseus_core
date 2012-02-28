@@ -55,7 +55,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@Override
 	public boolean connect(String connectString) {
 		// connectString should look like this:
-		// wsdlLocation#service
+		// wsdlLocation;service
 		String[] subConnect = connectString.split(";");
 		if(subConnect.length > 1 && subConnect.length < 3) {
 			try {
