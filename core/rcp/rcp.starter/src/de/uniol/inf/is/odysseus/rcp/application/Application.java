@@ -43,7 +43,7 @@ public class Application implements IApplication {
 				String wsdlLocation = "lalala";
 				String service = "fooService";
 				// string format is wsdlLocation#service
-				((IClientExecutor)executor).connect(wsdlLocation + "#" + service);
+				((IClientExecutor)executor).connect(wsdlLocation + ";" + service);
 			}
 			
 			Login.loginWindow(display, false, false);
