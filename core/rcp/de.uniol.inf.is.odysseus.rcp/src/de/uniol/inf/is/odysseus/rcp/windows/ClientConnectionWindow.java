@@ -189,4 +189,6 @@ public class ClientConnectionWindow {
 		// TODO: muss der client nicht noch iwo gemanaged werden
 		
 	}
+	
+	// TODO: class Connect analog zu login
 }
