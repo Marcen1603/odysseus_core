@@ -72,6 +72,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public void startClient(URL wsdlLocation, QName service) {
 		WsClient client = new WsClient();
 		client.service = new WebserviceServerService(wsdlLocation, service);
+		client.server = client.service.getWebserviceServerPort();
 	}
 	
 	public WebserviceServerService getWebserviceServerService() {
@@ -207,13 +208,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 			return getWebserviceServer().getCurrentSchedulingStrategyID(getSecurityToken()).getResponseValue();
 		}
 		return null;
-	}
-
-	public void updateExecutionPlan() throws NoOptimizerLoadedException,
-			QueryOptimizationException {
-		if(getWebserviceServer() != null) {
-			getWebserviceServer().updateExecutionPlan(getSecurityToken());
-		}
 	}
 
 	@Override
