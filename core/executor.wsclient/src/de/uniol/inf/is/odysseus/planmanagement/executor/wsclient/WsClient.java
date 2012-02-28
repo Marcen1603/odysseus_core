@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
 
+
 /**
  * 
  * @author Merlin Wasmann 
@@ -85,6 +86,12 @@ public class WsClient implements IExecutor, IClientExecutor{
 	
 	private String getSecurityToken() {
 		return this.securitytoken;
+	}
+	
+	@Override
+	public ISession login(String username, byte[] password) {
+		this.securitytoken = getWebserviceServer().login(username, new String(password)).getResponseValue();
+		return null;
 	}
 	
 	@Override
@@ -219,42 +226,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public ISession login(String username, byte[] password) {
-		this.securitytoken = getWebserviceServer().login(username, new String(password)).getResponseValue();
-		return null;
-	}
-
-	@Override
-	public void logout(ISession caller) {
-	}
-
-	@Override
-	public ILogicalOperator removeSink(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
-			ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void reloadStoredQueries(ISession caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Collection<Integer> addQuery(String query, String parserID,
+	public Collection<ILogicalQuery> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
@@ -262,26 +234,66 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 
 	@Override
-	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
+	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
+	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+/********************************************************************
+ *                      Methods not implemented by server           *
+ ********************************************************************/
+
 	@Override
-	public void removeViewOrStream(String name, ISession caller) {
-		// TODO Auto-generated method stub
-		
+	public ILogicalOperator removeSink(String name, ISession caller) {
+		// TODO not implemented by server
+		return null;
 	}
 
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
+			ISession caller) {
+		// TODO not implemented by server
+		return null;
+	}
+	
+	@Override
+	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
+		// TODO not implemented by server
+		return null;
+	}
+
+	@Override
+	public void reloadStoredQueries(ISession caller) {
+		// TODO not implemented by server
+	}
+
+	@Override
+	public IPhysicalQuery transform(ILogicalQuery query,
+			TransformationConfiguration transformationConfiguration,
+			ISession caller) throws TransformationException {
+		// TODO not implemented by server
+		return null;
+	}
+	@Override
+	public List<ILogicalQuery> translateQuery(String query, String parserID,
+			ISession user) throws QueryParseException {
+		// TODO not implemented by server
+		return null;
+	}
+
+	@Override
+	public void logout(ISession caller) {
+		// TODO: not implemented by server
+	}
 
 
 }
