@@ -34,14 +34,14 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO>{
 
 	@Override
 	public void execute(RenameAO rename, TransformationConfiguration transformConfig) {		
-		LoggerFactory.getLogger("TDeleteRename - Rule").debug("RenameAO removing...: " + rename);
+		LoggerFactory.getLogger(TDeleteRenameAORule.class).debug("RenameAO removing...: " + rename);
 		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(rename, true);		
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}
 		
 		retract(rename);
-		LoggerFactory.getLogger("TDeleteRename - Rule").debug("RenameAO removed: " + rename);
+		LoggerFactory.getLogger(TDeleteRenameAORule.class).debug("RenameAO removed: " + rename);
 	}
 
 	@Override

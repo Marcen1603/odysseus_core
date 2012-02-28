@@ -19,6 +19,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -30,6 +32,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	private static Logger logger = LoggerFactory.getLogger(Activator.class); 
 
 	/**
 	 * The constructor
@@ -52,7 +56,7 @@ public class Activator extends AbstractUIPlugin {
 			@Override
 			public void run() {
 				for (Bundle bundle : context.getBundles()) {
-					System.err.println("Try to start bundle "
+					logger.trace("Try to start bundle "
 							+ bundle.getSymbolicName());
 					boolean isFragment = bundle.getHeaders().get(
 							Constants.FRAGMENT_HOST) != null;

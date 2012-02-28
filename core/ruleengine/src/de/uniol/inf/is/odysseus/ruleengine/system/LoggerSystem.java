@@ -21,7 +21,7 @@ public class LoggerSystem {
 
 	private static Logger defaultlogger = LoggerFactory.getLogger("ruleengine");
 	private static Accuracy defaultAccuracy = Accuracy.DEBUG;
-	private static Accuracy minAccuracy = Accuracy.WARN;
+	private static Accuracy minAccuracy = Accuracy.TRACE;
 	private static boolean showAllAsDebug = false;
 
 	public enum Accuracy {
