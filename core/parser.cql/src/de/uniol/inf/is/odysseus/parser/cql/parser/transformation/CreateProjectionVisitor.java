@@ -200,6 +200,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			SDFAttribute attribute = (SDFAttribute) node.jjtAccept(this, null);
 			outputAttributes.add(attribute);
+			// Add Attribute in MEP Expression in the right order
+			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
 			SDFAttribute aliasAttribute;
 			if (aliasExpression.hasAlias()) {
 				// copy other attributes like datatypes
