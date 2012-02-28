@@ -50,14 +50,18 @@ public class WsClient implements IExecutor, IClientExecutor{
 	// SecurityToken
 	String securitytoken;
 	
+	/**
+	 * connect
+	 * @param connectString String: expected format is wsdlLocation;serviceNamespace;service
+	 */
 	@Override
 	public boolean connect(String connectString) {
 		// connectString should look like this:
-		// wsdlLocation;service
+		// wsdlLocation;serviceNamespace;service
 		String[] subConnect = connectString.split(";");
-		if(subConnect.length > 1 && subConnect.length < 3) {
+		if(subConnect.length > 1 && subConnect.length < 4) {
 			try {
-				startClient(new URL(subConnect[0]), new QName(subConnect[1]));
+				startClient(new URL(subConnect[0]), new QName(subConnect[1], subConnect[2]));
 				return true;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -69,9 +73,9 @@ public class WsClient implements IExecutor, IClientExecutor{
 	
 	// init
 	public void startClient(URL wsdlLocation, QName service) {
-		WsClient client = new WsClient();
-		client.service = new WebserviceServerService(wsdlLocation, service);
-		client.server = client.service.getWebserviceServerPort();
+//		WsClient client = new WsClient();
+		this.service = new WebserviceServerService(wsdlLocation, service);
+		this.server = this.service.getWebserviceServerPort();
 	}
 	
 	public WebserviceServerService getWebserviceServerService() {
