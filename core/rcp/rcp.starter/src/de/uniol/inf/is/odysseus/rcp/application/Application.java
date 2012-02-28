@@ -40,8 +40,8 @@ public class Application implements IApplication {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if(executor instanceof IClientExecutor) {
 				// TODO: hardcoded mit server verbinden
-				String wsdlLocation = "lalala";
-				String service = "fooService";
+				String wsdlLocation = "http://localhost:9669/odysseus";
+				String service = "WebserviceServer";
 				// string format is wsdlLocation#service
 				((IClientExecutor)executor).connect(wsdlLocation + ";" + service);
 			}
