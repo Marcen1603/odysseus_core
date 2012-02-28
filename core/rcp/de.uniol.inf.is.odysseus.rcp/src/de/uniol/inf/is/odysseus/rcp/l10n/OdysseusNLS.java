@@ -47,6 +47,7 @@ public class OdysseusNLS extends NLS {
 
 	public static String WsdlLocation;
 	public static String WebService;
+	public static String AutomaticallyConnectedTo;
 
 
 	static {
