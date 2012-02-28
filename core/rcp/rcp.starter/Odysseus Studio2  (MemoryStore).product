@@ -181,11 +181,11 @@ http://odysseus.offis.uni-oldenburg.de/
    <features>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.studio.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.scheduling.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.planmgmt.standard.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.usermanagement.mem.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.server.datadictionary.mem.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
