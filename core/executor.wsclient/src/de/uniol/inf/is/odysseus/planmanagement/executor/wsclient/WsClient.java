@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
@@ -144,7 +142,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@Override
 	public List<Integer> startAllClosedQueries(ISession user) {
 		if(getWebserviceServer() != null) {
-			// TODO: this is always null
+			// this is always null
 			getWebserviceServer().startAllClosedQueries(user.getToken());
 		}
 		return null;
@@ -221,74 +219,68 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 
+/********************************************************************
+ *                      Methods not implemented by server           *
+ ********************************************************************/
+
 	@Override
-	public Collection<ILogicalQuery> addQuery(String query, String parserID,
+	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
-		// TODO implement me
+		// TODO not implemented by server yet
 		return null;
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(ILogicalOperator logicalPlan, ISession user,
+	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException {
 		// TODO not implemented by server yet
 		return null;
 	}
 
 	@Override
-	public IPhysicalQuery addQuery(List<IPhysicalOperator> physicalPlan,
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		// TODO not implemented by server yet
 		return null;
 	}
 
-/********************************************************************
- *                      Methods not implemented by server           *
- ********************************************************************/
+	@Override
+	public void logout(ISession caller) {
+		// TODO not implemented by server yet
+		
+	}
 
 	@Override
 	public ILogicalOperator removeSink(String name, ISession caller) {
-		// TODO not implemented by server
+		// TODO not implemented by server yet
 		return null;
+	}
+
+	@Override
+	public void removeViewOrStream(String name, ISession caller) {
+		// TODO not implemented by server yet
+		
 	}
 
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
 			ISession caller) {
-		// TODO not implemented by server
+		// TODO not implemented by server yet
 		return null;
 	}
-	
+
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
-		// TODO not implemented by server
+		// TODO not implemented by server yet
 		return null;
 	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		// TODO not implemented by server
-	}
-
-	@Override
-	public IPhysicalQuery transform(ILogicalQuery query,
-			TransformationConfiguration transformationConfiguration,
-			ISession caller) throws TransformationException {
-		// TODO not implemented by server
-		return null;
-	}
-	@Override
-	public List<ILogicalQuery> translateQuery(String query, String parserID,
-			ISession user) throws QueryParseException {
-		// TODO not implemented by server
-		return null;
-	}
-
-	@Override
-	public void logout(ISession caller) {
-		// TODO: not implemented by server
+		// TODO not implemented by server yet
+		
 	}
 
 
