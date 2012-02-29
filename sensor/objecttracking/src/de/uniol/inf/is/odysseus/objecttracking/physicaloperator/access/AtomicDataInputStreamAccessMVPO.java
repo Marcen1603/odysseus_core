@@ -127,9 +127,9 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			} catch (IOException e) {
 				throw new OpenFailedException(e.getMessage());
 			}
-			for (IAtomicDataHandler reader : this.dataReader) {
-				reader.setStream(this.channel);
-			}
+//			for (IAtomicDataHandler reader : this.dataReader) {
+//				reader.setStream(this.channel);
+//			}
 			this.isOpen = true;
 			this.isDone = false;
 		}
@@ -175,7 +175,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 
 		try {
 			for (int i = 0; i < this.dataReader.length; ++i) {
-				this.attributeData[i] = dataReader[i].readData();
+				this.attributeData[i] = dataReader[i].readData(channel);
 			}
 		} catch (EOFException e) {
 			// System.out.println("READER DONE.");

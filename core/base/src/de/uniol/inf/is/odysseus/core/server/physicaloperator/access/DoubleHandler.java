@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,11 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	@Override
 	final public Object readData() throws IOException {
 		return getStream().readDouble();
+	}
+	
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
+		return inputStream.readDouble();
 	}
 	
 	@Override

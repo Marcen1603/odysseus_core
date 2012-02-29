@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,15 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	 */
 	@Override
 	public Object readData() throws IOException {
+		return readData(getStream());
+	}
+	
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
 		ArrayList<Object> values = new ArrayList<Object>();
-		int size = this.getStream().readInt();
+		int size = inputStream.readInt();
 		for(int i = 0; i<size; i++){
-			Object value = this.handler.readData();
+			Object value = this.handler.readData(inputStream);
 			values.add(value);
 		}
 		

@@ -131,9 +131,9 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		} catch (IOException e) {
 			throw new OpenFailedException(e.getMessage()+" "+this.hostName+" "+this.port);
 		}
-		for (IAtomicDataHandler reader : this.dataReader) {
-			reader.setStream(this.channel);
-		}
+//		for (IAtomicDataHandler reader : this.dataReader) {
+//			reader.setStream(this.channel);
+//		}
 		this.isDone = false;
 		// }
 	}
@@ -186,7 +186,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 
 			try {
 				for (int i = 0; i < this.dataReader.length; ++i) {
-					this.attributeData[i] = dataReader[i].readData();
+					this.attributeData[i] = dataReader[i].readData(channel);
 				}
 			} catch (EOFException e) {
 				this.isDone = true;

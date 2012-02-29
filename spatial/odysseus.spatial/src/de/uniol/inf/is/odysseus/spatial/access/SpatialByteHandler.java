@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,12 +61,17 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 
 	@Override
 	public Object readData() throws IOException {
+		return readData(getStream());
+	}
+	
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
 		// the first four bytes are the length
 		// of the geo data
 
-		int length = this.getStream().readInt();
+		int length = inputStream.readInt();
 		byte[] binData = new byte[length];
-		this.getStream().read(binData);
+		inputStream.read(binData);
 
 		try {
 			return this.reader.read(binData);

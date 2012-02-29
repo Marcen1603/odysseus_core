@@ -28,10 +28,12 @@ public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 	}
 	
 	@Override
+	@Deprecated
 	public void setStream(ObjectInputStream stream) {
 		this.stream = stream;
 	}
-	
+
+	@Deprecated
 	final public ObjectInputStream getStream() {
 		return stream;
 	}

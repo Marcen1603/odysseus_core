@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,11 @@ public class DateHandler extends AbstractAtomicDataHandler {
 		return getStream().readLong();
 	}
 
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
+		return inputStream.readLong();
+	}
+	
 	@Override
 	public Object readData(ByteBuffer buffer) {
 		long l = buffer.getLong();

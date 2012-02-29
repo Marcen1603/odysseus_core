@@ -18,10 +18,19 @@ import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.datadictionary.IAddDataType;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * This class represents data types. For some default data types there exists
+ * static implementations. Data types can be simple (BASE), Lists (MULTI_VALUE)
+ * or complex (TUPLE, BEAN).
+ * 
+ * @author Marco Grawunder
+ */
 public class SDFDatatype extends SDFElement implements Serializable {
 
+	/**
+	 * This enumerations contains the available type constructors.
+	 */
 	public static enum KindOfDatatype {
 		BASE, TUPLE, MULTI_VALUE, BEAN;
 	}
@@ -166,7 +175,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	// TODO: sp�ter wieder entfernen!!
 	public String getQualName() {
@@ -334,8 +343,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public boolean compatibleTo(SDFDatatype other) {
 		if (this.equals(other)) {
 			return true;
-		}
-		else if (this.isInteger() && other.isNumeric()) {
+		} else if (this.isInteger() && other.isNumeric()) {
 			return true;
 		} else if (this.isLong()
 				&& (other.isLong() || other.isFloat() || other.isDouble())) {
@@ -356,6 +364,5 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		}
 		return false;
 	}
-
 
 }

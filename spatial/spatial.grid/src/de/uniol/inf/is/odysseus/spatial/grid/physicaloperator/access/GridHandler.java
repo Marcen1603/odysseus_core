@@ -38,6 +38,11 @@ public class GridHandler extends AbstractAtomicDataHandler {
 	@Override
 	public Object readData() throws IOException {
 		ObjectInputStream stream = getStream();
+		return readData(stream);
+	}
+
+	@Override
+	public Object readData(ObjectInputStream stream) throws IOException {
 		int x = stream.readInt();
 		int y = stream.readInt();
 		short width = stream.readShort();
@@ -49,7 +54,7 @@ public class GridHandler extends AbstractAtomicDataHandler {
 		stream.readFully(grid.get(), 0, width * depth * height);
 		return null;
 	}
-
+	
 	@Override
 	public Object readData(ByteBuffer buffer) {
 		int x = buffer.getInt();

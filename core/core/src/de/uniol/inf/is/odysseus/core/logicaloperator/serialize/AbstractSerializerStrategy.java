@@ -15,15 +15,15 @@
 
 package de.uniol.inf.is.odysseus.core.logicaloperator.serialize;
 
-
 /**
  * 
  * @author Dennis Geesen Created at: 17.01.2012
  */
-public abstract class AbstractSerializerStrategy<T> implements ISerializerStrategy<T> {
+public abstract class AbstractSerializerStrategy<T> implements
+		ISerializerStrategy<T> {
 
 	@Override
-	public T serialize(ISerializable serializable) {		
+	public T serialize(ISerializable serializable) {
 		SerializeNode node = serializable.serialize();
 		return performSerialize(node);
 	}
@@ -32,11 +32,14 @@ public abstract class AbstractSerializerStrategy<T> implements ISerializerStrate
 	public ISerializable deserialize(T value) {
 		SerializeNode node = performDeserialize(value);
 		try {
-			if(ISerializable.class.isAssignableFrom(node.getRepresentingClass())){
-				ISerializable serializableRoot = (ISerializable) node.getRepresentingClass().newInstance();
+			if (ISerializable.class.isAssignableFrom(node
+					.getRepresentingClass())) {
+				ISerializable serializableRoot = (ISerializable) node
+						.getRepresentingClass().newInstance();
 				serializableRoot.deserialize(node);
-			}else{
-				throw new Exception("The root element has to be an object of ISerializable");
+			} else {
+				throw new Exception(
+						"The root element has to be an object of ISerializable");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -45,6 +48,7 @@ public abstract class AbstractSerializerStrategy<T> implements ISerializerStrate
 	}
 
 	protected abstract T performSerialize(SerializeNode node);
+
 	protected abstract SerializeNode performDeserialize(T value);
 
 }

@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.relational.base;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +58,15 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public Object readData() throws IOException {
+		return readData(getStream());
+	}
+
+	
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
 		Object[] attributes = new Object[schema.size()];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
-			attributes[i] = dataHandlers[i].readData();
+			attributes[i] = dataHandlers[i].readData(inputStream);
 		}
 
 		return new RelationalTuple<IMetaAttribute>(attributes);

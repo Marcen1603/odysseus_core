@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.spatial.access;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,12 @@ public class SpatialStringHandler extends StringHandler{
 	
 	@Override
 	final public Object readData() throws IOException {
-		String wktString = (String)super.readData();
+		return readData(getStream());
+	}
+	
+	@Override
+	public Object readData(ObjectInputStream inputStream) throws IOException {
+		String wktString = (String)super.readData(inputStream);
 		try {
 			return this.reader.read(wktString);
 		} catch (ParseException e) {
