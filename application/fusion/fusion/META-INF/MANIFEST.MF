@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fusion
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.fusion
+Bundle-Version: 1.0.0.qualifier
+Import-Package: com.vividsolutions.jts,
+ com.vividsolutions.jts.algorithm,
+ com.vividsolutions.jts.geom,
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.slf4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .
+Service-Component: OSGI-INF/AggregateFunctionProvider.xml, OSGI-INF/TransformRuleProvider.xml, OSGI-INF/FunctionProvider.xml
+Export-Package: de.uniol.inf.is.odysseus.fusion.function,
+ de.uniol.inf.is.odysseus.fusion.logicaloperator,
+ de.uniol.inf.is.odysseus.fusion.provider,
+ de.uniol.inf.is.odysseus.fusion.udf
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0", de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
