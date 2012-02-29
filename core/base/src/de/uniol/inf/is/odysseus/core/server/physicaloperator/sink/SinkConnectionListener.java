@@ -14,8 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -77,10 +78,13 @@ class SinkConnectionListener extends Thread {
 				logger.debug("Connection from "
 						+ socket.getRemoteSocketAddress());
 				if (loginNeeded){
-					InputStream inputStream = socket.getInputStream();
-					// TODO: Login und Passwort auslesen
-					String username = "";
-					String password = "";
+					BufferedReader in = 
+						    new BufferedReader(
+						    new InputStreamReader(
+						    socket.getInputStream()));					
+					
+					String username = in.readLine();
+					String password = in.readLine();
 					ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes());
 					if (user != null){
 						// TODO: Test if User has right to access sink

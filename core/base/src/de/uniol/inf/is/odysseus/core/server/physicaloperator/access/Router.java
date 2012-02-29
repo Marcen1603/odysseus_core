@@ -188,11 +188,30 @@ public class Router extends Thread implements IConnection {
 
 	public void connectToServer(IAccessConnectionListener sink, String host, int port)
 			throws Exception {
+		connectToServer(sink, host, port, null, null);
+	}
+	
+	public void connectToServer(IAccessConnectionListener sink, String host, int port, String username, String password)
+			throws Exception {
 		getLogger().debug(sink+" connect to server "+host+" "+port);
 		SocketChannel sc = SocketChannel.open();
 		sc.configureBlocking(false);
 		// sc.configureBlocking(true);
 		sc.connect(new InetSocketAddress(host, port));
+		if (username != null && password != null){
+			ByteBuffer buffer = ByteBuffer.allocate(2*(username.length()+password.length()));
+			for (int i=0;i<username.length();i++){
+				buffer.putChar(username.charAt(i));
+			}
+			buffer.putChar('\n');
+			for (int i=0;i<password.length();i++){
+				buffer.putChar(password.charAt(i));
+			}
+			buffer.putChar('\n');
+			buffer.reset();
+			sc.write(buffer);
+		}
+		
 		deferedRegister(sc, sink);
 		selector.wakeup();
 		notifyConnectionListeners(ConnectionMessageReason.ConnectionOpened);
