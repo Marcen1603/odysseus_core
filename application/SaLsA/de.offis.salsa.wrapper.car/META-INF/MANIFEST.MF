@@ -13,3 +13,5 @@ Import-Package: com.vividsolutions.jts.geom,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/CarSourceAdapter.xml, OSGI-INF/CarTCPSinkAdapter.xml, OSGI-INF/CarUDPSinkAdapter.xml, OSGI-INF/CarGridTCPSourceAdapter.xml, OSGI-INF/CarGridUDPSourceAdapter.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
