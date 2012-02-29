@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
@@ -39,6 +40,7 @@ public class UnNestAO extends UnaryLogicalOp {
     private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
     private SDFAttribute attribute;
     private SDFSchema outputSchema = null;
+	private boolean recalculate = true;
 
     /**
      * 
@@ -74,7 +76,7 @@ public class UnNestAO extends UnaryLogicalOp {
         if (outputSchema == null || recalcOutputSchemata) {
         	List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
             for (int i = 0; i < getInputSchema().size(); i++) {
-                if ((getInputSchema().getAttribute(i).equals(attribute))
+                if ((getInputSchema().getAttribute(i).equals(attribute) && this.recalculate)
                         && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {
                     SDFSchema subschema = getInputSchema().getAttribute(i).getDatatype()
                             .getSchema();
@@ -103,6 +105,11 @@ public class UnNestAO extends UnaryLogicalOp {
         this.attribute = attribute;
     }
 
+    @Parameter(name = "RECALCULATE", type = BooleanParameter.class, optional= true)
+    public void setRecalculate(final boolean recalculate) {
+       this.recalculate  = recalculate;
+    }   
+    
     /**
      * @return The attribute for unnest
      */
