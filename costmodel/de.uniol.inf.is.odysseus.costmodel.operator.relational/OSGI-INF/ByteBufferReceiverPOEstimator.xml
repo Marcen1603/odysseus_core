@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.costmodel.operator.relational.ByteBufferReceiverPO">
    <implementation class="de.uniol.inf.is.odysseus.costmodel.operator.relational.ByteBufferRecieverPOEstimator"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.costmodel.operator.IOperatorEstimator"/>
+      <provide interface="de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator"/>
    </service>
 </scr:component>
