@@ -30,7 +30,7 @@ public class ContextStoreFunctionProvider implements IFunctionProvider {
 
 	@Override
 	public List<IFunction<?>> getFunctions() {		
-		List<IFunction<?>> functions = new ArrayList<>();
+		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		functions.add(new ContextStoreFunction());
 		return functions;
 	}
