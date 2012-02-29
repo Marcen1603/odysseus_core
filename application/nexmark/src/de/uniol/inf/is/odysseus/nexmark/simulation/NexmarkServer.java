@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 
@@ -199,6 +200,8 @@ public class NexmarkServer {
 	}
 
 	public static void main(String[] args) {
+		// Hack to load bundle??
+		DataHandlerRegistry.getDataHandler("");
 		int personPort = 0, auctionPort = 0, bidPort = 0, categoryPort = 0;
 		int startPort = 0;
 		int elementLimit = 0;
@@ -250,15 +253,15 @@ public class NexmarkServer {
 			printHelp(e);
 			throw new RuntimeException(e);
 		}
-		if (server != null) {
-			// Warte auf Terminierung von server
-			try {
-				server.waitForTermination();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if (server != null) {
+//			// Warte auf Terminierung von server
+//			try {
+//				server.waitForTermination();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	private static void printHelp(Exception e) {
