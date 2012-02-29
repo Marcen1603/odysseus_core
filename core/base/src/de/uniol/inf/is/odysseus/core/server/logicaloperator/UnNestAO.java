@@ -20,6 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -33,91 +34,103 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "UNNEST")
 public class UnNestAO extends UnaryLogicalOp {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -5918972476973244744L;
-    private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
-    private SDFAttribute attribute;
-    private SDFSchema outputSchema = null;
+	private static final long serialVersionUID = -5918972476973244744L;
+	private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
+	private SDFAttribute attribute;
+	private SDFSchema outputSchema = null;
 	private boolean recalculate = true;
 
-    /**
+	/**
      * 
      */
-    public UnNestAO() {
-        super();
-    }
+	public UnNestAO() {
+		super();
+	}
 
-    /**
-     * @param ao
-     */
-    public UnNestAO(final UnNestAO ao) {
-        super(ao);
-        this.attribute = ao.getAttribute();
-        this.outputSchema = ao.getOutputSchema();
-    }
+	/**
+	 * @param ao
+	 */
+	public UnNestAO(final UnNestAO ao) {
+		super(ao);
+		this.attribute = ao.getAttribute();
+		this.outputSchema = ao.getOutputSchema();
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
-     */
-    @Override
-    public AbstractLogicalOperator clone() {
-        return new UnNestAO(this);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #clone()
+	 */
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new UnNestAO(this);
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getOutputSchema()
-     */
-    @Override
-    public SDFSchema getOutputSchema() {
-        if (outputSchema == null || recalcOutputSchemata) {
-        	List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-            for (int i = 0; i < getInputSchema().size(); i++) {
-                if ((getInputSchema().getAttribute(i).equals(attribute) && this.recalculate)
-                        && (getInputSchema().getAttribute(i).getDatatype().hasSchema())) {
-                    SDFSchema subschema = getInputSchema().getAttribute(i).getDatatype()
-                            .getSchema();
-                    for (int j = 0; j < subschema.size(); j++) {
-                        attrs.add(subschema.get(j));
-                    }
-                }
-                else {
-                    attrs.add(getInputSchema().get(i));
-                }
-            }
-            recalcOutputSchemata = false;
-            outputSchema = new SDFSchema("UNNEST", attrs);
-            LOG.debug("Set output schema to: {}", outputSchema);
-        }
-        return outputSchema;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #getOutputSchema()
+	 */
+	@Override
+	public SDFSchema getOutputSchema() {
+		if (outputSchema == null || recalcOutputSchemata) {
+			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+			for (int i = 0; i < getInputSchema().size(); i++) {
+				SDFAttribute attribute = getInputSchema().getAttribute(i);
+				
+				if (attribute.equals(attribute) && (attribute.getDatatype().isComplex() && this.recalculate)) {
 
-    /**
-     * @param attribute
-     *            The attribute for unnest
-     */
-    @Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
-    public void setAttribute(final SDFAttribute attribute) {
-        UnNestAO.LOG.debug("Set UnNest attribute to {}", attribute.getAttributeName());
-        this.attribute = attribute;
-    }
+					if (attribute.getDatatype().isMultiValue()) {
+						attrs.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype().getSubType()));
+					} else {
+						SDFSchema subschema = attribute.getDatatype().getSchema();
+						for (int j = 0; j < subschema.size(); j++) {
+							attrs.add(subschema.get(j));
+						}
+					}
 
-    @Parameter(name = "RECALCULATE", type = BooleanParameter.class, optional= true)
-    public void setRecalculate(final boolean recalculate) {
-       this.recalculate  = recalculate;
-    }   
-    
-    /**
-     * @return The attribute for unnest
-     */
-    public SDFAttribute getAttribute() {
-        return this.attribute;
-    }
-    
-    public int getAttributePosition() {
-        return this.getInputSchema().indexOf(getAttribute());
-    }
+				} else {
+					attrs.add(getInputSchema().get(i));
+				}
+			}
+			recalcOutputSchemata = false;
+			outputSchema = new SDFSchema("UNNEST", attrs);
+			LOG.debug("Set output schema to: {}", outputSchema);
+		}
+		return outputSchema;
+	}
+
+	/**
+	 * @param attribute
+	 *            The attribute for unnest
+	 */
+	@Parameter(name = "ATTRIBUTE", type = ResolvedSDFAttributeParameter.class)
+	public void setAttribute(final SDFAttribute attribute) {
+		UnNestAO.LOG.debug("Set UnNest attribute to {}",
+				attribute.getAttributeName());
+		this.attribute = attribute;
+	}
+
+	@Parameter(name = "RECALCULATE", type = BooleanParameter.class, optional = true)
+	public void setRecalculate(final boolean recalculate) {
+		this.recalculate = recalculate;
+	}
+
+	/**
+	 * @return The attribute for unnest
+	 */
+	public SDFAttribute getAttribute() {
+		return this.attribute;
+	}
+
+	public int getAttributePosition() {
+		return this.getInputSchema().indexOf(getAttribute());
+	}
 }
