@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>de.uniol.inf.is.odysseus.core.server.costmodel.operator.datasrc</name>
+	<name>de.uniol.inf.is.odysseus.costmodel.operator.datasrc</name>
 	<comment></comment>
 	<projects>
 	</projects>
