@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.Output
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 @UserDefinedFunction(name = "Scanner")
-public class SickUDFunction<R> implements IUserDefinedFunction<R, R> {
+public class SickUDFunction<R> implements IUserDefinedFunction<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
 
 	String name = null;
 
@@ -17,15 +17,14 @@ public class SickUDFunction<R> implements IUserDefinedFunction<R, R> {
 	}
 
 	@Override
-	public R process(R in, int port) {
-		RelationalTuple<IMetaAttribute> intuple = (RelationalTuple<IMetaAttribute>) in;
+	public RelationalTuple<? extends IMetaAttribute> process(RelationalTuple<? extends IMetaAttribute> in, int port) {
 
 		
 		//System.out.println(name);
-		intuple = intuple.append(name);
+		in.append(name);
 		//System.out.println("Attributes:" +intuple.size());
 
-		return (R)intuple;
+		return in;
 	}
 
 	@Override

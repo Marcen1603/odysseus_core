@@ -10,8 +10,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
 
 @UserDefinedFunction(name="SchulerBG")
-public class SaLsASchulerUDFunction<R> implements
-		IUserDefinedFunction<R, R> {
+public class SaLsASchulerUDFunction<R> implements IUserDefinedFunction< RelationalTuple<? extends IMetaAttribute>,  RelationalTuple<? extends IMetaAttribute>> {
 
 	String init = null;
 	
@@ -21,11 +20,10 @@ public class SaLsASchulerUDFunction<R> implements
 	}
 
 	@Override
-	public R process(R in, int port) {
+	public RelationalTuple<? extends IMetaAttribute> process(RelationalTuple<? extends IMetaAttribute> in, int port) {
 		//System.out.println(this+"("+init+") PROCESS "+in);
-		RelationalTuple<IMetaAttribute> tuple = (RelationalTuple<IMetaAttribute>)in;
 		
-		MultiPoint multiPoint = (MultiPoint)tuple.getAttribute(0); 
+		MultiPoint multiPoint = (MultiPoint)in.getAttribute(0); 
 		
 		for(int i=0; i < multiPoint.getCoordinates().length; i++){
 			//multiPoint.
@@ -37,7 +35,7 @@ public class SaLsASchulerUDFunction<R> implements
 			}
 		}
 		
-		return (R)tuple;
+		return in;
 	}
 
 	@Override
