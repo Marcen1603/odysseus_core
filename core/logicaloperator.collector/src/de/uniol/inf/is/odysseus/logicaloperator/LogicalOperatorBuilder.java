@@ -114,23 +114,23 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			Bundle bundle, URL curURL) {
 		String file = curURL.getFile();
 		int start = 1;
+		String className = "";
 		try {
 			if (file.startsWith("/bin/")) {
 				start = "/bin/".length();
 			}
 			// remove potential '/bin' and 'class' and change path to package
 			// name
-			String className = file.substring(start, file.length() - 6)
+			className = file.substring(start, file.length() - 6)
 					.replace('/', '.');
+			logger.trace("Trying to load class "+className);
 			Class<?> classObject = bundle.loadClass(className);
 			if (classObject.isAnnotationPresent(LogicalOperator.class)
 					&& ILogicalOperator.class.isAssignableFrom(classObject)) {
-				// System.err.println("REMOVE ME: "+this+" loading "+className);
 				return (Class<? extends ILogicalOperator>) classObject;
 			}
 		} catch (Exception e) {
-			// TODO anstaendige exception bauen
-			throw new RuntimeException(e);
+			logger.error("Failed to load Class "+className+" Reason: "+e.getMessage());
 		}
 		return null;
 	}
