@@ -1,14 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Base Plug-in
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.core.server
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.core.server;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.core.server.Activator
 Import-Package: 
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  org.apache.commons.collections.map,
  org.osgi.framework;version="1.3.0",
- org.osgi.framework.wiring;version="1.0.0",
  org.osgi.service.component,
  org.slf4j
 Service-Component: OSGI-INF/SDFFunctionProvider.xml, OSGI-INF/MEPFunctionService.xml, OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, OSGI-INF/LongHandler.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml, OSGI-INF/UserManagement.xml
