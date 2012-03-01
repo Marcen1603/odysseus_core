@@ -14,9 +14,19 @@
   */
 package de.uniol.inf.is.odysseus.core.event;
 
-
+/**
+ * EventListenerInterface
+ * 
+ * @author Marco Grawunder
+ *
+ */
 public interface IEventListener {
 
+	/**
+	 * Method will be called if an event occurred
+	 * @param event The event that has occurred
+	 * @param nanoTimestamp The system time in nano seconds the event was detected
+	 */
 	void eventOccured(IEvent<?,?> event, long nanoTimestamp);
 
 }

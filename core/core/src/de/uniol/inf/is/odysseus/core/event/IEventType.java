@@ -14,6 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.core.event;
 
+/**
+ * An Interface to mark event types
+ * @author Marco Grawunder
+ *
+ */
 public interface IEventType {
 
 }

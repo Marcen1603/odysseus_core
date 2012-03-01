@@ -14,16 +14,47 @@
   */
 package de.uniol.inf.is.odysseus.core.event;
 
+/**
+ * This interface provides all methods to handle eventlistener
+ * 
+ * @author Marco Grawunder
+ *
+ */
 public interface IEventHandler {
 
+	/**
+	 * Add a new listener for a specific event type
+	 * @param listener The listener that should be informed
+	 * @param type The types of events the listener is interested in
+	 */
 	public void subscribe(IEventListener listener, IEventType type);
 
+	/**
+	 * Remove a listener for a specific event type
+	 * @param listener The listener that should be removed
+	 * @param type The type of event for which the listener should
+	 *             be removed
+	 */
 	public void unsubscribe(IEventListener listener, IEventType type);
 
+	/**
+	 * Add a new listener for all events that could be fires
+	 * @param listener The listener that should be informed
+	 */
 	public void subscribeToAll(IEventListener listener);
 
+	/**
+	 * Remove a listener that was previously subscribed for all events
+	 * This does not remove a listener that was registered with a
+	 * specific event type
+	 * @param listener
+	 */
 	public void unSubscribeFromAll(IEventListener listener);
 
+	/**
+	 * Fire a specific event to all EventListner
+	 * @param event The event that will be fired
+	 */
 	public void fire(IEvent<?, ?> event);
 
 }
