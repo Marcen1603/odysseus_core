@@ -111,10 +111,6 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
         return new DirectAttributeResolver(this);
     }
 
-    @Override
-    public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-        // Nothing to do
-    }
 
     public SDFSchema getSchema() {
         return this.schema;

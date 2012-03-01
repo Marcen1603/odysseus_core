@@ -179,16 +179,5 @@ public class AttributeResolver implements IAttributeResolver {
 		return new AttributeResolver(this);
 	}
 
-	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-		Set<String> sourceNames = this.sources.keySet();
-		for (String sourceName : sourceNames) {
-			ILogicalOperator source = sources.get(sourceName);
-			ILogicalOperator newSource = updated.get(source);
-			if (newSource != null) {
-				sources.put(sourceName, newSource);
-			}
-		}
-	}
 }
 

@@ -184,11 +184,6 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 	}
 	
 	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-		expression.updateAfterClone(updated);
-	}
-
-	@Override
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
 		replacementMap.put(curAttr, newAttr);
 	}

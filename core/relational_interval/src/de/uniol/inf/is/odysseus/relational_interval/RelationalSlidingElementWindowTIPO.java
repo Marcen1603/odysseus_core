@@ -112,7 +112,7 @@ public class RelationalSlidingElementWindowTIPO extends
 	}
 
 	private PointInTime getMinTS() {
-		PointInTime minTS = new PointInTime();
+		PointInTime minTS = PointInTime.getInfinityTime();
 		for (List<RelationalTuple<ITimeInterval>> b : buffers.values()) {
 			// an der obersten Stelle eines jeden Puffers steht das pro
 			// partition aelteste Element

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
@@ -179,11 +178,6 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	@Override
 	public int hashCode() {
 		return 23 * this.expression.hashCode();
-	}
-
-	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-		expression.updateAfterClone(updated);
 	}
 
 	@Override

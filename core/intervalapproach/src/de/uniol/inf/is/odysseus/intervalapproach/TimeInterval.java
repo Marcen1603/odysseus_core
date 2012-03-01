@@ -38,7 +38,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	private static final long serialVersionUID = 2210545271466064814L;
 
 	private static final TimeInterval forever = new TimeInterval(
-			new PointInTime(0), new PointInTime());
+			new PointInTime(0), PointInTime.getInfinityTime());
 
 	private PointInTime start;
 

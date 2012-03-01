@@ -71,7 +71,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
 
     @Override
     public List<RelationalTuple<TimeInterval>> getValue() {
-        PointInTime startTimestamp = new PointInTime();
+        PointInTime startTimestamp = PointInTime.getInfinityTime();;
         for (final IExpression<?> expr : this.getArguments()) {
             if (expr.getReturnType().isStartTimestamp()) {
                 startTimestamp = (PointInTime) expr.getValue();

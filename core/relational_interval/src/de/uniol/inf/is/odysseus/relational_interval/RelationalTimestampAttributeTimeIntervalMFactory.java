@@ -52,7 +52,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 		Number timeN = (Number) inElem.getAttribute(attrPos);
 		PointInTime time = null;
 		if (timeN.longValue() == -1){
-			time = new PointInTime();
+			time = PointInTime.getInfinityTime();
 		}else{
 			time = new PointInTime(timeN);
 		}

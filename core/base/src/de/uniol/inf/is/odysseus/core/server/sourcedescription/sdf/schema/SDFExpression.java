@@ -281,10 +281,6 @@ public class SDFExpression implements Serializable, IClone {
 		return true;
 	}
 
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-		attributeResolver.updateAfterClone(updated);
-	}
-
 	/**
 	 * This method is need to be able to determine which kind of SweepArea has
 	 * to be used in a join. For this, we check whether this expression contains

@@ -17,31 +17,57 @@ package de.uniol.inf.is.odysseus.core.metadata;
 import java.io.Serializable;
 
 /**
+ * 
+ * This immutable class represents a simple point in time and that can be infinite
+ * 
  * @author Jonas Jacobi, Marco Grawunder
  * 
  */
 public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializable {
 
 	private static final long serialVersionUID = -350811211489411617L;
-
+	
+	/**
+	 * A representation of this time
+	 */
 	final long point;
 
+	/**
+	 * A marker if this point has not time, but is infinite
+	 */
 	final boolean isInfinite;
 
-	static volatile PointInTime infinityValue = null;
+	/**
+	 * Constant for infinityTime
+	 */
+	static final PointInTime infinityValue = new PointInTime();
+	
+	/**
+	 * Constant for zero time
+	 */
 	private static final PointInTime zeroTime = new PointInTime(0);
 
+	/**
+	 * Create a point in time from a long value
+	 * @param point
+	 */
 	public PointInTime(long point) {
 		this.point = point;
 		this.isInfinite = false;
 	}
 	
+	/**
+	 * Create a point in time from a number that can be cast to
+	 * a long value
+	 * @param point
+	 */
 	public PointInTime(Number point){
 		this.point = point.longValue();
 		this.isInfinite = false;
 	}
-
-	public PointInTime() {
+	
+	
+	private PointInTime() {
 		isInfinite = true;
 		point = -1;
 	}
@@ -56,13 +82,6 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	}
 
 	public static PointInTime getInfinityTime() {
-		if (infinityValue == null) {
-			synchronized (PointInTime.class) {
-				if (infinityValue == null) {
-					infinityValue = new PointInTime();
-				}
-			}
-		}
 		return infinityValue;
 	}
 

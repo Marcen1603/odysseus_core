@@ -31,7 +31,6 @@ public interface IPredicate<T> extends IClone, Serializable {
 	@Override
 	public IPredicate<T> clone();
 	public void init();
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated);
 	public boolean equals(IPredicate<T> pred);
 	boolean isContainedIn(Object o);
 	public List<SDFAttribute> getAttributes();

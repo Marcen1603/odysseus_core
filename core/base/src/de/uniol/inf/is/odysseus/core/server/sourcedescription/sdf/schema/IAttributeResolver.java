@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 public interface IAttributeResolver extends Serializable {
 
 	public SDFAttribute getAttribute(String name) throws AmgigiousAttributeException, NoSuchAttributeException;
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated);
 	public IAttributeResolver clone() ;
 	
 }

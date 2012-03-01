@@ -45,10 +45,7 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	
 	@Override
 	abstract public AbstractPredicate<T> clone();
-	
-	@Override
-	public void updateAfterClone(Map<ILogicalOperator,ILogicalOperator> updated) {};
-	
+		
 	@Override
 	public List<SDFAttribute> getAttributes() {
 		return null;

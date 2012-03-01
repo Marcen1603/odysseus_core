@@ -255,7 +255,7 @@ public class NexmarkStaticClientHandler extends Thread {
 //			}
 			retval = new Container<Node, ITimeInterval>(n);
 			retval.setMetadata(new TimeInterval(new PointInTime(newStart),
-					new PointInTime()));
+					PointInTime.getInfinityTime()));
 			//lastStart = newStart;
 		}
 

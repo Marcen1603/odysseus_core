@@ -41,11 +41,6 @@ public class NonPriorityPredicate<T extends IMetaAttributeContainer<? extends IP
 	public void init() {
 		
 	}
-
-	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> updated) {
-		
-	}
 	
 	@Override
 	public NonPriorityPredicate<T> clone() {

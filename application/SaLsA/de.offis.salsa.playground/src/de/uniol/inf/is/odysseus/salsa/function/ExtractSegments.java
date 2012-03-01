@@ -76,7 +76,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
     @Override
     public List<RelationalTuple<TimeInterval>> getValue() {
 
-        PointInTime startTimestamp = new PointInTime();
+        PointInTime startTimestamp = PointInTime.getInfinityTime();
 
         for (IExpression<?> expr : getArguments()) {
 
