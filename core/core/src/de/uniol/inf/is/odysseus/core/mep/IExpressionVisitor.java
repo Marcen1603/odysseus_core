@@ -14,8 +14,35 @@
   */
 package de.uniol.inf.is.odysseus.core.mep;
 
+/**
+ * This interface is used to walk through an IExpression
+ * 
+ * @author Jonas Jacobi
+ *
+ */
+
 public interface IExpressionVisitor {
+	/**
+	 * Walk through with a variable as starting point
+	 * @param variable
+	 * @param data ??
+	 * @return ??
+	 */
 	public Object visit(Variable variable, Object data);
+	
+	/**
+	 * Walk through with a constant as starting point
+	 * @param constant
+	 * @param data ??
+	 * @return ??
+	 */
 	public Object visit(Constant<?> constant, Object data);
+
+	/**
+	 * Walk through with a function as starting point
+	 * @param function
+	 * @param data ??
+	 * @return ??
+	 */
 	public Object visit(IFunction<?> function, Object data);
 }

@@ -14,6 +14,12 @@
   */
 package de.uniol.inf.is.odysseus.core.mep;
 
+/**
+ * Exception thrown if an expression cannot be parsed
+ * 
+ * @author Jonas Jacobi
+ *
+ */
 public class ParseException extends Exception {
 
 	private static final long serialVersionUID = -7832093047514492062L;
