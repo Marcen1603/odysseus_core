@@ -41,7 +41,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		String accessPOName = accessAO.getSource().getURI(false);
 		SizeByteBufferReceiverPO accessPO = null;
 		try {
-			accessPO = new SizeByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled()));
+			accessPO = new SizeByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}

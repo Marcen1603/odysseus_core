@@ -37,7 +37,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSource().getURI(false);
-		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema());
+		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), accessAO.getLogin(), accessAO.getPassword());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);

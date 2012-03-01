@@ -40,7 +40,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.DEBUG, "Standard InputStream");
 		String accessPOName = accessAO.getSource().getURI(false);
-		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation());
+		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation(), accessAO.getLogin(), accessAO.getPassword());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO, accessPO);

@@ -1,22 +1,23 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational.base.access;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -50,14 +51,16 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 
 	final private String hostName;
 	final private int port;
+	final private String user;
+	final private String password;
 	private ObjectInputStream channel;
 	private RelationalTuple<M> buffer;
 	private IAtomicDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	
+
 	private SDFSchema schema;
-	
+
 	public boolean connectToPipe = false;
 	private Socket socket;
 
@@ -70,12 +73,14 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	}
 
 	public AtomicDataInputStreamAccessPO(String host, int port,
-			SDFSchema schema) {
+			SDFSchema schema, String user, String password) {
 		this.hostName = host;
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
 		this.schema = schema;
+		this.user = user;
+		this.password = password;
 	}
 
 	private void createDataReader(SDFSchema schema) {
@@ -83,26 +88,29 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
-			if(handler == null){
-				throw new IllegalArgumentException("No handler for datatype "+ uri);
-			}
-			else{
+			IAtomicDataHandler handler = DataHandlerRegistry
+					.getDataHandler(uri);
+			if (handler == null) {
+				throw new IllegalArgumentException("No handler for datatype "
+						+ uri);
+			} else {
 				this.dataReader[i++] = handler;
 			}
-			
-//			String upperCaseURI = uri.toUpperCase();
-//				if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
-//					this.dataReader[i++] = new DoubleHandler();
-//				} else if (upperCaseURI.equals("STRING")) {
-//					this.dataReader[i++] = new StringHandler();
-//				} else if (upperCaseURI.equals("INTEGER")) {
-//					this.dataReader[i++] = new IntegerHandler();	
-//				} else if (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP")) {
-//					this.dataReader[i++] = new LongHandler();
-//				} else {
-//					throw new RuntimeException("illegal datatype " + upperCaseURI);
-//				}
+
+			// String upperCaseURI = uri.toUpperCase();
+			// if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
+			// this.dataReader[i++] = new DoubleHandler();
+			// } else if (upperCaseURI.equals("STRING")) {
+			// this.dataReader[i++] = new StringHandler();
+			// } else if (upperCaseURI.equals("INTEGER")) {
+			// this.dataReader[i++] = new IntegerHandler();
+			// } else if
+			// (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP"))
+			// {
+			// this.dataReader[i++] = new LongHandler();
+			// } else {
+			// throw new RuntimeException("illegal datatype " + upperCaseURI);
+			// }
 		}
 	}
 
@@ -128,12 +136,20 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		try {
 			socket = new Socket(this.hostName, this.port);
 			this.channel = new ObjectInputStream(socket.getInputStream());
+			// Send login information
+			if (user != null && password != null) {
+				PrintWriter out = new PrintWriter
+					    (socket.getOutputStream(), true);
+				out.println(user);
+				out.println(password);
+			}
 		} catch (IOException e) {
-			throw new OpenFailedException(e.getMessage()+" "+this.hostName+" "+this.port);
+			throw new OpenFailedException(e.getMessage() + " " + this.hostName
+					+ " " + this.port);
 		}
-//		for (IAtomicDataHandler reader : this.dataReader) {
-//			reader.setStream(this.channel);
-//		}
+		// for (IAtomicDataHandler reader : this.dataReader) {
+		// reader.setStream(this.channel);
+		// }
 		this.isDone = false;
 		// }
 	}
@@ -194,7 +210,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 				return false;
 			} catch (IOException e) {
 				// TODO wie mit diesem fehler umgehen?
-				//e.printStackTrace();
+				// e.printStackTrace();
 				this.isDone = true;
 				propagateDone();
 				return false;
@@ -216,7 +232,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	@Override
 	public synchronized void transferNext() {
 		// System.out.println("TRANSFER BUFFER: " + this.buffer);
-		if (this.buffer != null){
+		if (this.buffer != null) {
 			transfer(this.buffer);
 			this.buffer = null;
 		}
@@ -240,14 +256,15 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	public AtomicDataInputStreamAccessPO<M> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof AtomicDataInputStreamAccessPO)) {
+		if (!(ipo instanceof AtomicDataInputStreamAccessPO)) {
 			return false;
 		}
 		AtomicDataInputStreamAccessPO<?> adisapo = (AtomicDataInputStreamAccessPO<?>) ipo;
-		if(this.hostName.equals(adisapo.hostName) && this.port == adisapo.port && this.schema.equals(adisapo.schema)) {
+		if (this.hostName.equals(adisapo.hostName) && this.port == adisapo.port
+				&& this.schema.equals(adisapo.schema)) {
 			return true;
 		}
 		return false;
