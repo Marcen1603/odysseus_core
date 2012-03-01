@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.core.logicaloperator;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
@@ -28,35 +27,134 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * This interface represent all logical operators. A logical operator is describes an operation
+ * that should be executed over input data. A logical operator is translated to a physical operator that
+ * that does the execution
+ * @author Marco Grawunder
+ *
+ */
+
 public interface ILogicalOperator extends IOwnedOperator, 
 	ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator,LogicalSubscription>, IClone, Serializable, ISerializable{
 
-	@Override
-	public ILogicalOperator clone();
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced);
+	/**
+	 * For debugging purposes and for visualization,
+	 * each operator can have a name
+	 * @return the Name of this operator
+	 */
+	public String getName();
+
+	/**
+	 * For debugging purposes and for visualization,
+	 * each operator can have a name
+	 * @param name The name of the operator to set
+	 */
+	public void setName(String name);
+
+	/**
+	 * How many inputs has this logical operator at call time 
+	 * @return the count of currently attached sources
+	 */
+	public int getNumberOfInputs();
+	
+	/**
+	 * Get the output schema of this operator, could be null if not
+	 * set or not determinable (because no input operators are set) 
+	 * @return The Schema
+	 */
 	public SDFSchema getOutputSchema();
+	
+	/**
+	 * Get the output schema for a specific port. Most logical operators
+	 * provide only a single output port
+	 * @param pos Which output port (default is 0) 
+	 * @return The schema
+	 */
 	public SDFSchema getOutputSchema(int pos);
+	
+	/**
+	 * Deliever the input schema of this operator at a spefific input 
+	 * port. Typically this is the output schema of the input operator 
+	 * @param pos Which input port 
+	 * @return The Schema
+	 */
 	public SDFSchema getInputSchema(int pos);	
 		
+	/**
+	 * If this logical operator provides a predicate (e.g. a join or 
+	 * a selection) this is delivered with this method
+	 * @return the predicate, could be null
+	 */
 	public IPredicate<?> getPredicate();	
+	
+	/**
+	 * Set the predicate for this logical operator
+	 * @param predicate
+	 */
 	public void setPredicate(IPredicate<?> predicate);
 
-	public String getName();
-	public void setName(String name);
-	
+	/**
+	 * Find the subscription where the logical operator is the source
+	 * @param logicalOperator The operator that should be found
+	 * @return a collection of subscriptions
+	 */
+	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator logicalOperator);
+
+	/**
+	 * This Method can be called to check if all needed parameters are set or
+	 * the combination of parameters is valid. Needed in GenericOperatorBuilder.
+	 * @return
+	 */
+	public boolean isValid();
+		
+	/**
+	 * This method is used in the transformation process.
+	 * @return true if for any input port with a logical operator a 
+	 * physical operator (ISource) is set else false 
+	 */
 	boolean isAllPhysicalInputSet();
+	
+	/**
+	 * Add a new physical subscription to an ISource
+	 * @param sub the subscription to add
+	 */
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
+	/**
+	 * Creates a new physical subscription
+	 * @param op The operator that should be registered as source
+	 * @param sinkInPort The input port of this logical operator that should be used
+	 * @param sourceOutPort The output port of the op to connect
+	 * @param schema The data schema of the data that is transfered over this subscription
+	 */
 	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	
+	/**
+	 * Removes all subscriptions
+	 */
 	public void clearPhysicalSubscriptions();
-	public Subscription<ISource<?>> getPhysSubscriptionTo(int port);
+	
+	/**
+	 * Gets the physical Subscription 
+	 * @param inputPort the input port  
+	 * @return the physical subscription of the inputPort
+	 */
+	public Subscription<ISource<?>> getPhysSubscriptionTo(int inputPort);
+	
+	/**
+	 * Get the collection of all physical subscriptions
+	 * @return
+	 */
 	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
+	
 	// Currently needed for Transformation --> we should get rid of this!
 	public Collection<ISource<?>> getPhysInputPOs();
-	public int getNumberOfInputs();
+		
+	/**
+	 * Create a copy of this logical operator.
+	 */
+	@Override
+	public ILogicalOperator clone();
 
-//	public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator a);
-	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a);
-	public boolean isValid();
-	
-	
+
 }

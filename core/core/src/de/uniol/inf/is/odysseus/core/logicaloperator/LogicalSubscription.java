@@ -19,23 +19,44 @@ import java.io.Serializable;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * This class represents a link to another logical Operators
+ * @author Marco Grawunder
+ *
+ */
+
 public class LogicalSubscription extends Subscription<ILogicalOperator> implements Serializable{
 
 	private static final long serialVersionUID = 678442733825703258L;
-		
+	
+	/**
+	 * Create a new logical Subscription
+	 * @param target What is the link target (could be a source or a sink!)
+	 * @param sinkInPort The input port of the sink that is affected
+	 * @param sourceOutPort The output port of the source that is affected
+	 * @param schema The data schema of the elements that should be processed
+	 */
 	public LogicalSubscription(ILogicalOperator target, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
 	}
 		
-	//ACHTUNG. NICHT ÄNDERN!
+	
+	/**
+	 * Different Subscriptions cannot be equal and must provide different hash codes 
+	 */
 	@Override
-	public boolean equals(Object obj) {
+	final public boolean equals(Object obj) {
+		// DO NOT CHANGE!
 		return super.equals(obj);
 	}
 	
+	/**
+	 * Different Subscriptions cannot be equal and must provide different hash codes 
+	 */
 	@Override
-	public int hashCode() {
+	final public int hashCode() {
+		// DO NOT CHANGE!
 		return super.hashCode();
 	}
 		
