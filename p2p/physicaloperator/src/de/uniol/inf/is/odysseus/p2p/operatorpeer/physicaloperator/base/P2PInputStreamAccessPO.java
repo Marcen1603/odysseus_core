@@ -70,8 +70,8 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 	}
 
 	public P2PInputStreamAccessPO(IDataTransformation<In, Out> transformation,
-			String adv, PeerGroup peergroup) {
-		super(transformation);
+			String adv, PeerGroup peergroup, String user, String password) {
+		super(transformation, user, password);
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
 		this.peerGroup = peergroup;
 		logger.debug("Initialisiere P2PInputStreamAccessPO: "

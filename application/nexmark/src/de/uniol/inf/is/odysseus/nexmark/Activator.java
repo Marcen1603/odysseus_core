@@ -69,15 +69,15 @@ public class Activator implements BundleActivator {
 			args[6] = elementLimit;
 		}
 
-		
+		URL catURL = context.getBundle().getEntry(categoriesFile);		
 		logger.debug("NexMark started "+args[0]+" "+args[1]+" "+args[2]+" "+args[3]+" "+args[4]);
-		if (args[1] != null){
-			NexmarkServer.main(args);
-		}
-		URL catURL = context.getBundle().getEntry(categoriesFile);
 		logger.debug("Read Categories from "+categoriesFile+" --> "+catURL);
 		categories = readCategoryFile(catURL);
 		logger.debug("done ");
+		if (args[1] != null){
+			NexmarkServer.main(args);
+		}
+
 		
 	}
 

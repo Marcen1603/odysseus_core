@@ -47,7 +47,7 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 		ISource<?> accessPO = null;
 
 		try {
-			RouterConnection accessHandler = new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled());
+			RouterConnection accessHandler = new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword());
 			accessPO = new BrokerByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), accessHandler);
 		} catch (IOException e) {
 			e.printStackTrace();

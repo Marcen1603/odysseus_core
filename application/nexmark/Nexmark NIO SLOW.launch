@@ -5,7 +5,7 @@
 <booleanAttribute key="automaticValidate" value="true"/>
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
-<booleanAttribute key="clearConfig" value="false"/>
+<booleanAttribute key="clearConfig" value="true"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Nexmark NIO SLOW"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
@@ -20,7 +20,7 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -console -debug -clear"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Xms1000M -Xmx1000M"/>
 <stringAttribute key="org.ops4j.pax.cursor.logLevel" value="INFO"/>
@@ -35,9 +35,9 @@
 </listAttribute>
 <stringAttribute key="pde.version" value="3.3"/>
 <booleanAttribute key="show_selected_only" value="false"/>
-<stringAttribute key="target_bundles" value="ch.qos.logback.classic@default:default,ch.qos.logback.core@default:default,ch.qos.logback.slf4j@default:false,javax.activation*1.1.0.v201105071233@default:default,javax.mail@default:default,javax.servlet@default:default,javax.transaction@default:false,org.apache.log4j@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.core.jobs@default:default,org.eclipse.core.runtime.compatibility.auth@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.runtime@default:true,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.ds@default:true,org.eclipse.equinox.preferences@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.servletbridge.extensionbundle@default:false,org.eclipse.equinox.transforms.hook@default:false,org.eclipse.equinox.util@default:default,org.eclipse.equinox.weaving.hook@default:false,org.eclipse.net4j.jms.api@default:default,org.eclipse.osgi.services@default:default,org.eclipse.osgi@-1:true,org.eclipse.persistence.jpa.equinox.weaving@default:false,org.slf4j.api@default:default"/>
+<stringAttribute key="target_bundles" value="ch.qos.logback.classic@default:default,ch.qos.logback.core@default:default,ch.qos.logback.slf4j@default:false,javax.activation*1.1.0.v201105071233@default:default,javax.mail@default:default,javax.servlet@default:default,javax.transaction@default:false,org.eclipse.core.contenttype@default:default,org.eclipse.core.jobs@default:default,org.eclipse.core.runtime.compatibility.auth@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.runtime@default:true,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.ds@default:true,org.eclipse.equinox.preferences@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.servletbridge.extensionbundle@default:false,org.eclipse.equinox.transforms.hook@default:false,org.eclipse.equinox.util@default:default,org.eclipse.equinox.weaving.hook@default:false,org.eclipse.net4j.jms.api@default:default,org.eclipse.osgi.services@default:default,org.eclipse.osgi@-1:true,org.eclipse.persistence.jpa.equinox.weaving@default:false,org.slf4j.api@default:default"/>
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="Commons.Math@default:default,com.springsource.org.apache.log4j@default:default,com.springsource.slf4j.api@default:default,com.springsource.slf4j.bridge@default:default,com.springsource.slf4j.log4j@default:false,de.uniol.inf.is.odysseus.core.server@default:default,de.uniol.inf.is.odysseus.core@default:default,de.uniol.inf.is.odysseus.intervalapproach@default:default,de.uniol.inf.is.odysseus.julproperties@default:false,de.uniol.inf.is.odysseus.nexmark@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,log4jproperties@default:false,org.apache.commons.collections@default:default"/>
+<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.core.server@default:default,de.uniol.inf.is.odysseus.core@default:default,de.uniol.inf.is.odysseus.intervalapproach@default:default,de.uniol.inf.is.odysseus.nexmark@default:default,de.uniol.inf.is.odysseus.relational.base@default:default,de.uniol.inf.is.odysseus.slf4j@default:default,org.apache.commons.collections@default:default"/>
 </launchConfiguration>

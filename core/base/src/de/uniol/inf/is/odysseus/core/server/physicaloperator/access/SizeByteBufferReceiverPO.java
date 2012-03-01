@@ -27,14 +27,14 @@ public class SizeByteBufferReceiverPO<W> extends
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	public synchronized void process_open() throws OpenFailedException {
 		sizeBuffer.clear();
 		size = -1;
 		super.process_open();
 	}
 
 	@Override
-	protected void process_close() {
+	public void process_close() {
 		sizeBuffer.clear();
 		size = -1;
 		super.process_close();
@@ -42,7 +42,7 @@ public class SizeByteBufferReceiverPO<W> extends
 	
 	@Override
 	public synchronized void process(ByteBuffer buffer) {
-		if (opened) {
+		if (isOpened()) {
 			try {
 				while (buffer.remaining() > 0) {
 

@@ -186,10 +186,10 @@ public class Router extends Thread implements IConnection {
 		getLogger().debug("Router terminated ...");
 	}
 
-	public void connectToServer(IAccessConnectionListener sink, String host, int port)
-			throws Exception {
-		connectToServer(sink, host, port, null, null);
-	}
+//	public void connectToServer(IAccessConnectionListener sink, String host, int port)
+//			throws Exception {
+//		connectToServer(sink, host, port, null, null);
+//	}
 	
 	public void connectToServer(IAccessConnectionListener sink, String host, int port, String username, String password)
 			throws Exception {

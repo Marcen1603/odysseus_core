@@ -19,5 +19,8 @@ import java.nio.ByteBuffer;
 public interface IAccessConnectionListener{
 	public void process(ByteBuffer buffer);
 	public void done();
-	public String getSourceName();	
+	public String getSourceName();
+	boolean isOpened();
+	public void process_close();
+	public void process_open();	
 }

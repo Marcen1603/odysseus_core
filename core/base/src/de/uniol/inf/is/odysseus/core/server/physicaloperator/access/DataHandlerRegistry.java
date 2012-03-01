@@ -16,12 +16,21 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author André Bolles
  *
  */
 public class DataHandlerRegistry {
 
+	static Logger logger = LoggerFactory.getLogger(DataHandlerRegistry.class);
+	
+	public DataHandlerRegistry(){
+		logger.debug("Created new DataHandler registry");
+	}
+	
 	/**
 	 * HashMap from datatype to data handler
 	 */
@@ -29,6 +38,7 @@ public class DataHandlerRegistry {
 	
 	public static void registerDataHandler(IAtomicDataHandler handler){
 		String errMsg = "";
+		logger.debug("Register DataHandler "+handler+" for Datatypes "+handler.getSupportedDataTypes());
 		for(String type: handler.getSupportedDataTypes()){
 			if(dataHandlers.containsKey(type.toLowerCase())){
 				errMsg += "Data handler for " + type + " already registered.\n";

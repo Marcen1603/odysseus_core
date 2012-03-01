@@ -13,4 +13,7 @@ public interface IAccessConnection extends IClone {
 	public void close(IAccessConnectionListener caller) throws IOException;
 	public void reconnect();
 	
+	public String getUser();
+	public String getPassword();
+	
 }

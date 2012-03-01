@@ -36,7 +36,8 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public void execute(P2PSourceAO p2pSourceAO, TransformationConfiguration transformConfig) {
-		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(new IdentityTransformation(), p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup());
+		// TODO: Add Username and Password to P2PSourceAO?
+		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(new IdentityTransformation(), p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup(), null, null);
 		p2pAccessPO.setOutputSchema(p2pSourceAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(p2pSourceAO, p2pAccessPO);
 		for (ILogicalOperator o:toUpdate){

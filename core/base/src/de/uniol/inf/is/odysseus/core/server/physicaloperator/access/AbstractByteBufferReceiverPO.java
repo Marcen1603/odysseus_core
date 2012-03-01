@@ -36,7 +36,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 	}
 
 	protected IObjectHandler<W> objectHandler;
-	boolean opened;
+	private boolean opened;
 	
 	final IAccessConnection accessHandler;
 
@@ -57,9 +57,13 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 		opened = byteBufferReceiverPO.opened;
 	}
 
+	@Override
+	public boolean isOpened() {
+		return super.isOpen();
+	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	public synchronized void process_open() throws OpenFailedException {
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
@@ -73,7 +77,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 	}
 
 	@Override
-	protected void process_close() {
+	public void process_close() {
 		getLogger().debug("Process_close");
 		if (opened) {
 			try {

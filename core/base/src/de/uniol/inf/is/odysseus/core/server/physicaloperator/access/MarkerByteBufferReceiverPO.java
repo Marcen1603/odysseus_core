@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 public class MarkerByteBufferReceiverPO<W> extends
@@ -36,18 +35,8 @@ public class MarkerByteBufferReceiverPO<W> extends
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
-		super.process_open();
-	}
-
-	@Override
-	protected void process_close() {
-		super.process_close();
-	}
-
-	@Override
 	public synchronized void process(ByteBuffer buffer) {
-		if (opened) {
+		if (isOpened()) {
 			try {
 				int pos = 0;
 				while (buffer.remaining() > 0) {

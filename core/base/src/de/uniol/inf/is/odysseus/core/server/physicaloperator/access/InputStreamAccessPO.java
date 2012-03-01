@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -30,14 +31,14 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 	private int port;
 
 	public InputStreamAccessPO(String host, int port,
-			IDataTransformation<In, Out> transformation) {
-		super(transformation);
+			IDataTransformation<In, Out> transformation, String user, String password) {
+		super(transformation, user, password);
 		this.host = host;
 		this.port = port;
 	}
 
 	public InputStreamAccessPO(InputStreamAccessPO<In, Out> inputStreamAccessPO) {
-		super(inputStreamAccessPO.transformation);
+		super(inputStreamAccessPO);
 		this.host = inputStreamAccessPO.host;
 		this.port = inputStreamAccessPO.port;
 	}
@@ -50,6 +51,13 @@ public class InputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>> ext
 			try {
 				s = new Socket(host, port);
 				this.iStream = new ObjectInputStream(s.getInputStream());
+				// Send login information
+				if (user != null && password != null) {
+					PrintWriter out = new PrintWriter
+						    (s.getOutputStream(), true);
+					out.println(user);
+					out.println(password);
+				}
 			} catch (Exception e) {
 				throw new OpenFailedException(e.getMessage()+" on "+this.host+" "+this.port);
 			}

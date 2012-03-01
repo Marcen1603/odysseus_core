@@ -85,7 +85,7 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractByteBufferReceiverPO<
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	public synchronized void process_open() throws OpenFailedException {
 		sizeBuffer.clear();
 		typeBuffer.clear();
 		timeBuffer.clear();
@@ -94,7 +94,7 @@ public class BrokerByteBufferReceiverPO<W> extends AbstractByteBufferReceiverPO<
 	}
 
 	@Override
-	protected void process_close() {
+	public void process_close() {
 		sizeBuffer.clear();
 		typeBuffer.clear();
 		timeBuffer.clear();
