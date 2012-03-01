@@ -61,8 +61,8 @@ public class ToLongFunction extends AbstractFunction<Long> {
 		}
 	}
 	
-	@Override
-	public boolean isContextDependent() {	
-		return true;
-	}
+//	@Override
+//	public boolean isContextDependent() {	
+//		return true;
+//	}
 }

@@ -19,34 +19,66 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
+/**
+ * This class represents a variable with an identifier,
+ * a data type, a set of data types is can process and 
+ * optional a value
+ * 
+ * @author Marco Grawunder
+ *
+ */
 public class Variable implements IExpression<Object> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 6977413577984429091L;
+	/**
+	 * The bounded value, could be null
+	 */
 	private Object value;
+	/**
+	 * The name of the variable
+	 */
 	private final String identifier;
+	/**
+	 * The type of the variable
+	 */
 	private final SDFDatatype type;
+	/**
+	 * The array of types that could be used to bind a value
+	 */
 	private SDFDatatype[] acceptedTypes;
 
+	/**
+	 * Create a new Variable of type Object
+	 * @param id The name of the variable
+	 */
 	public Variable(String id) {
 		this.identifier = id;
 		this.type = SDFDatatype.OBJECT;
 	}
 
+	/**
+	 * Create a new Variable
+	 * @param id The name of the variable
+	 * @param type The type of the variable
+	 */
 	public Variable(String id, SDFDatatype type) {
 		this.identifier = id;
 		this.type = type;
 	}
 
+	/**
+	 * Get the name of the variable
+	 * @return the name of the variable
+	 */
 	public String getIdentifier() {
 		return identifier;
 	}
 
+	/**
+	 * Bind the value to the variable
+	 * @param value The value to bind
+	 */
 	public void bind(Object value) {
-//		if (value instanceof Number) {
-//			value = ((Number) value).doubleValue();
-//		}
 		this.value = value;
 	}
 
@@ -120,14 +152,25 @@ public class Variable implements IExpression<Object> {
 		throw new RuntimeException("cannot convert Variable to Constant");
 	}
 	
+	/**
+	 * Get the array of value types that this variable a bind 
+	 * @return the array of type
+	 */
 	public SDFDatatype[] getAcceptedTypes() {
 		return acceptedTypes;
 	}
 
+	/**
+	 * Set the array of value types that this variable a bind 
+	 */
 	public void setAcceptedTypes(SDFDatatype[] acceptedTypes) {
 		this.acceptedTypes = acceptedTypes;
 	}
 
+	/**
+	 * Remove some types from the array of accepted types 
+	 * @param restrictTypes The array of types that should be removed
+	 */
 	public void restrictAcceptedTypes(SDFDatatype[] restrictTypes){
 		int countOfRemovedTypes = 0;
 		for(int i = 0; i<this.acceptedTypes.length; i++){			

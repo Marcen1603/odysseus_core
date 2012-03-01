@@ -101,8 +101,8 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public boolean isContextDependent() {
-		return false;
+	public boolean optimizeConstantParameter() {
+		return true;
 	}
 	
 	@Override

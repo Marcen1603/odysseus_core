@@ -47,8 +47,8 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public boolean isContextDependent() {
-		return true;
+	public boolean optimizeConstantParameter() {
+		return false;
 	}
 
 	@Override

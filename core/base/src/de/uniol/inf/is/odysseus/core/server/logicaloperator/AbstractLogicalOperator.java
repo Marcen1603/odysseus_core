@@ -92,13 +92,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	abstract public AbstractLogicalOperator clone();
 
-	@Override
-	public void updateAfterClone(Map<ILogicalOperator, ILogicalOperator> replaced) {
-		if (predicate != null) {
-			predicate.updateAfterClone(replaced);
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

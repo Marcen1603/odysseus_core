@@ -36,19 +36,18 @@ PARSER_BEGIN(SPARQLParser)
  * All rights reserved.
  */
 
-package de.uniol.inf.is.odysseus.core.server.sparql.parser.ast;
+package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.description.*;
+import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
-import de.uniol.inf.is.odysseus.core.server.sparql.parser.helper.*;
-import de.uniol.inf.is.odysseus.core.server.sparql.parser.*;
-import de.uniol.inf.is.odysseus.core.server.sparql.*;
-
-public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SPARQLParserTreeConstants/*@egen*/
+import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
+import de.uniol.inf.is.odysseus.sparql.parser.*;
+import de.uniol.inf.is.odysseus.sparql.*;
+@ SuppressWarnings("all") public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SPARQLParserTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
   protected JJTSPARQLParserState jjtree = new JJTSPARQLParserState();
 

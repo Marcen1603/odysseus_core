@@ -9,16 +9,12 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 import java.util.List;
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.*;
-import de.uniol.inf.is.odysseus.core.sdf.description.*;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
-
 @ SuppressWarnings("all") public class SPARQLParser extends SPARQLParserBase/*@bgen(jjtree)*/implements SPARQLParserTreeConstants, SPARQLParserConstants {/*@bgen(jjtree)*/
   protected JJTSPARQLParserState jjtree = new JJTSPARQLParserState();
 
@@ -4928,6 +4924,11 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
     finally { jj_save(1, xla); }
   }
 
+  private boolean jj_3_2() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
   private boolean jj_3R_20() {
     if (jj_scan_token(ADVANCE)) return true;
     if (jj_3R_19()) return true;
@@ -5011,11 +5012,6 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
 
   private boolean jj_3R_24() {
     if (jj_scan_token(S)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_18()) return true;
     return false;
   }
 

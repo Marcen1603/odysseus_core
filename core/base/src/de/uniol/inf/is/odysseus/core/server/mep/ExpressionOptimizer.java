@@ -185,12 +185,12 @@ public class ExpressionOptimizer {
 				IExpression<?> iExpression = function.getArguments()[i];
 				function.getArguments()[i] = (IExpression<?>) iExpression
 						.acceptVisitor(this, data);
-				if (!(function.getArguments()[i] instanceof Constant)) {
+				if (!(function.getArguments()[i].isConstant())) {
 					isAllInputsConstant = false;
 				}
 			}
 
-			if (isAllInputsConstant && !function.isContextDependent()) {
+			if (isAllInputsConstant && function.optimizeConstantParameter()) {
 				return new Constant<Object>(function.getValue(), SDFDatatype.OBJECT);
 			}
 

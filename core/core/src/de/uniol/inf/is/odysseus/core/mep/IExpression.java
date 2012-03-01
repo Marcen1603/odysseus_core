@@ -19,16 +19,82 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
+/**
+ * This Interface represents all expressions in MEP. Could be 
+ * a function, a variable or a constant
+ * 
+ * @author Jonas Jacobi
+ *
+ * @param <T>
+ */
 public interface IExpression<T> extends Serializable{
+	
+	/**
+	 * Returns the value of this expression
+	 * @return
+	 */
 	public T getValue();
+	
+	/**
+	 * Method for optimization purposes (walk through the expression)
+	 * @param visitor TODO
+	 * @param data TODO
+	 * @return TODO
+	 */
 	public Object acceptVisitor(IExpressionVisitor visitor, Object data);
+	
+	/**
+	 * Returns the set of Variables of this expression
+	 * @return
+	 */
 	public Set<Variable> getVariables();
+
+	/**
+	 * Return variable with name 
+	 * @param name The name of the variable
+	 * @return The Variable
+	 */
 	public Variable getVariable(String name);
+	
+	/**
+	 * Delivers the return type of this expression
+	 * @return The SDFExpression
+	 */
 	public SDFDatatype getReturnType();
+	
+	/**
+	 * To avoid instanceof
+	 * @return true if this expression is a variable
+	 */
 	public boolean isVariable();
+
+	/**
+	 * To avoid instanceof
+	 * @return true if this expression is a function
+	 */
 	public boolean isFunction();
+
+	/**
+	 * To avoid instanceof
+	 * @return true if this expression is a constant
+	 */
 	public boolean isConstant();
+	
+	/**
+	 * Conversion function
+	 * @return the variable if this expression is a variable, runtime exception else
+	 */
 	public Variable toVariable();
+	
+	/**
+	 * Conversion function
+	 * @return the function if this expression is a function, runtime exception else
+	 */	
 	public IFunction<T> toFunction();
+	
+	/**
+	 * Conversion function
+	 * @return the constant if this expression is a constant, runtime exception else
+	 */
 	public Constant<T> toConstant();
 }
