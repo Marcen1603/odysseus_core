@@ -102,12 +102,11 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			// low enough
 			getLogger().debug("Total cost would be lower than maximum cost");
 			return true;
-		} else {
-			// too high costs!
-			getLogger().debug("Executing queries would exceed maximum cost");
-			getLogger().debug("Maximum Cost: " + maxCost);
-			return false;
 		}
+
+		getLogger().debug("Executing queries would exceed maximum cost");
+		getLogger().debug("Maximum Cost: " + maxCost);
+		return false;
 	}
 
 	@Override
@@ -265,14 +264,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	}
 
 	private ICost estimateCost(List<IPhysicalOperator> operators, boolean onUpdate) {
-		if (getSelectedCostModel() != null) {
-
-			ICostModel costModel = getCostModels().get(getSelectedCostModel());
-			ICost queryCost = costModel.estimateCost(operators, onUpdate);
-			return queryCost;
-		} else {
-			throw new RuntimeException(" No CostModel selected");
+		if (getSelectedCostModel() == null) {
+			throw new IllegalStateException("No CostModel selected.");
 		}
+
+		ICostModel costModel = getCostModels().get(getSelectedCostModel());
+		ICost queryCost = costModel.estimateCost(operators, onUpdate);
+		return queryCost;
 	}
 
 	/**
@@ -313,13 +311,14 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	/**
 	 * Wird aufgerufen, wenn im OSGi-Framework einen {@link IExecutor}
-	 * registriert wird. Für die Admission Control wird genau ein {@link IExecutor}
-	 * benötigt.
+	 * registriert wird. Für die Admission Control wird genau ein
+	 * {@link IExecutor} benötigt.
 	 * 
-	 * @param executor Neuer {@link IExecutor}
+	 * @param executor
+	 *            Neuer {@link IExecutor}
 	 */
 	public void bindExecutor(IExecutor executor) {
-		this.executor = (IServerExecutor)executor;
+		this.executor = (IServerExecutor) executor;
 
 		this.executor.addPlanModificationListener(this);
 
@@ -330,7 +329,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * Wird aufgerufen, wenn im OSGi-Framework der {@link IExecutor}
 	 * deregistriert wird.
 	 * 
-	 * @param executor Zu entfernender {@link IExecutor}
+	 * @param executor
+	 *            Zu entfernender {@link IExecutor}
 	 */
 	public void unbindExecutor(IExecutor executor) {
 		if (executor == this.executor) {
@@ -345,7 +345,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 * Liefert den aktuell registrierten Executor oder <code>null</code>.
 	 * 
 	 * @return Registrierter Executor oder <code>null</code>, falls kein
-	 * {@link IExecutor} registriert wurde.
+	 *         {@link IExecutor} registriert wurde.
 	 */
 	public IExecutor getExecutor() {
 		return this.executor;
