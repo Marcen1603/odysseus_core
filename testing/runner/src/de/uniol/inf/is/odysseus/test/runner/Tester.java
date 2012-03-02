@@ -24,6 +24,7 @@ public class Tester implements IApplication {
 		
 		new Thread() {
 			@SuppressWarnings("unchecked")
+			@Override
 			public void run() {
 				@SuppressWarnings("rawtypes")
 				ServiceTracker t = new ServiceTracker(ctx,
@@ -42,7 +43,7 @@ public class Tester implements IApplication {
 
 				testComponent.startTesting(args);
 				goOne = false;
-			};
+			}
 		}.start();
 
 		while (goOne) {
