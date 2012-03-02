@@ -28,7 +28,6 @@ public class LeastLossReaction implements IAdmissionReaction {
 			if( least == null ) {
 				least = poss;
 				leastCost = poss.getCostEstimation();
-				continue;
 			} else {
 				int cmp = poss.getCostEstimation().compareTo(leastCost);
 				if( cmp < 0 ) {
