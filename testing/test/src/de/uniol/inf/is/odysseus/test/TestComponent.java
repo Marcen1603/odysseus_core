@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class TestComponent implements ITestComponent, ICompareSinkListener{
 	
-	Logger logger = LoggerFactory.getLogger(TestComponent.class);
+	private static Logger LOG = LoggerFactory.getLogger(TestComponent.class);
 
 
 	static TestComponent instance = null;
@@ -43,12 +43,12 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	}
 	
 	public void bindExecutor(IExecutor executor){
-		System.out.println("Executor bound");
+		LOG.info("Executor bound");
 		this.executor = (IServerExecutor)executor;
 	}
 	
 	public void bindScriptParser(IOdysseusScriptParser scriptParser){
-		System.out.println("ScriptParser bound");
+		LOG.info("ScriptParser bound");
 		this.parser = scriptParser;
 	}
 	
@@ -67,7 +67,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		
 		// Read queries from directory dir
 		File f = new File(dir);
-		logger.debug("Looking for files in " + f);
+		LOG.debug("Looking for files in " + f);
 		File[] fileArray = f.listFiles();
 		
 		// Creating resultfile in dir
@@ -96,7 +96,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			}
 		}
 
-		logger.debug("Starting executor ...");
+		LOG.debug("Starting executor ...");
 
 		try {
 			executor.startExecution();
@@ -104,7 +104,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			throw new RuntimeException(e1);
 		}
 		
-		logger.debug("Processing queries ...");
+		LOG.debug("Processing queries ...");
 		// TODO: Logging to file
 		for (Entry<String, File> query : queries.entrySet()) {
 			boolean success = true;
@@ -128,7 +128,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 				success = false;
 				String text = "Query " + query.getKey() + " failed! "
 						+ e.getMessage();
-				logger.error(text);
+				LOG.error(text);
 				try {
 					out.write(text+newline);
 				} catch (IOException e1) {
@@ -137,13 +137,13 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			} finally {
 
 				if (success) {
-					logger.debug("Query " + query.getKey()
+					LOG.debug("Query " + query.getKey()
 							+ " successfull");
 				}
 			}
 			// Warten bei Nexmark notwendig damit Daten wieder von vorne losgehen
 			try {
-				logger.debug("Waiting 30 seconds before next run");
+				LOG.debug("Waiting 30 seconds before next run");
 				Thread.sleep(30000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -169,7 +169,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			IOException {
 		String text ="Testing Query " + key + " from file " + query
 				+ " with results from file " + result+ " --> "; 
-		logger.debug(text);
+		LOG.debug(text);
 		out.write(text);
 		if (result == null) {
 			throw new IllegalArgumentException("No result set found for query "
@@ -191,7 +191,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 
 	@Override
 	public synchronized void processingDone() {
-		logger.debug("Query processing done");
+		LOG.debug("Query processing done");
 		try {
 			out.write(" ok "+newline);
 		} catch (IOException e) {
@@ -205,7 +205,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	@Override
 	public synchronized void processingError(String line, String input) {
 		String text ="Query processing created error " + line + " " + input;
-		logger.error(text);
+		LOG.error(text);
 		try {
 			out.write(text+newline);
 		} catch (IOException e) {
