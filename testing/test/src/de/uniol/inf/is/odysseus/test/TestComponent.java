@@ -72,7 +72,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		try {
 			out = new BufferedWriter(new FileWriter(dir+"/result"+System.currentTimeMillis()+".log"));
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		
@@ -131,7 +130,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 				try {
 					out.write(text+newline);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			} finally {
@@ -146,7 +144,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 				logger.debug("Waiting 30 seconds before next run");
 				Thread.sleep(30000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -155,13 +152,11 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 			out.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			executor.stopExecution();
 		} catch (PlanManagementException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -198,7 +193,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		try {
 			out.write(" ok "+newline);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		processingDone = true;
@@ -213,7 +207,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		try {
 			out.write(text+newline);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		processingDone = true;
