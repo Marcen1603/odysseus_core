@@ -26,8 +26,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	
 	private static Logger LOG = LoggerFactory.getLogger(TestComponent.class);
 
-
-	static TestComponent instance = null;
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
 	
@@ -39,7 +37,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	BufferedWriter out = null;
 	
 	public void activate(ComponentContext context){
-		instance = this;
 	}
 	
 	public void bindExecutor(IExecutor executor){
