@@ -39,7 +39,11 @@ public class Activator implements BundleActivator {
 	}
 	
 	private static boolean isValidBundle( BundleContext context, Bundle bundle ) {
-		return bundle != context.getBundle() && bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null &&  bundle.getState() == Bundle.RESOLVED;
+		return bundle != context.getBundle() && !isFragmentBundle(bundle) &&  bundle.getState() == Bundle.RESOLVED;
+	}
+	
+	private static boolean isFragmentBundle( Bundle bundle ) {
+		return bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
 	}
 	
 	private static void tryStartBundle(Bundle bundle ) {
