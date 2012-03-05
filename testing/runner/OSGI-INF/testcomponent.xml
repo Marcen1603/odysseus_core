@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="TestRunner">
+   <implementation class="de.uniol.inf.is.odysseus.test.runner.Tester"/>
+   <reference bind="addTestComponent" cardinality="1..n" interface="de.uniol.inf.is.odysseus.test.ITestComponent" name="ITestComponent" policy="dynamic" unbind="removeTestComponent"/>
+</scr:component>

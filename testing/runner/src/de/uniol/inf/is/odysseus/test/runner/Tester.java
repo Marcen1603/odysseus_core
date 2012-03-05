@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.test.runner;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,50 +12,53 @@ import de.uniol.inf.is.odysseus.test.ITestComponent;
 
 public class Tester implements IApplication {
 
-	Logger logger = LoggerFactory.getLogger(Tester.class);
-	private boolean goOne = true;
+	private static final Logger LOG = LoggerFactory.getLogger(Tester.class);
+
+	private static Collection<ITestComponent> testComponents = new ArrayList<ITestComponent>();
+
+	public void addTestComponent(ITestComponent component) {
+		LOG.debug("Add TestComponent " + component);
+		testComponents.add(component);
+	}
+
+	public void removeTestComponent(ITestComponent component) {
+		testComponents.remove(component);
+		LOG.debug("Remove TestComponent : " + component);
+	}
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		final String[] args = (String[]) context.getArguments().get("application.args");
+		
+		LOG.debug("Starting tests (args = " + argsToString(args) + ")");
 
-		context.applicationRunning();
-		final BundleContext ctx = Activator.getBundleContext();
+		for( ITestComponent testComponent : testComponents ) {
+			testComponent.startTesting(args);
+		}
+		
+		return null;
+	}
 
-		new Thread() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run() {
-				@SuppressWarnings("rawtypes")
-				ServiceTracker t = new ServiceTracker(ctx, ITestComponent.class.getName(), null);
-				t.open();
-				ITestComponent testComponent = null;
-				try {
-					while (testComponent == null) {
-						// System.out.println("Wait for TestComponent Service");
-						testComponent = (ITestComponent) t.waitForService(1000);
-					}
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				testComponent.startTesting(args);
-				goOne = false;
-			}
-		}.start();
-
-		while (goOne) {
-			synchronized (this) {
-				wait(10000);
-			}
+	private static String argsToString(String[] strings) {
+		if (strings == null) {
+			return "null";
 		}
 
-		return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("[ ");
+		for (int i = 0; i < strings.length; i++) {
+			sb.append(strings[i]);
+			if (i < strings.length - 1) {
+				sb.append(", ");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	@Override
 	public void stop() {
 
 	}
+
 }

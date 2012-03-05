@@ -9,3 +9,4 @@ Import-Package: de.uniol.inf.is.odysseus.test,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.test.runner.Activator
+Service-Component: OSGI-INF/testcomponent.xml

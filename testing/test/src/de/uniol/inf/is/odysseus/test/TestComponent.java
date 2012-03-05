@@ -43,10 +43,12 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 	}
 	
 	public void bindExecutor(IExecutor executor){
+		System.out.println("Executor bound");
 		this.executor = (IServerExecutor)executor;
 	}
 	
 	public void bindScriptParser(IOdysseusScriptParser scriptParser){
+		System.out.println("ScriptParser bound");
 		this.parser = scriptParser;
 	}
 	
@@ -212,6 +214,12 @@ public class TestComponent implements ITestComponent, ICompareSinkListener{
 		processingDone = true;
 		errorText = "Wrong Result input " + input + " was expecting " + line;
 		notifyAll();
+	}
+
+	
+	@Override
+	public String toString() {
+		return "Nexmark Tests";
 	}
 
 }
