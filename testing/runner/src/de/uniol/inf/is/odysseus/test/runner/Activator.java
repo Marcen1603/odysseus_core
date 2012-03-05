@@ -7,35 +7,46 @@ import org.osgi.framework.Constants;
 
 public class Activator implements BundleActivator {
 
-	static public BundleContext context = null;
+	private static BundleContext context = null;
 
 	@Override
 	public void start(BundleContext ctx) throws Exception {
+		startResolvedBundles(ctx);
 		context = ctx;
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (Bundle bundle : context.getBundles()) {
-					boolean isFragment = bundle.getHeaders().get(
-							Constants.FRAGMENT_HOST) != null;
-					if (bundle != context.getBundle() && !isFragment
-							&& bundle.getState() == Bundle.RESOLVED) {
-						try {
-							bundle.start();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		t.start();
 	}
 
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
 
 	}
-
 	
+	public static BundleContext getBundleContext() {
+		return context;
+	}
+
+	private static void startResolvedBundles(final BundleContext context) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (Bundle bundle : context.getBundles()) {
+					if ( isValidBundle(context, bundle) ) {
+						tryStartBundle(bundle);
+					}
+				}
+			}
+		});
+		t.start();
+	}
+	
+	private static boolean isValidBundle( BundleContext context, Bundle bundle ) {
+		return bundle != context.getBundle() && bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null &&  bundle.getState() == Bundle.RESOLVED;
+	}
+	
+	private static void tryStartBundle(Bundle bundle ) {
+		try {
+			bundle.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

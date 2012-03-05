@@ -16,24 +16,22 @@ public class Tester implements IApplication {
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		final String[] args = (String[]) context.getArguments().get(
-				"application.args");
+		final String[] args = (String[]) context.getArguments().get("application.args");
 
 		context.applicationRunning();
-		final BundleContext ctx = Activator.context;
-		
+		final BundleContext ctx = Activator.getBundleContext();
+
 		new Thread() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void run() {
 				@SuppressWarnings("rawtypes")
-				ServiceTracker t = new ServiceTracker(ctx,
-						ITestComponent.class.getName(), null);
+				ServiceTracker t = new ServiceTracker(ctx, ITestComponent.class.getName(), null);
 				t.open();
 				ITestComponent testComponent = null;
 				try {
 					while (testComponent == null) {
-						//System.out.println("Wait for TestComponent Service");
+						// System.out.println("Wait for TestComponent Service");
 						testComponent = (ITestComponent) t.waitForService(1000);
 					}
 				} catch (InterruptedException e) {
