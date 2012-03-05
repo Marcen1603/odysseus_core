@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Latency
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.latency
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
