@@ -44,26 +44,26 @@ public class ContextStore<T> {
 		return instance;
 	}
 
-	private HashMap<String, ContextStoreEntry<T>> stores = new HashMap<>();
+	private HashMap<String, ContextStoreEntry<T>> stores = new HashMap<String, ContextStoreEntry<T>>();
 
 	public void createStore(String name, SDFSchema schema) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
-		} else {
-			ContextStoreEntry<T> entry = new ContextStoreEntry<>(schema);
-			this.stores.put(name, entry);
 		}
+
+		ContextStoreEntry<T> entry = new ContextStoreEntry<T>(schema);
+		this.stores.put(name, entry);
 	}
 
-	public SDFSchema getStoreSchema(String storeName) throws ContextManagementException{
-		if(storeExists(storeName)){
+	public SDFSchema getStoreSchema(String storeName) throws ContextManagementException {
+		if (storeExists(storeName)) {
 			return this.stores.get(storeName).getSchema();
-		}else{
-			throw new ContextManagementException("Context store does not exists");
 		}
+		
+		throw new ContextManagementException("Context store does not exists");
 	}
-	
-	public void insertValue(String storeName, T value) {		
+
+	public void insertValue(String storeName, T value) {
 		stores.get(storeName).setValue(value);
 	}
 
@@ -74,11 +74,11 @@ public class ContextStore<T> {
 	}
 
 	public Object getValue(String storeName) throws ContextManagementException {
-		if(storeExists(storeName)){
+		if (storeExists(storeName)) {
 			return this.stores.get(storeName).getValue();
-		}else{
-			throw new ContextManagementException("Context store does not exists");
-		}
+		} 
+		
+		throw new ContextManagementException("Context store does not exists");
 	}
 
 	public SDFAttribute getSDFAttribute(String name) {

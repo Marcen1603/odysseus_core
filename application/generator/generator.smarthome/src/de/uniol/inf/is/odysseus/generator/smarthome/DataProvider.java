@@ -40,7 +40,7 @@ public class DataProvider extends StreamClientHandler {
 	public synchronized List<DataTuple> next() {
 		List<DataTuple> tuples = new ArrayList<DataTuple>(this.buffer.size());
 		if(hasNew){					
-			tuples = new ArrayList<>(buffer);			
+			tuples = new ArrayList<DataTuple>(buffer);			
 			this.buffer.clear();
 			hasNew = false;
 		}
