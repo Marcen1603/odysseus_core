@@ -1488,7 +1488,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTCreateContextStore node, Object data)
 			throws QueryParseException {
 		IVisitor visitor = VisitorFactory.getInstance().getVisitor(
-				"de.uniol.inf.is.odysseus.core.server.context.cql.ContextVisitor");
+				"de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.visit(node, data, this);
