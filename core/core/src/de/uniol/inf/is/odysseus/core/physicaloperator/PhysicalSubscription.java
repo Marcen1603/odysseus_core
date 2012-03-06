@@ -50,16 +50,6 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public synchronized int getOpenCalls(){
 		return openCalls;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-	
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
 	
 	
 }

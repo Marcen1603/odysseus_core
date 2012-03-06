@@ -41,23 +41,5 @@ public class LogicalSubscription extends Subscription<ILogicalOperator> implemen
 		super(target, sinkInPort, sourceOutPort, schema);
 	}
 		
-	
-	/**
-	 * Different Subscriptions cannot be equal and must provide different hash codes 
-	 */
-	@Override
-	final public boolean equals(Object obj) {
-		// DO NOT CHANGE!
-		return super.equals(obj);
-	}
-	
-	/**
-	 * Different Subscriptions cannot be equal and must provide different hash codes 
-	 */
-	@Override
-	final public int hashCode() {
-		// DO NOT CHANGE!
-		return super.hashCode();
-	}
 		
 }

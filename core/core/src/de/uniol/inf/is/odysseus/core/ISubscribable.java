@@ -29,7 +29,7 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 * 
 	 * A -> B
 	 * 
-	 * Subscription is initial inactive, call open to active, close to deaktivate
+	 * Subscription is initial inactive, call open to active, close to deactivate
 	 *
 	 */
 	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);

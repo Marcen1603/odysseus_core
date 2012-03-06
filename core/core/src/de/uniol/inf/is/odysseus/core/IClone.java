@@ -15,6 +15,9 @@
 package de.uniol.inf.is.odysseus.core;
 
 /**
+ * This interface can be used to force the implementation of clone
+ * and makes the method public 
+ * 
  * @author Jonas Jacobi
  */
 public interface IClone extends Cloneable {

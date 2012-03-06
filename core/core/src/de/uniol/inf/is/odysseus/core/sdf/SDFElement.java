@@ -19,22 +19,36 @@ import java.io.Serializable;
 import de.uniol.inf.is.odysseus.core.IClone;
 
 /**
+ * The class SDFElement represents a logical unit that can
+ * be identified by an URI. SDFElement is immutable!
+ * 
+ * The can be different URIs like "http://www.demo.com/test.html#attrib1" or
+ * "source.attrib". Both kinds of URIs are supported. The default is the second one
+ * 
  * @author Marco Grawunder
  */
 public class SDFElement implements Serializable, IClone {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6076421686616330199L;
 
 	/**
-	 * @uml.property name="qualName"
+	 * The qualifying part.
 	 */
 	final private String qualName;
+	/**
+	 * The uri without the qualitfying part, e.g. the namespace or the source
+	 */
 	final private String uRIWithoutQualName;
+	/**
+	 * The delimmiter by which the both parts are separated or merged
+	 */
 	final private String delimitter;
 	
+	/**
+	 * Creates a new SDFElement. The URI is scanned for '#' or '.' as last sign to 
+	 * seperate both parts of the URI
+	 * @param URI The full URI
+	 */
 	public SDFElement(String URI) {
 		String[] split = splitURI(URI);
 		uRIWithoutQualName = split[0];
@@ -42,13 +56,34 @@ public class SDFElement implements Serializable, IClone {
 		delimitter = split[2];
 	}
 	
+	/**
+	 * Creates a new SDFElement with the parameters. The delimiter is '.'
+	 * @param uRIWithoutQualName
+	 * @param qualName
+	 */
 	public SDFElement(String uRIWithoutQualName, String qualName){
 		this.qualName = qualName;
 		this.uRIWithoutQualName = uRIWithoutQualName;
 		this.delimitter = ".";
 	}
 
-	public SDFElement(SDFElement copy) {
+	/**
+	 * Creates a new SDFElement with the parameters
+	 * @param uRIWithoutQualName
+	 * @param qualName
+	 * @param delimitter
+	 */
+	public SDFElement(String uRIWithoutQualName, String qualName, String delimitter){
+		this.qualName = qualName;
+		this.uRIWithoutQualName = uRIWithoutQualName;
+		this.delimitter = delimitter;
+	}
+
+	/**
+	 * Copy Constructor, needed in child classes
+	 * @param copy
+	 */
+	protected SDFElement(SDFElement copy) {
 		this.qualName = copy.qualName;
 		this.uRIWithoutQualName = copy.uRIWithoutQualName;
 		this.delimitter = copy.delimitter;

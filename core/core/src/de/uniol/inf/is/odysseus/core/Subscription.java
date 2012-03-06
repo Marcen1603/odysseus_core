@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 /**
+ * This class represents a link to another element.
  * 
  * @author Marco Grawunder, Jonas Jacobi
  *
@@ -29,11 +30,30 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class Subscription<K> implements ISubscription<K>, Serializable{
 
 	private static final long serialVersionUID = 5744808958349736195L;
+	/**
+	 * The target of the link
+	 */
 	private K target;
+	/**
+	 * If the target has more than one input, this is the input number
+	 */
 	private int sinkInPort;
+	/**
+	 * If the source has more that one output, this is the output number
+	 */
 	private int sourceOutPort;
+	/**
+	 * The schema of the data that is transported through this link
+	 */
 	private SDFSchema schema;
 
+	/**
+	 * Create a new Subscription
+	 * @param target What is the link target (could be a source or a sink!)
+	 * @param sinkInPort The input port of the sink that is affected
+	 * @param sourceOutPort The output port of the source that is affected
+	 * @param schema The data schema of the elements that should be processed
+	 */
 	public Subscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		this.target = target;
 		this.sinkInPort = sinkInPort;
@@ -57,6 +77,10 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		return sourceOutPort;
 	}
 	
+	/**
+	 * Set the schema of the data that is transported by this link
+	 * @param inputSchema
+	 */
 	public void setSchema(SDFSchema inputSchema) {
 		this.schema = inputSchema;
 	}
@@ -79,7 +103,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode() {
+	final public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + sinkInPort;
@@ -93,7 +117,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	 */
 	@Override
 	@SuppressWarnings({"rawtypes"})
-	public boolean equals(Object obj) {
+	final public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)

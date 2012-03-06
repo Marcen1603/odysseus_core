@@ -18,15 +18,36 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * 
+ * This interface represents a link to another element.
+ * 
  * @author Marco Grawunder
  *
  * @param <K>
  */
 
 public interface ISubscription<K> {	
+	/**
+	 * Get the target/destination of this link
+	 * @return
+	 */
 	public K getTarget();
+	
+	/**
+	 * Get the targets input port
+	 * @return
+	 */
 	public int getSinkInPort();
+	
+	/**
+	 * Get the source output port 
+	 * @return
+	 */
 	public int getSourceOutPort();
+	
+	/**
+	 * Get the schema of the data that is delivered through this link 
+	 * @return
+	 */
 	public SDFSchema getSchema();
 	
 }
