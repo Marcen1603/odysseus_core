@@ -53,7 +53,7 @@ public class StartsAfterPredicate extends AbstractPredicate<IMetaAttributeContai
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof StartsAfterPredicate)) {
 			return false;
 		}

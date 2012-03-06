@@ -16,9 +16,7 @@ package de.uniol.inf.is.odysseus.core.server.predicate;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
@@ -58,7 +56,13 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		return false;
 	}
+	
+	@Override
+	@Deprecated
+	final public boolean isContainedIn(Object o) {
+		return isContainedIn((IPredicate<?>)o);
+	} 
 }

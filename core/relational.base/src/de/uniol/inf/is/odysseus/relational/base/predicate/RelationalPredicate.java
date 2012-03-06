@@ -205,7 +205,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 
 	@Override
 	@SuppressWarnings({"rawtypes"})
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if (!(o instanceof RelationalPredicate)) {
 			return false;
 		}
@@ -219,7 +219,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 			if (!rp2.isAndPredicate()) {
 				List<IPredicate> spred = splitPredicate();
 
-				for (IPredicate p : spred) {
+				for (IPredicate<?> p : spred) {
 					if (p.isContainedIn(o)) {
 						return true;
 					}

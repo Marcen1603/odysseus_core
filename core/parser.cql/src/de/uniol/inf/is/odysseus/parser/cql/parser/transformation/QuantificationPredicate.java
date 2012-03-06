@@ -77,7 +77,7 @@ public class QuantificationPredicate extends
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof QuantificationPredicate)) {
 			return false;
 		}

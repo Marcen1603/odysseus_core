@@ -69,7 +69,7 @@ public class TotallyAfterPredicate extends AbstractPredicate<IMetaAttributeConta
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof TotallyAfterPredicate)) {
 			return false;
 		}

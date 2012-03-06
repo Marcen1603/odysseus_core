@@ -67,7 +67,7 @@ public class OverlapsPredicate extends
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof OverlapsPredicate)) {
 			return false;
 		}

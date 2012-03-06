@@ -16,22 +16,62 @@ package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
+ * This Interface represents all predicates 
+ *  
  * @author Jonas Jacobi
  */
 public interface IPredicate<T> extends IClone, Serializable {
+	
+	/**
+	 * Can be called to initialize a predicate bevor it can be
+	 * evaluated
+	 */
+	public void init();
+	
+	/**
+	 * Evaluate the predicate with the input
+	 * @param input
+	 * @return
+	 */
 	boolean evaluate(T input);
+	
+	/**
+	 * Evaluate a predicate with a left and a right part (e.g. in joins)
+	 * @param left
+	 * @param right
+	 * @return
+	 */
 	boolean evaluate(T left, T right);
+	
+	/**
+	 * Checks if this predicate is contained in another predicate
+	 * @param o
+	 * @return true if contained, false if not or not decidable
+	 */
+	boolean isContainedIn(IPredicate<?> o);
+	
+	@Deprecated
+	boolean isContainedIn(Object o);
+	
+	/**
+	 * Get the list of all attributes in this predicate
+	 * @return
+	 */
+	public List<SDFAttribute> getAttributes();
+	
+	/**
+	 * Compare two predicates
+	 * @param pred
+	 * @return true, if both predicates are equal
+	 */
+	public boolean equals(IPredicate<T> pred);
+	
 	@Override
 	public IPredicate<T> clone();
-	public void init();
-	public boolean equals(IPredicate<T> pred);
-	boolean isContainedIn(Object o);
-	public List<SDFAttribute> getAttributes();
+
 }

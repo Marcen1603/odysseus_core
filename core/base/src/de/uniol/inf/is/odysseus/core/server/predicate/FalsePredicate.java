@@ -57,7 +57,7 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof FalsePredicate)) {
 			return false;
 		}

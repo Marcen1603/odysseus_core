@@ -184,7 +184,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 	
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof RegExPredicate)) {
 			return false;
 		}

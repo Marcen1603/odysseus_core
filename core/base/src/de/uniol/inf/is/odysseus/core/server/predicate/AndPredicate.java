@@ -93,7 +93,7 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isContainedIn(Object o) {
+	public boolean isContainedIn(IPredicate<?> o) {
 		// Falls o ein Oder-Pr�dikat, �berhaupt kein Pr�dikat oder eines der beiden Argumente des And-Pr�dikats ein Oder-Pr�dikat ist, wird false zur�ck gegeben
 //		if(o instanceof OrPredicate || !(o instanceof IPredicate) || this.getLeft() instanceof OrPredicate || this.getRight() instanceof OrPredicate) {
 //			return false;
@@ -103,8 +103,8 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 		}
 		
 		// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist (Zus�tzliche Versch�rfung bestehender Pr�dikate)
-		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn(o)
-			|| this.getRight().isContainedIn(o))) {
+		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn((AndPredicate<T>)o)
+			|| this.getRight().isContainedIn((AndPredicate<T>)o))) {
 			return true;
 		}
 		// Falls es sich beim anderen Pr�dikat ebenfalls um ein AndPredicate handelt, m�ssen beide Pr�dikate verglichen werden (inklusiver aller "Unterpr�dikate")
