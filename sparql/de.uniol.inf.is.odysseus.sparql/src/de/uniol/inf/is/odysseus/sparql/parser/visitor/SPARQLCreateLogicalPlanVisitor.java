@@ -1383,7 +1383,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 			if(i > 0){
 				exprStr += " AND ";
 			}
-			exprStr += curLeftAttr.getPointURI() + " == " + curRightAttr.getPointURI();
+			exprStr += curLeftAttr.getURI() + " == " + curRightAttr.getURI();
 //			SDFExpression expr = new SDFExpression(null, exprStr, attrRes);
 //			exprs.add(expr);
 		}

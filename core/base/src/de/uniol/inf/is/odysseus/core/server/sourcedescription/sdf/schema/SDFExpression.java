@@ -24,7 +24,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
@@ -155,7 +154,7 @@ public class SDFExpression implements Serializable, IClone {
 					throw new SDFExpressionParseException("No such attribute: "
 							+ group);
 				}
-				String attributeName = attribute.getPointURI();
+				String attributeName = attribute.getURI();
 				String aliasName = aliasMappings.get(attributeName);
 				if (aliasName == null) {
 					aliasName = "__V" + ++this.varCounter;

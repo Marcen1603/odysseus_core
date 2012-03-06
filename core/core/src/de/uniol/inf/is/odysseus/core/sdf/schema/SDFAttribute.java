@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +25,8 @@ import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 
 /**
- * This class represents Attributes. Each Attribute can have two parts: A global
- * unique source name and a source unique attribute name.
- * 
+ * This class represent an immutable attribute. each attribute must have two
+ * parts: A global unique source name and a source unique attribute name.
  * 
  * @author Marco Grawunder, Andre Bolles
  * 
@@ -35,67 +35,88 @@ import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 public class SDFAttribute extends SDFElement implements
 		Comparable<SDFAttribute>, Serializable, IClone {
 
-	/**
-	 * used for measurement values
-	 */
-	private List<?> covariance;
-
 	private static final long serialVersionUID = -5128455072793206061L;
-	
+
+	/**
+	 * additional info that can be added to this attribute
+	 */
+	private List<?> addInfo;
+
+	/**
+	 * The data type of the attribute
+	 */
 	final private SDFDatatype datatype;
-	final private Map<String, SDFDatatypeConstraint> dtConstraints;
+
+	/**
+	 * The optional unit of the attribute 
+	 */
 	final private SDFUnit unit;
 
 	/**
-	 * Creates a new SDFAttribute from sourceName and AttributeName
-	 * 
-	 * @param sourceName
-	 * @param attributeName
+	 * A set of data type constraints further restricting the
+	 * set of possible values
 	 */
-	public SDFAttribute(String sourceName, String attributeName, SDFDatatype dt) {
-		super(sourceName, attributeName);
-		this.datatype = dt;
-		unit = null;
-		this.dtConstraints = null;
+	final private Map<String, SDFDatatypeConstraint> dtConstraints;
+
+	/**
+	 * Create a new SDFAttribute
+	 * @param sourceName The source name of the attribute
+	 * @param attributeName The attribute name in the source
+	 * @param datatype The data type of this attribute
+	 */
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype datatype) {
+		this(sourceName, attributeName, datatype, null, null);
 	}
 
 	/**
-	 * Copy Construktor
-	 * 
-	 * @param attribute
+	 * Creates a new SDFAttribute
+	 * @param sourceName The source name of the attribute
+	 * @param attributeName The attribute name in the source
+	 * @param datatype The data type of this attribute
+	 * @param unit The unit of this attribute
+	 * @param dtConstraints A set of constraints further restricting this attribute values
 	 */
-	public SDFAttribute(SDFAttribute copy) {
-		super(copy);
-		this.datatype = copy.datatype;
-		this.dtConstraints = copy.dtConstraints;
-		this.unit = copy.unit;
+	public SDFAttribute(String sourceName, String attributeName,
+			SDFDatatype datatype, SDFUnit unit,
+			Map<String, SDFDatatypeConstraint> dtConstraints) {
+		this(sourceName, attributeName, datatype, unit, dtConstraints, null);
 	}
 
+	/**
+	 * Create a new SDFAttribute
+	 * @param sourceName The source name of the attribute
+	 * @param attributeName The attribute name in the source
+	 * @param datatype The data type of this attribute
+	 * @param unit The unit of this attribute
+	 * @param dtConstraints A set of constraints further restricting this attribute values
+	 * @param additionalInfo A list representing free definable additional informations
+	 */
+	public SDFAttribute(String sourceName, String attributeName,
+			SDFDatatype attribType, SDFUnit unit,
+			Map<String, SDFDatatypeConstraint> dtConstraints, List<?> addInfo) {
+		super(sourceName, attributeName);
+		this.datatype = attribType;
+		this.unit = unit;
+		this.dtConstraints = dtConstraints;
+		this.addInfo = addInfo;
+	}
+
+	/**
+	 * Creates a new Attribute from another attribute, preserving everything but
+	 * the names
+	 * @param newSourceName The new source name of the attribute
+	 * @param newAttributeName The new attribute name
+	 * @param sdfAttribute The attribute containing the other informations like data type, unit etc.
+	 */
 	public SDFAttribute(String newSourceName, String newAttributeName,
 			SDFAttribute sdfAttribute) {
 		super(newSourceName, newAttributeName);
 		this.datatype = sdfAttribute.datatype;
 		this.dtConstraints = sdfAttribute.dtConstraints;
-		this.unit = sdfAttribute.unit;		
+		this.unit = sdfAttribute.unit;
 	}
 
-	public SDFAttribute(String sourceName, String attrName, SDFDatatype datatype,
-			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstraints) {
-		super(sourceName,attrName);
-		this.datatype = datatype;
-		this.unit = unit;
-		this.dtConstraints = dtConstraints;
-	}
 
-	public SDFAttribute(String sourceName, String attrName, SDFDatatype attribType,
-			SDFUnit unit, Map<String, SDFDatatypeConstraint> dtConstraints,
-			List<?> covariance) {
-		super(sourceName,attrName);
-		this.datatype = attribType;
-		this.unit = unit;
-		this.dtConstraints = dtConstraints;
-		this.covariance = covariance;
-	}
 
 	/**
 	 * Get Sourcename-Part of the Attribute
@@ -116,15 +137,59 @@ public class SDFAttribute extends SDFElement implements
 	public String getAttributeName() {
 		return getQualName();
 	}
-
-	// SDFAttribute is immutable!!
-	// public void setCovariance(List<?> cov) {
-	// this.covariance = cov;
-	// }
-
+	
+	/**
+	 * 
+	 * @return
+	 * @deprecated use getAddInfo instead
+	 */
+	@Deprecated
 	public List<?> getCovariance() {
-		return this.covariance;
+		return getAddInfo();
 	}
+	
+	
+	/**
+	 * Returns the additional informations of this attribute
+	 * @return
+	 */
+	public List<?> getAddInfo() {
+		return Collections.unmodifiableList(this.addInfo);
+	}
+	
+	/**
+	 * returns the data type of this attribute
+	 * @return
+	 */
+	public SDFDatatype getDatatype() {
+		return datatype;
+	}
+
+	/**
+	 * returns a specific data type constraint
+	 * @param uri
+	 * @return
+	 */
+	public SDFDatatypeConstraint getDtConstraint(String uri) {
+		return dtConstraints.get(uri);
+	}
+
+	/**
+	 * returns the set of all data type constraints
+	 * @return
+	 */
+	public Collection<SDFDatatypeConstraint> getDtConstraints() {
+		return dtConstraints.values();
+	}
+
+	/**
+	 * Return the unit of this attribute, can be null
+	 * @return
+	 */
+	public SDFUnit getUnit() {
+		return unit;
+	}
+
 
 	/**
 	 * Compares current attribute with attr, returns true if both sourceNames
@@ -135,30 +200,13 @@ public class SDFAttribute extends SDFElement implements
 	 * @return true if attributeNames/sourceNames are equal
 	 */
 	public boolean equalsCQL(SDFElement attr) {
-		// TODO: WOFUER DER AUSKOMMENTIERTE CODE? damit kann es sein, dass
-		// sourcename mit attributename verglichen wird ...
 		if (this.getURIWithoutQualName() != null
 				&& attr.getURIWithoutQualName() != null) {
 			if (!this.getSourceName().equals(attr.getURIWithoutQualName())) {
 				return false;
 			}
-			// return this.getAttributeName().equals(attr.getAttributeName());
 		}
 		return this.getAttributeName().equals(attr.getQualName());
-		// else {
-		//
-		// // Combinations
-		// // TODO: Problem is: name can be as sourceName or as attributeName
-		// String t1 =
-		// this.getSourceName()!=null?this.getSourceName():this.getAttributeName();
-		// String t2 =
-		// attr.getSourceName()!=null?attr.getSourceName():attr.getAttributeName();
-		// if (t1 != null) {
-		// return t1.equals(t2);
-		// }else{
-		// return false;
-		// }
-		// }
 	}
 
 	@Override
@@ -170,7 +218,7 @@ public class SDFAttribute extends SDFElement implements
 				+ ((getAttributeName() == null) ? 0 : getAttributeName()
 						.hashCode());
 		result = prime * result
-				+ ((covariance == null) ? 0 : covariance.hashCode());
+				+ ((addInfo == null) ? 0 : addInfo.hashCode());
 		result = prime * result
 				+ ((getSourceName() == null) ? 0 : getSourceName().hashCode());
 		return result;
@@ -190,12 +238,13 @@ public class SDFAttribute extends SDFElement implements
 				return false;
 		} else if (!getAttributeName().equals(other.getAttributeName()))
 			return false;
-		if (covariance == null) {
-			if (other.covariance != null)
+		if (addInfo == null) {
+			if (other.addInfo != null)
 				return false;
-		} else if (!covariance.equals(other.covariance))
+		} else if (!addInfo.equals(other.addInfo))
 			return false;
-		// TODO: Kurzfristiger Hack (attribute names are equal and only one attribute has a source)
+		// attribute names are equal and only one attribute has a source
+		// same as equalsCQL 
 		if (getSourceName() == null || other.getSourceName() == null) {
 			return true;
 		}
@@ -212,6 +261,13 @@ public class SDFAttribute extends SDFElement implements
 		return this;
 	}
 
+	/** 
+	 * Creates a new SDFAttribute with a new source name and a new attribute name
+	 * from this attribute, keeping all other information (like data type or unit)
+	 * @param newSourceName
+	 * @param newAttributeName
+	 * @return
+	 */
 	public SDFAttribute clone(String newSourceName, String newAttributeName) {
 		return new SDFAttribute(newSourceName, newAttributeName, this);
 	}
@@ -228,7 +284,6 @@ public class SDFAttribute extends SDFElement implements
 		return comp;
 	}
 
-	// // TODO: Anpassen!
 	@Override
 	public String toString() {
 		if (getSourceName() != null) {
@@ -238,40 +293,27 @@ public class SDFAttribute extends SDFElement implements
 		}
 	}
 
-	//
-	// // TODO: Anpassen!
-	// @Override
-	// private String getURI() {
-	// return toString();
-	// }
-	//
-	// // TODO: Anpassen!
-	// private String getURI(boolean prettyPrint) {
-	// return getURI(prettyPrint, ".");
-	// }
-
+	/**
+	 * This method returns the attribute uri with a point as
+	 * separator
+	 * @return
+	 * @deprecated use getURI() instead
+	 */
+	@Deprecated
 	public String getPointURI() {
 		return getURI(false, ".");
 	}
 
+	/**
+	 * This method returns the attribute uri with a point as
+	 * separator
+	 * @return
+	 * @deprecated use getURI() instead
+	 */
+	@Deprecated
 	public String toPointString() {
-		return getPointURI();
-	}
-	
-	public SDFDatatype getDatatype() {
-		return datatype;
+		return getURI(false, ".");
 	}
 
-	public SDFDatatypeConstraint getDtConstraint(String uri) {
-		return dtConstraints.get(uri);
-	}
-
-	public Collection<SDFDatatypeConstraint> getDtConstraints() {
-		return dtConstraints.values();
-	}
-
-	public SDFUnit getUnit() {
-		return unit;
-	}
 
 }

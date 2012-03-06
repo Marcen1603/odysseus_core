@@ -145,7 +145,7 @@ public class StreamTableEditor implements IStreamEditorType {
 
 			TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 			// col.getColumn().setText(attribute.getAttributeName());
-			col.getColumn().setText(attribute.toPointString());
+			col.getColumn().setText(attribute.getURI());
 			col.getColumn().setAlignment(SWT.CENTER);
 			final int fi = i;
 			col.setLabelProvider(new CellLabelProvider() {

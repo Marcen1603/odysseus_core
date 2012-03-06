@@ -164,8 +164,8 @@ public class MapleHack {
 				}
 				counter++;
 				
-				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") < sqrt(" + attributes.get(u).toPointString() + ")", attrRes , MEP.getInstance());
-				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes, MEP.getInstance());
+				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).getURI() + ") < sqrt(" + attributes.get(u).getURI() + ")", attrRes , MEP.getInstance());
+				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).getURI() + ") > sqrt(" + attributes.get(u).getURI() + ")", attrRes, MEP.getInstance());
 				IPredicate left = new RelationalPredicate(leftExpr);
 				IPredicate right = new RelationalPredicate(rightExpr);
 				IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);
@@ -201,8 +201,8 @@ public class MapleHack {
 				}
 				counter++;
 				
-				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") < sqrt(" + attributes.get(u).toPointString() + ")", attrRes , MEP.getInstance());
-				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).toPointString() + ") > sqrt(" + attributes.get(u).toPointString() + ")", attrRes, MEP.getInstance());
+				SDFExpression leftExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).getURI() + ") < sqrt(" + attributes.get(u).getURI() + ")", attrRes , MEP.getInstance());
+				SDFExpression rightExpr = new SDFExpression(null, "sqrt(" + attributes.get(i).getURI() + ") > sqrt(" + attributes.get(u).getURI() + ")", attrRes, MEP.getInstance());
 				IPredicate left = new RelationalPredicate(leftExpr);
 				IPredicate right = new RelationalPredicate(rightExpr);
 				IPredicate andPred = ComplexPredicateHelper.createAndPredicate(left, right);

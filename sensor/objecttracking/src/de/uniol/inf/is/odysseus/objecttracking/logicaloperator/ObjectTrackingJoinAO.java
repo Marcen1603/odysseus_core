@@ -284,7 +284,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 				String token = tokens.nextToken();
 				boolean found = false;
 				for(SDFAttribute curAttr: neededAttributes){
-					if(token.equals(curAttr.toPointString())){
+					if(token.equals(curAttr.getURI())){
 						int attrPos = leftSchema.indexOf(curAttr);
 						boolean fromRightChannel = false;
 						
@@ -361,7 +361,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 				List<SDFAttribute> attributes = new SDFExpression(null, rangePredicateExpression, attributeResolver, MEP.getInstance()).getAllAttributes();
 				// remove attribute t
 				for(int a = 0;a<attributes.size(); a++){
-					if(attributes.get(a).toPointString().equals("t")){
+					if(attributes.get(a).getURI().equals("t")){
 						attributes.remove(a);
 						break;
 					}

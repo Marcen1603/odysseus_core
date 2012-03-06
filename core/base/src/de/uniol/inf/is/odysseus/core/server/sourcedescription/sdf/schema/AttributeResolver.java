@@ -144,7 +144,7 @@ public class AttributeResolver implements IAttributeResolver {
 
 	public SDFAttribute getAggregateAttribute(String attributeName, String aggregateName) {
 		SDFAttribute attribute = getAttribute(attributeName);
-		aggregateName = aggregateName + "(" + attribute.getPointURI() + ")";
+		aggregateName = aggregateName + "(" + attribute.getURI() + ")";
 		for (SDFAttribute curAttribute : this.attributes) {
 			if (curAttribute.getAttributeName().equals(aggregateName)) {
 				return curAttribute;

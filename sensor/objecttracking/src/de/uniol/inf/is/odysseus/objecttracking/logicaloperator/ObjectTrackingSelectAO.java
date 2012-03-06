@@ -201,7 +201,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 				String token = tokens.nextToken();
 				boolean found = false;
 				for(SDFAttribute curAttr: neededAttributes){
-					if(token.equals(curAttr.toPointString())){
+					if(token.equals(curAttr.getURI())){
 						int attrPos = this.getInputSchema().indexOf(curAttr);
 						
 						// attrPos can be -1 if curAttr is t (for time)
@@ -272,7 +272,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 				List<SDFAttribute> attributes = new SDFExpression(null, rangePredicateExpression, attributeResolver, MEP.getInstance()).getAllAttributes();
 				// remove attribute t
 				for(int a = 0;a<attributes.size(); a++){
-					if(attributes.get(a).toPointString().equals("t")){
+					if(attributes.get(a).getURI().equals("t")){
 						attributes.remove(a);
 						break;
 					}

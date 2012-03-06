@@ -67,7 +67,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 * Finally, each row of the covariance matrix used by
 	 * {@link #updateMetaData(MVRelationalTuple)} is set to the covariance list
 	 * of each measurement value attribute found in the schema respectively (see
-	 * {@link SDFAttribute#getCovariance()}).
+	 * {@link SDFAttribute#getAddInfo()}).
 	 * 
 	 * @param schema
 	 *            the schema, used to initialize meta data, NOTE: has to be the

@@ -95,7 +95,7 @@ public class SDFSchemaExtended extends SDFSchema implements Serializable{
 	
 	
 	private SDFAttribute copyDeep(SDFAttribute attribute) {
-		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype(), attribute.getUnit(), null, attribute.getCovariance());
+		SDFAttribute copy = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype(), attribute.getUnit(), null, attribute.getAddInfo());
 		return copy;
 	}
 	

@@ -51,7 +51,7 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
         	}
         	// sourceName.attrName
         	else{
-	        	if ((attr).getPointURI().equals(name)) {
+	        	if ((attr).getURI().equals(name)) {
 	                found = attr;
 	            	break;
 	            }

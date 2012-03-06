@@ -39,7 +39,7 @@ public class TestUtil
       
       System.out.print("schema attribute \"" + info.attribute.getAttributeName() + "\" (of type " + info.attribute.getDatatype().getQualName());
       System.out.print(", path " + info.schemaIndexPath);
-      System.out.println(", path name \"" + info.schemaIndexPath.getFullAttributeName() + "\", covariance list " + info.attribute.getCovariance() + ")");
+      System.out.println(", path name \"" + info.schemaIndexPath.getFullAttributeName() + "\", covariance list " + info.attribute.getAddInfo() + ")");
     }
   }
   
@@ -54,7 +54,7 @@ public class TestUtil
       
       System.out.print("schema attribute \"" + info.attribute.getAttributeName() + "\" (of type " + info.attribute.getDatatype().getQualName());
       System.out.print(", path " + info.schemaIndexPath);
-      System.out.println(", path name \"" + info.schemaIndexPath.getFullAttributeName() + "\", covariance list " + info.attribute.getCovariance() + ")");
+      System.out.println(", path name \"" + info.schemaIndexPath.getFullAttributeName() + "\", covariance list " + info.attribute.getAddInfo() + ")");
       
       for (int i = 0; i < info.level; i++)
       {

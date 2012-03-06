@@ -150,8 +150,8 @@ public class JoinTransformationHelper {
 				// the equals(id1) || comparison(id2) in this loop
 				SDFAttribute ownAttr = null;
 				for(SDFAttribute curOwnAttr : ownSchema){
-					if(curOwnAttr.getPointURI().equalsIgnoreCase(id1) ||
-							curOwnAttr.getPointURI().equalsIgnoreCase(id2)){
+					if(curOwnAttr.getURI().equalsIgnoreCase(id1) ||
+							curOwnAttr.getURI().equalsIgnoreCase(id2)){
 						ownAttr = curOwnAttr;
 						break;
 					}
@@ -161,8 +161,8 @@ public class JoinTransformationHelper {
 				// in a == b either a or b can be from the other schema
 				SDFAttribute otherAttr = null;
 				for(SDFAttribute curOtherAttr : otherSchema){
-					if(curOtherAttr.getPointURI().equalsIgnoreCase(id1) ||
-							curOtherAttr.getPointURI().equalsIgnoreCase(id2)){
+					if(curOtherAttr.getURI().equalsIgnoreCase(id1) ||
+							curOtherAttr.getURI().equalsIgnoreCase(id2)){
 						otherAttr = curOtherAttr; 
 						break;
 					}

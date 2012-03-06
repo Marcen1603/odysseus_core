@@ -209,7 +209,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 				String attributeName = partition.jjtGetChild(i).toString();
 				boolean found = false;
 				for (SDFAttribute curAttribute : inputOp.getOutputSchema()) {
-					if (curAttribute.getPointURI().equals(attributeName)) {
+					if (curAttribute.getURI().equals(attributeName)) {
 						partitionAttributes.add(curAttribute);
 						found = true;
 						break;

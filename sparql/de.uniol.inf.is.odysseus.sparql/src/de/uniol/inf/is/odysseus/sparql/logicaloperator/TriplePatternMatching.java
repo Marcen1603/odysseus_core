@@ -212,19 +212,19 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
 		ArrayList<SDFExpression> exprs = new ArrayList<SDFExpression>();
 		
 		if(!this.triple.getSubject().isVariable()){
-			String exprStr = inputSchema.getAttribute(0).getPointURI() + " == '" + this.triple.getSubject().getName() + "'";
+			String exprStr = inputSchema.getAttribute(0).getURI() + " == '" + this.triple.getSubject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getPredicate().isVariable()){
-			String exprStr = inputSchema.getAttribute(1).getPointURI() + " == '" + this.triple.getPredicate().getName() + "'";
+			String exprStr = inputSchema.getAttribute(1).getURI() + " == '" + this.triple.getPredicate().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}
 		
 		if(!this.triple.getObject().isVariable()){
-			String exprStr = inputSchema.getAttribute(2).getPointURI() + " == '" + this.triple.getObject().getName() + "'";
+			String exprStr = inputSchema.getAttribute(2).getURI() + " == '" + this.triple.getObject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes, MEP.getInstance());
 			exprs.add(expr);
 		}

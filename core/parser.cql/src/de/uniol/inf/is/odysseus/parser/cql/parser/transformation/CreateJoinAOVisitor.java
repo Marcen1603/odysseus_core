@@ -285,7 +285,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	private String toExpression(ILogicalOperator subquery) {
 		SDFSchema outputSchema = subquery.getOutputSchema();
 		if (outputSchema.size() == 1) {
-			return outputSchema.get(0).getPointURI();
+			return outputSchema.get(0).getURI();
 		}
 		AttributeResolver tmpResolver = new AttributeResolver();
 		StringBuffer buffer = new StringBuffer();
@@ -296,7 +296,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			}
 			SDFAttribute attribute = (SDFAttribute) outputSchema
 					.getAttribute(i);
-			buffer.append(attribute.toPointString());
+			buffer.append(attribute.getURI());
 			tmpResolver.addAttribute(attribute);
 		}
 		buffer.append(']');

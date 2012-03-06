@@ -85,7 +85,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		SDFAttribute attribute = this.attributeResolver
 				.getAttribute(attributeName);
 
-		SDFAttribute outAttribute = outAttribute(attribute.toPointString(),
+		SDFAttribute outAttribute = outAttribute(attribute.getURI(),
 				function, aggrNode);
 		if (!ao.getOutputSchema().contains(outAttribute)) {
 			ao.addAggregation(attribute, function, outAttribute);

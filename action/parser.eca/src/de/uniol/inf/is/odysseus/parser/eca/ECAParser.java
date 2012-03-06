@@ -313,7 +313,7 @@ public class ECAParser implements IQueryParser {
 								for (int i = 0; i < schema.size(); i++) {
 									SDFAttribute attribute = schema.get(i);
 									// check for uri since it is unique
-									String uri = attribute.getPointURI();
+									String uri = attribute.getURI();
 									if (uri.equals(completeParam)) {
 										try {
 											actionParameters
@@ -345,7 +345,7 @@ public class ECAParser implements IQueryParser {
 															matchingAttribute
 																	.getDatatype(),
 															matchingAttribute
-																	.getPointURI()));
+																	.getURI()));
 										} catch (AttributeParsingException e) {
 											throw new QueryParseException(e
 													.getMessage());

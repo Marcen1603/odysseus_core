@@ -41,7 +41,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 		int i=0;
 		for (SDFAttribute a:scheme) {
 			Integer pos = new Integer(i);
-			this.scheme.put(a.toPointString(), pos);
+			this.scheme.put(a.getURI(), pos);
 			this.scheme.put(a.getAttributeName(), pos);
 			i++;
 		}

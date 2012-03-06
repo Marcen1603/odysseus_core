@@ -47,7 +47,7 @@ public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<Objec
 		int counter = 0;
 		for(SDFAttribute attr: this.schema){
 			if(attr.getDatatype().isMeasurementValue()){
-				List covariance = ((SDFAttribute)attr).getCovariance();
+				List covariance = ((SDFAttribute)attr).getAddInfo();
 				if(cov == null){
 					cov = new double[covariance.size()][covariance.size()];
 				}

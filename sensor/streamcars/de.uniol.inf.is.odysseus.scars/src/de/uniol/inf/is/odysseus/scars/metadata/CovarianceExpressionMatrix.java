@@ -63,7 +63,7 @@ public class CovarianceExpressionMatrix {
 		// work through all measurement attributes saved before
 		for (int j = 0; j < measurementAttributes.size(); j++) {
 			List<?> covarianceList = measurementAttributes.get(j)
-					.getCovariance();
+					.getAddInfo();
 			// initialize current matrix row with covariance list
 			for (int i = 0; i < covarianceList.size(); ++i) {
 				String expressionString = covarianceList.get(i).toString();

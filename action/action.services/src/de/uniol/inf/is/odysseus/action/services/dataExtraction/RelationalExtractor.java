@@ -54,7 +54,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 			SDFAttribute attribute = schema.get(i);
 			//check for uri since it is unique
 			try {
-				if (attribute.getPointURI().equals(attributeIdentifier)){
+				if (attribute.getURI().equals(attributeIdentifier)){
 					return ((RelationalTuple)element).getAttribute(i);
 				}
 			}catch (ClassCastException e){
