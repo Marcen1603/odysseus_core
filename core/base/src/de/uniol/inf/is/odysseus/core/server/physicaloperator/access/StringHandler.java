@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 public class StringHandler extends AbstractAtomicDataHandler {
 	static protected List<String> types = new ArrayList<String>();
 	static{
@@ -28,6 +30,7 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	
 	@Override
 	public Object readData() throws IOException {
+		Preconditions.checkNotNull(stream,"Stream not set");
 		return stream.readUTF();
 	}
 	

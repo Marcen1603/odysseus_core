@@ -110,4 +110,8 @@ public class OperatorBuilderFactory {
 			 return null;
 		 }
 	}
+
+	public static void removeUdf(String nameToRemove) {
+		udfs.remove(nameToRemove);		
+	}
 }
