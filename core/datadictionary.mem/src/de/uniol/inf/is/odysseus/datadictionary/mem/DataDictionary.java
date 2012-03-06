@@ -25,6 +25,7 @@ public class DataDictionary extends AbstractDataDictionary {
 		sinkFromUser = new MemoryStore<String, IUser>();
 		savedQueries = new MemoryStore<Integer, ILogicalQuery>();
 		savedQueriesForUser = new MemoryStore<Integer, IUser>();
+		savedQueriesBuildParameterName = new MemoryStore<Integer, String>();
 		initDatatypes();
 	}
 
