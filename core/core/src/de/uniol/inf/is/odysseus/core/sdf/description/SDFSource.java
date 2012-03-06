@@ -19,24 +19,31 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
+/**
+ * This class represents a source element.
+ * 
+ * @author Marco Grawunder
+ *
+ */
+
 public class SDFSource extends SDFElement {
-//
-//	static public enum SourceType {
-//		Relational, RelationalStreaming, RDFStreaming, RelationalInputStreamAccessPO, RelationalAtomicDataInputStreamAccessPO, RelationalByteBufferAccessPO,
-//		RelationalAtomicDataInputStreamAccessMVPO, OSGI
-//	}
-//	
+	
 	private static final long serialVersionUID = 4621120226185967024L;
 
 	/**
-	 * TODO RDF Schema muss noch angepasst werden
+	 * Source type as name
 	 */
-	private String sourceType;
-
-	private Map<String, String> optionalAttributes;
+	final private String sourceType;
 
 	/**
+	 * Additional information that can be added to the source
+	 */
+	final private Map<String, String> optionalAttributes;
+
+	/**
+	 * Create a new source with URI and source type
 	 * @param URI
+	 * @param sourceType
 	 */
 	public SDFSource(String URI, String sourceType) {
 		super(URI);
@@ -44,33 +51,57 @@ public class SDFSource extends SDFElement {
 		this.optionalAttributes = new HashMap<String, String>();
 	}
 
-	public SDFSource(SDFSource sdfSource) {
+	public SDFSource(String URI, String sourceType, Map<String, String> optionalAttributes ) {
+		super(URI);
+		this.sourceType = sourceType;
+		this.optionalAttributes = new HashMap<String, String>(optionalAttributes);
+	}
+
+	
+	/**
+	 * Copy Constructor, needed by clone and child classes
+	 * @param sdfSource
+	 */
+	protected SDFSource(SDFSource sdfSource) {
 		super(sdfSource);
 		this.sourceType = sdfSource.sourceType;
 		this.optionalAttributes = sdfSource.optionalAttributes;
 	}
 
-	public void setOptionalAttribute(String name, String value) {
-		this.optionalAttributes.put(name, value);
-	}
-
+	/**
+	 * Returns the type of the source
+	 * @return
+	 */
 	public String getSourceType() {
 		return sourceType;
 	}
 
-	public void setSourceType(String sourceType) {
-		this.sourceType = sourceType;
-	}
-
-	public Integer getIntegerAttribut(String name) {
+	/**
+	 * Get the value of the optional attribute as Integer
+	 * @param name
+	 * @return
+	 * @throws NumberFormatException if value cannot be parsed correctly
+	 */
+	public Integer getIntegerAttribut(String name) throws NumberFormatException {
 		return Integer.parseInt(this.optionalAttributes.get(name));
 	}
 
+	/**
+	 * Get the value of the optional attribute as String
+	 * @param name
+	 * @return
+	 */
 	public String getStringAttribute(String name) {
 		return this.optionalAttributes.get(name);
 	}
 
-	public Double getRealAttribute(String name) {
+	/**
+	 * Get the value of the optional attribute as Double
+	 * @param name
+	 * @return
+	 * @throws NumberFormatException if value cannot be parsed correctly
+	 */
+	public Double getRealAttribute(String name) throws NumberFormatException{
 		return Double.parseDouble(this.optionalAttributes.get(name));
 	}
 
