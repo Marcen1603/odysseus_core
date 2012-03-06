@@ -84,30 +84,32 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			searchBundle(event.getBundle());
 			break;
 		case BundleEvent.STOPPING:
-			// removeBundle(event.getBundle());
+			removeBundle(event.getBundle());
 			break;
 		default:
 			;
 		}
 	}
 
-	// private void removeBundle(Bundle bundle) {
-	// Enumeration<URL> entries = bundle.findEntries(
-	// "de.uniol.inf.is.odysseus.core.server", "*.class", true);
-	//
-	// while (entries.hasMoreElements()) {
-	// URL curURL = entries.nextElement();
-	// if (curURL.toString().contains(".logicaloperator")) {
-	// Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
-	// bundle, curURL);
-	// if (classObject == null) {
-	// continue;
-	// }
-	// String operatorName = classObject.getAnnotation(
-	// LogicalOperator.class).name();
-	// // operatorBuilders.remove(operatorName);
-	// }
-	// }
+	private void removeBundle(Bundle bundle) {
+		Enumeration<URL> entries = bundle.findEntries(
+				"de.uniol.inf.is.odysseus.server", "*.class", true);
+
+		while (entries.hasMoreElements()) {
+			URL curURL = entries.nextElement();
+			if (curURL.toString().contains(".logicaloperator")) {
+				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
+						bundle, curURL);
+				if (classObject == null) {
+					continue;
+				}
+				String operatorName = classObject.getAnnotation(
+						LogicalOperator.class).name();
+				OperatorBuilderFactory.removeOperatorBuilderType(operatorName);
+			}
+		}
+
+	}
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends ILogicalOperator> loadLogicalOperatorClass(
@@ -121,16 +123,17 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			}
 			// remove potential '/bin' and 'class' and change path to package
 			// name
-			className = file.substring(start, file.length() - 6)
-					.replace('/', '.');
-			logger.trace("Trying to load class "+className);
+			className = file.substring(start, file.length() - 6).replace('/',
+					'.');
+			logger.trace("Trying to load class " + className);
 			Class<?> classObject = bundle.loadClass(className);
 			if (classObject.isAnnotationPresent(LogicalOperator.class)
 					&& ILogicalOperator.class.isAssignableFrom(classObject)) {
 				return (Class<? extends ILogicalOperator>) classObject;
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load Class "+className+" Reason: "+e.getMessage());
+			logger.error("Failed to load Class " + className + " Reason: "
+					+ e.getMessage());
 		}
 		return null;
 	}
