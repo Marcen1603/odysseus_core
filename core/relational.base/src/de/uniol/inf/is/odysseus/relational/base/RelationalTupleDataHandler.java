@@ -58,7 +58,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 */
 	@Override
 	public Object readData() throws IOException {
-		return readData(getStream());
+		return readData(stream);
 	}
 
 	

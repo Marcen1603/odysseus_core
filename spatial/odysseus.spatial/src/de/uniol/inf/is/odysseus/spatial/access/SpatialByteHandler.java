@@ -61,7 +61,7 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 
 	@Override
 	public Object readData() throws IOException {
-		return readData(getStream());
+		return readData(stream);
 	}
 	
 	@Override

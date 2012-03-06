@@ -28,7 +28,7 @@ public class StringHandler extends AbstractAtomicDataHandler {
 	
 	@Override
 	public Object readData() throws IOException {
-		return getStream().readUTF();
+		return stream.readUTF();
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataH
 
 public abstract class AbstractAtomicDataHandler implements IAtomicDataHandler {
 
-	private ObjectInputStream stream;
+	protected ObjectInputStream stream;
 		
 	
 	protected AbstractAtomicDataHandler(){

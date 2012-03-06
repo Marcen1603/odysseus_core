@@ -34,7 +34,7 @@ public class DoubleHandler extends AbstractAtomicDataHandler {
 	
 	@Override
 	final public Object readData() throws IOException {
-		return getStream().readDouble();
+		return stream.readDouble();
 	}
 	
 	@Override

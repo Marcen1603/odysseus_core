@@ -36,7 +36,7 @@ public class DateHandler extends AbstractAtomicDataHandler {
 	
 	@Override
 	public final Object readData() throws IOException {
-		return getStream().readLong();
+		return stream.readLong();
 	}
 
 	@Override

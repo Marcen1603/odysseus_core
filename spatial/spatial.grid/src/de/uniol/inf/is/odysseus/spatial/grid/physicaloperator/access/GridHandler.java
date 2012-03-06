@@ -37,7 +37,6 @@ public class GridHandler extends AbstractAtomicDataHandler {
 
 	@Override
 	public Object readData() throws IOException {
-		ObjectInputStream stream = getStream();
 		return readData(stream);
 	}
 
