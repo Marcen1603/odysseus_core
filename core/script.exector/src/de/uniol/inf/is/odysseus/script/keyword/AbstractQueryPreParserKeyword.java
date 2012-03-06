@@ -21,9 +21,11 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
@@ -98,19 +100,17 @@ public abstract class AbstractQueryPreParserKeyword extends
 					// Append defaultSink to all queries
 					// and make it query root
 					if (defaultSink != null) {
-						
-						throw new QueryParseException("Default Sink Currently not supported!!");
-						
-//						for (ILogicalQuery lq : queries) {
-//							if (lq instanceof IPhysicalQuery) {
-//								IPhysicalQuery q = (IPhysicalQuery) lq;
-//								for (IPhysicalOperator p : q.getRoots()) {
-//									((ISource) p).subscribeSink(defaultSink, 0, 0,
-//											p.getOutputSchema());
-//								}
-//								q.setRoots(roots);
-//							}
-//						}
+						for (Integer queryId : queriesToStart) {
+							IPhysicalQuery lq = serverExec.getExecutionPlan().getQuery(queryId);		
+							if (lq instanceof IPhysicalQuery) {
+								IPhysicalQuery q = (IPhysicalQuery) lq;
+								for (IPhysicalOperator p : q.getRoots()) {
+									((ISource) p).subscribeSink(defaultSink, 0, 0,
+											p.getOutputSchema());
+								}
+								q.setRoots(roots);
+							}
+						}
 
 					}
 				}
