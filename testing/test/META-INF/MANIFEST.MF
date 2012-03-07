@@ -4,17 +4,20 @@ Bundle-Name: Tester
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.planmanagement.executor.exception,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.test.runner,
+ org.osgi.framework;version="1.6.0",
  org.osgi.service.component;version="1.1.0",
  org.slf4j
-Export-Package: de.uniol.inf.is.odysseus.test
 Bundle-Activator: de.uniol.inf.is.odysseus.test.Activator
 Service-Component: OSGI-INF/component.xml
+Require-Bundle: de.uniol.inf.is.odysseus.usermanagement.mem;bundle-version="1.0.0"
