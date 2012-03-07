@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: script exector
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.script.exector
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.core.server.datadictionary,
+Import-Package: com.google.common.collect,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
