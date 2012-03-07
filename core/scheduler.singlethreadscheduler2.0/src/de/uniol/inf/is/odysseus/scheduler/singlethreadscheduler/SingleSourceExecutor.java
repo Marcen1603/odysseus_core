@@ -33,9 +33,7 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 			while (!s.isOpen()) {
 				try {
 					this.wait(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				} catch (InterruptedException ignored) {}
 			}
 		}
 		logger.debug("Opened ... Start Processing");
