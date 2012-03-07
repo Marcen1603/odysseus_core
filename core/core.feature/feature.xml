@@ -19,16 +19,14 @@
 
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.log4j"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
-      <import plugin="javax.mail"/>
-      <import plugin="org.eclipse.net4j.jms.api"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
+      <import plugin="net.sf.eclipsecs.checkstyle"/>
    </requires>
 
    <plugin
@@ -165,6 +163,12 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
