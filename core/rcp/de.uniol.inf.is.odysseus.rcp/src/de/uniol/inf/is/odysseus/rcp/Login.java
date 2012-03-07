@@ -35,7 +35,7 @@ public class Login {
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(Login.class);
 		}
 		return _logger;
 	}

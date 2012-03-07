@@ -56,7 +56,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(AbstractDataDictionary.class);
 		}
 		return _logger;
 	}

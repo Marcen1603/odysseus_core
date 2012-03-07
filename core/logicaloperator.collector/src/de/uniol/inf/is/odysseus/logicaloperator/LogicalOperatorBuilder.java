@@ -106,6 +106,23 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 				String operatorName = classObject.getAnnotation(
 						LogicalOperator.class).name();
 				OperatorBuilderFactory.removeOperatorBuilderType(operatorName);
+			}else if (curURL.toString().contains("/udf")) {
+				@SuppressWarnings("rawtypes")
+				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
+						bundle, curURL);
+				if (classObject == null) {
+					continue;
+				} else {
+					String nameToRemove = classObject.getName();
+
+					if (classObject
+							.isAnnotationPresent(UserDefinedFunction.class)) {
+						UserDefinedFunction annotation = classObject
+								.getAnnotation(UserDefinedFunction.class);
+						nameToRemove = annotation.name();
+					}
+					OperatorBuilderFactory.removeUdf(nameToRemove);
+				}
 			}
 		}
 

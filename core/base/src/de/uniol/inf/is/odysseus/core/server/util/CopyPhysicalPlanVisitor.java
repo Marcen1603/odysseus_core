@@ -44,7 +44,7 @@ public class CopyPhysicalPlanVisitor implements
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(CopyPhysicalPlanVisitor.class);
 		}
 		return _logger;
 	}

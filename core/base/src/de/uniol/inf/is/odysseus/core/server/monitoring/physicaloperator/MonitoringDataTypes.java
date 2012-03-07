@@ -34,7 +34,7 @@ public enum MonitoringDataTypes {
 
 	protected static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(MonitoringDataTypes.class);
 		}
 		return _logger;
 	}

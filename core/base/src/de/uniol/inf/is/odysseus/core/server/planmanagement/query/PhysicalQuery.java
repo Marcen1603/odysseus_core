@@ -35,7 +35,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Query.class);
+			_logger = LoggerFactory.getLogger(PhysicalQuery.class);
 		}
 		return _logger;
 	}
