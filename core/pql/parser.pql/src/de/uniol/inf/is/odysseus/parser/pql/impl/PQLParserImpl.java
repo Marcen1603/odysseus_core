@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.InputOperatorItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
@@ -143,7 +143,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator topOperator = opEntry.getValue();
       if (roots.contains(topOperator))
       {
-        ILogicalQuery query = new Query();
+        ILogicalQuery query = new LogicalQuery();
         // Set Owners for query 
         AbstractTreeWalker walker = new AbstractTreeWalker();
         SetOwnerVisitor visitor = new SetOwnerVisitor(query);

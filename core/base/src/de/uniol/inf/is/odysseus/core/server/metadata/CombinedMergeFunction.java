@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 
 public class CombinedMergeFunction<T extends IClone> implements
 		IMetadataMergeFunction<T>, IClone {

@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTQuery;
@@ -90,7 +90,7 @@ public class SPARQL implements IQueryParser{
 			List<ILogicalQuery> listOfQueries = new ArrayList<ILogicalQuery>();
 			// an access ao must not be returned
 			if(!visitor.isCreateStatement()){
-				ILogicalQuery query = new Query();
+				ILogicalQuery query = new LogicalQuery();
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(logicalOp, true);
 				listOfQueries.add(query);

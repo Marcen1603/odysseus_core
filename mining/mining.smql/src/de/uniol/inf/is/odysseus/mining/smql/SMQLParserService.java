@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParser;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SimpleNode;
@@ -49,7 +49,7 @@ public class SMQLParserService implements IQueryParser {
 			List<ILogicalOperator> topOperators = walker.getTopOperators();
 			List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
 			for(ILogicalOperator op: topOperators){
-				Query query = new Query();
+				LogicalQuery query = new LogicalQuery();
 				query.setParserId(getLanguage());		
 				query.setLogicalPlan(op, true);
 				queries.add(query);

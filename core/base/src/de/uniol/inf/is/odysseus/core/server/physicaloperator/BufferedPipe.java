@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 
 /**
  * @author Jonas Jacobi

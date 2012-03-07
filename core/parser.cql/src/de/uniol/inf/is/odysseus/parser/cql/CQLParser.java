@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
@@ -164,7 +164,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				}
 			}
 		}
-		Query query = new Query();
+		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
 		query.setPriority(priority);
 		query.setLogicalPlan(op, true);
@@ -757,7 +757,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	private void addQuery(AbstractLogicalOperator sourceOp) {
-		Query query = new Query();
+		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
 		query.setLogicalPlan(sourceOp, true);
 		plans.add(query);
@@ -1318,7 +1318,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
 		}
 
-		Query query = new Query();
+		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
 		query.setLogicalPlan(sink, true);
 

@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.BufferedPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement.AbstractBufferPlacementStrategy;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 
 /**
  *  

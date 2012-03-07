@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.NullUserException;

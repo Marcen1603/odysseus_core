@@ -14,10 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
 
-import java.util.Map;
-
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 

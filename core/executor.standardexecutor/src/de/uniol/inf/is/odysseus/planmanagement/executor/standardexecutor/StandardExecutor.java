@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
@@ -59,7 +60,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.Exe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
@@ -461,7 +461,11 @@ public class StandardExecutor extends AbstractExecutor implements
 			QueryBuildConfiguration params) throws PlanManagementException {
 		try {
 			ArrayList<ILogicalQuery> newQueries = new ArrayList<ILogicalQuery>();
-			ILogicalQuery query = new Query(logicalPlan, params);
+			int prio = 0;
+			if (params != null) {
+				prio = params.getPriority();
+			}
+			ILogicalQuery query = new LogicalQuery(logicalPlan, prio);
 			query.setUser(user);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);

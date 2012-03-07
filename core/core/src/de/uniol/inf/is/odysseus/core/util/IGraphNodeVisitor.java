@@ -12,18 +12,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
+package de.uniol.inf.is.odysseus.core.util;
 
-import java.io.Serializable;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-
-/**
- * @author Jonas Jacobi
- *
- */
-public interface IAttributeResolver extends Serializable {
-
-	public SDFAttribute getAttribute(String name) throws AmgigiousAttributeException, NoSuchAttributeException;
-	public IAttributeResolver clone() ;
+public interface IGraphNodeVisitor<T,R> {
+	public void nodeAction(T node);
 	
+	public void beforeFromSinkToSourceAction(T sink, T source);
+	public void afterFromSinkToSourceAction(T sink, T source);
+	
+	public void beforeFromSourceToSinkAction(T source, T sink);
+	public void afterFromSourceToSinkAction(T source, T sink);
+	
+	public R getResult();
 }

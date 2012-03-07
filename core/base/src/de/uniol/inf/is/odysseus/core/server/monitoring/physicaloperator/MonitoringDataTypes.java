@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.Query;
 
 public enum MonitoringDataTypes {
 	
