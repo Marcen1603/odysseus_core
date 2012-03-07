@@ -1,32 +1,77 @@
 package de.uniol.inf.is.odysseus.datadictionary.mem;
 
-import java.io.IOException;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class DataDictionary extends AbstractDataDictionary {
 
-	public DataDictionary() throws IOException {
-		super();
-		streamDefinitions = new MemoryStore<String, ILogicalOperator>();
-		viewOrStreamFromUser = new MemoryStore<String, IUser>();
-		viewDefinitions = new MemoryStore<String, ILogicalOperator>();
-		entityMap = new MemoryStore<String, SDFSchema>();
-		sourceTypeMap = new MemoryStore<String, String>();
-		entityFromUser = new MemoryStore<String, IUser>();
-		datatypes = new MemoryStore<String, SDFDatatype>();
-		sinkDefinitions = new MemoryStore<String, ILogicalOperator>();
-		sinkFromUser = new MemoryStore<String, IUser>();
-		savedQueries = new MemoryStore<Integer, ILogicalQuery>();
-		savedQueriesForUser = new MemoryStore<Integer, IUser>();
-		savedQueriesBuildParameterName = new MemoryStore<Integer, String>();
-		initDatatypes();
+	@Override
+	protected IStore<String, ILogicalOperator> createStreamDefinitionsStore() {
+		return newMemoryStore();
 	}
 
+	@Override
+	protected IStore<String, IUser> createViewOrStreamFromUserStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, ILogicalOperator> createViewDefinitionsStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, SDFSchema> createEntityMapStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, IUser> createEntityFromUserStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, String> createSourceTypeMapStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, SDFDatatype> createDatatypesStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<Integer, ILogicalQuery> createSavedQueriesStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<Integer, IUser> createSavedQueriesForUserStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<Integer, String> createSavedQueriesBuildParameterNameStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, ILogicalOperator> createSinkDefinitionsStore() {
+		return newMemoryStore();
+	}
+
+	@Override
+	protected IStore<String, IUser> createSinkFromUserStore() {
+		return newMemoryStore();
+	}
+	
+	private static <T extends Comparable<?>,U> MemoryStore<T,U> newMemoryStore(){
+		return new MemoryStore<T, U>();
+	}
 }

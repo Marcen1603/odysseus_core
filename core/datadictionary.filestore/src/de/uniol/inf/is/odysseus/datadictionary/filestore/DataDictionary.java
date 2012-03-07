@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.datadictionary.filestore;
 
 import java.io.IOException;
+import java.io.Serializable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -9,38 +13,79 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class DataDictionary extends AbstractDataDictionary {
 
-	public DataDictionary() throws IOException {
-		super();
-		streamDefinitions = new FileStore<String, ILogicalOperator>(
-				OdysseusDefaults.get("streamDefinitionsFilename"));
-		viewOrStreamFromUser = new FileStore<String, IUser>(
-				OdysseusDefaults.get("streamOrViewFromUserFilename"));
-		viewDefinitions = new FileStore<String, ILogicalOperator>(
-				OdysseusDefaults.get("viewDefinitionsFilename"));
-		entityMap = new FileStore<String, SDFSchema>(
-				OdysseusDefaults.get("entitiesFilename"));
-		sourceTypeMap = new FileStore<String, String>(
-				OdysseusDefaults.get("sourceTypeMapFilename"));
-		entityFromUser = new FileStore<String, IUser>(
-				OdysseusDefaults.get("entityFromUserFilename"));
-		datatypes = new FileStore<String, SDFDatatype>(
-				OdysseusDefaults.get("datatypesFromDatatypesFilename"));
-		sinkDefinitions = new FileStore<String, ILogicalOperator>(
-				OdysseusDefaults.get("sinkDefinitionsFilename"));
-		sinkFromUser = new FileStore<String, IUser>(
-				OdysseusDefaults.get("sinkDefinitionsUserFilename"));
-		savedQueries = new FileStore<Integer, ILogicalQuery>(
-				OdysseusDefaults.get("queriesFilename"));
-		savedQueriesForUser = new FileStore<Integer, IUser>(
-				OdysseusDefaults.get("queriesUserFilename"));
-		savedQueriesBuildParameterName = new FileStore<Integer, String>(
-				OdysseusDefaults.get("queriesBuildParamFilename"));
-		
-		initDatatypes();
+	private static Logger LOG = LoggerFactory.getLogger(DataDictionary.class);
+	
+	@Override
+	protected IStore<String, ILogicalOperator> createStreamDefinitionsStore() {
+		return tryCreateFileStore("streamDefinitionsFilename");
 	}
 
+	@Override
+	protected IStore<String, IUser> createViewOrStreamFromUserStore() {
+		return tryCreateFileStore("streamOrViewFromUserFilename");
+	}
+
+	@Override
+	protected IStore<String, ILogicalOperator> createViewDefinitionsStore() {
+		return tryCreateFileStore("viewDefinitionsFilename");
+	}
+
+	@Override
+	protected IStore<String, SDFSchema> createEntityMapStore() {
+		return tryCreateFileStore("entitiesFilename");
+	}
+
+	@Override
+	protected IStore<String, IUser> createEntityFromUserStore() {
+		return tryCreateFileStore("entityFromUserFilename");
+	}
+
+	@Override
+	protected IStore<String, String> createSourceTypeMapStore() {
+		return tryCreateFileStore("sourceTypeMapFilename");
+	}
+
+	@Override
+	protected IStore<String, SDFDatatype> createDatatypesStore() {
+		return tryCreateFileStore("datatypesFromDatatypesFilename");
+	}
+
+	@Override
+	protected IStore<Integer, ILogicalQuery> createSavedQueriesStore() {
+		return tryCreateFileStore("queriesFilename");
+	}
+
+	@Override
+	protected IStore<Integer, IUser> createSavedQueriesForUserStore() {
+		return tryCreateFileStore("queriesUserFilename");
+	}
+
+	@Override
+	protected IStore<Integer, String> createSavedQueriesBuildParameterNameStore() {
+		return tryCreateFileStore("queriesBuildParamFilename");
+	}
+
+	@Override
+	protected IStore<String, ILogicalOperator> createSinkDefinitionsStore() {
+		return tryCreateFileStore("sinkDefinitionsFilename");
+	}
+
+	@Override
+	protected IStore<String, IUser> createSinkFromUserStore() {
+		return tryCreateFileStore("sinkDefinitionsUserFilename");
+	}
+
+	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key){
+		try {
+			return new FileStore<T, U>(OdysseusDefaults.get(key));
+		} catch (IOException e) {
+			LOG.error("Could not create fileStore-Instance for key " + key, e);
+			return null;
+		}
+	}
 }
