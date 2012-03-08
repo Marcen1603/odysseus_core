@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.Collection;
@@ -47,10 +47,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		protected void process_next(R object, int port, boolean exclusive) {
 			AbstractPipe.this.delegatedProcess(object, port, exclusive);
 		}
-		
+
 		@Override
 		public void processPunctuation(PointInTime timestamp, int port) {
-			AbstractPipe.this.delegatedProcessPunctuation(timestamp, port);			
+			AbstractPipe.this.delegatedProcessPunctuation(timestamp, port);
 		}
 
 		@Override
@@ -72,20 +72,22 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public AbstractSink<R> clone() {
 			throw new RuntimeException("Clone Not Supported");
 		}
-		
+
 		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
-			callCloseOnChildren(callPath);
+			if (isOpen()) {
+				callCloseOnChildren(callPath);
+			}
 		}
-		
+
 		@Override
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
 		}
-		
+
 	};
 
-	final protected DelegateSink delegateSink = new DelegateSink();	
+	final protected DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
 
@@ -147,25 +149,26 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-	
+
 	@Override
 	public void open() throws OpenFailedException {
 		this.delegateSink.open();
 	}
-	
+
 	@Override
 	public synchronized void open(ISink<? super W> caller, int sourcePort,
-			int sinkPort,List<PhysicalSubscription<ISink<?>>> callPath) throws OpenFailedException {
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
+			throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
-		this.delegateSink.open(callPath);						
+		this.delegateSink.open(callPath);
 	}
 
 	public void delegatedProcessOpen() throws OpenFailedException {
 		process_open();
 	}
-	
+
 	@Override
-	public boolean isOpen(){
+	public boolean isOpen() {
 		return super.isOpen() || this.delegateSink.isOpen();
 	}
 
@@ -185,8 +188,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	private void delegatedProcess(R object, int port, boolean exclusive) {
 		process_next(cloneIfNessessary(object, exclusive, port), port);
 	}
-	
-	private void delegatedProcessPunctuation(PointInTime timestamp, int port){
+
+	private void delegatedProcessPunctuation(PointInTime timestamp, int port) {
 		processPunctuation(timestamp, port);
 	}
 
@@ -197,6 +200,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	abstract protected void process_next(R object, int port);
+
 	abstract public void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------
@@ -204,16 +208,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,  List<PhysicalSubscription<ISink<?>>> callPath) {
+	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath) {
 		super.close(caller, sourcePort, sinkPort, callPath);
 		this.delegateSink.close(callPath);
 	}
-	
+
 	@Override
 	public void close() {
 		this.delegateSink.close();
 	}
-
 
 	@Override
 	protected void process_close() {
@@ -334,65 +338,72 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
 	}
-	
+
 	public boolean delegatedIsSemanticallyEqual(IPhysicalOperator ipo) {
 		return process_isSemanticallyEqual(ipo);
 	}
-	
+
 	/**
 	 * Liefert true, falls zwei Pipes die gleichen Quellen haben und die
-	 * entsprechenden Verbindungen die gleichen SinkIn- bzw. Sourceout-Ports nutzen.
+	 * entsprechenden Verbindungen die gleichen SinkIn- bzw. Sourceout-Ports
+	 * nutzen.
 	 * 
 	 * @param o
 	 *            zu überprüfendes Objekt (idealerweise eine AbstractPipe)
 	 */
 	public boolean hasSameSources(Object o) {
 		// Abbruch, falls das zu überprüfende Objekt keine AbstractPipe ist
-		if(!(o instanceof AbstractPipe)) {
+		if (!(o instanceof AbstractPipe)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		AbstractPipe<R,W> other = (AbstractPipe<R,W>) o;
+		AbstractPipe<R, W> other = (AbstractPipe<R, W>) o;
 
-		Collection<PhysicalSubscription<ISource<? extends R>>> thisSubs = this.getSubscribedToSource();
-		Collection<PhysicalSubscription<ISource<? extends R>>> otherSubs = other.getSubscribedToSource();
-		
+		Collection<PhysicalSubscription<ISource<? extends R>>> thisSubs = this
+				.getSubscribedToSource();
+		Collection<PhysicalSubscription<ISource<? extends R>>> otherSubs = other
+				.getSubscribedToSource();
+
 		// Unterschiedlich viele Quellen
-		if(thisSubs.size() != otherSubs.size()) {
+		if (thisSubs.size() != otherSubs.size()) {
 			return false;
 		}
 		// Iteration über die Subscriptions zu Quellen
-		for(PhysicalSubscription<?> s1 : thisSubs) {
+		for (PhysicalSubscription<?> s1 : thisSubs) {
 			boolean foundmatch = false;
-			for(PhysicalSubscription<?> s2 : otherSubs) {
+			for (PhysicalSubscription<?> s2 : otherSubs) {
 				// Subscription enthält gleiche Quelle und gleiche Ports
-				if(((ISource<?>)s1.getTarget()).getName().equals(((ISource<?>)s2.getTarget()).getName()) &&
-						s1.getSinkInPort() == s2.getSinkInPort() &&
-						s1.getSourceOutPort() == s2.getSourceOutPort() &&
-						s1.getSchema().compareTo(s2.getSchema()) == 0) {
+				if (((ISource<?>) s1.getTarget()).getName().equals(
+						((ISource<?>) s2.getTarget()).getName())
+						&& s1.getSinkInPort() == s2.getSinkInPort()
+						&& s1.getSourceOutPort() == s2.getSourceOutPort()
+						&& s1.getSchema().compareTo(s2.getSchema()) == 0) {
 					foundmatch = true;
 				}
 			}
 			// Operatoren haben mindestens eine unterschiedliche Quelle
-			if(!foundmatch) {
+			if (!foundmatch) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	public boolean isContainedIn(IPipe<R,W> ip) {
+
+	public boolean isContainedIn(IPipe<R, W> ip) {
 		return false;
-	}	
-			
+	}
+
 	@Override
-	public SDFMetaAttributeList getMetaAttributeSchema() {		
-		if(!this.metadataCalculated){
-			for(PhysicalSubscription<ISource<? extends R>> sub : this.getSubscribedToSource()){
-				this.metadataAttributeSchema = SDFMetaAttributeList.union(this.metadataAttributeSchema, sub.getTarget().getMetaAttributeSchema());
+	public SDFMetaAttributeList getMetaAttributeSchema() {
+		if (!this.metadataCalculated) {
+			for (PhysicalSubscription<ISource<? extends R>> sub : this
+					.getSubscribedToSource()) {
+				this.metadataAttributeSchema = SDFMetaAttributeList.union(
+						this.metadataAttributeSchema, sub.getTarget()
+								.getMetaAttributeSchema());
 			}
 			this.metadataCalculated = true;
-		}		
+		}
 		return this.metadataAttributeSchema;
 	}
 
