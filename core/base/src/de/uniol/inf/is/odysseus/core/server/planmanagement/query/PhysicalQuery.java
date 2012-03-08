@@ -130,7 +130,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getRoot ()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getRoot
+	 * ()
 	 */
 	@Override
 	public List<IPhysicalOperator> getRoots() {
@@ -145,7 +147,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
@@ -217,7 +220,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
-	 * initializePhysicalPlan(de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
+	 * initializePhysicalPlan
+	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
 	public void initializePhysicalRoots(List<IPhysicalOperator> roots) {
@@ -390,7 +394,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 			// since if an operator is already closed, the
 			// following sources will not be called any more.
 			if (curRoot.isSink()) {
-				((ISink<?>) curRoot).close();
+				if (curRoot.isOpen()) {
+					((ISink<?>) curRoot).close();
+				}
 			} else {
 				throw new IllegalArgumentException(
 						"Close cannot be called on a a source");
@@ -408,8 +414,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester#reoptimize
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
+	 * #reoptimize ()
 	 */
 	@Override
 	public void reoptimize() {
