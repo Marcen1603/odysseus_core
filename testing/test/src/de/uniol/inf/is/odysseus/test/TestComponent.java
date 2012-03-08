@@ -1,18 +1,25 @@
 package de.uniol.inf.is.odysseus.test;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -25,17 +32,19 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 
 public class TestComponent implements ITestComponent, ICompareSinkListener {
 
+	private static final String NEXMARK_TESTS_NAME = "Nexmark Tests";
+	private static final int PROCESSING_WAIT_TIME = 1000;
 	private static Logger LOG = LoggerFactory.getLogger(TestComponent.class);
+	private static final String DIRECTORY = "nexmark";
 
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
 
-	public static String newline = System.getProperty("line.separator");
-	ISession user = null;
+	private static final String NEWLINE = System.getProperty("line.separator");
 	private boolean processingDone = false;
 	private String errorText;
 
-	BufferedWriter out = null;
+	private BufferedWriter out = null;
 
 	public void activate(ComponentContext context) {
 	}
@@ -52,83 +61,113 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 
 	@Override
 	public Object startTesting() {
-		String dir = "nexmark";
-		user = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
-
-		// Read queries from directory dir
-		File f = new File(dir);
-		LOG.debug("Looking for files in " + f);
-		File[] fileArray = f.listFiles();
+		checkNotNull(executor, "Executor must be bound");
+		
+		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 
 		// Creating resultfile in dir
+		String filename = DIRECTORY + "/result" + System.currentTimeMillis() + ".log";
 		try {
-			out = new BufferedWriter(new FileWriter(dir + "/result" + System.currentTimeMillis() + ".log"));
-		} catch (IOException e2) {
-			e2.printStackTrace();
+			out = new BufferedWriter(new FileWriter(filename));
+			LOG.debug("Created result file " + filename);
+		} catch (IOException e) {
+			LOG.error("Error creating file " + filename, e);
+			throw new RuntimeException("Error during creating filename " + filename, e);
 		}
 
-		Map<String, File> queries = new HashMap<String, File>();
-		Map<String, File> results = new HashMap<String, File>();
+		Map<String, File> queries = Maps.newHashMap();
+		Map<String, File> results = Maps.newHashMap();
+		ImmutableList<File> fileArray = determineQueryFiles();
 
-		if (fileArray != null) {
-			for (File file : fileArray) {
-				if (file.isFile()) {
-					String name = file.getName();
-					int point = name.lastIndexOf(".");
-					String pre = name.substring(0, point);
-					String post = name.substring(point + 1);
-					if (post.equalsIgnoreCase("qry")) {
-						queries.put(pre, file);
-					} else if( post.equalsIgnoreCase("csv")){
-						results.put(pre, file);
-					}
-				}
+		for (File file : fileArray) {
+			String name = file.getName();
+			int point = name.lastIndexOf(".");
+			String pre = name.substring(0, point);
+			String post = name.substring(point + 1);
+			if (post.equalsIgnoreCase("qry")) {
+				queries.put(pre, file);
+			} else if (post.equalsIgnoreCase("csv")) {
+				results.put(pre, file);
 			}
 		}
 
-		LOG.debug("Starting executor ...");
+		tryStartExecutor(executor);
 
+		LOG.debug("Processing " + queries.size() + " queries ...");
+		for (Entry<String, File> query : queries.entrySet()) {
+			processingDone = false;
+			try {
+				test(query.getKey(), query.getValue(), results.get(query.getKey()), parser, session);
+				waitProcessing();
+				
+				executor.removeAllQueries(session);
+				
+				checkErrors(errorText);
+				LOG.debug("Query " + query.getKey() + " successfull");
+
+			} catch (Exception e) {
+				LOG.error("Query " + query.getKey() + " failed! ", e);
+				tryWrite(out, "Query " + query.getKey() + " failed! " + NEWLINE + e.getMessage());
+			}
+		}
+		
+		tryClose(out);
+		tryStopExecutor(executor);
+
+		LOG.debug("Testing finished");
+		
+		return "Success";
+	}
+
+	private void waitProcessing() throws InterruptedException {
+		synchronized (this) {
+			while (!processingDone) {
+				this.wait(PROCESSING_WAIT_TIME);
+			}
+		}
+	}
+	
+	private static void checkErrors(String errorText ) {
+		if( errorText != null ) {
+			throw new RuntimeException(errorText);
+		}
+	}
+
+	private static ImmutableList<File> determineQueryFiles() {
+		LOG.debug("Looking for files in " + DIRECTORY);
+		File f = new File(DIRECTORY);
+		File[] fileArray = f.listFiles();
+		if (fileArray == null) {
+			return ImmutableList.of();
+		}
+
+		return ImmutableList.<File> copyOf(Iterables.filter(Lists.newArrayList(fileArray), new Predicate<File>() {
+			@Override
+			public boolean apply(File file) {
+				return file.isFile();
+			}
+		}));
+	}
+
+	private static void tryStartExecutor(IServerExecutor executor) {
 		try {
+			LOG.debug("Starting executor");
 			executor.startExecution();
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
 		}
+	}
 
-		LOG.debug("Processing queries ...");
-		// TODO: Logging to file
-		for (Entry<String, File> query : queries.entrySet()) {
-			boolean success = true;
-			processingDone = false;
-			try {
-				test(query.getKey(), query.getValue(), results.get(query.getKey()), parser);
-				synchronized (this) {
-					while (!processingDone) {
-						this.wait(1000);
-					}
-				}
-				// Stop all queries
-				executor.removeAllQueries(user);
-				if (errorText != null) {
-					throw new RuntimeException(errorText);
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				success = false;
-				String text = "Query " + query.getKey() + " failed! " + e.getMessage();
-				LOG.error(text);
-				try {
-					out.write(text + newline);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			} finally {
-
-				if (success) {
-					LOG.debug("Query " + query.getKey() + " successfull");
-				}
-			}
+	private static void tryStopExecutor(IServerExecutor executor) {
+		try {
+			LOG.debug("Stopping executor");
+			executor.stopExecution();
+		} catch (PlanManagementException e) {
+			LOG.error("Exception during stopping executor", e);
 		}
+	}
+
+	private static void tryClose(BufferedWriter out) {
 		try {
 			out.flush();
 			out.close();
@@ -136,45 +175,43 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static void tryWrite(BufferedWriter out, String text) {
 		try {
-			executor.stopExecution();
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
+			out.write(text);
+		} catch( IOException ignored ) {
 		}
-		
-		return "Success";
 	}
 
-	private void test(String key, File query, File result, IOdysseusScriptParser parser) throws OdysseusScriptException, IOException {
-		String text = "Testing Query " + key + " from file " + query + " with results from file " + result + " --> ";
+	private void test(String key, File query, File result, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {
+		checkNotNull(result, "ResultSet must not be null!");
+		
+		String text = "Testing Query " + key + " from file " + query + " with results from file " + result;
 		LOG.debug(text);
-		out.write(text);
-		if (result == null) {
-			throw new IllegalArgumentException("No result set found for query " + key);
-		}
+		tryWrite(out, text);
 
-		ICompareSink compareSink = new SimpleCompareSink(result, this);
+		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this));
+	}
 
+	private static String getQueryString(File query) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(query));
 		String line = null;
 		StringBuffer queryString = new StringBuffer();
 		while ((line = reader.readLine()) != null) {
-			queryString.append(line).append(newline);
+			queryString.append(line).append(NEWLINE);
 		}
-
-		parser.parseAndExecute(queryString.toString(), user, compareSink);
+		return queryString.toString();
 	}
 
 	@Override
 	public synchronized void processingDone() {
 		LOG.debug("Query processing done");
-		try {
-			out.write(" ok " + newline);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		tryWrite(out, " ok " + NEWLINE);
+
 		processingDone = true;
 		errorText = null;
+		
 		notifyAll();
 	}
 
@@ -182,11 +219,8 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	public synchronized void processingError(String line, String input) {
 		String text = "Query processing created error " + line + " " + input;
 		LOG.error(text);
-		try {
-			out.write(text + newline);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		tryWrite(out, text);
+
 		processingDone = true;
 		errorText = "Wrong Result input '" + input + "'. Expected: '" + line + "'";
 		notifyAll();
@@ -194,7 +228,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 
 	@Override
 	public String toString() {
-		return "Nexmark Tests";
+		return NEXMARK_TESTS_NAME;
 	}
 
 }

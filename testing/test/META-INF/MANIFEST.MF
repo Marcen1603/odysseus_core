@@ -4,7 +4,9 @@ Bundle-Name: Tester
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.core,
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
@@ -20,4 +22,5 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Bundle-Activator: de.uniol.inf.is.odysseus.test.Activator
 Service-Component: OSGI-INF/component.xml
-Require-Bundle: de.uniol.inf.is.odysseus.usermanagement.mem;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.datadictionary.mem;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.usermanagement.mem;bundle-version="1.0.0"
