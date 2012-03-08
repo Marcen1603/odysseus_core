@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.ArrayList;
@@ -184,7 +184,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	protected void open(List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
-		//getLogger().debug("open() " + this);
+		// getLogger().debug("open() " + this);
 		if (!isOpen()) {
 			fire(openInitEvent);
 			process_open();
@@ -209,9 +209,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		for (PhysicalSubscription<ISink<?>> sub : callPath) {
 			if (sub.getTarget() == sink && sub.getSinkInPort() == sinkPort
 					&& sub.getSourceOutPort() == sourcePort) {
-//				getLogger().debug(
-//						"contains " + sink + " " + sourcePort + " " + sinkPort
-//								+ " in " + callPath);
+				// getLogger().debug(
+				// "contains " + sink + " " + sourcePort + " " + sinkPort
+				// + " in " + callPath);
 				return true;
 			}
 		}
@@ -248,6 +248,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected abstract void process_next(T object, int port, boolean isReadOnly);
+
 	public abstract void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------
@@ -260,10 +261,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
-		this.isSinkOpen.set(false);
-		process_close();
-		stopMonitoring();
-		callCloseOnChildren(callPath);
+		if (this.isSinkOpen.get()) {
+			this.isSinkOpen.set(false);
+			process_close();
+			stopMonitoring();
+			callCloseOnChildren(callPath);
+		}
 	}
 
 	protected void callCloseOnChildren(
@@ -328,20 +331,19 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return getOutputSchema(0);
 	}
 
-	
 	@Override
 	public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		this.outputSchema.put(port, outputSchema);		
+		this.outputSchema.put(port, outputSchema);
 	}
 
 	// ------------------------------------------------------------------------
@@ -354,12 +356,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			this.owners.add(owner);
 		}
 	}
-	
+
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
 		this.owners.remove(owner);
 	}
-	
+
 	@Override
 	public void removeAllOwners() {
 		this.owners.clear();
@@ -392,7 +394,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		StringBuffer result = new StringBuffer();
 		for (IOperatorOwner iOperatorOwner : owners) {
 			if (result.length() > 0) {
-				result.append( ", ");
+				result.append(", ");
 			}
 			result.append(iOperatorOwner.getID());
 		}
@@ -406,11 +408,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void subscribeToSource(ISource<? extends T> source, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		
-		if (sinkInPort == -1){
+
+		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
-		
+
 		if (sinkInPort >= this.noInputPorts) {
 			setInputPortCount(sinkInPort + 1);
 		}
@@ -422,9 +424,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 				throw new IllegalArgumentException("SinkInPort " + sinkInPort
 						+ " already bound ");
 			}
-//			getLogger().debug(
-//					this.getInstance() + " Subscribe To Source " + source
-//							+ " to " + sinkInPort + " from " + sourceOutPort);
+			// getLogger().debug(
+			// this.getInstance() + " Subscribe To Source " + source
+			// + " to " + sinkInPort + " from " + sourceOutPort);
 			this.subscribedToSource.add(sub);
 			source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
 					schema);
@@ -433,16 +435,16 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	private int getNextFreeSinkInPort() {
 		int sinkInPort = -1;
-		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource){
-			if (sub.getSinkInPort()> sinkInPort){
+		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
+			if (sub.getSinkInPort() > sinkInPort) {
 				sinkInPort = sub.getSinkInPort();
 			}
 		}
 		// und erhöhe um eins
-		sinkInPort ++;
+		sinkInPort++;
 		return sinkInPort;
 	}
-	
+
 	private boolean sinkInPortFree(int sinkInPort) {
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {
 			if (sub.getSinkInPort() == sinkInPort) {
@@ -536,10 +538,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}
-	
-	private Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old){
+
+	private Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old) {
 		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-		for(Entry<Integer, SDFSchema> e : old.entrySet()){
+		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
 			copy.put(e.getKey(), e.getValue().clone());
 		}
 		return copy;
