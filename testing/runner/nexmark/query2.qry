@@ -1,0 +1,8 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#RUNQUERY
+ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE 'C:/NexmarkDaten/nexmark_auction2.csv' AS string
+
+#RUNQUERY
+SELECT * FROM nexmark:auction2;
