@@ -128,14 +128,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 					LOG.debug("Query " + query.getKey() + " successfull");
 				}
 			}
-			// Warten bei Nexmark notwendig damit Daten wieder von vorne
-			// losgehen
-			try {
-				LOG.debug("Waiting 30 seconds before next run");
-				Thread.sleep(30000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 		try {
 			out.flush();
@@ -171,7 +163,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		}
 
 		parser.parseAndExecute(queryString.toString(), user, compareSink);
-		LOG.debug("Finished");
 	}
 
 	@Override
