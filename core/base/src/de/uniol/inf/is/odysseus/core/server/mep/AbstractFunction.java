@@ -37,7 +37,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			throw new IllegalArgumentException(
 					"illegal number of arguments for function " + getSymbol());
 		}
-		this.arguments = arguments;
+		
+		this.arguments = new IExpression<?>[getArity()];
+		for( int i = 0; i < arguments.length; i++ ) {
+			setArgument(i, arguments[i]);
+		}
 	}
 	
 	@Override
