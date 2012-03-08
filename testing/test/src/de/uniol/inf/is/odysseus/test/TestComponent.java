@@ -96,19 +96,23 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 
 		LOG.debug("Processing " + queries.size() + " queries ...");
 		for (Entry<String, File> query : queries.entrySet()) {
+			
+			final String queryKey = query.getKey();
+			final File queryFile = query.getValue();
 			processingDone = false;
+			
 			try {
-				test(query.getKey(), query.getValue(), results.get(query.getKey()), parser, session);
+				test(queryKey, queryFile, results.get(queryKey), parser, session);
 				waitProcessing();
 				
 				executor.removeAllQueries(session);
 				
 				checkErrors(errorText);
-				LOG.debug("Query " + query.getKey() + " successfull");
+				LOG.debug("Query " + queryKey + " successfull");
 
 			} catch (Exception e) {
-				LOG.error("Query " + query.getKey() + " failed! ", e);
-				tryWrite(out, "Query " + query.getKey() + " failed! " + NEWLINE + e.getMessage());
+				LOG.error("Query " + queryKey + " failed! ", e);
+				tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
 			}
 		}
 		
