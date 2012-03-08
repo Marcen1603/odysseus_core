@@ -35,7 +35,6 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		System.out.println("Open");
 		synchronized (compareInput) {
 			try {
 				logger.debug("Reading Compare File " + compareFile);
@@ -55,7 +54,6 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {
-		System.out.println("Object: " + object);
 		if (!isDone()) {
 			synchronized (compareInput) {
 				String line = compareInput.remove(0);
@@ -64,8 +62,7 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 				if (!line.equals(input)) {
 					System.err.println(line);
 					System.err.println(input);
-					System.err
-							.println("Difference at " + line.compareTo(input));
+					System.err.println("Difference at " + line.compareTo(input));
 					sinkListener.processingError(line, input);
 				}
 
