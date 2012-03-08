@@ -197,7 +197,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 			e.printStackTrace();
 		}
 		processingDone = true;
-		errorText = "Wrong Result input " + input + " was expecting " + line;
+		errorText = "Wrong Result input '" + input + "'. Expected: '" + line + "'";
 		notifyAll();
 	}
 
