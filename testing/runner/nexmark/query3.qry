@@ -2,6 +2,7 @@
 #PARSER CQL
 #TRANSCFG Standard
 #RUNQUERY
+DROP STREAM nexmark:bid2;
 ATTACH STREAM nexmark:bid2 (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FILE 'nexmark/daten/nexmark_bid2.csv' AS string;
 
 #RUNQUERY
