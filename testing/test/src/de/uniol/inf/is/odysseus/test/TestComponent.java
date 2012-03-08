@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.test;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.BufferedReader;
@@ -50,18 +51,18 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	}
 
 	public void bindExecutor(IExecutor executor) {
-		LOG.info("Executor bound");
+		checkArgument(executor instanceof IServerExecutor, "Executor must be instance of " + IServerExecutor.class.getName() + " instead of " + executor.getClass().getName());
 		this.executor = (IServerExecutor) executor;
 	}
 
 	public void bindScriptParser(IOdysseusScriptParser scriptParser) {
-		LOG.info("ScriptParser bound");
-		this.parser = scriptParser;
+		parser = scriptParser;
 	}
 
 	@Override
 	public Object startTesting() {
 		checkNotNull(executor, "Executor must be bound");
+		checkNotNull(parser, "Parser must be bound");
 		
 		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 
