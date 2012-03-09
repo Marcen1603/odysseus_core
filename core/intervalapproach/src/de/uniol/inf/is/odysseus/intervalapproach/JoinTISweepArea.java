@@ -25,18 +25,18 @@ public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeIn
 
 	@Override
 	public void insert(T s) {
-		synchronized (this.elements) {
-			this.elements.addLast(s);
+		synchronized (this.getElements()) {
+			this.getElements().addLast(s);
 		}
 	};
 	
 	@Override
 	public Iterator<T> queryCopy(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
-		synchronized(this.elements){
+		synchronized(this.getElements()){
 			switch (order) {
 			case LeftRight:
-				for (T next : this.elements) {
+				for (T next : this.getElements()) {
 					if (TimeInterval.totallyBefore(next.getMetadata(), element
 							.getMetadata())) {
 						continue;
@@ -52,7 +52,7 @@ public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeIn
 				}
 				break;
 			case RightLeft:
-				for (T next : this.elements) {
+				for (T next : this.getElements()) {
 					if (TimeInterval.totallyBefore(next.getMetadata(), element
 							.getMetadata())) {
 						continue;

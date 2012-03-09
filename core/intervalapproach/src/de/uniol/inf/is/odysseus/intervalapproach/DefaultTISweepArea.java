@@ -50,8 +50,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			for (T s : elements) {
+		synchronized (getElements()) {
+			for (T s : getElements()) {
 				if (TimeInterval.overlaps(s.getMetadata(), t)) {
 					retval.add(s);
 				}
@@ -62,8 +62,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	public Iterator<T> extractOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			Iterator<T> iter = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> iter = getElements().iterator();
 			while (iter.hasNext()) {
 				T elem = iter.next();
 				if (TimeInterval.overlaps(elem.getMetadata(), t)) {
@@ -84,8 +84,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
-		synchronized (elements) {
-			Iterator<T> it = this.elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> it = this.getElements().iterator();
 			//int i = 0;
 
 			while (it.hasNext()) {
@@ -107,8 +107,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
-		synchronized (elements) {
-			Iterator<T> it = this.elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
 				if (getRemovePredicate().evaluate(next, element)) {
@@ -136,8 +136,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			Iterator<T> li = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
@@ -155,8 +155,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	public Iterator<T> extractElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			Iterator<T> li = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
@@ -174,8 +174,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	public Iterator<T> extractElementsStartingEquals(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			Iterator<T> li = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
@@ -197,9 +197,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         linked list.
 	 */
 	public PointInTime getMinTs() {
-		synchronized (elements) {
-			if (!this.elements.isEmpty()) {
-				return this.elements.peek().getMetadata().getStart();
+		synchronized (getElements()) {
+			if (!this.getElements().isEmpty()) {
+				return this.getElements().peek().getMetadata().getStart();
 			}
 		}
 		return null;
@@ -212,8 +212,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         linked list.
 	 */
 	public PointInTime getMaxTs() {
-		if (!this.elements.isEmpty()) {
-			return this.elements.getLast().getMetadata().getStart();
+		if (!this.getElements().isEmpty()) {
+			return this.getElements().getLast().getMetadata().getStart();
 		}
 		return null;
 	}
@@ -237,9 +237,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + elements.size()
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
 				+ " Elems \n");
-		for (T element : elements) {
+		for (T element : getElements()) {
 			buf.append(element).append(" ");
 			buf.append("{META ")
 					.append(element.getMetadata().toString(baseTime))
@@ -255,8 +255,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
-		synchronized (elements) {
-			Iterator<T> li = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
@@ -279,8 +279,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	public Iterator<T> peekElementsContaing(PointInTime timestamp,
 			boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
-		synchronized (elements) {
-			Iterator<T> li = elements.iterator();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {

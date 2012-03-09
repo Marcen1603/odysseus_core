@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.priority_interval;
 
 import java.util.ArrayList;
@@ -36,11 +36,11 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 
 	@Override
 	public void insert(T s) {
-		synchronized (this.elements) {
+		synchronized (this.getElements()) {
 			if (((IPriority) s.getMetadata()).getPriority() == 0) {
-				this.elements.addLast(s);
+				this.getElements().addLast(s);
 			} else {
-				this.elements.addFirst(s);
+				this.getElements().addFirst(s);
 			}
 		}
 	};
@@ -50,7 +50,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		if (((IPriority) element.getMetadata()).getPriority() > 0) {
 			return;
 		}
-		Iterator<T> it = this.elements.iterator();
+		Iterator<T> it = this.getElements().iterator();
 		while (it.hasNext()) {
 			T next = it.next();
 			if (getRemovePredicate().evaluate(element, next)) {
@@ -67,7 +67,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	// TODO fehlerhaft im priortaetskontext wird aber atm nicht genutzt
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
-		Iterator<T> it = this.elements.iterator();
+		Iterator<T> it = this.getElements().iterator();
 		switch (order) {
 		case LeftRight:
 			while (it.hasNext()) {
@@ -109,7 +109,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
-		Iterator<T> li = elements.iterator();
+		Iterator<T> li = getElements().iterator();
 		while (li.hasNext()) {
 			T s_hat = li.next();
 			// Alle Elemente entfernen, die nicht mehr verschnitten werden
@@ -131,7 +131,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
 		case LeftRight:
-			for (T next : this.elements) {
+			for (T next : this.getElements()) {
 				if (TimeInterval.totallyBefore(next.getMetadata(),
 						element.getMetadata())) {
 					continue;
@@ -150,7 +150,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 			}
 			break;
 		case RightLeft:
-			for (T next : this.elements) {
+			for (T next : this.getElements()) {
 				if (TimeInterval.totallyBefore(next.getMetadata(),
 						element.getMetadata())) {
 					continue;
@@ -174,7 +174,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
-		Iterator<T> li = elements.iterator();
+		Iterator<T> li = getElements().iterator();
 		while (li.hasNext()) {
 			T s_hat = li.next();
 			// Alle Elemente entfernen, die nicht mehr verschnitten werden

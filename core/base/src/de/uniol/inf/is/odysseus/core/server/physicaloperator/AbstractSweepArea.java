@@ -33,9 +33,9 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because
 	// the inserts are typically chronologically ordered
-	final protected LinkedList<T> elements;
+	private final LinkedList<T> elements = new LinkedList<T>();
 
-	protected Comparator<? super T> comparator;
+	private Comparator<? super T> comparator;
 
 	IPredicate<? super T> queryPredicate;
 
@@ -58,7 +58,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		private T element;
 
 		public QueryIterator(T element, Order order) {
-			this.it = elements.iterator();
+			this.it = getElements().iterator();
 			this.order = order;
 			this.element = element;
 		}
@@ -115,20 +115,16 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	}
 
 	public AbstractSweepArea() {
-		this.elements = new LinkedList<T>();
-//		this.saSupervisor = new SweepAreaSupervisor(this, 20000);
-//		this.saSupervisor.start();
 	}
 
 	public AbstractSweepArea(Comparator<? super T> comparator) {
 		this.comparator = comparator;
-		this.elements = new LinkedList<T>();
 //		this.saSupervisor = new SweepAreaSupervisor(this, 20000);
 //		this.saSupervisor.start();
 	}
 
 	public AbstractSweepArea(AbstractSweepArea<T> area) {
-		this.elements = new LinkedList<T>(area.elements);
+		this.getElements().addAll(area.getElements());
 		this.comparator = area.comparator;
 		this.queryPredicate = area.queryPredicate.clone();
 		this.removePredicate = area.removePredicate.clone();
@@ -137,10 +133,10 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	@Override
 	public void insert(T s) {
 		if (this.comparator == null) {
-			this.elements.add(s);
+			this.getElements().add(s);
 			return;
 		}
-		ListIterator<T> li = this.elements.listIterator(this.elements.size());
+		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
 		while (li.hasPrevious()) {
 			if (this.comparator.compare(li.previous(), s) == -1) {
 				li.next();
@@ -148,7 +144,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 				return;
 			}
 		}
-		this.elements.addFirst(s);
+		this.getElements().addFirst(s);
 	}
 
 	@Override
@@ -161,14 +157,14 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
 		case LeftRight:
-			for (T next : this.elements) {
+			for (T next : this.getElements()) {
 				if (queryPredicate.evaluate(element, next)) {
 					result.add(next);
 				}
 			}
 			break;
 		case RightLeft:
-			for (T next : this.elements) {
+			for (T next : this.getElements()) {
 				if (queryPredicate.evaluate(next, element)) {
 					result.add(next);
 				}
@@ -181,7 +177,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
-		Iterator<T> it = this.elements.iterator();
+		Iterator<T> it = this.getElements().iterator();
 		switch (order) {
 		case LeftRight:
 			while (it.hasNext()) {
@@ -207,7 +203,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 
 	@Override
 	public void purgeElements(T element, Order order) {
-		Iterator<T> it = this.elements.iterator();
+		Iterator<T> it = this.getElements().iterator();
 		switch (order) {
 		case LeftRight:
 			while (it.hasNext()) {
@@ -247,37 +243,37 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 
 	@Override
 	final public boolean isEmpty() {
-		return this.elements.isEmpty();
+		return this.getElements().isEmpty();
 	}
 
 	@Override
 	final public int size() {
-		return this.elements.size();
+		return this.getElements().size();
 	}
 
 	@Override
 	final public void clear() {
-		this.elements.clear();
+		this.getElements().clear();
 	}
 
 	@Override
 	final public Iterator<T> iterator() {
-		return this.elements.iterator();
+		return this.getElements().iterator();
 	}
 
 	@Override
 	public boolean remove(T element) {
-		return this.elements.remove(element);
+		return this.getElements().remove(element);
 	}
 
 	@Override
 	public T peek() {
-		return this.elements.peek();
+		return this.getElements().peek();
 	}
 	
 	@Override
 	public T poll() {
-		return this.elements.poll();
+		return this.getElements().poll();
 	}
 
 	/**
@@ -292,19 +288,19 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 			return;
 		}
 		if (this.comparator == null) {
-			this.elements.addAll(toBeInserted);
+			this.getElements().addAll(toBeInserted);
 			return;
 		}
 		Collections.sort(toBeInserted, this.comparator);
 		T first = toBeInserted.get(0);
-		ListIterator<T> li = this.elements.listIterator(this.elements.size());
+		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
 		while (li.hasPrevious()) {
 			if (this.comparator.compare(li.previous(), first) == -1) {
-				this.elements.addAll(li.nextIndex(), toBeInserted);
+				this.getElements().addAll(li.nextIndex(), toBeInserted);
 				return;
 			}
 		}
-		this.elements.addAll(0, toBeInserted);
+		this.getElements().addAll(0, toBeInserted);
 	}
 
 	/**
@@ -315,14 +311,14 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	 */
 	@Override
 	public void removeAll(List<T> toBeRemoved) {
-		this.elements.removeAll(toBeRemoved);
+		this.getElements().removeAll(toBeRemoved);
 	}
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("SweepArea " + elements.size()
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
 				+ " Elems \n");
-		for (T element : elements) {
+		for (T element : getElements()) {
 			buf.append(element).append(" ");
 			buf.append("{META ").append(element.getMetadata().toString()).append("}\n");
 		}
@@ -346,6 +342,10 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	@Override
 	final public boolean equals(Object obj) {
 		return super.equals(obj);
+	}
+
+	protected LinkedList<T> getElements() {
+		return elements;
 	}
 	
 	

@@ -57,8 +57,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
-		synchronized(elements){
-			Iterator<T> it = this.elements.iterator();
+		synchronized(getElements()){
+			Iterator<T> it = this.getElements().iterator();
 			int i = 0;
 	
 			while (it.hasNext()) {
@@ -78,8 +78,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	@Override
 	public Iterator<T> extractElements(T element, Order order) {
 		LinkedList<T> result = new LinkedList<T>();
-		synchronized(elements){
-			Iterator<T> it = this.elements.iterator();
+		synchronized(getElements()){
+			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
 				if (getRemovePredicate().evaluate(next, element)) {
@@ -101,9 +101,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	 * @return the SweepArea as string
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + elements.size()
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
 				+ " Elems \n");
-		for (T element : elements) {
+		for (T element : getElements()) {
 			buf.append(element).append(" ");
 			buf.append("{META ").append(
 					element.getMetadata().toString(baseTime)).append("}\n");
@@ -124,8 +124,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime time) {
 		LinkedList<T> result = new LinkedList<T>();
-		synchronized(elements){
-			Iterator<T> it = this.elements.iterator();
+		synchronized(getElements()){
+			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
 				if (next.getMetadata().getStart().before(time)) {
@@ -141,8 +141,8 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
-		synchronized(elements){
-			Iterator<T> it = this.elements.iterator();
+		synchronized(getElements()){
+			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
 				if (next.getMetadata().getStart().before(time)) {

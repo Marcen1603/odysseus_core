@@ -65,8 +65,8 @@ public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKeyTimeInt
 	
 	public Iterator<Pair<T, List<ITimeInterval>>> queryOT(T element, Order order){
 		LinkedList<Pair<T, List<ITimeInterval>>> result = new LinkedList<Pair<T, List<ITimeInterval>>>();
-		synchronized(this.elements){
-			for(T next : this.elements){
+		synchronized(this.getElements()){
+			for(T next : this.getElements()){
 				if(TimeInterval.totallyBefore(next.getMetadata(), element.getMetadata())){
 					continue;
 				}

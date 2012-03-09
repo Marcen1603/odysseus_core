@@ -24,10 +24,10 @@ public class ExistenceSweepArea<T extends IMetaAttributeContainer<? extends ITim
 
 	@Override
 	public void insert(T object){
-		synchronized(this.elements){
-			this.elements.add(object);
+		synchronized(this.getElements()){
+			this.getElements().add(object);
 			MetadataComparator<ITimeInterval> comp = new MetadataComparator<ITimeInterval>();
-			Collections.sort(this.elements, comp);
+			Collections.sort(this.getElements(), comp);
 		}
 	}
 }

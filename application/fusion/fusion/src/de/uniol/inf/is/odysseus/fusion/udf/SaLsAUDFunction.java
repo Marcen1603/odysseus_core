@@ -35,13 +35,13 @@ public class SaLsAUDFunction extends AbstractSweepArea<RelationalTuple<? extends
 		RelationalTuple<? extends IMetaAttribute> out = null;
 		this.insert(in);
 		
-		if(!this.elements.isEmpty()){
-			if(((ITimeInterval)in.getMetadata()).getStart().after(((ITimeInterval)this.elements.getFirst().getMetadata()).getEnd())){		
+		if(!this.getElements().isEmpty()){
+			if(((ITimeInterval)in.getMetadata()).getStart().after(((ITimeInterval)this.getElements().getFirst().getMetadata()).getEnd())){		
 				//System.out.println("Last Element Received.");
 				
-				for(RelationalTuple<? extends IMetaAttribute> element1: this.elements){
+				for(RelationalTuple<? extends IMetaAttribute> element1: this.getElements()){
 					Geometry geometry1 = ((Geometry)element1.getAttribute(0));
-					for(RelationalTuple<? extends IMetaAttribute> element2: this.elements){
+					for(RelationalTuple<? extends IMetaAttribute> element2: this.getElements()){
 						Geometry geometry2 = ((Geometry)element2.getAttribute(0));
 						
 						double distance = geometry1.distance(geometry2);
@@ -57,7 +57,7 @@ public class SaLsAUDFunction extends AbstractSweepArea<RelationalTuple<? extends
 				}
 				
 				//System.out.println("Cleared Sweep Area: " + this.elements.size());
-				this.elements.clear();
+				this.getElements().clear();
 			}
 		}
 		
