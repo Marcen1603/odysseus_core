@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		extends AbstractIterableSource<T> {
 
-	Logger logger = LoggerFactory.getLogger(FileAccessPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FileAccessPO.class);
 
 	// Definition for the location and the type of file
 	final private String path;
@@ -59,19 +60,25 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	@Override
 	public synchronized boolean hasNext() {
+		
 		try {
-			if (bf.ready())
+			if (bf.ready()) {
 				return true;
-			else {
-				propagateDone();
-				return false;
-			}
-		} catch (Exception e) {
-			propagateDone();
-			e.printStackTrace();
+			} 
+		} catch (IOException e) {
+			LOG.error("Exception during checking, if file " + path + " has data left", e);
 		}
+		
+		tryPropagateDone();
 		return false;
-
+	}
+	
+	private void tryPropagateDone(){
+		try {
+			propagateDone();
+		} catch( Throwable throwable ) {
+			LOG.error("Exception during propagating done", throwable);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,7 +98,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 			} catch (Exception e) {
 				isDone = true;
 				propagateDone();
-				e.printStackTrace();
+				LOG.error("Exception during transfering next line", e);
 			}
 		}
 	}
@@ -134,9 +141,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		FileAccessPO fapo = (FileAccessPO) ipo;
 		if (this.path.equals(fapo.path) && this.fileType.equals(fapo.fileType)) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}
 
 }
