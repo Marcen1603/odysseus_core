@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="org.tigris.subversion.subclipse.core.svnnature">
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/args,de.uniol.inf.is.odysseus.args"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/core,de.uniol.inf.is.odysseus.core"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/core.feature,de.uniol.inf.is.odysseus.core.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/base,de.uniol.inf.is.odysseus.core.server"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/datadictionary.filestore,de.uniol.inf.is.odysseus.datadictionary.filestore"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/datadictionary.filestore.feature,de.uniol.inf.is.odysseus.datadictionary.filestore.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/datadictionary.mem,de.uniol.inf.is.odysseus.datadictionary.mem"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/datadictionary.mem.feature,de.uniol.inf.is.odysseus.datadictionary.mem.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/derby,de.uniol.inf.is.odysseus.derby"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/executor.wsclient.feature,de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/interval.transform,de.uniol.inf.is.odysseus.interval.transform"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/interval_latency,de.uniol.inf.is.odysseus.interval_latency"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/intervalapproach,de.uniol.inf.is.odysseus.intervalapproach"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/latency,de.uniol.inf.is.odysseus.latency"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/latency.feature,de.uniol.inf.is.odysseus.latency.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/latency.transform,de.uniol.inf.is.odysseus.latency.transform"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/logicaloperator.collector,de.uniol.inf.is.odysseus.logicaloperator.builder"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/logicaloperator.relational,de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/mep.matrix,de.uniol.inf.is.odysseus.mep.matrix"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/parser.cql,de.uniol.inf.is.odysseus.parser.cql"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/pql/parser.pql,de.uniol.inf.is.odysseus.parser.pql"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/pql/parser.pql.relational,de.uniol.inf.is.odysseus.parser.pql.relational"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/physicaloperator.relational,de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.bufferplacement.querybufferplacement,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.bufferplacement.sourcebufferplacementstrategy,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.bufferplacement.standardbufferplacementstrategy,de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.compiler.standardcompiler,de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/executor.standardexecutor,de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/executor.webserviceexecutor,de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/executor.wsclient,de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.optimization.installprocesscallsmonitor,de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.optimization.installstandardmetadatalistener,de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.optimization.plan.standardplanoptimizer,de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.optimization.query.standardqueryoptimizer,de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/querysharing,de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmanagement.optimization.standardoptimizer,de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/planmgmt.standard.feature,de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/priority,de.uniol.inf.is.odysseus.priority"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/priority.cql,de.uniol.inf.is.odysseus.priority.cql"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational.base,de.uniol.inf.is.odysseus.relational.base"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational.feature,de.uniol.inf.is.odysseus.relational.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/odysseus.persistentqueries,de.uniol.inf.is.odysseus.relational.persistentqueries"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational.rewrite,de.uniol.inf.is.odysseus.relational.rewrite"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational.transform,de.uniol.inf.is.odysseus.relational.transform"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational_interval,de.uniol.inf.is.odysseus.relational_interval"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/relational_interval.transform,de.uniol.inf.is.odysseus.relational_interval.transform"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/rewrite,de.uniol.inf.is.odysseus.rewrite"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/ruleengine,de.uniol.inf.is.odysseus.ruleengine"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/schedulermanager.singleschedulermanager,de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/scheduler.singlethreadscheduler2.0,de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/scheduler.strategy.factory.aurorafactory,de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/scheduler.strategy.factory.simplestratfactory,de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/script.exector,de.uniol.inf.is.odysseus.script.exector"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/script,de.uniol.inf.is.odysseus.script.parser"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/transform,de.uniol.inf.is.odysseus.transform"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/usermanagement.filestore,de.uniol.inf.is.odysseus.usermanagement.filestore"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/usermanagement.filestore.feature,de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/usermanagement.mem,de.uniol.inf.is.odysseus.usermanagement.mem"/>
+<project reference="0.9.3,http://isdb1.offis.uni-oldenburg.de/repos/odysseus/trunk/core/usermanagement.mem.feature,de.uniol.inf.is.odysseus.usermanagement.mem.feature"/>
+</provider>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1314777254593_4" label="core" name="core">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.latency.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.parser.cql" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.rewrite" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.datadictionary.mem" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.usermanagement.mem" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.datadictionary.filestore" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational_interval.transform" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.usermanagement.mem.feature" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.planmgmt.standard.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.mep.matrix" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.priority.cql" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational_interval" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational.persistentqueries" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.script.parser" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.datadictionary.filestore.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.datadictionary.mem.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.interval.transform" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.derby" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.latency.transform" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.relational.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.intervalapproach" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.priority" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.transform" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.core.server" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational.base" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.parser.pql.relational" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.latency" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.usermanagement.filestore" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.logicaloperator.builder" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational.transform" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.executor.wsclient.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.executor.wsclient" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.logicaloperator.relational" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.parser.pql" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.relational.rewrite" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.usermanagement.filestore.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.script.exector" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.uniol.inf.is.odysseus.core.feature" type="4"/>
+<item elementID="=de.uniol.inf.is.odysseus.ruleengine" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.args" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.interval_latency" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=de.uniol.inf.is.odysseus.physicaloperator.relational" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+</psf>
