@@ -107,7 +107,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 				
 				executor.removeAllQueries(session);
 				
-				checkErrors(errorText);
+				checkForErrors(errorText);
 				LOG.debug("Query " + queryKey + " successfull");
 
 			} catch (Exception e) {
@@ -132,7 +132,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		}
 	}
 	
-	private static void checkErrors(String errorText ) {
+	private static void checkForErrors(String errorText ) {
 		if( errorText != null ) {
 			throw new RuntimeException(errorText);
 		}
