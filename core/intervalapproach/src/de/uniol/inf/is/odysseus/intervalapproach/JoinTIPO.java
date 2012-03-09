@@ -259,7 +259,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	
 	@Override
 	protected void process_done() {
-		System.out.println("JoinTIPO(" + this.hashCode() + ").processDone()");
 		transferFunction.done();
 		areas[0].clear();
 		areas[1].clear();
