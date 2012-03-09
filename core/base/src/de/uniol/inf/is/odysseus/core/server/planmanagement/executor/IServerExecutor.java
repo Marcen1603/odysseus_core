@@ -156,7 +156,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	IDataDictionary getDataDictionary();
 
-	public void removeAllQueries(ISession caller);
+	public boolean removeAllQueries(ISession caller);
 
 	void executionPlanChanged() throws SchedulerException,
 			NoSchedulerLoadedException;
