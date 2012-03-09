@@ -20,13 +20,11 @@
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.slf4j.api" version="1.6.1" match="equivalent"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.jobs"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
-      <import plugin="net.sf.eclipsecs.checkstyle"/>
    </requires>
 
    <plugin
@@ -118,13 +116,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="org.apache.commons.collections"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="Commons.Math"
