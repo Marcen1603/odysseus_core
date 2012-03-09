@@ -133,5 +133,9 @@ public class SaLsAUDFunction extends AbstractSweepArea<RelationalTuple<? extends
 		return null;
 	}
 
+	@Override
+	public AbstractSweepArea<RelationalTuple<? extends IMetaAttribute>> clone() {
+		throw new RuntimeException("Clone not implemented!!");
+	}
 
 }

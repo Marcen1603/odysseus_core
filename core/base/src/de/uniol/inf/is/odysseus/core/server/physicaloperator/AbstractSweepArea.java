@@ -33,7 +33,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	// because we need ordered traversal via iterator
 	// while insertion is in O(N), it is not that bad in reality, because
 	// the inserts are typically chronologically ordered
-	protected LinkedList<T> elements;
+	final protected LinkedList<T> elements;
 
 	protected Comparator<? super T> comparator;
 
@@ -336,22 +336,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public AbstractSweepArea<T> clone() {
-		AbstractSweepArea<T> sa;
-		try {
-			sa = (AbstractSweepArea<T>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
-		
-		sa.elements = new LinkedList<T>(this.elements);
-		sa.comparator = this.comparator;
-		sa.queryPredicate = this.queryPredicate.clone();
-		sa.removePredicate = this.removePredicate.clone();
-		
-		return sa;
-	}
+	abstract public AbstractSweepArea<T> clone();
 
 	@Override
 	final public int hashCode() {
