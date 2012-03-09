@@ -20,17 +20,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.LinkedHashMultimap;
+
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.server.util.LinkedMultiHashMap;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends RelationalTuple<K>>
 		implements ITimeIntervalSweepArea<T> {
 
-	private LinkedMultiHashMap<Long, T> elements = new LinkedMultiHashMap<Long, T>();
+	private LinkedHashMultimap<Long, T> elements = LinkedHashMultimap.create();
 	final private int storedIdPosition;
 	final private int externalIdPosition;
 
@@ -43,12 +44,12 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 			PriorityIdHashSweepArea<K, T> priorityIdHashSweepArea) {
 		this.storedIdPosition = priorityIdHashSweepArea.storedIdPosition;
 		this.externalIdPosition = priorityIdHashSweepArea.externalIdPosition;
-		this.elements = priorityIdHashSweepArea.elements.clone();
+		this.elements = LinkedHashMultimap.create(priorityIdHashSweepArea.elements);
 	}
 
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime time) {
-		Iterator<T> it = elements.valueIterator();
+		Iterator<T> it = elements.values().iterator();
 		LinkedList<T> extractedElements = new LinkedList<T>();
 		while (it.hasNext()) {
 			T curElement = it.next();
@@ -66,7 +67,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
-		Iterator<T> it = elements.valueIterator();
+		Iterator<T> it = elements.values().iterator();
 		while (it.hasNext()) {
 			T curElement = it.next();
 			if (curElement.getMetadata().getEnd().beforeOrEquals(time)) {
@@ -169,13 +170,13 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 
 	@Override
 	public boolean remove(T element) {
-		return this.elements.remove(element.getAttribute(storedIdPosition)) != null;
+		return this.elements.removeAll(element.getAttribute(storedIdPosition)) != null;
 	}
 
 	@Override
 	public void removeAll(List<T> toBeRemoved) {
 		for (T curElement : toBeRemoved) {
-			this.elements.remove(curElement);
+			this.elements.removeAll(curElement);
 		}
 	}
 
@@ -196,7 +197,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 
 	@Override
 	public Iterator<T> iterator() {
-		return this.elements.valueIterator();
+		return this.elements.values().iterator();
 	}
 
 	@Override

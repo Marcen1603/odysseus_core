@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.util.PrintTreeVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class PQLParserImplTokenManager implements PQLParserImplConstants
 {
 

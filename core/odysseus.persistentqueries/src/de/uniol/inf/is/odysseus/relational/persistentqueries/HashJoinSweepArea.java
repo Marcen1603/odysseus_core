@@ -20,12 +20,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.LinkedHashMultimap;
+
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.server.util.LinkedMultiHashMap;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 @SuppressWarnings({"unchecked","rawtypes"})
 public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple<? extends ITimeInterval>> {
 
-	private LinkedMultiHashMap<RelationalTuple<? extends ITimeInterval>, Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> elements;
+	private LinkedHashMultimap<RelationalTuple<? extends ITimeInterval>, Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> elements;
 	/**
 	 * This list is used for
 	 * projecting new elements that
@@ -74,7 +75,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	IPredicate<? super RelationalTuple<? extends ITimeInterval>> removePredicate;
 	
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList){
-		this.elements = new LinkedMultiHashMap<RelationalTuple<? extends ITimeInterval>, Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>>();
+		this.elements = LinkedHashMultimap.create();		
 		this.insertRestrictList = insertRestrictList;
 		this.queryRestrictList = queryRestrictList;
 	}
@@ -177,7 +178,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	@Override
 	public RelationalTuple<? extends ITimeInterval> poll() {
 		RelationalTuple<? extends ITimeInterval> retVal = null;
-		Iterator iter = this.elements.valueIterator();
+		Iterator iter = this.elements.values().iterator();
 		if(iter.hasNext()){
 			retVal = ((Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>) iter.next()).getE2();
 			iter.remove();
