@@ -14,6 +14,7 @@ public class TestComponentRunner extends Thread {
 	public TestComponentRunner( ITestComponent component ) {
 		Preconditions.checkNotNull(component, "Component must not be null!");
 		
+		setName("TestComponentRunner:" + component);
 		this.component = component;
 	}
 	
