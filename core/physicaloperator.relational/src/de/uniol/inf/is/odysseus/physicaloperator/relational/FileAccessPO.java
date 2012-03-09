@@ -60,7 +60,9 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	@Override
 	public synchronized boolean hasNext() {
-		
+		if (isDone){
+			return false;
+		}
 		try {
 			if (bf.ready()) {
 				return true;
@@ -84,7 +86,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void transferNext() {
-		if (isOpen()) {
+		if (isOpen() && !isDone()) {
 			String line = "";
 			try {
 
