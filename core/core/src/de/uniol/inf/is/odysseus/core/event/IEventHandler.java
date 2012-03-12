@@ -67,6 +67,9 @@ public interface IEventHandler {
 	 */
 	void stopEventDispatcher();
 	
-	
-
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isEventDispatcherRunning();
 }
