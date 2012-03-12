@@ -166,7 +166,11 @@ public class OdysseusDefaults {
 	}
 
 	public static String get(String key) {
-		return props.getProperty(key);
+		String ret = props.getProperty(key);
+		if (ret == null){
+			getLogger().warn("Try to get a property that is not registered "+key);
+		}
+		return ret;
 	}
 
 	public static long getLong(String key, long defaultValue) {
