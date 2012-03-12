@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
  * Each stream has a port which can be used to connect and get the data of the
  * benchmark.
  * <p>
- * The {@link #startServer()} method starts server. The {@link #stop()} method
+ * The {@link #startServer()} method starts server. The {@link #stopEventDispatcher()} method
  * stops the server and removes all connected clients.
  * 
  * @author Bernd Hochschulz, Marco Grawunder

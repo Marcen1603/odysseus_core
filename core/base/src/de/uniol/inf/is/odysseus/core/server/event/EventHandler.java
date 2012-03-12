@@ -28,10 +28,20 @@ public class EventHandler implements IEventHandler {
 
 	final Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
 	final ArrayList<IEventListener> genericEventListener = new ArrayList<IEventListener>();
-	final EventDispatcher dispatcher = new EventDispatcher(this);
+	EventDispatcher dispatcher;
 
 	public EventHandler() {
+	}
+	
+	@Override
+	public void startEventDispatcher(){
+		dispatcher = new EventDispatcher(this);
 		dispatcher.start();
+	}
+	
+	@Override
+	public void stopEventDispatcher(){
+		dispatcher.interrupt();
 	}
 
 	/**

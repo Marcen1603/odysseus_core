@@ -104,6 +104,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
+	
+	@Override
+	public void startEventDispatcher() {
+		eventHandler.startEventDispatcher();
+	}
+	
+	@Override
+	public void stopEventDispatcher(){
+		eventHandler.stopEventDispatcher();
+	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
 	final private POEvent openInitEvent = new POEvent(this,
@@ -229,6 +239,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			sub.incOpenCalls();
 		}
 		if (!isOpen()) {
+			startEventDispatcher();
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
@@ -330,6 +341,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				open.set(false);
 				stopMonitoring();
 				fire(this.closeDoneEvent);
+				stopEventDispatcher();
 			}
 		}
 

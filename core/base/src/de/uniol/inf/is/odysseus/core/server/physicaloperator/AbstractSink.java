@@ -106,6 +106,17 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
+	
+	@Override
+	public void startEventDispatcher() {
+		eventHandler.startEventDispatcher();
+	}
+	
+	@Override
+	public void stopEventDispatcher(){
+		eventHandler.stopEventDispatcher();
+	}
+
 
 	final private POEvent openInitEvent;
 	final private POEvent openDoneEvent;
@@ -186,6 +197,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			throws OpenFailedException {
 		// getLogger().debug("open() " + this);
 		if (!isOpen()) {
+			startEventDispatcher();
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
@@ -267,6 +279,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			process_close();
 			stopMonitoring();
 			callCloseOnChildren(callPath);
+			stopEventDispatcher();
 		}
 	}
 
