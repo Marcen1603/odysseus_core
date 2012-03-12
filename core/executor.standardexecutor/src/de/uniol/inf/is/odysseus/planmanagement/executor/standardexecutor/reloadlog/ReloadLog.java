@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class ReloadLog {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
-	public static final String LOG_FILENAME = OdysseusDefaults.get("reloadLogFileName");
+	public static final String LOG_FILENAME = OdysseusDefaults.get("reloadLogStoreFilename");
 	
 	
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();

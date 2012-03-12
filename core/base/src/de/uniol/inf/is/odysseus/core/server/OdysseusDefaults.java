@@ -144,8 +144,6 @@ public class OdysseusDefaults {
 
 		// Odysseus Storing
 		props.setProperty("storing_database", odysseusHome + "database.conf");
-
-		props.setProperty("reloadLogFileName", "reloadlog.store");
 		
 		// AC
 		props.setProperty("ac_memHeadroom", "0.4");
