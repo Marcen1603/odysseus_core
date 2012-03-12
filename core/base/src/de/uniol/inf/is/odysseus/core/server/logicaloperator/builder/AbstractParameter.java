@@ -48,10 +48,12 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.errors = new ArrayList<Exception>();
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name.toUpperCase();
 	}
 	
+	@Override
 	public void setRequirement(REQUIREMENT requirement) {
 		this.requirement = requirement;
 	}

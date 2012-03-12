@@ -40,6 +40,7 @@ public class FESortedClonablePair<E1 extends IClone,E2 extends IClone> extends C
 		return comparableE1.compareTo(o.getE1());
 	}
 	
+	@Override
 	public FESortedClonablePair<E1, E2> clone(){
 		return new FESortedClonablePair<E1, E2>(this,false);
 	}

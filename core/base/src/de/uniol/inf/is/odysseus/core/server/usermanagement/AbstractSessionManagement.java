@@ -26,6 +26,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements I
 		return null;
 	}
 
+	@Override
 	public ISession login(String token) {
 		for (ISession session : this.sessionStore.values()) {
 			if (session.getToken().equals(token)) {

@@ -24,7 +24,7 @@ public class SameDefaultRootStrategy implements IDefaultRootStrategy {
 	@Override
 	public IPhysicalOperator connectDefaultRootToSource(
 			ISink<?> defaultRoot, IPhysicalOperator source) {
-		((ISource) source).connectSink((ISink) defaultRoot, 0, 0, source.getOutputSchema());		
+		((ISource) source).connectSink(defaultRoot, 0, 0, source.getOutputSchema());		
 		return defaultRoot;
 	}
 

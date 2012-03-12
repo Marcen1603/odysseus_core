@@ -34,7 +34,7 @@ public class CloneDefaultRootStrategy implements IDefaultRootStrategy{
 		
 		ISink<?> defaultRootCopy = (ISink<?>)copyVis.getResult();
 		
-		((ISource) source).connectSink((ISink) defaultRootCopy, 0, 0, source.getOutputSchema());
+		((ISource) source).connectSink(defaultRootCopy, 0, 0, source.getOutputSchema());
 		return defaultRootCopy;
 	}
 

@@ -58,14 +58,14 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 	 * @return current parameter for {@link ParameterDoRewrite}
 	 */
 	public ParameterDoRewrite getParameterDoRewrite() {
-		return (ParameterDoRewrite) this.get(ParameterDoRewrite.class);
+		return this.get(ParameterDoRewrite.class);
 	}
 	
 	public RewriteConfiguration getRewriteConfiguration(){
 		if (!this.contains(RewriteConfiguration.class)) {
 			set(new RewriteConfiguration());
 		}
-		return (RewriteConfiguration) this.get(RewriteConfiguration.class);
+		return this.get(RewriteConfiguration.class);
 	}
 
 	/**
@@ -74,47 +74,47 @@ public class OptimizationConfiguration extends Configuration<IOptimizationSettin
 	 * @return current parameter for {@link ParameterQueryOptimizer}
 	 */
 	public ParameterQueryOptimizer getParameterQueryOptimizer() {
-		return (ParameterQueryOptimizer) this.get(ParameterQueryOptimizer.class);
+		return this.get(ParameterQueryOptimizer.class);
 	}
 	
 	public SettingMaxConcurrentOptimizations getSettingMaxConcurrentOptimizations() {
 		if (!this.contains(SettingMaxConcurrentOptimizations.class)) {
 			set(new SettingMaxConcurrentOptimizations(2), false);
 		}
-		return (SettingMaxConcurrentOptimizations) this.get(SettingMaxConcurrentOptimizations.class);
+		return this.get(SettingMaxConcurrentOptimizations.class);
 	}
 	
 	public SettingComparePlanCandidates getSettingComparePlanCandidates() {
 		if (!this.contains(SettingComparePlanCandidates.class)) {
 			set(new SettingComparePlanCandidates(5));
 		}
-		return (SettingComparePlanCandidates) this.get(SettingComparePlanCandidates.class);
+		return this.get(SettingComparePlanCandidates.class);
 	}
 	
 	public SettingRefuseOptimizationAtCpuLoad getSettingRefuseOptimizationAtCpuLoad() {
 		if (!this.contains(SettingRefuseOptimizationAtCpuLoad.class)) {
 			set(new SettingRefuseOptimizationAtCpuLoad(85.0));
 		}
-		return (SettingRefuseOptimizationAtCpuLoad) this.get(SettingRefuseOptimizationAtCpuLoad.class);
+		return this.get(SettingRefuseOptimizationAtCpuLoad.class);
 	}
 	
 	public SettingRefuseOptimizationAtMemoryLoad getSettingRefuseOptimizationAtMemoryLoad() {
 		if (!this.contains(SettingRefuseOptimizationAtMemoryLoad.class)) {
 			set(new SettingRefuseOptimizationAtMemoryLoad(80.0));
 		}
-		return (SettingRefuseOptimizationAtMemoryLoad) this.get(SettingRefuseOptimizationAtMemoryLoad.class);
+		return this.get(SettingRefuseOptimizationAtMemoryLoad.class);
 	}
 	
 	public ParameterPerformQuerySharing getParameterPerformQuerySharing() {
-		return (ParameterPerformQuerySharing) this.get(ParameterPerformQuerySharing.class);
+		return this.get(ParameterPerformQuerySharing.class);
 	}
 	
 	public ParameterAllowRestructuringOfCurrentPlan getParameterAllowRestructuringOfCurrentPlan() {
-		return (ParameterAllowRestructuringOfCurrentPlan) this.get(ParameterAllowRestructuringOfCurrentPlan.class);
+		return this.get(ParameterAllowRestructuringOfCurrentPlan.class);
 	}
 	
 	public ParameterShareSimilarOperators getParameterShareSimilarOperators() {
-		return (ParameterShareSimilarOperators) this.get(ParameterShareSimilarOperators.class);
+		return this.get(ParameterShareSimilarOperators.class);
 	}
 
 

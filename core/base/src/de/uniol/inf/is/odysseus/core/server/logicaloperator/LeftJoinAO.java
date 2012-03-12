@@ -23,6 +23,7 @@ public class LeftJoinAO extends JoinAO{
 		super(joinPO);
 	}
 	
+	@Override
 	public LeftJoinAO clone(){
 		return new LeftJoinAO(this);
 	}

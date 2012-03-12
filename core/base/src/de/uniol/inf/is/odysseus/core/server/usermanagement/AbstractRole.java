@@ -28,6 +28,7 @@ public abstract class AbstractRole implements IRole {
 	 * @param name
 	 *            The name to set.
 	 */
+	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
@@ -45,6 +46,7 @@ public abstract class AbstractRole implements IRole {
 	/**
 	 * @param privilege
 	 */
+	@Override
 	public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}

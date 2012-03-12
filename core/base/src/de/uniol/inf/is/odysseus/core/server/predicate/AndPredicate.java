@@ -103,8 +103,8 @@ class AndPredicate<T> extends ComplexPredicate<T> {
 		}
 		
 		// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist (Zus�tzliche Versch�rfung bestehender Pr�dikate)
-		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn((AndPredicate<T>)o)
-			|| this.getRight().isContainedIn((AndPredicate<T>)o))) {
+		if(!(o instanceof AndPredicate) && (this.getLeft().isContainedIn(o)
+			|| this.getRight().isContainedIn(o))) {
 			return true;
 		}
 		// Falls es sich beim anderen Pr�dikat ebenfalls um ein AndPredicate handelt, m�ssen beide Pr�dikate verglichen werden (inklusiver aller "Unterpr�dikate")

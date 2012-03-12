@@ -34,7 +34,7 @@ public class EqualsPredicate<T> extends AbstractPredicate<T> {
 
 	@SuppressWarnings("unchecked")
 	public static <T> EqualsPredicate<T> getInstance() {
-		return (EqualsPredicate<T>) predicate;
+		return predicate;
 	}
 
 	@Override

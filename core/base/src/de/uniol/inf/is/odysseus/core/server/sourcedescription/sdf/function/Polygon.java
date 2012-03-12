@@ -111,6 +111,7 @@ public class Polygon extends AbstractFunction<Double> {
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.VECTOR_DOUBLE};
 	
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

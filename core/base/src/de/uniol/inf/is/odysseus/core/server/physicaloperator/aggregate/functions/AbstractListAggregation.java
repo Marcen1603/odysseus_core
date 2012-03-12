@@ -33,6 +33,7 @@ abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunc
 		return new ListPartialAggregate<R>(in);
 	}
 	
+	@Override
 	public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
 		ListPartialAggregate<R> list = (ListPartialAggregate<R>) p;
 		if (createNew){

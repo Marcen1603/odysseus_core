@@ -93,6 +93,7 @@ public class ProcessCallsMonitor extends AbstractPlanMonitor<Long> implements
 				.size()) : overallProcessCallCount;
 	}
 
+	@Override
 	public double getDoubleValue() {
 		return relativeCallCount ? (overallProcessCallCount * 1.0 / processCallsPerOperator
 				.size()) : overallProcessCallCount * 1.0;

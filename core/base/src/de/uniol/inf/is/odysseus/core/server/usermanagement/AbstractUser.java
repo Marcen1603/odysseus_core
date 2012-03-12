@@ -45,6 +45,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	 * @param name
 	 *            The name to set.
 	 */
+	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
@@ -71,6 +72,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	/**
 	 * @param password
 	 */
+	@Override
 	public void setPassword(final byte[] password) {
 		try {
 			this.password = this.getPasswordDigest(this.getAlgorithm(),
@@ -94,6 +96,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	 * @param active
 	 *            The active to set.
 	 */
+	@Override
 	public void setActive(final boolean active) {
 		this.active = active;
 	}
@@ -120,6 +123,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	/**
 	 * @param role
 	 */
+	@Override
 	public void addRole(final IRole role) {
 		this.roles.add(role);
 	}
@@ -127,6 +131,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	/**
 	 * @param role
 	 */
+	@Override
 	public void removeRole(final IRole role) {
 		this.roles.remove(role);
 	}
@@ -153,6 +158,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	/**
 	 * @param privilege
 	 */
+	@Override
 	public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}

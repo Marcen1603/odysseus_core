@@ -55,6 +55,7 @@ public class IfFunction extends AbstractFunction<Object> {
 															{SDFDatatype.OBJECT},
 															{SDFDatatype.OBJECT}};
 	
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

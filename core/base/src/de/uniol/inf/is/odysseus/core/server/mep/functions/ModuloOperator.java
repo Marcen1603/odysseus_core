@@ -72,6 +72,7 @@ public class ModuloOperator extends AbstractBinaryOperator<Double> {
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.INTEGER};
 	
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

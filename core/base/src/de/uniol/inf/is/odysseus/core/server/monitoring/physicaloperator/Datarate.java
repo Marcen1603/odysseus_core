@@ -62,7 +62,7 @@ public class Datarate extends AbstractPeriodicalMonitoringData<Double>
 //		synchronized (this) {
 			long currentTime = System.nanoTime();
 
-			this.value = (double) writeCount / ( (currentTime - lastTimestamp) / 1000000.0);
+			this.value = writeCount / ( (currentTime - lastTimestamp) / 1000000.0);
 			notifySubscribers(value);
 			lastTimestamp = currentTime;
 			this.writeCount = 0;

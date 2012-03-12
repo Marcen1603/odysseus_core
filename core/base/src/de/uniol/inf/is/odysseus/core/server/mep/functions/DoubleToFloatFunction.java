@@ -32,7 +32,8 @@ public class DoubleToFloatFunction  extends AbstractFunction<Float> {
 
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DOUBLE};
     
-    public SDFDatatype[] getAcceptedTypes(int argPos){
+    @Override
+	public SDFDatatype[] getAcceptedTypes(int argPos){
         if(argPos < 0){
             throw new IllegalArgumentException("negative argument index not allowed");
         }

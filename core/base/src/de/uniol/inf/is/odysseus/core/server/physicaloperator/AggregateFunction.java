@@ -66,6 +66,7 @@ public class AggregateFunction implements
 		return getName();
 	}
 	
+	@Override
 	public AggregateFunction clone(){
 		return new AggregateFunction(this);
 	}

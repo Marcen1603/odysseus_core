@@ -52,7 +52,7 @@ public class StandardTransformationHelper implements ITransformationHelper{
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeToSource((ISource) psub.getTarget(),
+			physical.subscribeToSource(psub.getTarget(),
 					(ignoreSocketSinkPort?-1:psub.getSinkInPort()), psub.getSourceOutPort(),psub.getSchema());
 		}
 		for (LogicalSubscription l : logical.getSubscriptions()) {

@@ -41,6 +41,7 @@ public abstract class AbstractPrivilege implements IPrivilege, Serializable {
 	/**
 	 * @param permission
 	 */
+	@Override
 	public void addPermission(final IPermission permission) {
 		this.permissions.add(permission);
 	}
@@ -48,6 +49,7 @@ public abstract class AbstractPrivilege implements IPrivilege, Serializable {
 	/**
 	 * @param permission
 	 */
+	@Override
 	public void removePermission(final IPermission permission) {
 		this.permissions.remove(permission);
 	}
@@ -67,6 +69,7 @@ public abstract class AbstractPrivilege implements IPrivilege, Serializable {
 	 * @param objectURI
 	 *            The objectURI to set.
 	 */
+	@Override
 	public void setObjectURI(final String objectURI) {
 		this.objectURI = objectURI;
 	}

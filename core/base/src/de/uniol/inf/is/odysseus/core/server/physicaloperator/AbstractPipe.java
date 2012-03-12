@@ -201,6 +201,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	abstract protected void process_next(R object, int port);
 
+	@Override
 	abstract public void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------

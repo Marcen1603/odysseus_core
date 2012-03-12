@@ -114,7 +114,7 @@ public class QueryBuildConfiguration extends
 	 * @return A physical root for the physical plan of a query.
 	 */
 	public IPhysicalOperator getDefaultRoot() {
-		return (IPhysicalOperator) get(ParameterDefaultRoot.class).getValue();
+		return get(ParameterDefaultRoot.class).getValue();
 	}
 	
 	public int getDefaultRootInPort() {
@@ -131,7 +131,7 @@ public class QueryBuildConfiguration extends
 	 * @return A priority for the query.
 	 */
 	public Integer getPriority() {
-		return (Integer) get(ParameterPriority.class).getValue();
+		return get(ParameterPriority.class).getValue();
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class QueryBuildConfiguration extends
 	 * @return A {@link TransformationConfiguration} for the query.
 	 */
 	public TransformationConfiguration getTransformationConfiguration() {
-		return (TransformationConfiguration) get(
+		return get(
 				ParameterTransformationConfiguration.class).getValue();
 	}
 
@@ -152,7 +152,7 @@ public class QueryBuildConfiguration extends
 	 *         query.
 	 */
 	public String getParserID() {
-		return (String) get(ParameterParserID.class).getValue();
+		return get(ParameterParserID.class).getValue();
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class QueryBuildConfiguration extends
 	}
 	
 	public IDefaultRootStrategy getDefaultRootStrategy(){
-		return (IDefaultRootStrategy)get(ParameterDefaultRootStrategy.class).getValue();
+		return get(ParameterDefaultRootStrategy.class).getValue();
 	}
 	
 }

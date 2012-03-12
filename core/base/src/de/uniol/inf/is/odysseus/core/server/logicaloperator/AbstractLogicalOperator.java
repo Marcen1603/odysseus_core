@@ -557,6 +557,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		return null;
 	}
 
+	@Override
 	public void deserialize(SerializeNode node) {
 //		for (Entry<String, ISerializeProperty<?>> prop : node.getProperties().entrySet()) {
 //			String name = prop.getKey();

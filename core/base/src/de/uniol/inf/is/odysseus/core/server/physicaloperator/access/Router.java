@@ -122,7 +122,7 @@ public class Router extends Thread implements IConnection {
 
 				Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 				while (it.hasNext()) {
-					SelectionKey key = (SelectionKey) it.next();
+					SelectionKey key = it.next();
 					it.remove();
 					IAccessConnectionListener op = (IAccessConnectionListener) key.attachment();
 					SocketChannel sc = (SocketChannel) key.channel();

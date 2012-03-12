@@ -249,6 +249,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	protected abstract void process_next(T object, int port, boolean isReadOnly);
 
+	@Override
 	public abstract void processPunctuation(PointInTime timestamp, int port);
 
 	// ------------------------------------------------------------------------

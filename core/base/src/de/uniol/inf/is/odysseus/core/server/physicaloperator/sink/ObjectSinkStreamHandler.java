@@ -34,12 +34,14 @@ class ObjectSinkStreamHandler implements ISinkStreamHandler<Object> {
 		}
 	}
 
+	@Override
 	public synchronized void transfer(Object o) throws IOException {
 		dout.writeObject(o);
 		dout.flush();
 
 	}
 
+	@Override
 	public void done() throws IOException {
 		dout.writeObject(Integer.valueOf(0));
 		dout.flush();

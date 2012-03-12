@@ -63,10 +63,10 @@ public class ComplexPredicateHelper {
 			IPredicate curPredicate = predicateStack.pop();
 			if (curPredicate instanceof AndPredicate) {
 				predicateStack
-						.push((IPredicate) ((AndPredicate) curPredicate)
+						.push(((AndPredicate) curPredicate)
 								.getLeft());
 				predicateStack
-						.push((IPredicate) ((AndPredicate) curPredicate)
+						.push(((AndPredicate) curPredicate)
 								.getRight());
 			} else {
 				result.add(curPredicate);

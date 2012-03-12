@@ -44,6 +44,7 @@ public class Now extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		throw new IllegalArgumentException("Now has no arguments.");
 	}

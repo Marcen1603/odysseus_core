@@ -45,6 +45,7 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 */
 	public Set<IPhysicalOperator> getRoots();
 
+	@Override
 	public IExecutionPlan clone();
 
 	/**

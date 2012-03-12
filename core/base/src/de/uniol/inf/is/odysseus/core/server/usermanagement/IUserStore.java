@@ -32,6 +32,7 @@ public interface IUserStore {
 	 * @deprecated Replaced by
 	 *             {@link ISessionManagement#findUser(String, ISession)}
 	 */
+	@Deprecated
 	public ISession getUserByName(String username);
 
 	/**
@@ -39,6 +40,7 @@ public interface IUserStore {
 	 * @deprecated Replaced by
 	 *             {@link ISessionManagement#deleteUser(ISession, ISession)}
 	 */
+	@Deprecated
 	public ISession removeByName(String username) throws StoreException;
 
 	/**
@@ -46,6 +48,7 @@ public interface IUserStore {
 	 * @deprecated Replaced by
 	 *             {@link ISessionManagement#createUser(String, ISession)}
 	 */
+	@Deprecated
 	public void storeUser(ISession user) throws UserStoreException;
 
 	public boolean isEmpty();
@@ -54,6 +57,7 @@ public interface IUserStore {
 	 * 
 	 * @deprecated Replaced by {@link ISessionManagement#getUsers(ISession)}
 	 */
+	@Deprecated
 	public Collection<ISession> getUsers();
 
 	public void clear() throws StoreException;

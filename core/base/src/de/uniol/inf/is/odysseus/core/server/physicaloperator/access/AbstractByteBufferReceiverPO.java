@@ -114,6 +114,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 		transfer(toTrans);
 	}
 	
+	@Override
 	abstract public void process(ByteBuffer buffer);
 
 	@Override

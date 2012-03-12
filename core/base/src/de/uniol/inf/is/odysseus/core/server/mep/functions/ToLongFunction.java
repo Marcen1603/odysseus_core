@@ -47,6 +47,7 @@ public class ToLongFunction extends AbstractFunction<Long> {
 
 	private static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING};
 	
+	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");

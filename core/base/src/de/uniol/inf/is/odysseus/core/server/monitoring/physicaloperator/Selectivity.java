@@ -51,6 +51,7 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 		((IPhysicalOperator) other.getTarget()).subscribe(this, POEventType.ProcessDone);
 	}
 
+	@Override
 	public Double getValue() {
 		return value;
 	}
@@ -68,15 +69,15 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 	}
 
 	final protected double getWriteCount() {
-		return (double) this.writeCount;
+		return this.writeCount;
 	}
 
 	final protected double getReadCount(int port) {
-		return (double) this.readCount[port];
+		return this.readCount[port];
 	}
 
 	final protected double getReadCountSum() {
-		return (double) this.readCountSum;
+		return this.readCountSum;
 	}
 
 	final protected double getReadCountProduct() {
@@ -84,7 +85,7 @@ public abstract class Selectivity extends AbstractPeriodicalMonitoringData<Doubl
 		for (int i = 0; i < readCount.length; i++) {
 			c *= readCount[i];
 		}
-		return (double) c;
+		return c;
 	}
 
 	final protected int getReadCountLength() {

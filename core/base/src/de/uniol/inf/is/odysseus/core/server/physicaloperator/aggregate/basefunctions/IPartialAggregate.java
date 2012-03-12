@@ -19,5 +19,6 @@ import de.uniol.inf.is.odysseus.core.IClone;
 
 
 public interface IPartialAggregate<T> extends IClone{
+	@Override
 	public IPartialAggregate<T> clone();
 }

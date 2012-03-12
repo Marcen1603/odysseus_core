@@ -47,6 +47,7 @@ public class TruePredicate<T> extends AbstractPredicate<T> {
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		return "true";
 	}

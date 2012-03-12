@@ -16,6 +16,7 @@ abstract public class AbstractQueryBuildConfiguration implements
 		return Collections.unmodifiableList(settings);
 	}
 	
+	@Override
 	public abstract IQueryBuildConfiguration clone();
 
 }

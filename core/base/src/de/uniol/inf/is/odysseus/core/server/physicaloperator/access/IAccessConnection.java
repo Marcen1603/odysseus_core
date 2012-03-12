@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 public interface IAccessConnection extends IClone {
 
+	@Override
 	IAccessConnection clone();
 	
 	public void open(IAccessConnectionListener caller) throws OpenFailedException;

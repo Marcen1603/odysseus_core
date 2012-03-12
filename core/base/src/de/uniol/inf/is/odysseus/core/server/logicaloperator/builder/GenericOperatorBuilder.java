@@ -142,6 +142,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 		}
 	}
 
+	@Override
 	public GenericOperatorBuilder cleanCopy() {
 		return new GenericOperatorBuilder(this);
 	}
