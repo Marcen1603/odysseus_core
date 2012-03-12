@@ -296,16 +296,13 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
 		if (type instanceof POEventType) {
-			switch ((POEventType) type) {
-			case ProcessInit:
-			case ProcessDone:
+			POEventType poEvent = (POEventType) type;
+			if (poEvent.equals(POEventType.ProcessInit)
+					|| poEvent.equals(POEventType.ProcessDone)) {
 				this.delegateSink.subscribe(listener, type);
-			default:
-				super.subscribe(listener, type);
 			}
-		} else {
-			super.subscribe(listener, type);
 		}
+		super.subscribe(listener, type);
 	}
 
 	@Override
