@@ -98,6 +98,7 @@ class EventDispatcher extends Thread {
 
 	public EventDispatcher(EventHandler handler) {
 		this.handler = handler;
+		this.setName("Event Dispatcher "+handler);
 	}
 
 	public void addEvent(IEvent<?, ?> event, long eventTime) {
