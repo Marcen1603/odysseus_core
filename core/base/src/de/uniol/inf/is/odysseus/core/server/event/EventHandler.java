@@ -160,6 +160,6 @@ class EventDispatcher extends Thread {
 			}
 		}
 		
-		System.err.println("Event Dispatcher terminated: " + getName());
+		//System.err.println("Event Dispatcher terminated: " + getName());
 	}
 }
