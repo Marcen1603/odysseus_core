@@ -61,7 +61,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	@Override
 	public synchronized boolean hasNext() {
-		if (isDone) {
+		if (isDone || !isOpen()) {
 			return false;
 		}
 		try {
@@ -100,9 +100,9 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 					propagateDone();
 				}
 			} catch (Exception e) {
+                LOG.error("Exception during transfering next line", e);
 				isDone = true;
 				propagateDone();
-				LOG.error("Exception during transfering next line", e);
 			}
 		}
 	}
