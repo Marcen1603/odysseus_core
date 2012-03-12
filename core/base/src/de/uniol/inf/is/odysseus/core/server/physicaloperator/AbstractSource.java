@@ -114,6 +114,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void stopEventDispatcher(){
 		eventHandler.stopEventDispatcher();
 	}
+	
+	@Override
+	public boolean isEventDispatcherRunning() {
+	    return eventHandler.isEventDispatcherRunning();
+	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
 	final private POEvent openInitEvent = new POEvent(this,
@@ -359,13 +364,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * overwrite this method. It is called when this operator is done!
 	 */
 	protected void process_done() {
-	};
+	}
 
 	final protected void propagateDone() {
 		fire(this.doneEvent);
 		this.process_done();
 		for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
-			sub.getTarget().done(sub.getSinkInPort());
+		    if( !sub.isDone() ) {
+		        sub.getTarget().done(sub.getSinkInPort());
+		    }
 		}
 	}
 

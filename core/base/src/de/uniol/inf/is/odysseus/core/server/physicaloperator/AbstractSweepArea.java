@@ -253,7 +253,9 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 
 	@Override
 	final public void clear() {
-		this.getElements().clear();
+	    synchronized( getElements() ) {
+	        this.getElements().clear();
+	    }
 	}
 
 	@Override

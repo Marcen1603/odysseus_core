@@ -81,7 +81,14 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	public AbstractSchedulerManager() {
 		this.logger = LoggerFactory.getLogger(AbstractSchedulerManager.class);
 		this.logger.trace("Scheduler manager activated.");
+		
 	}
+	
+	private void checkEventDispatcher() {
+	    if( !isEventDispatcherRunning() ) {
+	        startEventDispatcher();
+	    }
+    }
 
 	/**
 	 * OSGi-Method: Is called when this object will be deactivted by OSGi.
@@ -184,6 +191,8 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 		if (this.schedulingStrategyFactoryMap.get(stratName) == null) {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);
+			
+			checkEventDispatcher();
 			fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_ADDED, null));
 			// For internal processing
 			schedulingsChanged();

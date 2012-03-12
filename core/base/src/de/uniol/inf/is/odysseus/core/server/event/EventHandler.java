@@ -43,6 +43,11 @@ public class EventHandler implements IEventHandler {
 	public void stopEventDispatcher(){
 		dispatcher.interrupt();
 	}
+	
+    @Override
+    public boolean isEventDispatcherRunning() {
+        return dispatcher != null && dispatcher.isAlive();
+    }
 
 	/**
 	 * One listener can have multiple subscriptions to the same event sender and
@@ -128,9 +133,7 @@ class EventDispatcher extends Thread {
 				while (eventQueue.isEmpty() && eventTimestamps.isEmpty()) {
 					try {
 						eventQueue.wait(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					} catch (InterruptedException e) {}
 				}
 				eventToFire = eventQueue.removeFirst();
 				timeStamp = eventTimestamps.removeFirst();
@@ -156,5 +159,7 @@ class EventDispatcher extends Thread {
 				}
 			}
 		}
+		
+		System.err.println("Event Dispatcher terminated: " + getName());
 	}
 }

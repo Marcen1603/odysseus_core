@@ -186,6 +186,11 @@ public abstract class AbstractScheduler extends EventHandler implements
 		} else {
 			file = null;
 		}
+		
+		if( !isEventDispatcherRunning() ) {
+		    startEventDispatcher();
+		}
+		
 		fire(schedulingStarted);
 	}
 

@@ -117,7 +117,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		eventHandler.stopEventDispatcher();
 	}
 
-
+    @Override
+    public boolean isEventDispatcherRunning() {
+        return eventHandler.isEventDispatcherRunning();
+    }
+    
 	final private POEvent openInitEvent;
 	final private POEvent openDoneEvent;
 
