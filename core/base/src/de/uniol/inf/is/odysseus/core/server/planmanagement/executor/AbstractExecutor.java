@@ -716,15 +716,19 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(),
 					caller);
 			for (ILogicalQuery query : q) {
-				if (query.getQueryText() != null) {
-					addQuery(query.getQueryText(), query.getParserId(), caller,
-							dataDictionary.getQueryBuildConfigName(query.getID()));
-				} else if (query.getLogicalPlan() != null) {
-					addQuery(query.getLogicalPlan(), caller,
-							dataDictionary.getQueryBuildConfigName(query.getID()));
-				} else {
-					getLogger().warn("Query " + query + " cannot be loaded");
-				}
+			    try {
+    				if (query.getQueryText() != null) {
+    					addQuery(query.getQueryText(), query.getParserId(), caller,
+    							dataDictionary.getQueryBuildConfigName(query.getID()));
+    				} else if (query.getLogicalPlan() != null) {
+    					addQuery(query.getLogicalPlan(), caller,
+    							dataDictionary.getQueryBuildConfigName(query.getID()));
+    				} else {
+    					getLogger().warn("Query " + query + " cannot be loaded");
+    				}
+			    } catch( Throwable t ) {
+			        getLogger().error("Could not execute stored query", t);
+			    }
 			}
 		}
 	}
