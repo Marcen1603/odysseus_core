@@ -63,6 +63,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	public Object startTesting() {
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "Parser must be bound");
+		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
 		
 		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 
