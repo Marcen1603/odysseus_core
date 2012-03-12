@@ -39,12 +39,13 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
 public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		extends AbstractIterableSource<T> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileAccessPO.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(FileAccessPO.class);
 
 	// Definition for the location and the type of file
 	final private String path;
 	final private String fileType;
-	
+
 	private boolean isDone = false;
 	private BufferedReader bf;
 
@@ -60,25 +61,26 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	@Override
 	public synchronized boolean hasNext() {
-		if (isDone){
+		if (isDone) {
 			return false;
 		}
 		try {
 			if (bf.ready()) {
 				return true;
-			} 
+			}
 		} catch (IOException e) {
-			LOG.error("Exception during checking, if file " + path + " has data left", e);
+			LOG.error("Exception during checking, if file " + path
+					+ " has data left", e);
 		}
-		
+
 		tryPropagateDone();
 		return false;
 	}
-	
-	private void tryPropagateDone(){
+
+	private void tryPropagateDone() {
 		try {
 			propagateDone();
-		} catch( Throwable throwable ) {
+		} catch (Throwable throwable) {
 			LOG.error("Exception during propagating done", throwable);
 		}
 	}
@@ -92,7 +94,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 				if (!(line = bf.readLine()).isEmpty()) {
 					String[] splittedLine = line.split(separator);
-					transfer((T) dataHandler.readData(splittedLine));					
+					transfer((T) dataHandler.readData(splittedLine));
 				} else {
 					isDone = true;
 					propagateDone();
@@ -105,8 +107,6 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		}
 	}
 
-
-
 	@Override
 	public boolean isDone() {
 		return isDone;
@@ -116,7 +116,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	protected void process_open() throws OpenFailedException {
 
 		try {
-			this.dataHandler = new RelationalTupleDataHandler(this.getOutputSchema());
+			this.dataHandler = new RelationalTupleDataHandler(
+					this.getOutputSchema());
 
 			// logger.debug(fileType);
 			if (fileType.equalsIgnoreCase("csv")) {
@@ -126,6 +127,17 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void process_close() {
+		if (isOpen()) {
+			try {
+				bf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -143,7 +155,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		FileAccessPO fapo = (FileAccessPO) ipo;
 		if (this.path.equals(fapo.path) && this.fileType.equals(fapo.fileType)) {
 			return true;
-		} 
+		}
 		return false;
 	}
 
