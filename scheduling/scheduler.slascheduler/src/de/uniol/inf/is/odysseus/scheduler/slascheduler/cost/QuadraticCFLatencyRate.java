@@ -43,9 +43,8 @@ public class QuadraticCFLatencyRate extends QuadraticCFLatency {
 			temp = temp * temp;
 			// multiply cost with relative position
 			return temp * delta;
-		} else {
-			return 0;
 		}
+        return 0;
 
 	}
 
@@ -79,9 +78,8 @@ public class QuadraticCFLatencyRate extends QuadraticCFLatency {
 			temp = temp * temp;
 			// multiply with delta
 			return temp * delta;
-		} else {
-			return 0;
 		}
+        return 0;
 	}
 
 }

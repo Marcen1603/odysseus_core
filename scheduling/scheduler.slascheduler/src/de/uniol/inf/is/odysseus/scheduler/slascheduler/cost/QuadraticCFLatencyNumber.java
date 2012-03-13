@@ -39,9 +39,8 @@ public class QuadraticCFLatencyNumber extends QuadraticCFLatency {
 			temp = temp * temp;
 			// multiply cost with relative position
 			return temp * delta;
-		} else {
-			return sla.getMaxPenalty() * (conformance - this.calcUpperbound(slIndex, sla));
 		}
+        return sla.getMaxPenalty() * (conformance - this.calcUpperbound(slIndex, sla));
 		
 	}
 

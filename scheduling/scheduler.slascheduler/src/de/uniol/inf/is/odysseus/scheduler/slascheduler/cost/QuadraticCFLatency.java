@@ -51,13 +51,12 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 			return sla.getServiceLevel().get(slIndex).getPenalty().getCost()
 					- sla.getServiceLevel().get(slIndex - 1).getPenalty()
 							.getCost();
-		} else {
-			/*
-			 * if best service level is held, delta is defined as the costs for
-			 * violating the held service level
-			 */
-			return sla.getServiceLevel().get(slIndex).getPenalty().getCost();
 		}
+        /*
+         * if best service level is held, delta is defined as the costs for
+         * violating the held service level
+         */
+        return sla.getServiceLevel().get(slIndex).getPenalty().getCost();
 	}
 
 	/**
@@ -74,10 +73,9 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 		if (slIndex == 0) {
 			// upperbound is 0 if highest service level is held
 			return 0.0;
-		} else {
-			return sla.getServiceLevel().get(slIndex - 1).getThreshold();
-			// upperbound remains 0 if highest service level is held
 		}
+        return sla.getServiceLevel().get(slIndex - 1).getThreshold();
+        // upperbound remains 0 if highest service level is held
 	}
 
 	/**
@@ -99,9 +97,8 @@ public abstract class QuadraticCFLatency implements ICostFunction {
 			 */
 			return sla.getServiceLevel().get(sla.getServiceLevel().size() - 1)
 					.getThreshold() * 2;
-		} else {
-			return sla.getServiceLevel().get(slIndex).getThreshold();
 		}
+        return sla.getServiceLevel().get(slIndex).getThreshold();
 	}
 
 }

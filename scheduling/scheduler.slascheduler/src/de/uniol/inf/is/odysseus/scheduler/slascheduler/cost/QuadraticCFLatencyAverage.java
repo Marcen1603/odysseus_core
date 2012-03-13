@@ -79,9 +79,8 @@ public class QuadraticCFLatencyAverage extends QuadraticCFLatency {
 			temp = temp * temp;
 			// multiply with delta
 			return temp * delta;
-		} else {
-			return 0;
 		}
+        return 0;
 	}
 
 }
