@@ -48,7 +48,7 @@ public class NEXMarkGenerator extends Thread {
 
 	private boolean burst = false;
 
-	private NEXMarkBurstGenerator burstGenerator;;
+	private NEXMarkBurstGenerator burstGenerator;
 
 	/**
 	 * Creates a {@link NEXMarkGenerator}. 

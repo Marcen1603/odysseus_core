@@ -57,7 +57,7 @@ public class NexmarkStreamClientHandler extends Thread {
 		newSimulation,
 		cachedSimulation,
 		newSimulationAndCache
-	};
+	}
 
 	// Liste der Verbunden Clients
 	private ArrayList<NEXMarkClient> clients;
