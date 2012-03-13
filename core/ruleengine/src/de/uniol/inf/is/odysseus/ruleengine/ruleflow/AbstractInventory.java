@@ -128,9 +128,9 @@ public abstract class AbstractInventory implements IRuleFlow {
 			public IRule<?, ?> next() {
 				if (hasNext()) {
 					return ruleArray[position++];
-				} else {
-					throw new NoSuchElementException();
-				}
+				} 
+				
+				throw new NoSuchElementException();
 			}
 
 			@Override
