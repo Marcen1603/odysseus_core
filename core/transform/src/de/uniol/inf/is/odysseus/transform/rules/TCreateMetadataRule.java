@@ -64,10 +64,10 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource<?>> 
 			}
 		}
 		
-		for(ILogicalOperator op : (List<ILogicalOperator>)logicalOps) {
+		for(ILogicalOperator op : logicalOps) {
 			for (Subscription<ISource<?>> psub : op.getPhysSubscriptionsTo()) {
 					if (psub.getTarget() == source){
-						op.setPhysSubscriptionTo((ISource)po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
+						op.setPhysSubscriptionTo(po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
 						update(op);
 					}
 				}

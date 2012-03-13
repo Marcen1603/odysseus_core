@@ -71,7 +71,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 			
 			insert(source);
 			getDataDictionary().putAccessPlan(sourceName, source);
-			for(AccessAO curAO : (List<AccessAO>)accessAOs){
+			for(AccessAO curAO : accessAOs){
 //				Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(curAO,source);
 //				for (ILogicalOperator o:toUpdate){
 //					update(o);
