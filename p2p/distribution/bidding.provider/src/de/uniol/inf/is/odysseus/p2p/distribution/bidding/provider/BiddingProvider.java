@@ -143,7 +143,7 @@ public class BiddingProvider extends
 					.newAdvertisement(QueryExecutionSpezification
 							.getAdvertisementType());
 			adv.setID(IDFactory.newPipeID(PeerGroupTool.getPeerGroup().getPeerGroupID()));
-			adv.setBiddingPipe(((PipeAdvertisement) serverResponse).toString());
+			adv.setBiddingPipe(serverResponse.toString());
 			adv.setQueryId(query.getId());
 			adv.setSubplanId(subplan.getId());
 			adv.setSubplan(AdvertisementTools.toBase64String(subplan));
