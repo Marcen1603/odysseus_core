@@ -344,9 +344,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 		if (gradients == null) {
 			throw new RuntimeException(
 					"Instanciate the PersistentCachedMap first.");
-		} else {
-			gradients.fillCache(size);
 		}
+        gradients.fillCache(size);
 	}
 
 	/**
@@ -359,9 +358,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	public Gradient getGradient() {
 		if (temporaryGradient != null) {
 			return temporaryGradient;
-		} else {
-			return (Gradient) gradients.get(pos.toString());
 		}
+        return (Gradient) gradients.get(pos.toString());
 	}
 
 	/**

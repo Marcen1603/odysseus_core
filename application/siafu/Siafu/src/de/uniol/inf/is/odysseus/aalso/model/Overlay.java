@@ -178,9 +178,8 @@ public abstract class Overlay implements Overlayable {
     public boolean equals(final Object obj) {
 		if (obj == null || !(obj instanceof Overlay)) {
 			return false;
-		} else {
-			return name.equals(((Overlay) obj).getName());
 		}
+        return name.equals(((Overlay) obj).getName());
 	}
 
 	/**

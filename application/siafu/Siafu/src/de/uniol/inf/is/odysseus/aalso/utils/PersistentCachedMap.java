@@ -243,18 +243,17 @@ public class PersistentCachedMap {
 
 		if (!toc.contains(key.toString())) {
 			return null;
-		} else {
-			Object value;
-
-			if (recent.contains(key)) {
-				value = cache.get(key);
-			} else {
-				value = recoverObject(key);
-				putInCache(key, value);
-			}
-
-			return value;
 		}
+        Object value;
+
+        if (recent.contains(key)) {
+        	value = cache.get(key);
+        } else {
+        	value = recoverObject(key);
+        	putInCache(key, value);
+        }
+
+        return value;
 	}
 
 	/**

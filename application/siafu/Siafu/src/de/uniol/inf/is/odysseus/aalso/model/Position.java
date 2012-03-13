@@ -275,13 +275,11 @@ public class Position implements Serializable, Comparable<Position>,
 
 			if ((p.i == i) && (p.j == j)) {
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			throw new RuntimeException("Tried to compare a Position with a "
-					+ o.getClass().getCanonicalName());
+            return false;
 		}
+        throw new RuntimeException("Tried to compare a Position with a "
+        		+ o.getClass().getCanonicalName());
 	}
 
 	/**
