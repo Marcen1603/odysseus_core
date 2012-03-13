@@ -20,7 +20,8 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
+	@Override
+    public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFSpatialDatatype.SPATIAL_GEOMETRY, Types.OTHER);
 		DatatypeRegistry.getInstance().registerStreamToDatabase(SDFSpatialDatatype.SPATIAL_GEOMETRY_COLLECTION, Types.OTHER);
@@ -44,7 +45,8 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext bundleContext) throws Exception {
+	@Override
+    public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 }
