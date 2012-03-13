@@ -17,6 +17,12 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="org.eclipse.osgi"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"
          download-size="0"
