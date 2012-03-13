@@ -93,14 +93,14 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 	}
 	
 	@SuppressWarnings("unchecked")
-	private INodeView<IPhysicalOperator> findFirstNodeDisplay( IGraphView<IPhysicalOperator> graphDisplay, INodeModel<IPhysicalOperator> node ) {
+	private static INodeView<IPhysicalOperator> findFirstNodeDisplay( IGraphView<IPhysicalOperator> graphDisplay, INodeModel<IPhysicalOperator> node ) {
 		Collection<INodeView<IPhysicalOperator>> found = findNodeDisplay( graphDisplay, node );
 		if( found.isEmpty() )
 			return null;
 		return found.toArray(new INodeView[1])[0];
 	}
 	
-	private Collection<INodeView<IPhysicalOperator>> findNodeDisplay( IGraphView<IPhysicalOperator> graphDisplay, INodeModel<IPhysicalOperator> node ) {
+	private static Collection<INodeView<IPhysicalOperator>> findNodeDisplay( IGraphView<IPhysicalOperator> graphDisplay, INodeModel<IPhysicalOperator> node ) {
 		Collection<INodeView<IPhysicalOperator>> found = new ArrayList<INodeView<IPhysicalOperator>>();
 		for( INodeView<IPhysicalOperator> nodeDisplay : graphDisplay.getViewedNodes()) {
 			if( nodeDisplay.getModelNode() == node )
@@ -109,7 +109,7 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 		return found;
 	}
 	
-	private Collection<IConnectionView<IPhysicalOperator>> findConnectionDisplay( IGraphView<IPhysicalOperator> graphDisplay, IConnectionModel<IPhysicalOperator> conn ) {
+	private static Collection<IConnectionView<IPhysicalOperator>> findConnectionDisplay( IGraphView<IPhysicalOperator> graphDisplay, IConnectionModel<IPhysicalOperator> conn ) {
 		Collection<IConnectionView<IPhysicalOperator>> found = new ArrayList<IConnectionView<IPhysicalOperator>>();
 		for( IConnectionView<IPhysicalOperator> connDisplay : graphDisplay.getViewedConnections() ) {
 			if( connDisplay.getModelConnection() == conn ) 
@@ -204,7 +204,7 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 		logger.info( "GraphDisplay updated" );
 	}
 
-	private INodeView<IPhysicalOperator> createNodeDisplay( INodeModel<IPhysicalOperator> node, ISymbolElementFactory<IPhysicalOperator> symbolFactory, ISymbolConfiguration symbolConfig ) {
+	private static INodeView<IPhysicalOperator> createNodeDisplay( INodeModel<IPhysicalOperator> node, ISymbolElementFactory<IPhysicalOperator> symbolFactory, ISymbolConfiguration symbolConfig ) {
 		OdysseusNodeView nodeDisplay = new OdysseusNodeView((IOdysseusNodeModel)node);
 		
 		// Typ ermitteln
@@ -225,13 +225,13 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 		return nodeDisplay;
 	}
 	
-	private void createConnectionSymbol(IConnectionView<IPhysicalOperator> connView, ISymbolElementFactory<IPhysicalOperator> symbolFactory ) {
+	private static void createConnectionSymbol(IConnectionView<IPhysicalOperator> connView, ISymbolElementFactory<IPhysicalOperator> symbolFactory ) {
 		IConnectionSymbolElement<IPhysicalOperator> ele = symbolFactory.createForConnection("Arrow");
 		ele.setConnectionView( connView );
 		connView.getSymbolContainer().add( ele );
 	}
 	
-	private void createSymbols(INodeView<IPhysicalOperator> nodeView, Collection<SymbolElementInfo> symbolInfos, ISymbolElementFactory<IPhysicalOperator> symbolFactory ) {
+	private static void createSymbols(INodeView<IPhysicalOperator> nodeView, Collection<SymbolElementInfo> symbolInfos, ISymbolElementFactory<IPhysicalOperator> symbolFactory ) {
 		if( nodeView == null )
 			return;
 		if( symbolFactory == null )

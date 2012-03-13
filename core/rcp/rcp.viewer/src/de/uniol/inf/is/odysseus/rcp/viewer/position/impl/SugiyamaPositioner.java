@@ -305,7 +305,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		}
 	}
 	
-	private int getMedian( INodeView<IPhysicalOperator> node, ArrayList<INodeView<IPhysicalOperator>> fixedLayerNodes, boolean fromTop ) {
+	private static int getMedian( INodeView<IPhysicalOperator> node, ArrayList<INodeView<IPhysicalOperator>> fixedLayerNodes, boolean fromTop ) {
 		// Nachfolgerknoten holen
 		ArrayList<INodeView<IPhysicalOperator>> neighbours = new ArrayList<INodeView<IPhysicalOperator>>();
 		Collection<? extends IConnectionView<IPhysicalOperator>> conns = (fromTop == true ) ? node.getConnectionsAsEnd() : node.getConnectionsAsStart();
@@ -380,7 +380,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			logger.trace( "End traverse level " + level );
 	}
 	
-	private boolean sortByMedians( ArrayList<INodeView<IPhysicalOperator>> nodes, ArrayList<Integer> medians ) {
+	private static boolean sortByMedians( ArrayList<INodeView<IPhysicalOperator>> nodes, ArrayList<Integer> medians ) {
 		if( nodes.size() != medians.size() ) {
 			if( logger.isWarnEnabled() )
 				logger.warn( "nodes and medians arrays are not in the same size!" );

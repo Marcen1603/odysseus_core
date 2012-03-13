@@ -104,7 +104,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		return new SWTImageSymbolElement<C>(resourceName);
 	}
 	
-	private Color getColorFromParams( Map<String, String> params ) {
+	private static Color getColorFromParams( Map<String, String> params ) {
 		int r = clampInt(tryParseInt( params.get( "r" ), 0), 0, 255 );
 		int g = clampInt(tryParseInt( params.get( "g" ), 0), 0, 255 );
 		int b = clampInt(tryParseInt( params.get( "b" ), 0), 0, 255);

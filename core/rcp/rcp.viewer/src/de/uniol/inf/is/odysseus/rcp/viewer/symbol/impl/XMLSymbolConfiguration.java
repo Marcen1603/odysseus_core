@@ -126,7 +126,7 @@ public final class XMLSymbolConfiguration implements ISymbolConfiguration {
 		} 
 	}
 				
-	private SymbolElementInfo parseSymbolElement( Node node, int width, int height ) {
+	private static SymbolElementInfo parseSymbolElement( Node node, int width, int height ) {
 //		logger.trace( "Entering <SymbolElement>" );
 		
 		final String symbolType = getAttributeValue(node, "type");

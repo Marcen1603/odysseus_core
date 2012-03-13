@@ -127,13 +127,13 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 		renderer.dispose();
 	}
 
-	public void setUpdateInterval(int interval) {
+	public static void setUpdateInterval(int interval) {
 		if (interval < 10)
 			interval = 10;
 		// updateInterval = interval;
 	}
 
-	public int getUpdateInterval() {
+	public static int getUpdateInterval() {
 		// return updateInterval;
 		return 0;
 	}
@@ -183,7 +183,7 @@ public final class SWTRenderManager<C> implements ISelectListener<INodeView<C>>,
 	private Collection<INodeView<C>> getNodesInRect( Rectangle rect1 ) {
 		Rectangle rect = new Rectangle(rect1.x, rect1.y, rect1.width, rect1.height);
 		Collection<INodeView<C>> nodes = new ArrayList<INodeView<C>>();
-		if (rect != null && Math.abs(rect.width) > MIN_SELECTRECT && Math.abs(rect.height) > MIN_SELECTRECT) {
+		if (Math.abs(rect.width) > MIN_SELECTRECT && Math.abs(rect.height) > MIN_SELECTRECT) {
 
 			if (rect.width < 0) {
 				rect.x += rect.width;
