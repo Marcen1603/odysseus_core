@@ -51,7 +51,7 @@ public class StopQueryCommand extends AbstractHandler implements IHandler {
 
 		List<IPhysicalQuery> selectedObj = SelectionProvider.getSelection(event);
 		for (IPhysicalQuery obj : selectedObj) {
-			if (obj instanceof IPhysicalQuery) {
+			if (obj != null) {
 				qID = obj.getID();
 			} else {
 				logger.error("Cannot find queryID");

@@ -447,7 +447,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		refreshTable();
 	}
 
-	private String getQueryStatus(IPhysicalQuery q) {
+	private static String getQueryStatus(IPhysicalQuery q) {
 		if (q.isOpened())
 			return OdysseusNLS.Running;
         return OdysseusNLS.Inactive;

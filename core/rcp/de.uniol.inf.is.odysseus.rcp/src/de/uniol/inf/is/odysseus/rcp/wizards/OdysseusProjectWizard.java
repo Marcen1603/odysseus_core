@@ -30,7 +30,7 @@ public class OdysseusProjectWizard extends BasicNewProjectResourceWizard {
 		return result;
 	}
 
-	private boolean configureProject(IProject project) {
+	private static boolean configureProject(IProject project) {
 		try {
 			IProjectDescription description = project.getDescription();
 			String[] prevNatures = description.getNatureIds();
