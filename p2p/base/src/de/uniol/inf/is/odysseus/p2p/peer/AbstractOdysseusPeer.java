@@ -62,7 +62,8 @@ public abstract class AbstractOdysseusPeer implements IOdysseusPeer {
 		this.log = log;
 	}
 	
-	public ILogListener getLog() {
+	@Override
+    public ILogListener getLog() {
 		return log;
 	}
 
