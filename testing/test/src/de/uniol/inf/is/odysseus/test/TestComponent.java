@@ -31,6 +31,12 @@ import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 
+/**
+ * Testkomponente für Query-Tests mit Nexmark
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class TestComponent implements ITestComponent, ICompareSinkListener {
 
 	private static final String NEXMARK_TESTS_NAME = "Nexmark Tests";
@@ -42,10 +48,10 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	private IOdysseusScriptParser parser;
 
 	private static final String NEWLINE = System.getProperty("line.separator");
-	private boolean processingDone = false;
+	private boolean processingDone;
 	private String errorText;
 
-	private BufferedWriter out = null;
+	private BufferedWriter out;
 
 	public void activate(ComponentContext context) {
 	}
@@ -67,15 +73,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		
 		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 
-		// Creating resultfile in dir
-		String filename = DIRECTORY + "/result" + System.currentTimeMillis() + ".log";
-		try {
-			out = new BufferedWriter(new FileWriter(filename));
-			LOG.debug("Created result file " + filename);
-		} catch (IOException e) {
-			LOG.error("Error creating file " + filename, e);
-			throw new RuntimeException("Error during creating filename " + filename, e);
-		}
+		out = createWriter();
 
 		Map<String, File> queries = Maps.newHashMap();
 		Map<String, File> results = Maps.newHashMap();
@@ -109,11 +107,14 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 				executor.removeAllQueries(session);
 				
 				checkForErrors(errorText);
-				LOG.debug("Query " + queryKey + " successfull");
+				LOG.debug("Query {} successfull", queryKey);
 
-			} catch (Exception e) {
-				LOG.error("Query " + queryKey + " failed! ", e);
+			} catch (OdysseusScriptException e) {
+				LOG.error("Query {} failed! ", queryKey, e);
 				tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
+			} catch( IOException e ) {
+                LOG.error("Query {} failed! ", queryKey, e);
+                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
 			}
 		}
 		
@@ -125,10 +126,26 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		return "Success";
 	}
 
-	private void waitProcessing() throws InterruptedException {
+    private static BufferedWriter createWriter() {
+        // Creating resultfile in dir
+		String filename = DIRECTORY + "/result" + System.currentTimeMillis() + ".log";
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
+			LOG.debug("Created result file " + filename);
+			return out;
+		} catch (IOException e) {
+			LOG.error("Error creating file " + filename, e);
+			throw new RuntimeException("Error during creating filename " + filename, e);
+		}
+    }
+
+	private void waitProcessing() {
 		synchronized (this) {
 			while (!processingDone) {
-				this.wait(PROCESSING_WAIT_TIME);
+				try {
+                    this.wait(PROCESSING_WAIT_TIME);
+                }
+                catch (InterruptedException ignored) {}
 			}
 		}
 	}
