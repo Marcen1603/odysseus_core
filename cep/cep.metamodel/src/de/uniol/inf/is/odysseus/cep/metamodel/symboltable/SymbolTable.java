@@ -96,10 +96,8 @@ public class SymbolTable<T> {
 		IPartialAggregate<T> v = entries.get(name.getVariableName());
 		if (v  != null){
 			return name.getOperation().evaluate(v);
-		}else{
-			return null;
 		}
-		// return entries.get(name.getVariableName());
+        return null;
 	}
 
 	public void updateValue(CepVariable variable, T value) {
