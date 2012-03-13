@@ -78,7 +78,8 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
 		
 	}
 
-	public DiscoveryService getDiscoveryService() {
+	@Override
+    public DiscoveryService getDiscoveryService() {
 		return discoveryService;
 	}
 

@@ -47,7 +47,8 @@ public class AdministrationPeerListenerJxtaImpl implements DiscoveryListener, IA
 		this.discoveryServiceProvider = discoveryServiceProvider;
 	}
 
-	public void run() {
+	@Override
+    public void run() {
 		while (true) {
 			try {
 				Thread.sleep(WAIT_TIME);
