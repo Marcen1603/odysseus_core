@@ -58,20 +58,17 @@ public class TransactionTS implements Comparable<TransactionTS> {
 	public int compareTo(TransactionTS other) {		
 		if(this.getPointInTime().before(other.getPointInTime())){
 			return -1;
-		}else{
-			if(this.getPointInTime().equals(other.getPointInTime())){
-				if(this.getOutgoingPort()==other.getOutgoingPort()){
-					return 0;
-				}else{
-					if(this.getOutgoingPort()<other.getOutgoingPort()){
-						return -1;
-					}else{
-						return 1;
-					}
-				}
-			}
-			return 1;
-		}		
+		}
+        if(this.getPointInTime().equals(other.getPointInTime())){
+        	if(this.getOutgoingPort()==other.getOutgoingPort()){
+        		return 0;
+        	}
+            if(this.getOutgoingPort()<other.getOutgoingPort()){
+            	return -1;
+            }
+            return 1;
+        }
+        return 1;		
 	}
 	
 	/**
@@ -84,12 +81,10 @@ public class TransactionTS implements Comparable<TransactionTS> {
 		if(this.getOutgoingPort()==other.getOutgoingPort()){
 			if(this.getPointInTime().equals(other.getPointInTime())){
 				return true;
-			}else{
-				return false;
 			}
-		}else{
-			return false;
+            return false;
 		}
+        return false;
 	}
 	
 	/**

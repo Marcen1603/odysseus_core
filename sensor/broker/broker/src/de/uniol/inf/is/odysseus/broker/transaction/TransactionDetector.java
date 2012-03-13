@@ -156,27 +156,25 @@ public class TransactionDetector {
 			
 			return true;
 		}
-		else{
-			if(this.visitedFollowing.contains(curNode)){
-				return false;
-			}
-			/* curNode is another broker. Cycles
-			 * over multiple brokers will not be considered
-			 */
-			else if(curNode instanceof BrokerAO){
-				this.visitedFollowing.add(curNode);
-				return false;
-			}
-			else{
-				this.visitedFollowing.add(curNode);
-			}
-			
-			boolean cycleDetected = false;
-			for(LogicalSubscription sub: curNode.getSubscriptions()){
-				cycleDetected = cycleDetected || goToFollowingOps(sub.getTarget(), sub.getSinkInPort(), currentBroker, brokerOutPort);
-			}
-			return cycleDetected;
-		}
+        if(this.visitedFollowing.contains(curNode)){
+        	return false;
+        }
+        /* curNode is another broker. Cycles
+         * over multiple brokers will not be considered
+         */
+        else if(curNode instanceof BrokerAO){
+        	this.visitedFollowing.add(curNode);
+        	return false;
+        }
+        else{
+        	this.visitedFollowing.add(curNode);
+        }
+        
+        boolean cycleDetected = false;
+        for(LogicalSubscription sub: curNode.getSubscriptions()){
+        	cycleDetected = cycleDetected || goToFollowingOps(sub.getTarget(), sub.getSinkInPort(), currentBroker, brokerOutPort);
+        }
+        return cycleDetected;
 	}
 	
 	private boolean goToPrecedingOps(ILogicalOperator curNode, int curNodesOutPort, BrokerAO currentBroker, int brokerInPort){
@@ -205,25 +203,23 @@ public class TransactionDetector {
 			
 			return true;
 		}
-		else{
-			if(this.visitedPreceeding.contains(curNode)){
-				return false;
-			}
-			// curNode is another broker.
-			// Cycles over multiple brokers will not
-			// be considered
-			else if(curNode instanceof BrokerAO){
-				this.visitedPreceeding.add(curNode);
-				return false;
-			}
-			else{
-				this.visitedPreceeding.add(curNode);
-			}
-			boolean cycleDetected = false;
-			for(LogicalSubscription sub: curNode.getSubscribedToSource()){
-				cycleDetected = cycleDetected || goToPrecedingOps(sub.getTarget(), sub.getSourceOutPort(), currentBroker, brokerInPort);
-			}
-			return cycleDetected;
-		}
+        if(this.visitedPreceeding.contains(curNode)){
+        	return false;
+        }
+        // curNode is another broker.
+        // Cycles over multiple brokers will not
+        // be considered
+        else if(curNode instanceof BrokerAO){
+        	this.visitedPreceeding.add(curNode);
+        	return false;
+        }
+        else{
+        	this.visitedPreceeding.add(curNode);
+        }
+        boolean cycleDetected = false;
+        for(LogicalSubscription sub: curNode.getSubscribedToSource()){
+        	cycleDetected = cycleDetected || goToPrecedingOps(sub.getTarget(), sub.getSourceOutPort(), currentBroker, brokerInPort);
+        }
+        return cycleDetected;
 	}
 }
