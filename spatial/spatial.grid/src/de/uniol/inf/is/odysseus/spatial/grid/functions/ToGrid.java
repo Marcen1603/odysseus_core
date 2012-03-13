@@ -65,9 +65,8 @@ public class ToGrid extends AbstractFunction<Grid> {
 							+ " has only "
 							+ this.getArity()
 							+ " argument(s): A geometry, the x and y coordinates, the width and height, and the cellsize.");
-		} else {
-			return accTypes[argPos];
 		}
+        return accTypes[argPos];
 	}
 
 	@Override

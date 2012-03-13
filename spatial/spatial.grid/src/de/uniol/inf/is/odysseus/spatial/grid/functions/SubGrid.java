@@ -64,9 +64,8 @@ public class SubGrid extends AbstractFunction<Grid> {
 							+ " has only "
 							+ this.getArity()
 							+ " argument(s): The grid, the center point, the length and width in cm, and the rotation angle in degrees.");
-		} else {
-			return SubGrid.accTypes[argPos];
 		}
+        return SubGrid.accTypes[argPos];
 	}
 
 	@Override
