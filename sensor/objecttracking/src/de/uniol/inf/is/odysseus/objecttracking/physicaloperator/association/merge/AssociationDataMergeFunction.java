@@ -63,7 +63,8 @@ public class AssociationDataMergeFunction<M extends IProbabilityPredictionFuncti
 		
 	}
 
-	@Override
+	@SuppressWarnings("deprecation")
+    @Override
 	/**
 	 * Metadata will not be merged. Returned object contains no metadata
 	 */

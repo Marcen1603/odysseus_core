@@ -53,6 +53,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
      * @param noOfAttribs
      *            enthaelt die Anzahl der Attribute (Effizienzgr�nde)
      */
+    @SuppressWarnings("deprecation")
     public MVRelationalTuple(SDFSchema schema, String line, char delimiter) {
         super();
         // super(schema, line, delimiter);
@@ -75,6 +76,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
      *            enthaelt die Anzahl der Attribute die das Objekt speichern
      *            koennen soll
      */
+    @SuppressWarnings("deprecation")
     public MVRelationalTuple(SDFSchema schema) {
         super();
         this.findMeasurementValuePositions(schema);
@@ -191,6 +193,7 @@ public class MVRelationalTuple<T extends IProbability> extends RelationalTuple<T
      * @param attributes
      *            Attributbelegung des neuen Tuples
      */
+    @SuppressWarnings("deprecation")
     public MVRelationalTuple(Object[] attributes, SDFSchema schema) {
         super(attributes);
         // if(this.getAttribute(3).equals(19.3906)){
