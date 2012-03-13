@@ -88,7 +88,7 @@ public class SILABVisitor implements IVisitor{
 		
 	}
 	
-	private ILogicalOperator addTimestampAO(ILogicalOperator operator, SDFSchema attributes) {
+	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, SDFSchema attributes) {
 		TimestampAO timestampAO = new TimestampAO();
 		for(SDFAttribute attr : attributes) {
 			if (attr.getDatatype().equals("StartTimestamp")){
