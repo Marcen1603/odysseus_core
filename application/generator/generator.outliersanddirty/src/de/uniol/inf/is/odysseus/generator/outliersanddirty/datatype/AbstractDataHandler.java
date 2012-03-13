@@ -27,7 +27,8 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		this.value = value;
 	}
 	
-	public T getValue(){
+	@Override
+    public T getValue(){
 		return this.value;
 	}
 	
