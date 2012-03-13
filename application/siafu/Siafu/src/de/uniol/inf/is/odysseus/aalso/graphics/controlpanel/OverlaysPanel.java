@@ -170,7 +170,8 @@ public class OverlaysPanel extends BasePanel {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	protected void disposeResources() {
+	@Override
+    protected void disposeResources() {
 		super.disposeResources();
 		binaryOverlayIcon.dispose();
 		discreteOverlayIcon.dispose();

@@ -202,7 +202,8 @@ public class PlacesPanel extends BasePanel {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	protected void disposeResources() {
+	@Override
+    protected void disposeResources() {
 		super.disposeResources();
 		for (Color c : placeTypeColors.values()) {
 			c.dispose();

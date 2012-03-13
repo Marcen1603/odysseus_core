@@ -74,7 +74,8 @@ public class CanvasPaintListener implements PaintListener {
 	 * 
 	 * @param e the PaintEvent that triggered the redraw
 	 */
-	public void paintControl(final PaintEvent e) {
+	@Override
+    public void paintControl(final PaintEvent e) {
 		Image baseImg =
 				new Image(Display.getCurrent(), painter.getBounds());
 		GC gcAux = new GC(baseImg);

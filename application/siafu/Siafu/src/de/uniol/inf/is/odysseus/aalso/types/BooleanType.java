@@ -76,7 +76,8 @@ public class BooleanType implements Publishable {
 	 * 
 	 * @return the string value of the boolean object
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return "" + b;
 	}
 
@@ -96,7 +97,8 @@ public class BooleanType implements Publishable {
 	 * 
 	 * @return a <code>FlatData</code> object representing this boolean value
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -104,7 +106,8 @@ public class BooleanType implements Publishable {
 		return new FlatData(data);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof BooleanType)) {
 			return false;
 		} else {
@@ -113,7 +116,8 @@ public class BooleanType implements Publishable {
 		}
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + b).hashCode();
 	}
 }

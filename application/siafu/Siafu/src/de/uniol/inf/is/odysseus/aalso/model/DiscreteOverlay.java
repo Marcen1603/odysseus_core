@@ -131,7 +131,8 @@ public class DiscreteOverlay extends Overlay {
 	 *            the position for which we require the value
 	 * @return a Text object with the value at that position
 	 */
-	public Text getValue(final Position pos) {
+	@Override
+    public Text getValue(final Position pos) {
 		int val = this.value[pos.getRow()][pos.getCol()];
 
 		for (int i = 0; i < thresholds.length; i++) {

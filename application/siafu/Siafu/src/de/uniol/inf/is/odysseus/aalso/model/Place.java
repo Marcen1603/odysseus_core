@@ -241,7 +241,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @return the place's name
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return getName();
 	}
 
@@ -250,7 +251,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @return the place's name
 	 */
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 
@@ -277,7 +279,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @return the place's position
 	 */
-	public Position getPos() {
+	@Override
+    public Position getPos() {
 		return pos;
 	}
 
@@ -288,7 +291,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * @param value the value for that key
 	 * @return the previous value, if this key was already set.
 	 */
-	public Publishable set(final String key, final Publishable value) {
+	@Override
+    public Publishable set(final String key, final Publishable value) {
 		return info.put(key, value);
 	}
 
@@ -408,7 +412,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * @return the <code>FlatData</code> object that represents this Place.
 	 * 
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		double[] coords = pos.getCoordinates();
 		data = this.getClass().getName() + ":";
@@ -435,7 +440,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * @return a FlatData object representing the requested data
 	 * @throws UnknownContextException if the context variable isn't known
 	 */
-	public FlatData getContext(final String ctxName)
+	@Override
+    public FlatData getContext(final String ctxName)
 			throws UnknownContextException {
 		if (info.containsKey(ctxName)) {
 			return info.get(ctxName).flatten();
@@ -461,7 +467,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @return if the place is visible.
 	 */
-	public boolean isVisible() {
+	@Override
+    public boolean isVisible() {
 		return visible;
 	}
 
@@ -470,7 +477,8 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @param visible set to true to make the place visible
 	 */
-	public void setVisible(final boolean visible) {
+	@Override
+    public void setVisible(final boolean visible) {
 		this.visible = visible;
 	}
 }

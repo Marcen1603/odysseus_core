@@ -17,7 +17,8 @@ public class LoadingComposite extends Composite {
 		this.setLayoutData(gdLoadingComposite);
 	}
 
-	public void dispose() {
+	@Override
+    public void dispose() {
 		super.dispose();
 	}
 

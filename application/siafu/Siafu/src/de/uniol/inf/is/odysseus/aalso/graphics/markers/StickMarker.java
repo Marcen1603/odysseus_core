@@ -204,7 +204,8 @@ public class StickMarker extends Marker {
 	 * 
 	 * @param gc the GC to draw it with
 	 */
-	public void draw(final GC gc) {
+	@Override
+    public void draw(final GC gc) {
 
 		if (!drawnBefore) {
 			this.font = gc.getFont();

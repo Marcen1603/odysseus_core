@@ -57,7 +57,8 @@ public class SiafuGradientCache extends PersistentCachedMap {
 	 * 
 	 * @param desiredCacheSize the number of elements to read
 	 */
-	public void fillCache(final int desiredCacheSize) {
+	@Override
+    public void fillCache(final int desiredCacheSize) {
 		Controller.getProgress().reportCachePrefill(
 			Math.min(desiredCacheSize, toc.size()));
 

@@ -60,7 +60,8 @@ public class TextList implements Publishable {
 	 * 
 	 * @return a string of the type "element1,element2,...,elementN"
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		if(l.isEmpty()){
 			return "";
 		}
@@ -90,7 +91,8 @@ public class TextList implements Publishable {
 	 * @return a <code>FlatData</code> object representing this TextList
 	 *         object
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -100,7 +102,8 @@ public class TextList implements Publishable {
 		data = data.substring(0, data.lastIndexOf('#'));
 		return new FlatData(data);
 	}
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof TextList)) {
 			return false;
 		} else {
@@ -109,7 +112,8 @@ public class TextList implements Publishable {
 		}
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + l.toString()).hashCode();
 	}
 }

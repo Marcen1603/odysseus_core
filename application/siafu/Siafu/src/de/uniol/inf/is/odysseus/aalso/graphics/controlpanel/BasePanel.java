@@ -114,7 +114,8 @@ public abstract class BasePanel extends Composite {
 				| GridData.FILL_HORIZONTAL));
 
 		selectionCombo.addSelectionListener(new SelectionAdapter() {
-			public synchronized void widgetDefaultSelected(
+			@Override
+            public synchronized void widgetDefaultSelected(
 					final SelectionEvent e) {
 				onSelectionMade(selectionCombo.getText());
 			}
@@ -124,7 +125,8 @@ public abstract class BasePanel extends Composite {
 		selectButton.setImage(new Image(Display.getCurrent(), getClass()
 				.getResourceAsStream("/res/misc/examine.png")));
 		selectButton.addSelectionListener(new SelectionAdapter() {
-			public synchronized void widgetSelected(final SelectionEvent e) {
+			@Override
+            public synchronized void widgetSelected(final SelectionEvent e) {
 				onSelectionMade(selectionCombo.getText());
 			}
 		});

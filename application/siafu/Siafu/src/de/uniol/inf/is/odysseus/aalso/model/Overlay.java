@@ -162,7 +162,8 @@ public abstract class Overlay implements Overlayable {
 	 * 
 	 * @return the overlay's name
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return name;
 	}
 
@@ -173,7 +174,8 @@ public abstract class Overlay implements Overlayable {
 	 * @param obj the Object to compare this overlay to
 	 * @return true if the overlays are the same
 	 */
-	public boolean equals(final Object obj) {
+	@Override
+    public boolean equals(final Object obj) {
 		if (obj == null || !(obj instanceof Overlay)) {
 			return false;
 		} else {
@@ -186,7 +188,8 @@ public abstract class Overlay implements Overlayable {
 	 * 
 	 * @return the hash code value for the overlay
 	 */
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return name.hashCode();
 	}
 }

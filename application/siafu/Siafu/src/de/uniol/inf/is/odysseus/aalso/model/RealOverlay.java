@@ -67,7 +67,8 @@ public class RealOverlay extends Overlay {
 	 * @param pos the position to evaluate
 	 * @return the overlay value in the position
 	 */
-	public IntegerNumber getValue(final Position pos) {
+	@Override
+    public IntegerNumber getValue(final Position pos) {
 		return new IntegerNumber(value[pos.getRow()][pos.getCol()]);
 	}
 

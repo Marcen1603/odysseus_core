@@ -151,7 +151,8 @@ public class SpotMarker extends Marker {
 	 * 
 	 * @param gc the gc used to draw the spot marker
 	 */
-	public void draw(final GC gc) {
+	@Override
+    public void draw(final GC gc) {
 		backup(gc);
 
 		if (!drawnBefore) {

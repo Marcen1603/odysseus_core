@@ -219,7 +219,8 @@ public abstract class BaseStatus extends Composite {
 		colorPickerButton = new Label(parent, SWT.NONE);
 		colorPickerButton.setImage(colorPickerImage);
 		colorPickerButton.addMouseListener(new MouseAdapter() {
-			public void mouseUp(final MouseEvent e) {
+			@Override
+            public void mouseUp(final MouseEvent e) {
 				ColorDialog cd =
 						new ColorDialog(colorPickerButton.getShell());
 				cd.setText("Choose the marker color");
@@ -278,7 +279,8 @@ public abstract class BaseStatus extends Composite {
 		close.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, true,
 				false));
 		close.addMouseListener(new MouseAdapter() {
-			public void mouseUp(final MouseEvent e) {
+			@Override
+            public void mouseUp(final MouseEvent e) {
 				panel.removeStatusItem(thisStatusBox);
 			}
 		});

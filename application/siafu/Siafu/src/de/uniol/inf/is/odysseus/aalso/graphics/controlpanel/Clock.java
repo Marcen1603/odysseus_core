@@ -162,7 +162,8 @@ public class Clock extends Composite {
 		speedScale.setMaximum(SCALE_MAXIMUM);
 		speedScale.setMinimum(1);
 		speedScale.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				gui.setSpeed(((Scale) e.widget).getSelection());
 			}
 		});
@@ -189,7 +190,8 @@ public class Clock extends Composite {
 		playLabel.setImage(playingImg);
 		playLabel.setAlignment(SWT.CENTER);
 		playLabel.addMouseListener(new MouseAdapter() {
-			public void mouseDown(final MouseEvent e) {
+			@Override
+            public void mouseDown(final MouseEvent e) {
 
 				if (control.isPaused()) {
 					control.setPaused(false);
@@ -198,7 +200,8 @@ public class Clock extends Composite {
 				}
 			}
 
-			public void mouseUp(final MouseEvent e) {
+			@Override
+            public void mouseUp(final MouseEvent e) {
 				return;
 			}
 		});

@@ -177,7 +177,8 @@ public class CSVPrinter implements SimulatorOutputPrinter {
 	 * wipe out the old information in the file, unless the
 	 * <code>keepHistory</code> option has been enabled in the config file.
 	 */
-	public void notifyIterationConcluded() {
+	@Override
+    public void notifyIterationConcluded() {
 		long lastPrintoutAge = world.getTime().getTimeInMillis()
 				- lastPrintoutTime;
 		if (lastPrintoutAge > intervalInMillis) {
@@ -355,7 +356,8 @@ public class CSVPrinter implements SimulatorOutputPrinter {
 	/**
 	 * Flushes the remaining data, and closes the output files.
 	 */
-	public void cleanup() {
+	@Override
+    public void cleanup() {
 		try {
 			out.flush();
 			out.close();

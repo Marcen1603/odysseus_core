@@ -98,7 +98,8 @@ public class TimePeriod implements Publishable {
 	 * 
 	 * @return the time string
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return start.toString() + "-" + end.toString();
 	}
 
@@ -108,7 +109,8 @@ public class TimePeriod implements Publishable {
 	 * 
 	 * @return a <code>FlatData</code> object representing this object
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -118,7 +120,8 @@ public class TimePeriod implements Publishable {
 		return new FlatData(data);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof TimePeriod)) {
 			return false;
 		} else {
@@ -127,7 +130,8 @@ public class TimePeriod implements Publishable {
 		}
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + start + end).hashCode();
 	}
 }

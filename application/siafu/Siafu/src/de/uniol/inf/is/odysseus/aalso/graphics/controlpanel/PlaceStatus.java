@@ -121,7 +121,8 @@ public class PlaceStatus extends BaseStatus {
 	 * 
 	 * @param parent the parent composite
 	 */
-	protected void addBodyElements(final Composite parent) {
+	@Override
+    protected void addBodyElements(final Composite parent) {
 		placeComposite = new Composite(parent, SWT.NORMAL);
 		GridLayout glPlaceComposite = new GridLayout();
 		glPlaceComposite.marginWidth = 0;
@@ -159,11 +160,13 @@ public class PlaceStatus extends BaseStatus {
 				GridData.GRAB_HORIZONTAL));
 		showOverlayButton.addMouseListener(new MouseAdapter() {
 
-			public void mouseDown(final MouseEvent e) {
+			@Override
+            public void mouseDown(final MouseEvent e) {
 				gui.requestOverlayDrawing((Place) content);
 			}
 
-			public void mouseUp(final MouseEvent e) {
+			@Override
+            public void mouseUp(final MouseEvent e) {
 				gui.cancelOverlayDrawing();
 			}
 
@@ -175,7 +178,8 @@ public class PlaceStatus extends BaseStatus {
 	 * 
 	 * @param newColor the new color for the marker
 	 */
-	protected void onColorChanged(final RGB newColor) {
+	@Override
+    protected void onColorChanged(final RGB newColor) {
 		marker.setRGB(newColor);
 	}
 
@@ -265,7 +269,8 @@ public class PlaceStatus extends BaseStatus {
 	}
 
 	/** Refresh the status item. */
-	public void refresh() {
+	@Override
+    public void refresh() {
 		refreshOvLabels();
 		createInfoLabelsAndValues(infoComposite);
 	}
@@ -275,7 +280,8 @@ public class PlaceStatus extends BaseStatus {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	public void disposeResources() {
+	@Override
+    public void disposeResources() {
 		super.disposeResources();
 	}
 }

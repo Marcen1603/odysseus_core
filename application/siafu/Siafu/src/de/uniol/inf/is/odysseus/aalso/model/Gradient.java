@@ -144,7 +144,8 @@ public class Gradient implements Serializable {
 	 * 
 	 * @return the string representing the center position
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return center.toString();
 	}
 

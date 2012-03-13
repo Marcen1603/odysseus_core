@@ -64,7 +64,8 @@ public class FloatNumber implements Publishable {
 	 * 
 	 * @return the string representing the number
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return "" + d;
 	}
 
@@ -84,7 +85,8 @@ public class FloatNumber implements Publishable {
 	 * 
 	 * @return a <code>FlatData</code> object representing this object
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -92,7 +94,8 @@ public class FloatNumber implements Publishable {
 		return new FlatData(data);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof FloatNumber)) {
 			return false;
 		} else {
@@ -101,7 +104,8 @@ public class FloatNumber implements Publishable {
 		}
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + d).hashCode();
 	}
 }

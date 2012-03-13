@@ -101,7 +101,8 @@ public class AgentStatus extends BaseStatus {
 	 * 
 	 * @param parent the parent composite
 	 */
-	protected void addBodyElements(final Composite parent) {
+	@Override
+    protected void addBodyElements(final Composite parent) {
 		agentComposite = new Composite(parent, SWT.NORMAL);
 		GridLayout glPlaceComposite = new GridLayout();
 		glPlaceComposite.marginWidth = 0;
@@ -138,7 +139,8 @@ public class AgentStatus extends BaseStatus {
 				GridData.GRAB_HORIZONTAL));
 		movesFreelyButton.setSelection(a.isOnAuto());
 		movesFreelyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				if (movesFreelyButton.getSelection()) {
 					((Agent) content).returnControl();
 				} else {
@@ -153,7 +155,8 @@ public class AgentStatus extends BaseStatus {
 	 * 
 	 * @param newColor the chosen color
 	 */
-	protected void onColorChanged(final RGB newColor) {
+	@Override
+    protected void onColorChanged(final RGB newColor) {
 		marker.setRGB(newColor);
 	}
 
@@ -245,7 +248,8 @@ public class AgentStatus extends BaseStatus {
 	}
 
 	/** Refresh the status item. */
-	public void refresh() {
+	@Override
+    public void refresh() {
 		refreshAgentLabels();
 		refreshInfoLabels();
 		refreshOvLabels();
@@ -257,7 +261,8 @@ public class AgentStatus extends BaseStatus {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	public void disposeResources() {
+	@Override
+    public void disposeResources() {
 		super.disposeResources();
 	}
 }

@@ -76,7 +76,8 @@ public class StandbyComposite extends Composite {
 		splashLabel.setText("By the way:\n- Select agents with your mouse or right-click for a context menu\n- Move agents by selecting them and double-clicking on the destination");
 	}
 
-	public void dispose(){
+	@Override
+    public void dispose(){
 		super.dispose();
 		siafuIcon.dispose();
 		siafuIcon=null;

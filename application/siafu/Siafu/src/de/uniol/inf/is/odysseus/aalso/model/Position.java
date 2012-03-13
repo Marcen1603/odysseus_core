@@ -218,7 +218,8 @@ public class Position implements Serializable, Comparable<Position>,
 	 * 
 	 * @return the String representing the position
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return i + "." + j;
 	}
 
@@ -228,7 +229,8 @@ public class Position implements Serializable, Comparable<Position>,
 	 * 
 	 * @return the hashcode of the toString() output
 	 */
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return toString().hashCode();
 	}
 
@@ -266,7 +268,8 @@ public class Position implements Serializable, Comparable<Position>,
 	 *            the object to compare this position to
 	 * @return true if the positions are equal
 	 */
-	public boolean equals(final Object o) {
+	@Override
+    public boolean equals(final Object o) {
 		if (o instanceof Position) {
 			Position p = (Position) o;
 
@@ -290,7 +293,8 @@ public class Position implements Serializable, Comparable<Position>,
 	 *            the object to compare to
 	 * @return an integer according to the comparable interface
 	 */
-	public int compareTo(final Position p) {
+	@Override
+    public int compareTo(final Position p) {
 		if (p.i > i) {
 			return -1;
 		} else if (p.i < i) {
@@ -373,7 +377,8 @@ public class Position implements Serializable, Comparable<Position>,
 	 * 
 	 * @return the flattened position
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		double[] coords = coordinateTools.localToCoordinates(this);
 		data = this.getClass().getName() + ":";

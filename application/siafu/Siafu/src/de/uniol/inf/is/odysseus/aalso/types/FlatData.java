@@ -139,7 +139,8 @@ public class FlatData {
 	 * 
 	 * @return the data string
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return data;
 	}
 }

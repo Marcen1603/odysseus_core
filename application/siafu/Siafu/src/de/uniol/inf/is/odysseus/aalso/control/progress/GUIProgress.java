@@ -114,14 +114,16 @@ public class GUIProgress implements Progress {
 	 * Do nothing. The GUI is not available anymore at the time the
 	 * backgrounds are created.
 	 */
-	public synchronized void reportBackgroundCreated() {
+	@Override
+    public synchronized void reportBackgroundCreated() {
 	}
 
 	/**
 	 * Do nothing. The GUI is not available anymore at the time the
 	 * backgrounds are created.
 	 */
-	public synchronized void reportBackgroundCreationEnd() {
+	@Override
+    public synchronized void reportBackgroundCreationEnd() {
 	}
 
 	/**
@@ -130,11 +132,13 @@ public class GUIProgress implements Progress {
 	 * 
 	 * @param amount the amount of backgrounds that will be created
 	 */
-	public synchronized void reportBackgroundCreationStart(final int amount) {
+	@Override
+    public synchronized void reportBackgroundCreationStart(final int amount) {
 	}
 
 	/** Increase the load count. */
-	public synchronized void reportCacheElementLoaded() {
+	@Override
+    public synchronized void reportCacheElementLoaded() {
 		cacheElementsLoaded++;
 	}
 
@@ -143,7 +147,8 @@ public class GUIProgress implements Progress {
 	 * 
 	 * @param amountOfElements the amount of elements in the cache
 	 */
-	public synchronized void reportCachePrefill(final int amountOfElements) {
+	@Override
+    public synchronized void reportCachePrefill(final int amountOfElements) {
 		if (amountOfElements > 0) {
 			cachePrefillStarted = true;
 			firstRun = false;
@@ -154,12 +159,14 @@ public class GUIProgress implements Progress {
 	}
 
 	/** Store the change so the GUI can redraw it appropriately. */
-	public synchronized void reportCachePrefillEnded() {
+	@Override
+    public synchronized void reportCachePrefillEnded() {
 		cachePrefillEnded = true;
 	}
 
 	/** Store the change so the GUI can redraw it appropriately. */
-	public synchronized void reportCreatingAgents() {
+	@Override
+    public synchronized void reportCreatingAgents() {
 		creatingAgents = true;
 	}
 
@@ -169,7 +176,8 @@ public class GUIProgress implements Progress {
 	 * @param type the type of place
 	 * @param amount the amount of places of that type
 	 */
-	public synchronized void reportPlacesFound(final String type,
+	@Override
+    public synchronized void reportPlacesFound(final String type,
 			final int amount) {
 		synchronized (placesFound) {
 			placesFound.put(type, amount);
@@ -183,7 +191,8 @@ public class GUIProgress implements Progress {
 	 * 
 	 * @param type the type of the place that has just been created
 	 */
-	public void reportPlaceCreated(final String type) {
+	@Override
+    public void reportPlaceCreated(final String type) {
 		if (firstRun) {
 			synchronized (createdPlaces) {
 				createdPlaces.add(type);
@@ -193,12 +202,14 @@ public class GUIProgress implements Progress {
 	}
 
 	/** Store the change so the GUI can redraw it appropriately. */
-	public synchronized void reportSimulationEnded() {
+	@Override
+    public synchronized void reportSimulationEnded() {
 		// Do Nothing
 	}
 
 	/** Store the change so the GUI can redraw it appropriately. */
-	public synchronized void reportSimulationStarted() {
+	@Override
+    public synchronized void reportSimulationStarted() {
 		simulationStarted = true;
 	}
 
@@ -207,7 +218,8 @@ public class GUIProgress implements Progress {
 	 * 
 	 * @param newWorldName the name of the world
 	 */
-	public synchronized void reportWorldCreation(final String newWorldName) {
+	@Override
+    public synchronized void reportWorldCreation(final String newWorldName) {
 		worldCreationStarted = true;
 		this.worldName = newWorldName;
 	}

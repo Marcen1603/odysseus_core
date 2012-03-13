@@ -81,7 +81,8 @@ public class BinaryOverlay extends Overlay {
 	 * @return a BooleanType with true or false depending on the overlay
 	 *         value.
 	 */
-	public BooleanType getValue(final Position pos) {
+	@Override
+    public BooleanType getValue(final Position pos) {
 		int val = this.value[pos.getRow()][pos.getCol()];
 
 		if (val <= threshold) {

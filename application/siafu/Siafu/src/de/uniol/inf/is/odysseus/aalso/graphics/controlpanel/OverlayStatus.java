@@ -121,7 +121,8 @@ public class OverlayStatus extends BaseStatus {
 	 * 
 	 * @param parent the parent composite
 	 */
-	protected void addBodyElements(final Composite parent) {
+	@Override
+    protected void addBodyElements(final Composite parent) {
 		GridData gdOverlayRangeCanbas =
 				new GridData(CANVAS_WIDTH, CANVAS_HEIGHT);
 		overlayRangeCanvas =
@@ -130,7 +131,8 @@ public class OverlayStatus extends BaseStatus {
 		overlayRangeCanvas.setLayoutData(gdOverlayRangeCanbas);
 		overlayRangeCanvas.addPaintListener(new PaintListener() {
 
-			public void paintControl(final PaintEvent e) {
+			@Override
+            public void paintControl(final PaintEvent e) {
 				drawOverlayPicture(e);
 			}
 		});
@@ -236,11 +238,13 @@ public class OverlayStatus extends BaseStatus {
 				GridData.GRAB_HORIZONTAL));
 		showOverlayButton.addMouseListener(new MouseAdapter() {
 
-			public void mouseDown(final MouseEvent e) {
+			@Override
+            public void mouseDown(final MouseEvent e) {
 				gui.requestOverlayDrawing((Overlay) content);
 			}
 
-			public void mouseUp(final MouseEvent e) {
+			@Override
+            public void mouseUp(final MouseEvent e) {
 				gui.cancelOverlayDrawing();
 			}
 		});
@@ -252,11 +256,13 @@ public class OverlayStatus extends BaseStatus {
 	 * 
 	 * @param newColor the impossibly chosen color
 	 */
-	protected void onColorChanged(final RGB newColor) {
+	@Override
+    protected void onColorChanged(final RGB newColor) {
 	}
 
 	/** Refresh the status item. */
-	public void refresh() {
+	@Override
+    public void refresh() {
 	}
 
 	/**
@@ -264,7 +270,8 @@ public class OverlayStatus extends BaseStatus {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	public void disposeResources() {
+	@Override
+    public void disposeResources() {
 		super.disposeResources();
 	}
 }

@@ -131,7 +131,8 @@ public class PersistentCachedMap {
 		}
 
 		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(final File dir, final String fileName) {
+			@Override
+            public boolean accept(final File dir, final String fileName) {
 				return fileName.contains(".data");
 			}
 		};

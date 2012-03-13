@@ -52,7 +52,8 @@ public class AgentsPanel extends BasePanel {
 	/**
 	 * Add all the agents to the combo box.
 	 */
-	protected void addSelectableElements() {
+	@Override
+    protected void addSelectableElements() {
 		String[] items = new String[gui.getAgents().size()];
 
 		int i = 0;
@@ -72,7 +73,8 @@ public class AgentsPanel extends BasePanel {
 	 * @param o the agent to display
 	 * @return the newly created status for the agent
 	 */
-	protected BaseStatus createStatusItem(final Composite parent,
+	@Override
+    protected BaseStatus createStatusItem(final Composite parent,
 			final Object o) {
 		Agent a = (Agent) o;
 		return new AgentStatus(parent, SWT.NONE, a, gui.getAgentSprite(a)
@@ -85,7 +87,8 @@ public class AgentsPanel extends BasePanel {
 	 * 
 	 * @param baseStatus the status item that needs destroying
 	 */
-	protected void destroyStatusItem(final BaseStatus baseStatus) {
+	@Override
+    protected void destroyStatusItem(final BaseStatus baseStatus) {
 		gui.getMarkers().removeMarker((Trackable) baseStatus.getContent(),
 			Markers.Type.INTERNAL);
 		if (gui.getActive() != null
@@ -99,7 +102,8 @@ public class AgentsPanel extends BasePanel {
 	 * 
 	 * @param selection the selected agent's name
 	 */
-	protected void onSelectionMade(final String selection) {
+	@Override
+    protected void onSelectionMade(final String selection) {
 		Agent agent = null;
 		String name = selection;
 		for (Agent a : gui.getAgents()) {
@@ -122,7 +126,8 @@ public class AgentsPanel extends BasePanel {
 	 * the conainer composite is disposed.
 	 * 
 	 */
-	protected void disposeResources() {
+	@Override
+    protected void disposeResources() {
 		super.disposeResources();
 	}
 }

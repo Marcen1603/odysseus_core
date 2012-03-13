@@ -31,13 +31,15 @@ public class NullPrinter implements SimulatorOutputPrinter {
 	/**
 	 * Do nothing.
 	 */
-	public void cleanup() {
+	@Override
+    public void cleanup() {
 	}
 
 	/**
 	 * Do nothing.
 	 */
-	public void notifyIterationConcluded() {
+	@Override
+    public void notifyIterationConcluded() {
 	}
 
 }

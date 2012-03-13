@@ -169,7 +169,8 @@ public class BalloonMarker extends Marker {
 	 * 
 	 * @param gc the GC used for the drawing
 	 */
-	public void draw(final GC gc) {
+	@Override
+    public void draw(final GC gc) {
 
 		if (!drawnBefore) {
 			white = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);

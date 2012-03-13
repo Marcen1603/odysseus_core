@@ -68,7 +68,8 @@ public class CanvasMouseListener implements MouseListener {
 	 * 
 	 * @param e the mouse event that triggered this method
 	 */
-	public void mouseDown(final MouseEvent e) {
+	@Override
+    public void mouseDown(final MouseEvent e) {
 	}
 
 	/**
@@ -77,7 +78,8 @@ public class CanvasMouseListener implements MouseListener {
 	 * 
 	 * @param e the mouse event that triggered this method
 	 */
-	public void mouseDoubleClick(final MouseEvent e) {
+	@Override
+    public void mouseDoubleClick(final MouseEvent e) {
 		// FIXME: A double click should not be also twice single click. Is
 		// there a workaround for this that doesn't delay the single click
 		// too much?
@@ -116,7 +118,8 @@ public class CanvasMouseListener implements MouseListener {
 	 * 
 	 * @param e the mouse event that triggered this method
 	 */
-	public void mouseUp(final MouseEvent e) {
+	@Override
+    public void mouseUp(final MouseEvent e) {
 		Trackable target;
 		Position clickPos = new Position(e.y, e.x);
 		switch (e.button) {

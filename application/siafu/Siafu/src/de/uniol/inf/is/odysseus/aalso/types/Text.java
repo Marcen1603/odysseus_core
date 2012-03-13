@@ -60,7 +60,8 @@ public class Text implements Publishable {
 	 * 
 	 * @return the text string in the <code>Text</code> object
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return text;
 	}
 
@@ -80,7 +81,8 @@ public class Text implements Publishable {
 	 * 
 	 * @return a <code>FlatData</code> object representing this Text object
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -88,7 +90,8 @@ public class Text implements Publishable {
 		return new FlatData(data);
 	}
 	
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof Text)) {
 			return false;
 		} else {
@@ -97,7 +100,8 @@ public class Text implements Publishable {
 		}
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + text).hashCode();
 	}
 

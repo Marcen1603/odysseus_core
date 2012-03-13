@@ -64,7 +64,8 @@ public class JarSimulationData extends SimulationData {
 	 * @param path path to the type of files to be retrieved
 	 * @return a map with pairs of overlay names and their data
 	 */
-	protected HashMap<String, InputStream> getFilesByPath(final String path) {
+	@Override
+    protected HashMap<String, InputStream> getFilesByPath(final String path) {
 		HashMap<String, InputStream> foundFiles;
 		foundFiles = new HashMap<String, InputStream>();
 
@@ -98,7 +99,8 @@ public class JarSimulationData extends SimulationData {
 	 * @param path path to the type of files to be retrieved
 	 * @return a an ArrayList with the file names
 	 */
-	protected ArrayList<String> getFileNamesByPath(final String path) {
+	@Override
+    protected ArrayList<String> getFileNamesByPath(final String path) {
 		ArrayList<String> foundFiles;
 		foundFiles = new ArrayList<String>();
 
@@ -124,7 +126,8 @@ public class JarSimulationData extends SimulationData {
 	 * @param path the path of the file
 	 * @return the InputStream for the requested file
 	 */
-	protected InputStream getFile(final String path) {
+	@Override
+    protected InputStream getFile(final String path) {
 		JarEntry entry = null;
 		Enumeration<JarEntry> entries = jar.entries();
 		while (entries.hasMoreElements()) {
