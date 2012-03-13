@@ -44,11 +44,10 @@ public class MaxQueryBiddingStrategyJxtaImpl implements IThinPeerBiddingStrategy
 			int i = queryProvider.getQueryCount(interestedLifecycles);
 			if (i >= maxQueries) {
 				return 0;
-			} else {
-				// The more queries are currently running, the more are the
-				// costs for an additional query
-				return i * queryBitFactor;
 			}
+            // The more queries are currently running, the more are the
+            // costs for an additional query
+            return i * queryBitFactor;
 	}
 
 }
