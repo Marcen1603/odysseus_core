@@ -51,9 +51,7 @@ public class Background {
     	if (index < this.distances.length) {
             return this.distances[index];
         }
-        else {
-            return Float.MAX_VALUE;
-        }
+        return Float.MAX_VALUE;
     }
 
     public void setDistance(final int index, final float distance) {
