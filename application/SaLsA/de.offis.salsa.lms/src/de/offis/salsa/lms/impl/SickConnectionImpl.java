@@ -59,9 +59,8 @@ public class SickConnectionImpl implements SickConnection {
 		public boolean isConnected() {
 			if (this.channel != null) {
 				return this.channel.isConnected();
-			} else {
-				return false;
 			}
+            return false;
 		}
 
 		private void onClose() {
