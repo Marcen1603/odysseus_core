@@ -214,8 +214,7 @@ public class LogicalPlanEditor extends GraphicalEditorWithFlyoutPalette
 			protected CreationFactory getFactory(Object template) {
 				if (template instanceof String)
 					return new OperatorFactory((String) template);
-				else
-					return null;
+                return null;
 			}
 		};
 	}
