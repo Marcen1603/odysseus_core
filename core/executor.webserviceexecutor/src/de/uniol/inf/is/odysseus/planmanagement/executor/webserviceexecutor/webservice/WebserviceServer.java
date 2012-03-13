@@ -79,9 +79,8 @@ public class WebserviceServer {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
 			return response;
-		} else {
-			return new StringResponse(null, false);
 		}
+        return new StringResponse(null, false);
 	}
 
 	public Response addQuery(
@@ -143,10 +142,9 @@ public class WebserviceServer {
 				securityToken);
 		if (session != null) {
 			return session;
-		} else {
-			throw new WebserviceException(
-					"Security token unknown! You have to login first to obtain a security token!");
 		}
+        throw new WebserviceException(
+        		"Security token unknown! You have to login first to obtain a security token!");
 	}
 
 	public Response removeQuery(
