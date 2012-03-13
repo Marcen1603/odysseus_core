@@ -40,14 +40,12 @@ public class IsPedestrian extends AbstractFunction<Boolean> {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): A geometry and an angle in degree.");
         }
-        else {
-            switch (argPos) {
-                case 0:
-                    return IsPedestrian.accTypes0;
-                case 1:
-                default:
-                    return IsPedestrian.accTypes1;
-            }
+        switch (argPos) {
+            case 0:
+                return IsPedestrian.accTypes0;
+            case 1:
+            default:
+                return IsPedestrian.accTypes1;
         }
     }
 

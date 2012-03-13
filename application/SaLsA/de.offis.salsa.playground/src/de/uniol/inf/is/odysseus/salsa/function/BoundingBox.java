@@ -38,9 +38,7 @@ public class BoundingBox extends AbstractFunction<Geometry> {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): Two geometries.");
         }
-        else {
-            return BoundingBox.accTypes[argPos];
-        }
+        return BoundingBox.accTypes[argPos];
     }
 
     @Override

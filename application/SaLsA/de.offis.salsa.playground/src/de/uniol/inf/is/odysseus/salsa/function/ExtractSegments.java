@@ -51,9 +51,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): A matrix and a threashold.");
         }
-        else {
-            return accTypes[argPos];
-        }
+        return accTypes[argPos];
     }
 
     @Override
