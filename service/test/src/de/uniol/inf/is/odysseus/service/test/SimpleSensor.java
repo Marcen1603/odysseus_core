@@ -113,9 +113,8 @@ public class SimpleSensor extends Thread{
 	public boolean isSensorServiceBound(){
 		if(this.sensorService!=null){
 			return true;
-		}else{
-			return false;
 		}
+        return false;
 	}
 	
 	/* (non-Javadoc)
