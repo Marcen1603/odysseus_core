@@ -214,7 +214,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		}
 	}
 
-	private String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
+	private static String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
