@@ -84,7 +84,6 @@ public class SourceSplit extends AbstractSplittingStrategy {
 				String adv2 = AdvertisementTools.createSocketAdvertisement().toString();
 				// P2PSourceAO p2paccess2 = new P2PSourceAO(adv2);
 				temp = adv2;
-				P2PSinkAO p2psink2 = new P2PSinkAO(temp);
 				// P2PSourceAO p2psource2 = new P2PSourceAO(p2psink2.getAdv());
 				RestructHelper.insertOperator(p2psource, iLogicalOperator, 0,
 						0, 0);
