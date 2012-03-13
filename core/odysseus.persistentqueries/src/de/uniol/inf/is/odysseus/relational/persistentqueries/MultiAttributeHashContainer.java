@@ -25,7 +25,8 @@ public class MultiAttributeHashContainer {
 		this.hashCode = this.restrictedTuple.hashCode();
 	}
 	
-	public int hashCode(){
+	@Override
+    public int hashCode(){
 		return this.hashCode;
 	}
 	

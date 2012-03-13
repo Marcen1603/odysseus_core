@@ -233,7 +233,8 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 		this.removePredicate = removePredicate;
 	}
 	
-	public HashJoinSweepArea clone(){
+	@Override
+    public HashJoinSweepArea clone(){
 		return new HashJoinSweepArea(this);
 	}
 
@@ -263,7 +264,8 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 		return minMaxTs;
 	}
 	
-	public String toString(){
+	@Override
+    public String toString(){
 		String s = "";
 		for(int i : this.insertRestrictList){
 			s += i + " ";
