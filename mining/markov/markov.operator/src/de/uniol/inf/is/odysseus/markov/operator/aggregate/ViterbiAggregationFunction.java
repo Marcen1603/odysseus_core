@@ -67,7 +67,8 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
 		System.out.println("------- evaluate -------");
 		MarkovPartialAggregate<RelationalTuple<?>> mpa = (MarkovPartialAggregate<RelationalTuple<?>>)p;
-		RelationalTuple<?> tuple = new RelationalTuple(1);
+		@SuppressWarnings("rawtypes")
+        RelationalTuple<?> tuple = new RelationalTuple(1);
 		State s = mpa.getCurrentState();
 		tuple.setAttribute(0, s.getName()+mpa.getValues().get(s));		
 		return tuple;
@@ -85,7 +86,7 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 //		return s;
 //	}
 
-	private Observation tupleToObservation(RelationalTuple<?> in){
+	private static Observation tupleToObservation(RelationalTuple<?> in){
 		return new Observation(in.getAttribute(1).toString());
 	}
 	
