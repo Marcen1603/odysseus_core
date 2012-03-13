@@ -54,7 +54,7 @@ public class GrantedExecutionHandler extends AbstractExecutionHandler<JxtaMessag
 		HashMap<String, Object> messageElements = new HashMap<String, Object>();
 		//Sende Anfrage an die bestaetigten Peers
 		messageElements.put("queryId", cb.getQuery().getId());
-		messageElements.put("pipeAdvertisement", (PipeAdvertisement)getPeer().getServerResponseAddress());
+		messageElements.put("pipeAdvertisement", getPeer().getServerResponseAddress());
 		for(Subplan s : cb.getQuery().getSubPlans().values()) {
 			if(s.getBiddings().size() > 0 && s.getBiddings().get(0) instanceof BidJxtaImpl) {
 				messageElements.put("subplanId", s.getId());
