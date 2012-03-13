@@ -93,9 +93,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			if (handler == null) {
 				throw new IllegalArgumentException("No handler for datatype "
 						+ uri);
-			} else {
-				this.dataReader[i++] = handler;
 			}
+            this.dataReader[i++] = handler;
 
 			// String upperCaseURI = uri.toUpperCase();
 			// if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
@@ -219,9 +218,8 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 	@Override
