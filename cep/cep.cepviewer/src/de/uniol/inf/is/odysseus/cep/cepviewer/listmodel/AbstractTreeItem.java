@@ -62,7 +62,8 @@ public abstract class AbstractTreeItem {
 	/**
 	 * This method should return the text form this entry.
 	 */
-	public abstract String toString();
+	@Override
+    public abstract String toString();
 
 	/**
 	 * This is the getter for the parent entry.
