@@ -358,7 +358,8 @@ public class SickConnectionImpl implements SickConnection {
 		return this.handler.isConnected();
 	}
 
-	public void onMeasurement(final Measurement measurement,
+	@Override
+    public void onMeasurement(final Measurement measurement,
 			final long timestamp) {
 		if ((channel != null) && (channel.isOpen())) {
 			charBuffer.append(timestamp + ",");
