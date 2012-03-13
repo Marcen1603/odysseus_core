@@ -80,9 +80,7 @@ public class Distance extends AbstractFunction<Double> {
 		if(argPos > 3){
 			throw new IllegalArgumentException("abs has only 4 arguments.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }
