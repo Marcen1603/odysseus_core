@@ -37,7 +37,8 @@ public class SerializePropertyList implements ISerializeProperty<Collection<Seri
 		this.type = values.getClass();
 	}
 	
-	public Class<?> getType(){
+	@Override
+    public Class<?> getType(){
 		return this.type;
 	}
 	

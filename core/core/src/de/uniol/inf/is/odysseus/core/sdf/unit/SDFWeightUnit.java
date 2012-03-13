@@ -30,7 +30,8 @@ public class SDFWeightUnit extends SDFUnit {
 		super(sdfWeightUnit);
 	}
 
-	public SDFWeightUnit clone(){
+	@Override
+    public SDFWeightUnit clone(){
 		return new SDFWeightUnit(this);
 	}
 	

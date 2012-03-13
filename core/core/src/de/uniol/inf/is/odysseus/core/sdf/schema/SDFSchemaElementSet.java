@@ -141,11 +141,13 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T>{
 		return elements.toArray(a);
 	}
 
-	public Iterator<T> iterator() {
+	@Override
+    public Iterator<T> iterator() {
 		return elements.iterator();
 	}
 	
-	public SDFSchemaElementSet<T> clone() {
+	@Override
+    public SDFSchemaElementSet<T> clone() {
 		return new SDFSchemaElementSet<T>(this.getURI(), this);
 	}
 	

@@ -39,11 +39,13 @@ public class SerializePropertyItem implements ISerializeProperty<Object>{
 	}
 	
 	
-	public Class<?> getType(){
+	@Override
+    public Class<?> getType(){
 		return type;
 	}
 	
-	public Object getValue() {
+	@Override
+    public Object getValue() {
 		return value;
 	}
 

@@ -217,7 +217,8 @@ public class SDFElement implements Serializable, IClone {
 		return true;
 	}
 
-	public SDFElement clone(){
+	@Override
+    public SDFElement clone(){
 		return this;
 	}
 	
