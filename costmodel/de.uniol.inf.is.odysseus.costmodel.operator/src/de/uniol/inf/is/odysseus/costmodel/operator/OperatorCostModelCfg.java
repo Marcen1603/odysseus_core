@@ -112,7 +112,7 @@ public class OperatorCostModelCfg {
 	}
 
 	// wandelt einen String in ein Double um, falls möglich
-	private Double toDouble(String value, double std) {
+	private static Double toDouble(String value, double std) {
 		try {
 			if (value == null)
 				return std;
