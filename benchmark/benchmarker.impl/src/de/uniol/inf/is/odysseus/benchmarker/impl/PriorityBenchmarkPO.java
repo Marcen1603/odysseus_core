@@ -35,17 +35,17 @@ public class PriorityBenchmarkPO<T extends IMetaAttributeContainer<? extends IPr
 		for (int i = 0; i < 128; ++i) {
 			oldVals[i] = this.selectivity;
 		}
-	};
+	}
 
 	@Override
 	protected double getOldVal(T element) {
 		byte curP = element.getMetadata().getPriority();
 		return oldVals[curP];
-	};
+	}
 	
 	@Override
 	protected void setOldVal(T element, double d) {
 		byte curP = element.getMetadata().getPriority();
 		oldVals[curP] = d;
-	};
+	}
 }

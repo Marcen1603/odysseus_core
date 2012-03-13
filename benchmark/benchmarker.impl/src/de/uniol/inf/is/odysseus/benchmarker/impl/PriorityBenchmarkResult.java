@@ -39,7 +39,7 @@ public class PriorityBenchmarkResult<T extends ILatencyPriority> extends
 			++size;
 			prioritizedStats.addValue(object.getLatency());
 		}
-	};
+	}
 
 	@Override
 	public String toString() {
