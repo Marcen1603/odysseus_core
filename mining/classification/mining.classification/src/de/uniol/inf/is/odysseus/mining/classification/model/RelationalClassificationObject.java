@@ -97,9 +97,8 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 			RelationalTuple<T> newTuple = tuple.clone();
 			newTuple.setAttribute(labelAttributePosition, getClassLabel());
 			return newTuple;
-		} else {
-			return tuple.append(getClassLabel(), true);
 		}
+        return tuple.append(getClassLabel(), true);
 	}
 
 	/* (non-Javadoc)
