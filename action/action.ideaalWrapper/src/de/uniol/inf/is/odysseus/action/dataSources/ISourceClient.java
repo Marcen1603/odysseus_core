@@ -64,7 +64,7 @@ public abstract class ISourceClient implements Runnable{
 			if (this.clients.size() < 1){
 				break;
 			}
-		};
+		}
 		cleanUp();
 		
 		this.logger.info("Stopped producing tuples ...");
