@@ -439,9 +439,8 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 		int middle = m.size() / 2;
 		if (m.size() % 2 == 1) {
 			return m.get(middle);
-		} else {
-			long median = (m.get(middle - 1) + m.get(middle)) / 2;
-			return median;
 		}
+        long median = (m.get(middle - 1) + m.get(middle)) / 2;
+        return median;
 	}
 }

@@ -166,17 +166,15 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	public SDFSchema getLeftSchema() {
 		if (this.getSubscribedToSource(LEFT) != null) {
 			return this.getSubscribedToSource(LEFT).getSchema();
-		} else {
-			return null;
 		}
+        return null;
 	}
 
 	public SDFSchema getRightSchema() {
 		if (this.getSubscribedToSource(RIGHT) != null) {
 			return this.getSubscribedToSource(RIGHT).getSchema();
-		} else {
-			return null;
 		}
+        return null;
 	}
 
 	public String getASSOCIATION_RECORD_NAME() {

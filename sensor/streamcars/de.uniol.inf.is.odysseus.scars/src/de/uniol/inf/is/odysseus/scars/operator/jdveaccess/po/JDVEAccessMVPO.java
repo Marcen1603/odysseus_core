@@ -202,11 +202,10 @@ class JDVEData<M extends IProbability> {
 
 		if (res instanceof MVRelationalTuple<?>) {
 			return (MVRelationalTuple<M>) res;
-		} else {
-			MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(1);
-			tuple.setAttribute(0, res);
-			return tuple;
 		}
+        MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(1);
+        tuple.setAttribute(0, res);
+        return tuple;
 	}
 
 	public MVRelationalTuple<M> parseStart(SDFSchema schema, ByteBuffer bb) {
