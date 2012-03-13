@@ -73,8 +73,6 @@ public class MatrixTranspose extends AbstractFunction<Object> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("MatrixTrans has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 }

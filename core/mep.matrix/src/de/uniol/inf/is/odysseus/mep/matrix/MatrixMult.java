@@ -56,11 +56,10 @@ public class MatrixMult extends AbstractFunction<Object> {
 			double[][] res = new RealMatrixImpl((double[][]) input0)
 					.multiply(new RealMatrixImpl((double[][]) input1)).getData();
 			return res;
-		} else {
-			double[][] res = new RealMatrixImpl((double[][]) input0)
-					.scalarMultiply((Double) input1).getData();
-			return res;
 		}
+        double[][] res = new RealMatrixImpl((double[][]) input0)
+        		.scalarMultiply((Double) input1).getData();
+        return res;
 	}
 
 	/*
@@ -81,9 +80,7 @@ public class MatrixMult extends AbstractFunction<Object> {
 		if(argPos > 1){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }

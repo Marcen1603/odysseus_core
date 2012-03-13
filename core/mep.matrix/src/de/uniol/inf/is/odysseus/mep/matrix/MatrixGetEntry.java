@@ -71,8 +71,6 @@ public class MatrixGetEntry extends AbstractFunction<Object>{
 		if(argPos > 2){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 }

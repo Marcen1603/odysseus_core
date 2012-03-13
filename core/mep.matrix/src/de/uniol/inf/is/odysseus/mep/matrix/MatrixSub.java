@@ -78,9 +78,7 @@ public class MatrixSub extends AbstractFunction<Object> {
 		if(argPos > 1){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }

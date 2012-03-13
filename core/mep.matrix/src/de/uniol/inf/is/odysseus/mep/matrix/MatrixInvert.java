@@ -79,9 +79,7 @@ public class MatrixInvert extends AbstractFunction<Object> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }
