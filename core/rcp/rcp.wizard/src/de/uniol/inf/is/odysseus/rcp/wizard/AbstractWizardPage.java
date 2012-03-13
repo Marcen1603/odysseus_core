@@ -50,7 +50,8 @@ public abstract class AbstractWizardPage<T extends AbstractWizard> extends Wizar
 
 	public abstract void performNext();
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public T getWizard(){
 		return (T)super.getWizard();
 	}
