@@ -53,7 +53,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the CommandInterpreter
 	 */
 	public void _brokerDebug(CommandInterpreter ci){
-		List<String> args = this.getArgs(ci);
+		List<String> args = ExecutorBinder.getArgs(ci);
 		if(args.size()==0){
 			ci.println("No value (on | off) given");
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
@@ -90,7 +90,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the CommandInterpreter of the console
 	 */
 	public void _brokerPorts(CommandInterpreter ci){
-		List<String> args = this.getArgs(ci);
+		List<String> args = ExecutorBinder.getArgs(ci);
 		if(args.size()==0){
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
 				ci.println("******** Ports for broker \""+broker.getIdentifier()+"\" ********");
@@ -110,7 +110,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @return the result string
 	 */
 	@SuppressWarnings({"rawtypes"})
-	private String printPorts(BrokerPO<?> broker){
+	private static String printPorts(BrokerPO<?> broker){
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append("Reading Ports:\n");
@@ -135,7 +135,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the CommandInterpreter of the console
 	 */
 	public void _brokerPlan(CommandInterpreter ci){
-		List<String> args = this.getArgs(ci);
+		List<String> args = ExecutorBinder.getArgs(ci);
 		if(args.size()==0){
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
 				ci.println("******** BROKER: "+broker.getIdentifier()+" ********");
@@ -154,7 +154,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the ci
 	 */
 	public void _brokerContent(CommandInterpreter ci){
-		List<String> args = this.getArgs(ci);
+		List<String> args = ExecutorBinder.getArgs(ci);
 		if(args.size()==0){
 			for(BrokerPO<?> broker : BrokerWrapperPlanFactory.getAllBrokerPOs()){
 				ci.println("******** BROKER: "+broker.getIdentifier()+" ********");
@@ -176,7 +176,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the CommandInterpreter of the console
 	 */
 	public void _runfile(CommandInterpreter ci) {
-		String args = this.getArgsAsString(ci);						
+		String args = ExecutorBinder.getArgsAsString(ci);						
 		File file = new File(args);
 			logger.debug("--- running macro from file: " + file.getAbsolutePath()+ " ---");
 			
@@ -248,7 +248,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @return a list of arguments
 	 */
 	
-	private List<String> getArgs(CommandInterpreter ci){
+	private static List<String> getArgs(CommandInterpreter ci){
 		List<String> args = new ArrayList<String>();
 		String current = ci.nextArgument();
 		while(current!=null){
@@ -264,7 +264,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param ci the CommandInterpreter
 	 * @return the result string
 	 */
-	private String getArgsAsString(CommandInterpreter ci){
+	private static String getArgsAsString(CommandInterpreter ci){
 		return getArgsAsString(getArgs(ci));
 	}
 	
@@ -274,7 +274,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param args a list of arguments
 	 * @return the a single string
 	 */
-	private String getArgsAsString(List<String> args){
+	private static String getArgsAsString(List<String> args){
 		StringBuilder builder = new StringBuilder();
 		for(String arg: args){
 			builder.append(arg+" ");
@@ -289,7 +289,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param string the string to convert
 	 * @return true, if string represents a true value
 	 */
-	private boolean toBoolean(String string) {
+	private static boolean toBoolean(String string) {
 		if (string.equalsIgnoreCase("true")) {
 			return true;
 		}
