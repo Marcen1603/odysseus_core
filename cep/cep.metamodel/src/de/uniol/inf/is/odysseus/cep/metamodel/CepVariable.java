@@ -281,9 +281,8 @@ public class CepVariable implements Serializable{
 		String[] split = name.split(CepVariable.getSeperator());
 		if (split[0].isEmpty() && split[1].isEmpty() && split[2].isEmpty()) {
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 	public static String getStringFor(String operation, String stateIdentifier, String index, String attribute) {
