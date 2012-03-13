@@ -63,9 +63,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype "+ uri);
 			}
-			else{
-				this.dataHandler[i++] = handler;
-			}
+            this.dataHandler[i++] = handler;
 			
 //			if (uri.equals("Integer")) {
 //				this.dataHandler[i++] = new IntegerHandler();

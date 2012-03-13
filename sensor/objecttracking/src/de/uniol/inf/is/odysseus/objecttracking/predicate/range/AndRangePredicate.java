@@ -110,9 +110,7 @@ public class AndRangePredicate<T> extends ComplexRangePredicate<T>{
 		if(!(other instanceof AndRangePredicate)){
 			return false;
 		}
-		else{
-			return this.left.equals(((AndRangePredicate)other).getLeft()) && this.right.equals(((AndRangePredicate)other).getRight());
-		}
+        return this.left.equals(((AndRangePredicate)other).getLeft()) && this.right.equals(((AndRangePredicate)other).getRight());
 	}
 	
 	@Override

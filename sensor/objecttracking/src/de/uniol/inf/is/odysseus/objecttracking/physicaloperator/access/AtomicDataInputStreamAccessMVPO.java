@@ -76,9 +76,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype " + uri);
 			}
-			else{
-				this.dataReader[i++] = handler;
-			}
+            this.dataReader[i++] = handler;
 			
 //			if (uri.equals("Integer")) {
 //				this.dataReader[i++] = new IntegerHandler();
