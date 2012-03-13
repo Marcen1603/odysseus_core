@@ -150,7 +150,7 @@ public class WorkingMemory {
 		return this.objects;
 	}
 
-	private boolean ruleMatches(Object o, IRule<?, ?> rule) {
+	private static boolean ruleMatches(Object o, IRule<?, ?> rule) {
 		Class<?> pt = rule.getConditionClass();
 		LoggerSystem.printlog(Accuracy.TRACE, "\tChecking object (\"" + o + "\") if its type is an instance of the rule type: " + pt.getCanonicalName() + "...");
 		if (pt.isInstance(o)) {
