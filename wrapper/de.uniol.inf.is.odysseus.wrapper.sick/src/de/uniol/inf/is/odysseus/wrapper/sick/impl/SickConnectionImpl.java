@@ -82,9 +82,8 @@ public class SickConnectionImpl implements SickConnection {
 		public boolean isConnected() {
 			if (this.channel != null) {
 				return this.channel.isConnected();
-			} else {
-				return false;
 			}
+            return false;
 		}
 
 		private void onClose() {
@@ -380,13 +379,11 @@ public class SickConnectionImpl implements SickConnection {
 				// this.background.getDistance(index)){
 				if (value > 5999f || value > this.background.getDistance(index)) {
 					return 0f;
-				} else {
-					return value;
 				}
+                return value;
 
-			} else {
-				return value;
 			}
+            return value;
 		}
 	}
 
