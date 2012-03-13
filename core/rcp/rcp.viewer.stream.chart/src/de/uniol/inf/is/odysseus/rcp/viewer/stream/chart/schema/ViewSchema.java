@@ -69,7 +69,7 @@ public class ViewSchema<T> {
 
 	}
 
-	private boolean isAllowedDataType(SDFDatatype sdfDatatype) {
+	private static boolean isAllowedDataType(SDFDatatype sdfDatatype) {
 		return ViewableDatatypeRegistry.getInstance().isAllowedDataType(sdfDatatype);
 	}
 

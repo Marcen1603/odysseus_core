@@ -178,7 +178,7 @@ public class ChangeSettingsDialog extends TitleAreaDialog {
 		tbl_editor.setEditor(textEditor, item, 1);
 	}
 
-	private void createCheckBoxField(Table table, TableItem item, final Entry<MethodSetting, Object> entry) {
+	private static void createCheckBoxField(Table table, TableItem item, final Entry<MethodSetting, Object> entry) {
 		Button check = new Button(table, SWT.CHECK);
 		Boolean value = (Boolean) entry.getValue();
 		check.setData(value);
