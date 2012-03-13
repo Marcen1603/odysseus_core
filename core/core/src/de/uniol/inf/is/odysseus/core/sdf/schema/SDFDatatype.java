@@ -181,9 +181,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public String getQualName() {
 		if (super.getQualName() != null && super.getQualName().length() > 0) {
 			return super.getQualName();
-		} else {
-			return getURI();
 		}
+        return getURI();
 	}
 
 	@Override
@@ -284,9 +283,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public int getSubattributeCount() {
 		if (this.schema == null) {
 			return 0;
-		} else {
-			return this.schema.size();
 		}
+        return this.schema.size();
 	}
 
 	public static SDFDatatype min(SDFDatatype left, SDFDatatype right) {

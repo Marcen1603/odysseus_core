@@ -41,9 +41,8 @@ public class SDFMetaAttribute extends SDFAttribute {
 				return true;
 			}
 			return false;
-		}else{
-			return false;
-		}		
+		}
+        return false;		
 	}
 	
 	@Override

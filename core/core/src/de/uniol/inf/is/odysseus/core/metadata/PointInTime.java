@@ -152,21 +152,19 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 				return true;
 			}
 			return false;
-		} else {
-			if (right.isInfinite) {
-				return false;
-			}
-			return (left.point == right.point);
 		}
+        if (right.isInfinite) {
+        	return false;
+        }
+        return (left.point == right.point);
 	}
 
 	public static PointInTime min(PointInTime left, PointInTime right) {
 		if (left != null && right != null) {
 			if (before(left, right)) {
 				return left;
-			} else {
-				return right;
 			}
+            return right;
 		}
 		if (left != null) {
 			return left;
@@ -181,9 +179,8 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 		if (left != null && right != null) {
 			if (before(left, right)) {
 				return right;
-			} else {
-				return left;
 			}
+            return left;
 		}
 		if (left != null) {
 			return left;
@@ -198,29 +195,26 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	public int compareTo(PointInTime toCompare) {
 		if (equals(toCompare)) {
 			return 0;
-		} else {
-			if (before(this, toCompare)) {
-				return -1;
-			}
-			return 1;
 		}
+        if (before(this, toCompare)) {
+        	return -1;
+        }
+        return 1;
 	}
 
 	@Override
 	public String toString() {
 		if (isInfinite()) {
 			return "oo";
-		} else {
-			return ""+getMainPoint();
 		}
+        return ""+getMainPoint();
 	}
 
 	public String toString(PointInTime baseTime) {
 		if (isInfinite()) {
 			return "oo";
-		} else {
-			return ""+(getMainPoint() - baseTime.getMainPoint());
 		}
+        return ""+(getMainPoint() - baseTime.getMainPoint());
 	}
 
 	@Override

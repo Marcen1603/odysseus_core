@@ -288,9 +288,8 @@ public class SDFAttribute extends SDFElement implements
 	public String toString() {
 		if (getSourceName() != null) {
 			return getSourceName() + "." + getAttributeName();
-		} else {
-			return getAttributeName();
 		}
+        return getAttributeName();
 	}
 
 	/**
