@@ -82,7 +82,7 @@ public class SensorRegistryService extends WebserviceServer {
 		}
 	}
 
-	private String buildParamList(SensorSchema schema) {
+	private static String buildParamList(SensorSchema schema) {
 		String s = "";
 		String sep = "";
 		for (SensorAttribute a : schema.getAttributes()) {
