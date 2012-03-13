@@ -96,8 +96,8 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 		int roiWidth = (int) (width / grid.cellsize);
 		int roiDepth = (int) (depth / grid.cellsize);
 
-		final int roiX = (int) Math.max(globalGridCenterX - (roiWidth / 2), 0);
-		final int roiY = (int) Math.max(globalGridCenterY - (roiDepth / 2), 0);
+		final int roiX = Math.max(globalGridCenterX - (roiWidth / 2), 0);
+		final int roiY = Math.max(globalGridCenterY - (roiDepth / 2), 0);
 
 		roiWidth = (roiX + roiWidth) > grid.width ? grid.width - roiX
 				: roiWidth;
