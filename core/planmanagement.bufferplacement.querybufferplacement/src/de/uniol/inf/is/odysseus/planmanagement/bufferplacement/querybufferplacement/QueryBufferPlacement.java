@@ -56,7 +56,7 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 		if (!(sub.getTarget() instanceof IBuffer)){
 			sub.getTarget().unsubscribeFromSource((ISource) source, sub.getSinkInPort(),
 					sub.getSourceOutPort(), sub.getSchema());
-			buffer.subscribeToSource((ISource)source, sub.getSinkInPort(), 0, sub.getSchema());
+			buffer.subscribeToSource(source, sub.getSinkInPort(), 0, sub.getSchema());
 			sub.getTarget().subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(),
 					sub.getSchema());
 			}
