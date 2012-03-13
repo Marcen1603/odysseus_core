@@ -291,7 +291,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 			for (int i = 0; i < start.getSchemaIndices().size(); i++) {
 				schemaIndices.push(start.getSchemaIndex(i));
 
-				tupleIndices.push(new TupleIndex((RelationalTuple<?>) parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
+				tupleIndices.push(new TupleIndex(parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
 				if (parent instanceof RelationalTuple)
 					parent = ((RelationalTuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
 				else
@@ -360,7 +360,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
 					parent = tuple;
 
 				if (parent instanceof RelationalTuple) {
-					tupleIndices.push(new TupleIndex((RelationalTuple<?>) parent, entry.index, schemaIndices.peek().getAttribute()));
+					tupleIndices.push(new TupleIndex(parent, entry.index, schemaIndices.peek().getAttribute()));
 				} else {
 					// something wrong
 					throw new RuntimeException("Programming error");

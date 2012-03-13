@@ -348,7 +348,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	 *            Attributbelegung des neuen Tuples
 	 */
 	public RelationalTuple(Object[] attributes) {
-		this.attributes = (Object[]) attributes.clone();
+		this.attributes = attributes.clone();
 		// calcSize();
 	}
 

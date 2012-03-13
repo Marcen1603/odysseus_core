@@ -34,7 +34,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 			if(this.expression.getAllAttributes().get(i).getDatatype().getURI().equalsIgnoreCase("String") &&
 					vars.get(i).getAcceptedTypes().length == 1 ){ 
 				if(vars.get(i).getAcceptedTypes()[0].isNumeric()){
-					values[i]=(Double)Double.parseDouble((String)input.getAttribute(this.attributePositions[i]));
+					values[i]=Double.parseDouble((String)input.getAttribute(this.attributePositions[i]));
 				}
 				else{
 					values[i] = input.getAttribute(this.attributePositions[i]);
