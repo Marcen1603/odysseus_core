@@ -59,7 +59,8 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 		return (Boolean) this.expression.getValue();
 	}
 	
-	public TypeSafeRelationalPredicate clone(){
+	@Override
+    public TypeSafeRelationalPredicate clone(){
 		return new TypeSafeRelationalPredicate(this);
 	}
 }
