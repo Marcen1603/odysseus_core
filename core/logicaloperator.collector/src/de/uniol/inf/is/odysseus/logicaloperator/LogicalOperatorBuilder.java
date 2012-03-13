@@ -87,7 +87,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			removeBundle(event.getBundle());
 			break;
 		default:
-			;
+			break;
 		}
 	}
 
@@ -110,9 +110,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 				@SuppressWarnings("rawtypes")
 				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
 						bundle, curURL);
-				if (classObject == null) {
-					continue;
-				} else {
+				if (classObject != null) {
 					String nameToRemove = classObject.getName();
 
 					if (classObject
@@ -199,18 +197,14 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			if (curURL.toString().contains("/logicaloperator")) {
 				Class<? extends ILogicalOperator> classObject = loadLogicalOperatorClass(
 						bundle, curURL);
-				if (classObject == null) {
-					continue;
-				} else {
+				if (classObject != null) {
 					addLogicalOperator(classObject);
 				}
 			} else if (curURL.toString().contains("/udf")) {
 				@SuppressWarnings("rawtypes")
 				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
 						bundle, curURL);
-				if (classObject == null) {
-					continue;
-				} else {
+				if (classObject != null) {
 					String nameToRegister = classObject.getName();
 
 					if (classObject
