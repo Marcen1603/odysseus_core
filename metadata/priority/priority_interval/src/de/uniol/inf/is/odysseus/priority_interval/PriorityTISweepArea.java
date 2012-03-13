@@ -140,9 +140,8 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 						element.getMetadata())) {
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
-					} else {
-						continue;
 					}
+                    continue;
 				}
 				if (getQueryPredicate().evaluate(element, next)) {
 					result.add(next);
@@ -159,9 +158,8 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 						element.getMetadata())) {
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
-					} else {
-						continue;
 					}
+                    continue;
 				}
 				if (getQueryPredicate().evaluate(next, element)) {
 					result.add(next);
