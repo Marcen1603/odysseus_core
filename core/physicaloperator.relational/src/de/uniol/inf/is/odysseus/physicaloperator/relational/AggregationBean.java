@@ -330,7 +330,7 @@ public class AggregationBean extends
 	 * @param positions
 	 * @return
 	 */
-	private Object[] getAttributes(RelationalTuple<?> in, int[] positions) {
+	private static Object[] getAttributes(RelationalTuple<?> in, int[] positions) {
 		Object[] attributes = new Object[positions.length];
 		for (int i = 0; i < positions.length; ++i) {
 			attributes[i] = in.getAttribute(positions[i]);
