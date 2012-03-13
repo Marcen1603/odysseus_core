@@ -36,9 +36,8 @@ public class JitterNoise implements INoise {
 		double plusMinus = (rand.nextDouble() * schwankung)/2;
 		if(rand.nextBoolean()){
 			return value+plusMinus;
-		}else{
-			return value-plusMinus;
 		}
+        return value-plusMinus;
 	}
 
 }
