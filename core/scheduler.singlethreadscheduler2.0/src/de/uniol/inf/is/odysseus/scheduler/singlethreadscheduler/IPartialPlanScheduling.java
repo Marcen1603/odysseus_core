@@ -25,7 +25,8 @@ public interface IPartialPlanScheduling extends IClone{
 
 	int planCount();
 
-	IPartialPlanScheduling clone();
+	@Override
+    IPartialPlanScheduling clone();
 
 	IScheduling nextPlan();
 
