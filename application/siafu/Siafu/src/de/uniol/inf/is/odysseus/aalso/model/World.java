@@ -250,19 +250,16 @@ public class World {
 		Map<String, InputStream> fileList = simData.getPlaceFiles();
 		Iterator<String> listIt = fileList.keySet().iterator();
 
-		int total = 0;
-
 		while (listIt.hasNext()) {
-			String type = (String) listIt.next();
+			String type = listIt.next();
 			ArrayList<Position> placePoints = readPlacePoints(fileList
 					.get(type));
 			Iterator<Position> it = placePoints.iterator();
-			total += placePoints.size();
 			Controller.getProgress()
 					.reportPlacesFound(type, placePoints.size());
 
 			while (it.hasNext()) {
-				Position pos = (Position) it.next();
+				Position pos = it.next();
 				Place place;
 				try {
 					place = new Place(type, pos, this);
@@ -391,9 +388,9 @@ public class World {
 
 		if (p == null) {
 			throw new AgentNotFoundException(name);
-		} else {
-			return p;
-		}
+		} 
+		
+		return p;
 	}
 
 	/**
@@ -510,12 +507,12 @@ public class World {
 		Iterator<? extends Trackable> candidateIt = candidates.iterator();
 
 		while ((target == null) && candidateIt.hasNext()) {
-			candidate = (Trackable) candidateIt.next();
+			candidate = candidateIt.next();
 
 			if ((!visibleOnly || candidate.isVisible())
 					&& candidate.getPos().isNear(pos, distance)) {
 				target = candidate;
-				if (visibleOnly && !((Trackable) candidate).isVisible()) {
+				if (visibleOnly && !candidate.isVisible()) {
 					target = null;
 				}
 			}
@@ -523,9 +520,9 @@ public class World {
 
 		if (target == null) {
 			throw new NothingNearException();
-		} else {
-			return target;
-		}
+		} 
+		
+		return target;
 	}
 
 	/**
@@ -595,7 +592,7 @@ public class World {
 		Iterator<? extends Trackable> candidatesIt = candidates.iterator();
 
 		while (candidatesIt.hasNext()) {
-			candidate = (Trackable) candidatesIt.next();
+			candidate = candidatesIt.next();
 
 			if ((!visibleOnly || candidate.isVisible())
 					&& candidate.getPos().isNear(pos, distance)) {
@@ -605,9 +602,8 @@ public class World {
 
 		if (targets.isEmpty()) {
 			throw new NothingNearException();
-		} else {
-			return targets;
-		}
+		} 
+		return targets;
 	}
 
 	/**
@@ -677,7 +673,7 @@ public class World {
 		Iterator<Place> it = places.iterator();
 
 		while (it.hasNext()) {
-			Place p = (Place) it.next();
+			Place p = it.next();
 
 			if (p.getType().equals(type)) {
 				selection.add(p);
@@ -735,7 +731,7 @@ public class World {
 			throw new PlacesTypeIsEmptyException(type);
 		}
 
-		return (Place) typedPlaces.get(rand.nextInt(typedPlaces.size()));
+		return typedPlaces.get(rand.nextInt(typedPlaces.size()));
 	}
 
 	/**
@@ -848,7 +844,7 @@ public class World {
 		people = new HashMap<String, Agent>();
 
 		try {
-			agentModel = (BaseAgentModel) simData.getAgentModelClass()
+			agentModel = simData.getAgentModelClass()
 					.getConstructor(new Class[] { this.getClass() })
 					.newInstance(new Object[] { this });
 		} catch (Exception e) {
@@ -918,7 +914,7 @@ public class World {
 	 */
 	private void createPlaces() {
 		try {
-			worldModel = (BaseWorldModel) simData.getWorldModelClass()
+			worldModel = simData.getWorldModelClass()
 					.getConstructor(new Class[] { this.getClass() })
 					.newInstance(new Object[] { this });
 
@@ -939,7 +935,7 @@ public class World {
 		overlays = new TreeMap<String, Overlay>();
 
 		try {
-			contextModel = (BaseContextModel) simData.getContextModelClass()
+			contextModel = simData.getContextModelClass()
 					.getConstructor(new Class[] { this.getClass() })
 					.newInstance(new Object[] { this });
 		} catch (Exception e) {
