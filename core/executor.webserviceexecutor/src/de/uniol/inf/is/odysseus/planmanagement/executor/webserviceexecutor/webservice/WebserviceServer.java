@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.Execu
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
@@ -83,22 +84,23 @@ public class WebserviceServer {
         return new StringResponse(null, false);
 	}
 
-	public Response addQuery(
+	public IntegerCollectionResponse addQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser,
 			@WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,
-					transCfg);
-			return new Response(true);
+			IntegerCollectionResponse response = new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,
+					transCfg), true);
+			;
+			return response;
 		} catch (WebserviceException e) {
 			e.printStackTrace();
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		}
-		return new Response(false);
+		return new IntegerCollectionResponse(null, false);
 	}
 
 	public StringListResponse getInstalledSources(
