@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class StandardAC implements IAdmissionControl, IPlanModificationListener {
 
-	private static final long ESTIMATION_TOO_OLD = 3000; // ms
+	private static final long ESTIMATION_TOO_OLD_MILLIS = 3000;
 
 	private Map<String, ICostModel> costModels;
 	private ICostModel selectedCostModel;
@@ -75,7 +75,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			Long lastTime = timestamps.get(query);
 
 			// last estimation too long before?
-			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD) {
+			if (System.currentTimeMillis() - lastTime > ESTIMATION_TOO_OLD_MILLIS) {
 				queryCost = estimateCost(getAllOperators(query), false);
 				timestamps.put(query, System.currentTimeMillis());
 			} else {
@@ -174,7 +174,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		return operators;
 	}
 
-	private List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
+	private static List<IPhysicalOperator> getAllOperators(IPhysicalQuery query) {
 		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>();
 		// filter
 		for (IPhysicalOperator operator : query.getPhysicalChilds()) {
