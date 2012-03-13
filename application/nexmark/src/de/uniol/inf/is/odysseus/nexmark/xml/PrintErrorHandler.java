@@ -70,7 +70,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints the location of the error.
 	 */
-	private void printLocation(SAXParseException e) {
+	private static void printLocation(SAXParseException e) {
 		if (e.getPublicId() != null)
 			System.err.print(e.getPublicId() + " ");
 		if (e.getSystemId() != null)
@@ -85,7 +85,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints the message of the given exception.
 	 */
-	private void printMessage(SAXException e) {
+	private static void printMessage(SAXException e) {
 		if (e.getMessage() != null)
 			System.err.println(e.getMessage());
 	}
@@ -93,7 +93,7 @@ public class PrintErrorHandler implements ErrorHandler {
 	/**
 	 * Prints the stack trace of the given exception and its nested exceptions.
 	 */
-	private void printStackTrace(SAXException e) {
+	private static void printStackTrace(SAXException e) {
 		Exception ex = e;
 		while (ex != null) {
 			ex.printStackTrace();
