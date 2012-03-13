@@ -47,9 +47,8 @@ public class RelationalStdDev
 					1);
 			returnVal.setAttribute(0, stddev);
 			return returnVal;
-		} else {
-			return null;
 		}
+        return null;
 	}
 
 }

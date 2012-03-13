@@ -86,8 +86,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 				}
 			}
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 }

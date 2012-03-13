@@ -115,9 +115,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				return false;
 			}
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 }
