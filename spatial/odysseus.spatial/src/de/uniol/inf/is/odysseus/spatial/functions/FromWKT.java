@@ -56,9 +56,7 @@ public class FromWKT extends AbstractFunction<Geometry> {
 		if(argPos > this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)

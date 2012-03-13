@@ -58,9 +58,7 @@ public class AsMultiPoint extends AbstractFunction<Geometry> {
 		if(argPos > this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)
@@ -79,8 +77,7 @@ public class AsMultiPoint extends AbstractFunction<Geometry> {
 		Geometry g = (Geometry) this.getInputValue(0);
 		if (g instanceof MultiPoint)
 			return (MultiPoint) g.clone();
-		else
-			return g.getFactory().createMultiPoint(new Coordinate[0]);
+        return g.getFactory().createMultiPoint(new Coordinate[0]);
 	}
 
 	/* (non-Javadoc)

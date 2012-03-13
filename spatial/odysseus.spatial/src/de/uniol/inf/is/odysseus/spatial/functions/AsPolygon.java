@@ -58,9 +58,8 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 		}
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		} else {
-			return accTypes;
 		}
+        return accTypes;
 	}
 
 	/*
@@ -83,8 +82,7 @@ public class AsPolygon extends AbstractFunction<Geometry> {
 		Geometry g = (Geometry) this.getInputValue(0);
 		if (g instanceof Polygon)
 			return (Polygon) g.clone();
-		else
-			return g.getFactory().createPolygon(null, null);
+        return g.getFactory().createPolygon(null, null);
 	}
 
 	/*

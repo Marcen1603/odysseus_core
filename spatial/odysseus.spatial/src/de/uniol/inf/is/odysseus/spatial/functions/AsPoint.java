@@ -59,9 +59,8 @@ public class AsPoint extends AbstractFunction<Geometry> {
 		}
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		} else {
-			return accTypes;
 		}
+        return accTypes;
 	}
 
 	/*
@@ -84,8 +83,7 @@ public class AsPoint extends AbstractFunction<Geometry> {
 		Geometry g = (Geometry) this.getInputValue(0);
 		if (g instanceof Point)
 			return (Point) g.clone();
-		else
-			return g.getFactory().createPoint(new Coordinate(null));
+        return g.getFactory().createPoint(new Coordinate(null));
 	}
 
 	/*

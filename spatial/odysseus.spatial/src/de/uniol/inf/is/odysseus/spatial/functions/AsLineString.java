@@ -58,9 +58,7 @@ public class AsLineString extends AbstractFunction<Geometry> {
 		if(argPos > this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)
@@ -79,8 +77,7 @@ public class AsLineString extends AbstractFunction<Geometry> {
 		Geometry g = (Geometry) this.getInputValue(0);
 		if (g instanceof LineString)
 			return (LineString) g.clone();
-		else
-			return g.getFactory().createLineString(new Coordinate[0]);
+        return g.getFactory().createLineString(new Coordinate[0]);
 	}
 
 	/* (non-Javadoc)

@@ -57,9 +57,7 @@ public class AsMultiPolygon extends AbstractFunction<Geometry> {
 		if(argPos > this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)
@@ -78,8 +76,7 @@ public class AsMultiPolygon extends AbstractFunction<Geometry> {
 		Geometry g = (Geometry) this.getInputValue(0);
 		if (g instanceof MultiPolygon)
 			return (MultiPolygon) g.clone();
-		else
-			return g.getFactory().createMultiPolygon(null);
+        return g.getFactory().createMultiPolygon(null);
 	}
 
 	/* (non-Javadoc)
