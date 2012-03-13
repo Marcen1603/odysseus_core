@@ -26,7 +26,7 @@ public abstract class Bid implements Serializable, IBid {
 	private int bidValue;
 
 	public Bid() {
-	};
+	}
 
 	public Bid(Date date, String peerId, int bidValue) {
 		this.date = date;
