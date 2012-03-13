@@ -185,7 +185,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
         return elems.size();
     }
 
-    private Coordinate[] extendBoundingBox(Coordinate[] boundingBox, Coordinate from, Coordinate to) {
+    private static Coordinate[] extendBoundingBox(Coordinate[] boundingBox, Coordinate from, Coordinate to) {
         Coordinate leftBottom = boundingBox[0];
         Coordinate leftTop = boundingBox[1];
         Coordinate rightTop = boundingBox[2];
@@ -242,7 +242,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      *            The coordinate to check
      * @return true if the coordinate is in the grid else false
      */
-    private boolean isInBoundingBox(double x1, double y1, double x2, double y2,
+    private static boolean isInBoundingBox(double x1, double y1, double x2, double y2,
             Coordinate coordinate) {
         return ((coordinate.x >= x1) && (coordinate.x <= x2) && (coordinate.y >= y1) && (coordinate.y <= y2));
     }
@@ -264,7 +264,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      *            The second {@link Coordinate} of the line
      * @return The denominator
      */
-    private double getDenominator(double x1, double y1, double x2, double y2, Coordinate from,
+    private static double getDenominator(double x1, double y1, double x2, double y2, Coordinate from,
             Coordinate to) {
         return ((to.y - from.y) * (x2 - x1)) - ((to.x - from.x) * (y2 - y1));
     }
@@ -290,7 +290,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      *            The y-coordinate of the second point of the line
      * @return The first numerator
      */
-    private double getNumeratorA(double x1, double y1, double x2, double y2, double x3, double y3,
+    private static double getNumeratorA(double x1, double y1, double x2, double y2, double x3, double y3,
             double x4, double y4) {
         return ((x4 - x3) * (y1 - y3)) - ((y4 - y3) * (x1 - x3));
     }
@@ -312,7 +312,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      *            The y-coordinate of the first point of the line
      * @return The second numerator
      */
-    private double getNumeratorB(double x1, double y1, double x2, double y2, double x3, double y3) {
+    private static double getNumeratorB(double x1, double y1, double x2, double y2, double x3, double y3) {
         return ((x2 - x1) * (y1 - y3)) - ((y2 - y1) * (x1 - x3));
     }
 
@@ -335,7 +335,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      * @return true if the line formed by the coordinates intersects with the bounding box else
      *         false
      */
-    private boolean intersects(double x1, double y1, double x2, double y2, Coordinate from,
+    private static boolean intersects(double x1, double y1, double x2, double y2, Coordinate from,
             Coordinate to) {
         // Check bottom left to top left segment for intersection
         double denominator = getDenominator(x1, y1, x1, y2, from, to);
@@ -376,7 +376,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
      *            The second numerator
      * @return
      */
-    private boolean isIntersection(double denominator, double numeratorA, double numeratorB) {
+    private static boolean isIntersection(double denominator, double numeratorA, double numeratorB) {
         double factorA = Math.abs(numeratorA / denominator);
         double factorB = Math.abs(numeratorB / denominator);
         if (((factorA >= 0) && (factorA <= 1)) && ((factorB >= 0) && (factorB <= 1))) {
