@@ -54,9 +54,7 @@ public class CosinusFunction extends AbstractFunction<Double> {
 		if(argPos > 1){
 			throw new IllegalArgumentException("cos has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 

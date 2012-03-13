@@ -51,9 +51,8 @@ public class GetAbsoluteValue extends AbstractFunction<Object>{
 		double d = (Double)getInputValue(0);
 		if(d < 0) {
 			return (d*(-1));
-		} else {
-			return d;
 		}
+        return d;
 	}
 
 	/*
@@ -74,9 +73,7 @@ public class GetAbsoluteValue extends AbstractFunction<Object>{
 		if(argPos > 0){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }

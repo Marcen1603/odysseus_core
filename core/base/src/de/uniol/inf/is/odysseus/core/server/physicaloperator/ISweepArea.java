@@ -35,9 +35,8 @@ public interface ISweepArea<T> extends Iterable<T> {
 		public Order inverse() {
 			if (this.ordinal() == LeftRight.ordinal()) {
 				return RightLeft;
-			} else {
-				return LeftRight;
 			}
+            return LeftRight;
 		}
 
 		public static Order fromOrdinal(int i) {

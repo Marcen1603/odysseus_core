@@ -63,9 +63,7 @@ public class IfFunction extends AbstractFunction<Object> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("abs has only 1 argument.");
 		}
-		else{			
-			return accTypes[argPos];
-		}
+        return accTypes[argPos];
 	}
 
 }

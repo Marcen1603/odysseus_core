@@ -81,12 +81,11 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
 			Variable var = symbolTable.get(identifier);
 			var.restrictAcceptedTypes((SDFDatatype[])data);
 			return var;
-		} else {
-			Variable variable = new Variable(identifier);
-			variable.setAcceptedTypes((SDFDatatype[])data);
-			symbolTable.put(identifier, variable);
-			return variable;
-		}	
+		}
+        Variable variable = new Variable(identifier);
+        variable.setAcceptedTypes((SDFDatatype[])data);
+        symbolTable.put(identifier, variable);
+        return variable;	
 	}
 
 	@Override

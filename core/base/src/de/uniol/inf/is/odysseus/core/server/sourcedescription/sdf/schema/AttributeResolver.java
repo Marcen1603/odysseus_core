@@ -91,9 +91,8 @@ public class AttributeResolver implements IAttributeResolver {
 					if (curAttribute.getAttributeName().equals(name)) {
 						if (result != null) {
 							throw new IllegalArgumentException("ambigiuous identifier: " + name);
-						} else {
-							result = curAttribute;
 						}
+                        result = curAttribute;
 					}
 				}
 			}
@@ -101,9 +100,8 @@ public class AttributeResolver implements IAttributeResolver {
 				if (curAttribute.getAttributeName().equals(name)) {
 					if (result != null) {
 						throw new IllegalArgumentException("ambigiuous identifier: " + name);
-					} else {
-						result = curAttribute;
 					}
+                    result = curAttribute;
 				}
 			}
 		} else {

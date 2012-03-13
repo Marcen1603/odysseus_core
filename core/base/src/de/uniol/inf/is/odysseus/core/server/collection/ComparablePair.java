@@ -33,9 +33,7 @@ public class ComparablePair<E1 extends Comparable<E1>, E2 extends Comparable<E2>
 		if(this.getE1().compareTo(other.getE1()) == 0){
 			return this.getE2().compareTo(other.getE2());
 		}
-		else{
-			return this.getE1().compareTo(other.getE1());
-		}
+        return this.getE1().compareTo(other.getE1());
 	}
 
 	

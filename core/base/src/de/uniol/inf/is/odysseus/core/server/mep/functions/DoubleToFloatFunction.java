@@ -40,9 +40,7 @@ public class DoubleToFloatFunction  extends AbstractFunction<Float> {
         if(argPos > 0){
             throw new IllegalArgumentException("doubleToFloat has only 1 argument.");
         }
-        else{
-            return accTypes;
-        }
+        return accTypes;
     }
 
 }

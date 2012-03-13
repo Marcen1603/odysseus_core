@@ -139,9 +139,8 @@ public class DescriptiveStatistics {
 		int pos = offset + count * i / 100;
 		if (count % 2 == 0) {
 			return (this.values[pos] + this.values[pos - 1]) / 2d;
-		} else {
-			return this.values[pos];
 		}
+        return this.values[pos];
 	}
 	
 	public void mergeValues(DescriptiveStatistics otherStats) {

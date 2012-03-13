@@ -49,9 +49,8 @@ public class ComplexPredicateHelper {
 		}
 		if (negatived) {
 			return new NotPredicate(pred);
-		} else {
-			return pred;
 		}
+        return pred;
 	}
 
 	public static List<IPredicate> splitPredicate(
@@ -108,16 +107,14 @@ public class ComplexPredicateHelper {
 	public static boolean contains(IPredicate oPred, IPredicate pred){
 		if (oPred instanceof OrPredicate){
 			return ((OrPredicate)oPred).contains(pred);
-		}else{
-			return false;
 		}
+        return false;
 	}
 
 	public static IPredicate getChild(IPredicate notPred) {
 		if (notPred instanceof NotPredicate){
 		return ((NotPredicate) notPred).getChild();
-		}else{
-			throw new IllegalArgumentException("Argument is not a NotPredicate");
 		}
+        throw new IllegalArgumentException("Argument is not a NotPredicate");
 	}
 }

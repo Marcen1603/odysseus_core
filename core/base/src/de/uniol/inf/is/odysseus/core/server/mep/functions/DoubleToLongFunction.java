@@ -54,8 +54,6 @@ public class DoubleToLongFunction extends AbstractFunction<Long> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("doubleToLong has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 }

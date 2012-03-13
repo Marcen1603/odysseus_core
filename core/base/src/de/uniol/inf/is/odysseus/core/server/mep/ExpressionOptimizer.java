@@ -197,14 +197,13 @@ public class ExpressionOptimizer {
 			if (function.getClass() == AndOperator.class) {
 				return isConstantPredicate(function.getArguments(), false) ? new Constant<Boolean>(
 						false, SDFDatatype.BOOLEAN) : function;
-			} else {
-				if (function.getClass() == OrOperator.class) {
-					return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
-							true, SDFDatatype.BOOLEAN) : function;
-				} else {
-					return function;
-				}
 			}
+            if (function.getClass() == OrOperator.class) {
+            	return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
+            			true, SDFDatatype.BOOLEAN) : function;
+            } else {
+            	return function;
+            }
 		}
 
 		private boolean isConstantPredicate(IExpression<?>[] iExpression,

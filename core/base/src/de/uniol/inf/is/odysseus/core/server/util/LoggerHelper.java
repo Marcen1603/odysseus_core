@@ -55,9 +55,8 @@ public class LoggerHelper {
 	public boolean isInfoEnabled() {
 		if (_logger != null) {
 			return _logger.isInfoEnabled();
-		} else {
-			return false;
 		}
+        return false;
 	}
 	
 	public void warn(String message){

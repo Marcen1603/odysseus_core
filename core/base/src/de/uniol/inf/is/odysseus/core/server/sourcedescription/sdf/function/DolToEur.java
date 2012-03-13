@@ -61,9 +61,7 @@ public class DolToEur extends AbstractFunction<Double> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("dolToEur has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 

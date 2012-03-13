@@ -54,9 +54,7 @@ public class CeilFunction extends AbstractFunction<Double> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("ceil has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 

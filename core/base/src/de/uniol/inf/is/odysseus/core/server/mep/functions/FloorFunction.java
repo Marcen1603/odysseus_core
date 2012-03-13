@@ -54,9 +54,7 @@ public class FloorFunction extends AbstractFunction<Double> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("floor has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }
