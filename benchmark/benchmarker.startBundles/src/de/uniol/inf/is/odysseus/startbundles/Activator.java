@@ -66,7 +66,7 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 	
-	private void startBundles(final BundleContext context) {
+	private static void startBundles(final BundleContext context) {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
