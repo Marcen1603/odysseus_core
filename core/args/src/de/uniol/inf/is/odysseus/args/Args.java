@@ -216,15 +216,14 @@ public class Args {
 		}
 		if (mandatoryParameters.isEmpty()) {
 			return optionalBuilder.toString();
-		} else {
-			if (isAllParametersMandatory()) {
-				return mandatoryBuilder.toString();
-			} else {
-				mandatoryBuilder.append('\n');
-				mandatoryBuilder.append(optionalBuilder);
-				return mandatoryBuilder.toString();
-			}
 		}
+        if (isAllParametersMandatory()) {
+        	return mandatoryBuilder.toString();
+        } else {
+        	mandatoryBuilder.append('\n');
+        	mandatoryBuilder.append(optionalBuilder);
+        	return mandatoryBuilder.toString();
+        }
 	}
 
 	private boolean isAllParametersMandatory() {
