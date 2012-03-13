@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.scars.operator.filter.po.FilterExpressionCovaria
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class TFilterExpressionCovarianceAORule extends AbstractTransformationRule<FilterExpressionCovarianceUpdateAO> {
 
 	@Override

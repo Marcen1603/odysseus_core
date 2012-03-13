@@ -35,7 +35,6 @@ public class TFilterExpressionEstimateAORule  extends AbstractTransformationRule
 		return 20;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(FilterExpressionEstimateUpdateAO operator,TransformationConfiguration config) {
 		System.out.print("CREATE Filter Expression Estimate PO...");

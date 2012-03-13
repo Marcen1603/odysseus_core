@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao.JDVEAccessMVAO;
 import de.uniol.inf.is.odysseus.scars.operator.jdveaccess.po.JDVEAccessMVPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<AccessAO>{
 
 	@Override

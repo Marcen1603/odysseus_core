@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.scars.operator.sink.ao.JDVESinkAO;
 import de.uniol.inf.is.odysseus.scars.operator.sink.po.JDVESinkPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class TJDVESinkAORule extends AbstractTransformationRule<JDVESinkAO>{
 
 	@Override
