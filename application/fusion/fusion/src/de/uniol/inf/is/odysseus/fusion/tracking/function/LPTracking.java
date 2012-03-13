@@ -67,7 +67,7 @@ public class LPTracking extends AbstractFunction<Integer> {
 		int last = 0;
 		int candidates = 0;
 		for (int i = 0; i < list.size(); i++) {
-			Geometry geometry2 = (Geometry) list.get(i);
+			Geometry geometry2 = list.get(i);
 
 			double distance = currentPolygon.distance(geometry2);
 			if (distance < mDistance) {
