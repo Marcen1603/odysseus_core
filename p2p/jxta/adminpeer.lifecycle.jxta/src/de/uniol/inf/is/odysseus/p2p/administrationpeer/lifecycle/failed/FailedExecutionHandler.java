@@ -56,52 +56,51 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F>{
 				Arrays.asList(Lifecycle.FAILED, Lifecycle.FAILED)) > 0) {
 			cb.changeState(Lifecycle.TERMINATED);
 			return;
-		} else {
-			if (priorLifecycle == Lifecycle.NEW) {
-				if (occurence(history,
-						Arrays.asList(priorLifecycle, Lifecycle.FAILED)) > 0) {
-					cb.changeState(
-							Lifecycle.TERMINATED);
-				}
-			} else if (priorLifecycle == Lifecycle.SPLIT) {
-				if (occurence(history,
-						Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
-					cb.changeState(Lifecycle.SPLIT);
-				} else {
-					cb.changeState(
-							Lifecycle.TERMINATED);
-				}
-
-			} else if (priorLifecycle == Lifecycle.DISTRIBUTION) {
-				if (occurence(history,
-						Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
-					cb.changeState(
-							Lifecycle.DISTRIBUTION);
-				} else {
-					cb.changeState(
-							Lifecycle.TERMINATED);
-				}
-
-			} else if (priorLifecycle == Lifecycle.GRANTED) {
-				if (occurence(history,
-						Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
-					cb.changeState(
-							Lifecycle.DISTRIBUTION);
-				} else {
-					cb.changeState(
-							Lifecycle.TERMINATED);
-				}
-			} else if (priorLifecycle == Lifecycle.RUNNING) {
-				if (occurence(history,
-						Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
-					cb.changeState(
-							Lifecycle.DISTRIBUTION);
-				} else {
-					cb.changeState(
-							Lifecycle.TERMINATED);
-				}
-			}
 		}
+        if (priorLifecycle == Lifecycle.NEW) {
+        	if (occurence(history,
+        			Arrays.asList(priorLifecycle, Lifecycle.FAILED)) > 0) {
+        		cb.changeState(
+        				Lifecycle.TERMINATED);
+        	}
+        } else if (priorLifecycle == Lifecycle.SPLIT) {
+        	if (occurence(history,
+        			Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
+        		cb.changeState(Lifecycle.SPLIT);
+        	} else {
+        		cb.changeState(
+        				Lifecycle.TERMINATED);
+        	}
+
+        } else if (priorLifecycle == Lifecycle.DISTRIBUTION) {
+        	if (occurence(history,
+        			Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
+        		cb.changeState(
+        				Lifecycle.DISTRIBUTION);
+        	} else {
+        		cb.changeState(
+        				Lifecycle.TERMINATED);
+        	}
+
+        } else if (priorLifecycle == Lifecycle.GRANTED) {
+        	if (occurence(history,
+        			Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
+        		cb.changeState(
+        				Lifecycle.DISTRIBUTION);
+        	} else {
+        		cb.changeState(
+        				Lifecycle.TERMINATED);
+        	}
+        } else if (priorLifecycle == Lifecycle.RUNNING) {
+        	if (occurence(history,
+        			Arrays.asList(priorLifecycle, Lifecycle.FAILED)) < 2) {
+        		cb.changeState(
+        				Lifecycle.DISTRIBUTION);
+        	} else {
+        		cb.changeState(
+        				Lifecycle.TERMINATED);
+        	}
+        }
 
 	}
 
