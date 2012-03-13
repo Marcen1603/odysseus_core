@@ -69,7 +69,7 @@ public class TestUtil
       if (obj instanceof MVRelationalTuple<?>)
       {
         currTuple = (MVRelationalTuple<?>) obj;
-        meta = (IProbability) currTuple.getMetadata();
+        meta = currTuple.getMetadata();
         if (meta != null)
         {
           matrix = meta.getCovariance();

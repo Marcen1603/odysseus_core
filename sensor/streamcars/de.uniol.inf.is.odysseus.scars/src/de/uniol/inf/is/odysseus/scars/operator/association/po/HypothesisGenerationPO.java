@@ -147,7 +147,7 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 		association[0] = TupleIndexPath.fromSchemaIndexPath(timePathFromScannedData, scannedObject).getTupleObject();
 
 		// get scanned objects
-		TupleIndexPath path = TupleIndexPath.fromSchemaIndexPath(carsFromscannedData, (MVRelationalTuple<M>) scannedObject);
+		TupleIndexPath path = TupleIndexPath.fromSchemaIndexPath(carsFromscannedData, scannedObject);
 		association[1] = replaceMetaDataNames(path, this.sourceScannedObjListPath, this.outputScannedObjListPath);
 		
 
