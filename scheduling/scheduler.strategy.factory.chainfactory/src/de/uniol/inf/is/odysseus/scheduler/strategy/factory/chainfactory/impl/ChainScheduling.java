@@ -87,7 +87,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		return execList;
 	}
 
-	private OperatorPoint calcVirtOpCosts(OperatorPoint lastPoint, List<ISource<?>> p) {
+	private static OperatorPoint calcVirtOpCosts(OperatorPoint lastPoint, List<ISource<?>> p) {
 		double t = lastPoint.t;
 		double s = lastPoint.s;
 		if (p != null) {
@@ -105,7 +105,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		return ret;
 	}
 	
-	private void calculateProgressCharts(List<List<IIterableSource<?>>> pathes,
+	private static void calculateProgressCharts(List<List<IIterableSource<?>>> pathes,
 			Map<IIterableSource<?>, List<ISource<?>>> virtualOps,
 			Map<List<IIterableSource<?>>, OperatorPoint[]> progressCharts) {
 
@@ -148,7 +148,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		calculateExecutionList(getPlan());
 	}
 	
-	private void calculateLowerEnvelopes(List<List<IIterableSource<?>>> pathes,
+	private static void calculateLowerEnvelopes(List<List<IIterableSource<?>>> pathes,
 			Map<List<IIterableSource<?>>, OperatorPoint[]> progressCharts) {
 		
 		// Anm. MG: Wo hier die Hülle berechnet wird, ist mir noch nicht ganz klar ...
