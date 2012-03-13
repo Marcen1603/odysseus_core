@@ -111,29 +111,28 @@ public class OdysseusBenchmarkUtil extends Thread {
 							for (int i = 0; i < Integer.parseInt(benchmarkParam.getNumberOfRuns()); i++) {
 								if (isAbortProzess()) {
 									return;
-								} else {
-									Collection<IBenchmarkResult<Object>> results = iBenchmark.runBenchmark();
-									String filename = folderName + File.separator + "result" + (i + 1) + ".xml";
-									Serializer serializer = new Persister();
-									File file = new File(filename);
-									FileOutputStream oStream = new FileOutputStream(file);
-									for (IBenchmarkResult<?> result : results) {
-										serializer.write(result, oStream);
-									}
-
-									if (benchmarkParam.isMemoryUsage()) {
-										String memFile = filename.replaceAll(".xml", "_memory.xml");
-										serializer.write(iBenchmark.getMemUsageStatistics(), new File(memFile));
-									}
-									System.out.println("Benchmarkrun erfolgreich");
-									BenchmarkStoreUtil.loadResultsOfGroupAndBenchmark(benchmark);
-									Display.getDefault().asyncExec(new Runnable() {
-										@Override
-                                        public void run() {
-											ProjectView.getDefault().refresh();
-										}
-									});
 								}
+                                Collection<IBenchmarkResult<Object>> results = iBenchmark.runBenchmark();
+                                String filename = folderName + File.separator + "result" + (i + 1) + ".xml";
+                                Serializer serializer = new Persister();
+                                File file = new File(filename);
+                                FileOutputStream oStream = new FileOutputStream(file);
+                                for (IBenchmarkResult<?> result : results) {
+                                	serializer.write(result, oStream);
+                                }
+
+                                if (benchmarkParam.isMemoryUsage()) {
+                                	String memFile = filename.replaceAll(".xml", "_memory.xml");
+                                	serializer.write(iBenchmark.getMemUsageStatistics(), new File(memFile));
+                                }
+                                System.out.println("Benchmarkrun erfolgreich");
+                                BenchmarkStoreUtil.loadResultsOfGroupAndBenchmark(benchmark);
+                                Display.getDefault().asyncExec(new Runnable() {
+                                	@Override
+                                    public void run() {
+                                		ProjectView.getDefault().refresh();
+                                	}
+                                });
 							}
 							fetchMetadataInformations(benchmark);
 							BenchmarkStoreUtil.storeBenchmark(benchmark);
