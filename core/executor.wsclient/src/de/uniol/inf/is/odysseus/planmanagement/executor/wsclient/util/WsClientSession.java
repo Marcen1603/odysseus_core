@@ -78,7 +78,7 @@ public class WsClientSession implements ISession {
 		return token;
 	}
 	
-	private String createToken() {
+	private static String createToken() {
 		SecureRandom random = new SecureRandom();
 		return new BigInteger(130, random).toString(32);
 	}
