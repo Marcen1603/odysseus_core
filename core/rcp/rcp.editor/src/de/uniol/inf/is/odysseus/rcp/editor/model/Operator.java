@@ -167,12 +167,7 @@ public class Operator implements Serializable {
 					listeners.firePropertyChange(PROPERTY_BUILD, null, null);
 					onBuild = false;
 					return;
-				} else {
-//					System.out.println("ERRORS :");
-//					for( Exception ex: builder.getErrors() ) {
-//						System.out.println(ex);
-//					}
-				}
+				} 
 			}
 			logicalOperator = null;
 		}
