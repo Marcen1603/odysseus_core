@@ -94,7 +94,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 			RelationalTuple keyTuple = s.restrict(this.insertRestrictList, true);
 			this.elements.put(keyTuple, new Pair(keyTuple, s));
 		}
-	};
+	}
 	
 	@Override
 	public Iterator<RelationalTuple<? extends ITimeInterval>> queryCopy(RelationalTuple<? extends ITimeInterval> element, Order order) {
