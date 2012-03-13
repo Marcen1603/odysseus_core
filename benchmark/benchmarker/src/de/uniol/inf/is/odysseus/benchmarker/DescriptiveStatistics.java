@@ -89,7 +89,7 @@ public class DescriptiveStatistics {
 		double dev = 0.0;
 		@SuppressWarnings("unused")
 		double accum2 = 0.0;
-		this.mean = ((double) this.sum) / this.count;
+		this.mean = this.sum / this.count;
 		Arrays.sort(this.values);
 		this.offset = this.values.length - this.count;
 		if (offset == this.values.length) {
