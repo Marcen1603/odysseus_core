@@ -62,9 +62,7 @@ public class SpatialCrosses extends AbstractFunction<Boolean>{
 		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)

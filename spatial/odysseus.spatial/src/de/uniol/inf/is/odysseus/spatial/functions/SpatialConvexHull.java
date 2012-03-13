@@ -62,9 +62,7 @@ public class SpatialConvexHull extends AbstractFunction<Geometry> {
 		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 	/* (non-Javadoc)

@@ -65,14 +65,12 @@ public class SpatialIsWithinDistance extends AbstractFunction<Boolean> {
 		if(argPos >= 3){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			// 0 and 1 are equal
-			switch(argPos){
-			case 0:
-			case 1:	return accTypes[0];
-			case 2:	return accTypes[1];
-			}
-		}
+        // 0 and 1 are equal
+        switch(argPos){
+        case 0:
+        case 1:	return accTypes[0];
+        case 2:	return accTypes[1];
+        }
 		return null; // never reached
 	}
 

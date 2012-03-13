@@ -59,9 +59,7 @@ public class SpatialTouches extends AbstractFunction<Boolean> {
 		if(argPos > 1){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 
