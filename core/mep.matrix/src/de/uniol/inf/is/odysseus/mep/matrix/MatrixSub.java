@@ -70,7 +70,8 @@ public class MatrixSub extends AbstractFunction<Object> {
 	
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_DOUBLE};
 	
-	public SDFDatatype[] getAcceptedTypes(int argPos){
+	@Override
+    public SDFDatatype[] getAcceptedTypes(int argPos){
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
