@@ -46,7 +46,8 @@ public class DatabaseConnectionsView extends ViewPart implements IDatabaseConnec
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
-	public void createPartControl(Composite parent) {
+	@Override
+    public void createPartControl(Composite parent) {
 		DatabaseConnectionDictionary.getInstance().addListener(this);
 		viewer = new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		viewer.setContentProvider(new DatabaseConnectionsViewContentProvider());
@@ -57,7 +58,8 @@ public class DatabaseConnectionsView extends ViewPart implements IDatabaseConnec
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {
+	@Override
+    public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 

@@ -33,7 +33,8 @@ public class DatabaseConnectionsViewLabelProvider extends LabelProvider {
 
 	private Map<ImageDescriptor, Image> imageCache = new HashMap<ImageDescriptor, Image>();	
 
-	public Image getImage(Object element) {
+	@Override
+    public Image getImage(Object element) {
 		ImageDescriptor descriptor = null;
 		if (element instanceof DatabaseConnectionViewEntry) {
 			descriptor = Activator.getImageDescriptor("database.png");
