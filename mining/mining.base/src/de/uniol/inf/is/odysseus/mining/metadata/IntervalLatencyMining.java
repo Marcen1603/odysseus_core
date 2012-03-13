@@ -71,7 +71,8 @@ public class IntervalLatencyMining extends TimeInterval implements ILatency, IMi
 		return this.latency.getLatency();
 	}
 	
-	public IntervalLatencyMining clone(){
+	@Override
+    public IntervalLatencyMining clone(){
 		return new IntervalLatencyMining(this);
 	}
 	
