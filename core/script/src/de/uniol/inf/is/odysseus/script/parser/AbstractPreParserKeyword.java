@@ -45,10 +45,9 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	protected String[] getSimpleParameters(String parameter) {
 		if( parameter.contains(" ")) {
 			return parameter.split("\\ ");
-		} else {
-			//only one parameter
-			return new String[] { parameter, "" };
-		}
+		} 
+		
+		return new String[] { parameter, "" };
 	}
 	
 	protected List<IQueryBuildSetting<?>> getAdditionalTransformationSettings(Map<String, Object> variables){
