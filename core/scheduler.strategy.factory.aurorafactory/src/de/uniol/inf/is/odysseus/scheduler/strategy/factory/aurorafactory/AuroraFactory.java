@@ -29,7 +29,7 @@ public class AuroraFactory extends AbstractSchedulingFactory {
 
 	static public enum AuroraStrategy{MIN_LATENCY, MIN_COST, MIN_MEM}
 
-	private AuroraStrategy strategy;;
+	private AuroraStrategy strategy;
 	private boolean useIter;
 	
 	public AuroraStrategy getStrategy() {
