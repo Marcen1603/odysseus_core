@@ -133,7 +133,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		}
 	}
 
-	private void addBuffers(IPhysicalQuery query,
+	private static void addBuffers(IPhysicalQuery query,
 			IBufferPlacementStrategy bufferPlacementStrategy)
 			throws QueryOptimizationException {
 
