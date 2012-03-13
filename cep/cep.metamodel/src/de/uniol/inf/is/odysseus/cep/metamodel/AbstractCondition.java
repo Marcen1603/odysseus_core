@@ -76,9 +76,9 @@ abstract public class AbstractCondition implements ICepCondition {
 	public boolean checkEventType(String eventType) {
 		if (doEventTypeChecking()){
 			return eventType.equals(this.eventType);
-		}else{
-			return true;
 		}
+		
+		return true;
 	}
 	
 	@Override
@@ -95,9 +95,9 @@ abstract public class AbstractCondition implements ICepCondition {
 	public boolean checkEventTypeWithPort(int port) {
 		if (doEventTypeChecking()){
 			return port == eventPort;
-		}else{
-			return true;
 		}
+		
+		return true;
 	}
 
 	@Override
