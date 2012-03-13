@@ -101,7 +101,8 @@ public class Log implements ILogListener{
 
 	}
 
-	public void addAdminPeer(String queryId, String adminPeerName) {
+	@Override
+    public void addAdminPeer(String queryId, String adminPeerName) {
 		getWindow().addAdminPeer(queryId, adminPeerName);
 		
 	}
@@ -124,7 +125,8 @@ public class Log implements ILogListener{
 		
 	}
 	
-	public void addEvent(String queryId, String event) {
+	@Override
+    public void addEvent(String queryId, String event) {
 		getWindow().addEvent(queryId, event);
 	}
 

@@ -25,7 +25,8 @@ public interface IExecutionHandler<F> extends Runnable, IClone {
 	public IExecutionListenerCallback getExecutionListenerCallback();
 	public Thread startHandler();
 	public String getName();
-	public IExecutionHandler<F> clone() ;
+	@Override
+    public IExecutionHandler<F> clone() ;
 	public void setFunction(F function);
 	public F getFunction();
 	public void setPeer(IOdysseusPeer peer);
