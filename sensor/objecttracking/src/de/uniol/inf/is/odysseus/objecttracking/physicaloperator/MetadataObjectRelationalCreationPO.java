@@ -41,7 +41,7 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 			throw new RuntimeException(e);
 		}
 		this.transfer(object);
-	};
+	}
 	
 	@SuppressWarnings("unchecked")
 	private void assignMetadata(Object tuple ){
