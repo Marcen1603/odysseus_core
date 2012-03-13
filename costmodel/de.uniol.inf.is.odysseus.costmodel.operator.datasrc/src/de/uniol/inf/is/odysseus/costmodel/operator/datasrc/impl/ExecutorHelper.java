@@ -69,7 +69,7 @@ public class ExecutorHelper implements IPlanModificationListener {
 		}
 	}
 
-	private List<ISource<?>> getSources(IPhysicalQuery query) {
+	private static List<ISource<?>> getSources(IPhysicalQuery query) {
 		List<IPhysicalOperator> physicalOperators = query.getPhysicalChilds();
 		List<ISource<?>> sources = new ArrayList<ISource<?>>();
 
