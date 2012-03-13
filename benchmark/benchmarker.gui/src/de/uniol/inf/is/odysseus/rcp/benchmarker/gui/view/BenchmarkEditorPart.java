@@ -128,7 +128,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		labelPageName.setText(benchmark.getParentGroup().getName() + ":  " + benchmark.getName());
 		// Den ProjectView refreshen
 		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				ProjectView.getDefault().refresh();
 			}
 		});
@@ -467,11 +468,13 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 			buttonBrowser.setText("Browse");
 			buttonBrowser.addSelectionListener(new SelectionListener() {
 
-				public void widgetDefaultSelected(SelectionEvent e) {
+				@Override
+                public void widgetDefaultSelected(SelectionEvent e) {
 				}
 
 				// Browserfenster
-				public void widgetSelected(SelectionEvent e) {
+				@Override
+                public void widgetSelected(SelectionEvent e) {
 					FileDialog dlg = new FileDialog(buttonBrowser.getShell(), SWT.OPEN);
 					dlg.setText("Open");
 					String path = dlg.open();
@@ -511,14 +514,16 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		}
 
 		buttonCopy.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 				OpenBenchmarkHandler.copyAndOpenBenchmark(benchmark);
 			}
 		});
 
 		buttonAbortBenchmark.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 				OdysseusBenchmarkUtil util = OdysseusBenchmarkUtil.getDefault();
 				util.setAbortProzess(true);
 				buttonAbortBenchmark.setEnabled(false);
@@ -527,7 +532,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 
 		// Buttonlistener - BENCHMARK STARTEN
 		buttonStart.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 
 				if (checkMetadataCombination()) {
 					buttonAbortBenchmark.setEnabled(true);
@@ -536,7 +542,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 					Benchmark benchmark = ((BenchmarkEditorInput) getEditorInput()).getBenchmark();
 					final OdysseusBenchmarkUtil util = new OdysseusBenchmarkUtil(benchmark.getParentGroup());
 					Job job = new Job("Benchmarkprozess") {
-						protected IStatus run(IProgressMonitor monitor) {
+						@Override
+                        protected IStatus run(IProgressMonitor monitor) {
 							try {
 								util.run();
 							} catch (Exception e1) {
@@ -672,7 +679,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		}
 	}
 
-	private boolean trueMap(Map<String, Boolean> map) {
+	private static boolean trueMap(Map<String, Boolean> map) {
 		boolean result = false;
 		Set<Entry<String, Boolean>> sets = map.entrySet();
 		for (Entry<String, Boolean> entry : sets) {
@@ -695,12 +702,11 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 		Set<String> set = new HashSet(Arrays.asList(benchmarkParam.getMetadataCombination()));
 		if (allTypeCombination.contains(set)) {
 			return true;
-		} else {
-			Shell window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
-			org.eclipse.jface.dialogs.MessageDialog.openInformation(window, "Error in Metadata-Combination",
-					"Metadata-combination doesn't exist!");
-			return false;
-		}
+		} 
+		Shell window = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+		org.eclipse.jface.dialogs.MessageDialog.openInformation(window, "Error in Metadata-Combination",
+				"Metadata-combination doesn't exist!");
+		return false;
 	}
 
 	/**
@@ -723,7 +729,7 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 	 * @param benchmarkParam
 	 * @return
 	 */
-	private boolean checkStartable(BenchmarkParam benchmarkParam) {
+	private static boolean checkStartable(BenchmarkParam benchmarkParam) {
 		if (isNotBlank(benchmarkParam.getName(), benchmarkParam.getScheduler(), benchmarkParam.getSchedulingstrategy(),
 				benchmarkParam.getBufferplacement(), benchmarkParam.getDataType(), benchmarkParam.getQueryLanguage(),
 				benchmarkParam.getWaitConfig(), benchmarkParam.getInputFile(), benchmarkParam.getMaxResult(),
@@ -731,8 +737,8 @@ public class BenchmarkEditorPart extends EditorPart implements ISaveablePart, Pr
 				&& (isNotBlank(benchmarkParam.getInputFile()) || isNotBlank(benchmarkParam.getQuery()))
 				&& trueMap(benchmarkParam.getAllSingleTypes())) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+
+		return false;
 	}
 }
