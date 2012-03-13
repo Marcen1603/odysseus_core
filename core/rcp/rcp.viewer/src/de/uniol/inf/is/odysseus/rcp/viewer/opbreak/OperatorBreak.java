@@ -65,15 +65,14 @@ public class OperatorBreak implements IBufferedPipeListener {
 			
 			return true;
 
-		} else {
-			// Fehlermeldung, dass der Operator
-			// genau eine Senke haben muss
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-			box.setMessage("Only sources with exact one sink can be breaked");
-			box.setText("Error");
-			box.open();
-			return false;
 		}
+        // Fehlermeldung, dass der Operator
+        // genau eine Senke haben muss
+        MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+        box.setMessage("Only sources with exact one sink can be breaked");
+        box.setText("Error");
+        box.open();
+        return false;
 	}
 	
 	public void endBreak() {
