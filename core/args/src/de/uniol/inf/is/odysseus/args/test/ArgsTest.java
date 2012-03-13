@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 public class ArgsTest extends TestCase {
 
-	public void testMandatory() throws ArgsException {
+	public void testMandatory() {
 		Args args = new Args();
 		args.addInteger("-t", REQUIREMENT.MANDATORY);
 		try {
