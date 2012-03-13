@@ -133,7 +133,8 @@ public class ConfigShell {
 						.getResourceAsStream("/res/misc/icon.png"));
 		shell.setImage(icon);
 		shell.addShellListener(new ShellAdapter() {
-			public void shellClosed(final ShellEvent e) {
+			@Override
+            public void shellClosed(final ShellEvent e) {
 				icon.dispose();
 			}
 		});
@@ -169,7 +170,8 @@ public class ConfigShell {
 		buttonOK.setText("OK");
 		buttonOK.setFocus();
 		buttonOK.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				saveConfig();
 				shell.dispose();
 
@@ -183,7 +185,8 @@ public class ConfigShell {
 		buttonCancel.setLayoutData(gdButtonCancel);
 		buttonCancel.setText("Cancel");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				shell.dispose();
 
 			}
@@ -234,7 +237,8 @@ public class ConfigShell {
 				.getBoolean("commandlistener.enable"));
 		listenButton.setText("Listen for commands on a TCP port");
 		listenButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				boolean enabled = ((Button) e.widget).getSelection();
 				tcpPortLabel.setEnabled(enabled);
 				tcpPortText.setEnabled(enabled);
@@ -253,7 +257,8 @@ public class ConfigShell {
 		tcpPortText.setLayoutData(gdTCPPortText);
 		tcpPortText.setText("" + conf.getInt("commandlistener.tcpport"));
 		tcpPortText.addVerifyListener(new VerifyListener() {
-			public void verifyText(final VerifyEvent e) {
+			@Override
+            public void verifyText(final VerifyEvent e) {
 				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
 					return;
 				}
@@ -289,7 +294,8 @@ public class ConfigShell {
 				.setText("Output only on the Graphical User Interface");
 		nullOutputRadio.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				nullOutputRadio.setSelection(true);
 				csvOutputRadio.setSelection(false);
 				for (Control c1 : csvOutputComposite.getChildren()) {
@@ -312,7 +318,8 @@ public class ConfigShell {
 				.equalsIgnoreCase("csv"));
 		csvOutputRadio.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				csvOutputRadio.setSelection(true);
 				nullOutputRadio.setSelection(false);
 				for (Control c1 : csvOutputComposite.getChildren()) {
@@ -353,7 +360,8 @@ public class ConfigShell {
 		csvChooseButton.setText("Select");
 		csvChooseButton.setEnabled(csvOutputRadio.getSelection());
 		csvChooseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				fd.setText("Open a simulation");
 				fd.setFilterPath(csvPath.getText());
@@ -374,7 +382,8 @@ public class ConfigShell {
 		intervalText.setLayoutData(gdIntervalText);
 		intervalText.setText("" + conf.getInt("output.csv.interval"));
 		intervalText.addVerifyListener(new VerifyListener() {
-			public void verifyText(final VerifyEvent e) {
+			@Override
+            public void verifyText(final VerifyEvent e) {
 				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
 					return;
 				}
@@ -435,7 +444,8 @@ public class ConfigShell {
 		speedLabel.setText("Initial simulation speed: "
 				+ conf.getInt("ui.speed"));
 		speedScale.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				speedLabel.setText(SPEED_BASE_TEXT + ": "
 						+ ((Scale) e.widget).getSelection());
 			}
@@ -447,7 +457,8 @@ public class ConfigShell {
 		fillCacheButton.setSelection(conf
 				.getBoolean("ui.gradientcache.prefill"));
 		fillCacheButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				cacheSizeText.setEnabled(((Button) e.widget)
 						.getSelection());
 				cacheSizeLabel.setEnabled(((Button) e.widget)
@@ -467,7 +478,8 @@ public class ConfigShell {
 		cacheSizeText.setText("" + conf.getInt("ui.gradientcache.size"));
 		cacheSizeText.setEnabled(fillCacheButton.getSelection());
 		cacheSizeText.addVerifyListener(new VerifyListener() {
-			public void verifyText(final VerifyEvent e) {
+			@Override
+            public void verifyText(final VerifyEvent e) {
 				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
 					return;
 				}

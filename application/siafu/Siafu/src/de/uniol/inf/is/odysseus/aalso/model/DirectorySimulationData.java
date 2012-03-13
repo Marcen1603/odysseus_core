@@ -59,7 +59,8 @@ public class DirectorySimulationData extends SimulationData {
 	 * @param path path to the type of files to be retrieved
 	 * @return a map with pairs of overlay names and their data
 	 */
-	protected HashMap<String, InputStream> getFilesByPath(final String path) {
+	@Override
+    protected HashMap<String, InputStream> getFilesByPath(final String path) {
 		HashMap<String, InputStream> foundFiles;
 		foundFiles = new HashMap<String, InputStream>();
 
@@ -68,7 +69,8 @@ public class DirectorySimulationData extends SimulationData {
 		File absolutePath = new File(overlayPathString);
 
 		String[] files = absolutePath.list(new FilenameFilter() {
-			public boolean accept(final File directory, final String name) {
+			@Override
+            public boolean accept(final File directory, final String name) {
 				return name.endsWith(".png");
 			}
 		});
@@ -97,7 +99,8 @@ public class DirectorySimulationData extends SimulationData {
 	 * @param path path to the type of files to be retrieved
 	 * @return a map with pairs of overlay names and their data
 	 */
-	protected ArrayList<String> getFileNamesByPath(final String path) {
+	@Override
+    protected ArrayList<String> getFileNamesByPath(final String path) {
 		ArrayList<String> foundFiles;
 		foundFiles = new ArrayList<String>();
 
@@ -106,7 +109,8 @@ public class DirectorySimulationData extends SimulationData {
 		File absolutePath = new File(overlayPathString);
 
 		String[] files = absolutePath.list(new FilenameFilter() {
-			public boolean accept(final File directory, final String name) {
+			@Override
+            public boolean accept(final File directory, final String name) {
 				return name.endsWith(".png");
 			}
 		});
@@ -127,7 +131,8 @@ public class DirectorySimulationData extends SimulationData {
 	 * @param path the path of the file
 	 * @return the InputStream for the requested file
 	 */
-	protected InputStream getFile(final String path) {
+	@Override
+    protected InputStream getFile(final String path) {
 		String absolutePath =
 				dir.getAbsolutePath() + File.separator + path;
 		InputStream file;

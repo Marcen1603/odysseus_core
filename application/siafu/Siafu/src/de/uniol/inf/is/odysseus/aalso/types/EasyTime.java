@@ -266,7 +266,8 @@ public class EasyTime implements Publishable {
 	 * 
 	 * @return the time string
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return hour + ":" + minute;
 	}
 
@@ -277,7 +278,8 @@ public class EasyTime implements Publishable {
 	 * 
 	 * @return a <code>FlatData</code> object representing this Text object
 	 */
-	public FlatData flatten() {
+	@Override
+    public FlatData flatten() {
 		String data;
 		// We use simple name, because our package is de.nec.nle.siafu.data
 		data = this.getClass().getSimpleName() + ":";
@@ -285,16 +287,17 @@ public class EasyTime implements Publishable {
 		return new FlatData(data);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+    public boolean equals(Object o) {
 		if (!(o instanceof EasyTime)) {
 			return false;
-		} else {
-			EasyTime et = (EasyTime) o;
-			return (et.getHour() == hour && et.getMinute() == minute);
 		}
+        EasyTime et = (EasyTime) o;
+        return (et.getHour() == hour && et.getMinute() == minute);
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		return (this.getClass().getName() + hour + " " + minute).hashCode();
 	}
 }

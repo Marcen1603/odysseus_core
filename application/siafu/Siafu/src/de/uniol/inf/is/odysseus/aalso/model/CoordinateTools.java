@@ -294,10 +294,9 @@ public class CoordinateTools {
 		if (!crossesZeroes) {
 			return latHemisphere + " " + lat + " " + lonHemisphere + " "
 					+ lon;
-		} else {
-			return getHemisphereByLatitude(coord[0]) + " " + lat + " "
-					+ getHemisphereByLongitude(coord[1]) + " " + lon;
 		}
+        return getHemisphereByLatitude(coord[0]) + " " + lat + " "
+        		+ getHemisphereByLongitude(coord[1]) + " " + lon;
 	}
 
 	/**
@@ -359,12 +358,11 @@ public class CoordinateTools {
 	 * @param latitude a double with the latitude
 	 * @return "N" if the latitude is 0 or above degrees, "S" otherwise
 	 */
-	private String getHemisphereByLatitude(final double latitude) {
+	private static String getHemisphereByLatitude(final double latitude) {
 		if (latitude < 0) {
 			return "S";
-		} else {
-			return "N";
 		}
+        return "N";
 	}
 
 	/**
@@ -373,11 +371,10 @@ public class CoordinateTools {
 	 * @param longitude a double with the longitude
 	 * @return "E" if the latitude is 0 or above degrees, "W" otherwise
 	 */
-	private String getHemisphereByLongitude(final double longitude) {
+	private static String getHemisphereByLongitude(final double longitude) {
 		if (longitude < 0) {
 			return "W";
-		} else {
-			return "E";
 		}
+        return "E";
 	}
 }

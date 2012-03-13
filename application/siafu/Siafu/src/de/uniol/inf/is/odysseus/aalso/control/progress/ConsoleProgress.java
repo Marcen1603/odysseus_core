@@ -35,23 +35,27 @@ public class ConsoleProgress implements Progress {
 	 * 
 	 * @param amount the amount of backgrounds that will be created
 	 */
-	public void reportBackgroundCreationStart(final int amount) {
+	@Override
+    public void reportBackgroundCreationStart(final int amount) {
 		System.out.print("Preparing backgrounds");
 	}
 
 	/** Report the event on the standard output. */
-	public void reportBackgroundCreated() {
+	@Override
+    public void reportBackgroundCreated() {
 		System.out.print(".");
 	}
 
 	/** Report the event on the standard output. */
-	public void reportBackgroundCreationEnd() {
+	@Override
+    public void reportBackgroundCreationEnd() {
 		System.out.println();
 
 	}
 
 	/** Report the event on the standard output. */
-	public void reportCacheElementLoaded() {
+	@Override
+    public void reportCacheElementLoaded() {
 		System.out.print(".");
 
 	}
@@ -61,7 +65,8 @@ public class ConsoleProgress implements Progress {
 	 * 
 	 * @param amountOfElements the amount of elements being loaded
 	 */
-	public void reportCachePrefill(final int amountOfElements) {
+	@Override
+    public void reportCachePrefill(final int amountOfElements) {
 		if (amountOfElements > 0) {
 			System.out
 					.print("Prefilling cache (" + amountOfElements + ")");
@@ -74,12 +79,14 @@ public class ConsoleProgress implements Progress {
 	}
 
 	/** Report the event on the standard output. */
-	public void reportCachePrefillEnded() {
+	@Override
+    public void reportCachePrefillEnded() {
 		System.out.println();
 	}
 
 	/** Report the event on the standard output. */
-	public void reportCreatingAgents() {
+	@Override
+    public void reportCreatingAgents() {
 		System.out.println("Creating agents");
 	}
 
@@ -89,7 +96,8 @@ public class ConsoleProgress implements Progress {
 	 * @param type the place type
 	 * @param amount the amount of places of that type
 	 */
-	public void reportPlacesFound(final String type, final int amount) {
+	@Override
+    public void reportPlacesFound(final String type, final int amount) {
 		System.out.println("Creating Places: " + type + " (" + amount
 				+ ")");
 
@@ -100,7 +108,8 @@ public class ConsoleProgress implements Progress {
 	 * 
 	 * @param type the type of the place that has just been created
 	 */
-	public void reportPlaceCreated(final String type) {
+	@Override
+    public void reportPlaceCreated(final String type) {
 		// Do nothing
 	}
 
@@ -109,19 +118,22 @@ public class ConsoleProgress implements Progress {
 	 * 
 	 * @param worldName the name of the world
 	 */
-	public void reportWorldCreation(final String worldName) {
+	@Override
+    public void reportWorldCreation(final String worldName) {
 		System.out.println("Creating the world: " + worldName);
 
 	}
 
 	/** Report the event on the standard output. */
-	public void reportSimulationStarted() {
+	@Override
+    public void reportSimulationStarted() {
 		System.out.println("Starting the simulation");
 
 	}
 
 	/** Report the event on the standard output. */
-	public void reportSimulationEnded() {
+	@Override
+    public void reportSimulationEnded() {
 		System.out.println("Simulation ended");
 	}
 

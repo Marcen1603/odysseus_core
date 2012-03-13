@@ -130,7 +130,8 @@ public class ContextMenuListener implements MenuListener {
 	 * 
 	 * @param e the trigger for the show
 	 */
-	public void menuShown(final MenuEvent e) {
+	@Override
+    public void menuShown(final MenuEvent e) {
 		wasPaused = control.isPaused();
 		control.setPaused(true);
 
@@ -182,12 +183,14 @@ public class ContextMenuListener implements MenuListener {
 		mi.setText("Move " + a.getName() + " here");
 		mi.addSelectionListener(new SelectionListener() {
 
-			public void widgetDefaultSelected(final SelectionEvent e) {
+			@Override
+            public void widgetDefaultSelected(final SelectionEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
-			public void widgetSelected(final SelectionEvent e) {
+			@Override
+            public void widgetSelected(final SelectionEvent e) {
 				Agent a;
 				Object o = gui.getActive();
 
@@ -226,12 +229,14 @@ public class ContextMenuListener implements MenuListener {
 				mi.setData(a);
 				mi.setImage(gui.getAgentSprite(a).getImage(a.getDir()));
 				mi.addSelectionListener(new SelectionListener() {
-					public void widgetDefaultSelected(
+					@Override
+                    public void widgetDefaultSelected(
 							final SelectionEvent e) {
 
 					}
 
-					public void widgetSelected(final SelectionEvent e) {
+					@Override
+                    public void widgetSelected(final SelectionEvent e) {
 						// TODO Auto-generated method stub
 						Agent agent =
 								(Agent) ((MenuItem) e.getSource())
@@ -253,7 +258,8 @@ public class ContextMenuListener implements MenuListener {
 	 * 
 	 * @param e the event that triggers the closure
 	 */
-	public void menuHidden(final MenuEvent e) {
+	@Override
+    public void menuHidden(final MenuEvent e) {
 		if (!wasPaused) {
 			control.setPaused(false);
 		}
