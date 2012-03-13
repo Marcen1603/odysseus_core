@@ -58,18 +58,16 @@ public class TiltedTimeFrame<S extends ISnapshot> {
 		if(this.isNormalEmpty()){
 			this.setNormalTimeFrame(toInsert);
 			return null;
-		}else{
-			if(this.isBufferEmpty()){
-				this.setBufferTimeFrame(this.normalTimeFrame);
-				this.setNormalTimeFrame(toInsert);
-				return null;
-			}else{
-				TimeFrame<S> merged = TimeFrameMergeFunction.merge(this.normalTimeFrame, this.bufferTimeFrame, mergeFunction);
-				this.normalTimeFrame = toInsert;
-				this.bufferTimeFrame = null;
-				return merged;
-			}
 		}
+        if(this.isBufferEmpty()){
+        	this.setBufferTimeFrame(this.normalTimeFrame);
+        	this.setNormalTimeFrame(toInsert);
+        	return null;
+        }
+        TimeFrame<S> merged = TimeFrameMergeFunction.merge(this.normalTimeFrame, this.bufferTimeFrame, mergeFunction);
+        this.normalTimeFrame = toInsert;
+        this.bufferTimeFrame = null;
+        return merged;
 	}
 	
 	

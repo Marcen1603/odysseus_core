@@ -59,9 +59,8 @@ public class TiltedTimeWindow<T extends ISnapshot> implements ITimeCapsule<T> {
 	private boolean isEmptyFrame(int index) {
 		if (index >= this.frames.size()) {
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 	@Override
