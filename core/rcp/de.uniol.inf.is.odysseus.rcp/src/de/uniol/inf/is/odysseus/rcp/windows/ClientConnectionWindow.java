@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 /**
  * 
  * @author Merlin Wasmann
- *
+ * 
  */
 
 @SuppressWarnings("unused")
@@ -53,6 +53,8 @@ public class ClientConnectionWindow {
 	private static final String OK_BUTTON_TEXT = "OK";
 	private static final String CANCEL_BUTTON_TEXT = "Cancel";
 
+	private static final String AUTO_CONNECT_TEXT = "Connect automatically";
+
 	private Shell wnd;
 
 	private Label wsdlLocationLabel;
@@ -63,6 +65,7 @@ public class ClientConnectionWindow {
 	private Text serviceNamespaceInput;
 	private Button okButton;
 	private Button cancelButton;
+	private Button autoConnectCheck;
 
 	private final String startWsdlLocation;
 	private final boolean cancelOK;
@@ -115,6 +118,10 @@ public class ClientConnectionWindow {
 
 		createInput(wnd);
 
+//		autoConnectCheck = new Button(wnd, SWT.CHECK);
+//		autoConnectCheck.setText(OdysseusNLS.ConnectAutomatically);
+//		autoConnectCheck.setSelection(ConnectPreferencesManager.getInstance().getAutoConnect());
+		
 		createButtons(wnd);
 
 		wnd.layout();
@@ -134,18 +141,24 @@ public class ClientConnectionWindow {
 		wsdlLocationLabel = new Label(comp, SWT.NONE);
 		wsdlLocationLabel.setText(OdysseusNLS.WsdlLocation + ":");
 		wsdlLocationInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
-		wsdlLocationInput.setText(startWsdlLocation);
+		// TODO: DEBUG
+		//wsdlLocationInput.setText(startWsdlLocation);
+		wsdlLocationInput.setText((ConnectPreferencesManager.getInstance().getWsdlLocation() != "" ? ConnectPreferencesManager.getInstance().getWsdlLocation() : startWsdlLocation));
 		wsdlLocationInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		serviceNamespaceLabel = new Label(comp, SWT.NONE);
 		serviceNamespaceLabel.setText(OdysseusNLS.ServiceNamespace + ":");
 		serviceNamespaceInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		// TODO: DEBUG
+		serviceNamespaceInput.setText((ConnectPreferencesManager.getInstance().getServiceNamespace() != "" ? ConnectPreferencesManager.getInstance().getServiceNamespace() : ""));
 		serviceNamespaceInput.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 
 		serviceLabel = new Label(comp, SWT.NONE);
 		serviceLabel.setText(OdysseusNLS.WebService + ":");
 		serviceInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		// TODO: DEBUG
+		serviceInput.setText((ConnectPreferencesManager.getInstance().getService() != "" ? ConnectPreferencesManager.getInstance().getService() : ""));
 		serviceInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		serviceInput.addKeyListener(new KeyListener() {
 
@@ -208,12 +221,17 @@ public class ClientConnectionWindow {
 			this.connected = true;
 
 			// TODO: autologinkram...
-			// if(autoConnectCheck.getSelection()) {
-			// ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocationInput.getText());
-			// ConnectPreferencesManager.getInstance().setService(serviceInput.getText());
-			// }
-			// ConnectPreferencesManager.getInstance().setAutoConnect(autoConnectCheck.getSelection());
-			// ConnectPreferencesManager.getInstance().save();
+//			if (autoConnectCheck.getSelection()) {
+//				ConnectPreferencesManager.getInstance().setWdslLocation(
+//						wsdlLocationInput.getText());
+//				ConnectPreferencesManager.getInstance().setService(
+//						serviceInput.getText());
+//				ConnectPreferencesManager.getInstance().setServiceNamespace(
+//						serviceNamespaceInput.getText());
+//			}
+//			ConnectPreferencesManager.getInstance().setAutoConnect(
+//					autoConnectCheck.getSelection());
+			ConnectPreferencesManager.getInstance().save();
 
 			wnd.dispose();
 		} else {
