@@ -47,7 +47,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public Connection getConnection() {
+	@Override
+    public Connection getConnection() {
 		return this.connection;
 	}
 
@@ -103,7 +104,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public boolean tableExists(String tablename) {
+	@Override
+    public boolean tableExists(String tablename) {
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" });
@@ -118,7 +120,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public SDFSchema getSchema(String tablename) {
+	@Override
+    public SDFSchema getSchema(String tablename) {
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
@@ -136,7 +139,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		return schema;
 	}	
 
-	public boolean equalSchemas(String tablename, SDFSchema schema) {
+	@Override
+    public boolean equalSchemas(String tablename, SDFSchema schema) {
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
 			int i = 0;
@@ -169,7 +173,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public void dropTable(String tablename) {
+	@Override
+    public void dropTable(String tablename) {
 		Statement stmt;
 		try {
 			stmt = this.connection.createStatement();
@@ -179,7 +184,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		}
 	}
 
-	public void truncateTable(String tablename) {
+	@Override
+    public void truncateTable(String tablename) {
 		Statement stmt;
 		try {
 			stmt = this.connection.createStatement();
@@ -207,7 +213,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		return infos;
 	}
 
-	public List<String> getTables() {
+	@Override
+    public List<String> getTables() {
 		List<String> tables = new ArrayList<String>();
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
@@ -221,7 +228,8 @@ public class DatabaseConnection implements IDatabaseConnection {
 		return tables;
 	}
 
-	public List<String> getSchemas() {
+	@Override
+    public List<String> getSchemas() {
 		List<String> tables = new ArrayList<String>();
 		try {
 			DatabaseMetaData meta = connection.getMetaData();
