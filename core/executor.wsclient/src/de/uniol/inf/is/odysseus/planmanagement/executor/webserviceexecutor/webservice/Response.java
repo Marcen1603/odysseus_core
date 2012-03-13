@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     BooleanResponse.class,
     StringListResponse.class,
-    StringResponse.class
+    StringResponse.class,
+    IntegerCollectionResponse.class
 })
 public class Response {
 

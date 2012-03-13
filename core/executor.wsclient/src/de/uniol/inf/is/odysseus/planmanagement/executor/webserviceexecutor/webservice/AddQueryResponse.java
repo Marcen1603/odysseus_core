@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}response" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}integerCollectionResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class AddQueryResponse {
 
     @XmlElement(name = "return")
-    protected Response _return;
+    protected IntegerCollectionResponse _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link Response }
+     *     {@link IntegerCollectionResponse }
      *     
      */
-    public Response getReturn() {
+    public IntegerCollectionResponse getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class AddQueryResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link Response }
+     *     {@link IntegerCollectionResponse }
      *     
      */
-    public void setReturn(Response value) {
+    public void setReturn(IntegerCollectionResponse value) {
         this._return = value;
     }
 
