@@ -144,7 +144,8 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(java.lang.Object,
 	 *      int)
 	 */
-	protected void process_next(RelationalTuple<T> object, int port) {
+	@Override
+    protected void process_next(RelationalTuple<T> object, int port) {
 		IClusteringObject<T, Object> tuple = new RelationalClusteringObject<T>(
 				object, restrictList);
 		process_next(tuple, port);
