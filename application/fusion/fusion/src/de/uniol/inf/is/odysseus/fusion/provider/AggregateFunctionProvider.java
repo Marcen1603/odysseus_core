@@ -18,7 +18,8 @@ public class AggregateFunctionProvider implements IAggregateFunctionBuilder {
 		names.add("Tracker");
 	}
 	
-	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
+	@Override
+    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
 		
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
 		
