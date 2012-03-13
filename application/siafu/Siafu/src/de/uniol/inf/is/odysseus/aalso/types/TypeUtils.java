@@ -33,7 +33,7 @@ public final class TypeUtils {
 	 */
 	private TypeUtils() {
 		// Do nothing.
-	};
+	}
 
 	/**
 	 * Check that the type in the data text can be built by this class.

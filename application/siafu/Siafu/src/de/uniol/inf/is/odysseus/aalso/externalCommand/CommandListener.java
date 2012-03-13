@@ -168,7 +168,8 @@ public class CommandListener implements Runnable {
 	 * Start listening for commands. When one is received, parse it, and pass it
 	 * to the command processor, who will react on it.
 	 */
-	public void run() {
+	@Override
+    public void run() {
 
 		while (!ended) {
 			try {
@@ -205,7 +206,8 @@ public class CommandListener implements Runnable {
 			this.socket = socket;
 		}
 
-		public void run() {
+		@Override
+        public void run() {
 			BufferedReader in = null;
 			out = null;
 			try {
@@ -317,7 +319,7 @@ public class CommandListener implements Runnable {
 				Agent person;
 
 				try {
-					person = (Agent) control.getWorld().getPersonByName(name);
+					person = control.getWorld().getPersonByName(name);
 				} catch (AgentNotFoundException e) {
 					sendError("Who's " + name + "?");
 					return;
@@ -345,7 +347,7 @@ public class CommandListener implements Runnable {
 				Agent person;
 
 				try {
-					person = (Agent) control.getWorld().getPersonByName(name);
+					person = control.getWorld().getPersonByName(name);
 				} catch (AgentNotFoundException e) {
 					sendError("Who's " + name + "?");
 					return;
@@ -372,7 +374,7 @@ public class CommandListener implements Runnable {
 			Agent person;
 
 			try {
-				person = (Agent) control.getWorld().getPersonByName(name);
+				person = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				sendError("Who's " + name + "?");
 				return;
@@ -410,7 +412,7 @@ public class CommandListener implements Runnable {
 			Agent person;
 
 			try {
-				person = (Agent) control.getWorld().getPersonByName(name);
+				person = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				sendError("Who's " + name + "?");
 
@@ -454,7 +456,7 @@ public class CommandListener implements Runnable {
 				Agent person;
 
 				try {
-					person = (Agent) control.getWorld().getPersonByName(name);
+					person = control.getWorld().getPersonByName(name);
 				} catch (AgentNotFoundException e) {
 					sendError("Who's " + name + "?");
 
@@ -484,7 +486,7 @@ public class CommandListener implements Runnable {
 			Agent person;
 
 			try {
-				person = (Agent) control.getWorld().getPersonByName(name);
+				person = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				sendError("Who's " + name + "?");
 				return;
@@ -518,7 +520,7 @@ public class CommandListener implements Runnable {
 			Agent person;
 
 			try {
-				person = (Agent) control.getWorld().getPersonByName(name);
+				person = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				sendError("Who's " + name + "?");
 				return;
@@ -563,7 +565,7 @@ public class CommandListener implements Runnable {
 			Agent person;
 
 			try {
-				person = (Agent) control.getWorld().getPersonByName(name);
+				person = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				sendError("Who's " + name + "?");
 
@@ -601,10 +603,10 @@ public class CommandListener implements Runnable {
 			Trackable t;
 
 			try {
-				t = (Agent) control.getWorld().getPersonByName(name);
+				t = control.getWorld().getPersonByName(name);
 			} catch (AgentNotFoundException e) {
 				try {
-					t = (Place) control.getWorld().getPlaceByName(name);
+					t = control.getWorld().getPlaceByName(name);
 				} catch (PlaceNotFoundException e1) {
 					sendError("Who or where is " + name + "?");
 					return;
@@ -763,10 +765,10 @@ public class CommandListener implements Runnable {
 				Trackable t;
 
 				try {
-					t = (Agent) control.getWorld().getPersonByName(name);
+					t = control.getWorld().getPersonByName(name);
 				} catch (AgentNotFoundException e) {
 					try {
-						t = (Place) control.getWorld().getPlaceByName(name);
+						t = control.getWorld().getPlaceByName(name);
 					} catch (PlaceNotFoundException e1) {
 						sendError("Who or where is " + name + "?");
 						return;
