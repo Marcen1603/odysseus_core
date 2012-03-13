@@ -159,7 +159,7 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 								calendar.add(Calendar.MILLISECOND,
 										millisecond * 10);
 								long timestamp = calendar.getTimeInMillis();
-								int id = (int) buffer.getShort();
+								int id = buffer.getShort();
 								int x = buffer.getInt();
 								int y = buffer.getInt();
 								double speed = Float.valueOf(buffer.getFloat())
