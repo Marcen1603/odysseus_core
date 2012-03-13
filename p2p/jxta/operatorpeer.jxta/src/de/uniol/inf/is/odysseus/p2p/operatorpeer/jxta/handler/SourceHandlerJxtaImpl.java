@@ -103,7 +103,7 @@ public class SourceHandlerJxtaImpl implements ISourceHandler {
 
 	public PipeAdvertisement createSocketAdvertisement() {
 		PipeID socketID = null;
-		socketID = (PipeID) IDFactory.newPipeID(getPeer().getNetPeerGroup()
+		socketID = IDFactory.newPipeID(getPeer().getNetPeerGroup()
 				.getPeerGroupID());
 		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(PipeAdvertisement.getAdvertisementType());
