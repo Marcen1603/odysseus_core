@@ -71,9 +71,8 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 		if (this.totalNumber != 0) {
 			return (double) (this.totalNumber - this.numberOfViolations)
 					/ (double) this.totalNumber;
-		} else {
-			return 1.0;
 		}
+        return 1.0;
 	}
 
 	/**
@@ -126,8 +125,7 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 				/ (numberPredicted + this.totalNumber);
 		if (Double.isNaN(conformance))
 			return 0.0;
-		else
-		return conformance;
+        return conformance;
 	}
 
 }

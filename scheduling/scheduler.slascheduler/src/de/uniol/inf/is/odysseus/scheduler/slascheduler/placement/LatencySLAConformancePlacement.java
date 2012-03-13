@@ -35,10 +35,9 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 			subscribable = (ISubscribable) root;
 			subscribable.connectSink(latencyCalc, 0, 0, root.getOutputSchema());
 			return subscribable;
-		} else {
-			throw new RuntimeException(
-					"Cannot connect SLA conformance operator to query root: " + root);
 		}
+        throw new RuntimeException(
+        		"Cannot connect SLA conformance operator to query root: " + root);
 	}
 
 	/**

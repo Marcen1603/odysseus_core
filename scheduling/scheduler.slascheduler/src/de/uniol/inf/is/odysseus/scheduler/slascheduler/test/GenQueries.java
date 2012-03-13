@@ -357,9 +357,8 @@ public class GenQueries {
 		boolean isHighPrio = ALTERNATIVE_SLA_COUNTER % ALTERNATIVE_SLA_RATIO == 0;
 		if (isHighPrio) {
 			return ALTERNATIVE_BEST_SLA_PRIO;
-		} else {
-			return 1;
 		}
+        return 1;
 	}
 
 	private static String createSLA(int number, double metricValue,
