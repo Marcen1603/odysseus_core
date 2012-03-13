@@ -80,7 +80,7 @@ public class Polygon extends AbstractFunction<Double> {
 		RADIUS = radius;
 	}
 
-	private double[] getBoundingBox(Vector<Double> polygon) {
+	private static double[] getBoundingBox(Vector<Double> polygon) {
 		double[] boundingBox = new double[4];
 		if (polygon.size() % 2 == 0) {
 			for (int i = 0; i < polygon.size(); i = i + 2) {

@@ -83,7 +83,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void createEnumParameter(Method method, IParameter<?> parameter) {
+	private static void createEnumParameter(Method method, IParameter<?> parameter) {
 		Class<?>[] methodParameters = method.getParameterTypes();
 		if (methodParameters == null || methodParameters.length != 1
 				|| !methodParameters[0].isEnum()) {

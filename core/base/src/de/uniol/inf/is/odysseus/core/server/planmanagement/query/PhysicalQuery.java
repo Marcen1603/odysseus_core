@@ -194,7 +194,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/**
 	 * Checks, whether a reference to an object is already contained in a list.
 	 */
-	private boolean containsReference(List<?> listOfObj, Object obj) {
+	private static boolean containsReference(List<?> listOfObj, Object obj) {
 		for (Object o : listOfObj) {
 			if (o == obj) {
 				return true;
@@ -235,7 +235,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@SuppressWarnings("unchecked")
-	private ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
+	private static ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
 		ArrayList<IPhysicalOperator> children = new ArrayList<IPhysicalOperator>();
 		Stack<IPhysicalOperator> operators = new Stack<IPhysicalOperator>();
 		Set<IPhysicalOperator> visitedOps = new HashSet<IPhysicalOperator>();
@@ -498,7 +498,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public Set<IPhysicalOperator> getAllOperators() {
 		Set<IPhysicalOperator> ops = new HashSet<IPhysicalOperator>();
 		for (IPhysicalOperator root : this.roots) {
-			List<IPhysicalOperator> children = this.getChildren(root);
+			List<IPhysicalOperator> children = PhysicalQuery.getChildren(root);
 			ops.addAll(children);
 			ops.add(root);
 		}

@@ -107,7 +107,7 @@ public class ExpressionOptimizer {
 			return null;
 		}
 
-		private Constant<?> calculateConstant(
+		private static Constant<?> calculateConstant(
 				@SuppressWarnings("rawtypes") Class<? extends IFunction> class1,
 				List<IExpression<?>> constants) {
 			if (constants.size() == 1) {
@@ -130,7 +130,7 @@ public class ExpressionOptimizer {
 			}
 		}
 
-		private IFunction<?> createFunction(
+		private static IFunction<?> createFunction(
 				@SuppressWarnings("rawtypes") Class<? extends IFunction> class1) {
 			try {
 				IFunction<?> function = class1.newInstance();
@@ -141,7 +141,7 @@ public class ExpressionOptimizer {
 			}
 		}
 
-		private List<IExpression<?>> collectExpressions(
+		private static List<IExpression<?>> collectExpressions(
 				IBinaryOperator<?> function) {
 			List<IExpression<?>> list = new LinkedList<IExpression<?>>();
 			Stack<IExpression<?>> expressions = new Stack<IExpression<?>>();
@@ -205,7 +205,7 @@ public class ExpressionOptimizer {
             return function;
 		}
 
-		private boolean isConstantPredicate(IExpression<?>[] iExpression,
+		private static boolean isConstantPredicate(IExpression<?>[] iExpression,
 				Boolean value) {
 			return iExpression[0] instanceof Constant
 					&& iExpression[0].getValue().equals(value)

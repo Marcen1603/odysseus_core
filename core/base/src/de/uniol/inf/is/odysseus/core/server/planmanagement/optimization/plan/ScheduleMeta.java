@@ -72,7 +72,7 @@ public class ScheduleMeta implements ICSVToString{
 		return "lastDiff;inTimeCount;allSchedulings;factor;historySize";
 	}
 
-	private long getNow() {
+	private static long getNow() {
 		return System.currentTimeMillis();
 	}
 

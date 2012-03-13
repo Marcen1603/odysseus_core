@@ -254,7 +254,7 @@ public class SchemaHelper {
 
 	// Erstellt eine tiefe Kopie einer Liste aus
 	// Schemaindizes
-	private List<SchemaIndex> copy(List<SchemaIndex> base) {
+	private static List<SchemaIndex> copy(List<SchemaIndex> base) {
 		List<SchemaIndex> newList = new ArrayList<SchemaIndex>();
 		for (int i = 0; i < base.size(); i++)
 			newList.add(new SchemaIndex(base.get(i)));

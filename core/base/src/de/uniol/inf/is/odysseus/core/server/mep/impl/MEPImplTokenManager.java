@@ -588,6 +588,7 @@ private void jjCheckNAdd(int state)
       jjrounds[state] = jjround;
    }
 }
+@SuppressWarnings("unused")
 private void jjAddStates(int start, int end)
 {
    do {

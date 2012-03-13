@@ -66,13 +66,13 @@ public class SimplePlanPrinter<T> {
 		return false;
 	}
 
-	private String getObjectName(Object object){
+	private static String getObjectName(Object object){
 		String name ="";
 		name = object.getClass().getSimpleName()+" ("+object.hashCode()+")";
 		return name;
 	}
 	
-	private String getIndent(int depth) {
+	private static String getIndent(int depth) {
 		String str = "";
 		while (depth > 0) {
 			str = str + "       ";

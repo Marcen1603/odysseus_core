@@ -93,7 +93,7 @@ class SinkConnectionListener extends Thread {
 				}else{
 					connectionAllowed = true;
 				}
-				if (socket != null && connectionAllowed) {
+				if (connectionAllowed) {
 					logger.debug("Adding Handler");
 					ISinkStreamHandler temp = sinkStreamHandlerBuilder.newInstance(socket);
 					synchronized (subscribe) {

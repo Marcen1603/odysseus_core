@@ -7,12 +7,12 @@ import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
 public class UnitFactory {
 	
 	public Enum<?> buildUnit(String unitID) {
-		Enum<?> unit = this.getEnumValue(RatioUnit.class, unitID);
+		Enum<?> unit = UnitFactory.getEnumValue(RatioUnit.class, unitID);
 		if (unit == null) {
-			unit = this.getEnumValue(ThroughputUnit.class, unitID);
+			unit = UnitFactory.getEnumValue(ThroughputUnit.class, unitID);
 		} 
 		if (unit == null) {
-			unit = this.getEnumValue(TimeUnit.class, unitID);
+			unit = UnitFactory.getEnumValue(TimeUnit.class, unitID);
 		}
 		if (unit == null) {
 			throw new RuntimeException("not a valid unit: " + unitID);
@@ -21,7 +21,7 @@ public class UnitFactory {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Enum<?> getEnumValue(Class enumType, String id) {
+	private static Enum<?> getEnumValue(Class enumType, String id) {
 		try {
 			return Enum.valueOf(enumType, id);
 		} catch (Exception e) {
