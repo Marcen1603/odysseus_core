@@ -94,7 +94,8 @@ public class OdysseusScriptViewerConfiguration extends
 	// return reconciler;
 	// }
 
-	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+	@Override
+    public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		OdysseusScriptReconcilerStrategy strategy = new OdysseusScriptReconcilerStrategy(
 				this.editor);
 		MonoReconciler reconciler = new MonoReconciler(strategy, false);

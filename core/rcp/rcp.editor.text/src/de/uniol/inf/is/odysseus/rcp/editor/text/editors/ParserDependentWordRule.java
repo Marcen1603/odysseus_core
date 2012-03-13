@@ -83,7 +83,8 @@ public class ParserDependentWordRule implements IRule {
 	/*
 	 * @see IRule#evaluate(ICharacterScanner)
 	 */
-	public IToken evaluate(ICharacterScanner scanner) {
+	@Override
+    public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {
 			if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {

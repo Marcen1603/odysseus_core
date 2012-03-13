@@ -38,7 +38,8 @@ public class OdysseusScriptReconcilerStrategy implements IReconcilingStrategy, I
 	private void reconcile() {		
 		Shell shell = editor.getSite().getShell();
 		shell.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				editor.setModel();
 			}
 		});
