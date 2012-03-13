@@ -23,9 +23,8 @@ public class TransCfgKeywordGroup implements IKeywordGroup {
 	public String[] getKeywords() {
 		if (OdysseusRCPEditorTextPlugIn.getExecutor() != null){
 			return  OdysseusRCPEditorTextPlugIn.getExecutor().getQueryBuildConfigurationNames().toArray(new String[0]);
-		}else{
-			return null;
 		}
+        return null;
 	}
 
 }
