@@ -28,7 +28,7 @@ public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeIn
 		synchronized (this.getElements()) {
 			this.getElements().addLast(s);
 		}
-	};
+	}
 	
 	@Override
 	public Iterator<T> queryCopy(T element, Order order) {

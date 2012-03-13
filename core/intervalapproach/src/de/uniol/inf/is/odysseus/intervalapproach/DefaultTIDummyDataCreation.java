@@ -24,7 +24,7 @@ public class DefaultTIDummyDataCreation implements IDummyDataCreationFunction<IT
 		
 	}
 
-	public DefaultTIDummyDataCreation(){};
+	public DefaultTIDummyDataCreation(){}
 	
 	@SuppressWarnings("unchecked")
 	@Override
