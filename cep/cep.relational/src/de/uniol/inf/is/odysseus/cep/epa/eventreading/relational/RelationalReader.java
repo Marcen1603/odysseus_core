@@ -73,9 +73,8 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 		}
 		if (pos != null){
 			return event.restrict(pos, true);
-		}else{
-			return null;
 		}
+        return null;
 	}
 	
 	@Override
