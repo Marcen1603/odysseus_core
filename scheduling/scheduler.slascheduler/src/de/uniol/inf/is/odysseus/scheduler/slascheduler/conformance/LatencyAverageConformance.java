@@ -100,7 +100,7 @@ public class LatencyAverageConformance<T> extends AbstractSLaConformance<T> {
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
-			this.aggregate.addAggValue(this.nanoToMilli((double) latency
+			this.aggregate.addAggValue(this.nanoToMilli(latency
 					.getLatency()));
 		} else {
 			throw new RuntimeException("Latency missing");

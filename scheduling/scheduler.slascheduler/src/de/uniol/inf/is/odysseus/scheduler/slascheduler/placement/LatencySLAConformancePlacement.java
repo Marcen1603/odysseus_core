@@ -29,7 +29,7 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 		IPhysicalOperator root = query.getRoots().get(0);
 		if (root instanceof ISource) {
 			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
-			ISubscribable subscribable = (ISubscribable)latencyCalc;
+			ISubscribable subscribable = latencyCalc;
 			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
 			
 			subscribable = (ISubscribable) root;
