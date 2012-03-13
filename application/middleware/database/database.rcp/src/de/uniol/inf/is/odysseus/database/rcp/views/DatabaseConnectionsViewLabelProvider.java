@@ -51,7 +51,7 @@ public class DatabaseConnectionsViewLabelProvider extends LabelProvider {
 		}
 
 		// obtain the cached image corresponding to the descriptor
-		Image image = (Image) imageCache.get(descriptor);
+		Image image = imageCache.get(descriptor);
 		if (image == null) {
 			image = descriptor.createImage();
 			imageCache.put(descriptor, image);
