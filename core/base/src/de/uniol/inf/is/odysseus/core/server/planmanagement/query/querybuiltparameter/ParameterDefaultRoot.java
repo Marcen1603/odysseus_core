@@ -52,5 +52,5 @@ public final class ParameterDefaultRoot extends Setting<IPhysicalOperator> imple
 	
 	public int getPort() {
 		return port;
-	};
+	}
 }

@@ -24,7 +24,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 
 	public UserDefinedOperatorAO() {
 		super();
-	};
+	}
 
 	public UserDefinedOperatorAO(UserDefinedOperatorAO userDefinedOperatorAO) {
 		super(userDefinedOperatorAO);

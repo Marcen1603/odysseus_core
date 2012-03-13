@@ -20,7 +20,7 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 
 	private static final long serialVersionUID = 271263573427804690L;
 
-	public PredicateParameter(){};
+	public PredicateParameter(){}
 	
 	public PredicateParameter(String name, REQUIREMENT requirement) {
 		super(name, requirement);

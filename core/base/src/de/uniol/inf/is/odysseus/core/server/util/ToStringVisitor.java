@@ -34,7 +34,7 @@ public abstract class ToStringVisitor<T> implements INodeVisitor<T, String> {
 			this.builder.append('(');
 		}
 		this.wasup = false;
-	};
+	}
 
 	@Override
 	public void ascendAction(T sub) {

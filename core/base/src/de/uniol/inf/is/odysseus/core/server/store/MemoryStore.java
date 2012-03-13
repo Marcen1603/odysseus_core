@@ -37,7 +37,7 @@ public class MemoryStore<IDType extends Comparable<?>,STORETYPE> implements ISto
 	@Override
 	public Set<Entry<IDType, STORETYPE>> entrySet() {
 		return elements.entrySet();
-	};
+	}
 	
 	@Override
 	public boolean isEmpty() {
