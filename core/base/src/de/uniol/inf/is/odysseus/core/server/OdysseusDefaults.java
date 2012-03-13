@@ -150,7 +150,7 @@ public class OdysseusDefaults {
 		props.setProperty("ac_cpuHeadroom", "0.4");
 		props.setProperty("ac_standardMemCost", "4");
 		props.setProperty("ac_standardCpuCost", "0.00002");
-	};
+	}
 
 	private static void savePropertyFile(String odysseusHome) {
 		FileOutputStream out;
