@@ -11,9 +11,7 @@ public class DataTypeUtils{
 			if(right == String.class || right == Object.class){
 				return left;
 			}
-			else{
-				return right; // Number, Integer, Float, Double 
-			}
+			return right; // Number, Integer, Float, Double 
 		}
 		if(left == Integer.class && !(right == Float.class || right == Double.class)){
 			return left;
