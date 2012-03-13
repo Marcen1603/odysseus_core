@@ -49,7 +49,7 @@ public class LPPrediction extends AbstractFunction<Polygon> {
 	}
 
 	
-	private Polygon predictPolygon(Polygon polygon,int objectClass){
+	private static Polygon predictPolygon(Polygon polygon,int objectClass){
 		Polygon prediction = (Polygon) polygon.clone();
 		
 		
