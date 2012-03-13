@@ -26,10 +26,8 @@ public class GuiUpdaterJxtaImpl implements IGuiUpdater {
 
 	// Wie oft wird die GUI aktualisiert
 	private int UPDATE_TIME = 1000;
-	private ThinPeerJxtaImpl thinPeerJxtaImpl;
 
 	public GuiUpdaterJxtaImpl(ThinPeerJxtaImpl thinPeerJxtaImpl) {
-		this.thinPeerJxtaImpl = thinPeerJxtaImpl;
 	}
 
 	@Override

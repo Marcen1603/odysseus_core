@@ -49,7 +49,8 @@ public class StreamHandlerJxtaImpl implements IStreamHandler {
 				+ this.adv.toString());
 	}
 
-	@Override
+	@SuppressWarnings("null")
+    @Override
 	public void run() {
 		JxtaSocket socket = null;
 		ObjectInputStream iStream = null;
