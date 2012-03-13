@@ -59,7 +59,7 @@ public class AvgBenchmarkMemUsageListener implements IPlanExecutionListener,
 						.println("Plan execution prepared...collecting memory usage data!");
 				for (IPhysicalOperator op : eventArgs.getSender()
 						.getExecutionPlan().getRoots()) {
-					addMemListeners((ISink<?>) op);
+					addMemListeners(op);
 				}
 			}
 
