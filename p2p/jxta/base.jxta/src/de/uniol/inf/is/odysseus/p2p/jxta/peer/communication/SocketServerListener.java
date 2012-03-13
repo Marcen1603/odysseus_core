@@ -138,7 +138,7 @@ public class SocketServerListener implements ISocketServerListener {
 							} catch (ClassNotFoundException e) {
 								e.printStackTrace();
 							}
-						};
+						}
 					}.start();
 				}
 			} catch (IOException e) {
