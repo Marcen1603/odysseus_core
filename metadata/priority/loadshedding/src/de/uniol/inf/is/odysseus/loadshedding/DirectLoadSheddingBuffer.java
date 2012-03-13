@@ -30,7 +30,7 @@ extends DirectInterlinkBufferedPipe<T> {
 	private int rate = NO_LOAD_SHEDDING;
 	private double weight = 0;
 
-	public DirectLoadSheddingBuffer(){};
+	public DirectLoadSheddingBuffer(){}
 
 	public DirectLoadSheddingBuffer(
 			DirectLoadSheddingBuffer<T> directLoadSheddingBuffer) {
@@ -44,7 +44,8 @@ extends DirectInterlinkBufferedPipe<T> {
 
 		if (rate != NO_LOAD_SHEDDING) {
 
-			IPriority prio = (IPriority) next.getMetadata();
+			@SuppressWarnings("cast")
+            IPriority prio = (IPriority) next.getMetadata();
 
 			if (prio.getPriority() > 0) {
 				super.process_next(next, port);
