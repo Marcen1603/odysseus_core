@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
@@ -115,6 +116,9 @@ public class SourcePool<T extends IMetaAttribute> {
         // }
         if (!this.sources.containsKey(sourceSpec)) {
             this.sources.put(sourceSpec, source);
+            for (SDFAttribute attr : source.getOutputSchema().getAttributes()) {
+            	sourceSpec.addAttribute(attr.getAttributeName(), null);
+            }
             final SourceAdapter adapter = this.adapters.get(adapterName);
             if (adapter != null) {
                 adapter.registerSource(sourceSpec);
@@ -148,9 +152,9 @@ public class SourcePool<T extends IMetaAttribute> {
             event.setMetadata(metadata);
             try {
                 SourcePO<?> source = this.sources.get(sourceSpec);
-                if (enableSources.contains(source)) {
+//                if (enableSources.contains(source)) {
                     this.sources.get(sourceSpec).transfer(event);
-                }
+//                }
             }
             catch (final Exception e) {
                 SourcePool.LOG.error(e.getMessage(), e);

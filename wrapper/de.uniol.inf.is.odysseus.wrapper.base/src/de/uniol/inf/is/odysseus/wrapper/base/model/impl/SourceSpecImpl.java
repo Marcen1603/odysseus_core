@@ -74,10 +74,10 @@ public class SourceSpecImpl implements SourceSpec {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((attributeConfigurations == null) ? 0 : attributeConfigurations.hashCode());
+//        result = prime * result
+//                + ((attributeConfigurations == null) ? 0 : attributeConfigurations.hashCode());
         result = prime * result + ((configuration == null) ? 0 : configuration.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+//        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
         return result;
     }
 
@@ -90,24 +90,24 @@ public class SourceSpecImpl implements SourceSpec {
         if (getClass() != obj.getClass())
             return false;
         SourceSpecImpl other = (SourceSpecImpl) obj;
-        if (attributeConfigurations == null) {
-            if (other.attributeConfigurations != null)
-                return false;
-        }
-        else if (!attributeConfigurations.equals(other.attributeConfigurations))
-            return false;
+//        if (attributeConfigurations == null) {
+//            if (other.attributeConfigurations != null)
+//                return false;
+//        }
+//        else if (!attributeConfigurations.equals(other.attributeConfigurations))
+//            return false;
         if (configuration == null) {
             if (other.configuration != null)
                 return false;
         }
         else if (!configuration.equals(other.configuration))
             return false;
-        if (schema == null) {
-            if (other.schema != null)
-                return false;
-        }
-        else if (!schema.equals(other.schema))
-            return false;
+//        if (schema == null) {
+//            if (other.schema != null)
+//                return false;
+//        }
+//        else if (!schema.equals(other.schema))
+//            return false;
         return true;
     }
 

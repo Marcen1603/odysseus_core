@@ -28,11 +28,11 @@ public class TSourceAORule extends AbstractTransformationRule<SourceAO> {
             @SuppressWarnings({ "rawtypes", "unchecked" })
 			SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
-            if (SourcePool.hasSemanticallyEqualSource(po)) {
-                po = SourcePool.getSemanticallyEqualSource(po);
-            }else {
+//            if (SourcePool.hasSemanticallyEqualSource(po)) {
+//                po = SourcePool.getSemanticallyEqualSource(po);
+//            }else {
                 SourcePool.registerSource(operator.getAdapter(), po, operator.getOptionsMap());
-            }
+//            }
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
             for (final ILogicalOperator o : toUpdate) {
