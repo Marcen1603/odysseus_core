@@ -94,7 +94,7 @@ public class BenchmarkWizard extends Wizard {
 	private static IEditorPart openBenchmark(IWorkbenchPage page, Benchmark benchmark) {
 		try {
 			// Öffnet den Benchmarkparameter-Editor
-			return (BenchmarkEditorPart) page.openEditor(new BenchmarkEditorInput(benchmark), BenchmarkEditorPart.ID);
+			return page.openEditor(new BenchmarkEditorInput(benchmark), BenchmarkEditorPart.ID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
