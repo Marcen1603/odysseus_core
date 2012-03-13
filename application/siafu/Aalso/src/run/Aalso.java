@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -94,7 +95,7 @@ class AalsoDialog extends JFrame {
 					// Delete the content of the file with the CQL Creates
 					FileOutputStream out = new FileOutputStream("OdysCreates.aalso");
 					out.close();
-				} catch(Exception ex) {
+				} catch(IOException ex) {
 					ex.printStackTrace();
 				}
 				System.exit(0);
@@ -162,13 +163,15 @@ class AalsoDialog extends JFrame {
 		infoField.setEditable(false);
 		
 		startButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			@Override
+            public void actionPerformed(ActionEvent arg0) {
 				buttonStartSimulations();
 			}
 		});
 		
 		stopButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			@Override
+            public void actionPerformed(ActionEvent arg0) {
 				buttonStopSimulations();
 			}
 		});
