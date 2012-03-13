@@ -56,7 +56,7 @@ public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 
 	public static enum Type {
 		EXISTS, NOT_EXISTS
-	};
+	}
 
 	private Type type;
 

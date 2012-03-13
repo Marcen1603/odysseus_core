@@ -27,7 +27,7 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
 	private static final long serialVersionUID = -134272927237350983L;
 
 	public FalsePredicate() {
-	};
+	}
 
 	public FalsePredicate(FalsePredicate<T> other) {
 

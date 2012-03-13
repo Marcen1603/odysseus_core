@@ -19,6 +19,6 @@ import java.io.IOException;
 public interface ISinkStreamHandler<T>{
 
 	void transfer(T object) throws IOException;
-	void done()throws IOException;;
+	void done()throws IOException;
 
 }

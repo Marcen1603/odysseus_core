@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttrib
  * @author Jonas Jacobi
  */
 public interface IParameter<T> extends Serializable {
-	public static enum REQUIREMENT { MANDATORY, OPTIONAL };
+	public static enum REQUIREMENT { MANDATORY, OPTIONAL }
 	public void setName(String name);
 	public String getName();
 	public IParameter.REQUIREMENT getRequirement();
