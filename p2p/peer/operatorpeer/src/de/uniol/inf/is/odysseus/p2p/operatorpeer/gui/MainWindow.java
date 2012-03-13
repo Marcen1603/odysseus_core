@@ -139,7 +139,8 @@ public class MainWindow extends AbstractMainWindow {
 		}
 	}
 
-	public void removeTab(String queryId) {
+	@Override
+    public void removeTab(String queryId) {
 		synchronized (queryTabIndex) {
 			// Find Index of Query in Tabs
 			int pos = queryTabIndex.indexOf(queryId);
