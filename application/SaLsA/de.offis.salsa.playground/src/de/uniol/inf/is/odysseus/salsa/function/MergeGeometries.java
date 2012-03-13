@@ -48,9 +48,7 @@ public class MergeGeometries extends AbstractFunction<Geometry> {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): Two geometries.");
         }
-        else {
-            return MergeGeometries.accTypes[argPos];
-        }
+        return MergeGeometries.accTypes[argPos];
     }
 
     @Override

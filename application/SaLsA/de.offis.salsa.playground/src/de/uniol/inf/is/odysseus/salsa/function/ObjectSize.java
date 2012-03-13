@@ -38,9 +38,7 @@ public class ObjectSize extends AbstractFunction<Double> {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): A geometry.");
         }
-        else {
-            return ObjectSize.accTypes[argPos];
-        }
+        return ObjectSize.accTypes[argPos];
     }
 
     @Override
