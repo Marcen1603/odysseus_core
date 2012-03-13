@@ -166,15 +166,12 @@ public class LeaderPO<T extends IMetaAttribute> extends AbstractClusteringPO<T, 
 			if (other.threshold == this.threshold) {
 				if (Arrays.equals(other.restrictList, this.restrictList)) {
 					return true;
-				} else {
-					return false;
 				}
-			} else {
-				return false;
+                return false;
 			}
-		} else {
-			return false;
+            return false;
 		}
+        return false;
 
 	}
 
