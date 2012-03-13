@@ -113,7 +113,8 @@ public class AgentModel extends BaseAgentModel {
 	 * 
 	 * @return the created agents
 	 */
-	public ArrayList<Agent> createAgents() {
+	@Override
+    public ArrayList<Agent> createAgents() {
 		System.out.println("Creating " + POPULATION + " people.");
 		ArrayList<Agent> people = AgentGenerator.createRandomPopulation(POPULATION, world);
 
@@ -167,7 +168,8 @@ public class AgentModel extends BaseAgentModel {
 	 * 
 	 * @param agents the list of agents
 	 */
-	public void doIteration(final Collection<Agent> agents) {
+	@Override
+    public void doIteration(final Collection<Agent> agents) {
 		Calendar time = world.getTime();
 		now = new EasyTime(time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));
 		handleProtagonist();

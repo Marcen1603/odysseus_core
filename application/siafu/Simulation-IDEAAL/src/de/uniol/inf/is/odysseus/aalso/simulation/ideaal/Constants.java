@@ -102,7 +102,8 @@ public class Constants {
 		 * 
 		 * @return a string describing the activity
 		 */
-		public String toString() {
+		@Override
+        public String toString() {
 			return description;
 		}
 
@@ -121,7 +122,8 @@ public class Constants {
 		 * 
 		 * @return a flatenned text with the description of the activity
 		 */
-		public FlatData flatten() {
+		@Override
+        public FlatData flatten() {
 			return new Text(description).flatten();
 		}
 	}
