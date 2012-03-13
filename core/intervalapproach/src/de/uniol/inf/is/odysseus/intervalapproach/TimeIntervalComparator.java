@@ -36,12 +36,10 @@ public class TimeIntervalComparator<T extends IMetaAttributeContainer<? extends 
 	public int compare(T one, T two) {
 		if(TimeInterval.startsBefore(one.getMetadata(), two.getMetadata())){
 			return -1;
-		}else{
-			if(one.getMetadata().getStart().equals(two.getMetadata().getStart())){
-				return 0;
-			}else{
-				return 1;
-			}
 		}
+        if(one.getMetadata().getStart().equals(two.getMetadata().getStart())){
+        	return 0;
+        }
+        return 1;
 	}
 }

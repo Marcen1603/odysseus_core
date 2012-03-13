@@ -263,9 +263,8 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 				ret[1] = new TimeInterval(right.getEnd(), left.getEnd());
 			}
 			return ret;
-		} else {
-			return new ITimeInterval[] { left, null };
 		}
+        return new ITimeInterval[] { left, null };
 	}
 
 	/**
@@ -321,12 +320,11 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 						minuend.getEnd())						
 				);					
 				return difference;
-			} else {
-				difference.add(new TimeInterval(minuend.getEnd(),
-						subtrahend.getEnd())
-				);		
-				return difference;
 			}
+            difference.add(new TimeInterval(minuend.getEnd(),
+            		subtrahend.getEnd())
+            );		
+            return difference;
 		}
 		
 		if(minuend.getStart().before(subtrahend.getStart())) {
@@ -344,13 +342,12 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 						subtrahend.getStart()
 				));			
 				return difference;
-			} else {
-				difference.add(new TimeInterval(
-						minuend.getStart(),
-						subtrahend.getStart()
-				));		
-				return difference;
 			}
+            difference.add(new TimeInterval(
+            		minuend.getStart(),
+            		subtrahend.getStart()
+            ));		
+            return difference;
 		}
 		
 		if(subtrahend.getStart().before(minuend.getStart())) {
@@ -370,13 +367,12 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 						minuend.getStart()
 				));					
 				return difference;
-			} else {
-				difference.add(new TimeInterval(
-						subtrahend.getStart(),
-						minuend.getStart()
-				));			
-				return difference;
-			}			
+			}
+            difference.add(new TimeInterval(
+            		subtrahend.getStart(),
+            		minuend.getStart()
+            ));			
+            return difference;			
 		}
 		
 		return null;
