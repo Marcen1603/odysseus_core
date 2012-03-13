@@ -33,7 +33,7 @@ public class RelationalSymbolTableOperationFactory implements
 	public IAggregateFunction getOperation(String name) {
 		IAggregateFunction func = cache.get(name);
 		if (func == null){
-			func = createNewFunction(name);;
+			func = createNewFunction(name);
 			cache.put(name, func);
 		}
 		return func;
