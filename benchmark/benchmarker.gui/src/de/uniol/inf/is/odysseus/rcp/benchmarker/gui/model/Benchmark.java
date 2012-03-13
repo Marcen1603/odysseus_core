@@ -101,9 +101,8 @@ public class Benchmark {
 	public boolean hasResults() {
 		if (results.isEmpty()) {
 			return false;
-		} else {
-			return true;
 		}
+        return true;
 	}
 
 	public void setResults(List<BenchmarkResult> results) {
