@@ -194,7 +194,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
+	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
 		WindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
@@ -278,7 +278,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		return null;
 	}
 
-	private SDFSchema createAliasSchema(String alias,
+	private static SDFSchema createAliasSchema(String alias,
 			ILogicalOperator access) {
 		// Keep the original Type not the alias
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

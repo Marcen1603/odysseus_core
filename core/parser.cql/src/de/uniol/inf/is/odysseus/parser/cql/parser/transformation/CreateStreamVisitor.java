@@ -340,7 +340,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		return data;
 	}
 
-	private boolean hasAutoReconnect(ASTChannel node) {
+	private static boolean hasAutoReconnect(ASTChannel node) {
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
 			if (node.jjtGetChild(i) instanceof ASTAutoReconnect) {
 				return true;

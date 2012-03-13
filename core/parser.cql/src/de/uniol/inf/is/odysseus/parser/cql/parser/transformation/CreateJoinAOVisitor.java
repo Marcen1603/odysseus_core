@@ -282,7 +282,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 				: ExistenceAO.Type.NOT_EXISTS);
 	}
 
-	private String toExpression(ILogicalOperator subquery) {
+	private static String toExpression(ILogicalOperator subquery) {
 		SDFSchema outputSchema = subquery.getOutputSchema();
 		if (outputSchema.size() == 1) {
 			return outputSchema.get(0).getURI();

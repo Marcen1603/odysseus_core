@@ -34,7 +34,7 @@ public class VisitorService {
 	}
 	
 	
-	private String generateName(IVisitor visitor){
+	private static String generateName(IVisitor visitor){
 		return visitor.getClass().getCanonicalName();
 	}
 }

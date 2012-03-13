@@ -255,7 +255,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	/**
 	 * checks wether outputschema contains ambigious identifiers
 	 */
-	private void checkAttributes(List<SDFAttribute> aliasSchema) {
+	private static void checkAttributes(List<SDFAttribute> aliasSchema) {
 		for (SDFAttribute attribute : aliasSchema) {
 			if (Collections.frequency(aliasSchema, attribute) != 1) {
 				throw new IllegalArgumentException("ambigious attribute: " + attribute);
