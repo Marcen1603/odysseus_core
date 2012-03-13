@@ -85,7 +85,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
 		}
 
-	};
+	}
 
 	final protected DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
@@ -95,12 +95,12 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	public enum OutputMode {
 		NEW_ELEMENT, MODIFIED_INPUT, INPUT
-	};
+	}
 
 	abstract public OutputMode getOutputMode();
 
 	public AbstractPipe() {
-	};
+	}
 
 	public AbstractPipe(AbstractPipe<R, W> pipe) {
 		super(pipe);

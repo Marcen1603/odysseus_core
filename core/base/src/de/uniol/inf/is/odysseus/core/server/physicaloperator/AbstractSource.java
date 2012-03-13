@@ -52,9 +52,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T>{
 
-	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
-	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();;
+	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
@@ -146,7 +146,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------
 
 	public AbstractSource() {
-	};
+	}
 
 	public AbstractSource(AbstractSource<T> source) {
 		this.outputSchema = createCleanClone(source.outputSchema);
@@ -295,7 +295,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(T object) {
 		transfer(object, 0);
-	};
+	}
 
 	@Override
 	public void transfer(Collection<T> object, int sourceOutPort) {
@@ -350,7 +350,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			}
 		}
 
-	};
+	}
 
 	protected void process_close() {
 	}

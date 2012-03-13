@@ -52,7 +52,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	transient private List<IOperatorOwner> owners;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
-	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();;
+	protected Vector<LogicalSubscription> subscriptions = new Vector<LogicalSubscription>();
 
 	protected boolean recalcOutputSchemata = false;
 
@@ -164,11 +164,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 */
 	@Override
 	public String getName() {
-		if (name == null) {
-			return this.getClass().getSimpleName();
-		} else {
-			return name;
-		}
+	    return name == null ? this.getClass().getSimpleName() : name;
 	}
 
 	@Override

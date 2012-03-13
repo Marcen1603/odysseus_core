@@ -23,7 +23,7 @@ public abstract class AbstractIterablePipe<R, W> extends AbstractPipe<R, W>
 		implements IIterableSource<W> {
 	protected List<IOperatorOwner> deactivateRequestControls = new Vector<IOperatorOwner>();
 	
-	public AbstractIterablePipe(){};
+	public AbstractIterablePipe(){}
 	
 	public AbstractIterablePipe(AbstractIterablePipe<R,W> pipe){
 		super(pipe);

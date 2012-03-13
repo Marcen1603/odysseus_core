@@ -205,7 +205,7 @@ public abstract class AbstractScheduling implements IScheduling,ITrainScheduling
 	@Override
 	public IPartialPlan getPlan() {
 		return plan;
-	};
+	}
 
 	@Override
 	public void addSchedulingEventListener(

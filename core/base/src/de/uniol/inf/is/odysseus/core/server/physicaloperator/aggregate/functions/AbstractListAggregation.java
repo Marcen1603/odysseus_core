@@ -41,7 +41,7 @@ abstract public class AbstractListAggregation<R,W> extends AbstractAggregateFunc
 		}
 		list.addElem(toMerge);
 		return list;
-	};
+	}
 
 
 }
