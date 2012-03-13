@@ -54,9 +54,8 @@ public class StatefulDetectionPO<Meta extends IMiningMetadata, Data  extends IMe
 	private DefaultTISweepArea<Data> getSA(int port){
 		if(port==LEFT){
 			return sweepAreaDetect;
-		}else{
-			return sweepAreaCheck;
 		}
+        return sweepAreaCheck;
 	}
 	
 	private void setMin(int port, PointInTime time){

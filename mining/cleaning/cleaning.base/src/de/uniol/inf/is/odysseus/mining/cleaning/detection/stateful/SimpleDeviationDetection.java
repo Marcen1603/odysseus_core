@@ -40,10 +40,9 @@ public class SimpleDeviationDetection extends AbstractSimpleAggregateDetection{
 			String p = getAttributeName()+" < ( (1.0-"+percent+") * "+getAggregationAttribute()+")";
 			p = p+" || "+getAttributeName()+" > ( (1.0+"+percent+") * "+getAggregationAttribute()+")";		
 			return p;
-		}else{
-			String p = getAttributeName()+"+"+this.abweichung+"<"+getAggregationAttribute();
-			p = p+" || "+getAttributeName()+"-"+this.abweichung+">"+getAggregationAttribute();		
-			return p;
 		}
+        String p = getAttributeName()+"+"+this.abweichung+"<"+getAggregationAttribute();
+        p = p+" || "+getAttributeName()+"-"+this.abweichung+">"+getAggregationAttribute();		
+        return p;
 	}
 }

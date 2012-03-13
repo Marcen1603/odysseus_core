@@ -62,9 +62,8 @@ public class StatefulCorrectionPO<Meta extends IMiningMetadata, Data extends IMe
 	private DefaultTISweepArea<Data> getSA(int port) {
 		if (port == LEFT) {
 			return sweepAreaData;
-		} else {
-			return sweepAreaForCorrection;
 		}
+        return sweepAreaForCorrection;
 	}
 
 	private void setMin(int port, PointInTime time) {
