@@ -213,9 +213,8 @@ public class NexmarkStaticClientHandler extends Thread {
 			Node n_neu = DOMHelp.createNode(n);
 			// TODO: debug(DOMHelp.dumpNode(n_neu, false));
 			return n_neu;
-		} else {
-			return null;
 		}
+        return null;
 	}
 
 	/**
