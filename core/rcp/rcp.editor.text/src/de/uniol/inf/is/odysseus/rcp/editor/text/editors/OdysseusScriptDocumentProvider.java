@@ -63,7 +63,7 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	 * @return <code>true</code> if setting the content was successful or no file exists, <code>false</code> otherwise
 	 * @throws CoreException if reading the file fails
 	 */
-	private boolean setDocumentContent(IDocument document, IEditorInput input) throws CoreException {
+	private static boolean setDocumentContent(IDocument document, IEditorInput input) throws CoreException {
 		// XXX handle encoding
 		Reader reader;
 		try {
@@ -91,7 +91,7 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	 * @param reader the source
 	 * @throws IOException if reading fails
 	 */
-	private void setDocumentContent(IDocument document, Reader reader) throws IOException {
+	private static void setDocumentContent(IDocument document, Reader reader) throws IOException {
 		BufferedReader in= new BufferedReader(reader);
 		try {
 			StringBuffer buffer= new StringBuffer(512);
@@ -165,7 +165,7 @@ public class OdysseusScriptDocumentProvider extends AbstractDocumentProvider {
 	 * @param monitor a progress monitor to report progress
 	 * @throws IOException if writing fails
 	 */
-	private void writeDocumentContent(IDocument document, Writer writer, IProgressMonitor monitor) throws IOException {
+	private static void writeDocumentContent(IDocument document, Writer writer, IProgressMonitor monitor) throws IOException {
 		Writer out= new BufferedWriter(writer);
 		try {
 			out.write(document.get());

@@ -93,7 +93,7 @@ public class CommentTextCommand extends AbstractHandler implements IHandler {
 		return null;
 	}	
 	
-	private boolean allLinesCommented(String[] lines, int from, int to) {
+	private static boolean allLinesCommented(String[] lines, int from, int to) {
 		for (int linenumber = 0; linenumber < lines.length; linenumber++) {
 			if (linenumber >= from && linenumber <= to) {
 				if (!lines[linenumber].startsWith(COMMENT_STRING)) {

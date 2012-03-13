@@ -61,7 +61,7 @@ public class OdysseusOccurrencesUpdater implements ISelectionChangedListener {
 		}
 	}
 
-	private String getWordAtSelection(ISelection selection, IDocument document) {
+	private static String getWordAtSelection(ISelection selection, IDocument document) {
 		if (selection instanceof TextSelection) {
 			TextSelection textSelection = (TextSelection) selection;
 			if (textSelection.getLength() > 0) {
@@ -74,7 +74,7 @@ public class OdysseusOccurrencesUpdater implements ISelectionChangedListener {
 		return "";
 	}
 
-	private String findEndOfWord(IDocument doc, int offset) {
+	private static String findEndOfWord(IDocument doc, int offset) {
 		try {
 			for (int n = offset; n < doc.getLength(); n++) {
 				char c = doc.getChar(n);
@@ -88,7 +88,7 @@ public class OdysseusOccurrencesUpdater implements ISelectionChangedListener {
 		return "";
 	}
 
-	private String findStartOfWord(IDocument doc, int offset) {
+	private static String findStartOfWord(IDocument doc, int offset) {
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
@@ -102,7 +102,7 @@ public class OdysseusOccurrencesUpdater implements ISelectionChangedListener {
 		return "";
 	}
 
-	private boolean isValidWord(String word) {
+	private static boolean isValidWord(String word) {
 		return !word.isEmpty();
 	}
 

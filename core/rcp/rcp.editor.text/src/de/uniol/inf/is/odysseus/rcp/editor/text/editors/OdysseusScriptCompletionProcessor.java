@@ -91,7 +91,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 	
 	
 
-	private String tokenBefore(IDocument doc, int offset) {
+	private static String tokenBefore(IDocument doc, int offset) {
 		try {
 			int n = offset - 1;
 			while (n >= 0 && Character.isSpaceChar(doc.getChar(n))) {
@@ -103,7 +103,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		}
 	}
 
-	private String lastWord(IDocument doc, int offset) {
+	private static String lastWord(IDocument doc, int offset) {
 		try {
 			for (int n = offset - 1; n >= 0; n--) {
 				char c = doc.getChar(n);
@@ -116,7 +116,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 	}
 
 	
-	private List<String> getScriptKeywords(){
+	private static List<String> getScriptKeywords(){
 		List<String> words = new ArrayList<String>();
 		String scriptkeywords[] = OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames().toArray(new String[] {});
 		for (int i = 0; i < scriptkeywords.length; i++) {
@@ -126,7 +126,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		return words;
 	}
 	
-	private List<String> getKeywordsFromRegistry() {
+	private static List<String> getKeywordsFromRegistry() {
 		List<String> words = new ArrayList<String>();
 		for (String grp : KeywordRegistry.getInstance().getKeywordGroups()) {
 			for (String word : KeywordRegistry.getInstance().getKeywords(grp)) {
