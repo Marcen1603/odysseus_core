@@ -62,9 +62,8 @@ public class BpelServiceImpl implements BpelService {
         if (maintainedBy == null){
         	this.maintainedMachines.put(machine, 1);
         	return 0;
-        }else {
-        	return maintainedBy;
         }
+        return maintainedBy;
     }
 
 	@Override
