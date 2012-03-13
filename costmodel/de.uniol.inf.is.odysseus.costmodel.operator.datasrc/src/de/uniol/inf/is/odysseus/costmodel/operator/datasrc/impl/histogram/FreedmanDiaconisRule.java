@@ -9,8 +9,8 @@ public class FreedmanDiaconisRule implements IIntervalCountEstimator {
 		int dataSize = data.size();
 
 		// determine number of bins...
-		int lowerQuartilePos = (int) ((double) dataSize * 0.25);
-		int upperQuartilePos = (int) ((double) dataSize * 0.75);
+		int lowerQuartilePos = (int) (dataSize * 0.25);
+		int upperQuartilePos = (int) (dataSize * 0.75);
 		double min = data.get(0);
 		double max = data.get(dataSize - 1);
 
