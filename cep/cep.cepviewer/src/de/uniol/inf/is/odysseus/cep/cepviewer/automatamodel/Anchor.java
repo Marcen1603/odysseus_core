@@ -47,7 +47,8 @@ public class Anchor extends AbstractConnectionAnchor {
 	 *            is not used.
 	 * @return Returns the location of this anchor.
 	 */
-	public Point getLocation(Point point) {
+	@Override
+    public Point getLocation(Point point) {
 		Rectangle rect = getOwner().getBounds();
 		int x = rect.x + place.x * rect.width / 2;
 		int y = rect.y + place.y * rect.height / 2;

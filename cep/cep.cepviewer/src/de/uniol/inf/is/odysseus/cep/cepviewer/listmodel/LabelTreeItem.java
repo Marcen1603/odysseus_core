@@ -50,7 +50,8 @@ public class LabelTreeItem extends AbstractTreeItem {
 	 * 
 	 * @return the text of this entry
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return StringConst.LABEL_TREE_ITEM_TEXT.replaceFirst(
 				StringConst.WILDCARD, this.name)
 				.replaceFirst(StringConst.WILDCARD,

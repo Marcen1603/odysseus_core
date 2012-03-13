@@ -57,7 +57,8 @@ public class CEPSymbolView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the query view.
 	 */
-	public void createPartControl(Composite parent) {
+	@Override
+    public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		this.text = new Text(parent, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL
 				| SWT.V_SCROLL);
@@ -86,7 +87,8 @@ public class CEPSymbolView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
-	public void setFocus() {
+	@Override
+    public void setFocus() {
 		// do nothing
 	}
 

@@ -45,7 +45,8 @@ public class CEPEventListener implements ICEPEventListener {
 	 * @param event
 	 *            is the CEPEvent fired by the CEPEventAgent
 	 */
-	public void cepEventOccurred(CEPEvent event) {
+	@Override
+    public void cepEventOccurred(CEPEvent event) {
 		// get the content object of the event
 		final Object content = event.getContent();
 		if (content instanceof StateMachineInstance) {
@@ -69,7 +70,8 @@ public class CEPEventListener implements ICEPEventListener {
 				try {
 					this.view.getSite().getShell().getDisplay()
 							.asyncExec(new Runnable() {
-								public void run() {
+								@Override
+                                public void run() {
 									view.selectionChanged((StateMachineInstance<?>) content);
 									view.getStatusList().getTree().refresh();
 								}
@@ -90,7 +92,8 @@ public class CEPEventListener implements ICEPEventListener {
 			// refresh all lists within the gui
 			this.view.getSite().getShell().getDisplay()
 					.asyncExec(new Runnable() {
-						public void run() {
+						@Override
+                        public void run() {
 							view.getNormalList().getTree().refresh();
 							view.getQueryList().getTree().refresh();
 							view.getStatusList().getTree().refresh();

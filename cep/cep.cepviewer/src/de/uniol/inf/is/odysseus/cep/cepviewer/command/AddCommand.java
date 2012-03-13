@@ -52,7 +52,8 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * @param event
 	 *            is the event.
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		// get the CepOperator

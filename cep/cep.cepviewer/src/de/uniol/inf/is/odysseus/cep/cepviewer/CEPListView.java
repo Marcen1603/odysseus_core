@@ -80,7 +80,8 @@ public class CEPListView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the list view.
 	 */
-	public void createPartControl(Composite parent) {
+	@Override
+    public void createPartControl(Composite parent) {
 		// set the layout
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginWidth = layout.marginHeight = 0;
@@ -157,7 +158,8 @@ public class CEPListView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
-	public void setFocus() {
+	@Override
+    public void setFocus() {
 		this.tabMenu.setFocus();
 	}
 
@@ -167,7 +169,8 @@ public class CEPListView extends ViewPart {
 	 */
 	public void setInfoData() {
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				String infotext = StringConst.INFO_ALL
 						+ CEPListView.this.normalList.getItemCount()
 						+ StringConst.WHITESPACE;

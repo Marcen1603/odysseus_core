@@ -81,7 +81,8 @@ public class TransitionLoop extends AbstractTransition {
 	 * This method is called, if the AbstractState is dragged to another
 	 * position within the diagram to update the positions of the Bendpoints.
 	 */
-	public void repaint() {
+	@Override
+    public void repaint() {
 //		super.repaint();
 		if (this.bendpointList != null) {
 			this.setLocations();

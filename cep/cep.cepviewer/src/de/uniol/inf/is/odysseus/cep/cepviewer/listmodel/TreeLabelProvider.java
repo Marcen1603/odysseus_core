@@ -33,7 +33,8 @@ public class TreeLabelProvider extends LabelProvider {
 	 * 
 	 * @return the image of the given entry
 	 */
-	public Image getImage(Object object) {
+	@Override
+    public Image getImage(Object object) {
 		if (object instanceof InstanceTreeItem) {
 			InstanceTreeItem instance = (InstanceTreeItem) object;
 			return instance.getContent().getImage();
@@ -52,7 +53,8 @@ public class TreeLabelProvider extends LabelProvider {
 	 * 
 	 * @return the name of the given entry
 	 */
-	public String getText(Object object) {
+	@Override
+    public String getText(Object object) {
 		if (object instanceof AbstractTreeItem) {
 			AbstractTreeItem item = (AbstractTreeItem) object;
 			return item.toString();

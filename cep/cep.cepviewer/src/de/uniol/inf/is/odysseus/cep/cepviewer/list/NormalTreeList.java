@@ -48,11 +48,13 @@ public class NormalTreeList extends AbstractTreeList {
 	 * @param instance
 	 *            is the instance which should be added
 	 */
-	public void addToTree(CEPInstance instance) {
+	@Override
+    public void addToTree(CEPInstance instance) {
 		InstanceTreeItem newItem = new InstanceTreeItem(this.root, instance);
 		this.root.add(newItem);
 		this.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				tree.refresh();
 			}
 		});
@@ -88,7 +90,8 @@ public class NormalTreeList extends AbstractTreeList {
 	 * 
 	 * @return true if the instance has been found, else false
 	 */
-	public boolean remove(InstanceTreeItem toRemove) {
+	@Override
+    public boolean remove(InstanceTreeItem toRemove) {
 		for (AbstractTreeItem instanceItem : this.root.getChildren()) {
 			if (toRemove.getContent().equals(instanceItem.getContent())) {
 				this.root.getChildren().remove(instanceItem);
@@ -107,7 +110,8 @@ public class NormalTreeList extends AbstractTreeList {
 	 * 
 	 * @return true
 	 */
-	public boolean remove(MachineTreeItem toRemove) {
+	@Override
+    public boolean remove(MachineTreeItem toRemove) {
 		for (Object listItem : this.root.getChildren().toArray()) {
 			// search for every instance with the equal StateMachine object
 			if (toRemove.getContent().equals(
@@ -125,7 +129,8 @@ public class NormalTreeList extends AbstractTreeList {
 	/**
 	 * This method removes all entries from the tree of the TreeViewer.
 	 */
-	public void removeAll() {
+	@Override
+    public void removeAll() {
 		this.root = new LabelTreeItem(null, "Root");
 		this.tree.setInput(this.root.getChildren());
 		this.tree.refresh();

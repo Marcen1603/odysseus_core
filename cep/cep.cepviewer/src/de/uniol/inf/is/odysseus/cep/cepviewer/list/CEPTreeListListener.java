@@ -38,7 +38,8 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 	/**
 	 * This method is called if a new item within the source widget is selected.
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
+	@Override
+    public void selectionChanged(SelectionChangedEvent event) {
 		// get the selection of the widget
 		if (event.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection select = (IStructuredSelection) event

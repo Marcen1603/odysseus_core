@@ -45,7 +45,8 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 	 *            is the ExecutionEvent fired by the corresponding context menu
 	 *            entry
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	@Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 		// search for the reference of the CEPListView
 		for (IViewReference a : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {

@@ -30,7 +30,8 @@ public class CEPViewer implements IPerspectiveFactory {
 	 * @param myLayout
 	 *            is the layout of the perspective
 	 */
-	public void createInitialLayout(IPageLayout myLayout) {
+	@Override
+    public void createInitialLayout(IPageLayout myLayout) {
 		// deactived the editor area
 		myLayout.setEditorAreaVisible(false);
 	}

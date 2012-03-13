@@ -39,7 +39,8 @@ public class ExpandAllCommand extends AbstractHandler implements IHandler {
 	 *            is the ExecutionEvent fired by the Button which represents the
 	 *            ExpandAll command
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	@Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 		// search for the reference of the CEPListView
 		for (IViewReference a : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage()

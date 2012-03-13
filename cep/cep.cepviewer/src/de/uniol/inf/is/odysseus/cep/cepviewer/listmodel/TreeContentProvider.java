@@ -33,7 +33,8 @@ public class TreeContentProvider extends ArrayContentProvider implements
 	 * 
 	 * @return the children entries of the given entry
 	 */
-	public Object[] getChildren(Object parent) {
+	@Override
+    public Object[] getChildren(Object parent) {
 		AbstractTreeItem item = (AbstractTreeItem) parent;
 		return item.getChildren().toArray();
 	}
@@ -45,7 +46,8 @@ public class TreeContentProvider extends ArrayContentProvider implements
 	 * 
 	 * @return the parent entry of the given entry
 	 */
-	public Object getParent(Object element) {
+	@Override
+    public Object getParent(Object element) {
 		AbstractTreeItem item = (AbstractTreeItem) element;
 		return item.getParent();
 	}
@@ -57,7 +59,8 @@ public class TreeContentProvider extends ArrayContentProvider implements
 	 * 
 	 * @return true if the given entry has children entries, else false
 	 */
-	public boolean hasChildren(Object element) {
+	@Override
+    public boolean hasChildren(Object element) {
 		AbstractTreeItem item = (AbstractTreeItem) element;
 		return !item.getChildren().isEmpty();
 	}

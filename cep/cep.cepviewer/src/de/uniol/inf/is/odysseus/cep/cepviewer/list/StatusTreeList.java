@@ -67,7 +67,8 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @param instance
 	 *            is the instance which should be added
 	 */
-	public void addToTree(CEPInstance instance) {
+	@Override
+    public void addToTree(CEPInstance instance) {
 		// check the current status of the instance and add it to
 		// status entry
 		if (instance.getStatus().equals(CEPStatus.FINISHED)) {
@@ -85,7 +86,8 @@ public class StatusTreeList extends AbstractTreeList {
 		}
 		// refresh the list
 		this.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				tree.refresh();
 			}
 		});
@@ -99,7 +101,8 @@ public class StatusTreeList extends AbstractTreeList {
 	 * 
 	 * @return true if the instance has been found, else false
 	 */
-	public boolean remove(InstanceTreeItem toRemove) {
+	@Override
+    public boolean remove(InstanceTreeItem toRemove) {
 		// check the current status of the instance and remove it from the
 		// status entry
 		if (toRemove.getContent().getStatus().equals(CEPStatus.FINISHED)) {
@@ -127,7 +130,8 @@ public class StatusTreeList extends AbstractTreeList {
 	 * 
 	 * @return true
 	 */
-	public boolean remove(MachineTreeItem toRemove) {
+	@Override
+    public boolean remove(MachineTreeItem toRemove) {
 		this.removeMachineFromList(this.itemR, toRemove.getContent());
 		this.removeMachineFromList(this.itemF, toRemove.getContent());
 		this.removeMachineFromList(this.itemA, toRemove.getContent());
@@ -138,7 +142,8 @@ public class StatusTreeList extends AbstractTreeList {
 	/**
 	 * This method removes all entries from the tree of the TreeViewer.
 	 */
-	public void removeAll() {
+	@Override
+    public void removeAll() {
 		this.itemA.removeAllChildren();
 		this.itemR.removeAllChildren();
 		this.itemF.removeAllChildren();

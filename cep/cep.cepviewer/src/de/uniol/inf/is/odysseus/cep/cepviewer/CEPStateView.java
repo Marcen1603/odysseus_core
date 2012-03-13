@@ -80,7 +80,8 @@ public class CEPStateView extends ViewPart {
 	 * @param parent
 	 *            is the widget which contains the query view.
 	 */
-	public void createPartControl(Composite parent) {
+	@Override
+    public void createPartControl(Composite parent) {
 		// create the widget and set the layout
 		this.table = new Table(parent, SWT.SINGLE | SWT.BORDER
 				| SWT.HIDE_SELECTION);
@@ -150,7 +151,8 @@ public class CEPStateView extends ViewPart {
 				Boolean.toString(state.isActive()) };
 		final String[] transContent = this.createTransList(state, transList);
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				// set the state information
 				for (int i = 0; i < newContent.length; i++) {
 					table.getItem(i).setText(1, newContent[i]);
@@ -176,7 +178,8 @@ public class CEPStateView extends ViewPart {
 	/**
 	 * This method is called to set the focus to this view.
 	 */
-	public void setFocus() {
+	@Override
+    public void setFocus() {
 		// do nothing
 	}
 

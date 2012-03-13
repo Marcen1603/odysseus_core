@@ -48,7 +48,8 @@ public class QueryTreeList extends AbstractTreeList {
 	 * @param instance
 	 *            is the instance which should be added
 	 */
-	public void addToTree(CEPInstance instance) {
+	@Override
+    public void addToTree(CEPInstance instance) {
 		for (AbstractTreeItem child : this.root.getChildren()) {
 			StateMachine<?> itemContent = ((MachineTreeItem) child)
 					.getContent();
@@ -58,7 +59,8 @@ public class QueryTreeList extends AbstractTreeList {
 				InstanceTreeItem newItem = new InstanceTreeItem(child, instance);
 				child.add(newItem);
 				this.getDisplay().asyncExec(new Runnable() {
-					public void run() {
+					@Override
+                    public void run() {
 						tree.refresh();
 					}
 				});
@@ -79,7 +81,8 @@ public class QueryTreeList extends AbstractTreeList {
 	 * 
 	 * @return true if the instance has been found, else false
 	 */
-	public boolean remove(InstanceTreeItem toRemove) {
+	@Override
+    public boolean remove(InstanceTreeItem toRemove) {
 		for (AbstractTreeItem machineItem : this.root.getChildren()) {
 			if (toRemove.getContent().getStateMachine()
 					.equals(((MachineTreeItem) machineItem).getContent())) {
@@ -108,7 +111,8 @@ public class QueryTreeList extends AbstractTreeList {
 	 * 
 	 * @return true if the MachineTreeItem has been removed, else false
 	 */
-	public boolean remove(MachineTreeItem toRemove) {
+	@Override
+    public boolean remove(MachineTreeItem toRemove) {
 		MachineTreeItem removeItem = (MachineTreeItem) toRemove;
 		for (AbstractTreeItem machineItem : this.root.getChildren()) {
 			// durchsuche die Rootelemente
@@ -127,7 +131,8 @@ public class QueryTreeList extends AbstractTreeList {
 	/**
 	 * This method removes all entries from the tree of the TreeViewer.
 	 */
-	public void removeAll() {
+	@Override
+    public void removeAll() {
 		this.root = new LabelTreeItem(null, "Root");
 		this.tree.setInput(this.root.getChildren());
 		this.tree.refresh();

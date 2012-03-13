@@ -45,7 +45,8 @@ public class MachineTreeItem extends AbstractTreeItem {
 	 * 
 	 * @return the StateMachine object
 	 */
-	public StateMachine<?> getContent() {
+	@Override
+    public StateMachine<?> getContent() {
 		return (StateMachine<?>) this.content;
 	}
 
@@ -54,7 +55,8 @@ public class MachineTreeItem extends AbstractTreeItem {
 	 * 
 	 * @return the text of this entry
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return StringConst.TREE_ITEM_MACHINE_LABEL + this.name + " (Total "
 				+ this.getChildren().size() + ")";
 	}

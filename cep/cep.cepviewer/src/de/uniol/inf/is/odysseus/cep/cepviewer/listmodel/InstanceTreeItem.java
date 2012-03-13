@@ -44,7 +44,8 @@ public class InstanceTreeItem extends AbstractTreeItem {
 	 * 
 	 * @return the StateMachine object
 	 */
-	public CEPInstance getContent() {
+	@Override
+    public CEPInstance getContent() {
 		return (CEPInstance) this.content;
 	}
 	
@@ -53,7 +54,8 @@ public class InstanceTreeItem extends AbstractTreeItem {
 	 * 
 	 * @return the text of this entry
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		return StringConst.TREE_ITEM_INSTANCE_LABEL + this.name;
 	}
 

@@ -76,7 +76,8 @@ public class AutomataState extends AbstractState {
 	 * @param graphic
 	 *            is the object that allows to draw on a surface.
 	 */
-	public void paintFigure(Graphics graphic) {
+	@Override
+    public void paintFigure(Graphics graphic) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Rectangle r = bounds;
 		Font f = new Font(display, "Arial", 15,
