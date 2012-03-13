@@ -126,7 +126,8 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 
 	}
 
-	private void updateCovariance(MVRelationalTuple<M> car, double[][] restCov,
+	@SuppressWarnings("static-method")
+    private void updateCovariance(MVRelationalTuple<M> car, double[][] restCov,
 			String[] restrictedList) {
 		List<Integer> restrictedIndicesList = new ArrayList<Integer>(
 				restrictedList.length);
@@ -150,7 +151,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 		}
 	}
 
-	private void updateCovarianceLine(double[] covLine, double[] restCovLine,
+	private static void updateCovarianceLine(double[] covLine, double[] restCovLine,
 			List<Integer> restrictedIndices) {
 		for (int i = 0; i < restrictedIndices.size(); i++) {
 			covLine[restrictedIndices.get(i)] = restCovLine[i];

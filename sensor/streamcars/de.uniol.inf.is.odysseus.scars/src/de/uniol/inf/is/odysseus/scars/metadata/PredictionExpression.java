@@ -373,7 +373,7 @@ public class PredictionExpression {
 	 * @param path
 	 * @param index
 	 */
-	private void replaceIndex(int[] path, int index) {
+	private static void replaceIndex(int[] path, int index) {
 		for(int i=0; i<path.length; i++) {
 			if(path[i] == -1) {
 				path[i] = index;

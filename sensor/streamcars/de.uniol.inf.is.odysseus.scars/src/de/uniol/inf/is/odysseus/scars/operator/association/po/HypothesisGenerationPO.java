@@ -170,7 +170,8 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 		return base;
 	}
 
-	private List<Object> replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
+	@SuppressWarnings("static-method")
+    private List<Object> replaceMetaDataNames(TupleIndexPath tupleIndexPath, String sourceName, String outputName) {
 		List<Object> list = new ArrayList<Object>();
 		for (TupleInfo car : tupleIndexPath) {
 			@SuppressWarnings("unchecked")

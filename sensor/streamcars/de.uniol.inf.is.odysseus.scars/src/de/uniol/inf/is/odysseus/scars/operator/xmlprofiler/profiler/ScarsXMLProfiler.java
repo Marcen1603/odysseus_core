@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.metadata.Probability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
@@ -436,72 +435,6 @@ public class ScarsXMLProfiler {
 //	}
 
 
-
-	private static<M extends IProbability> MVRelationalTuple<M> createScanTuple(SDFSchema schema) {
-		MVRelationalTuple<M>[] objList = createObjectList();
-
-		MVRelationalTuple<M> list = new MVRelationalTuple<M>(objList.length);
-		for(int index=0; index<objList.length; index++) {
-			list.setAttribute(index, objList[index]);
-
-		}
-
-		MVRelationalTuple<M> scan = new MVRelationalTuple<M>(2);
-		scan.setAttribute(0, list);
-		scan.setAttribute(1, 1);
-
-		return scan;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static<M extends IProbability> MVRelationalTuple<M> createObjectTuple() {
-		MVRelationalTuple<M> obj = new MVRelationalTuple<M>(2);
-
-		MVRelationalTuple<M> pos = new MVRelationalTuple<M>(3);
-		pos.setAttribute(0, 1.0);
-		pos.setAttribute(1, 1.0);
-		pos.setAttribute(2, 0.0);
-
-		obj.setAttribute(0, pos);
-		obj.setAttribute(1, 45.0);
-
-
-		double[][] cov = new double[4][4];
-		cov[0][0] = 0.5;
-		cov[0][1] = 0.5;
-		cov[0][2] = 0.5;
-		cov[0][3] = 0.5;
-
-		cov[1][0] = 0.5;
-		cov[1][1] = 0.5;
-		cov[1][2] = 0.5;
-		cov[1][3] = 0.5;
-
-		cov[2][0] = 0.5;
-		cov[2][1] = 0.5;
-		cov[2][2] = 0.5;
-		cov[2][3] = 0.5;
-
-		cov[3][0] = 0.5;
-		cov[3][1] = 0.5;
-		cov[3][2] = 0.5;
-		cov[3][3] = 0.5;
-
-		ArrayList<int[]> paths = new ArrayList<int[]>();
-		paths.add(new int[] {0, 0, 0, 0});
-		paths.add(new int[] {0, 0, 0, 1});
-		paths.add(new int[] {0, 0, 0, 2});
-		paths.add(new int[] {0, 0, 1});
-
-		Probability p = new Probability();
-		p.setCovariance(cov);
-		p.setAttributePaths(paths);
-		obj.setMetadata((M) p);
-
-		return obj;
-	}
-
-
 	@SuppressWarnings("unused")
 	private static List<List<?>> createObjectCovarianz() {
 		List<List<?>> cov = new ArrayList<List<?>>(4);
@@ -535,21 +468,5 @@ public class ScarsXMLProfiler {
 
 		return cov;
 	}
-
-	private static<M extends IProbability> MVRelationalTuple<M>[] createObjectList() {
-		@SuppressWarnings("unchecked")
-		MVRelationalTuple<M>[] list = new MVRelationalTuple[4];
-		list[0] = createObjectTuple();
-		list[1] = createObjectTuple();
-		list[2] = createObjectTuple();
-		list[3] = createObjectTuple();
-		return list;
-	}
-
-//	private static<M extends IProbability> MVRelationalTuple<M> createTimeTuple() {
-//		MVRelationalTuple<M> time = new MVRelationalTuple<M>(1);
-//		time.setAttribute(0, 10);
-//		return time;
-//	}
 
 }

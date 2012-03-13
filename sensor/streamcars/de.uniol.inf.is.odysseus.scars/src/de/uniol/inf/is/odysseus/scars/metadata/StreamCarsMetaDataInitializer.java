@@ -118,11 +118,13 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 		tupleGiven.getMetadata().setStart(p);
 	}
 
-	private void initLatencyData(MVRelationalTuple<M> tupleGiven) {
+	@SuppressWarnings("static-method")
+    private void initLatencyData(MVRelationalTuple<M> tupleGiven) {
 		tupleGiven.getMetadata().setLatencyStart(System.nanoTime());
 	}
 
-	private void initAssoziationMetaData(MVRelationalTuple<M> tupleGiven) {
+	@SuppressWarnings("static-method")
+    private void initAssoziationMetaData(MVRelationalTuple<M> tupleGiven) {
 		tupleGiven.getMetadata().setConnectionList(new ConnectionList());
 	}
 

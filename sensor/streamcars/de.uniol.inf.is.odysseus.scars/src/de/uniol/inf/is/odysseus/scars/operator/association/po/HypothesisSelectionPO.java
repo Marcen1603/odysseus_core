@@ -108,7 +108,8 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 		return getSingleMatchingList(connections, mainTuple);
 	}
 
-	private ConnectionList getSingleMatchingList(Map<MVRelationalTuple<M>, List<IConnection>> connections, MVRelationalTuple<M> mainTuple) {
+	@SuppressWarnings("static-method")
+    private ConnectionList getSingleMatchingList(Map<MVRelationalTuple<M>, List<IConnection>> connections, MVRelationalTuple<M> mainTuple) {
 		Map<MVRelationalTuple<M>, IConnection> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, IConnection>();
 
 		for (MVRelationalTuple<M> matchingTuple : connections.keySet()) {
@@ -152,7 +153,8 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 		return resultConnectionList;
 	}
 
-	private List<Object> getDifferenceSet(MVRelationalTuple<M> mainTuple, TupleIndexPath baseObjects, ConnectionList matchedObjects) {
+	@SuppressWarnings("static-method")
+    private List<Object> getDifferenceSet(MVRelationalTuple<M> mainTuple, TupleIndexPath baseObjects, ConnectionList matchedObjects) {
 		List<Object> tupleList = new ArrayList<Object>();
 //		TupleHelper tupleHelper = new TupleHelper(mainTuple);
 		for (TupleIndexPath obj : matchedObjects.getAllElements()) {

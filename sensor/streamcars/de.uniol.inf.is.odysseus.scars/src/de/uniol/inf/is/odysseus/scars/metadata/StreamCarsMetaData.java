@@ -107,7 +107,7 @@ public class StreamCarsMetaData<K> extends ObjectTrackingMetadata<K> implements
 		return this.gain;
 	}
 
-	private double[][] copyArray( double[][] toCopy ) {
+	private static double[][] copyArray( double[][] toCopy ) {
 		if( toCopy == null ) return null;
 
 		double[][] copy = new double[toCopy.length][];
