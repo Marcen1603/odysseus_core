@@ -103,7 +103,7 @@ public class DataTuple{
 		return memSize;
 	}
 
-	private int calcBaseTypeSize(Object attObject) {
+	private static int calcBaseTypeSize(Object attObject) {
 		if (attObject == null)
 			return 0;
 		if (attObject instanceof Integer)
