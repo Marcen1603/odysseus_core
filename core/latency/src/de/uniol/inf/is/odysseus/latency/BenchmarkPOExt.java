@@ -43,7 +43,7 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency
 		this.processingTime = processingTime;
 		this.selectivity = selectivity;
 		this.buffer = new LinkedList<R>();
-	};
+	}
 
 	public BenchmarkPOExt(BenchmarkPOExt<R> benchmarkPO) {
 		this.processingTime = benchmarkPO.processingTime;
@@ -64,10 +64,12 @@ public class BenchmarkPOExt<R extends IMetaAttributeContainer<? extends ILatency
 	}
 	
 
-	private void waitProcessingTime(long end) {
-		while (System.nanoTime() < end)
-			;
-	}
+    private static void waitProcessingTime(long end) {
+        long current = System.nanoTime();
+        try {
+            Thread.sleep(end - current);
+        } catch (InterruptedException ignored) {}
+    }
 
 	protected void setOldVal(R object, double d) {
 		this.oldVal = d;
