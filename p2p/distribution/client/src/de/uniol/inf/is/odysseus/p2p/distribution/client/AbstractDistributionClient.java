@@ -23,7 +23,7 @@ public abstract class AbstractDistributionClient implements IDistributionClient 
 
 	private AbstractOdysseusPeer peer;
 	static private Logger logger = LoggerFactory
-			.getLogger(AbstractDistributionClient.class);;
+			.getLogger(AbstractDistributionClient.class);
 
 	public AbstractOdysseusPeer getPeer() {
 		return peer;
