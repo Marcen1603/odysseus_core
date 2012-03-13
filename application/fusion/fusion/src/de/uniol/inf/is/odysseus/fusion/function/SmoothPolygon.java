@@ -7,7 +7,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.algorithm.*;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -31,9 +30,9 @@ public class SmoothPolygon extends AbstractFunction<Geometry> {
 		}
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
-		} else {
-			return accTypes;
-		}
+		} 
+		
+		return accTypes;
 	}
 
 	@Override
@@ -48,11 +47,7 @@ public class SmoothPolygon extends AbstractFunction<Geometry> {
 		Polygon polygon = (Polygon) this.getInputValue(0);		
 		
 		List<Coordinate> smoothCoordinates = new ArrayList<Coordinate>();
-		Coordinate coordinate_last = null;
 		for(Coordinate coordinate : polygon.getCoordinates()){
-			if(coordinate_last != null){
-				System.out.println(Angle.toDegrees(Angle.angle(coordinate_last, coordinate)));	
-			}
 			if(add){
  				smoothCoordinates.add(coordinate);
 			}
