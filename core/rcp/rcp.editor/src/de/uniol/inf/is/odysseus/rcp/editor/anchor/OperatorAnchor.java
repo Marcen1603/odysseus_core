@@ -51,10 +51,9 @@ public class OperatorAnchor extends AbstractConnectionAnchor {
 		if( type == Type.INPUT ) {
 			// unten
 			return new Point(Math.round(r.x + dWidth), Math.round(r.y + r.height));
-		} else {
-			// oben
-			return new Point(Math.round(r.x + dWidth), Math.round(r.y));
 		}
+        // oben
+        return new Point(Math.round(r.x + dWidth), Math.round(r.y));
 	}
 
 	public Type getType() {
