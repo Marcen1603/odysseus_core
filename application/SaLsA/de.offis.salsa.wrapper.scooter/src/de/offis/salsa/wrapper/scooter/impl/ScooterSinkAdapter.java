@@ -28,9 +28,6 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 		SinkAdapter {
 	private static Logger LOG = LoggerFactory
 			.getLogger(ScooterSinkAdapter.class);
-	private final static double FREE = 0.0;
-	private final static double UNKNOWN = -1.0;
-	private final static double OBSTACLE = 1.0;
 	private static final String SERVICE = "GridPublisher";
 	private static final String PROTOCOL = "default";
 	private final Map<SinkSpec, Thread> scooterThreads = new HashMap<SinkSpec, Thread>();
