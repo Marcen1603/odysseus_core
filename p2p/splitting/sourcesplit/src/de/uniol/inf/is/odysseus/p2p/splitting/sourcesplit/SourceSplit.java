@@ -100,7 +100,7 @@ public class SourceSplit extends AbstractSplittingStrategy {
 				// temp = adv;
 			}
 		} else if (iLogicalOperator instanceof P2PSinkAO) {
-			splitList.add((AbstractLogicalOperator) iLogicalOperator);
+			splitList.add(iLogicalOperator);
 		}
 		for (int i = 0; i < outputCount; ++i) {
 			if (i == 1) {
