@@ -207,10 +207,9 @@ public class StreamClientHandler {
 	private Long getLong(Object data) {
 		if (data instanceof Long) {
 			return (Long) data;
-		} else {
-			System.out.println("Trying to cast to a Long");
-			return new Long(data.toString());
 		}
+        System.out.println("Trying to cast to a Long");
+        return new Long(data.toString());
 	}
 
 	/**
@@ -225,10 +224,9 @@ public class StreamClientHandler {
 	private Integer getInteger(Object data) {
 		if (data instanceof Integer) {
 			return (Integer) data;
-		} else {
-			System.out.println("Trying to cast to a Integer");
-			return new Integer(data.toString());
 		}
+        System.out.println("Trying to cast to a Integer");
+        return new Integer(data.toString());
 	}
 
 	/**
@@ -243,9 +241,8 @@ public class StreamClientHandler {
 	private Double getDouble(Object data) {
 		if (data instanceof Double) {
 			return (Double) data;
-		} else {
-			System.out.println("Trying to cast to a Double");
-			return new Double(data.toString());
 		}
+        System.out.println("Trying to cast to a Double");
+        return new Double(data.toString());
 	}
 }

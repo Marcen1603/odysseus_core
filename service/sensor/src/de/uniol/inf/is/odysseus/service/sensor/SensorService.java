@@ -71,9 +71,8 @@ public class SensorService implements ISensorService {
     public boolean isSensorExistent(String name) {
 		if (SensorDictionary.getInstance().getSensor(name) == null) {
 			return false;
-		} else {
-			return true;
 		}
+        return true;
 	}
 
 	@Override
