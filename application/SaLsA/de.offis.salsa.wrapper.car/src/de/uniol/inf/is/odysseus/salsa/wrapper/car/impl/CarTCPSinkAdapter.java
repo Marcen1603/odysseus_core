@@ -80,7 +80,8 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 			this.buffer = ByteBuffer.allocateDirect(64 * 1024);
 		}
 
-		public void run() {
+		@Override
+        public void run() {
 			try {
 				while ((!Thread.currentThread().isInterrupted())
 						&& (this.channel.isConnected())) {
