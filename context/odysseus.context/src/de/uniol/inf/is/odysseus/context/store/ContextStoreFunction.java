@@ -58,9 +58,8 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 			Object value = ContextStore.getInstance().getValue(storeName);
 			if (value == null) {
 				return "<empty>";
-			} else {
-				return value;
 			}
+            return value;
 		} catch (ContextManagementException e) {
 			e.printStackTrace();
 		}
