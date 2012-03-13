@@ -145,7 +145,7 @@ public class OperatorPlanExporter implements IOperatorPlanExporter {
 		return params;
 	}
 
-	private String convertToString(Object inputValue) {
+	private static String convertToString(Object inputValue) {
 		if( inputValue == null ) 
 			return "__null__";
 		

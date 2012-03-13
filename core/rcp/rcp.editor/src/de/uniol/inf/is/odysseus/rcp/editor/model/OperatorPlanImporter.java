@@ -14,13 +14,11 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -160,85 +158,7 @@ public class OperatorPlanImporter implements IOperatorPlanImporter {
 	}
 
 	protected Operator loadOperator(Node node) {
-//		int x = Integer.valueOf(getAttributeValue(node, "x"));
-//	
-//		int y = Integer.valueOf(getAttributeValue(node, "y"));
-//
-//		String builderName = getAttributeValue(node, "builder");
-//		IOperatorBuilder builder = null;
-	// FIXME: THIS IS LOCAL ... THE OTHER COULD BE REMOTE!
-//		//		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(builderName, OdysseusRCPPlugIn.getActiveSession(), OdysseusRCPPlugIn.getExecutor());
-////		builder.setCaller(OdysseusRCPPlugIn.getActiveSession());
-//
-//		Map<String, Object> parameters = loadParameters(node);
-//
-//		Set<IParameter<?>> params = builder.getParameters();
-//		for (IParameter<?> param : params) {
-//			param.setInputValue(parameters.get(param.getName()));
-//		}
-//
-//		Operator operator = new Operator(builder, builderName);
-//		operator.setX(x);
-//		operator.setY(y);
-//
-//		return operator;
 		return null;
-	}
-
-	private Map<String, Object> loadParameters(Node node) {
-
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-
-		NodeList list = node.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			Node actNode = list.item(i);
-
-			if( actNode.getNodeType() == Node.TEXT_NODE) {
-				continue;
-			} else if (!actNode.getNodeName().equals("Parameters"))
-				throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
-
-			NodeList list2 = actNode.getChildNodes();
-			for (int j = 0; j < list2.getLength(); j++) {
-				Node actNode2 = list2.item(j);
-
-				if( actNode2.getNodeType() == Node.TEXT_NODE) {
-					continue;
-				} else if (!actNode2.getNodeName().equals("Parameter"))
-					throw new IllegalArgumentException("Unknown node: " + actNode.getNodeName());
-
-				String key = getAttributeValue(actNode2, "name");
-				String value = getAttributeValue(actNode2, "value");
-
-				Object obj = null;
-				if (!value.equals("__null__"))
-					obj = interpretValue(value);
-				parameters.put(key, obj);
-			}
-		}
-
-		return parameters;
-	}
-
-	private Object interpretValue(String value) {
-		String[] parts = value.split("\\.");
-		byte[] bytes = new byte[parts.length];
-		for (int i = 0; i < parts.length; i++) {
-			bytes[i] = Byte.valueOf(parts[i]);
-		}
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			ObjectInputStream objOut = new ObjectInputStream(bais);
-			Object obj = objOut.readObject();
-			return obj;
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			return null;
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-			return null;
-		}
-
 	}
 
 	protected Document loadDocument(IFile file) {

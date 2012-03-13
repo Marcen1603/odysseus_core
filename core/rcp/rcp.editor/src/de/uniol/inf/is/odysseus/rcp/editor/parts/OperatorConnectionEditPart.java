@@ -106,7 +106,7 @@ public class OperatorConnectionEditPart extends AbstractConnectionEditPart {
 		}
 	}
 	
-	private Label createLabel( String text ) {
+	private static Label createLabel( String text ) {
 		Label label = new Label(text);
 		label.setForegroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 		label.setBackgroundColor(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));

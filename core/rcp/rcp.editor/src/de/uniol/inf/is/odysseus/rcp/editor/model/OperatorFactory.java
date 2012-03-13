@@ -16,21 +16,14 @@ package de.uniol.inf.is.odysseus.rcp.editor.model;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-
 
 public class OperatorFactory implements CreationFactory {
 
-	private final String operatorBuilderName;
-	
 	public OperatorFactory(String operatorBuilderName) {
-		this.operatorBuilderName = operatorBuilderName;
 	}
 	
 	@Override
 	public Object getNewObject() {
-		final ISession user = OdysseusRCPPlugIn.getActiveSession();
 		Operator op = null;
 		// FIXME: Find solution for Operator-Generation!
 		//		Operator op = new Operator( OperatorBuilderFactory.createOperatorBuilder(operatorBuilderName, user, OdysseusRCPPlugIn.getExecutor().getDataDictionary()), 
