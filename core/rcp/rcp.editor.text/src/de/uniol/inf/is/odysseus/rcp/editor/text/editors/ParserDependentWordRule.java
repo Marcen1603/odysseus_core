@@ -101,7 +101,7 @@ public class ParserDependentWordRule implements IRule {
 				// the map
 				if (fIgnoreCase)
 					buffer = buffer.toLowerCase();				
-				IToken token = (IToken) fWords.get(buffer);
+				IToken token = fWords.get(buffer);
 				if (token != null) {
 					String parser = wordAndParser.get(buffer);
 					try {

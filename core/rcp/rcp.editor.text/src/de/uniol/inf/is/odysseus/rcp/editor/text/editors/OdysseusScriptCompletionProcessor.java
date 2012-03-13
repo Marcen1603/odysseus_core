@@ -81,7 +81,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 				}
 			}
 						
-			return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
+			return result.toArray(new ICompletionProposal[result.size()]);
 		} catch (Exception e) {
 			// ... log the exception ...
 			return NO_COMPLETIONS;
