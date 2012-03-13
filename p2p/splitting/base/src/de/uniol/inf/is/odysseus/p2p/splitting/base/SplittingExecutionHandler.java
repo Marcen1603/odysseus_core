@@ -48,13 +48,12 @@ public class SplittingExecutionHandler<F extends AbstractSplittingStrategy>
 					getExecutionListenerCallback()
 							.changeState(Lifecycle.FAILED);
 					return;
-				} else {
-					for (int i = 0; i < plan.size(); i++) {
-						getExecutionListenerCallback().getQuery().addSubPlan(
-								new Subplan(query.getId() + "_"+(subplanID++),
-										plan.get(i)), i == 0);
-					}
 				}
+                for (int i = 0; i < plan.size(); i++) {
+                	getExecutionListenerCallback().getQuery().addSubPlan(
+                			new Subplan(query.getId() + "_"+(subplanID++),
+                					plan.get(i)), i == 0);
+                }
 			}
 			getExecutionListenerCallback().changeState(
 					Lifecycle.SUCCESS);
