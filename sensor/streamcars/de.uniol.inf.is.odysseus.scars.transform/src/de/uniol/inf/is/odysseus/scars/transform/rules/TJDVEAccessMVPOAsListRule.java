@@ -42,9 +42,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 		accessPO = new JDVEAccessMVPO(operator.getPort());
 		System.out.println("JDVEAccessMVPO created");
 			
-		if(accessPO != null) {
-			accessPO.setObjectListPath(((JDVEAccessMVAO) operator).getObjectListPath());
-		}
+		accessPO.setObjectListPath(((JDVEAccessMVAO) operator).getObjectListPath());
 		
 		accessPO.setOutputSchema(operator.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
