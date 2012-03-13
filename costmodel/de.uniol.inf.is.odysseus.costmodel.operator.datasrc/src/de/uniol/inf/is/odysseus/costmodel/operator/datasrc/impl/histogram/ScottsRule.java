@@ -22,7 +22,7 @@ public class ScottsRule implements IIntervalCountEstimator {
 		}
 		
 		// erwartungswert
-		double e = sum / (double)data.size();
+		double e = sum / data.size();
 		
 		// variances
 		double sum2 = 0.0;
