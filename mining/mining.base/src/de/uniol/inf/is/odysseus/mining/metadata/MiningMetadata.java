@@ -42,7 +42,7 @@ public class MiningMetadata extends TimeInterval implements IMiningMetadata {
 	}
 	
 	
-	private String listToString(List<String> list){
+	private static String listToString(List<String> list){
 		String dS = "[";		
 		String del = "";
 		for(int i=0;i<list.size();i++){
