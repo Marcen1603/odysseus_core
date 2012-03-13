@@ -39,7 +39,7 @@ public class RecordEntry implements Serializable{
 
 	public enum State {
 		Initialized, Started, Stopped, Paused
-	};
+	}
 	
 	public enum PlayingState{
 		Started, Paused, Stopped
