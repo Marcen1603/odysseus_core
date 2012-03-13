@@ -38,7 +38,7 @@ public class StreamClient {
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 
-	public StreamClient(Socket connection, SDFSchema schema) throws IOException{
+	public StreamClient(Socket connection, SDFSchema schema) {
 		this.connection = connection;
 		
 		this.objectHandler = new ObjectHandler<RelationalTuple<IMetaAttribute>>(new RelationalTupleDataHandler(schema));

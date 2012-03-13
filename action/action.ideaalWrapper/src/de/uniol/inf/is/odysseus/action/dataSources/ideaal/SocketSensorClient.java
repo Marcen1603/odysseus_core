@@ -90,7 +90,7 @@ public class SocketSensorClient extends ISourceClient {
 					}
 					
 					SDFAttribute attribute = schema.getAttribute(index);
-					Object val = this.extractFromInputString(
+					Object val = SocketSensorClient.extractFromInputString(
 							attribute.getDatatype(), input);
 					if (val != null){
 						tuple.setAttribute(index, val);
@@ -134,7 +134,7 @@ public class SocketSensorClient extends ISourceClient {
 		return true;
 	}
 
-	private Object extractFromInputString(SDFDatatype datatype, String val) {
+	private static Object extractFromInputString(SDFDatatype datatype, String val) {
 		String qualName = datatype.getQualName();
 		qualName = qualName.toLowerCase();
 		if (qualName.equals("double")){
@@ -160,7 +160,7 @@ public class SocketSensorClient extends ISourceClient {
 			
 	}
 
-	private String readFromSensor(InputStream stream) {
+	private static String readFromSensor(InputStream stream) {
 		String message ="";
 		char[] buffer = new char[255];
 		
