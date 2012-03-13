@@ -31,8 +31,6 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
             0.0, 0.0
     };
 
-    private static final int SCALE = 60;
-
     public ExtPolygonMap() {
         this.setFocusable(true);
         this.addKeyListener(this);
@@ -103,8 +101,6 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        int number = keyCode - 48;
         double angle = Math.toRadians(this.angle);
         double radian = Math.toRadians(180);
         switch (event.getKeyCode()) {
@@ -172,13 +168,9 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        // System.out.println("KeyCode: " + keyCode);
     }
 
     @Override
     public void keyTyped(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-
     }
 }
