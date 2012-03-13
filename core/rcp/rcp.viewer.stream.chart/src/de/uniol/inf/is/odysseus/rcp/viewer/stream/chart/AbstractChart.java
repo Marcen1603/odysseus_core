@@ -89,7 +89,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		
 
 	@SuppressWarnings("unchecked")
-	private IStreamConnection<Object> createConnection(IPhysicalOperator operator) {
+	private static IStreamConnection<Object> createConnection(IPhysicalOperator operator) {
 		if (operator instanceof DefaultStreamConnection<?>) {
 			return (IStreamConnection<Object>) operator;
 		}
@@ -122,7 +122,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	}
 
-	private SDFMetaAttributeList extractMetaSchema(IStreamConnection<?> streamConnection) {
+	private static SDFMetaAttributeList extractMetaSchema(IStreamConnection<?> streamConnection) {
 		SDFMetaAttributeList attributes = new SDFMetaAttributeList();
 		for (ISource<?> source : streamConnection.getSources()) {
 			attributes = SDFMetaAttributeList.union(attributes, source.getMetaAttributeSchema());
@@ -219,7 +219,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	protected abstract void decorateChart(JFreeChart thechart);
 
-	private SDFSchema extractSchema(IStreamConnection<?> streamConnection) {
+	private static SDFSchema extractSchema(IStreamConnection<?> streamConnection) {
 		ISource<?>[] sources = streamConnection.getSources().toArray(new ISource<?>[0]);
 		return sources[0].getOutputSchema();
 	}
@@ -313,9 +313,8 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	private Method getAccordingType(ChartSetting otherMethod) {
 		if (otherMethod.type().equals(Type.SET)) {
 			return findMethod(otherMethod.name(), Type.GET);
-		} else {
-			return findMethod(otherMethod.name(), Type.SET);
-		}
+		} 
+		return findMethod(otherMethod.name(), Type.SET);
 	}
 
 	@Override
