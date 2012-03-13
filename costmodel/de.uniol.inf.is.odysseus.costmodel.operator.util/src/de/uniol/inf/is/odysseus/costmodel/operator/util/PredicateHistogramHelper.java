@@ -268,10 +268,9 @@ public class PredicateHistogramHelper {
 
 		if (mepExpression instanceof IBinaryOperator) {
 			return evaluateBinaryOperator((IBinaryOperator<?>) mepExpression, histograms);
-		} else {
-			getLogger().warn("Unsupported MEP-Expression: " + mepExpression);
-			return histograms;
 		}
+        getLogger().warn("Unsupported MEP-Expression: " + mepExpression);
+        return histograms;
 	}
 
 	private Map<SDFAttribute, IHistogram> evaluateBinaryOperator(IBinaryOperator<?> op, Map<SDFAttribute, IHistogram> histograms) {
@@ -314,49 +313,48 @@ public class PredicateHistogramHelper {
 			resultHistograms.put(hav.attribute, cuttedHistogram);
 			return resultHistograms;
 
-		} else {
-			TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
-			if (tha == null)
-				return null;
-
-			// Calculate new histograms
-			IHistogram hist1Relative = tha.histogram1.toRelative();
-			IHistogram hist2Relative = tha.histogram2.toRelative();
-
-			IHistogram biggerHist = null;
-			IHistogram smallerHist = null;
-			if (hist1Relative.getIntervalCount() > hist2Relative.getIntervalCount()) {
-				biggerHist = hist1Relative;
-				smallerHist = hist2Relative;
-			} else {
-				biggerHist = hist2Relative;
-				smallerHist = hist1Relative;
-			}
-
-			double[] borders = biggerHist.getIntervalBorders();
-			IHistogram histResult = biggerHist.clone();
-			for (int i = 0; i < borders.length - 1; i++) {
-				double intervalStart = borders[i];
-				double intervalEnd = borders[i + 1];
-
-				double prob1 = biggerHist.getOccurences(intervalStart);
-				double prob2 = smallerHist.getOccurenceRange(intervalStart, intervalEnd);
-				double result = prob1 * prob2;
-
-				histResult.setOccurences(i, result); // set value in
-														// histogram
-			}
-
-			// make absolute again
-			IHistogram hist1Result = histResult.normalize().toAbsolute(tha.histogram1.getValueCount());
-			IHistogram hist2Result = histResult.normalize().toAbsolute(tha.histogram2.getValueCount());
-
-			// insert results
-			Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
-			resultHistograms.put(tha.attr1, hist1Result);
-			resultHistograms.put(tha.attr2, hist2Result);
-			return resultHistograms;
 		}
+        TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
+        if (tha == null)
+        	return null;
+
+        // Calculate new histograms
+        IHistogram hist1Relative = tha.histogram1.toRelative();
+        IHistogram hist2Relative = tha.histogram2.toRelative();
+
+        IHistogram biggerHist = null;
+        IHistogram smallerHist = null;
+        if (hist1Relative.getIntervalCount() > hist2Relative.getIntervalCount()) {
+        	biggerHist = hist1Relative;
+        	smallerHist = hist2Relative;
+        } else {
+        	biggerHist = hist2Relative;
+        	smallerHist = hist1Relative;
+        }
+
+        double[] borders = biggerHist.getIntervalBorders();
+        IHistogram histResult = biggerHist.clone();
+        for (int i = 0; i < borders.length - 1; i++) {
+        	double intervalStart = borders[i];
+        	double intervalEnd = borders[i + 1];
+
+        	double prob1 = biggerHist.getOccurences(intervalStart);
+        	double prob2 = smallerHist.getOccurenceRange(intervalStart, intervalEnd);
+        	double result = prob1 * prob2;
+
+        	histResult.setOccurences(i, result); // set value in
+        											// histogram
+        }
+
+        // make absolute again
+        IHistogram hist1Result = histResult.normalize().toAbsolute(tha.histogram1.getValueCount());
+        IHistogram hist2Result = histResult.normalize().toAbsolute(tha.histogram2.getValueCount());
+
+        // insert results
+        Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
+        resultHistograms.put(tha.attr1, hist1Result);
+        resultHistograms.put(tha.attr2, hist2Result);
+        return resultHistograms;
 	}
 
 	/***********************************************************************/
@@ -379,51 +377,50 @@ public class PredicateHistogramHelper {
 			resultHistograms.put(hav.attribute, cuttedHistogram);
 			return resultHistograms;
 
-		} else {
-			TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
-			if (tha == null)
-				return null;
-
-			// Calculate new histograms
-			IHistogram hist1Relative = tha.histogram1.toRelative();
-			IHistogram hist2Relative = tha.histogram2.toRelative();
-			IHistogram hist1RelativeResult = hist1Relative.clone();
-			IHistogram hist2RelativeResult = hist2Relative.clone();
-
-			double[] borders = hist1Relative.getIntervalBorders();
-			for (int i = 0; i < borders.length - 1; i++) {
-				double intervalStart = borders[i];
-
-				double prob1 = hist1Relative.getOccurences(intervalStart);
-				double prob2 = hist2Relative.getOccurenceRange(intervalStart, hist2Relative.getMaximum());
-				double result = prob1 * prob2;
-
-				hist1RelativeResult.setOccurences(i, result); // set value in
-																// histogram
-			}
-
-			double[] borders2 = hist2Relative.getIntervalBorders();
-			for (int i = 0; i < borders2.length - 1; i++) {
-				double intervalStart = borders2[i];
-
-				double prob2 = hist2Relative.getOccurences(intervalStart);
-				double prob1 = hist1Relative.getOccurenceRange(hist1Relative.getMinimum(), intervalStart);
-				double result = prob1 * prob2;
-
-				hist2RelativeResult.setOccurences(i, result); // set value in
-																// histogram
-			}
-
-			// make absolute again
-			IHistogram hist1Result = hist1RelativeResult.toAbsolute(tha.histogram1.getValueCount());
-			IHistogram hist2Result = hist2RelativeResult.toAbsolute(tha.histogram2.getValueCount());
-
-			// insert results
-			Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
-			resultHistograms.put(tha.attr1, hist1Result);
-			resultHistograms.put(tha.attr2, hist2Result);
-			return resultHistograms;
 		}
+        TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
+        if (tha == null)
+        	return null;
+
+        // Calculate new histograms
+        IHistogram hist1Relative = tha.histogram1.toRelative();
+        IHistogram hist2Relative = tha.histogram2.toRelative();
+        IHistogram hist1RelativeResult = hist1Relative.clone();
+        IHistogram hist2RelativeResult = hist2Relative.clone();
+
+        double[] borders = hist1Relative.getIntervalBorders();
+        for (int i = 0; i < borders.length - 1; i++) {
+        	double intervalStart = borders[i];
+
+        	double prob1 = hist1Relative.getOccurences(intervalStart);
+        	double prob2 = hist2Relative.getOccurenceRange(intervalStart, hist2Relative.getMaximum());
+        	double result = prob1 * prob2;
+
+        	hist1RelativeResult.setOccurences(i, result); // set value in
+        													// histogram
+        }
+
+        double[] borders2 = hist2Relative.getIntervalBorders();
+        for (int i = 0; i < borders2.length - 1; i++) {
+        	double intervalStart = borders2[i];
+
+        	double prob2 = hist2Relative.getOccurences(intervalStart);
+        	double prob1 = hist1Relative.getOccurenceRange(hist1Relative.getMinimum(), intervalStart);
+        	double result = prob1 * prob2;
+
+        	hist2RelativeResult.setOccurences(i, result); // set value in
+        													// histogram
+        }
+
+        // make absolute again
+        IHistogram hist1Result = hist1RelativeResult.toAbsolute(tha.histogram1.getValueCount());
+        IHistogram hist2Result = hist2RelativeResult.toAbsolute(tha.histogram2.getValueCount());
+
+        // insert results
+        Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
+        resultHistograms.put(tha.attr1, hist1Result);
+        resultHistograms.put(tha.attr2, hist2Result);
+        return resultHistograms;
 	}
 
 	/***********************************************************************/
@@ -447,51 +444,50 @@ public class PredicateHistogramHelper {
 			resultHistograms.put(hav.attribute, cuttedHistogram);
 			return resultHistograms;
 
-		} else {
-			TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
-			if (tha == null)
-				return null;
-
-			// Calculate new histograms
-			IHistogram hist1Relative = tha.histogram1.toRelative();
-			IHistogram hist2Relative = tha.histogram2.toRelative();
-			IHistogram hist1RelativeResult = hist1Relative.clone();
-			IHistogram hist2RelativeResult = hist2Relative.clone();
-
-			double[] borders = hist1Relative.getIntervalBorders();
-			for (int i = 0; i < borders.length - 1; i++) {
-				double intervalStart = borders[i];
-
-				double prob1 = hist1Relative.getOccurences(intervalStart);
-				double prob2 = hist2Relative.getOccurenceRange(hist2Relative.getMinimum(), intervalStart);
-				double result = prob1 * prob2;
-
-				hist1RelativeResult.setOccurences(i, result); // set value in
-																// histogram
-			}
-
-			double[] borders2 = hist2Relative.getIntervalBorders();
-			for (int i = 0; i < borders2.length - 1; i++) {
-				double intervalStart = borders2[i];
-
-				double prob2 = hist2Relative.getOccurences(intervalStart);
-				double prob1 = hist1Relative.getOccurenceRange(intervalStart, hist1Relative.getMaximum());
-				double result = prob1 * prob2;
-
-				hist2RelativeResult.setOccurences(i, result); // set value in
-																// histogram
-			}
-
-			// make absolute again
-			IHistogram hist1Result = hist1RelativeResult.toAbsolute(tha.histogram1.getValueCount());
-			IHistogram hist2Result = hist2RelativeResult.toAbsolute(tha.histogram2.getValueCount());
-
-			// insert results
-			Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
-			resultHistograms.put(tha.attr1, hist1Result);
-			resultHistograms.put(tha.attr2, hist2Result);
-			return resultHistograms;
 		}
+        TwoHistAttr tha = getTwoHistAttr(arg0, arg1, histograms);
+        if (tha == null)
+        	return null;
+
+        // Calculate new histograms
+        IHistogram hist1Relative = tha.histogram1.toRelative();
+        IHistogram hist2Relative = tha.histogram2.toRelative();
+        IHistogram hist1RelativeResult = hist1Relative.clone();
+        IHistogram hist2RelativeResult = hist2Relative.clone();
+
+        double[] borders = hist1Relative.getIntervalBorders();
+        for (int i = 0; i < borders.length - 1; i++) {
+        	double intervalStart = borders[i];
+
+        	double prob1 = hist1Relative.getOccurences(intervalStart);
+        	double prob2 = hist2Relative.getOccurenceRange(hist2Relative.getMinimum(), intervalStart);
+        	double result = prob1 * prob2;
+
+        	hist1RelativeResult.setOccurences(i, result); // set value in
+        													// histogram
+        }
+
+        double[] borders2 = hist2Relative.getIntervalBorders();
+        for (int i = 0; i < borders2.length - 1; i++) {
+        	double intervalStart = borders2[i];
+
+        	double prob2 = hist2Relative.getOccurences(intervalStart);
+        	double prob1 = hist1Relative.getOccurenceRange(intervalStart, hist1Relative.getMaximum());
+        	double result = prob1 * prob2;
+
+        	hist2RelativeResult.setOccurences(i, result); // set value in
+        													// histogram
+        }
+
+        // make absolute again
+        IHistogram hist1Result = hist1RelativeResult.toAbsolute(tha.histogram1.getValueCount());
+        IHistogram hist2Result = hist2RelativeResult.toAbsolute(tha.histogram2.getValueCount());
+
+        // insert results
+        Map<SDFAttribute, IHistogram> resultHistograms = new HashMap<SDFAttribute, IHistogram>();
+        resultHistograms.put(tha.attr1, hist1Result);
+        resultHistograms.put(tha.attr2, hist2Result);
+        return resultHistograms;
 	}
 
 	/***********************************************************************/

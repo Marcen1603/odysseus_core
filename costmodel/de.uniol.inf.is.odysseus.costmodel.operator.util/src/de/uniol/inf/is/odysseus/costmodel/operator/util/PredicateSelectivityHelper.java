@@ -142,10 +142,9 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 		if (mepExpression instanceof IBinaryOperator) {
 			return evaluateBinaryOperator((IBinaryOperator<?>) mepExpression);
-		} else {
-			getLogger().warn("Unsupported MEP-Expression: " + mepExpression);
-			return STD_SELECTIVITY;
 		}
+        getLogger().warn("Unsupported MEP-Expression: " + mepExpression);
+        return STD_SELECTIVITY;
 	}
 
 	private double evaluateBinaryOperator(IBinaryOperator<?> op) {
