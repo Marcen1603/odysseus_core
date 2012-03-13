@@ -57,9 +57,8 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 		// keine Quellen werden verwaltet
 		if (dd.emptySourceTypeMap()) {
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 	private void collectSourcesFromPlan(ILogicalOperator op,
