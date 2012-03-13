@@ -29,7 +29,6 @@ public abstract class AbstractAggregateCorrection implements IBinaryCorrection<R
 	
 	private AggregateFunction aggregateFunction;
 	private String attributeName;
-	private boolean dataComesFromLeft = false;
 	private int attributePosition;
 	
 	public AbstractAggregateCorrection(String aggregate, String attributeName){
@@ -57,14 +56,12 @@ public abstract class AbstractAggregateCorrection implements IBinaryCorrection<R
 		for(int i=0;i<leftSchema.size();i++){
 			if(leftSchema.get(i).getAttributeName().equals(attributeName)){
 				this.attributePosition = i;
-				this.dataComesFromLeft = true;
 				break;
 			}
 		}			
 		for(int i=0;i<rightSchema.size();i++){
 			if(rightSchema.get(i).getAttributeName().equals(attributeName)){
 				this.attributePosition = i;
-				this.dataComesFromLeft = false;
 				break;
 			}
 		}	

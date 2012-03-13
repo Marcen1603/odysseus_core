@@ -52,7 +52,8 @@ public abstract class AbstractRelationalPredicateDetection implements IUnaryDete
 		}
 	}	
 	
-	public void init(SDFSchema schema){		
+	@Override
+    public void init(SDFSchema schema){		
 		String predicateString = createPredicate();
 		buildPredicate(predicateString, schema);
 		this.predicate.init(schema, null);
