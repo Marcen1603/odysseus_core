@@ -43,9 +43,8 @@ public class XPathHelper {
 				Node n = nl.item(i).getFirstChild();
 				if (n!= null){
 					return n.getTextContent();
-				}else{
-					return "";
 				}
+                return "";
 			}
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
