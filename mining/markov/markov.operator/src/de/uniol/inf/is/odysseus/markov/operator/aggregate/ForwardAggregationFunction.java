@@ -11,11 +11,9 @@ public class ForwardAggregationFunction extends AbstractAggregateFunction<Relati
 	 * 
 	 */
 	private static final long serialVersionUID = -9078982639010201605L;
-	private HiddenMarkovModel hmm;
 	
 	public ForwardAggregationFunction(HiddenMarkovModel hmm) {
 		super("FORWARD");
-		this.hmm = hmm;
 	}
 
 	@Override
