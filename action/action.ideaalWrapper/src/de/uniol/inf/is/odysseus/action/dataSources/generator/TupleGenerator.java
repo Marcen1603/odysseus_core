@@ -34,7 +34,7 @@ public class TupleGenerator {
 	private static int factoryNo = 0;
 	private static int machineNo = 0;
 	
-	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage};
+	public enum GeneratorType{Factory, Machine, Install_Pure, Install_DB, Usage}
 
 	public TupleGenerator(GeneratorConfig config, GeneratorType type) throws GeneratorException{
 		this.genTyp = type;
@@ -155,9 +155,9 @@ public class TupleGenerator {
 		
 		if (usageRate == null){
 			return null;
-		}else{
-			tuple.setAttribute(2, usageRate);
 		}
+		
+		tuple.setAttribute(2, usageRate);
 		
 		return tuple;
 	}
