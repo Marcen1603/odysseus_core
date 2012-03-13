@@ -104,7 +104,7 @@ public class FailedExecutionHandler<F> extends AbstractExecutionHandler<F>{
 
 	}
 
-	private int occurence(List<Lifecycle> list, List<Lifecycle> occurence) {
+	private static int occurence(List<Lifecycle> list, List<Lifecycle> occurence) {
 		int occ = 0;
 		if (occurence.size() > 0) {
 			for (int counter = 0; counter + occurence.size() < list.size(); counter++) {
