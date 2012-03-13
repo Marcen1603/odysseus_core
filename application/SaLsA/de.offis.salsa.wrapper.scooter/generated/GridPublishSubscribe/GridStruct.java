@@ -125,7 +125,7 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
         {
             for(int __i0 = 0; __i0 < data.length; __i0++)
             {
-                __h = 5 * __h + (int)data[__i0];
+                __h = 5 * __h + data[__i0];
             }
         }
         return __h;
