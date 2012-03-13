@@ -71,9 +71,7 @@ public class ST_Transform extends AbstractFunction<Geometry> {
 		if(argPos > this.getArity()){
 			throw new IllegalArgumentException(getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes[argPos];
-		}
+        return accTypes[argPos];
 	}
 
 	/* (non-Javadoc)
