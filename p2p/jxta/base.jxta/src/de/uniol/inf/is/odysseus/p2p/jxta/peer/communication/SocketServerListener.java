@@ -95,7 +95,8 @@ public class SocketServerListener implements ISocketServerListener {
 				socket.setSoTimeout(0);
 				if (socket != null) {
 					new Thread() {
-						public void run() {
+						@Override
+                        public void run() {
 							try {
 								InputStream in = socket.getInputStream();
 								ObjectInputStream oin = new ObjectInputStream(
@@ -154,7 +155,8 @@ public class SocketServerListener implements ISocketServerListener {
 		return peer;
 	}
 
-	public synchronized Collection<IMessageHandler> getMessageHandler() {
+	@Override
+    public synchronized Collection<IMessageHandler> getMessageHandler() {
 		return Collections.unmodifiableCollection(messageHandlers.values());
 	}
 
