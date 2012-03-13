@@ -61,7 +61,8 @@ public class SourcesViewContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public boolean hasChildren(Object element) {
 		if( element instanceof Entry ){ 
 			Entry<String, ILogicalOperator> entry = (Entry<String, ILogicalOperator>)element;
