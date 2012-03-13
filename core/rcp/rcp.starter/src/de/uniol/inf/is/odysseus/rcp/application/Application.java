@@ -42,7 +42,7 @@ public class Application implements IApplication {
 			// TODO: use a servicetracker instead of sleep...
 			IExecutor executor = null;
 			while((executor = OdysseusRCPPlugIn.getExecutor()) == null){
-				Thread.sleep(200);
+				Thread.sleep(2000);
 			}
 			if(executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
