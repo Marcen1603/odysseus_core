@@ -94,10 +94,9 @@ public class Text implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof Text)) {
 			return false;
-		} else {
-			Text t = (Text) o;
-			return (t.getText().equals(text));
 		}
+        Text t = (Text) o;
+        return (t.getText().equals(text));
 	}
 
 	@Override

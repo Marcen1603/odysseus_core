@@ -81,13 +81,12 @@ public final class SequentialNamer {
 		try {
 			if (nameList.ready()) {
 				return nameList.readLine();
-			} else {
-				if (index > Long.MAX_VALUE) {
-					throw new RuntimeException(
-							"Too many names asked out of the RandomNamer.");
-				}
-				return "Person" + (index++);
 			}
+            if (index > Long.MAX_VALUE) {
+            	throw new RuntimeException(
+            			"Too many names asked out of the RandomNamer.");
+            }
+            return "Person" + (index++);
 		} catch (Exception e) {
 			throw new RuntimeException(
 					"Strange occurred when reading the default name list");

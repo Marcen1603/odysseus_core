@@ -124,10 +124,9 @@ public class TimePeriod implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof TimePeriod)) {
 			return false;
-		} else {
-			TimePeriod tp = (TimePeriod) o;
-			return (tp.getStart().equals(start) && tp.getEnd().equals(end));
 		}
+        TimePeriod tp = (TimePeriod) o;
+        return (tp.getStart().equals(start) && tp.getEnd().equals(end));
 	}
 
 	@Override

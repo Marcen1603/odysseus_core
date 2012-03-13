@@ -106,10 +106,9 @@ public class TextList implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof TextList)) {
 			return false;
-		} else {
-			TextList tl = (TextList) o;
-			return (tl.getList().equals(l));
 		}
+        TextList tl = (TextList) o;
+        return (tl.getList().equals(l));
 	}
 
 	@Override
