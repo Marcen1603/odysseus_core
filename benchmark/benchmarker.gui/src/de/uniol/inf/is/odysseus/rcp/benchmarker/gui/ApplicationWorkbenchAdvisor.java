@@ -22,11 +22,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	private static final String PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.benchmarker.gui.perspective"; //$NON-NLS-1$
 
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+	@Override
+    public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
-	public String getInitialWindowPerspectiveId() {
+	@Override
+    public String getInitialWindowPerspectiveId() {
 		return PERSPECTIVE_ID;
 	}
 }

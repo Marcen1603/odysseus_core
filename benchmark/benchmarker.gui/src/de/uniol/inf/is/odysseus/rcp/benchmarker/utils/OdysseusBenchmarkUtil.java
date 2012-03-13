@@ -73,7 +73,8 @@ public class OdysseusBenchmarkUtil extends Thread {
 	/**
 	 * Startet den Benchmarkprozess
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		BundleContext ctx = de.uniol.inf.is.odysseus.rcp.benchmarker.gui.Activator.getDefault().getBundle()
 				.getBundleContext();
 		for (Benchmark benchmark : benchmarks) {
@@ -127,7 +128,8 @@ public class OdysseusBenchmarkUtil extends Thread {
 									System.out.println("Benchmarkrun erfolgreich");
 									BenchmarkStoreUtil.loadResultsOfGroupAndBenchmark(benchmark);
 									Display.getDefault().asyncExec(new Runnable() {
-										public void run() {
+										@Override
+                                        public void run() {
 											ProjectView.getDefault().refresh();
 										}
 									});

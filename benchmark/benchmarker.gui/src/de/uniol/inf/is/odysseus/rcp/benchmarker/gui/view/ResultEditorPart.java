@@ -93,7 +93,8 @@ public class ResultEditorPart extends EditorPart {
 		// löscht das Ergebnis
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 				BenchmarkStoreUtil.deleteResult(benchmark, ((ResultEditorInput) getEditorInput()).getResult());
 			}
 		});

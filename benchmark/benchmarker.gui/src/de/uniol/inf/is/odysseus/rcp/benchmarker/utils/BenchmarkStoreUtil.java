@@ -298,7 +298,8 @@ public class BenchmarkStoreUtil {
 		benchmark.getResults().remove(result);
 		// TreeViewer aktualisieren
 		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				ProjectView.getDefault().refresh();
 			}
 		});

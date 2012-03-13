@@ -70,7 +70,8 @@ public class FilterTextTreeViewer extends ControlContribution implements ModifyL
 	}
 
 	ViewerFilter viewerFilter = new ViewerFilter() {
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
+		@Override
+        public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof Benchmark) {
 				return showBenchmarkNote((Benchmark) element);
 			}
