@@ -47,7 +47,7 @@ public class AdvertisementTools {
 	public static PipeAdvertisement createSocketAdvertisement() {
 		PipeID socketID = null;
 
-		socketID = (PipeID) IDFactory.newPipeID(PeerGroupTool.getPeerGroup().getPeerGroupID());
+		socketID = IDFactory.newPipeID(PeerGroupTool.getPeerGroup().getPeerGroupID());
 		PipeAdvertisement advertisement = (PipeAdvertisement) AdvertisementFactory
 				.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		advertisement.setPipeID(socketID);
