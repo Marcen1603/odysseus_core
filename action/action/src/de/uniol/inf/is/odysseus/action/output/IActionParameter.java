@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.action.operator.EventTriggerPO;
  *
  */
 public interface IActionParameter {
-	public enum ParameterType{Attribute, Value};
+	public enum ParameterType{Attribute, Value}
 		
 	public Class<?> getParamClass();
 
