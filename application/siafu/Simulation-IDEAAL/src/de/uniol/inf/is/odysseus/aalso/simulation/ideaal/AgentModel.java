@@ -273,7 +273,7 @@ public class AgentModel extends BaseAgentModel {
 		case LESEN:
 			break;
 		default:
-			throw new RuntimeException("Unable to handle activity " + (Activity) a.get(ACTIVITY));
+			throw new RuntimeException("Unable to handle activity " + a.get(ACTIVITY));
 		}
 
 	}
