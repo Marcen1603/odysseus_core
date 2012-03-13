@@ -259,7 +259,8 @@ class OperatorPoint implements Comparable<OperatorPoint>, IClone{
 		return "t=" + t + " s=" + s + " d=" + d;
 	}
 	
-	public OperatorPoint clone(){
+	@Override
+    public OperatorPoint clone(){
 		return new OperatorPoint(this);
 	}
 
