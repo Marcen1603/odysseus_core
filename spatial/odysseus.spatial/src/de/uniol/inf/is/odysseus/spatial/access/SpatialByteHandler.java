@@ -191,16 +191,16 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 		return size;
 	}
 
-	private int getPointMemSize() {
+	private static int getPointMemSize() {
 		return 5 + 2 * 16;
 	}
 
-	private int getLineStringMemSize(LineString lineString) {
+	private static int getLineStringMemSize(LineString lineString) {
 		return 5 + getCoordinateSequenceMemSize(lineString
 				.getCoordinateSequence());
 	}
 
-	private int getPolygonMemSize(Polygon polygon) {
+	private static int getPolygonMemSize(Polygon polygon) {
 		int size = 5;
 		size += 4;
 		size += getCoordinateSequenceMemSize(polygon.getExteriorRing()
@@ -214,7 +214,7 @@ public class SpatialByteHandler extends AbstractAtomicDataHandler {
 		return size;
 	}
 
-	private int getCoordinateSequenceMemSize(
+	private static int getCoordinateSequenceMemSize(
 			CoordinateSequence coordinateSequence) {
 		return 4 + coordinateSequence.size() * 16;
 	}
