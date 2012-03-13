@@ -298,7 +298,8 @@ public class Simulation implements Runnable {
 	/**
 	 * Starts the simulation.
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		this.world = new World(this, simData);
 		this.time = world.getTime();
 		this.iterationStep = simulationConfig.getInt("iterationstep");

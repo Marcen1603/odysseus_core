@@ -70,7 +70,8 @@ public class AalsoOutputPrinter implements SimulatorOutputPrinter {
 	/**
 	 * closes the StreamServer connections
 	 */
-	public void cleanup() {
+	@Override
+    public void cleanup() {
 		for(StreamServer singleServer : this.getServer()){
 			singleServer.close();
 		}

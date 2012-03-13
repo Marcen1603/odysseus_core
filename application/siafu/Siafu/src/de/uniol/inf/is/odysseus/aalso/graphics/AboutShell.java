@@ -142,7 +142,8 @@ public class AboutShell {
 
 		shell.addShellListener(new ShellAdapter() {
 
-			public void shellClosed(final ShellEvent e) {
+			@Override
+            public void shellClosed(final ShellEvent e) {
 				disposeResources();
 			}
 		});

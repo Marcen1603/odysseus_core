@@ -321,9 +321,9 @@ public class Painter {
 			int darkness = (int) (DARKNESS_STEP * (minute / MINUTES_PER_HOUR));
 			if (hour == SUNRISE) {
 				return ONE_HUNDRED - darkness;
-			} else {
-				return darkness;
-			}
+			} 
+			
+			return darkness;
 		}
 	}
 

@@ -280,7 +280,8 @@ public class GUI implements Runnable {
 		 * drawn, it does so, and then sets the timer again for the next period.
 		 * 
 		 */
-		public synchronized void run() {
+		@Override
+        public synchronized void run() {
 			if (shell.isDisposed()) {
 				return;
 			}
@@ -525,11 +526,9 @@ public class GUI implements Runnable {
 			iterationReady = true;
 			skippedIterations = 0;
 			return true;
-		} else {
-			skippedIterations++;
-			return false;
-		}
-
+		} 
+		skippedIterations++;
+		return false;
 	}
 
 	/**
@@ -585,7 +584,8 @@ public class GUI implements Runnable {
 	 * and starting of the periodic timer that will refresh the simulation
 	 * canvas.
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		System.out.println("Starting Siafu...");
 		display = new Display();
 
