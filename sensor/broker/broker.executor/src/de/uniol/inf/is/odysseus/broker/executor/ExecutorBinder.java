@@ -109,7 +109,7 @@ public class ExecutorBinder implements CommandProvider{
 	 * @param broker the broker
 	 * @return the result string
 	 */
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	private String printPorts(BrokerPO<?> broker){
 		
 		StringBuilder builder = new StringBuilder();
