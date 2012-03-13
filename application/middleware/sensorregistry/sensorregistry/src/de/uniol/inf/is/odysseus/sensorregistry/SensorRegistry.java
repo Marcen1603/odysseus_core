@@ -57,18 +57,16 @@ public class SensorRegistry {
 		if(!registeredSensors.containsKey(name)){
 			this.registeredSensors.put(name, s);
 			return true;
-		}else{
-			return false;
 		}
+        return false;
 	}
 	
 	public boolean unregisterSensor(String name){
 		if(registeredSensors.containsKey(name)){
 			registeredSensors.remove(name);
 			return true;
-		}else{
-			return false;
 		}
+        return false;
 	}
 	
 	public void clear(){
