@@ -80,7 +80,8 @@ public class Window {
 	 * 
 	 * @return
 	 */
-	public long lengthToMilliseconds() {
+	@SuppressWarnings("fallthrough")
+    public long lengthToMilliseconds() {
 		long tempLength = this.length;
 		switch (this.unit) {
 		case months:

@@ -68,7 +68,7 @@ public class XMLSerializeStrategy extends AbstractSerializerStrategy<String> {
 		return s;
 	}
 
-	private String serializeProperties(Map<String, ISerializeProperty<?>> values) {
+	private static String serializeProperties(Map<String, ISerializeProperty<?>> values) {
 		String s = "";
 		String sep = "";
 		for (Entry<String, ISerializeProperty<?>> e : values.entrySet()) {
@@ -78,11 +78,11 @@ public class XMLSerializeStrategy extends AbstractSerializerStrategy<String> {
 		return s;
 	}
 
-	private String serializeProperty(String key, ISerializeProperty<?> value) {				
+	private static String serializeProperty(String key, ISerializeProperty<?> value) {				
 		return "<property type=\"" + value.getType().getCanonicalName() + "\" name=\"" + key + "\">" + serializeValue(value) + "</property>";
 	}
 
-	private Object serializeValue(ISerializeProperty<?> prop) {
+	private static Object serializeValue(ISerializeProperty<?> prop) {
 		Object value = prop.getValue();
 		if (prop.isList()) {
 			SerializePropertyList listProp  = (SerializePropertyList)prop;			
@@ -92,11 +92,11 @@ public class XMLSerializeStrategy extends AbstractSerializerStrategy<String> {
 
 	}
 
-	private Object serializeSimpleValue(Object value) {
+	private static Object serializeSimpleValue(Object value) {
 		return value;
 	}
 
-	private Object serializeListOfValues(Collection<SerializePropertyItem> values, Class<?> clazz) {
+	private static Object serializeListOfValues(Collection<SerializePropertyItem> values, Class<?> clazz) {
 		String s = "<list>" + NEWLINE;
 		for (SerializePropertyItem o : values) {
 			s = s + "<item>" + o.getValue() + "</item>" + NEWLINE;

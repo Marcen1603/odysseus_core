@@ -72,7 +72,7 @@ public class SDFMetaAttributeList extends SDFSchemaElementSet<SDFMetaAttribute> 
 		return newSet;
 	}
 
-	private SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
+	private static SDFDatatype getAccordingSDFDataType(Class<?> returnType) {
 		if (returnType.equals(Integer.class) || returnType.equals(int.class)) {
 			return SDFDatatype.INTEGER;			
 		}

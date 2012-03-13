@@ -37,7 +37,7 @@ public class JSONSerializeStrategy extends AbstractSerializerStrategy<String> {
 	}
 
 	@SuppressWarnings("unused")
-	private String serializeProperties(Map<String, ISerializeProperty<?>> values) {
+	private static String serializeProperties(Map<String, ISerializeProperty<?>> values) {
 		String s = "";
 //		String sep = "";
 //		for (Entry<String, SerializeProperty> e : values.entrySet()) {

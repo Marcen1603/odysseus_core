@@ -114,7 +114,7 @@ public class SDFElement implements Serializable, IClone {
 	 * @param substSDFNamespace
 	 * @return
 	 */
-	private String getURI(String uRIWithoutQualName, String qualName,
+	private static String getURI(String uRIWithoutQualName, String qualName,
 			boolean substSDFNamespace, String defaultSperator) {
 		String sep = defaultSperator == null ? "#" : defaultSperator;
 		StringBuffer ret = new StringBuffer();
