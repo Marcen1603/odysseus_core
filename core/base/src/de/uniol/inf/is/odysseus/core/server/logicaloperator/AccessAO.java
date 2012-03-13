@@ -172,7 +172,7 @@ public class AccessAO extends AbstractLogicalOperator implements
 		return true;
 	}
 
-	private Map<Integer, SDFSchema> createCleanClone(
+	private static Map<Integer, SDFSchema> createCleanClone(
 			Map<Integer, SDFSchema> old) {
 		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
 		for (Entry<Integer, SDFSchema> e : old.entrySet()) {

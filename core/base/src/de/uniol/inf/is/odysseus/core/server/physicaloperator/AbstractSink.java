@@ -219,7 +219,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	private boolean containsSubscription(
+	@SuppressWarnings("static-method")
+    private boolean containsSubscription(
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			ISink<? super T> sink, int sourcePort, int sinkPort) {
 		for (PhysicalSubscription<ISink<?>> sub : callPath) {
@@ -557,7 +558,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return false;
 	}
 
-	private Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old) {
+	private static Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old) {
 		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
 		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
 			copy.put(e.getKey(), e.getValue().clone());

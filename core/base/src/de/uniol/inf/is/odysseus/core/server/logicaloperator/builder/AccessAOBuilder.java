@@ -80,7 +80,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		return op;
 	}
 
-	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+	private static ILogicalOperator addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
 		for (SDFAttribute attr : operator.getOutputSchema()) {
 			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {

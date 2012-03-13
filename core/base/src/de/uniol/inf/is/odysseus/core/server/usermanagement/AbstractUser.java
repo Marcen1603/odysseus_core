@@ -56,9 +56,9 @@ public abstract class AbstractUser implements IUser, Serializable {
 	public String getAlgorithm() {
 		if (this.algorithm == null || "".equals(this.algorithm)) {
 			return "SHA-256";
-		} else {
-			return this.algorithm;
 		}
+		
+		return this.algorithm;
 	}
 
 	/**
@@ -75,8 +75,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	@Override
 	public void setPassword(final byte[] password) {
 		try {
-			this.password = this.getPasswordDigest(this.getAlgorithm(),
-					password);
+			this.password = getPasswordDigest(this.getAlgorithm(), password);
 		} catch (final NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
@@ -180,8 +179,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	@Override
 	public boolean validatePassword(final byte[] password) {
 		try {
-			return this.password.equals(this.getPasswordDigest(
-					this.getAlgorithm(), password));
+			return this.password.equals(getPasswordDigest(this.getAlgorithm(), password));
 		} catch (final NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
@@ -248,7 +246,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	 * @return The digist using the given algorithm.
 	 * @throws NoSuchAlgorithmException
 	 */
-	private String getPasswordDigest(final String algorithmName,
+	private static String getPasswordDigest(final String algorithmName,
 			final byte[] password) throws NoSuchAlgorithmException {
 		final MessageDigest algorithm = MessageDigest
 				.getInstance(algorithmName);
