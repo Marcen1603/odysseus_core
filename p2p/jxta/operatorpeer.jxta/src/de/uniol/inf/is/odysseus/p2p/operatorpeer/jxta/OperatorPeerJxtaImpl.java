@@ -294,7 +294,7 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 								"CQL"));
 		List<IQueryBuildSetting<?>> cfg = ((IServerExecutor)aPeer.getExecutor())
 				.getQueryBuildConfiguration("Standard").getConfiguration();
-		;
+		
 		if (cfg == null) {
 			getLogger().debug("No Query Build Configuration found!!!");
 			return;
