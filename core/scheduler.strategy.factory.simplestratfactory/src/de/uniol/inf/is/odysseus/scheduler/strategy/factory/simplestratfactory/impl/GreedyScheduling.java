@@ -42,7 +42,7 @@ public class GreedyScheduling extends AbstractExecListScheduling {
 	 * @param p
 	 * @return Pair<Costs,Seletivity>
 	 */
-	private void calcVirtOpCosts(List<ISource<?>> p, Helper ret) {
+	private static void calcVirtOpCosts(List<ISource<?>> p, Helper ret) {
 		double t = 0;
 		double s = 1;
 		if (p != null) {
