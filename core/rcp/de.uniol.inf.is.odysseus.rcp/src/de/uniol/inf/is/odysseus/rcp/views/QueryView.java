@@ -134,12 +134,11 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 					return 0;
 				else if (s1.equals(OdysseusNLS.Opened))
 					return 1;
-				else if (s1.equals(OdysseusNLS.Active))
-					if (s2.equals(OdysseusNLS.Inactive))
+				else if (s1.equals(OdysseusNLS.Active)) {
+                    if (s2.equals(OdysseusNLS.Inactive))
 						return 1;
-					else
-						return -1;
-				else
+                    return -1;
+                } else
 					return -1;
 			}
 		};
@@ -451,8 +450,7 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 	private String getQueryStatus(IPhysicalQuery q) {
 		if (q.isOpened())
 			return OdysseusNLS.Running;
-		else
-			return OdysseusNLS.Inactive;
+        return OdysseusNLS.Inactive;
 	}
 
 	private static abstract class ColumnViewerSorter extends ViewerComparator {
