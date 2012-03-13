@@ -103,5 +103,6 @@ public abstract class StreamClientHandler extends Thread{
 	public void remove() {				
 	}
 	
-	public abstract StreamClientHandler clone();
+	@Override
+    public abstract StreamClientHandler clone();
 }
