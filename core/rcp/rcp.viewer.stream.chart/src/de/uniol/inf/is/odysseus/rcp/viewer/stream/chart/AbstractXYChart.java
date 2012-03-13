@@ -161,9 +161,9 @@ public abstract class AbstractXYChart extends AbstractChart<Double, IMetaAttribu
 	public String getSeriesValue() {
 		if (this.choosenSerie > -1) {
 			return getViewableAttributes().get(this.choosenSerie).getName();
-		} else {
-			return "";
-		}
+		} 
+		
+		return "";
 	}
 
 	@ChartSetting(name = "Value for Series", type = Type.SET)
