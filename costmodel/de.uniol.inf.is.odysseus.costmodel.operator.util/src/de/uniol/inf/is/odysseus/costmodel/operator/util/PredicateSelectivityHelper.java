@@ -361,7 +361,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 		return null;
 	}
 
-	private boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
+	private static boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
 		if (arg0 instanceof Variable && arg1 instanceof Variable)
 			return false;
 		return true;

@@ -555,7 +555,7 @@ public class PredicateHistogramHelper {
 		return new TwoHistAttr(histogram1, attr1, histogram2, attr2);
 	}
 
-	private SDFAttribute getAttribute(String attribute, Set<SDFAttribute> attributes) {
+	private static SDFAttribute getAttribute(String attribute, Set<SDFAttribute> attributes) {
 		for (SDFAttribute attr : attributes) {
 			String srcName = attr.getSourceName();
 			String attrName = attr.getAttributeName();
@@ -569,7 +569,7 @@ public class PredicateHistogramHelper {
 		return null;
 	}
 
-	private boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
+	private static boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
 		if (arg0 instanceof Variable && arg1 instanceof Variable)
 			return false;
 		return true;
