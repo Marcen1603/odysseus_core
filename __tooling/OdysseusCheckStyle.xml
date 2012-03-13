@@ -242,7 +242,10 @@
       <property name="severity" value="error"/>
       <property name="option" value="alone"/>
     </module>
-    <module name="AvoidInlineConditionals"/>
+    <module name="AvoidInlineConditionals">
+      <property name="severity" value="ignore"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
     <module name="CovariantEquals">
       <property name="severity" value="error"/>
     </module>
