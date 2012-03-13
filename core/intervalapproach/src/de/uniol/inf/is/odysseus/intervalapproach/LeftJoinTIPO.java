@@ -311,7 +311,8 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IMetaAttributeConta
 		this.dataMerge = dataMerge;
 	}
 	
-	public ILeftMergeFunction<T> getDataMerge(){
+	@Override
+    public ILeftMergeFunction<T> getDataMerge(){
 		return this.dataMerge;
 	}
 }

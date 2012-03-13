@@ -40,7 +40,8 @@ public abstract class LeftMergeFunction<T extends IClone> implements ILeftMergeF
 	@Override
 	public abstract T merge(T left, T right);
 	
-	public abstract T createLeftFilledUp(T left);
+	@Override
+    public abstract T createLeftFilledUp(T left);
 	
 	@Override
 	public LeftMergeFunction<T> clone() {

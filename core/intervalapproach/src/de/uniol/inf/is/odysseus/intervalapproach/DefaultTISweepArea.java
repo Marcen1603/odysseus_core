@@ -196,7 +196,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         area. Should be the start timestamp of the first element in the
 	 *         linked list.
 	 */
-	public PointInTime getMinTs() {
+	@Override
+    public PointInTime getMinTs() {
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
 				return this.getElements().peek().getMetadata().getStart();
@@ -211,7 +212,8 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         area. Should be the start timestamp of the last element in the
 	 *         linked list.
 	 */
-	public PointInTime getMaxTs() {
+	@Override
+    public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
 			return this.getElements().getLast().getMetadata().getStart();
 		}

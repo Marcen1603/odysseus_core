@@ -11,7 +11,8 @@ public class LeftJoinTITransferArea <R extends IMetaAttributeContainer<? extends
 	/**
 	 * removes all elements whose start timestamp is before heartbeat
 	 */
-	public void newHeartbeat(PointInTime heartbeat, int inPort) {
+	@Override
+    public void newHeartbeat(PointInTime heartbeat, int inPort) {
 		PointInTime minimum = heartbeat;
 		if (minimum != null) {
 			synchronized (this.outputQueue) {
