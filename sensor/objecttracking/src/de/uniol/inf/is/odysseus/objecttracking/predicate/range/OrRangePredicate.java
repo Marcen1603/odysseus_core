@@ -85,9 +85,7 @@ public class OrRangePredicate<T> extends ComplexRangePredicate<T>{
 		if(!(other instanceof OrRangePredicate)){
 			return false;
 		}
-		else{
-			return this.left.equals(((OrRangePredicate)other).getLeft()) && this.right.equals(((OrRangePredicate)other).getRight());
-		}
+        return this.left.equals(((OrRangePredicate)other).getLeft()) && this.right.equals(((OrRangePredicate)other).getRight());
 	}
 	
 	@Override

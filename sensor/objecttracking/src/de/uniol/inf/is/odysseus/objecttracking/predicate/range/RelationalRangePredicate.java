@@ -393,9 +393,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		if(!(other instanceof RelationalRangePredicate)){
 			return false;
 		}
-		else{
-			return this.solutions.equals(((RelationalRangePredicate)other).solutions);
-		}
+        return this.solutions.equals(((RelationalRangePredicate)other).solutions);
 	}
 	
 	@Override
