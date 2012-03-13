@@ -77,7 +77,7 @@ public class JoinTransformationHelper {
 		// there is a window, we need
 		// temporal sweep area in our
 		// join.
-		Collection<LogicalSubscription> subs = ((ILogicalOperator)operator).getSubscribedToSource();
+		Collection<LogicalSubscription> subs = operator.getSubscribedToSource();
 		for(LogicalSubscription s: subs){
 			if(!checkLogicalPath(s.getTarget())){
 				return false;
