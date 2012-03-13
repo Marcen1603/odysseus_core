@@ -53,9 +53,8 @@ public class ClearGrid extends AbstractFunction<Grid> {
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s): Two grids.");
-		} else {
-			return accTypes[argPos];
 		}
+        return accTypes[argPos];
 	}
 
 	@Override

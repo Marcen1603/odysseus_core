@@ -67,9 +67,8 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 							+ " has only "
 							+ this.getArity()
 							+ " argument(s): A grid, the x and y coordinates, the width and height.");
-		} else {
-			return accTypes[argPos];
 		}
+        return accTypes[argPos];
 	}
 
 	@Override

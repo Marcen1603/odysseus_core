@@ -51,9 +51,8 @@ public class InverseGrid extends AbstractFunction<Grid> {
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument: A grid.");
-		} else {
-			return accTypes[argPos];
 		}
+        return accTypes[argPos];
 	}
 
 	@Override

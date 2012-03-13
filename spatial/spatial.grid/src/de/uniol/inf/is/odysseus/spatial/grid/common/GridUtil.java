@@ -279,19 +279,18 @@ public final class GridUtil {
 				|| (coordinate.y > boundingBox[3])
 				|| (coordinate.y < boundingBox[1])) {
 			return false;
-		} else {
-			for (int i = 0; i < polygon.length; i++) {
-				if (((polygon[i].y < coordinate.y) && (polygon[j].y >= coordinate.y))
-						|| ((polygon[j].y < coordinate.y) && (polygon[i].y >= coordinate.y))) {
-					if (polygon[i].x + (coordinate.y - polygon[i].y)
-							/ (polygon[j].y - polygon[i].y)
-							* (polygon[j].x - polygon[i].x) < coordinate.x) {
-						isIn = !isIn;
-					}
-				}
-				j = i;
-			}
-			return ((isIn) ? true : false);
 		}
+        for (int i = 0; i < polygon.length; i++) {
+        	if (((polygon[i].y < coordinate.y) && (polygon[j].y >= coordinate.y))
+        			|| ((polygon[j].y < coordinate.y) && (polygon[i].y >= coordinate.y))) {
+        		if (polygon[i].x + (coordinate.y - polygon[i].y)
+        				/ (polygon[j].y - polygon[i].y)
+        				* (polygon[j].x - polygon[i].x) < coordinate.x) {
+        			isIn = !isIn;
+        		}
+        	}
+        	j = i;
+        }
+        return ((isIn) ? true : false);
 	}
 }
