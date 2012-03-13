@@ -112,7 +112,8 @@ public class SensorStreamServer extends Thread implements ISensor {
 	 * de.uniol.inf.is.odysseus.service.sensor.ISensor#sendTuple(de.uniol.inf
 	 * .is.odysseus.service.sensor.data.DataTuple)
 	 */
-	public synchronized void sendTuple(DataTuple tuple) {
+	@Override
+    public synchronized void sendTuple(DataTuple tuple) {
 		List<StreamClientHandler> stillAlive = new ArrayList<StreamClientHandler>();
 		for (StreamClientHandler sch : this.streamClientHandlers) {
 			try {
@@ -137,7 +138,8 @@ public class SensorStreamServer extends Thread implements ISensor {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.service.sensor.ISensor#getPort()
 	 */
-	public int getPort() {
+	@Override
+    public int getPort() {
 		return this.port;
 	}
 
@@ -146,7 +148,8 @@ public class SensorStreamServer extends Thread implements ISensor {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.service.sensor.ISensor#getOwnHost()
 	 */
-	public String getOwnHost() {
+	@Override
+    public String getOwnHost() {
 		try {
 			return InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {

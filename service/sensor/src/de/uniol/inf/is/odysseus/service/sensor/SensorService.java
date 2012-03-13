@@ -26,12 +26,14 @@ public class SensorService implements ISensorService {
 	private String username;
 	private String password;
 
-	public void setCredentials(String username, String password) {
+	@Override
+    public void setCredentials(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 
-	public ISensor createSensor(String name, Schema schema, boolean register) {
+	@Override
+    public ISensor createSensor(String name, Schema schema, boolean register) {
 		ISensor sensor = null;
 		if (register) {			
 			SensorRegistryServiceService srss = new SensorRegistryServiceService();
@@ -60,11 +62,13 @@ public class SensorService implements ISensorService {
 		return sensor;
 	}
 
-	public ISensor getSensor(String name) {
+	@Override
+    public ISensor getSensor(String name) {
 		return SensorDictionary.getInstance().getSensor(name);
 	}
 
-	public boolean isSensorExistent(String name) {
+	@Override
+    public boolean isSensorExistent(String name) {
 		if (SensorDictionary.getInstance().getSensor(name) == null) {
 			return false;
 		} else {
@@ -72,7 +76,8 @@ public class SensorService implements ISensorService {
 		}
 	}
 
-	public boolean removeSensor(String name) {
+	@Override
+    public boolean removeSensor(String name) {
 		if (isSensorExistent(name)) {
 			SensorRegistryServiceService srss = new SensorRegistryServiceService();
 			SensorRegistryService srs = srss.getSensorRegistryServicePort();
