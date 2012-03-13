@@ -197,7 +197,7 @@ public class OverlayStatus extends BaseStatus {
 	 * @param tags the tag assigned to each of the thresholds
 	 * @param gcAux the GC to draw with
 	 */
-	private void drawMarks(final int[] thresholds, final String[] tags,
+	private static void drawMarks(final int[] thresholds, final String[] tags,
 			final GC gcAux) {
 		int[] separators = new int[thresholds.length + 2];
 

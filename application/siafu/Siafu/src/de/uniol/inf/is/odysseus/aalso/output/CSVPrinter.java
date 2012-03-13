@@ -322,7 +322,7 @@ public class CSVPrinter implements SimulatorOutputPrinter {
 	 * @return the line we generate
 	 */
 	@SuppressWarnings("unused")
-	private String addInfoFields(final Agent agent) {
+	private static String addInfoFields(final Agent agent) {
 		String line = new String();
 
 		for (Publishable info : agent.getInfoValues()) {

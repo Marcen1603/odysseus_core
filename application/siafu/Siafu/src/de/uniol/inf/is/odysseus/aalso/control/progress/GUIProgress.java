@@ -341,7 +341,7 @@ public class GUIProgress implements Progress {
 	 * @param comp the composite where the label should be added
 	 * @return the created label
 	 */
-	private Label addLabel(final String message, final Composite comp) {
+	private static Label addLabel(final String message, final Composite comp) {
 		GridData gdLabel = new GridData(SWT.CENTER, SWT.CENTER, true, false);
 		Label l = new Label(comp, SWT.WRAP);
 		l.setLayoutData(gdLabel);

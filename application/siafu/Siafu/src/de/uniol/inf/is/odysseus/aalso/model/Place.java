@@ -196,7 +196,7 @@ public class Place implements Trackable, Publishable, Overlayable {
 	 * 
 	 * @param thisPlacesWorld the world of this place
 	 */
-	private void basicChecks(final World thisPlacesWorld) {
+	private static void basicChecks(final World thisPlacesWorld) {
 		if (gradients == null) {
 			throw new InitializationRequiredException(
 					"You need to initialize the Place class");
