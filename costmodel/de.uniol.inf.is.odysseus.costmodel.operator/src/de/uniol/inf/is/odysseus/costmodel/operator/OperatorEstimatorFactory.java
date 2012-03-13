@@ -70,8 +70,8 @@ public class OperatorEstimatorFactory {
 		if (operator == null)
 			return new StandardOperatorEstimator<T>();
 
-		Class<? extends IPhysicalOperator> clazz = (Class<? extends IPhysicalOperator>) operator.getClass();
-		Class<? extends IOperatorEstimator<? extends IPhysicalOperator>> estimatorClass = (Class<IOperatorEstimator<? extends IPhysicalOperator>>) estimators.get(clazz);
+		Class<? extends IPhysicalOperator> clazz = operator.getClass();
+		Class<? extends IOperatorEstimator<? extends IPhysicalOperator>> estimatorClass = estimators.get(clazz);
 
 		if (estimatorClass == null) {
 			// use standard-estimator
