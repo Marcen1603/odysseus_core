@@ -34,7 +34,7 @@ public class PersistentTransferArea<R extends IMetaAttributeContainer<? extends 
 	final protected PointInTime[] minTs;
 	protected AbstractSource<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
-			new MetadataComparator<ITimeInterval>());;
+			new MetadataComparator<ITimeInterval>());
 
 	public PersistentTransferArea() {
 		minTs = new PointInTime[2];
