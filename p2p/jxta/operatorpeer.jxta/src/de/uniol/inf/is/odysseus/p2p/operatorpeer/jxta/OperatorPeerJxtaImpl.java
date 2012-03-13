@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.jxta;
 
 import java.io.File;
@@ -58,302 +58,271 @@ import de.uniol.inf.is.odysseus.p2p.user.P2PUserContext;
 
 public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
-	static Logger logger = LoggerFactory.getLogger(OperatorPeerJxtaImpl.class);
+    static Logger logger = LoggerFactory.getLogger(OperatorPeerJxtaImpl.class);
 
-	static Logger getLogger() {
-		return logger;
-	}
-	JxtaConfiguration configuration;
-	public DiscoveryService discoveryService;
-	public NetworkManager manager = null;
-	public PeerGroup netPeerGroup;
-	public NetworkConfigurator networkConfigurator;
-	public PipeService pipeService;
-	private PipeAdvertisement serverResponseAddress;
+    static Logger getLogger() {
+        return logger;
+    }
 
-	public void activate() {
-		getLogger().info("OSGi Services loaded");
+    JxtaConfiguration configuration;
+    public DiscoveryService discoveryService;
+    public NetworkManager manager = null;
+    public PeerGroup netPeerGroup;
+    public NetworkConfigurator networkConfigurator;
+    public PipeService pipeService;
+    private PipeAdvertisement serverResponseAddress;
 
-		String configFile = System.getenv("PeerConfig");
-		if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0){
-			configFile = OdysseusDefaults.getHomeDir()+"/"+System.getenv("PeerConfigFile");
-		}
-		// If no file given try first Odysseus-Home
-		if (configFile == null || configFile.trim().length() == 0) {
-			configFile = OdysseusDefaults.getHomeDir()
-					+ "/OperatorPeer1Config.xml";
-			try {
-				configuration = new JxtaConfiguration(configFile);
-			} catch (IOException e) {
-				configFile = null;
-			}
+    public void activate() {
+        getLogger().info("OSGi Services loaded");
 
-		}
-		// If still no configuration found try default config-File
-		// TODO: Does not work currently ...
-		if (configFile == null || configFile.trim().length() == 0) {
-			configFile = "/config/OperatorPeer1Config.xml";
-		}
+        String configFile = System.getenv("PeerConfig");
+        if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0) {
+            configFile = OdysseusDefaults.getHomeDir() + "/" + System.getenv("PeerConfigFile");
+        }
+        // If no file given try first Odysseus-Home
+        if (configFile == null || configFile.trim().length() == 0) {
+            configFile = OdysseusDefaults.getHomeDir() + "/OperatorPeer1Config.xml";
+            try {
+                configuration = new JxtaConfiguration(configFile);
+            } catch (IOException e) {
+                configFile = null;
+            }
 
-		// JxtaConfiguration einlesen
-		try {
-			configuration = new JxtaConfiguration(configFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not init peer");
-		}
+        }
+        // If still no configuration found try default config-File
+        // TODO: Does not work currently ...
+        if (configFile == null || configFile.trim().length() == 0) {
+            configFile = "/config/OperatorPeer1Config.xml";
+        }
 
-		setName(configuration.getName());
-		
-		// TODO: User einlesen
-		P2PUserContext.setActiveSession("",UserManagement.getSessionmanagement().login("System", "manager".getBytes()));
+        // JxtaConfiguration einlesen
+        try {
+            configuration = new JxtaConfiguration(configFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not init peer");
+        }
 
-		startPeer();
-		getDistributionClient().initializeService();
+        setName(configuration.getName());
 
-	}
+        // TODO: User einlesen
+        P2PUserContext.setActiveSession("", UserManagement.getSessionmanagement().login("System", "manager".getBytes()));
 
-	public OperatorPeerJxtaImpl() {
-		super(new SocketServerListener(), Log.getInstance());
-		getSocketServerListener().setPeer(this);
-	}
+        startPeer();
+        getDistributionClient().initializeService();
 
-	public DiscoveryService getDiscoveryService() {
-		return discoveryService;
-	}
+    }
 
-	public NetworkManager getManager() {
-		return manager;
-	}
+    public OperatorPeerJxtaImpl() {
+        super(new SocketServerListener(), Log.getInstance());
+        getSocketServerListener().setPeer(this);
+    }
 
-	public PeerGroup getNetPeerGroup() {
-		return netPeerGroup;
-	}
+    public DiscoveryService getDiscoveryService() {
+        return discoveryService;
+    }
 
-	public NetworkConfigurator getNetworkConfigurator() {
-		return networkConfigurator;
-	}
+    public NetworkManager getManager() {
+        return manager;
+    }
 
-	public PipeService getPipeService() {
-		return pipeService;
-	}
+    public PeerGroup getNetPeerGroup() {
+        return netPeerGroup;
+    }
 
-	public void setDiscoveryService(DiscoveryService discoveryService) {
-		this.discoveryService = discoveryService;
-	}
+    public NetworkConfigurator getNetworkConfigurator() {
+        return networkConfigurator;
+    }
 
-	public void setManager(NetworkManager manager) {
-		this.manager = manager;
-	}
+    public PipeService getPipeService() {
+        return pipeService;
+    }
 
-	public void setNetPeerGroup(PeerGroup netPeerGroup) {
-		this.netPeerGroup = netPeerGroup;
-	}
+    public void setDiscoveryService(DiscoveryService discoveryService) {
+        this.discoveryService = discoveryService;
+    }
 
-	public void setNetworkConfigurator(NetworkConfigurator networkConfigurator) {
-		this.networkConfigurator = networkConfigurator;
-	}
+    public void setManager(NetworkManager manager) {
+        this.manager = manager;
+    }
 
-	public void setPipeService(PipeService pipeService) {
-		this.pipeService = pipeService;
-	}
+    public void setNetPeerGroup(PeerGroup netPeerGroup) {
+        this.netPeerGroup = netPeerGroup;
+    }
 
-	@Override
-	public void startNetwork() {
+    public void setNetworkConfigurator(NetworkConfigurator networkConfigurator) {
+        this.networkConfigurator = networkConfigurator;
+    }
 
-		String name = configuration.getName();
+    public void setPipeService(PipeService pipeService) {
+        this.pipeService = pipeService;
+    }
 
-		if (configuration.isRandomName()) {
-			name = "" + name + "" + System.currentTimeMillis();
-		}
-		System.setProperty("net.jxta.logging.Logging",
-				configuration.getLogging());
+    @Override
+    public void startNetwork() {
 
-		try {
-			CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_"
-					+ name,
-					new File(new File(".cache"), "OperatorPeer_" + name));
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
+        String name = configuration.getName();
 
-		ConfigMode peerMode = null;
+        if (configuration.isRandomName()) {
+            name = "" + name + "" + System.currentTimeMillis();
+        }
+        System.setProperty("net.jxta.logging.Logging", configuration.getLogging());
 
-		if (configuration.isUseSuperPeer()) {
-			peerMode = NetworkManager.ConfigMode.EDGE;
-		} else {
-			peerMode = NetworkManager.ConfigMode.ADHOC;
-		}
+        CacheTool.checkForExistingConfigurationDeletion("OperatorPeer_" + name, new File(new File(".cache"), "OperatorPeer_" + name));
 
-		try {
-			manager = new NetworkManager(peerMode, "OperatorPeer_" + name,
-					new File(new File(".cache"), "OperatorPeer_" + name)
-							.toURI());
+        ConfigMode peerMode = null;
 
-			manager.getConfigurator().clearRelaySeeds();
-			manager.getConfigurator().clearRendezvousSeeds();
-			if (configuration.isUseSuperPeer()) {
-				manager.getConfigurator().clearRelaySeeds();
-				manager.getConfigurator().clearRendezvousSeeds();
+        if (configuration.isUseSuperPeer()) {
+            peerMode = NetworkManager.ConfigMode.EDGE;
+        } else {
+            peerMode = NetworkManager.ConfigMode.ADHOC;
+        }
 
-				try {
-					manager.getConfigurator().addSeedRendezvous(
-							new URI(configuration.getHttpRendezvousUri()));
-					manager.getConfigurator().addSeedRelay(
-							new URI(configuration.getHttpRelayUri()));
-					manager.getConfigurator().addSeedRendezvous(
-							new URI(configuration.getTcpRendezvousUri()));
-					manager.getConfigurator().addSeedRelay(
-							new URI(configuration.getTcpRelayUri()));
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-			}
-			manager.getConfigurator().setTcpPort(configuration.getTcpPort());
-			manager.getConfigurator().setHttpPort(configuration.getHttpPort());
-			manager.getConfigurator().setHttpEnabled(configuration.isHttp());
-			manager.getConfigurator().setHttpOutgoing(configuration.isHttp());
-			manager.getConfigurator().setHttpIncoming(configuration.isHttp());
-			manager.getConfigurator().setTcpEnabled(configuration.isTcp());
-			manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
-			manager.getConfigurator().setTcpIncoming(configuration.isTcp());
-			manager.getConfigurator().setUseMulticast(
-					configuration.isMulticast());
+        try {
+            manager = new NetworkManager(peerMode, "OperatorPeer_" + name, new File(new File(".cache"), "OperatorPeer_" + name).toURI());
 
-			if (!configuration.getTcpInterfaceAddress().equals("")) {
-				manager.getConfigurator().setTcpInterfaceAddress(
-						configuration.getTcpInterfaceAddress());
-			}
+            manager.getConfigurator().clearRelaySeeds();
+            manager.getConfigurator().clearRendezvousSeeds();
+            if (configuration.isUseSuperPeer()) {
+                manager.getConfigurator().clearRelaySeeds();
+                manager.getConfigurator().clearRendezvousSeeds();
 
-			if (!configuration.getHttpInterfaceAddress().equals("")) {
-				manager.getConfigurator().setHttpInterfaceAddress(
-						configuration.getHttpInterfaceAddress());
-			}
+                try {
+                    manager.getConfigurator().addSeedRendezvous(new URI(configuration.getHttpRendezvousUri()));
+                    manager.getConfigurator().addSeedRelay(new URI(configuration.getHttpRelayUri()));
+                    manager.getConfigurator().addSeedRendezvous(new URI(configuration.getTcpRendezvousUri()));
+                    manager.getConfigurator().addSeedRelay(new URI(configuration.getTcpRelayUri()));
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+            manager.getConfigurator().setTcpPort(configuration.getTcpPort());
+            manager.getConfigurator().setHttpPort(configuration.getHttpPort());
+            manager.getConfigurator().setHttpEnabled(configuration.isHttp());
+            manager.getConfigurator().setHttpOutgoing(configuration.isHttp());
+            manager.getConfigurator().setHttpIncoming(configuration.isHttp());
+            manager.getConfigurator().setTcpEnabled(configuration.isTcp());
+            manager.getConfigurator().setTcpOutgoing(configuration.isTcp());
+            manager.getConfigurator().setTcpIncoming(configuration.isTcp());
+            manager.getConfigurator().setUseMulticast(configuration.isMulticast());
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+            if (!configuration.getTcpInterfaceAddress().equals("")) {
+                manager.getConfigurator().setTcpInterfaceAddress(configuration.getTcpInterfaceAddress());
+            }
 
-		if (manager.getNetPeerGroup() == null) {
-			try {
-				manager.startNetwork();
-			} catch (PeerGroupException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+            if (!configuration.getHttpInterfaceAddress().equals("")) {
+                manager.getConfigurator().setHttpInterfaceAddress(configuration.getHttpInterfaceAddress());
+            }
 
-		manager.waitForRendezvousConnection(configuration.getConnectionTime());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
 
-		netPeerGroup = manager.getNetPeerGroup();
-		PeerGroupTool.setPeerGroup(netPeerGroup);
-		this.discoveryService = this.getNetPeerGroup().getDiscoveryService();
-		AdvertisementFactory.registerAdvertisementInstance(
-				QueryTranslationSpezification.getAdvertisementType(),
-				new QueryTranslationSpezification.Instantiator());
+        if (manager.getNetPeerGroup() == null) {
+            try {
+                manager.startNetwork();
+            } catch (PeerGroupException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-		AdvertisementFactory.registerAdvertisementInstance(
-				SourceAdvertisement.getAdvertisementType(),
-				new SourceAdvertisement.Instantiator());
+        manager.waitForRendezvousConnection(configuration.getConnectionTime());
 
-		AdvertisementFactory.registerAdvertisementInstance(
-				QueryExecutionSpezification.getAdvertisementType(),
-				new QueryExecutionSpezification.Instantiator());
+        netPeerGroup = manager.getNetPeerGroup();
+        PeerGroupTool.setPeerGroup(netPeerGroup);
+        this.discoveryService = this.getNetPeerGroup().getDiscoveryService();
+        AdvertisementFactory.registerAdvertisementInstance(QueryTranslationSpezification.getAdvertisementType(), new QueryTranslationSpezification.Instantiator());
 
-	}
+        AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisement.Instantiator());
 
-	@Override
-	public void stopNetwork() {
-		manager.stopNetwork();
-	}
+        AdvertisementFactory.registerAdvertisementInstance(QueryExecutionSpezification.getAdvertisementType(), new QueryExecutionSpezification.Instantiator());
 
-	@Override
-	protected void initAliveHandler() {
-		this.aliveHandler = new AliveHandlerJxtaImpl(this);
+    }
 
-	}
+    @Override
+    public void stopNetwork() {
+        manager.stopNetwork();
+    }
 
-	@Override
-	protected void initSources(AbstractOperatorPeer aPeer) {
+    @Override
+    protected void initAliveHandler() {
+        this.aliveHandler = new AliveHandlerJxtaImpl(this);
 
-		getSources()
-				.put("nexmark:person2",
-						new Pair<String, String>(
-								"CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440",
-								"CQL"));
-		getSources()
-				.put("nexmark:auction2",
-						new Pair<String, String>(
-								"CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441",
-								"CQL"));
-		getSources()
-				.put("nexmark:bid2",
-						new Pair<String, String>(
-								"CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442",
-								"CQL"));
-		List<IQueryBuildSetting<?>> cfg = ((IServerExecutor)aPeer.getExecutor())
-				.getQueryBuildConfiguration("Standard").getConfiguration();
-		
-		if (cfg == null) {
-			getLogger().debug("No Query Build Configuration found!!!");
-			return;
-		}
+    }
 
-		for (IPair<String, String> s : getSources().values()) {
-			try {
-				ISession user = P2PUserContext.getActiveSession("");
-				aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, 
-						"Standard");
-			} catch (PlanManagementException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+    @Override
+    protected void initSources(AbstractOperatorPeer aPeer) {
 
-	}
+        getSources().put(
+                "nexmark:person2",
+                new Pair<String, String>("CREATE STREAM nexmark:person2 (timestamp LONG,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) CHANNEL localhost : 65440",
+                        "CQL"));
+        getSources()
+                .put("nexmark:auction2",
+                        new Pair<String, String>(
+                                "CREATE STREAM nexmark:auction2 (timestamp LONG,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) CHANNEL localhost : 65441",
+                                "CQL"));
+        getSources().put("nexmark:bid2",
+                new Pair<String, String>("CREATE STREAM nexmark:bid2 (timestamp LONG,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) CHANNEL localhost : 65442", "CQL"));
+        List<IQueryBuildSetting<?>> cfg = ((IServerExecutor) aPeer.getExecutor()).getQueryBuildConfiguration("Standard").getConfiguration();
 
-	@Override
-	protected void initSourceHandler(AbstractOperatorPeer aPeer) {
-		this.sourceHandler = new SourceHandlerJxtaImpl(
-				(OperatorPeerJxtaImpl) aPeer, getExecutor());
+        if (cfg == null) {
+            getLogger().debug("No Query Build Configuration found!!!");
+            return;
+        }
 
-	}
+        for (IPair<String, String> s : getSources().values()) {
+            try {
+                ISession user = P2PUserContext.getActiveSession("");
+                aPeer.getExecutor().addQuery(s.getE1(), s.getE2(), user, "Standard");
+            } catch (PlanManagementException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	@Override
-	protected void initServerResponseConnection() {
-		setServerPipeAdvertisement(AdvertisementTools
-				.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
-	}
+    }
 
-	private void setServerPipeAdvertisement(
-			PipeAdvertisement serverPipeAdvertisement) {
-		this.serverResponseAddress = serverPipeAdvertisement;
-	}
+    @Override
+    protected void initSourceHandler(AbstractOperatorPeer aPeer) {
+        this.sourceHandler = new SourceHandlerJxtaImpl((OperatorPeerJxtaImpl) aPeer, getExecutor());
 
-	@Override
-	public Object getServerResponseAddress() {
-		return this.serverResponseAddress;
-	}
+    }
 
-	@Override
-	public void initLocalMessageHandler() {
-	}
+    @Override
+    protected void initServerResponseConnection() {
+        setServerPipeAdvertisement(AdvertisementTools.getServerPipeAdvertisement(PeerGroupTool.getPeerGroup()));
+    }
 
-	@Override
-	public void initLocalExecutionHandler() {
-	}
+    private void setServerPipeAdvertisement(PipeAdvertisement serverPipeAdvertisement) {
+        this.serverResponseAddress = serverPipeAdvertisement;
+    }
 
-	@Override
-	public void initMessageSender() {
-		setMessageSender(new JxtaMessageSender());
-	}
+    @Override
+    public Object getServerResponseAddress() {
+        return this.serverResponseAddress;
+    }
 
-	@Override
-	protected void afterQueryRemoval(String queryId) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void initLocalMessageHandler() {
+    }
+
+    @Override
+    public void initLocalExecutionHandler() {
+    }
+
+    @Override
+    public void initMessageSender() {
+        setMessageSender(new JxtaMessageSender());
+    }
+
+    @Override
+    protected void afterQueryRemoval(String queryId) {
+        // TODO Auto-generated method stub
+
+    }
 
 }
