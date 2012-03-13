@@ -26,13 +26,13 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class ObjectTrackingPredicateInitializer {
 
-	public static void visitPredicates(Map<IPredicate, IRangePredicate> predicates,
+	public static void visitPredicates(Map<IPredicate<?>, IRangePredicate<?>> predicates,
 			ILogicalOperator operator) {
 		
-		for(Entry<IPredicate, IRangePredicate> entry: predicates.entrySet()){
+		for(Entry<IPredicate<?>, IRangePredicate<?>> entry: predicates.entrySet()){
 			visitPredicates(entry.getKey(), operator.getInputSchema(0), operator.getInputSchema(1));
 			entry.getValue().init(operator.getInputSchema(0), operator.getInputSchema(1));	
 		}

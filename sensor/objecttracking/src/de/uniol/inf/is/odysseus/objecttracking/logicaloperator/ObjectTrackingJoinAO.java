@@ -67,10 +67,10 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	 * that leads to the prediction function, so we can use this predicate attached
 	 * to the tuple as a key and return the resulting rangePredicate.
 	 */
-	private Map<IPredicate, IRangePredicate> rangePredicates;
+	private Map<IPredicate<?>, IRangePredicate<?>> rangePredicates;
 	
 	@Override
-	public Map<IPredicate, IRangePredicate> getRangePredicates() {
+	public Map<IPredicate<?>, IRangePredicate<?>> getRangePredicates() {
 		return rangePredicates;
 	}
 	
@@ -243,7 +243,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 		// FIXME: Neue PredictionFunctions aus scars-Plugin verwenden
 		if(leftFcts != null && rightFcts != null){
 		
-			this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
+			this.rangePredicates = new HashMap<IPredicate<?>, IRangePredicate<?>>();
 			for(Entry<IPredicate, IPredictionFunction> leftEntry : leftFcts.entrySet()){
 				for(Entry<IPredicate, IPredictionFunction> rightEntry: rightFcts.entrySet()){
 					IPredicate newPredicate = ComplexPredicateHelper.createAndPredicate(leftEntry.getKey(), rightEntry.getKey());

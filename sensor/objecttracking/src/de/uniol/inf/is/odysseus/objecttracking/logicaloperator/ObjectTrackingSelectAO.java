@@ -78,7 +78,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 * that leads to the prediction function, so we can use this predicate attached
 	 * to the tuple as a key and return the resulting rangePredicate.
 	 */
-	private Map<IPredicate, IRangePredicate> rangePredicates;
+	private Map<IPredicate<?>, IRangePredicate<?>> rangePredicates;
 	
 	public int getWindowSize() {
 		return windowSize;
@@ -116,10 +116,11 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 		this.initialized = false;
 	}
 
-	public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
+	@SuppressWarnings("cast")
+    public ObjectTrackingSelectAO(ObjectTrackingSelectAO po) {
 		super(po);
-		this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
-		for(Entry<IPredicate, IRangePredicate> entry: ((Map<IPredicate, IRangePredicate>)po.rangePredicates).entrySet()){
+		this.rangePredicates = new HashMap<IPredicate<?>, IRangePredicate<?>>();
+		for(Entry<IPredicate<?>, IRangePredicate<?>> entry: ((Map<IPredicate<?>, IRangePredicate<?>>)po.rangePredicates).entrySet()){
 			this.rangePredicates.put(entry.getKey().clone(), entry.getValue().clone());
 		}
 		this.defaultRangePredicate = po.defaultRangePredicate != null ? po.defaultRangePredicate.clone() : null;
@@ -163,7 +164,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 			// in our query plan, that changes to SDFSchemaExtended
 			// for compatibility with other operators
 			if(predictionFunctions != null){
-				this.rangePredicates = new HashMap<IPredicate, IRangePredicate>();
+				this.rangePredicates = new HashMap<IPredicate<?>, IRangePredicate<?>>();
 				for(Entry<IPredicate, IPredictionFunction> entry : predictionFunctions.entrySet()){
 					IRangePredicate rangePredicate = this.generateRangePredicate(this.getPredicate(), entry.getValue().getExpressions(), attributeResolver);
 					this.rangePredicates.put(entry.getKey(), rangePredicate);
@@ -316,7 +317,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	}
 
 	@Override
-	public Map<IPredicate, IRangePredicate> getRangePredicates() {
+	public Map<IPredicate<?>, IRangePredicate<?>> getRangePredicates() {
 		// TODO Auto-generated method stub
 		return this.rangePredicates;
 	}

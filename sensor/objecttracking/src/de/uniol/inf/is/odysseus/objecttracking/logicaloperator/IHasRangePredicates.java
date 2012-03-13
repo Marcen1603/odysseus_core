@@ -19,9 +19,8 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 
-@SuppressWarnings({"unchecked","rawtypes"})
 public interface IHasRangePredicates {	
-	public Map<IPredicate, IRangePredicate> getRangePredicates();
+	public Map<IPredicate<?>, IRangePredicate<?>> getRangePredicates();
 	public boolean isInitialized();
 	public void setInitialized(boolean b);
 }
