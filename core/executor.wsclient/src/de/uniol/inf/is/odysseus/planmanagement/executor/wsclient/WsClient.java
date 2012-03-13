@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
@@ -290,6 +291,12 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public void reloadStoredQueries(ISession caller) {
 		// TODO not implemented by server yet
 		
+	}
+
+	@Override
+	public ILogicalQuery getLogicalQuery(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
