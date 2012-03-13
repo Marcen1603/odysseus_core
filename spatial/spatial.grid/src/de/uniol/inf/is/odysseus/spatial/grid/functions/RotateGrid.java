@@ -63,9 +63,8 @@ public class RotateGrid extends AbstractFunction<Grid> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity()
 					+ " argument(s): A grid and an angle in degree.");
-		} else {
-			return RotateViewPoint.accTypes[argPos];
 		}
+        return RotateViewPoint.accTypes[argPos];
 	}
 
 	@Override

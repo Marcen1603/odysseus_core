@@ -56,9 +56,8 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity()
 					+ " argument(s): A geometry and a x and y value.");
-		} else {
-			return MoveViewPoint.accTypes[argPos];
 		}
+        return MoveViewPoint.accTypes[argPos];
 	}
 
 	@Override

@@ -54,9 +54,8 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity()
 					+ " argument(s): A geometry and an angle in degree.");
-		} else {
-			return RotateViewPoint.accTypes[argPos];
 		}
+        return RotateViewPoint.accTypes[argPos];
 	}
 
 	@Override
