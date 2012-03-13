@@ -126,10 +126,9 @@ public class HistogramTypeEvaluation {
 		if( isDoubleEqual(from, to) ) {
 			double occurences = hist.getOccurences(from);
 			return occurences / hist.getValueCount();
-		} else {
-			double occurences = hist.getOccurenceRange(from, to);
-			return occurences / hist.getValueCount();
 		}
+        double occurences = hist.getOccurenceRange(from, to);
+        return occurences / hist.getValueCount();
 	}
 	
 	private static double getSelectivity( List<Double> list, double from, double to ) {
