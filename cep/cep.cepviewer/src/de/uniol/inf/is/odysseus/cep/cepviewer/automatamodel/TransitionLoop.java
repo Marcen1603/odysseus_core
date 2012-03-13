@@ -68,7 +68,7 @@ public class TransitionLoop extends AbstractTransition {
 	 * 
 	 * @return a list of loaction points
 	 */
-	private ArrayList<Point> createLocationPoints() {
+	private static ArrayList<Point> createLocationPoints() {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (int i = 0; i < IntConst.MAX_BENDPOINTS_OF_LOOP; i++) {
 			points.add(new Point((IntConst.STATE_SIZE * i / 2),

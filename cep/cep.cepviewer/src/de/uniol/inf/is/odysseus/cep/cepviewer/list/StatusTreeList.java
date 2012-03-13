@@ -106,15 +106,15 @@ public class StatusTreeList extends AbstractTreeList {
 		// check the current status of the instance and remove it from the
 		// status entry
 		if (toRemove.getContent().getStatus().equals(CEPStatus.FINISHED)) {
-			this.removeInstanceFromList(this.itemF, toRemove.getContent()
+			StatusTreeList.removeInstanceFromList(this.itemF, toRemove.getContent()
 					.getInstance());
 			return true;
 		} else if (toRemove.getContent().getStatus().equals(CEPStatus.RUNNING)) {
-			this.removeInstanceFromList(this.itemR, toRemove.getContent()
+			StatusTreeList.removeInstanceFromList(this.itemR, toRemove.getContent()
 					.getInstance());
 			return true;
 		} else if (toRemove.getContent().getStatus().equals(CEPStatus.ABORTED)) {
-			this.removeInstanceFromList(this.itemA, toRemove.getContent()
+			StatusTreeList.removeInstanceFromList(this.itemA, toRemove.getContent()
 					.getInstance());
 			return true;
 		}
@@ -132,9 +132,9 @@ public class StatusTreeList extends AbstractTreeList {
 	 */
 	@Override
     public boolean remove(MachineTreeItem toRemove) {
-		this.removeMachineFromList(this.itemR, toRemove.getContent());
-		this.removeMachineFromList(this.itemF, toRemove.getContent());
-		this.removeMachineFromList(this.itemA, toRemove.getContent());
+		StatusTreeList.removeMachineFromList(this.itemR, toRemove.getContent());
+		StatusTreeList.removeMachineFromList(this.itemF, toRemove.getContent());
+		StatusTreeList.removeMachineFromList(this.itemA, toRemove.getContent());
 		this.tree.refresh();
 		return true;
 	}
@@ -158,7 +158,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @param instance
 	 *            the instance which should be removed
 	 */
-	private void removeInstanceFromList(LabelTreeItem labelItem,
+	private static void removeInstanceFromList(LabelTreeItem labelItem,
 			StateMachineInstance<?> instance) {
 		for (Object item : labelItem.getChildren().toArray()) {
 			if (((InstanceTreeItem) item).getContent().getInstance()
@@ -179,7 +179,7 @@ public class StatusTreeList extends AbstractTreeList {
 	 * @param machine
 	 *            is the StateMachine which instances should be removed.
 	 */
-	private void removeMachineFromList(LabelTreeItem labelItem,
+	private static void removeMachineFromList(LabelTreeItem labelItem,
 			StateMachine<?> machine) {
 		for (Object item : labelItem.getChildren().toArray()) {
 			if (((InstanceTreeItem) item).getContent().getStateMachine()

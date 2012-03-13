@@ -107,7 +107,7 @@ public class CEPQueryView extends ViewPart {
 	 * @param stateList
 	 * @return
 	 */
-	private String createStateLabel(ArrayList<AbstractState> stateList) {
+	private static String createStateLabel(ArrayList<AbstractState> stateList) {
 		String output = "";
 		for (AbstractState state : stateList) {
 			output = output.concat(state.getName()).concat(
@@ -127,9 +127,9 @@ public class CEPQueryView extends ViewPart {
 		final String[] newContent = {
 				Integer.toString(instance.getStateMachine().hashCode()),
 				Integer.toString(instance.getInstance().hashCode()),
-				this.createStateLabel(instance.getStateList()),
+				CEPQueryView.createStateLabel(instance.getStateList()),
 				instance.getStateList().get(0).getName(),
-				this.createStateLabel(instance.getFinalStateList()),
+				CEPQueryView.createStateLabel(instance.getFinalStateList()),
 				Long.toString(instance.getStateMachine().getWindowSize()),
 				instance.getCurrentState().getName(),
 				Long.toString(instance.getStartTimestamp()) };

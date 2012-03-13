@@ -57,7 +57,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		// get the CepOperator
-		CepOperator<?, ?> operator = this.getCepOperator(window);
+		CepOperator<?, ?> operator = AddCommand.getCepOperator(window);
 		if (operator == null) {
 			throw new NoCepOperatorSelectedException();
 		}
@@ -65,7 +65,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			// show the CEPViewer in the workbench
 			window.getWorkbench().showPerspective(Activator.PLUGIN_ID, window);
 			// get a reference of the CEPListView and add the CepOperator
-			CEPListView listView = this.getCEPListView();
+			CEPListView listView = AddCommand.getCEPListView();
 			if (listView == null) {
 				throw new CEPListViewNotFoundException();
 			}
@@ -97,7 +97,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * 
 	 * @return a reference of the CEPListView or null
 	 */
-	private CEPListView getCEPListView() {
+	private static CEPListView getCEPListView() {
 		for (IViewReference reference : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (reference.getId().equals(CEPListView.ID)) {
@@ -115,7 +115,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * @return a CepOperator or null
 	 */
 	@SuppressWarnings("rawtypes")
-	private CepOperator getCepOperator(IWorkbenchWindow window) {
+	private static CepOperator getCepOperator(IWorkbenchWindow window) {
 		// get the selection of the current view
 		ISelection selection = window.getActivePage().getSelection();
 		// if (selection instanceof IStructuredSelection) {

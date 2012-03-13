@@ -52,7 +52,7 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 				select(instance);
 			} else {
 				// ...else reset the views
-				this.clearAllViews();
+				CEPTreeListListener.clearAllViews();
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public class CEPTreeListListener implements ISelectionChangedListener {
 	/**
 	 * This method clears all Views within the CEPViewer
 	 */
-	private void clearAllViews() {
+	private static void clearAllViews() {
 		for (IViewReference reference : PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage().getViewReferences()) {
 			if (reference.getId().equals(CEPAutomataView.ID)) {
