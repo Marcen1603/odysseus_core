@@ -196,10 +196,11 @@ public abstract class AbstractTableListParameterEditor<T, U, V> extends Abstract
 			list.add(convertTo(u));
 		}
 		
-		if( list.isEmpty() ) 
-			return null;//setValue(null);
-		else
-			return list;//setValue(list);
+		if( list.isEmpty() ) {
+			return null;
+		} 
+		
+		return list;
 	}
 	
 	@SuppressWarnings("unchecked")
