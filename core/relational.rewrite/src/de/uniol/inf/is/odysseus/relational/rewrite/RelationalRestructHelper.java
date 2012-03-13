@@ -65,7 +65,7 @@ public class RelationalRestructHelper {
 
 	public static Set<?> sourcesOfPredicate(IPredicate<?> predicate) {
 		final HashSet<String> sources = new HashSet<String>();
-		ComplexPredicateHelper.visitPredicates((IPredicate<?>) predicate,
+		ComplexPredicateHelper.visitPredicates(predicate,
 				new IUnaryFunctor<IPredicate<?>>() {
 					@Override
 					public void call(IPredicate<?> pred) {
@@ -76,7 +76,7 @@ public class RelationalRestructHelper {
 						// sourcesOfAttributes
 						// get called from here
 						for (SDFAttribute attribute : attributes) {
-							sources.add(((SDFAttribute) attribute)
+							sources.add(attribute
 									.getSourceName());
 						}
 					}
