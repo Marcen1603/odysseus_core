@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttrib
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.ISolution;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.MapleResultParserFacade;
 
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class MapleFacade {
 
 	private static Logger logger = LoggerFactory.getLogger(MapleFacade.class);

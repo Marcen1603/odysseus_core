@@ -95,7 +95,6 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void process_next(MVRelationalTuple<T> object, int port) {
 		
 		// restrict the original tuple and set the new metadata

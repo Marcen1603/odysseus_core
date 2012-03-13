@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPro
  *
  * @param <T>
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKeyLatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
 
 //	private final String LOGGER_NAME = "ObjectTrackingProjectPO";

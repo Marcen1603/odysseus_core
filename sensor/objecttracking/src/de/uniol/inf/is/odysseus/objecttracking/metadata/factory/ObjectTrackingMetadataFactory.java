@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.ObjectTrackingMetadata;
  * @author Andre Bolles
  * 
  */
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<ObjectTrackingMetadata, MVRelationalTuple<ObjectTrackingMetadata>>{
 
 	SDFSchema schema;

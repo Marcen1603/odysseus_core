@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IPredictionFunctionKey;
  * @author Andre Bolles
  * 
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class PredictionKeyMetadataMergeFunction<M extends IPredictionFunctionKey<IPredicate>>
 		implements IInlineMetadataMergeFunction<M> {
 

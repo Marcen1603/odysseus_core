@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
  * @param <T>
  *            Datentyp
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunction, T extends MVRelationalTuple<K>>
 		extends AbstractPipe<T, T> {
 

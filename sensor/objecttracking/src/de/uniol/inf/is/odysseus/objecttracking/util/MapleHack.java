@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @author André Bolles
  *
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class MapleHack {
 
 	private static Logger logger = LoggerFactory.getLogger(MapleHack.class);
