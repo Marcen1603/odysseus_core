@@ -1347,7 +1347,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 	// ================================= utility methods =======================================
 	
 	
-	private SDFAttribute outAttribute(String attributeName,
+	private static SDFAttribute outAttribute(String attributeName,
 			AggregateFunctionName function) {
 		String funcName = function.toString() + "(" + attributeName + ")";
 		
@@ -1421,7 +1421,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		return retval;
 	}
 
-	private TimestampAO addTimestampAO(ILogicalOperator operator) {
+	private static TimestampAO addTimestampAO(ILogicalOperator operator) {
 		TimestampAO timestampAO = new TimestampAO();
 		for (SDFAttribute attr : operator.getOutputSchema()) {
 			if (attr.getDatatype().getURI().equals("StartTimestamp")) {

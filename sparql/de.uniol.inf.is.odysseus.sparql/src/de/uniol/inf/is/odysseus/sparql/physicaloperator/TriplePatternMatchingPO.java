@@ -75,9 +75,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		RelationalTuple<M> preprocessed = preprocess(object);
 		if (this.predicate.evaluate(preprocessed)) {
 			this.transfer(this.transform(preprocessed));
-			if(this.hashCode() == 18250880){
-				String a = "null";
-			}
 		}
 
 	}
@@ -101,7 +98,8 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		return newElem;
 	}
 	
-	private RelationalTuple<M> preprocess(RelationalTuple<M> element, int attrPos){
+	@SuppressWarnings("static-method")
+    private RelationalTuple<M> preprocess(RelationalTuple<M> element, int attrPos){
 		// remove datatype information
 		int hatPos = ((String)element.getAttribute(attrPos)).indexOf("^^");
 		if(hatPos != -1){

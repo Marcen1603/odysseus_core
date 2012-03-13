@@ -34,7 +34,7 @@ public class SPARQLParserBase {
 	}
 	
 	// Worker function
-    private String unescape(String s, char escape, boolean pointCodeOnly, int line, int column) throws ParseException
+    private static String unescape(String s, char escape, boolean pointCodeOnly, int line, int column) throws ParseException
     {
         int i = s.indexOf(escape) ;
         
@@ -132,7 +132,7 @@ public class SPARQLParserBase {
     }
 	
     // Line and column that started the escape
-    private int hex(String s, int i, int len, int line, int column) throws ParseException
+    private static int hex(String s, int i, int len, int line, int column) throws ParseException
     {
         if ( i+len >= s.length() )
         {

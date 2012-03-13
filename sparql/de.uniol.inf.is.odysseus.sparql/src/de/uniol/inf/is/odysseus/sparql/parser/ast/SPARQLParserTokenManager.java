@@ -21,6 +21,7 @@ public class SPARQLParserTokenManager implements SPARQLParserConstants
   public  java.io.PrintStream debugStream = System.out;
   /** Set debug output. */
   public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
+@SuppressWarnings("unused")
 private int jjStopAtPos(int pos, int kind)
 {
    jjmatchedKind = kind;
