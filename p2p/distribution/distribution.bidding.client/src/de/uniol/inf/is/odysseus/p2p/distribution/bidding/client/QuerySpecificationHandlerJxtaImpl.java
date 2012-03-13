@@ -166,14 +166,7 @@ public class QuerySpecificationHandlerJxtaImpl<S extends QueryExecutionSpezifica
 		List<AccessAO> sources = new ArrayList<AccessAO>();
 		collectSourcesFromPlan(subplan.getAo(), sources);
 		if (!sources.isEmpty()) {
-			for (AccessAO ao : sources) {
-				//TODO: Find a solution ;-)
-//				if (!GlobalState.getActiveDatadictionary()
-//						.containsViewOrStream(ao.getSource().getURI(),
-//								GlobalState.getActiveSession(""))) {
-					return "-1";
-//				}
-			}
+			return "-1";
 		}
 
 		// // keine Quellen werden verwaltet
