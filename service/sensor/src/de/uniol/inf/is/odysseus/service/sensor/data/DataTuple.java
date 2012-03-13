@@ -127,7 +127,7 @@ public class DataTuple {
 	 * @param attObject the att object
 	 * @return the int
 	 */
-	private int calcBaseTypeSize(Object attObject) {
+	private static int calcBaseTypeSize(Object attObject) {
 		if (attObject == null)
 			return 0;
 		if (attObject instanceof Integer)

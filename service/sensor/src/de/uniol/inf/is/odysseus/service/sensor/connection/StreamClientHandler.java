@@ -97,7 +97,7 @@ public class StreamClientHandler {
 		for (String name : this.schema.getNameOrder()) {
 			DataType dt = this.schema.getDatatype(name);			
 			Object data = tuple.getAttribute(name);				
-			this.isDataTypeOK(name, dt, data);
+			StreamClientHandler.isDataTypeOK(name, dt, data);
 			DataType expectedType = getSimpleType(dt);
 			
 			if (expectedType == DataType.INTEGER) {
@@ -126,7 +126,7 @@ public class StreamClientHandler {
 	 * @param soll the name and data type
 	 * @param data the data to check
 	 */
-	private void isDataTypeOK(String name, DataType sollType, Object data) {		
+	private static void isDataTypeOK(String name, DataType sollType, Object data) {		
 		DataType istType = getAccordingDataType(data);
 		// first every timestamp is a long
 		sollType = getSimpleType(sollType);
@@ -148,7 +148,7 @@ public class StreamClientHandler {
 	 * @param toTest the to test
 	 * @return the simple type
 	 */
-	private DataType getSimpleType(DataType toTest){
+	private static DataType getSimpleType(DataType toTest){
 		if (toTest == DataType.ENDTIMESTAMP || toTest == DataType.STARTTIMESTAMP || toTest == DataType.TIMESTAMP) {
 			toTest = DataType.LONG;
 		}
@@ -161,7 +161,7 @@ public class StreamClientHandler {
 	 * @param data the data
 	 * @return the according data type
 	 */
-	private DataType getAccordingDataType(Object data) {
+	private static DataType getAccordingDataType(Object data) {
 		if (data instanceof Integer) {
 			return DataType.INTEGER;
 		}
@@ -204,7 +204,7 @@ public class StreamClientHandler {
 	 * @param data the data to convert
 	 * @return the converted long
 	 */
-	private Long getLong(Object data) {
+	private static Long getLong(Object data) {
 		if (data instanceof Long) {
 			return (Long) data;
 		}
@@ -221,7 +221,7 @@ public class StreamClientHandler {
 	 * @param data the data to convert
 	 * @return the converted  integer
 	 */
-	private Integer getInteger(Object data) {
+	private static Integer getInteger(Object data) {
 		if (data instanceof Integer) {
 			return (Integer) data;
 		}
@@ -238,7 +238,7 @@ public class StreamClientHandler {
 	 * @param data the data to convert
 	 * @return the converted double
 	 */
-	private Double getDouble(Object data) {
+	private static Double getDouble(Object data) {
 		if (data instanceof Double) {
 			return (Double) data;
 		}
