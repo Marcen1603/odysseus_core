@@ -169,10 +169,9 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	public boolean equals(Object other) {
 		if (!(other instanceof RelationalPredicate)) {
 			return false;
-		} else {
-			return this.expression
-					.equals(((RelationalPredicate) other).expression);
 		}
+        return this.expression
+        		.equals(((RelationalPredicate) other).expression);
 	}
 
 	@Override
@@ -198,9 +197,8 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 			// boolean isContainedIn1 = this.isContainedIn(pred);
 			// boolean isContainedIn2 = pred.isContainedIn(this);
 			return this.isContainedIn(pred) && pred.isContainedIn(this);
-		} else {
-			return true;
 		}
+        return true;
 	}
 
 	@Override

@@ -159,11 +159,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			newTuple.setMetadata((T) this.getMetadata().clone());			
 			return newTuple;			
 		}
-		else
-		{
-			this.attributes = newAttrs;
-			return this;
-		}
+        this.attributes = newAttrs;
+        return this;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -173,11 +170,10 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 			newTuple.setAttributes(newAttrs);
 			newTuple.setMetadata((T) this.getMetadata().clone());
 			return newTuple;
-		} else {
-			this.attributes = newAttrs;
-			this.valueChanged = true;
-			return this;
 		}
+        this.attributes = newAttrs;
+        this.valueChanged = true;
+        return this;
 	}
 
 	/**
@@ -199,9 +195,8 @@ public class RelationalTuple<T extends IMetaAttribute> extends MetaAttributeCont
 	public final boolean equals(Object o) {
 		if (o instanceof RelationalTuple) {
 			return this.compareTo((RelationalTuple<?>) o) == 0;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 	/**

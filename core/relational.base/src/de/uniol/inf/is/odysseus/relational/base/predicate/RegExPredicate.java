@@ -101,9 +101,8 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 		if (this.matcher == null) {
 			this.matcher = this.pattern.matcher(inputString);
 			return this.matcher.find();
-		} else {
-			return this.matcher.reset(inputString).find();
 		}
+        return this.matcher.reset(inputString).find();
 	}
 
 	@Override

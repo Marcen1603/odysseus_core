@@ -95,18 +95,16 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 			if(a.getSourceName().equals(attr.getSourceName()) && a.getAttributeName().equals(attr.getAttributeName())) {
 				return true;
 			}
-			else{
-				boolean found = false;
-				if(a.getDatatype().hasSchema()){
-					found = findAttribute(a.getDatatype().getSchema(), attr, path);
-				}
-				if(!found){
-					path.remove(path.size() - 1); // remove the last entry, because it is wrong
-				}
-				else{
-					return true;
-				}
-			}
+            boolean found = false;
+            if(a.getDatatype().hasSchema()){
+            	found = findAttribute(a.getDatatype().getSchema(), attr, path);
+            }
+            if(!found){
+            	path.remove(path.size() - 1); // remove the last entry, because it is wrong
+            }
+            else{
+            	return true;
+            }
 		}
 		return false;
 	}
@@ -172,9 +170,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 		if(!(other instanceof ObjectRelationalPredicate)){
 			return false;
 		}
-		else{
-			return this.expression.equals(((ObjectRelationalPredicate)other).expression);
-		}
+        return this.expression.equals(((ObjectRelationalPredicate)other).expression);
 	}
 	
 	@Override
