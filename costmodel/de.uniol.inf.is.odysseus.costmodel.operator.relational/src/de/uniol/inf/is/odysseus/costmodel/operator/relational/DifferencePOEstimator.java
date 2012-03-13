@@ -139,7 +139,7 @@ public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {
 		return estimation;
 	}
 	
-	private double getEqualsSelectivity( IHistogram hist1, IHistogram hist2 ) {
+	private static double getEqualsSelectivity( IHistogram hist1, IHistogram hist2 ) {
 		if( hist1 == null || hist2 == null )
 			return 1.0;
 		

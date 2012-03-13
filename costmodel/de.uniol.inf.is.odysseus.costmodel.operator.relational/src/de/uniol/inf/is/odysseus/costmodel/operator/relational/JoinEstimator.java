@@ -136,7 +136,7 @@ public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {
 	}
 
 	// Kreuzprodukt
-	private OperatorEstimation estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	private static OperatorEstimation estimateCrossProductOperator(JoinTIPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		OperatorEstimation estimation = new OperatorEstimation(instance);
 
 		OperatorEstimation op1 = prevOperators.get(0);
