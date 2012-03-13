@@ -39,7 +39,6 @@ public class SickConnectionImpl implements SickConnection {
 		private long recordInterval;
 		private long recordEnd;
 		private long timestamp = 0;
-		private long clock = 0;
 		private final SickConnectionImpl connection;
 
 		public SickConnectionHandler(final String host, final int port,
