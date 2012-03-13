@@ -72,7 +72,7 @@ public class JxtaConfiguration {
 	 * @throws IOException
 	 *             wenn Properties file nicht gelesen werden kann
 	 */
-	private Properties readProperties(String filename) throws IOException, FileNotFoundException {
+	private static Properties readProperties(String filename) throws IOException, FileNotFoundException {
 		logger.debug("Reading Peer Properties from " + filename);
 		FileInputStream in;
 		in = new FileInputStream(filename);

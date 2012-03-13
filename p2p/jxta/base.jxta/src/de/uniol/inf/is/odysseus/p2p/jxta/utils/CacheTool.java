@@ -15,12 +15,11 @@
 package de.uniol.inf.is.odysseus.p2p.jxta.utils;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CacheTool {
 	
 	public static void checkForExistingConfigurationDeletion(String Name,
-			File ConfigurationFile) throws IOException {
+			File ConfigurationFile)  {
 		recursiveDelete(ConfigurationFile);
 	}
 
