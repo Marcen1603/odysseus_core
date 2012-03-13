@@ -80,10 +80,8 @@ public class BreakOperatorCommand extends AbstractHandler implements IHandler {
 				if (!ob.isBreaked()) {
 					if (ob.startBreak())
 						return true;
-					else {
-						System.out.println("Could not start breaking");
-						OperatorBreakManager.getInstance().remove(ob);
-					}
+                    System.out.println("Could not start breaking");
+                    OperatorBreakManager.getInstance().remove(ob);
 				} else
 					System.out.println("Already breaking");
 
