@@ -116,14 +116,13 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 		Object value = node.jjtGetChild(0).jjtAccept(this, data);
 		if(value instanceof Integer){
 			return ((Integer)value).doubleValue();
-		}else{
-			if(value instanceof Long){
-				return ((Long)value).doubleValue();
-			}else{
-				// last chance: cast to double
-				return (Double) value;
-			}
 		}
+		if(value instanceof Long){
+			return ((Long)value).doubleValue();
+		}
+		
+		// last chance: cast to double
+		return value;
 	}
 
 	@Override
@@ -133,16 +132,16 @@ public abstract class AbstractSMQLParserVisitor implements SMQLParserVisitor {
 		if(value instanceof String){			
 			AbstractParameter<String> parameter = new AbstractParameter<String>(name, (String)value);
 			return parameter;
-		}else{			
-			if(value instanceof Double){
-				AbstractParameter<Double> parameter = new AbstractParameter<Double>(name, (Double)value);
-				return parameter;
-			}else{
-				// should be an integer
-				AbstractParameter<Integer> parameter = new AbstractParameter<Integer>(name, (Integer)value);
-				return parameter;
-			}			
-		}		
+		}	
+		
+		if(value instanceof Double){
+			AbstractParameter<Double> parameter = new AbstractParameter<Double>(name, (Double)value);
+			return parameter;
+		}
+		
+		// should be an integer
+		AbstractParameter<Integer> parameter = new AbstractParameter<Integer>(name, (Integer)value);
+		return parameter;
 	}
 
 	@Override
