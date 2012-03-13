@@ -72,7 +72,7 @@ public class BenchmarkHolderContentProvider implements ITreeContentProvider {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void addIfNotNullAndNotEmpty(List<Object> list, Object obj) {
+	private static void addIfNotNullAndNotEmpty(List<Object> list, Object obj) {
 		if (obj != null) {
 			// abbrechen, wenn Objekt eine leere Liste ist
 			if (obj instanceof List) {

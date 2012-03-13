@@ -105,7 +105,7 @@ public class BenchmarkWizard extends Wizard {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	private void refreshNavigator() {
+	private static void refreshNavigator() {
 		ProjectView projectView = (ProjectView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findView(ProjectView.ID);
 		projectView.refresh();

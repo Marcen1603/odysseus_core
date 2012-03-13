@@ -105,7 +105,7 @@ public class BenchmarkWizardPage extends WizardPage {
 		return dropDown.getText();
 	}
 
-	private List<BenchmarkGroup> getDirectories() {
+	private static List<BenchmarkGroup> getDirectories() {
 		return BenchmarkHolder.INSTANCE.getBenchmarkGroups();
 	}
 }
