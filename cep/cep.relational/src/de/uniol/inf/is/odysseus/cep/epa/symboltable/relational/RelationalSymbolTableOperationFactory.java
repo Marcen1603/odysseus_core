@@ -39,7 +39,7 @@ public class RelationalSymbolTableOperationFactory implements
 		return func;
 	}
 
-	private IAggregateFunction createNewFunction(String name) {
+	private static IAggregateFunction createNewFunction(String name) {
 		IAggregateFunction func = null;
 		if ("COUNT".equalsIgnoreCase(name)){
 			func = RelationalCount.getInstance();
