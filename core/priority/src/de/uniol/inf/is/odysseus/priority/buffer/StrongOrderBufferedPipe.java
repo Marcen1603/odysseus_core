@@ -50,7 +50,7 @@ public class StrongOrderBufferedPipe<T extends IMetaAttributeContainer<? extends
 			this.buffers[prio].add(object);
 			this.heartbeat.set(null);
 		}
-	};
+	}
 
 	@Override
 	public void transferNext() {
