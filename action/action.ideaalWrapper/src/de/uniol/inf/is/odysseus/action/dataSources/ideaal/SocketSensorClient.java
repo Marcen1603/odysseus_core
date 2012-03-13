@@ -118,9 +118,8 @@ public class SocketSensorClient extends ISourceClient {
 			if (this.retries<1){
 				this.logger.error("Sensor not avaiable. Stopping server");
 				return false;
-			}else {
-				this.logger.error("Sensor not avaiable. Retrying ...("+this.retries+" retries left)");
 			}
+            this.logger.error("Sensor not avaiable. Retrying ...("+this.retries+" retries left)");
 		} catch (InternalException e) {
 			super.logger.error(e.getMessage());
 			super.logger.error("Skipping tuple");
