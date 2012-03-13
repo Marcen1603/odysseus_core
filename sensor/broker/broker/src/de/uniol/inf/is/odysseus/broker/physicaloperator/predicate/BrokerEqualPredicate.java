@@ -77,9 +77,8 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
         if( leftTuple.getMetadata().getStart().equals(rightTuple.getMetadata().getStart()) ) {
 //			if (leftTuple.getAttribute(this.position).equals(rightTuple.getAttribute(this.position))) {				
         	return true;
-        } else {				
-        	return false;
         }
+        return false;
 	}
 	
 	@Override

@@ -46,13 +46,12 @@ public class MetricMeasureAO extends AbstractLogicalOperator{
 	public int getOnAttribute() {
 		if(this.schema==null){
 			return -1;
-		}else{
-			for(int i=0;i<this.schema.size();i++){			
-				if(this.schema.getAttribute(i).getAttributeName().equals(this.onAttribute)){
-					return i;
-				}
-			}
 		}
+        for(int i=0;i<this.schema.size();i++){			
+        	if(this.schema.getAttribute(i).getAttributeName().equals(this.onAttribute)){
+        		return i;
+        	}
+        }
 		return -1;		
 	}			
 		
