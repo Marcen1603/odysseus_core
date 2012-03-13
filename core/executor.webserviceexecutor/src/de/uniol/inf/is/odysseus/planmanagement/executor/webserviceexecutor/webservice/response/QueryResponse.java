@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 
 /**
  * @author Merlin Wasmann
@@ -23,22 +23,22 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
  */
 public class QueryResponse extends Response {
 
-	private ILogicalQuery responseValue;
+	private LogicalQuery responseValue;
 	
 	public QueryResponse() {
 		super();
 	}
 	
-	public QueryResponse(ILogicalQuery value, boolean success) {
+	public QueryResponse(LogicalQuery value, boolean success) {
 		super(success);
 		this.responseValue = value;
 	}
 	
-	public ILogicalQuery getResponseValue() {
+	public LogicalQuery getResponseValue() {
 		return this.responseValue;
 	}
 	
-	public void setResponseValue(ILogicalQuery value) {
+	public void setResponseValue(LogicalQuery value) {
 		this.responseValue = value;
 	}
 }

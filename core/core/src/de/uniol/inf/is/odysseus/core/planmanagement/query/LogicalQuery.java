@@ -5,15 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
-import de.uniol.inf.is.odysseus.core.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class LogicalQuery implements ILogicalQuery {
 
 	private static final long serialVersionUID = -7357156628145329724L;
@@ -36,7 +41,8 @@ public class LogicalQuery implements ILogicalQuery {
 	/**
 	 * The user who created this query
 	 */
-	transient private ISession user = null;
+	@XmlTransient
+	private ISession user = null;
 
 	/**
 	 * ID of the parser that should be used to translate the query string.
@@ -46,6 +52,7 @@ public class LogicalQuery implements ILogicalQuery {
 	/**
 	 * Logical root operator of this query
 	 */
+	@XmlTransient
 	private ILogicalOperator logicalPlan;
 
 	private boolean containsCycles = false;
@@ -63,19 +70,21 @@ public class LogicalQuery implements ILogicalQuery {
 	/**
 	 * Service level agreement of the query
 	 */
+	@XmlTransient
 	private SLA sla;
-	
-	public LogicalQuery(String parserID, ILogicalOperator logicalPlan, int priority) {
+
+	public LogicalQuery(String parserID, ILogicalOperator logicalPlan,
+			int priority) {
 		this.id = idCounter++;
 		this.parserID = parserID;
 		this.logicalPlan = logicalPlan;
 		this.priority = priority;
 	}
-	
+
 	public LogicalQuery(ILogicalOperator logicalPlan, int priority) {
-		this("",logicalPlan,priority);
+		this("", logicalPlan, priority);
 	}
-	
+
 	public LogicalQuery() {
 		this("", null, 0);
 	}
@@ -105,13 +114,15 @@ public class LogicalQuery implements ILogicalQuery {
 		this.logicalPlan = logicalPlan;
 		if (setOwner) {
 			// Set Owner
-			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(this);
+			SetOwnerGraphVisitor<ILogicalOperator> visitor = new SetOwnerGraphVisitor<ILogicalOperator>(
+					this);
 			@SuppressWarnings("rawtypes")
 			AbstractGraphWalker walker = new AbstractGraphWalker();
 			walker.prefixWalk(logicalPlan, visitor);
 		} else {
 			if (!logicalPlan.hasOwner()) {
-				throw new IllegalArgumentException("LogicalPlan must have an owner " + logicalPlan);
+				throw new IllegalArgumentException(
+						"LogicalPlan must have an owner " + logicalPlan);
 			}
 		}
 	}
@@ -119,7 +130,9 @@ public class LogicalQuery implements ILogicalQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getPriority()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getPriority
+	 * ()
 	 */
 	@Override
 	public int getPriority() {
@@ -129,7 +142,8 @@ public class LogicalQuery implements ILogicalQuery {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setPriority
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setPriority
 	 * (int)
 	 */
 	@Override
@@ -148,11 +162,12 @@ public class LogicalQuery implements ILogicalQuery {
 		return this.logicalPlan;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IOperatorOwner#getID()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IOperatorOwner#getID
+	 * ()
 	 */
 	@Override
 	public int getID() {
@@ -207,8 +222,8 @@ public class LogicalQuery implements ILogicalQuery {
 	@Override
 	public void setSLA(SLA sla) {
 		this.sla = sla;
-	}	
-	
+	}
+
 	@Override
 	public boolean containsCycles() {
 		return containsCycles;
@@ -241,29 +256,30 @@ public class LogicalQuery implements ILogicalQuery {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public int compareTo(ILogicalQuery query) {
-		if (this.id < query.getID()){
+		if (this.id < query.getID()) {
 			return -1;
 		}
-		if (this.id > query.getID()){
+		if (this.id > query.getID()) {
 			return 1;
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public SerializeNode serialize() {
 		SerializeNode node = new SerializeNode(LogicalQuery.class);
-		List<ILogicalOperator> visitedOperators = new ArrayList<ILogicalOperator>();		
+		List<ILogicalOperator> visitedOperators = new ArrayList<ILogicalOperator>();
 		ILogicalOperator operator = getLogicalPlan();
 		serializeWalker(operator, visitedOperators, node);
 		node.addPropertyValue("rootOperator", operator.hashCode());
 		return node;
 	}
 
-	private void serializeWalker(ILogicalOperator op, List<ILogicalOperator> visitedOperators, SerializeNode list) {
+	private void serializeWalker(ILogicalOperator op,
+			List<ILogicalOperator> visitedOperators, SerializeNode list) {
 		if (visitedOperators.contains(op)) {
 			return;
 		}
@@ -287,33 +303,41 @@ public class LogicalQuery implements ILogicalQuery {
 		try {
 			Map<String, ILogicalOperator> ops = new HashMap<String, ILogicalOperator>();
 			for (SerializeNode node : rootNode.getChilds()) {
-				if (ILogicalOperator.class.isAssignableFrom(node.getRepresentingClass())) {
+				if (ILogicalOperator.class.isAssignableFrom(node
+						.getRepresentingClass())) {
 
 					// create instance
-					ISerializable s = (ISerializable) node.getRepresentingClass().newInstance();
+					ISerializable s = (ISerializable) node
+							.getRepresentingClass().newInstance();
 					// reload properties
 					s.deserialize(node);
 					// memorize for subscriptions
-					ops.put(node.getProperty("id").toString(), (ILogicalOperator) s);
+					ops.put(node.getProperty("id").toString(),
+							(ILogicalOperator) s);
 
 				}
 			}
 			// strict serial, so that the operators are all available and
 			// loaded!
 			for (SerializeNode node : rootNode.getChilds()) {
-				if (LogicalSubscription.class.isAssignableFrom(node.getRepresentingClass())) {
+				if (LogicalSubscription.class.isAssignableFrom(node
+						.getRepresentingClass())) {
 					String from = node.getProperty("from").toString();
 					String to = node.getProperty("to").toString();
-					int sinkInPort = Integer.parseInt(node.getProperty("sinkInPort").toString());
-					int sourceOutPort = Integer.parseInt(node.getProperty("sourceOutPort").toString());
+					int sinkInPort = Integer.parseInt(node.getProperty(
+							"sinkInPort").toString());
+					int sourceOutPort = Integer.parseInt(node.getProperty(
+							"sourceOutPort").toString());
 					// TODO: schema speichern
-					ops.get(to).subscribeToSource(ops.get(from), sinkInPort, sourceOutPort, ops.get(from).getOutputSchema());
+					ops.get(to).subscribeToSource(ops.get(from), sinkInPort,
+							sourceOutPort, ops.get(from).getOutputSchema());
 				}
 			}
-			
-			//String hashCode = rootNode.getProperty("rootOperator").toString();
-			//ILogicalOperator rootOperator = ops.get(hashCode); 
-			//this.setLogicalPlan(rootOperator, getUser());
+
+			// String hashCode =
+			// rootNode.getProperty("rootOperator").toString();
+			// ILogicalOperator rootOperator = ops.get(hashCode);
+			// this.setLogicalPlan(rootOperator, getUser());
 			System.out.println("ready");
 		} catch (InstantiationException e) {
 			e.printStackTrace();

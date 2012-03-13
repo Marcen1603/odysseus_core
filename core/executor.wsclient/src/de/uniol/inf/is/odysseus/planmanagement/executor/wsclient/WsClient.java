@@ -87,9 +87,13 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return false;
 	}
 	
-	// init
+	/**
+	 * Setup the client with given wsdlLocation and the service
+	 * 
+	 * @param wsdlLocation
+	 * @param service
+	 */
 	public void startClient(URL wsdlLocation, QName service) {
-//		WsClient client = new WsClient();
 		this.service = new WebserviceServerService(wsdlLocation, service);
 		this.server = this.service.getWebserviceServerPort();
 	}
@@ -241,16 +245,20 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 
-	// TODO: Implement
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
 		Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName).getResponseValue();
 		for(Integer val : response) {
-			getLogger().debug(val.toString());
+			getLogger().error(getLogicalQuery(val).getQueryText());
 		}
 		return response;
+	}
+	
+	@Override
+	public ILogicalQuery getLogicalQuery(int id) {
+		return getWebserviceServer().getLogicalQuery(getSecurityToken(), new String(id)).getResponseValue();
 	}
 	
 /********************************************************************
@@ -308,12 +316,5 @@ public class WsClient implements IExecutor, IClientExecutor{
 		// TODO not implemented by server yet
 		
 	}
-
-	@Override
-	public ILogicalQuery getLogicalQuery(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

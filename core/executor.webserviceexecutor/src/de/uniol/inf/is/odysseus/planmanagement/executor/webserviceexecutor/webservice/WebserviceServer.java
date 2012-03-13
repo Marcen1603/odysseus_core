@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
@@ -42,6 +43,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
@@ -390,15 +392,16 @@ public class WebserviceServer {
 		}
 	}
 
-//	public QueryResponse getLogicalQuery(
-//			@WebParam(name = "securitytoken") String securityToken,
-//			@WebParam(name = "id") int id) {
-//		try {
-//			loginWithSecurityToken(securityToken);
-//			return new QueryResponse(ExecutorServiceBinding.getExecutor().getLogicalQuery(id), true);
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//			return new QueryResponse(null, false);
-//		}
-//	}
+	public QueryResponse getLogicalQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "id") String id) {
+		try {
+			loginWithSecurityToken(securityToken);
+			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor()
+					.getLogicalQuery(Integer.valueOf(id)), true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new QueryResponse(null, false);
+		}
+	}
 }
