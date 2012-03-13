@@ -26,7 +26,7 @@ public class DuplicateElimination extends UnaryLogicalOp{
     }
     
     public DuplicateElimination(DuplicateElimination original){
-        super((UnaryLogicalOp)original);
+        super(original);
     }
     
 //    public void calcOutIDSize(){
