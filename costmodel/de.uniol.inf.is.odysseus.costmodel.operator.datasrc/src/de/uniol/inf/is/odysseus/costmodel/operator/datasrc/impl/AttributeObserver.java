@@ -69,7 +69,7 @@ public class AttributeObserver implements IDataSourceObserverListener {
 		// direct input... e.g. cached values
 		if( element instanceof Double ) {
 			factory.addValue((Double)element);
-			getLogger().debug("Direct value for " + attribute + ": " + ((Double)element) );
+			getLogger().debug("Direct value for " + attribute + ": " + element );
 			return;
 		}
 		

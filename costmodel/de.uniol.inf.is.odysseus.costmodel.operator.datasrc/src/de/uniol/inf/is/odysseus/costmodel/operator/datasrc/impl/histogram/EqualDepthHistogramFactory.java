@@ -36,7 +36,7 @@ public class EqualDepthHistogramFactory extends AbstractIntervalSamplingHistogra
 		for( int i = 0; i < valueCount; i++ ) {
 			counts[actBin]++;
 			if( counts[actBin] > depth - overhead) {
-				overhead += ((double)counts[actBin] - depth);
+				overhead += (counts[actBin] - depth);
 				
 				borders[actBorder] = values.get(i);
 				actBorder++;
