@@ -88,7 +88,7 @@ public class TMetadataObjectRelationalCreationPORule extends AbstractTransformat
 		for(ILogicalOperator op : (List<ILogicalOperator>)logicalOps) {
 			for (Subscription<ISource<?>> psub : op.getPhysSubscriptionsTo()) {
 					if (psub.getTarget() == operator){
-						op.setPhysSubscriptionTo((ISource)po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
+						op.setPhysSubscriptionTo(po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
 						update(op);
 					}
 				}
