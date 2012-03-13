@@ -26,53 +26,53 @@ import org.osgi.framework.wiring.BundleWiring;
  */
 public class BundleClassLoading {
 
+	private static final String CLASS_SEP = "/";
 	private static String DEFAULT_PACKAGE_ROOT_DIR = "/bin";
 
-	public static Class<?> findClass(String canonicalClassName, Bundle startBundle) throws ClassNotFoundException {
+	public static Class<?> findClass(String canonicalClassName,
+			Bundle startBundle) throws ClassNotFoundException {
 		// first try to load by default-classloader
-		try{
+		try {
 			Class<?> clazz = startBundle.loadClass(canonicalClassName);
 			return clazz;
-		}catch(Exception e){
-			
-		}
-		
-		// then scan wired bundles
-		try {
-			
-			for (Bundle b : startBundle.getBundleContext().getBundles()) {
-				String slashedName = canonicalClassName.replace('.', '/');
-				int splitPoint = slashedName.lastIndexOf("/");
+		} catch (ClassNotFoundException e) {
 
-				String resourcePath = slashedName.substring(0, splitPoint);
-				String className = slashedName.substring(splitPoint + 1, slashedName.length());
-				resourcePath = DEFAULT_PACKAGE_ROOT_DIR + "/" + resourcePath;
-				BundleWiring wiring = b.adapt(BundleWiring.class);
-				if (wiring != null) {
-					Collection<String> resources = wiring.listResources(resourcePath, className + ".class", BundleWiring.LISTRESOURCES_LOCAL);
-					if (resources.size() > 1) {
-						throw new ClassNotFoundException("There are more than one possible class for " + canonicalClassName);
-					}
-					if (resources.size() == 1) {
-						String name = canonicalClassName;
-						ClassLoader loader = wiring.getClassLoader();
-						Class<?> theClass = loader.loadClass(name);
-						return theClass;
-					}
+		}
+
+		// then scan wired bundles
+		Class<?> theClass = null;
+		for (Bundle b : startBundle.getBundleContext().getBundles()) {
+			String slashedName = canonicalClassName.replace('.', '/');
+			int splitPoint = slashedName.lastIndexOf(CLASS_SEP);
+
+			String resourcePath = slashedName.substring(0, splitPoint);
+			String className = slashedName.substring(splitPoint + 1,
+					slashedName.length());
+			resourcePath = DEFAULT_PACKAGE_ROOT_DIR + CLASS_SEP + resourcePath;
+			BundleWiring wiring = b.adapt(BundleWiring.class);
+			if (wiring != null) {
+				Collection<String> resources = wiring.listResources(
+						resourcePath, className + ".class",
+						BundleWiring.LISTRESOURCES_LOCAL);
+				if (resources.size() > 1) {
+					throw new ClassNotFoundException(
+							"There are more than one possible class for "
+									+ canonicalClassName);
+				}
+				if (resources.size() == 1) {
+					String name = canonicalClassName;
+					ClassLoader loader = wiring.getClassLoader();
+					theClass = loader.loadClass(name);
+					break;
 				}
 			}
-			return null;
-		} catch (Exception e) {
-			throw new ClassNotFoundException("Can't obtain class: " + canonicalClassName, e);
 		}
+		return theClass;
+
 	}
 
 	public static ClassLoader getBundleClassLoader(Bundle b) {
-		try {
-			BundleWiring wiring = b.adapt(BundleWiring.class);
-			return wiring.getClassLoader();
-		} catch (Exception e) {
-			throw new RuntimeException("Can't obtain Bundle Class Loader for bundle: " + b, e);
-		}
+		BundleWiring wiring = b.adapt(BundleWiring.class);
+		return wiring.getClassLoader();
 	}
 }
