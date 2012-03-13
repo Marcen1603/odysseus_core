@@ -89,7 +89,7 @@ public class QueryTreeList extends AbstractTreeList {
 				// search for the MAchineTreeItem for the StateMachine of the
 				// instance
 				for (AbstractTreeItem instanceItem : machineItem.getChildren()) {
-					if (((CEPInstance) toRemove.getContent()).getInstance()
+					if (toRemove.getContent().getInstance()
 							.equals(((InstanceTreeItem) instanceItem)
 									.getContent().getInstance())) {
 						// if the instance has been found remove it
@@ -113,7 +113,7 @@ public class QueryTreeList extends AbstractTreeList {
 	 */
 	@Override
     public boolean remove(MachineTreeItem toRemove) {
-		MachineTreeItem removeItem = (MachineTreeItem) toRemove;
+		MachineTreeItem removeItem = toRemove;
 		for (AbstractTreeItem machineItem : this.root.getChildren()) {
 			// durchsuche die Rootelemente
 			if (removeItem.getContent().equals(

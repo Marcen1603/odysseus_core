@@ -232,13 +232,13 @@ public class StatusTreeList extends AbstractTreeList {
 			CEPStatus newStatus) {
 		for (Object item : this.itemR.getChildren().toArray()) {
 			InstanceTreeItem instanceItem = (InstanceTreeItem) item;
-			if (instance.equals(((CEPInstance) instanceItem.getContent())
+			if (instance.equals(instanceItem.getContent()
 					.getInstance())) {
 				// if the instance has been found, change the status within the
 				// CEPInstance object
-				this.remove((InstanceTreeItem) instanceItem);
-				((CEPInstance) instanceItem.getContent()).setStatus(newStatus);
-				this.addToTree((CEPInstance) instanceItem.getContent());
+				this.remove(instanceItem);
+				instanceItem.getContent().setStatus(newStatus);
+				this.addToTree(instanceItem.getContent());
 				return;
 			}
 		}
