@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.IExtendedPeerAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.ISourceAdvertisement;
@@ -211,6 +212,12 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	public void removeViewOrStream(String name, ISession caller) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ILogicalQuery getLogicalQuery(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

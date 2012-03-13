@@ -550,6 +550,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return this.executionPlan;
 	}
 
+	@Override
+	public ILogicalQuery getLogicalQuery(int id) {
+		IPhysicalQuery pq = executionPlan.getQuery(id); 
+		ILogicalQuery lq = null;
+		if (pq != null){
+			lq = pq.getLogicalQuery();
+		}
+		return lq;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

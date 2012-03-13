@@ -22,6 +22,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -97,6 +98,13 @@ public interface IExecutor extends IClientPlanManager{
 	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
 			String queryBuildConfigurationName) throws PlanManagementException;
 
+	/**
+	 * Return the logical query with the id
+	 * @param id
+	 * @return
+	 */
+	public ILogicalQuery getLogicalQuery(int id);
+	
 	/**
 	 * Start all queries that are currently not running
 	 * 
