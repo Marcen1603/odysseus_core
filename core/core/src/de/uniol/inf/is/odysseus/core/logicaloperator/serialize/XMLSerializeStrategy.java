@@ -117,7 +117,6 @@ public class XMLSerializeStrategy extends AbstractSerializerStrategy<String> {
 			Element element = doc.getDocumentElement();
 			if (element.getNodeName().equalsIgnoreCase("node")) {
 				String theClass = element.getAttribute("type");
-				@SuppressWarnings("unchecked")
 				SerializeNode node = new SerializeNode(Class.forName(theClass));
 				NodeList childs = element.getChildNodes();
 				for (int i = 0; i < childs.getLength(); i++) {
