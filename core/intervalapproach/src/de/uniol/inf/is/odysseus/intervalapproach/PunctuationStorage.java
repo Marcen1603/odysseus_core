@@ -74,10 +74,9 @@ public class PunctuationStorage<W extends IMetaAttributeContainer<?>, R> {
 				PointInTime curPoint = it.next();
 				if (start.before(curPoint)) {
 					break;
-				} else {
-					lastPoint = curPoint;
-					it.remove();
 				}
+                lastPoint = curPoint;
+                it.remove();
 			}
 
 			if (lastPoint != null) {
