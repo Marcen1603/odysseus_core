@@ -34,6 +34,7 @@ public class RelationalPolygonAggregation
         return ret;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> merge(
             IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p,
