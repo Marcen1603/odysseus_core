@@ -338,8 +338,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		if (commentPos != -1) {
 			if (commentPos == 0)
 				return "";
-			else
-				return line.substring(0, commentPos);
+            return line.substring(0, commentPos);
 		}
 
 		return line;
