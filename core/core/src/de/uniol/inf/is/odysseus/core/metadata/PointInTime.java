@@ -1,32 +1,36 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.metadata;
 
 import java.io.Serializable;
 
 /**
  * 
- * This immutable class represents a simple point in time and that can be infinite
+ * This immutable class represents a simple point in time and that can be
+ * infinite
  * 
  * @author Jonas Jacobi, Marco Grawunder
  * 
  */
-public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializable {
+public class PointInTime implements Comparable<PointInTime>, Cloneable,
+		Serializable {
+
+	private static final String INFINITY_SYMBOL = "oo";
 
 	private static final long serialVersionUID = -350811211489411617L;
-	
+
 	/**
 	 * A representation of this time
 	 */
@@ -40,65 +44,65 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	/**
 	 * Constant for infinityTime
 	 */
-	static final PointInTime infinityValue = new PointInTime();
-	
+	static final PointInTime INFINITY = new PointInTime();
+
 	/**
 	 * Constant for zero time
 	 */
-	private static final PointInTime zeroTime = new PointInTime(0);
+	private static final PointInTime ZERO = new PointInTime(0);
 
 	/**
 	 * Create a point in time from a long value
+	 * 
 	 * @param point
 	 */
 	public PointInTime(long point) {
 		this.point = point;
 		this.isInfinite = false;
 	}
-	
+
 	/**
-	 * Create a point in time from a number that can be cast to
-	 * a long value
+	 * Create a point in time from a number that can be cast to a long value
+	 * 
 	 * @param point
 	 */
-	public PointInTime(Number point){
+	public PointInTime(Number point) {
 		this.point = point.longValue();
 		this.isInfinite = false;
 	}
-	
-	
+
 	private PointInTime() {
 		isInfinite = true;
 		point = -1;
 	}
 
-//	public PointInTime(PointInTime time) {
-//		this.point = time.point;
-//		this.isInfinite = time.isInfinite;
-//	}
+	// public PointInTime(PointInTime time) {
+	// this.point = time.point;
+	// this.isInfinite = time.isInfinite;
+	// }
 
 	public boolean isInfinite() {
 		return isInfinite;
 	}
 
 	public static PointInTime getInfinityTime() {
-		return infinityValue;
+		return INFINITY;
 	}
 
-//	public void setMainPoint(long point) {
-//		this.point = point;
-//		this.isInfinite = false;
-//	}
-//
-//	public void setInfinite() {
-//		this.isInfinite = true;
-//	}
-//
-//
-//	public void setPoint(long mainPoint) {
-//		this.point = mainPoint;
-//		this.isInfinite = false;
-//	}
+	// public void setMainPoint(long point) {
+	// this.point = point;
+	// this.isInfinite = false;
+	// }
+	//
+	// public void setInfinite() {
+	// this.isInfinite = true;
+	// }
+	//
+	//
+	// public void setPoint(long mainPoint) {
+	// this.point = mainPoint;
+	// this.isInfinite = false;
+	// }
 
 	public long getMainPoint() {
 		return this.point;
@@ -129,20 +133,20 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	}
 
 	public static boolean before(PointInTime left, PointInTime right) {
+		boolean before;
 		// Achtung: Vorher die Behandlung von unendlich testen
 		// Wenn der linke Punkt unendlich ist, kann der rechte nicht davor sein
 		if (left.isInfinite()) {
-			return false;
+			before = false;
+			// Wenn der rechte Punkt unendlich ist und der linke nicht (s.o.)
+			// dann ist er auf jeden Fall davor :-)
+		} else if (right.isInfinite()) {
+			before = true;
+		} else {
+			// Ansonsten ganz normal
+			before = left.point < right.point;
 		}
-		// Wenn der rechte Punkt unendlich ist und der linke nicht (s.o.) dann
-		// ist
-		// er auf jeden Fall davor :-)
-		if (right.isInfinite()) {
-			return true;
-		}
-
-		// Ansonsten ganz normal
-		return left.point < right.point;
+		return before;
 	}
 
 	public static boolean equals(PointInTime left, PointInTime right) {
@@ -153,74 +157,74 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 			}
 			return false;
 		}
-        if (right.isInfinite) {
-        	return false;
-        }
-        return (left.point == right.point);
+		if (right.isInfinite) {
+			return false;
+		}
+		return (left.point == right.point);
 	}
 
 	public static PointInTime min(PointInTime left, PointInTime right) {
+		PointInTime min = null;
 		if (left != null && right != null) {
 			if (before(left, right)) {
-				return left;
+				min = left;
+			} else {
+				min = right;
 			}
-            return right;
+		} else if (left != null) {
+			min = left;
+		} else if (right != null) {
+			min = right;
 		}
-		if (left != null) {
-			return left;
-		}
-		if (right != null) {
-			return right;
-		}
-		return null;
+		return min;
 	}
 
 	public static PointInTime max(PointInTime left, PointInTime right) {
+		PointInTime max = null;
 		if (left != null && right != null) {
 			if (before(left, right)) {
-				return right;
+				max = right;
+			} else {
+				max = left;
 			}
-            return left;
+		} else if (left != null) {
+			max = left;
+		} else if (right != null) {
+			max = right;
 		}
-		if (left != null) {
-			return left;
-		}
-		if (right != null) {
-			return right;
-		}
-		return null;
+		return max;
 	}
 
 	@Override
 	public int compareTo(PointInTime toCompare) {
+		int ret = 1;
 		if (equals(toCompare)) {
-			return 0;
+			ret = 0;
+		} else if (before(this, toCompare)) {
+			ret = -1;
 		}
-        if (before(this, toCompare)) {
-        	return -1;
-        }
-        return 1;
+		return ret;
 	}
 
 	@Override
 	public String toString() {
 		if (isInfinite()) {
-			return "oo";
+			return INFINITY_SYMBOL;
 		}
-        return ""+getMainPoint();
+		return "" + getMainPoint();
 	}
 
 	public String toString(PointInTime baseTime) {
 		if (isInfinite()) {
-			return "oo";
+			return INFINITY_SYMBOL;
 		}
-        return ""+(getMainPoint() - baseTime.getMainPoint());
+		return "" + (getMainPoint() - baseTime.getMainPoint());
 	}
 
 	@Override
 	public PointInTime clone() {
 		// PointInTime is immutable
-		return this; 
+		return this;
 	}
 
 	public PointInTime minus(PointInTime time) {
@@ -228,13 +232,13 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 			return this;
 		return new PointInTime(this.point - time.point);
 	}
-	
+
 	public PointInTime plus(PointInTime time) {
 		if (isInfinite)
 			return this;
 		return new PointInTime(this.point + time.point);
 	}
-	
+
 	public PointInTime plus(int time) {
 		if (isInfinite)
 			return this;
@@ -267,7 +271,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable, Serializ
 	}
 
 	public static PointInTime getZeroTime() {
-		return zeroTime.clone();
+		return ZERO.clone();
 	}
 
 }
