@@ -36,7 +36,7 @@ public class AuctionMonitor {
 	private Map<Integer, AuctionStatus> auctionStatus;
 	private Shell shell;
 	
-	private Display display;;
+	private Display display;
 	
 	private static AuctionMonitor instance = new AuctionMonitor();
 
@@ -146,7 +146,7 @@ public class AuctionMonitor {
 			});
 		}catch (Exception e){
 			System.err.println("Error updating");
-		};
+		}
 	}
 
 }
