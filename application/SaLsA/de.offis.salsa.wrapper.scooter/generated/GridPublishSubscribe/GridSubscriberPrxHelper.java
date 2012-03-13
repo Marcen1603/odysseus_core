@@ -27,12 +27,14 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
 	 */
 	private static final long serialVersionUID = 3323403235184290181L;
 
-	public void
+	@Override
+    public void
     _notify(GridStruct grid)
     {
         _notify(grid, null, false);
     }
 
+    @Override
     public void
     _notify(GridStruct grid, java.util.Map<String, String> __ctx)
     {
@@ -70,31 +72,37 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
 
     private static final String __notify_name = "notify";
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid)
     {
         return begin_notify(grid, null, false, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx)
     {
         return begin_notify(grid, __ctx, true, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid, Ice.Callback __cb)
     {
         return begin_notify(grid, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_notify(grid, __ctx, true, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid, Callback_GridSubscriber_notify __cb)
     {
         return begin_notify(grid, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(GridStruct grid, java.util.Map<String, String> __ctx, Callback_GridSubscriber_notify __cb)
     {
         return begin_notify(grid, __ctx, true, __cb);
@@ -118,6 +126,7 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
         return __result;
     }
 
+    @Override
     public void end_notify(Ice.AsyncResult __result)
     {
         __end(__result, __notify_name);
@@ -261,12 +270,14 @@ public final class GridSubscriberPrxHelper extends Ice.ObjectPrxHelperBase imple
         return __ids[0];
     }
 
+    @Override
     protected Ice._ObjectDelM
     __createDelegateM()
     {
         return new _GridSubscriberDelM();
     }
 
+    @Override
     protected Ice._ObjectDelD
     __createDelegateD()
     {

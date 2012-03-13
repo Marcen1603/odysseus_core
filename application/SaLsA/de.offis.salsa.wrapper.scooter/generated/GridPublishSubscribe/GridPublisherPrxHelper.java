@@ -27,12 +27,14 @@ public final class GridPublisherPrxHelper extends Ice.ObjectPrxHelperBase implem
 	 */
 	private static final long serialVersionUID = 3862575084683998262L;
 
-	public void
+	@Override
+    public void
     subscribe(GridSubscriberPrx sub)
     {
         subscribe(sub, null, false);
     }
 
+    @Override
     public void
     subscribe(GridSubscriberPrx sub, java.util.Map<String, String> __ctx)
     {
@@ -70,31 +72,37 @@ public final class GridPublisherPrxHelper extends Ice.ObjectPrxHelperBase implem
 
     private static final String __subscribe_name = "subscribe";
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub)
     {
         return begin_subscribe(sub, null, false, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub, java.util.Map<String, String> __ctx)
     {
         return begin_subscribe(sub, __ctx, true, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub, Ice.Callback __cb)
     {
         return begin_subscribe(sub, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_subscribe(sub, __ctx, true, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub, Callback_GridPublisher_subscribe __cb)
     {
         return begin_subscribe(sub, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_subscribe(GridSubscriberPrx sub, java.util.Map<String, String> __ctx, Callback_GridPublisher_subscribe __cb)
     {
         return begin_subscribe(sub, __ctx, true, __cb);
@@ -118,6 +126,7 @@ public final class GridPublisherPrxHelper extends Ice.ObjectPrxHelperBase implem
         return __result;
     }
 
+    @Override
     public void end_subscribe(Ice.AsyncResult __result)
     {
         __end(__result, __subscribe_name);
@@ -261,12 +270,14 @@ public final class GridPublisherPrxHelper extends Ice.ObjectPrxHelperBase implem
         return __ids[0];
     }
 
+    @Override
     protected Ice._ObjectDelM
     __createDelegateM()
     {
         return new _GridPublisherDelM();
     }
 
+    @Override
     protected Ice._ObjectDelD
     __createDelegateD()
     {

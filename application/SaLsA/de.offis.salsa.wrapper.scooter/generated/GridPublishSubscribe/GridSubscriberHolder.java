@@ -33,6 +33,7 @@ public final class GridSubscriberHolder extends Ice.ObjectHolderBase<GridSubscri
         this.value = value;
     }
 
+    @Override
     public void
     patch(Ice.Object v)
     {
@@ -46,6 +47,7 @@ public final class GridSubscriberHolder extends Ice.ObjectHolderBase<GridSubscri
         }
     }
 
+    @Override
     public String
     type()
     {

@@ -33,6 +33,7 @@ public final class GridPublisherHolder extends Ice.ObjectHolderBase<GridPublishe
         this.value = value;
     }
 
+    @Override
     public void
     patch(Ice.Object v)
     {
@@ -46,6 +47,7 @@ public final class GridPublisherHolder extends Ice.ObjectHolderBase<GridPublishe
         }
     }
 
+    @Override
     public String
     type()
     {

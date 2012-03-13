@@ -22,6 +22,7 @@ package TelemetriePublishSubscribe;
 
 public final class _TelemetriePublisherDelM extends Ice._ObjectDelM implements _TelemetriePublisherDel
 {
+    @Override
     public void
     subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper

@@ -27,12 +27,14 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
 	 */
 	private static final long serialVersionUID = 8160446058670624206L;
 
-	public void
+	@Override
+    public void
     _notify(Pose p)
     {
         _notify(p, null, false);
     }
 
+    @Override
     public void
     _notify(Pose p, java.util.Map<String, String> __ctx)
     {
@@ -70,31 +72,37 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
 
     private static final String __notify_name = "notify";
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p)
     {
         return begin_notify(p, null, false, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx)
     {
         return begin_notify(p, __ctx, true, null);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p, Ice.Callback __cb)
     {
         return begin_notify(p, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_notify(p, __ctx, true, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p, Callback_TelemetrieSubscriber_notify __cb)
     {
         return begin_notify(p, null, false, __cb);
     }
 
+    @Override
     public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Callback_TelemetrieSubscriber_notify __cb)
     {
         return begin_notify(p, __ctx, true, __cb);
@@ -118,6 +126,7 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
         return __result;
     }
 
+    @Override
     public void end_notify(Ice.AsyncResult __result)
     {
         __end(__result, __notify_name);
@@ -261,12 +270,14 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
         return __ids[1];
     }
 
+    @Override
     protected Ice._ObjectDelM
     __createDelegateM()
     {
         return new _TelemetrieSubscriberDelM();
     }
 
+    @Override
     protected Ice._ObjectDelD
     __createDelegateD()
     {

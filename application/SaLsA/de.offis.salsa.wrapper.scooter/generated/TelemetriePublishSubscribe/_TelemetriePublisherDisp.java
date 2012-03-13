@@ -40,36 +40,42 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         "::TelemetriePublishSubscribe::TelemetriePublisher"
     };
 
+    @Override
     public boolean
     ice_isA(String s)
     {
         return java.util.Arrays.binarySearch(__ids, s) >= 0;
     }
 
+    @Override
     public boolean
     ice_isA(String s, Ice.Current __current)
     {
         return java.util.Arrays.binarySearch(__ids, s) >= 0;
     }
 
+    @Override
     public String[]
     ice_ids()
     {
         return __ids;
     }
 
+    @Override
     public String[]
     ice_ids(Ice.Current __current)
     {
         return __ids;
     }
 
+    @Override
     public String
     ice_id()
     {
         return __ids[1];
     }
 
+    @Override
     public String
     ice_id(Ice.Current __current)
     {
@@ -82,6 +88,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         return __ids[1];
     }
 
+    @Override
     public final void
     subscribe(TelemetrieSubscriberPrx sub)
     {
@@ -110,6 +117,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         "subscribe"
     };
 
+    @Override
     public Ice.DispatchStatus
     __dispatch(IceInternal.Incoming in, Ice.Current __current)
     {
@@ -147,6 +155,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
     }
 
+    @Override
     public void
     __write(IceInternal.BasicStream __os)
     {
@@ -156,6 +165,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         super.__write(__os);
     }
 
+    @Override
     public void
     __read(IceInternal.BasicStream __is, boolean __rid)
     {
@@ -168,6 +178,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         super.__read(__is, true);
     }
 
+    @Override
     public void
     __write(Ice.OutputStream __outS)
     {
@@ -176,6 +187,7 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         throw ex;
     }
 
+    @Override
     public void
     __read(Ice.InputStream __inS, boolean __rid)
     {

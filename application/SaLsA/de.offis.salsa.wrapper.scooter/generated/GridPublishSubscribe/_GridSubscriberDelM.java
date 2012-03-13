@@ -22,6 +22,7 @@ package GridPublishSubscribe;
 
 public final class _GridSubscriberDelM extends Ice._ObjectDelM implements _GridSubscriberDel
 {
+    @Override
     public void
     _notify(GridStruct grid, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper

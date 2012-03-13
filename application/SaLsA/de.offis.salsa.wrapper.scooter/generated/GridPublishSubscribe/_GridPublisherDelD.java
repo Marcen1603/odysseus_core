@@ -22,6 +22,7 @@ package GridPublishSubscribe;
 
 public final class _GridPublisherDelD extends Ice._ObjectDelD implements _GridPublisherDel
 {
+    @Override
     public void
     subscribe(final GridSubscriberPrx sub, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
@@ -33,6 +34,7 @@ public final class _GridPublisherDelD extends Ice._ObjectDelD implements _GridPu
         {
             __direct = new IceInternal.Direct(__current)
             {
+                @Override
                 public Ice.DispatchStatus run(Ice.Object __obj)
                 {
                     GridPublisher __servant = null;

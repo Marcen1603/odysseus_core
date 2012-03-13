@@ -56,6 +56,7 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
         this.data = data;
     }
 
+    @Override
     public boolean
     equals(java.lang.Object rhs)
     {
@@ -109,6 +110,7 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
         return false;
     }
 
+    @Override
     public int
     hashCode()
     {
@@ -129,6 +131,7 @@ public class GridStruct implements java.lang.Cloneable, java.io.Serializable
         return __h;
     }
 
+    @Override
     public java.lang.Object
     clone()
     {

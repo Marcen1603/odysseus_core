@@ -33,6 +33,7 @@ public final class TelemetriePublisherHolder extends Ice.ObjectHolderBase<Teleme
         this.value = value;
     }
 
+    @Override
     public void
     patch(Ice.Object v)
     {
@@ -46,6 +47,7 @@ public final class TelemetriePublisherHolder extends Ice.ObjectHolderBase<Teleme
         }
     }
 
+    @Override
     public String
     type()
     {

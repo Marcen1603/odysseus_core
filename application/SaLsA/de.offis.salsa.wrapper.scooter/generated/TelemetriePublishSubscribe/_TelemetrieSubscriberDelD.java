@@ -22,6 +22,7 @@ package TelemetriePublishSubscribe;
 
 public final class _TelemetrieSubscriberDelD extends Ice._ObjectDelD implements _TelemetrieSubscriberDel
 {
+    @Override
     public void
     _notify(final Pose p, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
@@ -33,6 +34,7 @@ public final class _TelemetrieSubscriberDelD extends Ice._ObjectDelD implements 
         {
             __direct = new IceInternal.Direct(__current)
             {
+                @Override
                 public Ice.DispatchStatus run(Ice.Object __obj)
                 {
                     TelemetrieSubscriber __servant = null;
