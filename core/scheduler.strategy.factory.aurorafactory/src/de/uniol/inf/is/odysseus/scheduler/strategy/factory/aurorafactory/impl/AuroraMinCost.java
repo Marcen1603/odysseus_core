@@ -56,9 +56,8 @@ public class AuroraMinCost extends AbstractExecListScheduling {
 			}
 			if (!(sub.getTarget() instanceof ISink<?>)) {
 				continue;
-			} else {
-				postOrderAdd((ISink<?>) sub.getTarget(), execList);
 			}
+            postOrderAdd((ISink<?>) sub.getTarget(), execList);
 		}
 		if (sink instanceof IIterableSource<?> && this.getPlan().getIterableSources().contains(sink)) {
 			execList.add((IIterableSource<?>) sink);
