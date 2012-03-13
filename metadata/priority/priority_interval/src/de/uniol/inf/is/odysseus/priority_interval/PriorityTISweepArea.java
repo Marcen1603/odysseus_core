@@ -43,7 +43,7 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IMetaAttribu
 				this.getElements().addFirst(s);
 			}
 		}
-	};
+	}
 
 	@Override
 	public void purgeElements(T element, Order order) {
