@@ -35,7 +35,8 @@ public class QueryEntry {
 		return qe;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		String newline = System.getProperty("line.separator");
 		String s = "#PARSER " + this.parserID;
 		s = s + newline;
