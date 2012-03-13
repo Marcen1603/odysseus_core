@@ -12,15 +12,14 @@ public class MarkerByteBufferReceiverPO<W> extends
 	private byte start;
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler, byte start, byte end)
-			throws IOException {
+			IAccessConnection accessHandler, byte start, byte end) {
 		super(objectHandler, accessHandler);
 		this.start = start;
 		this.end = end;
 	}
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler, byte marker) throws IOException {
+			IAccessConnection accessHandler, byte marker) {
 		super(objectHandler, accessHandler);
 		this.start = marker;
 		this.end = marker;
@@ -58,8 +57,6 @@ public class MarkerByteBufferReceiverPO<W> extends
 					buffer.position(pos);
 					objectHandler.put(buffer);
 				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 				accessHandler.reconnect();

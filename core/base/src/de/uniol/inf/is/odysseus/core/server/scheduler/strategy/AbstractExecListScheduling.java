@@ -118,9 +118,9 @@ abstract public class AbstractExecListScheduling extends
 		}
 		if (p.size() > 0){
 			return selProd/cAvg;
-		}else{
-			return 0;
 		}
+		
+		return 0;
 	}
 
 	/** Calculates for s which (out: schedulable, nonschedulable, virtual) operators are passed on the way to the root node

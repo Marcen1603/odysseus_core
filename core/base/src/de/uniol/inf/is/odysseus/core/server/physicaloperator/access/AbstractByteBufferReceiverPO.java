@@ -41,7 +41,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 	final IAccessConnection accessHandler;
 
 
-	public AbstractByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) throws IOException {
+	public AbstractByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) {
 		super();
 		this.objectHandler = objectHandler;
 		this.accessHandler = accessHandler;
@@ -98,7 +98,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
   
 
 
-	protected synchronized void transfer() throws IOException, ClassNotFoundException {
+	protected synchronized void transfer()  {
 
 		W toTrans = null;
 		try {

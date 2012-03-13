@@ -98,12 +98,11 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 				this.userDAO.create(user);
 				fireUserChangedEvent();
 				return user;
-			} else {
-				throw new UsernameAlreadyUsedException("name");
-			}
-		} else {
-			throw new PermissionException("Not right to create user");
-		}
+			} 
+			throw new UsernameAlreadyUsedException("name");
+		} 
+		
+		throw new PermissionException("Not right to create user");
 	}
 
 	abstract protected USER createEmptyUser();

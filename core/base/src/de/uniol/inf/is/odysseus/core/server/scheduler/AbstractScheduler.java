@@ -271,10 +271,9 @@ public abstract class AbstractScheduler extends EventHandler implements
 	final public List<IIterableSource<?>> getLeafSources() {
 		if (sources != null){
 			return Collections.unmodifiableList(sources);
-		}else{
-			return null;
 		}
-		}
+		return null;
+	}
 
 	abstract protected void process_setLeafSources(
 			List<IIterableSource<?>> sources);
@@ -292,8 +291,8 @@ public abstract class AbstractScheduler extends EventHandler implements
 	final public List<IPartialPlan> getPartialPlans() {
 		if (partialPlans != null){
 			return Collections.unmodifiableList(partialPlans);
-		}else{
-			return null;
 		}
+		
+		return null;
 	}
 }

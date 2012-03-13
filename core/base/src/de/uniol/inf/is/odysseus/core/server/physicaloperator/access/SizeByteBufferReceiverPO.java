@@ -14,7 +14,7 @@ public class SizeByteBufferReceiverPO<W> extends
 	private int currentSize = 0;
 
 	public SizeByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler) throws IOException {
+			IAccessConnection accessHandler) {
 		super(objectHandler, accessHandler);
 	}
 
@@ -82,8 +82,6 @@ public class SizeByteBufferReceiverPO<W> extends
 						}
 					}
 				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 				accessHandler.reconnect();
