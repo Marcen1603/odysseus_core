@@ -152,9 +152,8 @@ public class PriorityBufferedPipe2<T extends IMetaAttributeContainer<? extends I
 		T obj = this.prioBuffer.peek();
 		if (obj != null) {
 			return obj.getMetadata().getPriority();
-		} else {
-			return 0;
 		}
+        return 0;
 	}
 
 	@Override
