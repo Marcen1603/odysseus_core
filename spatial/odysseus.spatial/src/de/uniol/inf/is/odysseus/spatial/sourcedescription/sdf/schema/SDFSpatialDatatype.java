@@ -130,7 +130,8 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	 * @param other
 	 * @return True, if this type can be casted into <code>other</code>
 	 */
-	public boolean compatibleTo(SDFDatatype other){
+	@Override
+    public boolean compatibleTo(SDFDatatype other){
 		if (other instanceof SDFSpatialDatatype){
 			SDFSpatialDatatype otherSpatial = (SDFSpatialDatatype) other;
 			if(this.isSpatial() && (otherSpatial.isSpatial()) ||
