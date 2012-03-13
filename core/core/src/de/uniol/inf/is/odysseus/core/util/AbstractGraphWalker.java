@@ -63,9 +63,8 @@ public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<
 		if(this.visited.contains(node)){
 			return;
 		}
-		else{
-			this.visited.add(node);
-		}
+		
+		this.visited.add(node);
 		
 		visitor.nodeAction(node);
 		
@@ -86,9 +85,8 @@ public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<
 		if(this.visitedPhysical.contains(node)){
 			return;
 		}
-		else{
-			this.visitedPhysical.add(node);
-		}
+		
+		this.visitedPhysical.add(node);
 		
 		visitor.nodeAction(node);
 		
