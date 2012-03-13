@@ -96,7 +96,7 @@ public class BiddingProvider extends
 		for (IMessageHandler handler : getRegisteredMessageHandler()) {
 			getPeer().deregisterMessageHandler(handler);
 		}
-	};
+	}
 
 	private void startDiscoveryService() {
 		this.discoveryService = PeerGroupTool.getPeerGroup()
