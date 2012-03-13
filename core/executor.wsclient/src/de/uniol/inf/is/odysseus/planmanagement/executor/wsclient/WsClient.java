@@ -25,6 +25,9 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
@@ -47,6 +50,15 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientUs
 
 public class WsClient implements IExecutor, IClientExecutor{
 
+	protected static Logger _logger = null;
+
+	protected synchronized static Logger getLogger() {
+		if (_logger == null) {
+			_logger = LoggerFactory.getLogger(WsClient.class);
+		}
+		return _logger;
+	}
+	
 	// manages the connection to the WebserviceServer
 	WebserviceServerService service;
 	// create handle for WebserviceServer
@@ -234,8 +246,11 @@ public class WsClient implements IExecutor, IClientExecutor{
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
 			throws PlanManagementException {
-		// TODO not implemented by server yet
-		return null;
+		Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName).getResponseValue();
+		for(Integer val : response) {
+			getLogger().debug(val.toString());
+		}
+		return response;
 	}
 	
 /********************************************************************
