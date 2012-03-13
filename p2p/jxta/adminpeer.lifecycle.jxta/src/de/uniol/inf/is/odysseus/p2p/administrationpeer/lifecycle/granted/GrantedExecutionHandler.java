@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.p2p.administrationpeer.lifecycle.granted;
 
 import java.util.HashMap;
 
-import net.jxta.protocol.PipeAdvertisement;
 import de.uniol.inf.is.odysseus.p2p.jxta.BidJxtaImpl;
 import de.uniol.inf.is.odysseus.p2p.jxta.peer.communication.JxtaMessageSender;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
