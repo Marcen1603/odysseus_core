@@ -57,7 +57,7 @@ public class RestartQueryCommand extends AbstractHandler implements IHandler {
 		List<IPhysicalQuery> selectedObj = SelectionProvider.getSelection(event);
 		for (IPhysicalQuery obj : selectedObj) {
 			if (obj instanceof IPhysicalQuery) {
-				qID = ((IPhysicalQuery) obj).getID();
+				qID = obj.getID();
 			} else {
 				logger.error("Cannot find queryID");
 				return null;
