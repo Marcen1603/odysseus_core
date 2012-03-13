@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class TObjectTrackingPredictionProjectAORule extends AbstractTransformationRule<ObjectTrackingProjectAO>{
 
 	@Override
