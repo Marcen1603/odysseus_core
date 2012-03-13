@@ -113,7 +113,8 @@ public class BrokerDictionary {
 	 * @param type the transaction type
 	 * @return the given port for the transaction
 	 */
-	public int addNewTransaction(String brokername, WriteTransaction type) {
+	@SuppressWarnings("deprecation")
+    public int addNewTransaction(String brokername, WriteTransaction type) {
 		return this.brokerlist.get(brokername).addNewWriteTransaction(type);
 	}
 
@@ -124,7 +125,8 @@ public class BrokerDictionary {
 	 * @param type the transaction type
 	 * @return the given port for the transaction
 	 */
-	public int addNewTransaction(String brokername, ReadTransaction type) {
+	@SuppressWarnings("deprecation")
+    public int addNewTransaction(String brokername, ReadTransaction type) {
 		return this.brokerlist.get(brokername).addNewReadTransaction(type);
 	}
 

@@ -59,11 +59,9 @@ public class BrokerSweepArea <T extends IMetaAttributeContainer<? extends ITimeI
 	public void purgeElements(T element, Order order) {
 		synchronized(getElements()){
 			Iterator<T> it = this.getElements().iterator();
-			int i = 0;
 	
 			while (it.hasNext()) {
 				if (getRemovePredicate().evaluate(it.next(), element)) {
-					++i;
 					it.remove();
 				} else {
 					//return;
