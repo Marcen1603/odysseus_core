@@ -78,8 +78,7 @@ public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 						channel.configureBlocking(false);
 						while ((!Thread.currentThread().isInterrupted())
 								&& (channel.isOpen())) {
-							int nbytes = 0;
-							while ((nbytes = channel.read(buffer)) > 0) {
+							while (channel.read(buffer) > 0) {
 								int pos = buffer.position();
 								buffer.flip();
 								try {

@@ -134,12 +134,10 @@ public class CarSourceAdapter extends AbstractPushingSourceAdapter implements
 
 					final ByteBuffer buffer = ByteBuffer
 							.allocateDirect(64 * 1024);
-					int nbytes = 0;
-					long currentTimestamp = 0;
 					this.channel.configureBlocking(true);
 					while ((!Thread.currentThread().isInterrupted())
 							&& (channel.isConnected())) {
-						while ((nbytes = channel.read(buffer)) > 0) {
+						while (channel.read(buffer) > 0) {
 							int pos = buffer.position();
 							buffer.flip();
 							try {

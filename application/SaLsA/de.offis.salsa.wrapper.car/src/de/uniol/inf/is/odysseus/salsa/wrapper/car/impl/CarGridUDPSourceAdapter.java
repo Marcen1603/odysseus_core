@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.salsa.wrapper.car.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Calendar;
@@ -76,7 +75,6 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 						channel.configureBlocking(true);
 						while ((!Thread.currentThread().isInterrupted())
 								&& (channel.isOpen())) {
-							SocketAddress client = channel.receive(buffer);
 							if (buffer.position() > 28) {
 								int pos = buffer.position();
 								buffer.flip();
@@ -107,7 +105,7 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									buffer.compact();
 									while (buffer.position() < length * width
 											* height) {
-										client = channel.receive(buffer);
+										channel.receive(buffer);
 									}
 									pos = buffer.position();
 									buffer.flip();
