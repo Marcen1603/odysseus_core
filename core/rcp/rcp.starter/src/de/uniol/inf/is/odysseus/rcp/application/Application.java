@@ -40,8 +40,10 @@ public class Application implements IApplication {
 		Display display = PlatformUI.createDisplay();
 		try {
 			// TODO: use a servicetracker instead of sleep...
-			Thread.sleep(3000);
-			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+			IExecutor executor = null;
+			while((executor = OdysseusRCPPlugIn.getExecutor()) == null){
+				Thread.sleep(200);
+			}
 			if(executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
 				String service = "WebserviceServerService";
@@ -50,8 +52,6 @@ public class Application implements IApplication {
 				ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
 				ConnectPreferencesManager.getInstance().setService(service);
 				ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
-				// string format is wsdlLocation#service
-				//((IClientExecutor)executor).connect(wsdlLocation + ";" + service);
 				Connect.connectWindow(display, false, false);
 			}
 			
