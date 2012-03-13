@@ -219,11 +219,10 @@ public class Args {
 		}
         if (isAllParametersMandatory()) {
         	return mandatoryBuilder.toString();
-        } else {
-        	mandatoryBuilder.append('\n');
-        	mandatoryBuilder.append(optionalBuilder);
-        	return mandatoryBuilder.toString();
         }
+        mandatoryBuilder.append('\n');
+        mandatoryBuilder.append(optionalBuilder);
+        return mandatoryBuilder.toString();
 	}
 
 	private boolean isAllParametersMandatory() {
