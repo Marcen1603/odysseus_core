@@ -81,7 +81,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IMetaAttributeConta
 	}
 
 	public AntiJoinTIPO(AntiJoinTIPO<K, T> antiJoinTIPO) {
-		this.sa = (ISweepArea<T>[]) antiJoinTIPO.sa.clone();// TODO was ist hier
+		this.sa = antiJoinTIPO.sa.clone();// TODO was ist hier
 															// gewollt
 		this.returnBuffer = new PriorityQueue<T>(10,
 				new MetadataComparator<ITimeInterval>());

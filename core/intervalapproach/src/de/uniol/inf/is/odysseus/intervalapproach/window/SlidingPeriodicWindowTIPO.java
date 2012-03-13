@@ -98,7 +98,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		process(object.getMetadata().getStart());
 
 		while (!this.deliveryList.isEmpty()) {
-			this.transfer((R) this.deliveryList.removeFirst());
+			this.transfer(this.deliveryList.removeFirst());
 		}
 	}
 
@@ -123,7 +123,7 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			
 			// 2. all Elemente before p_end need to be processed
 			while(!inputBuffer.isEmpty() && inputBuffer.getFirst().getMetadata().getStart().before(p_end)){
-				R elem = (R) inputBuffer.removeFirst();
+				R elem = inputBuffer.removeFirst();
 				elem.getMetadata().setStart(p_start);
 				elem.getMetadata().setEnd(p_end);
 				this.deliveryList.add(elem);

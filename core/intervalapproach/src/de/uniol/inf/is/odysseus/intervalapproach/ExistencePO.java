@@ -97,7 +97,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 
 	public ExistencePO(ExistencePO<K, T> join) {
 		super(join);
-		this.areas = (ITemporalSweepArea<T>[]) join.areas.clone();
+		this.areas = join.areas.clone();
 		int i = 0;
 		for (ITemporalSweepArea<T> ja : join.areas) {
 			this.areas[i] = ja.clone();

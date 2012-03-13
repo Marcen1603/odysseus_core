@@ -98,7 +98,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
 		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
-		this.areas = (ITimeIntervalSweepArea<T>[]) join.areas.clone();
+		this.areas = join.areas.clone();
 		int i = 0;
 		for (ITimeIntervalSweepArea<T> ja : join.areas) {
 			this.areas[i] = ja.clone();
