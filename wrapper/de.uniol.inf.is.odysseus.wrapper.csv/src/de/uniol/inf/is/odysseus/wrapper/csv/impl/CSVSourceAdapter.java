@@ -13,8 +13,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.io.WKTReader;
-
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
@@ -95,14 +93,12 @@ public class CSVSourceAdapter extends AbstractPushingSourceAdapter implements
 			private final Socket server;
 			private final CSVSourceAdapter adapter;
 			private SourceSpec source;
-			private WKTReader reader;
 
 			public CSVProcessor(final SourceSpec source, final Socket server,
 					final CSVSourceAdapter adapter) {
 				this.server = server;
 				this.adapter = adapter;
 				this.source = source;
-				this.reader = new WKTReader();
 			}
 
 			@Override
