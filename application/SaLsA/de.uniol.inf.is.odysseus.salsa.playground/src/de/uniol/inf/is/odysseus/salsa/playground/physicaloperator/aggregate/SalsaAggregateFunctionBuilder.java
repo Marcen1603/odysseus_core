@@ -16,7 +16,8 @@ public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder 
 		names.add("L1Merge");
 	}
 	
-	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+	@Override
+    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
 			AggregateFunction key, int[] pos) {
 		
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
