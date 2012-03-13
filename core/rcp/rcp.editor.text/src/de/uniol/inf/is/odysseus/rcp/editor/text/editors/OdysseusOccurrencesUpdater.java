@@ -66,11 +66,10 @@ public class OdysseusOccurrencesUpdater implements ISelectionChangedListener {
 			TextSelection textSelection = (TextSelection) selection;
 			if (textSelection.getLength() > 0) {
 				return textSelection.getText();
-			} else {
-				String wordStart = findStartOfWord(document, textSelection.getOffset());
-				String wordEnd = findEndOfWord(document, textSelection.getOffset());
-				return wordStart + wordEnd;
 			}
+            String wordStart = findStartOfWord(document, textSelection.getOffset());
+            String wordEnd = findEndOfWord(document, textSelection.getOffset());
+            return wordStart + wordEnd;
 		}
 		return "";
 	}

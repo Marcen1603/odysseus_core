@@ -199,8 +199,7 @@ public class OdysseusScriptViewerConfiguration extends
 	protected IToken createToken(Color color, boolean bold) {
 		if (bold)
 			return new Token(new TextAttribute(color, null, SWT.BOLD));
-		else
-			return new Token(new TextAttribute(color));
+        return new Token(new TextAttribute(color));
 	}
 
 	protected IWordDetector getWordDetector() {

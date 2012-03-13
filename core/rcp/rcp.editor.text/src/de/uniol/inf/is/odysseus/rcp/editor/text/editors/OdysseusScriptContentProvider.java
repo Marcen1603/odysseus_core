@@ -68,9 +68,8 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 					list.add( replaceLeaf );
 					list.addAll(statements);
 					return list.toArray();
-				} else {
-					throw new OdysseusScriptException();
 				}
+                throw new OdysseusScriptException();
 			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 				return new Object[] { new StringError("Error in Query") };
