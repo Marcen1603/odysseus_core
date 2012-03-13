@@ -127,27 +127,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetInstalledQueriesResponse }
-     * 
-     */
-    public GetInstalledQueriesResponse createGetInstalledQueriesResponse() {
-        return new GetInstalledQueriesResponse();
-    }
-
-    /**
      * Create an instance of {@link GraphNode }
      * 
      */
     public GraphNode createGraphNode() {
         return new GraphNode();
-    }
-
-    /**
-     * Create an instance of {@link StartQuery }
-     * 
-     */
-    public StartQuery createStartQuery() {
-        return new StartQuery();
     }
 
     /**
@@ -231,14 +215,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetQueryBuildConfigurationNames }
-     * 
-     */
-    public GetQueryBuildConfigurationNames createGetQueryBuildConfigurationNames() {
-        return new GetQueryBuildConfigurationNames();
-    }
-
-    /**
      * Create an instance of {@link GetRegisteredSchedulers }
      * 
      */
@@ -260,6 +236,14 @@ public class ObjectFactory {
      */
     public GetInstalledQueries createGetInstalledQueries() {
         return new GetInstalledQueries();
+    }
+
+    /**
+     * Create an instance of {@link StartQuery }
+     * 
+     */
+    public StartQuery createStartQuery() {
+        return new StartQuery();
     }
 
     /**
@@ -343,6 +327,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetQueryBuildConfigurationNames }
+     * 
+     */
+    public GetQueryBuildConfigurationNames createGetQueryBuildConfigurationNames() {
+        return new GetQueryBuildConfigurationNames();
+    }
+
+    /**
      * Create an instance of {@link Response }
      * 
      */
@@ -356,14 +348,6 @@ public class ObjectFactory {
      */
     public StringResponse createStringResponse() {
         return new StringResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetRegisteredSchedulersResponse }
-     * 
-     */
-    public GetRegisteredSchedulersResponse createGetRegisteredSchedulersResponse() {
-        return new GetRegisteredSchedulersResponse();
     }
 
     /**
@@ -447,6 +431,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetRegisteredSchedulersResponse }
+     * 
+     */
+    public GetRegisteredSchedulersResponse createGetRegisteredSchedulersResponse() {
+        return new GetRegisteredSchedulersResponse();
+    }
+
+    /**
      * Create an instance of {@link RemoveQueryResponse }
      * 
      */
@@ -476,6 +468,14 @@ public class ObjectFactory {
      */
     public SimpleGraph createSimpleGraph() {
         return new SimpleGraph();
+    }
+
+    /**
+     * Create an instance of {@link GetInstalledQueriesResponse }
+     * 
+     */
+    public GetInstalledQueriesResponse createGetInstalledQueriesResponse() {
+        return new GetInstalledQueriesResponse();
     }
 
     /**

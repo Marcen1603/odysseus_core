@@ -81,7 +81,7 @@ public class WebserviceServer {
 			StringResponse response = new StringResponse(token, true);
 			return response;
 		}
-        return new StringResponse(null, false);
+		return new StringResponse(null, false);
 	}
 
 	public IntegerCollectionResponse addQuery(
@@ -91,8 +91,9 @@ public class WebserviceServer {
 			@WebParam(name = "transformationconfig") String transCfg) {
 		try {
 			ISession user = loginWithSecurityToken(securityToken);
-			IntegerCollectionResponse response = new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().addQuery(query, parser, user,
-					transCfg), true);
+			IntegerCollectionResponse response = new IntegerCollectionResponse(
+					ExecutorServiceBinding.getExecutor().addQuery(query,
+							parser, user, transCfg), true);
 			;
 			return response;
 		} catch (WebserviceException e) {
@@ -128,7 +129,8 @@ public class WebserviceServer {
 			for (IPhysicalQuery q : ExecutorServiceBinding.getExecutor()
 					.getExecutionPlan().getQueries()) {
 				if (q.getLogicalQuery() != null) {
-					response.addResponseValue(q.getLogicalQuery().getQueryText());
+					response.addResponseValue(q.getLogicalQuery()
+							.getQueryText());
 				}
 			}
 			return response;
@@ -145,8 +147,8 @@ public class WebserviceServer {
 		if (session != null) {
 			return session;
 		}
-        throw new WebserviceException(
-        		"Security token unknown! You have to login first to obtain a security token!");
+		throw new WebserviceException(
+				"Security token unknown! You have to login first to obtain a security token!");
 	}
 
 	public Response removeQuery(
@@ -369,7 +371,8 @@ public class WebserviceServer {
 		try {
 			SimpleGraph graph = new SimpleGraph();
 			// loginWithSecurityToken(securityToken);
-			IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
+			IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
+					.getExecutionPlan();
 			int idCounter = 0;
 			for (IPhysicalOperator op : plan.getRoots()) {
 				GraphNodeVisitor<IPhysicalOperator> visitor = new GraphNodeVisitor<IPhysicalOperator>();
@@ -386,4 +389,16 @@ public class WebserviceServer {
 			return null;
 		}
 	}
+
+//	public QueryResponse getLogicalQuery(
+//			@WebParam(name = "securitytoken") String securityToken,
+//			@WebParam(name = "id") int id) {
+//		try {
+//			loginWithSecurityToken(securityToken);
+//			return new QueryResponse(ExecutorServiceBinding.getExecutor().getLogicalQuery(id), true);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//			return new QueryResponse(null, false);
+//		}
+//	}
 }
