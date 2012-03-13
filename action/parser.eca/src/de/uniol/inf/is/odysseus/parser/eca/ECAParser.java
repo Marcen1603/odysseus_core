@@ -110,7 +110,7 @@ public class ECAParser implements IQueryParser {
 	 * @return
 	 * @throws QueryParseException
 	 */
-	private Action createAction(IActuator actuator, String methodName,
+	private static Action createAction(IActuator actuator, String methodName,
 			ArrayList<IActionParameter> actionParameters)
 			throws QueryParseException {
 		Class<?>[] parameters = new Class<?>[actionParameters.size()];
@@ -165,16 +165,15 @@ public class ECAParser implements IQueryParser {
 			if (plan.size() > 1) {
 				throw new QueryParseException(
 						"Multiple plans defined, cannot determine output scheme");
-			} else {
-				ILogicalOperator outputOperator = this
-						.determineOutputOperator(plan.get(0).getLogicalPlan());
-				return outputOperator.getOutputSchema();
 			}
+            ILogicalOperator outputOperator = this
+            		.determineOutputOperator(plan.get(0).getLogicalPlan());
+            return outputOperator.getOutputSchema();
 		}
 		throw new QueryParseException("No output schema defined");
 	}
 
-	private Object generateStandardValue(String paramValue, String paramType)
+	private static Object generateStandardValue(String paramValue, String paramType)
 			throws QueryParseException {
 		try {
 			if (paramType.equals("double")) {
@@ -301,8 +300,7 @@ public class ECAParser implements IQueryParser {
 								String paramType = paramTypeMatcher.group(2)
 										.toLowerCase();
 
-								Object value = this.generateStandardValue(
-										paramValue, paramType);
+								Object value = generateStandardValue(paramValue, paramType);
 								actionParameters
 										.add(new StaticParameter(value));
 
@@ -371,7 +369,7 @@ public class ECAParser implements IQueryParser {
 					}
 
 					// create action object, sort parameters & map both
-					Action action = this.createAction(actuator, methodName,
+					Action action = ECAParser.createAction(actuator, methodName,
 							actionParameters);
 					actions.put(action, actionParameters);
 				}
