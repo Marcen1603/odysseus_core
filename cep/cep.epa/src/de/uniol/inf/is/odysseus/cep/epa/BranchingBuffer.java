@@ -130,16 +130,15 @@ public class BranchingBuffer<R> {
 	private Branch<R> findBranch(StateMachineInstance<R> instance, Branch<R> branch) {
 		if (branch.getInstance() == instance) {
 			return branch;
-		} else {
-			for (int i = 0; i < branch.getChildren().size(); i++) {
-				Branch<R> result = this.findBranch(instance, branch.getChildren()
-						.get(i));
-				if (result != null) {
-					return result;
-				}
-			}
-			return null;
 		}
+        for (int i = 0; i < branch.getChildren().size(); i++) {
+        	Branch<R> result = this.findBranch(instance, branch.getChildren()
+        			.get(i));
+        	if (result != null) {
+        		return result;
+        	}
+        }
+        return null;
 	}
 
 	/**
@@ -201,9 +200,8 @@ public class BranchingBuffer<R> {
 	private Branch<R> getRoot(Branch<R> branch) {
 		if (branch.getParent() != null) {
 			return this.getRoot(branch.getParent());
-		} else {
-			return branch;
 		}
+        return branch;
 	}
 
 	/**
