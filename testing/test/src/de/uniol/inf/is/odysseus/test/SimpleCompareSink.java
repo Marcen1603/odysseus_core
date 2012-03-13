@@ -81,7 +81,7 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 	}
 
 	@Override
-	public AbstractSink<Object> clone() {
+	public SimpleCompareSink clone() {
 		return new SimpleCompareSink(this);
 	}
 
