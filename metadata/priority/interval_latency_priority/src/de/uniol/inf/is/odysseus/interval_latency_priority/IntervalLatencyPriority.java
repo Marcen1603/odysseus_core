@@ -48,7 +48,7 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	public IntervalLatencyPriority(IntervalLatencyPriority original) {
 		super(original);
 
-		this.latency = (ILatency) original.latency.clone();
+		this.latency = original.latency.clone();
 		this.prio = (IPriority) original.prio.clone();
 	}
 
