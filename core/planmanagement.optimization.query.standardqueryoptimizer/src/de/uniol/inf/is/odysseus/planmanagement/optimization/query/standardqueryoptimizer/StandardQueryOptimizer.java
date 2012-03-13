@@ -56,7 +56,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		return _logger;
 	}
 
-	final private Map<IPhysicalQuery, QueryBuildConfiguration> buildConfig = new HashMap<IPhysicalQuery, QueryBuildConfiguration>();;
+	final private Map<IPhysicalQuery, QueryBuildConfiguration> buildConfig = new HashMap<IPhysicalQuery, QueryBuildConfiguration>();
 
 	/*
 	 * (non-Javadoc)
