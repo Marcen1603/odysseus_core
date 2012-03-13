@@ -97,9 +97,8 @@ public class MatchingTrace<R> {
 		if (l!=null && l.size()>0){
 			if (pos > 0 ){ // && pos < l.size()
 				return l.get(pos);
-			}else{
-				return l.get(l.size()-1);
 			}
+            return l.get(l.size()-1);
 		}
 		return null;
 	}
