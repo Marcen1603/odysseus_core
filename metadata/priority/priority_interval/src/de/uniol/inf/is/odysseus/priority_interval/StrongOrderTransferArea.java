@@ -60,13 +60,11 @@ public class StrongOrderTransferArea<K extends ITimeIntervalPriority, R extends 
 						byte t2priority = t2.getMetadata().getPriority();
 						if (t1priority > t2priority) {
 							return -1;
-						} else {
-							if (t1priority < t2priority) {
-								return 1; 
-							} else {
-								return t1.getMetadata().compareTo(t2.getMetadata());
-							}
 						}
+                        if (t1priority < t2priority) {
+                        	return 1; 
+                        }
+                        return t1.getMetadata().compareTo(t2.getMetadata());
 					}
 				});
 				for (Object element : sortedOutput) {
