@@ -91,7 +91,7 @@ public class PlaceTimeActivity {
 	 * 
 	 * @return the Activity belonging to the passed name param
 	 */
-	private Activity getActivityFromString(String name) {
+	private static Activity getActivityFromString(String name) {
 		if(name.equals("DUSCHEN")){
 			return(Activity.DUSCHEN);
 		} else if(name.equals("SCHLAFEN")){
