@@ -27,11 +27,9 @@ public class SCAISensorPool {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SCAISensorPool.class);
 	private static Map<String, SCAISensorPool> instances = new HashMap<String, SCAISensorPool>();
-	private final BundleContext context;
 	public static SCAISourceAdapter adapter;
 
 	public SCAISensorPool(BundleContext context) {
-		this.context = context;
 	}
 
 	public static void setAdapter(SCAISourceAdapter adapter) {
