@@ -38,9 +38,8 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 	public SDFSchema getOutputSchema() {
 		if (outputSchema != null) {
 			return outputSchema;
-		} else {
-			return getInputSchema(0);
 		}
+        return getInputSchema(0);
 	}
 
 	@Parameter(type = StringParameter.class, name = "class", optional = false)

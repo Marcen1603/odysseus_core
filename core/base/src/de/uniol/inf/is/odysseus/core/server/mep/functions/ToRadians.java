@@ -29,9 +29,8 @@ public class ToRadians extends AbstractFunction<Double> {
 		if (argPos > 0) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s).");
-		} else {
-			return accTypes;
 		}
+        return accTypes;
 	}
 
 	@Override

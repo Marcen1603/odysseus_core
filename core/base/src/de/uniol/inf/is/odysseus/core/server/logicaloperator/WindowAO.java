@@ -119,9 +119,8 @@ public class WindowAO extends UnaryLogicalOp {
 	public List<SDFAttribute> getPartitionBy() {
 		if (partitionedBy != null) {
 			return Collections.unmodifiableList(partitionedBy);
-		} else {
-			return new ArrayList<SDFAttribute>();
 		}
+        return new ArrayList<SDFAttribute>();
 	}
 
 	public boolean isPartitioned() {

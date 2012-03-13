@@ -97,9 +97,8 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 				}
 			}
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 
 }

@@ -54,10 +54,8 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 		if(argPos > 0){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
-		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.DOUBLE;
-			return accTypes;
-		}
+        SDFDatatype[] accTypes = new SDFDatatype[1];
+        accTypes[0] = SDFDatatype.DOUBLE;
+        return accTypes;
 	}
 }

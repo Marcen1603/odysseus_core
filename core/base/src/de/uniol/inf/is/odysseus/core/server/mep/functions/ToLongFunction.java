@@ -55,11 +55,9 @@ public class ToLongFunction extends AbstractFunction<Long> {
 		if(argPos > 0){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
-		else{
-//			SDFDatatype[] accTypes = new SDFDatatype[1];
+        //			SDFDatatype[] accTypes = new SDFDatatype[1];
 //			accTypes[0] = SDFDatatype.DOUBLE;
-			return accTypes;
-		}
+        return accTypes;
 	}
 	
 //	@Override
