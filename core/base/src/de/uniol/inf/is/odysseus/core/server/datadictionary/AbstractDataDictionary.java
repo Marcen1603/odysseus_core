@@ -696,13 +696,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 	}
 
-	private boolean hasPermission(ISession caller, IPermission permission,
+	private static boolean hasPermission(ISession caller, IPermission permission,
 			String objectURI) {
 		return UserManagement.getUsermanagement().hasPermission(caller,
 				permission, objectURI);
 	}
 
-	private boolean hasPermission(ISession caller, IPermission permission) {
+	private static boolean hasPermission(ISession caller, IPermission permission) {
 		return hasPermission(caller, permission,
 				DataDictionaryPermission.objectURI);
 	}

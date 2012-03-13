@@ -206,7 +206,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 	}
 
-	private IAttributeResolver buildAttributeResolver(
+	private static IAttributeResolver buildAttributeResolver(
 			List<ILogicalOperator> inputOps) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (ILogicalOperator op : inputOps) {
