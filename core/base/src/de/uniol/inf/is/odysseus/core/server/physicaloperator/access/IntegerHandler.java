@@ -31,7 +31,7 @@ public class IntegerHandler extends AbstractAtomicDataHandler {
 
 	@Override
 	public Object readData() throws IOException {
-		return getStream().readInt();
+		return stream.readInt();
 	}
 
 	@Override
