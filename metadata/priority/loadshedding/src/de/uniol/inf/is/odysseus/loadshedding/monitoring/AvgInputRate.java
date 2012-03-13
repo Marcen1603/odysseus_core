@@ -43,10 +43,9 @@ public class AvgInputRate implements
 	public Double getAvgInputRate() {
 		if (streams == 0) {
 			return UNKOWN;
-		} else {
-			double result = read/streams;
-			return result;
 		}
+        double result = read/streams;
+        return result;
 	}
 
 	@Override
