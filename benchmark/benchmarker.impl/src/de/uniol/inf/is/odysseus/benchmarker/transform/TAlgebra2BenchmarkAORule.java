@@ -68,9 +68,8 @@ public class TAlgebra2BenchmarkAORule extends AbstractTransformationRule<ILogica
 	public BenchmarkPO createBenchmarkPO(int processingTime, double selectivity, TransformationConfiguration trafo) {
 		if (trafo.getMetaTypes().contains(IPriority.class.getName())) {
 			return new PriorityBenchmarkPO(processingTime, selectivity);
-		} else {
-			return new BenchmarkPO(processingTime, selectivity);
 		}
+        return new BenchmarkPO(processingTime, selectivity);
 	}
 
 	@Override
