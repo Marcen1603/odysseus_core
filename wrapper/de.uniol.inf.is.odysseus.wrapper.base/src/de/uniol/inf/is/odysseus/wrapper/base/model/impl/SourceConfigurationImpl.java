@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 
 public class SourceConfigurationImpl implements SourceConfiguration {
-    private final Map<String, Object> configurations = new ConcurrentHashMap<String, Object>();;
+    private final Map<String, Object> configurations = new ConcurrentHashMap<String, Object>();
 
     @Override
     public void clear() {
