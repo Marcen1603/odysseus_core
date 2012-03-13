@@ -93,7 +93,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 	}
 	
 	// erstellt die Buttons
-	private void createButton(Composite container, final TableViewer viewer, final Map<String, String> aliases) {
+	private static void createButton(Composite container, final TableViewer viewer, final Map<String, String> aliases) {
 		
 		final Button button = new Button(container, SWT.PUSH);
 		button.setText("Change");
@@ -124,7 +124,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 	}
 
 	// läd die Aliases aus dem Operator
-	private Map<String, String> load(SDFSchema schema, List<String> value) {
+	private static Map<String, String> load(SDFSchema schema, List<String> value) {
 		
 		HashMap<String, String> aliases = new HashMap<String, String>();
 		
@@ -142,7 +142,7 @@ public class AliasesParameterEditor extends AbstractListParameterEditor<String> 
 	}
 	
 	// Tabelle erzeugen
-	private TableViewer createAliasesTable( Composite parent, Map<String, String> aliases ) {
+	private static TableViewer createAliasesTable( Composite parent, Map<String, String> aliases ) {
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		TableColumnLayout tableLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableLayout);
