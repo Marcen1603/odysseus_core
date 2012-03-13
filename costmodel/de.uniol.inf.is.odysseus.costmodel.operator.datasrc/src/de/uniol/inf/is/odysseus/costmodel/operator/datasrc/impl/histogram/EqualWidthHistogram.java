@@ -307,7 +307,8 @@ public class EqualWidthHistogram implements IHistogram {
 		countSum += occs;
 	}
 	
-	public IHistogram normalize() {
+	@Override
+    public IHistogram normalize() {
 		EqualWidthHistogram clone = clone();
 		if( !isRelative() )
 			return clone;
