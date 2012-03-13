@@ -455,7 +455,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		validateUserRight(user, ExecutorPermission.ADD_QUERY);
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(buildConfigurationName, overwriteSetting);
 		return addQuery(logicalPlan, user, params);		
-	};
+	}
 
 	private Integer addQuery(ILogicalOperator logicalPlan, ISession user,
 			QueryBuildConfiguration params) throws PlanManagementException {
