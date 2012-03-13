@@ -181,13 +181,12 @@ public abstract class BasePanel extends Composite {
 	protected final synchronized void add(final Object o) {
 		if (elementsShown.contains(o)) {
 			return;
-		} else {
-			elementsShown.add(o);
-			statusItems.add(createStatusItem(infoPanel, o));
-			infoPanelScroll.setMinWidth(infoPanel.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT).x);
-			infoPanelScroll.layout(true);
 		}
+        elementsShown.add(o);
+        statusItems.add(createStatusItem(infoPanel, o));
+        infoPanelScroll.setMinWidth(infoPanel.computeSize(SWT.DEFAULT,
+        	SWT.DEFAULT).x);
+        infoPanelScroll.layout(true);
 	}
 
 	/**

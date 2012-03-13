@@ -87,9 +87,8 @@ public class BinaryOverlay extends Overlay {
 
 		if (val <= threshold) {
 			return new BooleanType(true);
-		} else {
-			return new BooleanType(false);
 		}
+        return new BooleanType(false);
 	}
 
 	/**

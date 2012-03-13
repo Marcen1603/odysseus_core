@@ -98,10 +98,9 @@ public class IntegerNumber implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof IntegerNumber)) {
 			return false;
-		} else {
-			IntegerNumber in = (IntegerNumber) o;
-			return (in.getNumber() == i);
 		}
+        IntegerNumber in = (IntegerNumber) o;
+        return (in.getNumber() == i);
 	}
 
 	@Override

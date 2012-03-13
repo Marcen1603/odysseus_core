@@ -98,10 +98,9 @@ public class FloatNumber implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof FloatNumber)) {
 			return false;
-		} else {
-			FloatNumber fn = (FloatNumber) o;
-			return (fn.getNumber() == d);
 		}
+        FloatNumber fn = (FloatNumber) o;
+        return (fn.getNumber() == d);
 	}
 
 	@Override

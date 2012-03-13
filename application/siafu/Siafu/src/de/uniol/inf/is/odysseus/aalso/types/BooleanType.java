@@ -110,10 +110,9 @@ public class BooleanType implements Publishable {
     public boolean equals(Object o) {
 		if (!(o instanceof BooleanType)) {
 			return false;
-		} else {
-			BooleanType bt = (BooleanType) o;
-			return (bt.getValue().equals(b));
 		}
+        BooleanType bt = (BooleanType) o;
+        return (bt.getValue().equals(b));
 	}
 
 	@Override

@@ -306,9 +306,8 @@ public class Gradient implements Serializable {
 
 		if (preferredDir != -1 && optimalDirs.contains(preferredDir)) {
 			return preferredDir;
-		} else {
-			return optimalDirs.get(0);
 		}
+        return optimalDirs.get(0);
 
 	}
 
