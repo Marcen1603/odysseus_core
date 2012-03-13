@@ -31,16 +31,14 @@ public class AttributeTimeIntervalComparator<T extends IClone> implements Compar
 			int idRight = ((Integer)right.getAttribute(attributePos)).intValue();
 			if(idLeft<idRight){
 				return -1;
-			}else{
-				if(idLeft>idRight){
-					return 1;
-				}else{
-					return 0;
-				}
 			}
-		}else{
-			return compare;
+            if(idLeft>idRight){
+            	return 1;
+            }else{
+            	return 0;
+            }
 		}
+        return compare;
 		
 	}
 
