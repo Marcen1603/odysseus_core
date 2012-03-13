@@ -144,7 +144,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 		String q = "SELECT ContextStore(bla) AS bla, moin FROM A";
 		// String q = "SELECT A.b, C.d FROM Q RANGE 10000 ADVANCE 10, C AS Q
 		// WHERE c.a > 2 AND c.b < 1 GROUP BY C.d, A.b";
-		@SuppressWarnings("unused")
 		NewSQLParser p = new NewSQLParser(new StringReader(q));
 		try {
 			NewSQLParser.Statement().childrenAccept(
