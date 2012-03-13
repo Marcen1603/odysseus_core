@@ -62,7 +62,8 @@ public class SDFGridDatatype extends SDFDatatype {
 	 * @param other
 	 * @return True, if this type can be casted into <code>other</code>
 	 */
-	public boolean compatibleTo(SDFDatatype other) {
+	@Override
+    public boolean compatibleTo(SDFDatatype other) {
 		if (other instanceof SDFGridDatatype) {
 			SDFGridDatatype otherSpatial = (SDFGridDatatype) other;
 			if (this.isGrid() && otherSpatial.isGrid()) {
