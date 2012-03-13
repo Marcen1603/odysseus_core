@@ -65,7 +65,6 @@ public class StandardSMQLParserVisitor extends AbstractSMQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateKnowledgeDiscoveryProcess node, Object data) {
-		String name = (String)node.jjtGetChild(0).jjtAccept(this, null);
 		List<?> ops = (List<?>) node.jjtGetChild(1).jjtAccept(this, null);
 		for(Object o: ops){
 			super.addTopOperator((ILogicalOperator) o);
