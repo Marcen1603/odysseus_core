@@ -73,11 +73,10 @@ class NotPredicate<T> extends AbstractPredicate<T> {
 	public boolean isContainedIn(IPredicate<?> o) {
 		if(!(o instanceof NotPredicate)) {
 			return false;
-		} else {
-			if(((NotPredicate<?>)o).getChild().isContainedIn(this.predicate)) {
-				return true;
-			}
 		}
+        if(((NotPredicate<?>)o).getChild().isContainedIn(this.predicate)) {
+        	return true;
+        }
 		return false;
 	}
 }

@@ -60,21 +60,20 @@ public class Polygon extends AbstractFunction<Double> {
 		if ((latitude > boundingBox[2]) || (latitude < boundingBox[0])
 				|| (longitude > boundingBox[3]) || (longitude < boundingBox[1])) {
 			return 0.0;
-		} else {
-			for (int i = 0; i < polygon.size(); i = i + 2) {
-				if (((polygon.get(i + 1) < longitude) && (polygon.get(j + 1) >= longitude))
-						|| ((polygon.get(j + 1) < longitude) && (polygon
-								.get(i + 1) >= longitude))) {
-					if (polygon.get(i) + (longitude - polygon.get(i + 1))
-							/ (polygon.get(j + 1) - polygon.get(i + 1))
-							* (polygon.get(j) - polygon.get(i)) < latitude) {
-						isIn = !isIn;
-					}
-				}
-				j = i;
-			}
-			return ((isIn) ? 1.0 : 0.0);
 		}
+        for (int i = 0; i < polygon.size(); i = i + 2) {
+        	if (((polygon.get(i + 1) < longitude) && (polygon.get(j + 1) >= longitude))
+        			|| ((polygon.get(j + 1) < longitude) && (polygon
+        					.get(i + 1) >= longitude))) {
+        		if (polygon.get(i) + (longitude - polygon.get(i + 1))
+        				/ (polygon.get(j + 1) - polygon.get(i + 1))
+        				* (polygon.get(j) - polygon.get(i)) < latitude) {
+        			isIn = !isIn;
+        		}
+        	}
+        	j = i;
+        }
+        return ((isIn) ? 1.0 : 0.0);
 	}
 
 	public static void setRadius(double radius) {
@@ -119,8 +118,6 @@ public class Polygon extends AbstractFunction<Double> {
 		if(argPos > 2){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{	
-			return accTypes;
-		}
+        return accTypes;
 	}
 }

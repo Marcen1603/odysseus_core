@@ -106,9 +106,8 @@ public class OperatorBuilderFactory {
 		 Class udfClass = (Class) udfs.get(name);
 		 if (udfClass != null){
 			 return (IUserDefinedFunction) udfClass.newInstance();
-		 }else{
-			 return null;
 		 }
+        return null;
 	}
 
 	public static void removeUdf(String nameToRemove) {

@@ -138,9 +138,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public List<IPhysicalOperator> getRoots() {
 		if (roots != null) {
 			return Collections.unmodifiableList(this.roots);
-		} else {
-			return null;
 		}
+        return null;
 
 	}
 

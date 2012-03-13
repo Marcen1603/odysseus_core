@@ -81,15 +81,13 @@ public class PowerOperator extends AbstractBinaryOperator<Double> {
 		if(argPos > this.getArity()-1){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
-		else{
-			SDFDatatype[] accTypes = null;
-			switch(argPos){
-			case 0: 
-				return accTypes0;
-			case 1:
-				return accTypes1;
-			}
-			return accTypes;
-		}
+        SDFDatatype[] accTypes = null;
+        switch(argPos){
+        case 0: 
+        	return accTypes0;
+        case 1:
+        	return accTypes1;
+        }
+        return accTypes;
 	}
 }

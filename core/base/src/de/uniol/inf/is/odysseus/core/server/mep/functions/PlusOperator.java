@@ -81,9 +81,7 @@ public class PlusOperator extends AbstractBinaryOperator<Double> {
 		if(argPos > this.getArity()-1){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
-		else{
-//			accTypes[1] = String.class; // string concatenation
-			return accTypes;
-		}
+        //			accTypes[1] = String.class; // string concatenation
+        return accTypes;
 	}
 }

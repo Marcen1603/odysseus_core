@@ -59,11 +59,9 @@ public class NotOperator extends AbstractUnaryOperator<Boolean> {
 		if(argPos > 0){
 			throw new IllegalArgumentException("! has only 1 argument.");
 		}
-		else{
-			SDFDatatype[] accTypes = new SDFDatatype[1];
-			accTypes[0] = SDFDatatype.BOOLEAN;
-			return accTypes;
-		}
+        SDFDatatype[] accTypes = new SDFDatatype[1];
+        accTypes[0] = SDFDatatype.BOOLEAN;
+        return accTypes;
 	}
 
 

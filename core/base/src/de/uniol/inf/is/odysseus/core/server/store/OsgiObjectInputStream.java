@@ -26,9 +26,8 @@ public class OsgiObjectInputStream extends ObjectInputStream {
 				System.err.println("OsgiObjectInputStream" + e.getMessage());
 			}
 			return super.resolveClass(desc);
-		}else{
-			throw new ClassNotFoundException();
 		}
+        throw new ClassNotFoundException();
 	}
 
 }

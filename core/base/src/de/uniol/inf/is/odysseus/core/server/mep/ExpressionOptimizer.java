@@ -201,9 +201,8 @@ public class ExpressionOptimizer {
             if (function.getClass() == OrOperator.class) {
             	return isConstantPredicate(function.getArguments(), true) ? new Constant<Boolean>(
             			true, SDFDatatype.BOOLEAN) : function;
-            } else {
-            	return function;
             }
+            return function;
 		}
 
 		private boolean isConstantPredicate(IExpression<?>[] iExpression,

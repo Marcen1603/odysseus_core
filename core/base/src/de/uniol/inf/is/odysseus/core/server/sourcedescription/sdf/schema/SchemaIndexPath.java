@@ -114,12 +114,11 @@ public class SchemaIndexPath {
 //			SDFAttribute att2 = to.getSubattribute(0);
 			SDFAttribute att2 = tempAttr;
 			return new SchemaIndexPath(i, att2);
-		} else {
-			// seems that there must be subschema
-			i.add(new SchemaIndex(index, att.getDatatype().getSchema().getAttribute(index)));
-			SDFAttribute att2 = to.getDatatype().getSchema().getAttribute(index);
-			return new SchemaIndexPath(i, att2);
 		}
+        // seems that there must be subschema
+        i.add(new SchemaIndex(index, att.getDatatype().getSchema().getAttribute(index)));
+        SDFAttribute att2 = to.getDatatype().getSchema().getAttribute(index);
+        return new SchemaIndexPath(i, att2);
 	}
 
 	/**
@@ -184,9 +183,7 @@ public class SchemaIndexPath {
 			System.arraycopy(this.indicesArray, 0, copy, 0, this.indicesArray.length);
 			return copy;
 		}
-		else{
-			return this.indicesArray;
-		}
+        return this.indicesArray;
 	}
 
 	/**

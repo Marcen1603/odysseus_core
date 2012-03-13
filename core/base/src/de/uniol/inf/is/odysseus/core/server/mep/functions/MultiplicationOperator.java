@@ -82,9 +82,7 @@ public class MultiplicationOperator extends AbstractBinaryOperator<Double> {
 		if(argPos > this.getArity()-1){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 
 }

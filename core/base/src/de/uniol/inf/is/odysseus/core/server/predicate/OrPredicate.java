@@ -65,9 +65,7 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 		if(!(other instanceof OrPredicate)){
 			return false;
 		}
-		else{
-			return this.getLeft().equals(((OrPredicate<?>)other).getLeft()) && this.getRight().equals(((OrPredicate<?>)other).getRight());
-		}
+        return this.getLeft().equals(((OrPredicate<?>)other).getLeft()) && this.getRight().equals(((OrPredicate<?>)other).getRight());
 	}
 	
 	@Override
@@ -97,31 +95,28 @@ class OrPredicate<T> extends ComplexPredicate<T> {
 				return true;
 			}
 			return false;
-		} else {
-		// Falls es sich beim anderen Pr�dikat ebenfalls um ein OrPredicate handelt, m�ssen beide Pr�dikate verglichen werden (inklusiver aller "Unterpr�dikate")
-
-			OrPredicate<?> op = (OrPredicate<?>) o;
-
-
-			
-			ArrayList<IPredicate<?>> a = extractAllPredicates(this);
-			ArrayList<IPredicate<?>> b = extractAllPredicates(op);
-
-			// F�r JEDES Pr�dikat aus diesem OrPredicate muss ein enthaltenes Pr�dikat in dem anderen OrPredicate gefunden werden
-			// (Das andere Oder-Pr�dikat darf noch weitere Pr�dikate haben)
-			for(IPredicate<?> preda : a) {
-				boolean foundmatch = false;
-				for(IPredicate<?> predb : b) {
-					if(preda.isContainedIn(predb)) {
-						foundmatch = true;
-					}
-				}
-				if(!foundmatch) {
-					return false;
-				}
-			}
-			return true;
 		}
+        OrPredicate<?> op = (OrPredicate<?>) o;
+
+
+        
+        ArrayList<IPredicate<?>> a = extractAllPredicates(this);
+        ArrayList<IPredicate<?>> b = extractAllPredicates(op);
+
+        // F�r JEDES Pr�dikat aus diesem OrPredicate muss ein enthaltenes Pr�dikat in dem anderen OrPredicate gefunden werden
+        // (Das andere Oder-Pr�dikat darf noch weitere Pr�dikate haben)
+        for(IPredicate<?> preda : a) {
+        	boolean foundmatch = false;
+        	for(IPredicate<?> predb : b) {
+        		if(preda.isContainedIn(predb)) {
+        			foundmatch = true;
+        		}
+        	}
+        	if(!foundmatch) {
+        		return false;
+        	}
+        }
+        return true;
 	}
 	
 	private ArrayList<IPredicate<?>> extractAllPredicates(OrPredicate<?> op) {

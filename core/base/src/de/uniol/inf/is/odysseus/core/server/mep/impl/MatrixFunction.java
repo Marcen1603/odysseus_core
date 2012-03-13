@@ -71,8 +71,6 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
 		if(argPos > arity){
 			throw new IllegalArgumentException("AbsValue has only 1 argument.");
 		}
-		else{
-			return accTypes;
-		}
+        return accTypes;
 	}
 }

@@ -119,9 +119,8 @@ public class MyStats {
 		if (this.values.length % 2 == 0) {
 			//TODO nicht ganz genau wegen int div, sollte double returnen
 			return (this.values[pos] + this.values[pos - 1]) / 2;
-		} else {
-			return this.values[pos];
 		}
+        return this.values[pos];
 	}
 
 }

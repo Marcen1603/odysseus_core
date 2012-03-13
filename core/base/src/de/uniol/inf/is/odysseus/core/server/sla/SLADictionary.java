@@ -73,9 +73,8 @@ public class SLADictionary {
 	public boolean exists(String slaName) {
 		if (this.sla.get(slaName) != null) {
 			return true;
-		} else {
-			return false;
 		}
+        return false;
 	}
 	
 	
