@@ -22,7 +22,8 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
+	@Override
+    public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		DatatypeRegistry.getInstance().registerDatabaseToStream(Types.ARRAY, SDFDatatype.OBJECT);
 		DatabaseConnectionDictionary.getInstance().addFactory("postgresql", new PostgreSQLConnectionFactory());
@@ -32,7 +33,8 @@ public class Activator implements BundleActivator {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext bundleContext) throws Exception {
+	@Override
+    public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 }
