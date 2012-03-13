@@ -108,7 +108,6 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 * This list is only necessary for computing the new covariance matrix.
 	 * TODO: Manipulation der Covariance-Matrix in den RangePredicates berücksichtigen.
 	 */
-	private int[] restrictList;
 	
 	public ObjectTrackingSelectAO(){
 		super();
@@ -152,8 +151,6 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	 * prediction functions of the serveral attributes.
 	 */
 	public void init(IAttributeResolver attributeResolver){
-		this.initRestrictList();
-		
 		if(this.getInputSchema() instanceof SDFSchemaExtended){
 			SDFSchemaExtended inputSchema = (SDFSchemaExtended)this.getInputSchema();
 			
@@ -312,10 +309,6 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	}
 	
 	
-	private void initRestrictList(){
-		this.restrictList = ((SDFSchemaExtended)this.getInputSchema(0)).getMeasurementAttributePositions();
-	}
-
 	@Override
 	public Map<IPredicate<?>, IRangePredicate<?>> getRangePredicates() {
 		// TODO Auto-generated method stub

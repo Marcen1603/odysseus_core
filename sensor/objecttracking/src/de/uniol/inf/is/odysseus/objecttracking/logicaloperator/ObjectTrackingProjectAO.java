@@ -120,7 +120,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 		return newOutputSchema;
 	}
 	
-	private IPredictionFunction getNewPredictionFunction(SDFSchema inputSchema, SDFSchema outAttributes, SDFExpression[] oldExprs){
+	private static IPredictionFunction getNewPredictionFunction(SDFSchema inputSchema, SDFSchema outAttributes, SDFExpression[] oldExprs){
 		/*
 		 * it is not necessary to test, whether the attributes of the predicate
 		 * are still available since the predicate will not be evaluated again.

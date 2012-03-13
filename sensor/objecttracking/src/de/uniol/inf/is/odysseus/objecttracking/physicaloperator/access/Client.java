@@ -500,12 +500,11 @@ public class Client
 
    private void RecvAck() throws IOException
    {
-	int ack;
 
 	if (VERBOSE)
 		System.out.println("Waiting for ack...");
 
-	ack = input.read();
+	input.read();
 
 	if (VERBOSE)
 		System.out.println("Ack recieved.");

@@ -21,11 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -49,8 +45,6 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 
 	private static final long serialVersionUID = 1222104352250883947L;
 	
-	private static Logger logger = LoggerFactory.getLogger(RelationalRangePredicate.class);
-	
 	private LinkedList<ObjectTrackingPair<IPredicate, ISolution>> lastEvaluated;
 	private int windowSize;
 	private ObjectTrackingPair<IPredicate, ISolution> truePred;
@@ -63,7 +57,6 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	 * Prädikate, ganz nach vorne. Entsprechend wird auch die Liste
 	 * lastEvaluated umsortiert.
 	 */
-	private int changeWindow = 1;
 	
 	/**
 	 * EVLUATION: count the number of evaluations of this predicate
@@ -174,7 +167,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		}
 	}
 
-	private int indexOf(SDFSchema schema, SDFAttribute cqlAttr) {
+	private static int indexOf(SDFSchema schema, SDFAttribute cqlAttr) {
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
 			if (cqlAttr.equalsCQL(it.next())) {
@@ -325,7 +318,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	 * @param pointInTime
 	 * @return
 	 */
-	private ITimeInterval createApplicationTime(String compareOperator, double pointInTime){
+	private static ITimeInterval createApplicationTime(String compareOperator, double pointInTime){
 		// TODO at the moment we only have one solution for each predicate
 		// because of the use of only linear prediction functions.
 		
@@ -442,60 +435,11 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 		lastEvaluatedPredicate.increasePriority();
 		
 		// a sorting is necessary only if the removed and the added predicate are not equal
-		if(removed == null || (removed != null && removed != lastEvaluatedPredicate)){
+		if(removed == null || (removed != lastEvaluatedPredicate)){
 			Collections.sort(this.solutions);
 		}
 	}
 	
-	/**
-	 * Dient der Evaluation, damit auch mal der Wechsel von Prädikaten
-	 * vorkommt.
-	 */
-	private void changeOrder(){
-		Random r = new Random();
-		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
-			entry.setPriority(0);
-		}
-		
-		this.solutions.remove(this.truePred);
-		this.solutions.add(0, this.truePred);
-		
-		this.lastEvaluated.clear();
-		
-		while(this.lastEvaluated.size() < this.windowSize){
-			int nextInt = r.nextInt(3);
-			this.lastEvaluated.add(this.solutions.get(nextInt));
-			this.solutions.get(nextInt).increasePriority();
-		}
-		
-//		long start = System.nanoTime();
-		Collections.sort(this.solutions);
-//		long end = System.nanoTime();
-//		this.changeDuration -= (end - start);
-		
-//		====================================================================
-		
-//		Collections.reverse(this.solutions);
-//		for(ObjectTrackingPair<IPredicate, ISolution> entry: this.solutions){
-//			entry.setPriority(0);
-//		}
-//		
-//		this.lastEvaluated.clear();
-//		outer:
-//		for(int i = 0; i<this.solutions.size()-1; i++){
-//			for(int u = 0; u<=i; u++){
-//				if(this.lastEvaluated.size() < this.windowSize){
-//					ObjectTrackingPair<IPredicate, ISolution> curSolution = this.solutions.get(u);
-//					this.lastEvaluated.addLast(curSolution);
-//					curSolution.increasePriority();
-//				}
-//				else{
-//					break outer;
-//				}
-//			}
-//		}
-	}
-
 	@Override
 	public long getAdditionalEvaluationDuration() {
 		// TODO Auto-generated method stub

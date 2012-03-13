@@ -155,15 +155,6 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 		this.replacementMap.put(curAttr, newAttr);
 		
 	}
-	
-	private SDFAttribute getReplacement(SDFAttribute a) {
-		SDFAttribute ret = a;
-		SDFAttribute tmp = null;
-		while ((tmp=replacementMap.get(ret))!=null){
-			ret = tmp;
-		}
-		return ret;
-	}
 
 	@Override
 	public MahalanobisPredicate<T> clone(){

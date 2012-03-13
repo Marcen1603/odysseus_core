@@ -118,12 +118,6 @@ public class MapleHack {
 		logger.debug("Missing Solution: If " + andPred.toString() + " then " + full.toString() );
 		
 		// 2. the empty solution
-		SDFExpression leftExprEmpty = new SDFExpression(null, denominator + " == 0", attributeResolver, MEP.getInstance());
-		RelationalPredicate leftEmpty = new RelationalPredicate(leftExpr);
-		
-		
-		
-		
 		
 		// only get the right side of the comparison
 		// we assume, that the left side is the only one that contains
@@ -236,7 +230,6 @@ public class MapleHack {
 		
 		// 2. the empty solution
 		
-		SDFExpression leftExprEmpty = new SDFExpression(null, "a.speed - b.speed == 0", attributeResolver, MEP.getInstance());
 		RelationalPredicate leftEmpty = new RelationalPredicate(leftExpr);
 		
 		SDFExpression rightExprEmpty = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp <= -0.1", attributeResolver, MEP.getInstance());
@@ -266,11 +259,6 @@ public class MapleHack {
 		
 		
 		// 2. the empty solution
-		SDFExpression leftExprEmpty = new SDFExpression(null, "a.speed - b.speed == 0", attributeResolver, MEP.getInstance());
-		RelationalPredicate leftEmtpy = new RelationalPredicate(leftExpr);
-		
-		SDFExpression rightExprEmpty = new SDFExpression(null, "a.pos - b.pos + b.speed * b.timestamp - a.speed * a.timestamp >= 0.1", attributeResolver, MEP.getInstance());
-		RelationalPredicate rightEmpty = new RelationalPredicate(rightExpr);
 		IPredicate andPredEmpty = ComplexPredicateHelper.createAndPredicate(left, right);
 		
 		ISolution solutionEmpty = new Solution(null, null, null);
