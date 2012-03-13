@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.args.marshaller.StringMarshaller;
 public class Args {
 	public static enum REQUIREMENT {
 		MANDATORY, OPTIONAL
-	};
+	}
 
 	private Map<String, IParameterMarshaller> marshaller;
 	private Set<String> mandatoryParameters;
