@@ -3,17 +3,12 @@ package de.uniol.inf.is.odysseus.wrapper.nmea.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.nmea.nmea.NMEAMessage;
 import de.uniol.inf.is.odysseus.wrapper.nmea.nmea.NMEAStack;
 
 public class NMEASourceAdapter extends AbstractPushingSourceAdapter {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(NMEASourceAdapter.class);
 	private final Map<SourceSpec, NMEAStack> stackMap = new ConcurrentHashMap<SourceSpec, NMEAStack>();
 
 	@Override
