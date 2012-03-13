@@ -63,7 +63,7 @@ public class ExtSaLsAPolygonSinkPO extends AbstractSink<RelationalTuple<? extend
 	protected void process_next(
 			RelationalTuple<? extends IMetaAttribute> object, int port,
 			boolean isReadOnly) {
-		 this.segments.offer((RelationalTuple<? extends IMetaAttribute>)object);
+		 this.segments.offer(object);
 		
 	}
 
