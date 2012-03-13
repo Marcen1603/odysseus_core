@@ -135,22 +135,20 @@ public class MessagePart {
 	public void setValsForProperties(Object[] values) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (this.propertyDescriptors.size() != values.length){
 			throw new IllegalArgumentException();
-		}else {
-			for (Object value : values){
-				this.writeNextProperty(value);
-			}
-			
-			this.resetIterators();
 		}
+        for (Object value : values){
+        	this.writeNextProperty(value);
+        }
+        
+        this.resetIterators();
 	}
 	
 	private void resetIterators() {
 		if (iterator == null){
 			return;
-		}else {
-			//reset to invoke childs again
-			iterator = this.propertyDescriptors.iterator();
 		}
+        //reset to invoke childs again
+        iterator = this.propertyDescriptors.iterator();
 		
 		//invoke child messageParts
 		while(iterator.hasNext()){
