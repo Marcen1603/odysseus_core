@@ -19,30 +19,28 @@ import de.uniol.inf.is.odysseus.p2p.ac.bid.IP2PBidGenerator;
  */
 public class StandardP2PBidGenerator implements IP2PBidGenerator {
 
-	/**
-	 * Liefert ein Gebot zu einem Teilplan. Dabei werden die aktuellen Kosten
-	 * des Ausführungsplans mit den neuen Kosten des Teilplans addiert.
-	 * Anschließend werden die Komponenten (Speicherkosten und Prozessorkosten)
-	 * addiert. Das Ergebnis ist das Gebot.
-	 */
-	@SuppressWarnings("restriction")
-	public double generateBid(IAdmissionControl sender, ICost actSystemLoad, ICost queryCost, ICost maxCost) {
+    /**
+     * Liefert ein Gebot zu einem Teilplan. Dabei werden die aktuellen Kosten
+     * des Ausführungsplans mit den neuen Kosten des Teilplans addiert.
+     * Anschließend werden die Komponenten (Speicherkosten und Prozessorkosten)
+     * addiert. Das Ergebnis ist das Gebot.
+     */
+    @Override
+    public double generateBid(IAdmissionControl sender, ICost actSystemLoad, ICost queryCost, ICost maxCost) {
+        if (!(actSystemLoad instanceof OperatorCost)) {
+            return 1;
+        }
 
-		if (actSystemLoad instanceof OperatorCost) {
+        Runtime runtime = Runtime.getRuntime();
 
-			Runtime runtime = Runtime.getRuntime();
+        // calculate potencial system load
+        OperatorCost actSystemLoad2 = (OperatorCost) actSystemLoad;
+        OperatorCost queryCost2 = (OperatorCost) queryCost;
+        double cpu = actSystemLoad2.getCpuCost() + queryCost2.getCpuCost();
+        double memFactor = (actSystemLoad2.getMemCost() + queryCost2.getMemCost()) / runtime.totalMemory();
 
-			// calculate potencial system load
-			OperatorCost actSystemLoad2 = (OperatorCost) actSystemLoad;
-			OperatorCost queryCost2 = (OperatorCost) queryCost;
-			double cpu = actSystemLoad2.getCpuCost() + queryCost2.getCpuCost();
-			double memFactor = (actSystemLoad2.getMemCost() + queryCost2.getMemCost()) / (double) runtime.totalMemory();
-
-			// higher cost --> higher bid
-			return cpu + memFactor;
-		} else {
-			return 1;
-		}
-	}
+        // higher cost --> higher bid
+        return cpu + memFactor;
+    }
 
 }
