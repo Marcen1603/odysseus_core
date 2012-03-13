@@ -136,7 +136,7 @@ public class WorkflowClient implements IActuator {
 		this.correlationID = correlationID;
 	}
 
-	private HashMap<String, Class<?>> createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws InstantiationException, IllegalAccessException, IntrospectionException, ActuatorException {       
+	private HashMap<String, Class<?>> createInputMessageParts(BindingMessageInfo inputMessageInfo, Message message) throws IntrospectionException, ActuatorException {       
 		HashMap<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
 		for (MessagePartInfo partInfo : inputMessageInfo.getMessageInfo().getMessageParts()){
             Class<?> partClass = partInfo.getTypeClass();
@@ -211,7 +211,7 @@ public class WorkflowClient implements IActuator {
 	}
 
 	private void createOutputMessageParts(BindingMessageInfo outputMessageInfo,
-			Message message) throws InstantiationException, IllegalAccessException, IntrospectionException, ActuatorException {
+			Message message) throws IntrospectionException, ActuatorException {
 		for (MessagePartInfo partInfo : outputMessageInfo.getMessageInfo().getMessageParts()){
             Class<?> partClass = partInfo.getTypeClass();
             
