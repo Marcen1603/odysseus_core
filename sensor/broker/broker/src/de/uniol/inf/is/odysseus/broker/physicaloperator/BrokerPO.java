@@ -354,7 +354,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		ReadTransaction type = BrokerDictionary.getInstance().getReadTypeForPort(this.identifier, sourceOutPort);
 		printDebug("Transfer to " + sourceOutPort + " " + type + ": " + object.toString() + "  (" + this + ")");
 		process_transfer(object, sourceOutPort);
-	};
+	}
 
 	/*
 	 * (non-Javadoc)
