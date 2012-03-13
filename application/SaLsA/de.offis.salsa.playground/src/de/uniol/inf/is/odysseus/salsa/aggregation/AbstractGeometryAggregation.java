@@ -25,6 +25,7 @@ abstract class AbstractGeometryAggregation<R, W> extends AbstractListAggregation
         return aggregate;
     }
 
+    @Override
     public IPartialAggregate<R> merge(IPartialAggregate<R> p, R toMerge, boolean createNew) {
         GeometryPartialAggregate<R> list = (GeometryPartialAggregate<R>) p;
         if (createNew) {
