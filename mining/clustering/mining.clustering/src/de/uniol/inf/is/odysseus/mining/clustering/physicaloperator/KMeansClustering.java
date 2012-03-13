@@ -116,10 +116,8 @@ public class KMeansClustering<T extends IMetaAttribute> {
 		ArrayList<KMeansCluster<T>> clusterListCopy = copyClusterList();
 		int oldSwaps = -1;
 		int swaps = 0;
-		int run = 0;
 		// did the number of reassignments change?
 		while (swaps != oldSwaps) {
-			run++;
 			oldSwaps = swaps;
 			swaps = 0;
 			ArrayList<KMeansCluster<T>> emptyClusterList = getEmtpyClusterList();

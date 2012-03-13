@@ -94,7 +94,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		sumTuple.setAttribute(pos, newvalue);
 	}	
 	
-	private Object addValue(RelationalTuple<M> tuple, int pos, Double value, boolean square){
+	@SuppressWarnings("static-method")
+    private Object addValue(RelationalTuple<M> tuple, int pos, Double value, boolean square){
 		Double old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -102,7 +103,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		return old+value;
 	}
 	
-	private Object addValue(RelationalTuple<M> tuple, int pos, Integer value, boolean square){
+	@SuppressWarnings("static-method")
+    private Object addValue(RelationalTuple<M> tuple, int pos, Integer value, boolean square){
 		Integer old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -110,7 +112,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		return old+value;
 	}
 	
-	private Object addValue(RelationalTuple<M> tuple, int pos, Float value, boolean square){
+	@SuppressWarnings("static-method")
+    private Object addValue(RelationalTuple<M> tuple, int pos, Float value, boolean square){
 		Float old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -118,7 +121,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		return old+value;
 	}
 	
-	private Object addValue(RelationalTuple<M> tuple, int pos, Long value, boolean square){
+	@SuppressWarnings("static-method")
+    private Object addValue(RelationalTuple<M> tuple, int pos, Long value, boolean square){
 		Long old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -126,7 +130,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		return old+value;
 	}
 	
-	private Object addValue(RelationalTuple<M> tuple, int pos, String value, boolean square){
+	@SuppressWarnings("static-method")
+    private Object addValue(RelationalTuple<M> tuple, int pos, String value, boolean square){
 		String old = tuple.getAttribute(pos);				
 		return old+value;
 	}
