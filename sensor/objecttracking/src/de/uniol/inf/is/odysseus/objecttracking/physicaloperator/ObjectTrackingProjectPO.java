@@ -76,7 +76,7 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 
 		try {
 			// restrict the original tuple and set the new metadata
-			MVRelationalTuple<T> objectNew = (MVRelationalTuple<T>)object.restrict(this.restrictList, this.projectMatrix, false);
+			MVRelationalTuple<T> objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
 			
 			// updating the prediction function
 			// is not necessary, since the

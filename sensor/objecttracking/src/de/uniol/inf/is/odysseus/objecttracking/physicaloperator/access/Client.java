@@ -505,7 +505,7 @@ public class Client
 	if (VERBOSE)
 		System.out.println("Waiting for ack...");
 
-	ack = (int) input.read();
+	ack = input.read();
 
 	if (VERBOSE)
 		System.out.println("Ack recieved.");

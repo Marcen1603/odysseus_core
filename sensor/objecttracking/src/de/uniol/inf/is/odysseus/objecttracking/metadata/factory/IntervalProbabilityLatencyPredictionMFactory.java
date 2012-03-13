@@ -52,7 +52,7 @@ public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetada
 		int counter = 0;
 		for(SDFAttribute attr: this.schema){
 			if(attr.getDatatype().isMeasurementValue()){
-				List covariance = ((SDFAttribute)attr).getAddInfo();
+				List covariance = attr.getAddInfo();
 				if(cov == null){
 					cov = new double[covariance.size()][covariance.size()];
 				}

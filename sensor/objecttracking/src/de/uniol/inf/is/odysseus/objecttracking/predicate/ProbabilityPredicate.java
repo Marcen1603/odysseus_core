@@ -348,7 +348,7 @@ public class ProbabilityPredicate<T extends IProbability> extends
 		RealMatrix projectedRight = null;
 		RealMatrix projectedRightCov = null;
 
-		if (((SDFAttribute) this.leftSchema.get(0)).getSourceName().equals(
+		if (this.leftSchema.get(0).getSourceName().equals(
 				this.leftSource)) {
 			projectedLeft = this.leftMatrix.multiply(leftMV);
 			if (this.leftVector != null) {

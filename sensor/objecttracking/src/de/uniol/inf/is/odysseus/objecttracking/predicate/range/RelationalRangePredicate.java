@@ -150,7 +150,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 				
 				int i = 0;
 				for (SDFAttribute curAttribute : neededAttributes) {
-					SDFAttribute cqlAttr = (SDFAttribute) curAttribute;
+					SDFAttribute cqlAttr = curAttribute;
 					int pos = indexOf(leftSchema, cqlAttr);
 					if (pos == -1) {
 						// if you get here, there is an attribute
@@ -177,7 +177,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	private int indexOf(SDFSchema schema, SDFAttribute cqlAttr) {
 		Iterator<SDFAttribute> it = schema.iterator();
 		for (int i = 0; it.hasNext(); ++i) {
-			if (cqlAttr.equalsCQL((SDFAttribute) it.next())) {
+			if (cqlAttr.equalsCQL(it.next())) {
 				return i;
 			}
 		}

@@ -84,7 +84,7 @@ public class IntervalProbabilityLatencyPrediction<T extends MetaAttributeContain
 			IntervalProbabilityLatencyPrediction copy) {
 		super(copy);
 		this.prob = (IProbability) copy.prob.clone();
-		this.latency = (ILatency) copy.latency.clone();
+		this.latency = copy.latency.clone();
 		this.predFct = (IProbabilityPredictionFunction) copy.predFct.clone();
 	}
 

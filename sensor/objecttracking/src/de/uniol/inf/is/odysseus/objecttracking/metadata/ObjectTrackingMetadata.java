@@ -96,11 +96,11 @@ public class ObjectTrackingMetadata<K> implements IPredictionFunctionKey<K>, IPr
 		}
 		
 		if(copy.lat != null){
-			this.lat = (ILatency)copy.lat.clone();
+			this.lat = copy.lat.clone();
 		}
 		
 		if(copy.appTime != null){
-			this.appTime = (IApplicationTime)copy.appTime.clone();
+			this.appTime = copy.appTime.clone();
 		}
 		if(copy.streamTime != null){
 			this.streamTime = (ITimeInterval)copy.streamTime.clone();

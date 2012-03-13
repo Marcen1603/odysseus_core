@@ -182,7 +182,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			this.isDone = true;
 			this.end = System.nanoTime();
 			long duration = (end - start);
-			long elems = (long)this.elemCount * 1000L * 1000L * 1000L;
+			long elems = this.elemCount * 1000L * 1000L * 1000L;
 			System.out.println("elements/sec: " + ((double)(elems)/ (double)(duration)));
 			
 			propagateDone();
