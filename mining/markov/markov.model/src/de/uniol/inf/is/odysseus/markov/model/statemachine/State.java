@@ -97,18 +97,15 @@ public class State {
 			if (name == null) {
 				if (other.name == null) {
 					return true;
-				} else {
-					return false;
 				}
+                return false;
 			}
 			if (name.toUpperCase().equals(other.name.toUpperCase())) {
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
+            return false;
 		}
+        return false;
 	}
 
 }
