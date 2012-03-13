@@ -212,7 +212,7 @@ public class PlaceStatus extends BaseStatus {
 		int i = 0;
 
 		while (ovIt.hasNext()) {
-			Overlay ov = (Overlay) ovIt.next();
+			Overlay ov = ovIt.next();
 			ovLabels[i++] = new LabelPair(parent, SWT.NONE, ov.getName());
 		}
 	}
@@ -263,7 +263,7 @@ public class PlaceStatus extends BaseStatus {
 		int i = 0;
 
 		while (ovIt.hasNext()) {
-			Overlay ov = (Overlay) ovIt.next();
+			Overlay ov = ovIt.next();
 			ovLabels[i++].setValue(ov.getValue(place.getPos()).toString());
 		}
 	}

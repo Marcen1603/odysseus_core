@@ -130,11 +130,11 @@ public class ControlPanel extends Composite {
 	 */
 	public void setSelected(final Object o) {
 		if (o instanceof Agent) {
-			agentsPanel.add((Agent) o);
+			agentsPanel.add(o);
 		} else if (o instanceof Place) {
-			placesPanel.add((Place) o);
+			placesPanel.add(o);
 		} else if (o instanceof Overlay) {
-			overlaysPanel.add((Overlay) o);
+			overlaysPanel.add(o);
 		}
 
 	}

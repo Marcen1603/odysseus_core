@@ -126,7 +126,7 @@ public class FlatData {
 		}
 
 		try {
-			return (Publishable) constructorObj
+			return constructorObj
 					.newInstance(new Object[] {this});
 		} catch (Exception e) {
 			throw new InvalidFlatDataException(data, className, e);
