@@ -143,7 +143,8 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	 * window's end has been reached a new window will be set and all results of
 	 * conformance are reset.
 	 */
-	public void checkViolation() {
+	@Override
+    public void checkViolation() {
 		/*
 		 * most valuable service level is first list entry! so iterate reverse
 		 * over list to find the less valuable violated service level first
@@ -320,11 +321,13 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 		return waitingTime + getOpTime();
 	}
 	
-	public int getNumberOfPredictedLatency() {
+	@Override
+    public int getNumberOfPredictedLatency() {
 		return numberOfPredictedElements;
 	}
 	
-	public int getNumberOfViolationsPredictedLatency() {
+	@Override
+    public int getNumberOfViolationsPredictedLatency() {
 		this.numberOfPredictedElements = 0;
 		int numViolations = 0;
 		long timestamp = System.nanoTime();
