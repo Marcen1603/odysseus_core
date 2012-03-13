@@ -304,7 +304,7 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		return valid;
 	}
 
-	private boolean validTableName(String name) {
+	private static boolean validTableName(String name) {
 		if (!Character.isLetter(name.charAt(0))) {
 			return false;
 		}

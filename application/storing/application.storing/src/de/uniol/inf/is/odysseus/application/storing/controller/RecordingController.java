@@ -124,7 +124,7 @@ public class RecordingController {
 		fireChangedEvent();
 	}
 
-	private void deployQueries(RecordEntry record) throws PlanManagementException {
+	private static void deployQueries(RecordEntry record) throws PlanManagementException {
 		String sinkName = record.getSinkName();
 		String createSink = "CREATE SINK " + sinkName + " AS DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
