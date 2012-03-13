@@ -28,7 +28,7 @@ public class PriorityMetaUpdater extends AbstractMetadataUpdater<ITimeInterval,I
 
 	@Override
 	public void updateMetadata(IMetaAttributeContainer<ITimeInterval> inElem) {
-		ITimeInterval interval = (ITimeInterval) inElem.getMetadata();
+		ITimeInterval interval = inElem.getMetadata();
 		IntervalPriority priority = new IntervalPriority();
 		priority.setStart(interval.getStart());
 		priority.setEnd(interval.getEnd());
