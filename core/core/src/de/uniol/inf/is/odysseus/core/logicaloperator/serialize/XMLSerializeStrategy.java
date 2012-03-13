@@ -87,9 +87,8 @@ public class XMLSerializeStrategy extends AbstractSerializerStrategy<String> {
 		if (prop.isList()) {
 			SerializePropertyList listProp  = (SerializePropertyList)prop;			
 			return serializeListOfValues(listProp.getValue(), prop.getType());
-		} else {
-			return serializeSimpleValue(value);
 		}
+        return serializeSimpleValue(value);
 
 	}
 
