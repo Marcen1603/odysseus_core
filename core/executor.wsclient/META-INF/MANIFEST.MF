@@ -8,5 +8,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Service-Component: OSGI-INF/wsclient.xml
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.usermanagement
- 
+ de.uniol.inf.is.odysseus.core.usermanagement,
+ org.slf4j
