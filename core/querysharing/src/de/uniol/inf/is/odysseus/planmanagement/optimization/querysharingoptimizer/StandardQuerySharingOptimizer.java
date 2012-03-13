@@ -80,7 +80,9 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			parameterShareSimilarOperators = false;
 		}
 		while(removeIdenticalOperators(ipos, newOps, restructuringAllowed)
-				|| (parameterShareSimilarOperators && reconnectSimilarOperators(ipos,newOps,restructuringAllowed)));
+				|| (parameterShareSimilarOperators && reconnectSimilarOperators(ipos,newOps,restructuringAllowed))) {
+		    
+		}
 //		while((parameterShareSimilarOperators && reconnectSimilarOperators(ipos,newOps,restructuringAllowed))
 //				|| removeIdenticalOperators(ipos, newOps, restructuringAllowed));
 	}
@@ -93,7 +95,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		}
 	}
 
-	private boolean removeIdenticalOperators(List<IPhysicalOperator> ipos, List<IPhysicalOperator> newOps, boolean restructuringAllowed) {
+	private static boolean removeIdenticalOperators(List<IPhysicalOperator> ipos, List<IPhysicalOperator> newOps, boolean restructuringAllowed) {
 		int size = ipos.size();
 		for(int i = 0; i<size-1; i++) {
 			for(int j = i+1; j<size; j++) {
@@ -119,7 +121,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 							op2 = temp;
 						}
 
-						this.replaceOperator(op1, op2);
+						replaceOperator(op1, op2);
 						//Entfernen des ersetzten Operators aus der Liste
 						ipos.remove(op1);
 						newOps.remove(op1);
@@ -135,7 +137,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		return false;
 	}
 
-	private boolean reconnectSimilarOperators(List<IPhysicalOperator> ipos, List<IPhysicalOperator> newOps, boolean restructuringAllowed) {
+	private static boolean reconnectSimilarOperators(List<IPhysicalOperator> ipos, List<IPhysicalOperator> newOps, boolean restructuringAllowed) {
 		int size = ipos.size();
 		for(int i = 0; i<size-1; i++) {
 			for(int j = i+1; j<size; j++) {
@@ -152,14 +154,14 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					// op1 ist in op2 enthalten 
 					if(op1 instanceof AbstractPipe && op2 instanceof IPipe
 							&& ((AbstractPipe<?,?>)op1).isContainedIn((IPipe)op2) && (newOps.contains(op1) || restructuringAllowed)) {
-						this.replaceInput(op1, op2);
+						replaceInput(op1, op2);
 						// Reiteration (möglicherweise neue identische Operatoren)
 						return true;
 						//break;
 						// op2 ist in op1 enthalten 
 					} else if(op1 instanceof AbstractPipe && op2 instanceof IPipe
 							&& ((AbstractPipe<?,?>)op2).isContainedIn((IPipe)op1) && (newOps.contains(op2) || restructuringAllowed)) {
-						this.replaceInput(op2, op1);
+						replaceInput(op2, op1);
 						// Reiteration (möglicherweise neue identische Operatoren)
 						return true;
 						//break;
@@ -171,7 +173,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		return false;
 	}
 
-	private void replaceOperator(IPhysicalOperator op1, IPhysicalOperator op2) {
+	private static void replaceOperator(IPhysicalOperator op1, IPhysicalOperator op2) {
 		// Austausch von Operatoren
 
 		// Holen sämtlicher Subscriptions von bei dem zu ersetzenden Operator angemeldeten sinks
@@ -230,7 +232,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	 * @param op1
 	 * @param op2
 	 */
-	private void replaceInput(IPhysicalOperator op1, IPhysicalOperator op2) {
+	private static void replaceInput(IPhysicalOperator op1, IPhysicalOperator op2) {
 		// Ersetzen der Quelle von op1 mit op2
 		Collection<ISubscription> sources = new ArrayList(((IPipe)op1).getSubscribedToSource());
 		for(ISubscription sub : sources) {
