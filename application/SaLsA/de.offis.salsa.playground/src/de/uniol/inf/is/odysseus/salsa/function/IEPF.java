@@ -59,9 +59,8 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity()
                     + " argument(s): A matrix and a threashold.");
         }
-        else {
-            return accTypes[argPos];
-        }
+        
+        return accTypes[argPos];
     }
 
     @Override
@@ -71,7 +70,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
 
     @Override
     public List<RelationalTuple<TimeInterval>> getValue() {
-        PointInTime startTimestamp = PointInTime.getInfinityTime();;
+        PointInTime startTimestamp = PointInTime.getInfinityTime();
         for (final IExpression<?> expr : this.getArguments()) {
             if (expr.getReturnType().isStartTimestamp()) {
                 startTimestamp = (PointInTime) expr.getValue();
@@ -114,7 +113,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
             int splitIndex = 0;
 
             for (int i = 1; i < coordinates.length - 1; i++) {
-                final double distance = this.getDistanceToLine(coordinates[i], start, end);
+                final double distance = getDistanceToLine(coordinates[i], start, end);
                 if (distance > maxDistance) {
                     maxDistance = distance;
                     splitIndex = i;
@@ -140,7 +139,7 @@ public class IEPF extends AbstractFunction<List<RelationalTuple<TimeInterval>>> 
         return segments;
     }
 
-    private double getDistanceToLine(final Coordinate point, final Coordinate from,
+    private static double getDistanceToLine(final Coordinate point, final Coordinate from,
             final Coordinate to) {
 
         final Coordinate fromTo = new Coordinate(to.x - from.x, to.y - from.y);
