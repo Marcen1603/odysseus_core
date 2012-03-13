@@ -57,7 +57,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
     public Integer getGroupID(RelationalTuple<T> elem) {
         // Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
         if (gRestrict == null || gRestrict.length == 0)
-            return Integer.valueOf(0);;
+            return Integer.valueOf(0);
         // Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
         RelationalTuple<T> gTuple = elem.restrict(gRestrict, true);
         // Gibt es diese Kombination schon?
