@@ -41,9 +41,8 @@ public class StandardP2PBidSelector implements IP2PBidSelector {
 
 			return lowestBid;
 
-		} else {
-			return null;
 		}
+        return null;
 	}
 
 }
