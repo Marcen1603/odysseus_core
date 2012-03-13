@@ -47,7 +47,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 		}
 	}
 
-	private PointInTime extractTimestamp(
+	private static PointInTime extractTimestamp(
 			RelationalTuple<? extends ITimeInterval> inElem, int attrPos) {
 		Number timeN = (Number) inElem.getAttribute(attrPos);
 		PointInTime time = null;
