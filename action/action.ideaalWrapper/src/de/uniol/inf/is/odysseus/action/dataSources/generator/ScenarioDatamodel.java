@@ -174,9 +174,8 @@ public class ScenarioDatamodel {
 		
 		if(this.occupiedMachines.size() > 0){
 			return this.occupiedMachines.get(randomGen.nextInt(this.occupiedMachines.size()));
-		}else {
-			return null;
 		}
+        return null;
 	}
 	
 	/**
@@ -331,13 +330,11 @@ public class ScenarioDatamodel {
 					}
 	
 					return usageRate;
-				}else {
-					return null;
 				}
-			}else {
-				//can happen if tool was released during execution 
-				return null;
+                return null;
 			}
+            //can happen if tool was released during execution 
+            return null;
 
 	}
 		
