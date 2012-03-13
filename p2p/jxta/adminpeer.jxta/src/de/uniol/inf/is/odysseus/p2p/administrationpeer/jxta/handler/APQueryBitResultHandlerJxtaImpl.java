@@ -43,7 +43,7 @@ public class APQueryBitResultHandlerJxtaImpl extends AbstractJxtaMessageHandler 
 	public void handleMessage(Object _msg, String _namespace) {
 
 		Message msg = (Message) _msg;
-		String namespace = (String) _namespace;
+		String namespace = _namespace;
 		String queryId = meas(namespace, "queryId", msg);
 		String queryResult = meas(namespace, "result", msg);
 
