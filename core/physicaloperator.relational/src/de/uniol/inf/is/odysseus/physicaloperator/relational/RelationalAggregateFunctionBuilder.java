@@ -48,7 +48,8 @@ public class RelationalAggregateFunctionBuilder implements
         names.add(RATE);
 	}
 	
-	public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+	@Override
+    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
 			AggregateFunction key, int[] pos) {
 		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
 		if ((key.getName().equalsIgnoreCase("AVG"))

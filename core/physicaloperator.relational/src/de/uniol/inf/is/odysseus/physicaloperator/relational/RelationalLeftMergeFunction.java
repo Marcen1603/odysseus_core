@@ -59,7 +59,8 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 	 * the left schema are set an the attributes of the right schema are
 	 * null. The metadata is used from the original.
 	 */
-	public RelationalTuple<M> createLeftFilledUp(RelationalTuple<M> original){
+	@Override
+    public RelationalTuple<M> createLeftFilledUp(RelationalTuple<M> original){
 		// copy the original element, because otherwise the hashmap
 		// in the left join will not work any more
 		RelationalTuple<M> retVal = new RelationalTuple<M>(this.schemaSize);
@@ -76,10 +77,12 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 		return retVal;
 	}
 
-	public void init(){
+	@Override
+    public void init(){
 	}
 	
-	public RelationalLeftMergeFunction<M> clone(){
+	@Override
+    public RelationalLeftMergeFunction<M> clone(){
 		return new RelationalLeftMergeFunction<M>(this);
 	}
 }
