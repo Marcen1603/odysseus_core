@@ -153,7 +153,7 @@ public class SourcePool<T extends IMetaAttribute> {
             try {
                 SourcePO<?> source = this.sources.get(sourceSpec);
 //                if (enableSources.contains(source)) {
-                    this.sources.get(sourceSpec).transfer(event);
+                    source.transfer(event);
 //                }
             }
             catch (final Exception e) {
