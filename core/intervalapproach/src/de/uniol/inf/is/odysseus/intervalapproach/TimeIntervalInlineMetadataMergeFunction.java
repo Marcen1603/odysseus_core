@@ -27,7 +27,7 @@ public class TimeIntervalInlineMetadataMergeFunction implements
 
 	}
 	
-	public TimeIntervalInlineMetadataMergeFunction(){};
+	public TimeIntervalInlineMetadataMergeFunction(){}
 
 	@Override
 	public void mergeInto(ITimeInterval result, ITimeInterval inLeft,

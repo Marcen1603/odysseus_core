@@ -49,13 +49,13 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	/**
 	 * What are the slides in which elements are processed
 	 */
-	final private long windowSlide;;
+	final private long windowSlide;
 
 	
 	/**
 	 * list with buffered elements 
 	 */
-	private LinkedList<R> inputBuffer = new LinkedList<R>();;
+	private LinkedList<R> inputBuffer = new LinkedList<R>();
 
 	/**
 	 * list with elements to deliver

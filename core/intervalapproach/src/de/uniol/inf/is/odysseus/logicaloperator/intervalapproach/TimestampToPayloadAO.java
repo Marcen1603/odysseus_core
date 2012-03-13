@@ -15,7 +15,7 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 7506659021418301530L;
 
 	public TimestampToPayloadAO() {
-	};
+	}
 
 	public TimestampToPayloadAO(TimestampToPayloadAO timestampToPayloadAO) {
 		super(timestampToPayloadAO);

@@ -32,7 +32,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 	final protected PointInTime[] minTs;
 	protected AbstractSource<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
-			new MetadataComparator<ITimeInterval>());;
+			new MetadataComparator<ITimeInterval>());
 
 	public TITransferArea() {
 		minTs = new PointInTime[2];

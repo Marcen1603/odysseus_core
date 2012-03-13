@@ -51,7 +51,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 				public int compare(IPair<T, Integer> left, IPair<T, Integer> right) {
 					return left.getE1().getMetadata()
 							.compareTo(right.getE1().getMetadata());
-				};
+				}
 			});
 
 	public TIInputStreamSyncArea() {

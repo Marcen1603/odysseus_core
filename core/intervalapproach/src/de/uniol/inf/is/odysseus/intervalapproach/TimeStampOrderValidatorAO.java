@@ -8,7 +8,7 @@ public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9204585315520513917L;
 
-	public TimeStampOrderValidatorAO(){};
+	public TimeStampOrderValidatorAO(){}
 	
 	public TimeStampOrderValidatorAO(
 			TimeStampOrderValidatorAO timeStampOrderValidatorAO) {
