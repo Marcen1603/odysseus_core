@@ -132,7 +132,8 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		if (target == null) {
 			if (other.target != null)
 				return false;
-		} else if (!(target == other.target)) // ACHTUNG. KEIN EQUALS AUF DER TARGET!!
+        // ACHTUNG. KEIN EQUALS AUF DER TARGET!!
+		} else if (!(target == other.target))
 			return false;
 		return true;
 	}
