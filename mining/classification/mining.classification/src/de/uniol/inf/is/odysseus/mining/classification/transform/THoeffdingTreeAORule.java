@@ -113,9 +113,8 @@ public class THoeffdingTreeAORule extends
 		if ("gini".equalsIgnoreCase(evaluationMeasure)
 				|| "giniindex".equalsIgnoreCase(evaluationMeasure)) {
 			return new GiniIndex(hoeffdingTreeAO.getProbability(), null);
-		} else {
-			return new InformationGain(hoeffdingTreeAO.getProbability(), null);
 		}
+        return new InformationGain(hoeffdingTreeAO.getProbability(), null);
 	}
 
 }
