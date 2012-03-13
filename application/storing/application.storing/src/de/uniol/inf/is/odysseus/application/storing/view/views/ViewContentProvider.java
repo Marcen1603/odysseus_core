@@ -28,13 +28,16 @@ import de.uniol.inf.is.odysseus.application.storing.controller.RecordingControll
  * @author Dennis Geesen Created at: 09.11.2011
  */
 public class ViewContentProvider implements IStructuredContentProvider {
-	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+	@Override
+    public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 	}
 
-	public void dispose() {
+	@Override
+    public void dispose() {
 	}
 
-	public Object[] getElements(Object parent) {
+	@Override
+    public Object[] getElements(Object parent) {
 		Map<String, RecordEntry> records = RecordingController.getInstance().getRecords();		
 		return records.values().toArray();
 	}

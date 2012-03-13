@@ -212,7 +212,8 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 				setReturnCode(CANCEL);
 				close();
 			}
@@ -227,7 +228,8 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(new Integer(id));
 		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
+			@Override
+            public void widgetSelected(SelectionEvent event) {
 				if (isValidInput()) {
 					okPressed();
 				}
