@@ -62,7 +62,7 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 		return "Switch Selection and Rename";
 	}
 	
-	private boolean isValidSelect(SelectAO sel, RenameAO ren) {
+	private static boolean isValidSelect(SelectAO sel, RenameAO ren) {
 		if (sel.getInputAO().equals(ren)) {
 			return true;
 		}		
