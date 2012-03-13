@@ -64,7 +64,8 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
-	public void mouseDoubleClicked(MouseEvent event) {
+	@Override
+    public void mouseDoubleClicked(MouseEvent event) {
 		// do nothing
 	}
 
@@ -75,7 +76,8 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
-	public void mouseDragged(MouseEvent event) {
+	@Override
+    public void mouseDragged(MouseEvent event) {
 		// null check to avoid exception
 		if (this.initialPoint != null) {
 			// calculate the new position of the state
@@ -94,7 +96,8 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
-	public void mousePressed(MouseEvent event) {
+	@Override
+    public void mousePressed(MouseEvent event) {
 		// If the is no state registered to be dragged, register it.
 		if (initialPoint == null) {
 			this.initialPoint = event.getLocation();
@@ -108,7 +111,8 @@ public class DragListener extends MouseMotionListener.Stub implements
 	 * @param event
 	 *            is the mouse event which happened
 	 */
-	public void mouseReleased(MouseEvent event) {
+	@Override
+    public void mouseReleased(MouseEvent event) {
 		// delete
 		this.initialPoint = null;
 		this.draggingState = null;
