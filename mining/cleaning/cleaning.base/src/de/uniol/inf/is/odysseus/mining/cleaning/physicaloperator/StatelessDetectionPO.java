@@ -41,11 +41,13 @@ public class StatelessDetectionPO<T extends IMetaAttributeContainer<? extends IM
 	}
 	
 	
-	protected void process_next_failed(T object, int port, IUnaryDetection<T> detection){
+	@Override
+    protected void process_next_failed(T object, int port, IUnaryDetection<T> detection){
 		transfer(object, 0);
 	}
 	
-	protected void process_next_passed(T object, int port){
+	@Override
+    protected void process_next_passed(T object, int port){
 		transfer(object, 0);
 	}	
 

@@ -35,7 +35,8 @@ public class OutOfRangeDetection extends AbstractSimpleAggregateDetection{
 		this.inPercent = inPercent;		
 	}	
 	
-	protected String buildPredicateStirng(){		
+	@Override
+    protected String buildPredicateStirng(){		
 		if(this.inPercent){
 			double percent = this.abweichung/100.0;
 			String p = getAttributeName()+" < ( (1.0-"+percent+") * "+getAggregationAttribute()+")";
