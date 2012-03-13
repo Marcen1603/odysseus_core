@@ -302,7 +302,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 				if (data != null) {
 					// first check for sla violation and create event in case of violation
 					data.getConformance().checkViolation();
-					if (this.hasNext(data.getBuffers())) {
+					if (SLAPartialPlanScheduling.hasNext(data.getBuffers())) {
 						
 						SLA sla = query.getSLA();
 						double conformance = data.getConformance().predictConformance();
@@ -393,7 +393,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 	 * @param buffers list of buffers owned by one query
 	 * @return true iff the given buffers have elements to process
 	 */
-	private boolean hasNext(List<IBuffer<?>> buffers) {
+	private static boolean hasNext(List<IBuffer<?>> buffers) {
 		for (IBuffer<?> buffer : buffers) {
 			if (buffer.size() > 0) {
 				return true;

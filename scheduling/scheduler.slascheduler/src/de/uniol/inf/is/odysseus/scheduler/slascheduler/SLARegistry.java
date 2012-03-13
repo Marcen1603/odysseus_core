@@ -128,7 +128,7 @@ public class SLARegistry implements IPlanModificationListener {
 			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
 			data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
 			
-			List<IBuffer<?>> buffers = this.findBuffers(query);
+			List<IBuffer<?>> buffers = findBuffers(query);
 			data.setBuffers(buffers);
 			conformance.setBuffers(buffers);
 			
@@ -146,6 +146,8 @@ public class SLARegistry implements IPlanModificationListener {
 					data.getConformance());
 			break;
 		}
+		default:
+            break;
 		}
 	}
 
@@ -155,7 +157,7 @@ public class SLARegistry implements IPlanModificationListener {
 	 * @return a list of all buffers owned by the query. could be empty, if
 	 * 		the query ownes no buffers 
 	 */
-	private List<IBuffer<?>> findBuffers(IPhysicalQuery query) {
+	private static List<IBuffer<?>> findBuffers(IPhysicalQuery query) {
 		List<IBuffer<?>> buffers = new ArrayList<IBuffer<?>>();
 		for (IPhysicalOperator po : query.getAllOperators()) {
 			if (po instanceof IBuffer<?>) {

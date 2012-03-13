@@ -36,7 +36,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		File file = new File(PATH, FILE_NAME);
 		try {
 			this.writer = new FileWriter(file);
-			this.writer.write(this.header());
+			this.writer.write(SLAViolationLogger.header());
 			this.writer.flush();
 		} catch (IOException e) {
 			//throw new RuntimeException(e);
@@ -50,7 +50,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	@Override
 	public void slaViolated(SLAViolationEvent event) {
 		try {
-			this.writer.write(this.eventToString(event));
+			this.writer.write(SLAViolationLogger.eventToString(event));
 			this.writer.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	 *            the event that should be transformed to String
 	 * @return
 	 */
-	private String eventToString(SLAViolationEvent event) {
+	private static String eventToString(SLAViolationEvent event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(DateFormat.getDateTimeInstance().format(new Date()))
 				.append(SEPERATOR)
@@ -83,7 +83,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	/**
 	 * @return csv header
 	 */
-	private String header() {
+	private static String header() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Timestamp").append(SEPERATOR).append("SLA Name")
 				.append(SEPERATOR).append("Query ID").append(SEPERATOR)
