@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"
          download-size="0"

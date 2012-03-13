@@ -229,10 +229,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 
-/********************************************************************
- *                      Methods not implemented by server           *
- ********************************************************************/
-
+	// TODO: Implement
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName)
@@ -240,6 +237,10 @@ public class WsClient implements IExecutor, IClientExecutor{
 		// TODO not implemented by server yet
 		return null;
 	}
+	
+/********************************************************************
+ *                      Methods not implemented by server           *
+ ********************************************************************/
 
 	@Override
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
