@@ -59,7 +59,7 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 		return null;
 	}
 
-	private List<String> splitParams(String input){
+	private static List<String> splitParams(String input){
 		String[] s = input.split("\"*\"");
 		List<String> ret = new ArrayList<String>(s.length);
 		for (String str : s) {
