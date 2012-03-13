@@ -122,7 +122,7 @@ public class DataCube<T extends IMetaAttribute> {
 	 *            the source cube to copy
 	 */
 	@SuppressWarnings("unchecked")
-	private void copy(HashMap<Object, HashMap<Object, Integer>> destination,
+	private static void copy(HashMap<Object, HashMap<Object, Integer>> destination,
 			HashMap<Object, HashMap<Object, Integer>> source) {
 		
 		for (Entry<Object, HashMap<Object, Integer>> entry : source.entrySet()) {

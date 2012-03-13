@@ -106,7 +106,7 @@ public class THoeffdingTreeAORule extends
 	}
 
 	@SuppressWarnings("rawtypes")
-	private AbstractAttributeEvaluationMeasure createEvaluationMeasure(
+	private static AbstractAttributeEvaluationMeasure createEvaluationMeasure(
 			HoeffdingTreeAO hoeffdingTreeAO) {
 		String evaluationMeasure = hoeffdingTreeAO
 				.getAttributeEvaluationMeasure();
