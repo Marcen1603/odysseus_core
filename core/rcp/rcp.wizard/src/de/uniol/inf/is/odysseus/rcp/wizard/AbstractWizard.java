@@ -73,9 +73,9 @@ public abstract class AbstractWizard extends Wizard implements INewWizard {
 	public String getFullPath(){
 		if(this.selectedContainer!=null){
 			return this.selectedContainer.getLocation().toString();
-		}else{
-			return System.getProperty("user.home");
-		}		
+		}
+		
+		return System.getProperty("user.home");
 	}
 
 }
