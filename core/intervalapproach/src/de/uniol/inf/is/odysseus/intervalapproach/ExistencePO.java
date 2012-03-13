@@ -275,9 +275,8 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 		try {
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
-			} else {
-				return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 			}
+            return getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore

@@ -270,9 +270,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
-			} else {
-				return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 			}
+            return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
