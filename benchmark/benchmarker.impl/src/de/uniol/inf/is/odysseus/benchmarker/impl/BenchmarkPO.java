@@ -40,7 +40,7 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 		super();
 		this.processingTime = processingTime;
 		this.selectivity = selectivity;
-	};
+	}
 
 	public BenchmarkPO(BenchmarkPO<R> benchmarkPO) {
 		super(benchmarkPO);
@@ -74,10 +74,11 @@ public class BenchmarkPO<R extends IMetaAttributeContainer<?>> extends
 		}
 	}
 	
-
-	private void waitProcessingTime(long end) {
-		while (System.nanoTime() < end)
-			;
+	private static void waitProcessingTime(long end) {
+	    long current = System.nanoTime();
+		try {
+            Thread.sleep(end - current);
+        } catch (InterruptedException ignored) {}
 	}
 
 	protected void setOldVal(R object, double d) {
