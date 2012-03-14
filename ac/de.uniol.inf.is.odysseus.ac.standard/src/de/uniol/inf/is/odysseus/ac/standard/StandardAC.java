@@ -50,14 +50,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 	private final List<IAdmissionListener> listeners = new ArrayList<IAdmissionListener>();
 
-	private static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(StandardAC.class);
-		}
-		return _logger;
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardAC.class);
 
 	@Override
 	public ICost getCost(IPhysicalQuery query) {
@@ -94,19 +87,18 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			totalCost = actCost.merge(queryCost);
 		else
 			totalCost = queryCost;
-		getLogger().debug("Total cost if executed: " + totalCost);
+		LOGGER.debug("Total cost if executed: " + totalCost);
 
 		// check, if total is lower than maximum allowed
 		int cmp = totalCost.compareTo(maxCost);
 		if (cmp == -1 || cmp == 0) {
 			// low enough
-			getLogger().debug("Total cost would be lower than maximum cost");
-			return true;
+			LOGGER.debug("Total cost would be lower than maximum cost");
+		} else {
+		    LOGGER.debug("Executing queries would exceed maximum cost");
+		    LOGGER.debug("Maximum Cost: " + maxCost);
 		}
-
-		getLogger().debug("Executing queries would exceed maximum cost");
-		getLogger().debug("Maximum Cost: " + maxCost);
-		return false;
+		return cmp == -1 || cmp == 0;
 	}
 
 	@Override
@@ -151,13 +143,13 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			timestamps.put(query, System.currentTimeMillis());
 
 		// check, if system-load is too heavy
-		getLogger().debug("Cost of execution plan : " + actCost);
+		LOGGER.debug("Cost of execution plan : " + actCost);
 		int cmp = actCost.compareTo(maxCost);
 		if (cmp > 0) {
 			// too high load now!
 
-			getLogger().debug("Cost is too high");
-			getLogger().debug("MaxCost = " + maxCost);
+			LOGGER.debug("Cost is too high");
+			LOGGER.debug("MaxCost = " + maxCost);
 
 			fireOverloadEvent();
 		}
@@ -198,8 +190,8 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		maxCost = selectedCostModel.getMaximumCost();
 		actCost = selectedCostModel.getZeroCost();
 
-		getLogger().debug("CostModel " + name + " selected");
-		getLogger().debug("Maximum cost allowed:" + maxCost);
+		LOGGER.debug("CostModel " + name + " selected");
+		LOGGER.debug("Maximum cost allowed:" + maxCost);
 	}
 
 	@Override
@@ -227,17 +219,17 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
 		List<IPhysicalOperator> operators = getAllOperators(query);
 
-		getLogger().debug("EVENT : " + eventArgs.getEventType());
+		LOGGER.debug("EVENT : " + eventArgs.getEventType());
 		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
 			// query removed!
-			getLogger().debug("Query " + query + " removed");
+			LOGGER.debug("Query " + query + " removed");
 
 			queryCosts.remove(query);
 			timestamps.remove(query);
 
 		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
 			// query added!
-			getLogger().debug("Query " + query + " added");
+			LOGGER.debug("Query " + query + " added");
 
 			// do cost-estimation now
 			ICost queryCost = estimateCost(operators, false);
@@ -246,7 +238,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			timestamps.put(query, System.currentTimeMillis());
 
 		} else if (PlanModificationEventType.QUERY_START.equals(eventArgs.getEventType())) {
-			getLogger().debug("Query " + query + " started");
+			LOGGER.debug("Query " + query + " started");
 
 			ICost queryCost = queryCosts.get(query);
 
@@ -255,7 +247,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			}
 
 		} else if (PlanModificationEventType.QUERY_STOP.equals(eventArgs.getEventType())) {
-			getLogger().debug("Query " + query + " stopped");
+			LOGGER.debug("Query " + query + " stopped");
 
 			if (runningQueryCosts.containsKey(query)) {
 				runningQueryCosts.remove(query);
@@ -283,7 +275,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	 */
 	public void bindCostModel(ICostModel costModel) {
 		getCostModels().put(costModel.getClass().getSimpleName(), costModel);
-		getLogger().debug("Costmodel bound: " + costModel.getClass().getSimpleName());
+		LOGGER.debug("Costmodel bound: " + costModel.getClass().getSimpleName());
 
 		if (getSelectedCostModel() == null) {
 			selectCostModel(costModel.getClass().getSimpleName());
@@ -300,7 +292,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 	public void unbindCostModel(ICostModel costModel) {
 		getCostModels().remove(costModel.getClass().getSimpleName());
 
-		getLogger().debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
+		LOGGER.debug("Costmodel unbound: " + costModel.getClass().getSimpleName());
 	}
 
 	private Map<String, ICostModel> getCostModels() {
@@ -322,7 +314,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 
 		this.executor.addPlanModificationListener(this);
 
-		getLogger().debug("Executor bound");
+		LOGGER.debug("Executor bound");
 	}
 
 	/**
@@ -337,7 +329,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 			this.executor.removePlanModificationListener(this);
 			this.executor = null;
 
-			getLogger().debug("Executor unbound");
+			LOGGER.debug("Executor unbound");
 		}
 	}
 
@@ -384,7 +376,7 @@ public class StandardAC implements IAdmissionControl, IPlanModificationListener 
 					if (listener != null) {
 						listener.overloadOccured(this);
 					}
-				} catch (Exception ex) {
+				} catch (Throwable ex) {
 					ex.printStackTrace();
 				}
 			}

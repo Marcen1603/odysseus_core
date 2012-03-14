@@ -23,14 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
-	private static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(PossibleExecutionGenerator.class);
-		}
-		return _logger;
-	}
+	private static Logger LOGGER = LoggerFactory.getLogger(PossibleExecutionGenerator.class);
 
 	@Override
 	public List<IPossibleExecution> getPossibleExecutions(IAdmissionControl ac, Map<IPhysicalQuery, ICost> queryCosts, ICost maxCost) {
@@ -39,17 +32,18 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 
 		// first solution: all queries running!
 		ICost costSum = null;
-		for (ICost cost : queryCosts.values())
-			if (costSum == null)
+		for (ICost cost : queryCosts.values()) {
+			if (costSum == null) {
 				costSum = cost;
-			else
+			} else {
 				costSum = costSum.merge(cost);
+			}
+		}
 
 		int cmp = costSum.compareTo(maxCost);
 		if (cmp == -1 || cmp == 0) {
 			poss.add(new StandardPossibleExecution(queryCosts.keySet(), new ArrayList<IPhysicalQuery>(), costSum));
-			getLogger().debug("Possible Execution: execute all queries");
-			return poss;
+			LOGGER.debug("Possible Execution: execute all queries");
 		}
 		
 		// only one query?
@@ -58,26 +52,29 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 		if( queryCosts.size() == 1 ) {
 			// nur eine Anfrage, die gestoppt werden sollte
 			poss.add(new StandardPossibleExecution(new ArrayList<IPhysicalQuery>(), queryCosts.keySet(), cm.getZeroCost()));
-			return poss;
 		}
 
-		// generate exactly one possible execution
-		// brute-force too load-heavy
-		List<IPhysicalQuery> runningQueries = new ArrayList<IPhysicalQuery>();
-		List<IPhysicalQuery> stoppingQueries = new ArrayList<IPhysicalQuery>();
-		ICost actSum = cm.getZeroCost();
-		for( IPhysicalQuery query : queryCosts.keySet() ) {
-			ICost cost = queryCosts.get(query);
-			ICost newSum = actSum.merge(cost);
-			if( newSum.compareTo(maxCost) < 0 ) {
-				runningQueries.add(query);
-				actSum = newSum;
-			} else {
-				stoppingQueries.add(query);
-			}
+		if( poss.isEmpty() ) {
+    		// generate exactly one possible execution
+    		// brute-force too load-heavy
+    		List<IPhysicalQuery> runningQueries = new ArrayList<IPhysicalQuery>();
+    		List<IPhysicalQuery> stoppingQueries = new ArrayList<IPhysicalQuery>();
+    		ICost actSum = cm.getZeroCost();
+    		for( IPhysicalQuery query : queryCosts.keySet() ) {
+    			ICost cost = queryCosts.get(query);
+    			ICost newSum = actSum.merge(cost);
+    			if( newSum.compareTo(maxCost) < 0 ) {
+    				runningQueries.add(query);
+    				actSum = newSum;
+    			} else {
+    				stoppingQueries.add(query);
+    			}
+    		}
+    		
+    		poss.add(new StandardPossibleExecution(runningQueries, stoppingQueries, actSum));
 		}
 		
-		poss.add(new StandardPossibleExecution(runningQueries, stoppingQueries, actSum));
+        return poss;
 				
 		// TOOO HEAVY:
 //		// generate all combinations
@@ -120,8 +117,6 @@ public class PossibleExecutionGenerator implements IPossibleExecutionGenerator {
 //			}
 //
 //		}
-
-		return poss;
 	}
 
 //	private static List<List<IQuery>> powerset(List<IQuery> queries) {
