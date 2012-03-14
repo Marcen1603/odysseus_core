@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LogicalQueryInfo;
@@ -277,6 +278,12 @@ public class WsClient implements IExecutor, IClientExecutor{
 		query.setPriority(info.getPriority());
 		query.setQueryText(info.getQueryText());
 		return query;
+	}
+	
+	
+	protected void firePlanModificationEvent(
+			AbstractPlanModificationEvent<?> eventArgs) {
+		// TODO: implement me!
 	}
 	
 /********************************************************************
