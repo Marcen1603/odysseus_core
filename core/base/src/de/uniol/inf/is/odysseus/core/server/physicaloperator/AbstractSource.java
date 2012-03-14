@@ -280,7 +280,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void transfer(T object, int sourceOutPort) {
-		fire(this.pushInitEvent);
+		// The are cases possible where the the query is closed
+		// while transfer is active, in this cases no pushDoneEvent needs to be send
+		if (isOpen()) {
+			fire(this.pushInitEvent);
+		}
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				sink.getTarget().process(object, sink.getSinkInPort(),
