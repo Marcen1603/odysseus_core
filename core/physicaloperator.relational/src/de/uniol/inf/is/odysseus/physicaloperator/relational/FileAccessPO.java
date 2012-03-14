@@ -113,7 +113,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected synchronized void process_open() throws OpenFailedException {
 
 		try {
 			this.dataHandler = new RelationalTupleDataHandler(
@@ -131,7 +131,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	}
 
 	@Override
-	protected void process_close() {
+	protected synchronized void process_close() {
 		if (isOpen()) {
 			try {
 				bf.close();
