@@ -91,8 +91,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 		if (isOpen() && !isDone()) {
 			String line = "";
 			try {
-
-				if (!(line = bf.readLine()).isEmpty()) {
+				line = bf.readLine();
+				if (line!=null && !(line).isEmpty()) {
 					String[] splittedLine = line.split(separator);
 					transfer((T) dataHandler.readData(splittedLine));
 				} else {
