@@ -5,6 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * TestComponent for running tests in nexmark.
+ * Nexmark usually uses files for repeating the same data.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class TestComponentRunner extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestComponentRunner.class);

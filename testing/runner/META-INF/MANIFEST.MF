@@ -9,7 +9,7 @@ Import-Package: com.google.common.base,
  org.osgi.framework;version="1.6.0",
  org.slf4j
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: de.uniol.inf.is.odysseus.test.runner.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.test.runner.TestRunnerPlugIn
 Service-Component: OSGI-INF/testcomponent.xml
 Export-Package: de.uniol.inf.is.odysseus.test.runner
 Require-Bundle: de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;bundle-version="1.0.0",

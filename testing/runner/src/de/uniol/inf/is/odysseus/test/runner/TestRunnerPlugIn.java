@@ -9,11 +9,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-public class Activator implements BundleActivator {
+/**
+ * Activator-Class for Plugin test.runner. Recieves all registered {@code TestComponents}
+ * over Declarative Services and executes them.
+ * 
+ * @author Timo Michelsen
+ *
+ */
+public class TestRunnerPlugIn implements BundleActivator {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerPlugIn.class);
 	
-	private static final List<TestComponentRunner> runners = Lists.newArrayList(); 
+	private static final List<TestComponentRunner> RUNNERS = Lists.newArrayList(); 
 
 	@Override
 	public void start(BundleContext ctx) throws Exception {
@@ -23,7 +30,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
 		LOG.debug("Test results");
-		for( TestComponentRunner runner : runners ) {
+		for( TestComponentRunner runner : RUNNERS ) {
 			String result;
 			try {
 				result = runner.getResult() != null ? runner.getResult().toString() : "null";
@@ -37,7 +44,7 @@ public class Activator implements BundleActivator {
 
 	public void startTestComponent(ITestComponent component) {
 		TestComponentRunner runner = new TestComponentRunner(component);
-		runners.add(runner);
+		RUNNERS.add(runner);
 		
 		LOG.debug("Start TestComponent" + component);
 		runner.start();
