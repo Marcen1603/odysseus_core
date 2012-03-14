@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;extension base="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}response">
  *       &lt;sequence>
- *         &lt;element name="responseValue" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}logicalQuery" minOccurs="0"/>
+ *         &lt;element name="responseValue" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}logicalQueryInfo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ public class QueryResponse
     extends Response
 {
 
-    protected LogicalQuery responseValue;
+    protected LogicalQueryInfo responseValue;
 
     /**
      * Gets the value of the responseValue property.
      * 
      * @return
      *     possible object is
-     *     {@link LogicalQuery }
+     *     {@link LogicalQueryInfo }
      *     
      */
-    public LogicalQuery getResponseValue() {
+    public LogicalQueryInfo getResponseValue() {
         return responseValue;
     }
 
@@ -52,10 +52,10 @@ public class QueryResponse
      * 
      * @param value
      *     allowed object is
-     *     {@link LogicalQuery }
+     *     {@link LogicalQueryInfo }
      *     
      */
-    public void setResponseValue(LogicalQuery value) {
+    public void setResponseValue(LogicalQueryInfo value) {
         this.responseValue = value;
     }
 
