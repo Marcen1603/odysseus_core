@@ -116,7 +116,8 @@ public class SimpleCharStream
         inputStream.close();
         throw new java.io.IOException();
       }
-    maxNextCharInd += i;
+      else
+        maxNextCharInd += i;
       return;
     }
     catch(java.io.IOException e) {
@@ -389,7 +390,8 @@ public class SimpleCharStream
   {
     if (bufpos >= tokenBegin)
       return new String(buffer, tokenBegin, bufpos - tokenBegin + 1);
-    return new String(buffer, tokenBegin, bufsize - tokenBegin) +
+    else
+      return new String(buffer, tokenBegin, bufsize - tokenBegin) +
                             new String(buffer, 0, bufpos + 1);
   }
 
