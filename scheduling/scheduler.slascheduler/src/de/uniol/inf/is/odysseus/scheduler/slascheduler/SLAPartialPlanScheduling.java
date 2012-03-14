@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.IQuerySharing;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.querysharing.QuerySharing;
@@ -304,7 +304,7 @@ public class SLAPartialPlanScheduling implements IPartialPlanScheduling,
 					data.getConformance().checkViolation();
 					if (SLAPartialPlanScheduling.hasNext(data.getBuffers())) {
 						
-						SLA sla = query.getSLA();
+						SLA sla = (SLA) query.getParameter(SLA.class.getName());
 						double conformance = data.getConformance().predictConformance();
 						// calculate priorities for all partial plans:
 						// - calculate oc

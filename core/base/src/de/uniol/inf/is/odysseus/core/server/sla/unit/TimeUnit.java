@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.sla.unit;
+package de.uniol.inf.is.odysseus.core.server.sla.unit;
 
 /**
  * possible time units for defining evaluation windows and time-based metrics.

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.cost;
 
-import de.uniol.inf.is.odysseus.core.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ICostFunction;
 
 /**

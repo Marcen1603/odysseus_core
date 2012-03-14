@@ -14,8 +14,7 @@ Import-Package:
 Service-Component: OSGI-INF/SDFFunctionProvider.xml, OSGI-INF/MEPFunctionService.xml, OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, OSGI-INF/LongHandler.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml, OSGI-INF/UserManagement.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Export-Package: de.uniol.inf.is.odysseus.core.server.ac,
- de.uniol.inf.is.odysseus.core.server,
+Export-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.ac,
  de.uniol.inf.is.odysseus.core.server.collection,
  de.uniol.inf.is.odysseus.core.server.costmodel,

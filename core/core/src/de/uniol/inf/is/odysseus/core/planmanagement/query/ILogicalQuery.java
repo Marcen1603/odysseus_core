@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<ILogicalQuery>, IProvidesSLA{
+public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<ILogicalQuery>{
 
 	/**
 	 * ID of this query. Should be unique.
@@ -94,8 +94,18 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 */
 	public boolean containsCycles();
 
-	public void addPenalty(double penalty);
+	/**
+	 * Store key values pairs
+	 * @param key
+	 * @param value
+	 */
+	public void setParameter(String key, Object value);
 
-	double getPenalty();
-	
+	/**
+	 * Retrieve value for key
+	 * @param key
+	 * @return
+	 */
+	public Object getParameter(String key);	
 }
+

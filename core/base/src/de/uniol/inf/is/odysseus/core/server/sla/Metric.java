@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.sla;
+package de.uniol.inf.is.odysseus.core.server.sla;
 
 /**
  * Definition of a sla metric

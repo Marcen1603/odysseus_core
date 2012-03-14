@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import de.uniol.inf.is.odysseus.core.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 
 /**
  * Interface for priority functions

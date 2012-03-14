@@ -9,14 +9,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.IProvidesSLA;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IPhysicalQuery extends IMonitoringDataProvider, IReoptimizeHandler<IQueryReoptimizeListener>,
-IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IProvidesSLA {
+IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 
 	/**
 	 * The method must be called for each of the physical roots of a query.
@@ -119,4 +118,18 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IProvidesSLA 
 	public boolean containsCycles();
 
 	public ILogicalQuery getLogicalQuery();	
+	
+	/**
+	 * Store key values pairs
+	 * @param name
+	 * @param value
+	 */
+	public void setParameter(String name, Object value);
+
+	/**
+	 * Retrieve value for key
+	 * @param name
+	 * @return
+	 */
+	public Object getParameter(String name);
 }

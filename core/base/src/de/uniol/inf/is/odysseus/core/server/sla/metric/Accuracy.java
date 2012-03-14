@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.sla.metric;
 
+import de.uniol.inf.is.odysseus.core.server.sla.Metric;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.RatioUnit;
-import de.uniol.inf.is.odysseus.core.sla.Metric;
 
 /**
  * This Metric is a measure for the Quality of Answers (QoA)

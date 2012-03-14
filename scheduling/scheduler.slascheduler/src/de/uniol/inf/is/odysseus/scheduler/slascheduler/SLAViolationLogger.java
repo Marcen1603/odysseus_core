@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 
 /**
  * Simple implementation of {@link ISLAViolationEventListener} interface for
@@ -68,7 +69,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 		StringBuilder sb = new StringBuilder();
 		sb.append(DateFormat.getDateTimeInstance().format(new Date()))
 				.append(SEPERATOR)
-				.append(event.getQuery().getSLA().getName())
+				.append(((SLA)event.getQuery().getParameter(SLA.class.getName())).getName())
 				.append(SEPERATOR)
 				.append(event.getQuery().getID())
 				.append(SEPERATOR)

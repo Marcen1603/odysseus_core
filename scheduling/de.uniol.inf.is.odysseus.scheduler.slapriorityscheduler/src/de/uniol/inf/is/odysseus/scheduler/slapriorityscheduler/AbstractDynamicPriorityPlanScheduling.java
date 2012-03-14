@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -86,7 +86,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			if (!this.extendedQueries.contains(query)) {
 				// add SLA conformance operator to plan for monitoring
 				this.extendedQueries.add(query);
-				SLA sla = query.getSLA();
+				SLA sla = (SLA)query.getParameter(SLA.class.getName());
 				ISLAConformance conformance = new SLAConformanceFactory()
 						.createSLAConformance(sla, this, query);
 

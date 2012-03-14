@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.core.sla;
+package de.uniol.inf.is.odysseus.core.server.sla;
 
-import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 
 /**
  * Instances of this class represent evaluation windows for sla

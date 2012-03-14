@@ -258,7 +258,9 @@ public class WsClient implements IExecutor, IClientExecutor{
 	
 	@Override
 	public ILogicalQuery getLogicalQuery(int id) {
-		return getWebserviceServer().getLogicalQuery(getSecurityToken(), new String(id)).getResponseValue();
+		// FIXME: local LogicalQuery is not ILogicalQuery --> Why are there two LogicalQuery-Klasses --> should be one!! 
+		//return getWebserviceServer().getLogicalQuery(getSecurityToken(), new StringBuffer(id).toString()).getResponseValue();
+		return null;
 	}
 	
 /********************************************************************

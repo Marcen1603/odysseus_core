@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.sla.factories;
 
 import de.uniol.inf.is.odysseus.core.server.sla.unit.RatioUnit;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.ThroughputUnit;
-import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 
 public class UnitFactory {
 	

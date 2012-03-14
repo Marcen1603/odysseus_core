@@ -65,10 +65,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
@@ -246,7 +246,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             setQueryBuildParameters(query, parameters);
             query.setQueryText(queryStr);
             query.setUser(user);
-            query.setSLA(sla);
+            query.setParameter(SLA.class.getName(), sla);
             // this executor processes reoptimize requests
             if (query instanceof IPhysicalQuery) {
                 ((IPhysicalQuery) query).addReoptimizeListener(this);

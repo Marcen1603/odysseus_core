@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.core.server.sla.factories;
 
+import de.uniol.inf.is.odysseus.core.server.sla.Penalty;
 import de.uniol.inf.is.odysseus.core.server.sla.penalty.AbsolutePenalty;
 import de.uniol.inf.is.odysseus.core.server.sla.penalty.PercentagePenalty;
-import de.uniol.inf.is.odysseus.core.sla.Penalty;
 
 public class PenaltyFactory {
 	

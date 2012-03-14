@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.placement.LatencySLAConformancePlacement;
 
 /**

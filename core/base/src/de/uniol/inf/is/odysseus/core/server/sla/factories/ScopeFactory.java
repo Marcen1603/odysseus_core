@@ -1,10 +1,10 @@
 package de.uniol.inf.is.odysseus.core.server.sla.factories;
 
+import de.uniol.inf.is.odysseus.core.server.sla.Scope;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Average;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Number;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Rate;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Single;
-import de.uniol.inf.is.odysseus.core.sla.Scope;
 
 public class ScopeFactory {
 	

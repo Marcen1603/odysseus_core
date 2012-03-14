@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Average;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Number;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Rate;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Single;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyAverage;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyNumber;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.cost.QuadraticCFLatencyRate;

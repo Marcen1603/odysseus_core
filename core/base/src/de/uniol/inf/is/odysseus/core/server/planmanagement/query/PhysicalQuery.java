@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IDefaultRootStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class PhysicalQuery implements IPhysicalQuery {
@@ -41,7 +40,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	private ILogicalQuery query;
-	private SLA sla;
 	final private IPhysicalOperator defaultRoot;
 	final private IDefaultRootStrategy defaultRootStrategy;
 	private int priority;
@@ -93,6 +91,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	private boolean opened = false;
 	private ISession user;
+	final private Map<String, Object> parameters = new HashMap<String, Object>();
 
 	/**
 	 * Creates a query based on a physical plan and
@@ -120,7 +119,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.query = query;
 		this.defaultRoot = defaultRoot;
 		this.defaultRootStrategy = defaultRootStrategy;
-		this.sla = query.getSLA();
 		this.user = query.getUser();
 		this.priority = query.getPriority();
 		this.containsCycles = query.containsCycles();
@@ -563,16 +561,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public SLA getSLA() {
-		return sla;
-	}
-
-	@Override
-	public void setSLA(SLA sla) {
-		this.sla = sla;
-	}
-
-	@Override
 	public void setUser(ISession user) {
 		this.user = user;
 	}
@@ -601,4 +589,15 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ILogicalQuery getLogicalQuery() {
 		return query;
 	}
+	
+	@Override
+	public void setParameter(String key, Object value) {
+		parameters.put(key, value);
+	}
+
+	@Override
+	public Object getParameter(String key) {
+		return parameters.get(key);
+	}
+
 }

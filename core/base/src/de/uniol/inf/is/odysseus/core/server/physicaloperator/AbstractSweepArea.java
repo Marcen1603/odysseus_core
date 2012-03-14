@@ -98,13 +98,13 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 				T tmpElement = this.currentElement;
 				this.currentElement = null;
 				return tmpElement;
-			} 
-
-			if (!hasNext()) {
-				throw new NoSuchElementException();
-			} 
-			
-            return next();
+			} else {
+				if (hasNext()) {
+					return next();
+				} else {
+					throw new NoSuchElementException();
+				}
+			}
 		}
 
 		@Override
@@ -253,9 +253,7 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 
 	@Override
 	final public void clear() {
-	    synchronized( getElements() ) {
-	        this.getElements().clear();
-	    }
+		this.getElements().clear();
 	}
 
 	@Override

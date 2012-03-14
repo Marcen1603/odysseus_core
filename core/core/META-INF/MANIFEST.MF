@@ -26,8 +26,6 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf.description,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.sdf.unit,
- de.uniol.inf.is.odysseus.core.sla,
- de.uniol.inf.is.odysseus.core.sla.unit,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
 

@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.sla.metric;
 
-import de.uniol.inf.is.odysseus.core.sla.Metric;
-import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.core.server.sla.Metric;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 
 /**
  * This Metric is a measure for the delay of tuples.

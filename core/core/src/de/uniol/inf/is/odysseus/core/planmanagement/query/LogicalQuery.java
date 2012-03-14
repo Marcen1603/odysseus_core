@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
@@ -62,17 +61,14 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	private int priority = 0;
 
+	final private Map<String, Object> parameters = new HashMap<String, Object>();
+	
 	/**
-	 * SLA based penalty
+	 * 
+	 * @param parserID
+	 * @param logicalPlan
+	 * @param priority
 	 */
-	private double penalty;
-
-	/**
-	 * Service level agreement of the query
-	 */
-	@XmlTransient
-	private SLA sla;
-
 	public LogicalQuery(String parserID, ILogicalOperator logicalPlan,
 			int priority) {
 		this.id = idCounter++;
@@ -205,26 +201,6 @@ public class LogicalQuery implements ILogicalQuery {
 	}
 
 	@Override
-	public double getPenalty() {
-		return penalty;
-	}
-
-	@Override
-	public void addPenalty(double penalty) {
-		this.penalty += penalty;
-	}
-
-	@Override
-	public SLA getSLA() {
-		return this.sla;
-	}
-
-	@Override
-	public void setSLA(SLA sla) {
-		this.sla = sla;
-	}
-
-	@Override
 	public boolean containsCycles() {
 		return containsCycles;
 	}
@@ -345,6 +321,16 @@ public class LogicalQuery implements ILogicalQuery {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void setParameter(String key, Object value) {
+		parameters.put(key, value);
+	}
+
+	@Override
+	public Object getParameter(String key) {
+		return parameters.get(key);
 	}
 
 }

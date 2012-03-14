@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.sla;
+package de.uniol.inf.is.odysseus.core.server.sla;
 
 /**
  * Instances of this class define a service level of a sla.

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.sla.scope;
 
-import de.uniol.inf.is.odysseus.core.sla.Scope;
+import de.uniol.inf.is.odysseus.core.server.sla.Scope;
 
 /**
  * A scope for sla. This scope means that the average value of a metric must not

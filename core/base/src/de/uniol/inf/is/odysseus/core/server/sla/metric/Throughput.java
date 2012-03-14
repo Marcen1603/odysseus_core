@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.sla.metric;
 
+import de.uniol.inf.is.odysseus.core.server.sla.Metric;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.ThroughputUnit;
-import de.uniol.inf.is.odysseus.core.sla.Metric;
 
 /**
  * This metric is a measure for throughput

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.core.server.sla;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.sla.SLA;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**

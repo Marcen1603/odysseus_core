@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.sla;
+package de.uniol.inf.is.odysseus.core.server.sla;
 
 /**
  * Defines the scope of the sla.

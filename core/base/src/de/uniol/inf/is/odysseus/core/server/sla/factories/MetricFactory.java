@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.core.server.sla.factories;
 
+import de.uniol.inf.is.odysseus.core.server.sla.Metric;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Accuracy;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Throughput;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.RatioUnit;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.ThroughputUnit;
-import de.uniol.inf.is.odysseus.core.sla.Metric;
-import de.uniol.inf.is.odysseus.core.sla.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 
 public class MetricFactory {
 

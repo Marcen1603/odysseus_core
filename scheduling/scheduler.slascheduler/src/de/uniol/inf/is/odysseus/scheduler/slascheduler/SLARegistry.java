@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 
 /**
  * central management of scheduling data
@@ -114,10 +115,10 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			SLARegistryInfo data = new SLARegistryInfo();
 			ISLAConformance conformance = new SLAConformanceFactory().
-					createSLAConformance(query.getSLA(), this.scheduler, query);
+					createSLAConformance((SLA) query.getParameter(SLA.class.getName()), this.scheduler, query);
 			data.setConformance(conformance);
 			
-			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), query.getSLA());
+			ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), (SLA) query.getParameter(SLA.class.getName()));
 			data.setCostFunction(costFunction);
 			
 			IStarvationFreedom starvationFreedom = new StarvationFreedomFactory().
@@ -125,7 +126,7 @@ public class SLARegistry implements IPlanModificationListener {
 							data, query);
 			data.setStarvationFreedom(starvationFreedom);
 			
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement((SLA) query.getParameter(SLA.class.getName()));
 			data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
 			
 			List<IBuffer<?>> buffers = findBuffers(query);
@@ -141,7 +142,7 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			SLARegistryInfo data = this.removeSchedData(query);
 			
-			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement(query.getSLA());
+			ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement((SLA) query.getParameter(SLA.class.getName()));
 			placement.removeSLAConformance(data.getConnectionPoint(), 
 					data.getConformance());
 			break;
