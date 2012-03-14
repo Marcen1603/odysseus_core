@@ -3,6 +3,7 @@
 #TRANSCFG Standard
 #ADDQUERY
 DROP STREAM nexmark:person2;
+#ADDQUERY
 ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FILE 'nexmark/daten/nexmark_person2.csv' AS string
 
 #RUNQUERY

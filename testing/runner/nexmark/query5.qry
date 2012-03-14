@@ -3,8 +3,11 @@
 #TRANSCFG Standard
 #RUNQUERY
 DROP STREAM nexmark:auction2;
+#RUNQUERY
 DROP STREAM nexmark:person2;
+#RUNQUERY
 ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE 'nexmark/daten/nexmark_auction2.csv' AS csv;
+#RUNQUERY
 ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FILE 'nexmark/daten/nexmark_person2.csv' AS csv;
 
 #RUNQUERY
