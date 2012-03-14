@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: Odysseus Checkstyle Configuration
+    Checkstyle-Configuration: Odyssues Checkstyle
     Description: none
 -->
 <module name="Checker">
@@ -319,7 +319,8 @@
       <property name="severity" value="warning"/>
     </module>
     <module name="MultipleStringLiterals">
-      <property name="severity" value="warning"/>
+      <property name="severity" value="ignore"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="warning"/>
     </module>
     <module name="MultipleVariableDeclarations">
       <property name="severity" value="error"/>
