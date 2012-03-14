@@ -162,7 +162,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
+			
 			for (SingleSourceExecutor source : sourceThreads) {
+				logger.debug("Interrupting running source thread "+source);
 				source.interrupt();
 			}
 			sourceThreads.clear();

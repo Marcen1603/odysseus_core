@@ -16,6 +16,8 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 
 	private SingleThreadSchedulerWithStrategy caller;
 
+	private boolean interrupt;
+
 	public SingleSourceExecutor(IIterableSource<?> s,
 			SingleThreadSchedulerWithStrategy singleThreadScheduler) {
 		this.setName(s.getName());
@@ -25,29 +27,40 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 
 	@Override
 	public void run() {
-
-		logger.debug("Adding Source " + s);
-		logger.debug("Waiting for open");
+		interrupt = false;
+		logger.debug("Adding Source. "+s+".Waiting for open ...");
 		s.subscribe(this, POEventType.OpenDone);
 		synchronized (this) {
-			while (!s.isOpen()) {
+			while (!interrupt && !s.isOpen() && !isInterrupted()) {
 				try {
 					this.wait(1000);
-				} catch (InterruptedException ignored) {}
+				} catch (InterruptedException ignored) {
+				}
 			}
 		}
-		logger.debug("Opened ... Start Processing");
-		while (!isInterrupted() && s.isOpen() && !s.isDone() && s.hasNext()) {
+		if (!interrupt) {
+			logger.debug("Opened " + this.hashCode()
+					+ "... Start Processing of Source " + s);
+		}
+		while (!interrupt && !isInterrupted() && s.isOpen() && !s.isDone()
+				&& s.hasNext()) {
 			s.transferNext();
 			Thread.yield();
 		}
-		logger.debug("Removing Source " + s);
+
+		logger.debug("Removing " + this.hashCode() + " Source " + s);
 		caller.removeSourceThread(this);
 	}
 
 	@Override
 	public synchronized void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
 		notifyAll();
+	}
+
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		this.interrupt = true;
 	}
 
 }
