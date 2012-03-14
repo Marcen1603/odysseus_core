@@ -165,6 +165,7 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 			for (SingleSourceExecutor source : sourceThreads) {
 				source.interrupt();
 			}
+			sourceThreads.clear();
 
 			for (IIterableSource<?> source : sourcesToSchedule) {
 				final IIterableSource<?> s = source;
