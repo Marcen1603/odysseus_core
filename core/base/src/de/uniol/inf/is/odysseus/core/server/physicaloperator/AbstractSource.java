@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
-		implements ISource<T>{
+		implements ISource<T> {
 
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
@@ -78,7 +78,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private IEventHandler eventHandler = new EventHandler();
+	private IEventHandler eventHandler = new EventHandler(this);
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
@@ -104,20 +104,20 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
-	
+
 	@Override
 	public void startEventDispatcher() {
 		eventHandler.startEventDispatcher();
 	}
-	
+
 	@Override
-	public void stopEventDispatcher(){
+	public void stopEventDispatcher() {
 		eventHandler.stopEventDispatcher();
 	}
-	
+
 	@Override
 	public boolean isEventDispatcherRunning() {
-	    return eventHandler.isEventDispatcherRunning();
+		return eventHandler.isEventDispatcherRunning();
 	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
@@ -198,18 +198,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
-	
+
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		this.outputSchema.put(port, outputSchema);		
+		this.outputSchema.put(port, outputSchema);
 	}
-	
-	
 
 	// ------------------------------------------------------------------------
 	// OPEN
@@ -329,7 +327,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {
@@ -367,12 +366,16 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected void propagateDone() {
-		fire(this.doneEvent);
-		this.process_done();
-		for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
-		    if( !sub.isDone() ) {
-		        sub.getTarget().done(sub.getSinkInPort());
-		    }
+		// Could be that the query is already closed. In this cases the done event
+		// does not of any interest any more
+		if (isOpen()) {
+			fire(this.doneEvent);
+			this.process_done();
+			for (PhysicalSubscription<ISink<? super T>> sub : sinkSubscriptions) {
+				if (!sub.isDone()) {
+					sub.getTarget().done(sub.getSinkInPort());
+				}
+			}
 		}
 	}
 
@@ -387,20 +390,20 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void block() {
-//		synchronized (blocked) {
-			this.blocked.set(true);
-			getLogger().debug("Operator " + this.toString() + " blocked");
-			fire(blockedEvent);
-//		}
+		// synchronized (blocked) {
+		this.blocked.set(true);
+		getLogger().debug("Operator " + this.toString() + " blocked");
+		fire(blockedEvent);
+		// }
 	}
 
 	@Override
 	public void unblock() {
-//		synchronized (blocked) {
-			this.blocked.set(false);
-			getLogger().debug("Operator " + this.toString() + " unblocked");
-			fire(unblockedEvent);
-//		}
+		// synchronized (blocked) {
+		this.blocked.set(false);
+		getLogger().debug("Operator " + this.toString() + " unblocked");
+		fire(unblockedEvent);
+		// }
 	}
 
 	// ------------------------------------------------------------------------
@@ -424,9 +427,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		if (!this.sinkSubscriptions.contains(sub)) {
-//			getLogger().debug(
-//					this + " Subscribe Sink " + sink + " to " + sinkInPort
-//							+ " from " + sourceOutPort);
+			// getLogger().debug(
+			// this + " Subscribe Sink " + sink + " to " + sinkInPort
+			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
 		}
@@ -469,32 +472,34 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 	}
 
-	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite Arrays (MG)
+	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
+	// Arrays (MG)
 	@Override
 	public void atomicReplaceSink(
 			List<PhysicalSubscription<ISink<? super T>>> remove,
 			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
-//		synchronized (this.sinkSubscriptions) {
-			for (PhysicalSubscription<ISink<? super T>> sub : remove) {
-				unsubscribeSink(sub);
-			}
-			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-//		}
+		// synchronized (this.sinkSubscriptions) {
+		for (PhysicalSubscription<ISink<? super T>> sub : remove) {
+			unsubscribeSink(sub);
+		}
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		// }
 	}
 
-	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite Arrays (MG)
+	// TODO: Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
+	// Arrays (MG)
 	@Override
 	public void atomicReplaceSink(
 			PhysicalSubscription<ISink<? super T>> remove,
 			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
-//		synchronized (this.sinkSubscriptions) {
-			unsubscribeSink(remove);
-			for (ISink<? super T> sink : sinks) {
-				subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-			}
-//		}
+		// synchronized (this.sinkSubscriptions) {
+		unsubscribeSink(remove);
+		for (ISink<? super T> sink : sinks) {
+			subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		}
+		// }
 	}
 
 	@Override
@@ -514,7 +519,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void addOwner(IOperatorOwner owner) {
-		if (!this.owners.contains(owner)){
+		if (!this.owners.contains(owner)) {
 			this.owners.add(owner);
 		}
 	}
@@ -528,7 +533,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// this.deactivateRequestControls.remove(owner);
 		// }
 	}
-	
+
 	@Override
 	public void removeAllOwners() {
 		this.owners.clear();
@@ -567,7 +572,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		}
 		return result.toString();
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// Other Methods
 	// ------------------------------------------------------------------------
@@ -584,27 +589,29 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	abstract public AbstractSource<T> clone();
-	
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(! (ipo instanceof ISource || ipo instanceof IPipe)) return false;
+		if (!(ipo instanceof ISource || ipo instanceof IPipe))
+			return false;
 		return process_isSemanticallyEqual(ipo);
 	}
-	
+
 	// TODO: Make abstract again and implement in Children
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;
 	}
-	
-	
-	private static Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old){
+
+	private static Map<Integer, SDFSchema> createCleanClone(
+			Map<Integer, SDFSchema> old) {
 		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-		for(Entry<Integer, SDFSchema> e : old.entrySet()){
-			copy.put(e.getKey(), new SDFSchema(e.getValue().getURI(), e.getValue()));
+		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
+			copy.put(e.getKey(),
+					new SDFSchema(e.getValue().getURI(), e.getValue()));
 		}
 		return copy;
 	}
-	
+
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		// in general there is no metadata

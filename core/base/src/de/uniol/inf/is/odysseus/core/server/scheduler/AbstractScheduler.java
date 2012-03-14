@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
+import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -37,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractScheduler extends EventHandler implements
+public abstract class AbstractScheduler implements
 		IScheduler {
 	/**
 	 * Indicates if the scheduling is started.
@@ -81,6 +84,8 @@ public abstract class AbstractScheduler extends EventHandler implements
 	private List<IIterableSource<?>> sources;
 
 	private List<IPartialPlan> partialPlans;
+	
+	private final EventHandler eventHandler;
 
 	/**
 	 * Creates a new scheduler.
@@ -91,6 +96,7 @@ public abstract class AbstractScheduler extends EventHandler implements
 	 *            instance.
 	 */
 	public AbstractScheduler(ISchedulingFactory schedulingFactory) {
+		eventHandler = new EventHandler(this);
 		this.schedulingFactory = schedulingFactory;
 	}
 
@@ -295,4 +301,38 @@ public abstract class AbstractScheduler extends EventHandler implements
 		
 		return null;
 	}
+
+	public void startEventDispatcher() {
+		eventHandler.startEventDispatcher();
+	}
+
+	public void stopEventDispatcher() {
+		eventHandler.stopEventDispatcher();
+	}
+
+	public boolean isEventDispatcherRunning() {
+		return eventHandler.isEventDispatcherRunning();
+	}
+
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(listener, type);
+	}
+
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(listener);
+	}
+
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	public final void fire(IEvent<?, ?> event) {
+		eventHandler.fire(event);
+	}
+	
+	
 }

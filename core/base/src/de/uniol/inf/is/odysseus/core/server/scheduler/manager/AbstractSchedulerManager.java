@@ -24,6 +24,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
+import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
@@ -43,7 +46,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
  * @author Wolf Bauer
  * 
  */
-public abstract class AbstractSchedulerManager extends EventHandler implements ISchedulerManager {
+public abstract class AbstractSchedulerManager implements ISchedulerManager {
 
 	/**
 	 * Count of active scheduler.
@@ -73,12 +76,14 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 	private List<IErrorEventListener> errorEventListener = Collections
 			.synchronizedList(new ArrayList<IErrorEventListener>());
 	
+	final EventHandler eventHandler;
 	
 	/**
 	 * Creates a new manager and initializes the logger. Used by OSGi (no
 	 * parameter allowed).
 	 */
 	public AbstractSchedulerManager() {
+		this.eventHandler = new EventHandler(this);
 		this.logger = LoggerFactory.getLogger(AbstractSchedulerManager.class);
 		this.logger.trace("Scheduler manager activated.");
 		
@@ -323,5 +328,39 @@ public abstract class AbstractSchedulerManager extends EventHandler implements I
 				+ schedulingStrategy);
 		return null;
 	}
+
+	public void startEventDispatcher() {
+		eventHandler.startEventDispatcher();
+	}
+
+	public void stopEventDispatcher() {
+		eventHandler.stopEventDispatcher();
+	}
+
+	public boolean isEventDispatcherRunning() {
+		return eventHandler.isEventDispatcherRunning();
+	}
+
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(listener, type);
+	}
+
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(listener, type);
+	}
+
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(listener);
+	}
+
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(listener);
+	}
+
+	public final void fire(IEvent<?, ?> event) {
+		eventHandler.fire(event);
+	}
+	
+	
 
 }

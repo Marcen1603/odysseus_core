@@ -80,7 +80,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private IEventHandler eventHandler = new EventHandler();
+	private IEventHandler eventHandler = new EventHandler(this);
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
