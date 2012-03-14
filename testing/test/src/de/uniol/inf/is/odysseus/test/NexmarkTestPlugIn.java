@@ -3,7 +3,13 @@ package de.uniol.inf.is.odysseus.test;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+/**
+ * Activator for odysses.test-Plugin
+ * 
+ * @author Timo Michelsen
+ *
+ */
+public class NexmarkTestPlugIn implements BundleActivator {
 
 	static public BundleContext context;
 

@@ -79,17 +79,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		Map<String, File> results = Maps.newHashMap();
 		ImmutableList<File> fileArray = determineQueryFiles();
 
-		for (File file : fileArray) {
-			String name = file.getName();
-			int point = name.lastIndexOf(".");
-			String pre = name.substring(0, point);
-			String post = name.substring(point + 1);
-			if (post.equalsIgnoreCase("qry")) {
-				queries.put(pre, file);
-			} else if (post.equalsIgnoreCase("csv")) {
-				results.put(pre, file);
-			}
-		}
+		determineQueriesAndResults( fileArray, queries, results );
 
 		tryStartExecutor(executor);
 
@@ -125,6 +115,24 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		
 		return "Success";
 	}
+
+    private static void determineQueriesAndResults(ImmutableList<File> fileArray, Map<String, File> queries, Map<String, File> results) {
+        checkNotNull(fileArray, "fileArray must not be null");
+        checkNotNull(queries, "Map of Queries must not be null");
+        checkNotNull(results, "Map of Results must not be null");
+        
+        for (File file : fileArray) {
+            String name = file.getName();
+            int point = name.lastIndexOf(".");
+            String pre = name.substring(0, point);
+            String post = name.substring(point + 1);
+            if (post.equalsIgnoreCase("qry")) {
+                queries.put(pre, file);
+            } else if (post.equalsIgnoreCase("csv")) {
+                results.put(pre, file);
+            }
+        }        
+    }
 
     private static BufferedWriter createWriter() {
         // Creating resultfile in dir

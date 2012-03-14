@@ -14,6 +14,14 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
+/**
+ * Sink, which compares calculated relational tuple with
+ * predefined tuple. Used for tests only. Use callbacks to inform
+ * listener if one calculated tuple differs or all calculated tuples are correct.  
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class SimpleCompareSink extends AbstractSink<Object> implements
 		ICompareSink {
 
