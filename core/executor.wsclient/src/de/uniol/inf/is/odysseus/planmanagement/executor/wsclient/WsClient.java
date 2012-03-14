@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +33,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LogicalQueryInfo;
@@ -61,6 +62,8 @@ public class WsClient implements IExecutor, IClientExecutor{
 		}
 		return _logger;
 	}
+	
+	private List<IQueryListener> queryListener = new ArrayList<IQueryListener>();
 	
 	// manages the connection to the WebserviceServer
 	WebserviceServerService service;
@@ -88,6 +91,17 @@ public class WsClient implements IExecutor, IClientExecutor{
 			}
 		}
 		return false;
+	}
+	
+	
+	@Override
+	public void addQueryListener(IQueryListener listener) {
+		queryListener.add(listener);
+	}
+
+	@Override
+	public void removeQueryListener(IQueryListener listener) {
+		queryListener.remove(listener);
 	}
 	
 	/**
@@ -280,11 +294,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return query;
 	}
 	
-	
-	protected void firePlanModificationEvent(
-			AbstractPlanModificationEvent<?> eventArgs) {
-		// TODO: implement me!
-	}
+
 	
 /********************************************************************
  *                      Methods not implemented by server           *
@@ -341,5 +351,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 		// TODO not implemented by server yet
 		
 	}
+
+
 
 }
