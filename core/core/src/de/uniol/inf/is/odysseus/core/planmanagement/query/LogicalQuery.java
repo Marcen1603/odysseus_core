@@ -61,7 +61,7 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	private int priority = 0;
 
-	final private Map<String, Object> parameters = new HashMap<String, Object>();
+	transient final private Map<String, Object> parameters = new HashMap<String, Object>();
 	
 	/**
 	 * 
