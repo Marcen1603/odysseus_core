@@ -34,8 +34,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
 import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientSession;
@@ -252,15 +254,29 @@ public class WsClient implements IExecutor, IClientExecutor{
 		Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName).getResponseValue();
 		for(Integer val : response) {
 			getLogger().error(getLogicalQuery(val).getQueryText());
+			// TODO logicalQuery holen und firePlanModification aufrufen.
 		}
 		return response;
 	}
 	
 	@Override
 	public ILogicalQuery getLogicalQuery(int id) {
-		// FIXME: local LogicalQuery is not ILogicalQuery --> Why are there two LogicalQuery-Klasses --> should be one!! 
-		//return getWebserviceServer().getLogicalQuery(getSecurityToken(), new StringBuffer(id).toString()).getResponseValue();
-		return null;
+		return createLogicalQueryFromInfo(getWebserviceServer().getLogicalQuery(getSecurityToken(), "" + id).getResponseValue());
+	}
+	
+	/**
+	 * method to create an instance of LogicalQuery from an instance of LogicalQueryInfo
+	 * 
+	 * @param info
+	 * @return LogicalQuery
+	 */
+	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info) {
+		LogicalQuery query = new LogicalQuery();
+		query.setContainsCycles(info.isContainsCycles());
+		query.setParserId(info.getParserID());
+		query.setPriority(info.getPriority());
+		query.setQueryText(info.getQueryText());
+		return query;
 	}
 	
 /********************************************************************
