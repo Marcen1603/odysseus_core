@@ -287,7 +287,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 						isTransferExclusive());
 			}
 		}
-		fire(this.pushDoneEvent);
+		// The are cases possible where the the query is closed
+		// while transfer is active, in this cases no pushDoneEvent needs to be send
+		if (isOpen()) {
+			fire(this.pushDoneEvent);
+		}
 	}
 
 	@Override
@@ -366,7 +370,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	final protected void propagateDone() {
-		// Could be that the query is already closed. In this cases the done event
+		// Could be that the query is already closed. In this cases the done
+		// event
 		// does not of any interest any more
 		if (isOpen()) {
 			fire(this.doneEvent);
