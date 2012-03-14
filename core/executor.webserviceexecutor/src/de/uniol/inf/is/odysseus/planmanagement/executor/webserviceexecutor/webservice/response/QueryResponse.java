@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
  *
  */
 public class QueryResponse extends Response {
-
-	private LogicalQuery responseValue;
+	
+	private LogicalQuery query;
 	
 	public QueryResponse() {
 		super();
@@ -31,14 +31,14 @@ public class QueryResponse extends Response {
 	
 	public QueryResponse(LogicalQuery value, boolean success) {
 		super(success);
-		this.responseValue = value;
+		this.query = value;
 	}
 	
 	public LogicalQuery getResponseValue() {
-		return this.responseValue;
+		return this.query;
 	}
 	
 	public void setResponseValue(LogicalQuery value) {
-		this.responseValue = value;
+		this.query = value;
 	}
 }

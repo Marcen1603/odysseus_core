@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
-@XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class })
+@XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class, LogicalQuery.class })
 public class WebserviceServer {
 
 	public static void startServer() {
