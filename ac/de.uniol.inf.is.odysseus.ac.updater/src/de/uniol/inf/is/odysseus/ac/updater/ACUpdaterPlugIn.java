@@ -7,6 +7,12 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionReaction;
 
+/**
+ * Activator-Class for ac.updater-Plugin.
+ * 
+ * @author Timo Michelsen
+ *
+ */
 public class ACUpdaterPlugIn implements BundleActivator {
 
 	private static IAdmissionControl admissionControl;

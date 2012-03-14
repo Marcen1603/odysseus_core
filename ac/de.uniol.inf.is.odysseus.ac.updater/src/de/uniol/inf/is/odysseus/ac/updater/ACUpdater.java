@@ -14,14 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
  */
 public class ACUpdater extends Thread {
 
-	protected static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(ACUpdater.class);
-		}
-		return _logger;
-	}
+	private static final Logger LOGGER = LoggerFactory.getLogger(ACUpdater.class);
 
 	private static final long UPDATE_INTERVAL = 5000;
 
@@ -56,7 +49,7 @@ public class ACUpdater extends Thread {
 				
 			}
 		} catch( Throwable t ) {
-			t.printStackTrace();
+		    LOGGER.error("Exception during running ACUpdater", t);
 		}
 	}
 
