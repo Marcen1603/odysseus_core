@@ -44,6 +44,7 @@ public class Application implements IApplication {
 			while((executor = OdysseusRCPPlugIn.getExecutor()) == null){
 				Thread.sleep(2000);
 			}
+			//IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if(executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
 				String service = "WebserviceServerService";
