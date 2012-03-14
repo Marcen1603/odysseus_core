@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
  * @author wolf
  * 
  */
-public interface IPlanManager extends IClientPlanManager, IPlanModificationHandler {
+public interface IPlanManager extends IClientPlanManager, IPlanModificationHandler{
 
 	/**
 	 * getPlan liefert alle in Odysseus registrierten Anfragen.

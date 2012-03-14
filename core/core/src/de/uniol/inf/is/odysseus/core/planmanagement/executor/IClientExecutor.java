@@ -24,4 +24,6 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 public interface IClientExecutor {
 
 	public boolean connect(String connectString);
+	public void addQueryListener(IQueryListener listener);
+	public void removeQueryListener(IQueryListener listener);
 }

@@ -101,7 +101,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void fire(IEvent<?, ?> event) {
+	public synchronized void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
 
@@ -279,21 +279,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void transfer(T object, int sourceOutPort) {
-		// The are cases possible where the the query is closed
-		// while transfer is active, in this cases no pushDoneEvent needs to be send
+	public synchronized void transfer(T object, int sourceOutPort) {
 		if (isOpen()) {
 			fire(this.pushInitEvent);
-		}
-		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort(),
-						isTransferExclusive());
+			for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+				if (sink.getSourceOutPort() == sourceOutPort) {
+					sink.getTarget().process(object, sink.getSinkInPort(),
+							isTransferExclusive());
+				}
 			}
-		}
-		// The are cases possible where the the query is closed
-		// while transfer is active, in this cases no pushDoneEvent needs to be send
-		if (isOpen()) {
 			fire(this.pushDoneEvent);
 		}
 	}
@@ -304,7 +298,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void transfer(Collection<T> object, int sourceOutPort) {
+	public synchronized void transfer(Collection<T> object, int sourceOutPort) {
 		fire(this.pushListInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
@@ -335,8 +329,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<PhysicalSubscription<ISink<?>>> callPath) {
+	public synchronized void close(ISink<? super T> caller, int sourcePort,
+			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {

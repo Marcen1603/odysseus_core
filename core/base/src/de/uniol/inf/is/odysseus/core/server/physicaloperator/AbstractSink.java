@@ -106,22 +106,22 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	public void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
-	
+
 	@Override
 	public void startEventDispatcher() {
 		eventHandler.startEventDispatcher();
 	}
-	
+
 	@Override
-	public void stopEventDispatcher(){
+	public void stopEventDispatcher() {
 		eventHandler.stopEventDispatcher();
 	}
 
-    @Override
-    public boolean isEventDispatcherRunning() {
-        return eventHandler.isEventDispatcherRunning();
-    }
-    
+	@Override
+	public boolean isEventDispatcherRunning() {
+		return eventHandler.isEventDispatcherRunning();
+	}
+
 	final private POEvent openInitEvent;
 	final private POEvent openDoneEvent;
 
@@ -193,7 +193,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// OPEN
 	// ------------------------------------------------------------------------
 	@Override
-	public void open() throws OpenFailedException {
+	public synchronized void open() throws OpenFailedException {
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
 
@@ -220,7 +220,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@SuppressWarnings("static-method")
-    private boolean containsSubscription(
+	private boolean containsSubscription(
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			ISink<? super T> sink, int sourcePort, int sinkPort) {
 		for (PhysicalSubscription<ISink<?>> sub : callPath) {
@@ -251,9 +251,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void process(T object, int port, boolean isReadOnly) {
-		fire(processInitEvent[port]);
-		process_next(object, port, isReadOnly);
-		fire(processDoneEvent[port]);
+		if (isOpen()) {
+			fire(processInitEvent[port]);
+			process_next(object, port, isReadOnly);
+			fire(processDoneEvent[port]);
+		}
 	}
 
 	@Override
@@ -278,7 +280,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
 
-	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+	public synchronized void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		if (this.isSinkOpen.get()) {
 			this.isSinkOpen.set(false);
 			process_close();
@@ -558,7 +560,8 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		return false;
 	}
 
-	private static Map<Integer, SDFSchema> createCleanClone(Map<Integer, SDFSchema> old) {
+	private static Map<Integer, SDFSchema> createCleanClone(
+			Map<Integer, SDFSchema> old) {
 		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
 		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
 			copy.put(e.getKey(), e.getValue().clone());

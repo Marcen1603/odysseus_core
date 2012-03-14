@@ -43,17 +43,21 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class QueryView extends ViewPart implements IPlanModificationListener {
+public class QueryView extends ViewPart implements IPlanModificationListener, IQueryListener {
 
 	private Logger logger = LoggerFactory.getLogger(QueryView.class);
 	private IExecutor executor;
@@ -376,6 +380,9 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 						logger.error("cannot get queries", e);
 
 					}
+				}else if (executor instanceof IClientExecutor){
+					IClientExecutor ce = (IClientExecutor) executor;
+					ce.addQueryListener(QueryView.this);
 				}
 			}
 		});
@@ -525,5 +532,10 @@ public class QueryView extends ViewPart implements IPlanModificationListener {
 		}
 
 		protected abstract int doCompare(Viewer viewer, Object e1, Object e2);
+	}
+
+	@Override
+	public void queryAdded(ILogicalQuery logicalQuery) {
+		queries.add(new PhysicalQuery(logicalQuery, null, null, null));
 	}
 }

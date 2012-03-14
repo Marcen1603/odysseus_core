@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author wolf
  * 
  */
-public interface IClientPlanManager {
+public interface IClientPlanManager{
 	/**
 	 * removeQuery entfernt eine Anfrage aus Odysseus.
 	 * 

@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 
 public class EventHandler implements IEventHandler {
-	
+
 	Logger logger = LoggerFactory.getLogger(EventHandler.class);
 
 	final Map<IEventType, ArrayList<IEventListener>> eventListener = new HashMap<IEventType, ArrayList<IEventListener>>();
@@ -39,27 +39,27 @@ public class EventHandler implements IEventHandler {
 	public EventHandler(Object caller) {
 		this.caller = caller;
 	}
-	
+
 	@Override
-	public void startEventDispatcher(){
-		if (isEventDispatcherRunning()){
+	public void startEventDispatcher() {
+		if (isEventDispatcherRunning()) {
 			stopEventDispatcher();
 		}
 		dispatcher = new EventDispatcher(this);
 		dispatcher.start();
 	}
-	
+
 	@Override
-	public void stopEventDispatcher(){
-		logger.debug("Trying to stop Event Dispatcher for "+caller);
+	public void stopEventDispatcher() {
+		logger.debug("Trying to stop Event Dispatcher for " + caller);
 		dispatcher.interrupt();
 		dispatcher = null;
 	}
-	
-    @Override
-    public boolean isEventDispatcherRunning() {
-        return dispatcher != null && dispatcher.isAlive();
-    }
+
+	@Override
+	public boolean isEventDispatcherRunning() {
+		return dispatcher != null && dispatcher.isAlive();
+	}
 
 	/**
 	 * One listener can have multiple subscriptions to the same event sender and
@@ -111,29 +111,34 @@ public class EventHandler implements IEventHandler {
 
 	@Override
 	final public void fire(IEvent<?, ?> event) {
-		long curTime = System.nanoTime();
-		dispatcher.addEvent(event, curTime);
+		try {
+			long curTime = System.nanoTime();
+			dispatcher.addEvent(event, curTime);
+		} catch (NullPointerException e) {
+			logger.warn("Event fired on closed handler from "+caller);
+		}
 
 	}
 
 	Object getCaller() {
 		return caller;
 	}
-	
+
 }
 
 class EventDispatcher extends Thread {
-	
+
 	static Logger logger = LoggerFactory.getLogger(EventDispatcher.class);
-	
-	LinkedList<IEvent<?, ?>> eventQueue = new  LinkedList<IEvent<?,?>>();
+
+	LinkedList<IEvent<?, ?>> eventQueue = new LinkedList<IEvent<?, ?>>();
 	LinkedList<Long> eventTimestamps = new LinkedList<Long>();
 	final EventHandler handler;
 	private boolean interrupt;
 
 	public EventDispatcher(EventHandler handler) {
 		this.handler = handler;
-		this.setName("Event Dispatcher "+handler+" for "+handler.getCaller());
+		this.setName("Event Dispatcher " + handler + " for "
+				+ handler.getCaller());
 	}
 
 	public void addEvent(IEvent<?, ?> event, long eventTime) {
@@ -150,19 +155,21 @@ class EventDispatcher extends Thread {
 		Long timeStamp = null;
 		while (!isInterrupted()) {
 			synchronized (eventQueue) {
-				while (!isInterrupted() && eventQueue.isEmpty() && eventTimestamps.isEmpty()) {
+				while (!isInterrupted() && eventQueue.isEmpty()
+						&& eventTimestamps.isEmpty()) {
 					try {
 						eventQueue.wait(1000);
-					} catch (InterruptedException e) {}
+					} catch (InterruptedException e) {
+					}
 				}
-				if (isInterrupted()){
-					logger.debug("INTERRUPTED "+getName());
+				if (isInterrupted()) {
+					logger.debug("INTERRUPTED " + getName());
 					continue;
 				}
 				eventToFire = eventQueue.removeFirst();
 				timeStamp = eventTimestamps.removeFirst();
 			}
-			
+
 			synchronized (handler.eventListener) {
 				ArrayList<IEventListener> list = handler.eventListener
 						.get(eventToFire.getEventType());
@@ -181,18 +188,18 @@ class EventDispatcher extends Thread {
 				}
 			}
 		}
-		
+
 		logger.debug("Event Dispatcher terminated: " + getName());
 	}
-	
+
 	@Override
 	public void interrupt() {
 		this.interrupt = true;
 		super.interrupt();
 	}
-	
+
 	public boolean isInterrupted() {
 		return super.isInterrupted() || interrupt;
 	};
-	
+
 }
