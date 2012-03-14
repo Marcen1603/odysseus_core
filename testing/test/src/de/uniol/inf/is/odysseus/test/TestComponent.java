@@ -42,7 +42,6 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	private static final String NEXMARK_TESTS_NAME = "Nexmark Tests";
 	private static final int PROCESSING_WAIT_TIME = 1000;
 	private static Logger LOG = LoggerFactory.getLogger(TestComponent.class);
-	private static final String DIRECTORY = "nexmark";
 
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
@@ -66,18 +65,19 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	}
 
 	@Override
-	public Object startTesting() {
+	public Object startTesting(String[] args) {
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "Parser must be bound");
 		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
+		checkArgument(args.length == 3, "NexmarkTest needs exactly three arguments: [User], [Password], [FolderWithQueries]");
 		
-		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
+		ISession session = UserManagement.getSessionmanagement().login(args[0], args[1].getBytes());
 
-		out = createWriter();
+		out = createWriter(args[2]);
 
 		Map<String, File> queries = Maps.newHashMap();
 		Map<String, File> results = Maps.newHashMap();
-		ImmutableList<File> fileArray = determineQueryFiles();
+		ImmutableList<File> fileArray = determineQueryFiles(args[2]);
 
 		determineQueriesAndResults( fileArray, queries, results );
 
@@ -134,9 +134,11 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
         }        
     }
 
-    private static BufferedWriter createWriter() {
+    private static BufferedWriter createWriter(String directory) {
+        checkNotNull(directory, "directory must not be null");
+        
         // Creating resultfile in dir
-		String filename = DIRECTORY + "/result" + System.currentTimeMillis() + ".log";
+		String filename = directory + "/result" + System.currentTimeMillis() + ".log";
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
 			LOG.debug("Created result file " + filename);
@@ -164,9 +166,11 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		}
 	}
 
-	private static ImmutableList<File> determineQueryFiles() {
-		LOG.debug("Looking for files in " + DIRECTORY);
-		File f = new File(DIRECTORY);
+	private static ImmutableList<File> determineQueryFiles( String directory) {
+	    checkNotNull(directory, "Directory for determining query files must not be null");
+	    
+		LOG.debug("Looking for files in " + directory);
+		File f = new File(directory);
 		File[] fileArray = f.listFiles();
 		if (fileArray == null) {
 			return ImmutableList.of();
