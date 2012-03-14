@@ -54,7 +54,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration trafo) {
 		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getSourceType().equals("RelationalInputStreamAccessPO")){
+			if(accessAO.getAdapter() == null && accessAO.getSourceType().equals("RelationalInputStreamAccessPO")){
 				return true;
 			}
 		}

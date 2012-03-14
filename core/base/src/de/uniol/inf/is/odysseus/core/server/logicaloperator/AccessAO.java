@@ -39,6 +39,8 @@ public class AccessAO extends AbstractLogicalOperator implements
 	private String login;
 	private String password;
 	private boolean autoreconnect = false;
+	private Map<String, String> optionsMap;
+	private String adapter;
 
 	public String getFileURL() {
 		return fileURL;
@@ -201,5 +203,23 @@ public class AccessAO extends AbstractLogicalOperator implements
 	public void setAutoReconnectEnabled(boolean enable){
 		this.autoreconnect = enable;		
 	}
+
+	public void setOptions(Map<String, String> value) {
+		this.optionsMap = value;
+	}
+	
+	public Map<String, String> getOptionsMap() {
+		return optionsMap;
+	}
+
+	public void setAdapter(String value) {
+		this.adapter = value;
+	}
+	
+	public String getAdapter() {
+		return adapter;
+	}
+	
+	
 	
 }
