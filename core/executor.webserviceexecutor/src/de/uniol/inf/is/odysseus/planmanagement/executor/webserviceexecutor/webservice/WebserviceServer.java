@@ -96,7 +96,6 @@ public class WebserviceServer {
 			IntegerCollectionResponse response = new IntegerCollectionResponse(
 					ExecutorServiceBinding.getExecutor().addQuery(query,
 							parser, user, transCfg), true);
-			;
 			return response;
 		} catch (WebserviceException e) {
 			e.printStackTrace();
