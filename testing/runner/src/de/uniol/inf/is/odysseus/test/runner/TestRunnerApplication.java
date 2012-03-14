@@ -7,6 +7,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -19,10 +20,25 @@ import com.google.common.collect.Lists;
 public class TestRunnerApplication implements IApplication {
 
     private static final List<TestComponentRunner> RUNNERS = Lists.newArrayList(); 
+    private static final List<ITestComponent> COMPONENT_CACHE = Lists.newArrayList();
+    
     private static final Logger LOG = LoggerFactory.getLogger(TestRunnerPlugIn.class);
-
+    private static String[] args;
+    
+    private static boolean applicationStarted;
+    
     @Override
     public Object start(IApplicationContext context) throws Exception {
+        args = (String[])context.getArguments().get("application.args");
+        applicationStarted = true;
+        
+        if( !COMPONENT_CACHE.isEmpty() ) {
+            for( ITestComponent component : COMPONENT_CACHE ) {
+                startTestComponentImpl(component, args);
+            }
+            COMPONENT_CACHE.clear();
+        }
+        
         return null;
     }
 
@@ -42,7 +58,18 @@ public class TestRunnerApplication implements IApplication {
     }
 
     public void startTestComponent(ITestComponent component) {
-        TestComponentRunner runner = new TestComponentRunner(component);
+        if( applicationStarted ) {
+            startTestComponentImpl(component, args);
+        } else {
+            COMPONENT_CACHE.add(component);
+        }
+    }
+    
+    private static void startTestComponentImpl( ITestComponent component, String[] args ) {
+        Preconditions.checkNotNull(component, "Component must not be null!");
+        Preconditions.checkNotNull(args, "Args are not set here!");
+        
+        TestComponentRunner runner = new TestComponentRunner(component, args);
         RUNNERS.add(runner);
         
         LOG.debug("Start TestComponent" + component);

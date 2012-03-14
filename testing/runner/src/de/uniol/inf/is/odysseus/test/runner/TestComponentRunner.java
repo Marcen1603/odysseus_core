@@ -16,20 +16,23 @@ public class TestComponentRunner extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestComponentRunner.class);
 	private final ITestComponent component;
+	private final String[] args;
 	private Object testResult;
 	
-	public TestComponentRunner( ITestComponent component ) {
+	public TestComponentRunner( ITestComponent component, String[] args ) {
 		Preconditions.checkNotNull(component, "Component must not be null!");
+		Preconditions.checkNotNull(args, "Args must not be null");
 		
 		setName("TestComponentRunner:" + component);
 		this.component = component;
+		this.args = args;
 	}
 	
 	@Override
 	public void run() {
-		LOG.debug("Start Testcomponent " + component);
-		testResult = component.startTesting();
-		LOG.debug("End Testcomponent " + component);
+		LOG.debug("Start Testcomponent '" + component + "'. Arguments = '" + argsToString(args) + "'");
+		testResult = component.startTesting(args);
+		LOG.debug("End Testcomponent '" + component + "'.");
 	}
 	
 	public final Object getResult() {
@@ -41,5 +44,13 @@ public class TestComponentRunner extends Thread {
 	
 	public final ITestComponent getTestComponent() {
 		return component;
+	}
+	
+	private static String argsToString( String[] args ) {
+	    StringBuilder sb = new StringBuilder();
+	    for( String str: args ) {
+	        sb.append(str).append(" ");
+	    }
+	    return sb.toString();
 	}
 }
