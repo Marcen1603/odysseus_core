@@ -17,6 +17,8 @@ class SchedulingExecutor extends Thread {
 
 	private boolean pause;
 
+	private boolean interrupt;
+
 	public SchedulingExecutor(IPartialPlanScheduling planScheduling,
 			long timeSlicePerStrategy,
 			SingleThreadSchedulerWithStrategy caller, int trainsize) {
@@ -45,6 +47,7 @@ class SchedulingExecutor extends Thread {
 	@Override
 	public void run() {
 		logger.debug(" Started ");
+		interrupt = false;
 		try {
 			while (!isInterrupted()) {
 				if (!pause && planScheduling.planCount() > 0) {
@@ -78,5 +81,16 @@ class SchedulingExecutor extends Thread {
 			}
 		}
 		logger.debug(" Terminated ");
+	}
+	
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		this.interrupt = true;
+	}
+	
+	@Override
+	public boolean isInterrupted() {
+		return super.isInterrupted() || interrupt;
 	}
 }
