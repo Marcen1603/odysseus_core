@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Iterator;
@@ -51,23 +51,23 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
-		extends AbstractPipe<T, T> implements IHasPredicate{
+		extends AbstractPipe<T, T> implements IHasPredicate {
 	private final POEvent processPunctuationDoneEvent;
-	private static Logger _logger =  null;
-	
-	private static Logger getLogger(){
-		if (_logger == null){
+	private static Logger _logger = null;
+
+	private static Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(JoinTIPO.class);
 		}
 		return _logger;
 	}
-		
+
 	protected ITimeIntervalSweepArea<T>[] areas;
 	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
-	protected ITransferArea<T,T> transferFunction;
+	protected ITransferArea<T, T> transferFunction;
 	protected SDFSchema outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
@@ -83,21 +83,25 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	public JoinTIPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T,T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
+			ITransferArea<T, T> transferFunction,
+			ITimeIntervalSweepArea<T>[] areas) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 		this.areas = areas;
-		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
+		this.processPunctuationDoneEvent = new POEvent(this,
+				POEventType.ProcessPunctuationDone);
 	}
 
 	public JoinTIPO() {
-		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
+		this.processPunctuationDoneEvent = new POEvent(this,
+				POEventType.ProcessPunctuationDone);
 	}
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
-		this.processPunctuationDoneEvent  = new POEvent(this, POEventType.ProcessPunctuationDone);
+		this.processPunctuationDoneEvent = new POEvent(this,
+				POEventType.ProcessPunctuationDone);
 		this.areas = join.areas.clone();
 		int i = 0;
 		for (ITimeIntervalSweepArea<T> ja : join.areas) {
@@ -145,7 +149,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	public IPredicate<? super T> getJoinPredicate() {
 		return joinPredicate;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public IPredicate getPredicate() {
@@ -160,7 +164,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		}
 	}
 
-	public void setTransferFunction(ITransferArea<T,T> transferFunction) {
+	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
 		transferFunction.init(this);
 	}
@@ -172,7 +176,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	protected void process_next(T object, int port) {
-		
+
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -185,7 +189,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 			return;
 		}
 		if (!isOpen()) {
-			getLogger().error("process next called on non opened operator "+this+" with "+object+" from "+port);
+			getLogger().error(
+					"process next called on non opened operator " + this
+							+ " with " + object + " from " + port);
 			return;
 		}
 		int otherport = port ^ 1;
@@ -241,7 +247,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected synchronized void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
 			this.areas[i].clear();
 			this.areas[i].init();
@@ -252,26 +258,29 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	}
 
 	@Override
-	protected void process_close() {
-		areas[0].clear();
-		areas[1].clear();
-	}
-	
-	@Override
-	protected void process_done() {
-		transferFunction.done();
+	protected synchronized void process_close() {
 		areas[0].clear();
 		areas[1].clear();
 	}
 
 	@Override
+	protected synchronized void process_done() {
+		transferFunction.done();
+		if (isOpen()) {
+			areas[0].clear();
+			areas[1].clear();
+		}
+	}
+
+	@Override
 	protected boolean isDone() {
 		try {
-			
+
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 			}
-            return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+			return getSubscribedToSource(1).isDone()
+					&& getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
@@ -303,62 +312,71 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 
 	@Override
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		this.areas[port^1].purgeElementsBefore(timestamp);
+		this.areas[port ^ 1].purgeElementsBefore(timestamp);
 		this.transferFunction.newHeartbeat(timestamp, port);
 		fire(this.processPunctuationDoneEvent);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof JoinTIPO)) {
+		if (!(ipo instanceof JoinTIPO)) {
 			return false;
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ipo;
-				
-		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck gegeben
-		if(!this.hasSameSources(jtipo)
-				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
-				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
-				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
+
+		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
+		// gegeben
+		if (!this.hasSameSources(jtipo)
+				|| !dataMerge.getClass().toString()
+						.equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString()
+						.equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString()
+						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-		
+
 		// Vergleichen des Join-Pr�dikats und des Output-Schemas
-		if(this.getJoinPredicate().equals(jtipo.getJoinPredicate()) &&
-				this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
+		if (this.getJoinPredicate().equals(jtipo.getJoinPredicate())
+				&& this.getOutputSchema().compareTo(jtipo.getOutputSchema()) == 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isContainedIn(IPipe<T,T> ip) {
-		if(!(ip instanceof JoinTIPO)) {
+	public boolean isContainedIn(IPipe<T, T> ip) {
+		if (!(ip instanceof JoinTIPO)) {
 			return false;
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IMetaAttributeContainer<K>>) ip;
-		
-		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck gegeben
-		if(!this.hasSameSources(jtipo)
-				|| !dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
-				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
-				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
+
+		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
+		// gegeben
+		if (!this.hasSameSources(jtipo)
+				|| !dataMerge.getClass().toString()
+						.equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString()
+						.equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString()
+						.equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
-		
+
 		// Vergleichen des Join-Pr�dikats
-		if(this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
+		if (this.getJoinPredicate().isContainedIn(jtipo.getJoinPredicate())) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String getName(){
+	public String getName() {
 		return super.getName();
-//		return super.getName() + "Left SA: " + this.getAreas()[0].toString() + " Right SA: " + this.getAreas()[1].toString();
+		// return super.getName() + "Left SA: " + this.getAreas()[0].toString()
+		// + " Right SA: " + this.getAreas()[1].toString();
 	}
 
 }
