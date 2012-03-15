@@ -33,6 +33,7 @@ public class TestComponentRunner extends Thread {
 		LOG.debug("Start Testcomponent '" + component + "'. Arguments = '" + argsToString(args) + "'");
 		testResult = component.startTesting(args);
 		LOG.debug("End Testcomponent '" + component + "'.");
+		
 	}
 	
 	public final Object getResult() {

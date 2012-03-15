@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
@@ -521,6 +522,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 		firePlanExecutionEvent(new PlanExecutionEvent(this,
 				PlanExecutionEventType.EXECUTION_STOPPED));
+		// Stop Event Handler
+		EventHandler.stopDispatching();
 	}
 
 	/*

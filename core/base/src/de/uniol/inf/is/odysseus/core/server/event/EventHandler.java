@@ -26,10 +26,18 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 
+/**
+ * This class is a delegate and can handle event dispatching for
+ * any source that registers IEventListener. A thread pool is used
+ * to allow asynchronous dispatching
+ * 
+ * @author Marco Grawunder
+ *
+ */
 public class EventHandler {
 
-	private static int THREAD_POOL_SIZE = 10;
 	Logger logger = LoggerFactory.getLogger(EventHandler.class);
 
 	final Map<Object, Map<IEventType, ArrayList<IEventListener>>> eventListener = new HashMap<Object, Map<IEventType, ArrayList<IEventListener>>>();
@@ -38,17 +46,11 @@ public class EventHandler {
 	final private Map<Object, EventDispatcher> dispatcherMap = new HashMap<Object, EventDispatcher>();
 	static private EventHandler handler;
 
-	private EventHandler() {
-		initThreadPool(THREAD_POOL_SIZE);
-	}
-
-	private void initThreadPool(int size) {
-		dispatcherPool = new EventDispatcher[size];
-		for (int i = 0; i < size; i++) {
-			dispatcherPool[i] = new EventDispatcher(this);
-		}
-	}
-
+	/**
+	 * Get an instance of the EventHandler and register caller as one distributor
+	 * @param caller
+	 * @return
+	 */
 	public synchronized static EventHandler getInstance(Object caller) {
 
 		if (handler == null) {
@@ -62,31 +64,46 @@ public class EventHandler {
 			handler.eventListener.put(caller, el);
 		}
 
-		// Round robin assignment of Dispatcher Threads
-		// TODO: What if caller has already a dispatcher asigned?
-		EventDispatcher dispatcher = handler.dispatcherPool[handler.dispatcherMap
-				.size() % THREAD_POOL_SIZE];
-		handler.dispatcherMap.put(caller, dispatcher);
-		if (!dispatcher.isAlive()) {
-			dispatcher.start();
+		// Round robin assignment of Dispatcher Threads, if not already assigned
+		if (!handler.dispatcherMap.containsKey(caller)) {
+			EventDispatcher dispatcher = handler.dispatcherPool[handler.dispatcherMap
+					.size() % handler.dispatcherPool.length];
+			handler.dispatcherMap.put(caller, dispatcher);
+			if (!dispatcher.isAlive()) {
+				dispatcher.start();
+			}
 		}
 
 		return handler;
 	}
 
+	/**
+	 * Stops ALL dispatching. This should only be called before the hole instance closes 
+	 * because all threads are stopped.
+	 */
 	public static synchronized void stopDispatching() {
 		for (EventDispatcher dispatcher : handler.dispatcherPool) {
 			dispatcher.interrupt();
 		}
 		handler = null;
 	}
+	
+	private EventHandler() {
+		initThreadPool((int) OdysseusDefaults.getLong("EventHandlerDispatcherPoolSize", 10));
+	}
+
+	private void initThreadPool(int size) {
+		dispatcherPool = new EventDispatcher[size];
+		for (int i = 0; i < size; i++) {
+			dispatcherPool[i] = new EventDispatcher(this);
+		}
+	}
 
 	/**
-	 * One listener can have multiple subscriptions to the same event sender and
-	 * the same event type
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.queryexecution.po.base.operators.IPhysicalOperator#subscribe(de.uniol.inf.is.odysseus.core.server.IPOEventListener.queryexecution.event.POEventListener,
-	 *      de.uniol.inf.is.odysseus.core.server.monitor.queryexecution.event.POEventType)
+	 * Register a new listener at caller for event type
+	 * @param caller
+	 * @param listener
+	 * @param type
 	 */
 	public void subscribe(Object caller, IEventListener listener,
 			IEventType type) {
@@ -101,7 +118,13 @@ public class EventHandler {
 			curEventListener.add(listener);
 		}
 	}
-
+	
+	/**
+	 * Remove a listener from caller for event type
+	 * @param caller
+	 * @param listener
+	 * @param type
+	 */
 	public void unsubscribe(Object caller, IEventListener listener,
 			IEventType type) {
 		synchronized (this.eventListener) {
@@ -112,10 +135,11 @@ public class EventHandler {
 		}
 	}
 
+
 	/**
-	 * One listener can have multiple subscriptions to the same event sender
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.queryexecution.po.base.operators.IPhysicalOperator#subscribeToAll(de.uniol.inf.is.odysseus.core.server.IPOEventListener.queryexecution.event.POEventListener)
+	 * Register a listener for all events a caller provides
+	 * @param caller
+	 * @param listener
 	 */
 	public void subscribeToAll(Object caller, IEventListener listener) {
 
@@ -129,6 +153,12 @@ public class EventHandler {
 		}
 	}
 
+	/**
+	 * Remove a listener from all caller if it was registered for all events. Does not removed any single
+	 * event registration! 
+	 * @param caller
+	 * @param listener
+	 */
 	public void unSubscribeFromAll(Object caller, IEventListener listener) {
 		synchronized (this.genericEventListener) {
 			List<IEventListener> list = genericEventListener.get(caller);
@@ -138,6 +168,11 @@ public class EventHandler {
 		}
 	}
 
+	/**
+	 * Deliver event from caller
+	 * @param caller
+	 * @param event
+	 */
 	final public void fire(Object caller, IEvent<?, ?> event) {
 		long curTime = System.nanoTime();
 		dispatcherMap.get(caller).addEvent(caller, event, curTime);
@@ -145,6 +180,15 @@ public class EventHandler {
 
 }
 
+/**
+ * Dispatcher Class that does the dispatching of events. The Dispatcher has a
+ * queue of events that should be dispatched to the listener. Each event has a
+ * caller, a time stamp and a type. The EventHandler is asked to the listener
+ * that should be informed
+ * 
+ * @author Marco Grawunder
+ *
+ */
 class EventDispatcher extends Thread {
 
 	static Logger logger = LoggerFactory.getLogger(EventDispatcher.class);
@@ -228,7 +272,7 @@ class EventDispatcher extends Thread {
 	}
 
 	@Override
-    public boolean isInterrupted() {
+	public boolean isInterrupted() {
 		return super.isInterrupted() || interrupt;
 	}
 
