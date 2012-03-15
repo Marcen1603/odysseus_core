@@ -201,6 +201,6 @@ class EventDispatcher extends Thread {
 	@Override
     public boolean isInterrupted() {
 		return super.isInterrupted() || interrupt;
-	};
+	}
 
 }
