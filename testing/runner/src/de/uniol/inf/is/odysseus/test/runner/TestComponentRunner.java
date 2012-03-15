@@ -31,12 +31,17 @@ public class TestComponentRunner extends Thread {
 	@Override
 	public void run() {
 		LOG.debug("Start Testcomponent '" + component + "'. Arguments = '" + argsToString(args) + "'");
+		long startTime = System.nanoTime();
 		testResult = component.startTesting(args);
-		LOG.debug("End Testcomponent '" + component + "'.");
-		
+		long elapsedTime = System.nanoTime() - startTime;
+		LOG.debug("End Testcomponent '" + component + "'. Duration = " + toMillis(elapsedTime) + " ms");
 	}
 	
-	public final Object getResult() {
+	private static long toMillis(long elapsedTime) {
+        return elapsedTime / 1000000;
+    }
+
+    public final Object getResult() {
 		if(testResult == null ) {
 			throw new IllegalStateException("TestComponent " + component + " not finished.");
 		}
