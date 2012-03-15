@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.wrapper.base.logicaloperator.SourceAO;
 import de.uniol.inf.is.odysseus.wrapper.base.physicaloperator.SourcePO;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
