@@ -329,35 +329,43 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		return null;
 	}
 
-	public void startEventDispatcher() {
+	@Override
+    public void startEventDispatcher() {
 		eventHandler.startEventDispatcher();
 	}
 
-	public void stopEventDispatcher() {
+	@Override
+    public void stopEventDispatcher() {
 		eventHandler.stopEventDispatcher();
 	}
 
-	public boolean isEventDispatcherRunning() {
+	@Override
+    public boolean isEventDispatcherRunning() {
 		return eventHandler.isEventDispatcherRunning();
 	}
 
-	public void subscribe(IEventListener listener, IEventType type) {
+	@Override
+    public void subscribe(IEventListener listener, IEventType type) {
 		eventHandler.subscribe(listener, type);
 	}
 
-	public void unsubscribe(IEventListener listener, IEventType type) {
+	@Override
+    public void unsubscribe(IEventListener listener, IEventType type) {
 		eventHandler.unsubscribe(listener, type);
 	}
 
-	public void subscribeToAll(IEventListener listener) {
+	@Override
+    public void subscribeToAll(IEventListener listener) {
 		eventHandler.subscribeToAll(listener);
 	}
 
-	public void unSubscribeFromAll(IEventListener listener) {
+	@Override
+    public void unSubscribeFromAll(IEventListener listener) {
 		eventHandler.unSubscribeFromAll(listener);
 	}
 
-	public final void fire(IEvent<?, ?> event) {
+	@Override
+    public final void fire(IEvent<?, ?> event) {
 		eventHandler.fire(event);
 	}
 	

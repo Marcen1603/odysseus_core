@@ -198,7 +198,8 @@ class EventDispatcher extends Thread {
 		super.interrupt();
 	}
 
-	public boolean isInterrupted() {
+	@Override
+    public boolean isInterrupted() {
 		return super.isInterrupted() || interrupt;
 	};
 
