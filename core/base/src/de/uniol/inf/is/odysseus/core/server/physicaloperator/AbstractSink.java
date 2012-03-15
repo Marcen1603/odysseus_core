@@ -82,27 +82,27 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(this,listener, type);
+		eventHandler.subscribe(this, listener, type);
 	}
 
 	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(this,listener, type);
+		eventHandler.unsubscribe(this, listener, type);
 	}
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(this,listener);
+		eventHandler.subscribeToAll(this, listener);
 	}
 
 	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(this,listener);
+		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
 	@Override
 	public void fire(IEvent<?, ?> event) {
-		eventHandler.fire(this,event);
+		eventHandler.fire(this, event);
 	}
 
 	final private POEvent openInitEvent;
@@ -233,11 +233,9 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void process(T object, int port, boolean isReadOnly) {
-		if (isOpen()) {
-			fire(processInitEvent[port]);
-			process_next(object, port, isReadOnly);
-			fire(processDoneEvent[port]);
-		}
+		fire(processInitEvent[port]);
+		process_next(object, port, isReadOnly);
+		fire(processDoneEvent[port]);
 	}
 
 	@Override
