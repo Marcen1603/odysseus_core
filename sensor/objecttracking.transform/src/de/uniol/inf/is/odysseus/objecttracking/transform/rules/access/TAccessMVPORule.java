@@ -37,7 +37,7 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 	@Override
 	public void execute(AccessAO operator, TransformationConfiguration config) {
 		System.out.println("CREATE AccessMVPO: " + operator); 
-		String sourceName = operator.getSource().getURI(false);
+		String sourceName = operator.getSourcename();
 		ISource accessPO = new AtomicDataInputStreamAccessMVPO(operator.getHost(), operator.getPort(), operator.getOutputSchema());
 		accessPO.setOutputSchema(operator.getOutputSchema());
 		getDataDictionary().putAccessPlan(sourceName, accessPO);
@@ -55,8 +55,8 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 	@Override
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
-		if(operator.getSourceType().equals("RelationalAtomicDataInputStreamAccessMVPO") &&
-				getDataDictionary().getAccessPlan(operator.getSource().getURI()) == null){
+		if(operator.getAdapter().equals("RelationalAtomicDataInputStreamAccessMVPO") &&
+				getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
 			return true;
 		}
 		

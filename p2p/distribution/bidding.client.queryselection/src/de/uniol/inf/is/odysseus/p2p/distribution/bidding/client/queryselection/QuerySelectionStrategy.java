@@ -47,7 +47,7 @@ public class QuerySelectionStrategy implements IQuerySelectionStrategy {
 		if (!sources.isEmpty()) {
 			for (AccessAO ao : sources) {
 				if (dd
-						.containsViewOrStream(ao.getSource().getURI(),
+						.containsViewOrStream(ao.getSourcename(),
 								P2PUserContext.getActiveSession(""))) {
 					return false;
 				}

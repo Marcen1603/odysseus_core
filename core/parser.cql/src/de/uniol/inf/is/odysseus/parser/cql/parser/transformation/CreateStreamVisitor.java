@@ -25,7 +25,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
@@ -119,8 +118,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTTimedTuples node, Object data)
 			throws QueryParseException {
 		try {
-			FixedSetAccessAO newPO = new FixedSetAccessAO(
-					dd.createSDFSource(name), node.getTuples(attributes));
+			FixedSetAccessAO newPO = new FixedSetAccessAO(name,
+					dd.getSourceType(name), node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, attributes);
 			newPO.setOutputSchema(outputSchema);
 			dd.setStream(name, newPO, caller);
@@ -261,16 +260,15 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		AccessAO source = null;
 		if (node.useTupleMode()) {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalInputStreamAccessPO"));
+			source = new AccessAO(name,
+					"RelationalInputStreamAccessPO",null);
 		} else if (node.useMVMode()) {
-			source = new AccessAO(new SDFSource(name,
-					"RelationalAtomicDataInputStreamAccessMVPO"));
+			source = new AccessAO(name,
+					"RelationalAtomicDataInputStreamAccessMVPO",null);
 		} else {
 			source = new AccessAO(
-					new SDFSource(
 							name,
-							RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+							RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
 		}
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
@@ -306,8 +304,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				port = Integer.parseInt(parts[1]);
 			}
 		}
-		AccessAO source = new AccessAO(new SDFSource(name,
-				"RelationalByteBufferAccessPO"));
+		AccessAO source = new AccessAO(name,
+				"RelationalByteBufferAccessPO",null);
 		source.setAutoReconnectEnabled(autoReconnect);
 		initSource(source, host, port);
 		ILogicalOperator op = addTimestampAO(source);
@@ -327,7 +325,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (node.jjtGetNumChildren() > 1) {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
-		FileAccessAO source = new FileAccessAO(new SDFSource(name, type));
+		FileAccessAO source = new FileAccessAO(name, type,null);
 		source.setPath(filename);
 		source.setFileType(type);
 		source.setOutputSchema(new SDFSchema(name, this.attributes));

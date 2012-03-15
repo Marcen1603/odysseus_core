@@ -33,7 +33,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.TRACE,"Transform AccessAO: " + accessAO);	
-		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSource().getURI());
+		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSourcename());
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
 		replace(accessAO, accessPO, trafo);		
@@ -44,7 +44,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public boolean isExecutable(AccessAO operator, TransformationConfiguration transformConfig) {		
-		return getDataDictionary().getAccessPlan(operator.getSource().getURI(false)) != null;
+		return getDataDictionary().getAccessPlan(operator.getSourcename()) != null;
 	}
 
 	@Override

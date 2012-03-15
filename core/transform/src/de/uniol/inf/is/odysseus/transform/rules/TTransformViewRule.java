@@ -39,9 +39,9 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 //		System.out.println("Transform view: " + accessAO);
-		String sourceName = accessAO.getSource().getURI(false);
+		String sourceName = accessAO.getSourcename();
 		//ILogicalOperator cPlan = AbstractTreeWalker.prefixWalk($view, new CopyLogicalPlanVisitor());
-		ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSource().getURI(), getCaller());
+		ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSourcename(), getCaller());
 		ILogicalOperator cPlan = view;
 
 		ITransformation transformation = new TransformationExecutor();
@@ -63,7 +63,7 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 			for(Object o: currentWM){
 				if(o instanceof AccessAO){
 					AccessAO other = (AccessAO)o;
-					if(other.getSource().getURI().equals(accessAO.getSource().getURI())){
+					if(other.getSourcename().equals(accessAO.getSourcename())){
 						accessAOs.add(other);
 					}
 				}
@@ -88,8 +88,8 @@ public class TTransformViewRule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI(false))==null){
-			ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSource().getURI(), getCaller());
+		if(getDataDictionary().getAccessPlan(accessAO.getSourcename())==null){
+			ILogicalOperator view = getDataDictionary().getStreamForTransformation(accessAO.getSourcename(), getCaller());
 			if(view!=null){		
 				if(view.getSubscribedToSource().size()!=1 || (!view.getSubscribedToSource(0).getTarget().equals(accessAO))){
 					return true;

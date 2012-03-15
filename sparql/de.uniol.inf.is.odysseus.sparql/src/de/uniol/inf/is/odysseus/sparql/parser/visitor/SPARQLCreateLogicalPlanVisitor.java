@@ -8,7 +8,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -1272,7 +1271,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		if(child instanceof ASTSocket){
 			ASTSocket socket = (ASTSocket)child;
 //			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_Access_Socket"));
-			accAO = new AccessAO(new SDFSource(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+			accAO = new AccessAO(node.getStreamName(), RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
 			accAO.setHost(socket.getHost());
 			accAO.setPort(socket.getPort());
 			
@@ -1281,7 +1280,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		else if(child instanceof ASTChannel){
 			ASTChannel channel = (ASTChannel)child;
 //			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_Channel"));
-			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+			accAO = new AccessAO(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
 			accAO.setHost(channel.getHost());
 			accAO.setPort(channel.getPort());
 			
@@ -1289,7 +1288,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		else if(child instanceof ASTCSVSource){
 			ASTCSVSource csv = (ASTCSVSource)child;
 //			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_CSV"));
-			accAO = new AccessAO(new SDFSource(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS));
+			accAO = new AccessAO(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
 			accAO.setFileURL(csv.getURL());
 			
 		}
@@ -1300,7 +1299,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		accAO.setOutputSchema(outputSchema);
 		
 		// before adding the acces operator, add the corresponding entity
-		dd.addSourceType(streamName, accAO.getSourceType());
+		dd.addSourceType(streamName, accAO.getAdapter());
 		dd.addEntitySchema(streamName, outputSchema, user);
 		
 		TimestampAO op = addTimestampAO(accAO);

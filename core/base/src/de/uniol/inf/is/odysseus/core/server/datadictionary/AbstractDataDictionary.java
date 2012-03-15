@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -216,16 +215,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 
 	// no restric
 	@Override
-	public SDFSource createSDFSource(String sourcename)
-			throws DataDictionaryException {
-		String type = getSourceType(sourcename);
-		SDFSource source = new SDFSource(sourcename, type);
-
-		return source;
-	}
-
-	// no restric
-	@Override
 	public boolean emptySourceTypeMap() {
 		return sourceTypeMap.isEmpty();
 	}
@@ -347,8 +336,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			throw new DataDictionaryException("no such view: " + viewname);
 		}
 
-		SDFSource source = createSDFSource(viewname);
-		AccessAO ao = new AccessAO(source);
+		AccessAO ao = new AccessAO(viewname, getSourceType(viewname), null);
 
 		SDFSchema entity = getEntitySchema(viewname, caller);
 		ao.setOutputSchema(entity);

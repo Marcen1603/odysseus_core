@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 
@@ -24,8 +23,8 @@ public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone
 	private static final long serialVersionUID = -4026927772571867684L;
 	private final T[] tuples;
 	
-	public FixedSetAccessAO(SDFSource sdfSource, T... tuples) {
-		super(sdfSource);
+	public FixedSetAccessAO(String name, String type, T... tuples) {
+		super(name, type, null);
 		this.tuples = tuples;
 	}
 	

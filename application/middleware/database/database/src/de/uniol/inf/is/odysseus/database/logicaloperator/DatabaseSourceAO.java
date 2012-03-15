@@ -15,8 +15,6 @@
 
 package de.uniol.inf.is.odysseus.database.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
@@ -34,7 +32,6 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 
 	private static final long serialVersionUID = -5800479007184861697L;
 	private boolean timesensitiv = false;
-	protected SDFSource source = null;
 
 	private SDFSchema outputSchema;
 
@@ -42,9 +39,10 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 
 	private String tablename;
 	private long waitMillis;
+	private String name;
 
-	public DatabaseSourceAO(SDFSource source, IDatabaseConnection connection, String tablename, boolean timesensitiv, long waitMillis) {
-		this.source = source;
+	public DatabaseSourceAO(String name, IDatabaseConnection connection, String tablename, boolean timesensitiv, long waitMillis) {
+		this.name = name;
 		this.connection = connection;
 		this.tablename = tablename;
 		this.timesensitiv = timesensitiv;
@@ -53,7 +51,7 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 	}
 
 	public DatabaseSourceAO(DatabaseSourceAO original) {
-		this.source = original.source;
+		this.name = original.name;
 		this.connection = original.connection;
 		this.timesensitiv = original.timesensitiv;
 		this.tablename = original.tablename;
@@ -87,8 +85,8 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 		return timesensitiv;
 	}
 
-	public SDFElement getSource() {
-		return this.source;
+	public String getSourceName() {
+		return this.name;
 	}
 
 	@Override

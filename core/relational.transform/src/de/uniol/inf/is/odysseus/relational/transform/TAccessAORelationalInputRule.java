@@ -39,7 +39,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.DEBUG, "Standard InputStream");
-		String accessPOName = accessAO.getSource().getURI(false);
+		String accessPOName = accessAO.getSourcename();
 		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation(), accessAO.getLogin(), accessAO.getPassword());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
@@ -53,8 +53,8 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration trafo) {
-		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getAdapter() == null && accessAO.getSourceType().equals("RelationalInputStreamAccessPO")){
+		if(getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+			if(accessAO.getAdapter().equals("RelationalInputStreamAccessPO")){
 				return true;
 			}
 		}

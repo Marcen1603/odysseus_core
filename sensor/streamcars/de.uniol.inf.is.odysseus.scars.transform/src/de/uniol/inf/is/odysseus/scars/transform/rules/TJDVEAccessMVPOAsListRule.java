@@ -35,7 +35,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 
 	@Override
 	public void execute(AccessAO operator, TransformationConfiguration config) {
-		String accessPOName = operator.getSource().getURI(false);
+		String accessPOName = operator.getSourcename();
 		AbstractSensorAccessPO<?, ?> accessPO = null;
 		System.out.println("Host = " + operator.getHost());
 			
@@ -57,8 +57,8 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 	@Override
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
-		if(operator.getSourceType().equals("JDVEAccessMVPO") &&
-				getDataDictionary().getAccessPlan(operator.getSource().getURI()) == null){
+		if(operator.getAdapter().equals("JDVEAccessMVPO") &&
+				getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
 			return true;
 		}
 		

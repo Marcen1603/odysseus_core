@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.parser;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -70,8 +69,8 @@ public class SILABVisitor implements IVisitor{
 //			source.setOutputSchema(this.attributes);
 //		} else {
 			String name = ((CreateStreamVisitor)baseObject).getName();
-			source = new AccessAO(new SDFSource(name,
-					"RelationalSILABInputStreamAccessPO"));
+			source = new AccessAO(name,
+					"RelationalSILABInputStreamAccessPO",null);
 			source.setPort(port);
 			source.setHost(host);
 			source.setOutputSchema(new SDFSchema(name, ((CreateStreamVisitor)baseObject).getAttributes()));

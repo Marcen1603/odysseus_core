@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
@@ -73,14 +72,13 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	}
 
 	private FileAccessAO createNewFileAccessAO(String sourceName) {
-		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
 		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 
 		
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
 		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
-		FileAccessAO ao = new FileAccessAO(sdfSource);
+		FileAccessAO ao = new FileAccessAO(sourceName, type.getValue(), null);
 		ao.setPath(path.getValue());
 		ao.setFileType(fileType.getValue());
 		ao.setSeparator(separator.getValue());

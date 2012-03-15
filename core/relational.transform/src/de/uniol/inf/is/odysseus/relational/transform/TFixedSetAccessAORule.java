@@ -35,7 +35,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 
 	@Override
 	public void execute(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		String accessPOName = accessAO.getSource().getURI(false);
+		String accessPOName = accessAO.getSourcename();
 		ISource<?> accessPO = new FixedSetPO<IMetaAttributeContainer<?>>(accessAO.getTuples());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
@@ -51,7 +51,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 
 	@Override
 	public boolean isExecutable(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
-		return (getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null);
+		return (getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null);
 	}
 
 	@Override

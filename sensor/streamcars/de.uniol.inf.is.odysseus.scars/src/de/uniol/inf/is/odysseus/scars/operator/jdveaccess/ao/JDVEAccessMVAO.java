@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.jdveaccess.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
 public class JDVEAccessMVAO extends AccessAO {
@@ -31,8 +30,8 @@ public class JDVEAccessMVAO extends AccessAO {
 		this.objectListPath = objectListPath;
 	}
 	
-	public JDVEAccessMVAO(SDFSource sdfSource) {
-		super(sdfSource);
+	public JDVEAccessMVAO(String sourceName, String sourceType) {
+		super(sourceName, sourceType,null);
 	}
 
 	public JDVEAccessMVAO(JDVEAccessMVAO sensorAccessAO) {

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -72,17 +71,9 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	}
 
 	private ILogicalOperator createNewAccessAO(String sourceName) {
-		SDFSource sdfSource = new SDFSource(sourceName, type.getValue());
+		
+		String adapterName = adapter.hasValue()?adapter.getValue():type.getValue(); 
 		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
-
-		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
-		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
-
-		AccessAO ao = new AccessAO(sdfSource);
-		ao.setHost(host.getValue());
-		ao.setPort(port.getValue());
-		ao.setOutputSchema(schema);
-
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 		for (final String item : options.getValue()) {
 			final String[] option = item.split(":");
@@ -93,6 +84,16 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				optionsMap.put(option[0], "");
 			}
 		}
+		
+		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
+		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
+
+		AccessAO ao = new AccessAO(sourceName, adapterName, optionsMap);
+		ao.setHost(host.getValue());
+		ao.setPort(port.getValue());
+		ao.setOutputSchema(schema);
+
+
 		
 		ao.setOptions(optionsMap);
 		ao.setAdapter(adapter.getValue());
@@ -130,12 +131,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		} else {
-			if (!(host.hasValue() && type.hasValue() && port.hasValue() && attributes
-					.hasValue())) {
+			if (!(type.hasValue() && adapter.hasValue()) || (type.hasValue() && adapter.hasValue())) {
 				addError(new IllegalArgumentException(
 						"missing information for the creation of source "
 								+ sourceName
-								+ ". expecting source, host, port, type and schema."));
+								+ ". expecting type OR adapter."));
 				return false;
 			}
 		}

@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.sdf.description,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.util,
  de.uniol.inf.is.odysseus.core.util,

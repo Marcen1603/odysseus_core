@@ -40,8 +40,6 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 import java.util.List;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
-
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
@@ -312,8 +310,7 @@ SourceInfo StreamClause() :
   streamName = SourceSelector()
   (window = Window())?
   {
-    SDFSource sdfSource = new SDFSource(streamName.getName(), SPARQLAccessSourceTypes.RDF);
-	access = new AccessAO(sdfSource);
+	access = new AccessAO(streamName.getName(), SPARQLAccessSourceTypes.RDF, null);
 
 	SourceInfo si = new SourceInfo(streamName.getName(), access, window);
 	si.setDefaultStream(!named);

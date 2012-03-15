@@ -38,7 +38,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		String accessPOName = accessAO.getSource().getURI(false);
+		String accessPOName = accessAO.getSourcename();
 		SizeByteBufferReceiverPO accessPO = null;
 		try {
 			accessPO = new SizeByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
@@ -57,8 +57,8 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getAdapter() == null && accessAO.getSourceType().equals("RelationalByteBufferAccessPO")){
+		if(getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+			if(accessAO.getAdapter().equals("RelationalByteBufferAccessPO")){
 				return true;
 			}
 		}

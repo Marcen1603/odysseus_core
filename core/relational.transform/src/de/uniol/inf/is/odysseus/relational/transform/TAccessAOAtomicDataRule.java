@@ -36,7 +36,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
-		String accessPOName = accessAO.getSource().getURI(false);
+		String accessPOName = accessAO.getSourcename();
 		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), accessAO.getLogin(), accessAO.getPassword());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
@@ -51,8 +51,8 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {		
-		if(getDataDictionary().getAccessPlan(accessAO.getSource().getURI()) == null){
-			if(accessAO.getAdapter() == null && (accessAO.getSourceType().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getSourceType().equals("RelationalStreaming"))){
+		if(getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
+			if(accessAO.getAdapter().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getAdapter().equals("RelationalStreaming")){
 				return true;
 			}
 		}

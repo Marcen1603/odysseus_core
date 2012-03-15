@@ -30,13 +30,13 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 
 	@Override
 	public int getPriority() {
-		return 1;
+		return 10;
 	}
 
 	@Override
 	public void execute(FileAccessAO fileAccessAO,
 			TransformationConfiguration transformConfig) {
-		String fileAccessPOName = fileAccessAO.getSource().getURI(false);
+		String fileAccessPOName = fileAccessAO.getSourcename();
 		ISource<?> fileAccessPO = new FileAccessPO<RelationalTuple<?>>(
 				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator());
 
@@ -56,7 +56,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	@Override
 	public boolean isExecutable(FileAccessAO fileAccessAO,
 			TransformationConfiguration trafo) {
-		if (getDataDictionary().getAccessPlan(fileAccessAO.getSource().getURI()) == null) {
+		if (getDataDictionary().getAccessPlan(fileAccessAO.getSourcename()) == null) {
 			return true;
 		}
 		return false;

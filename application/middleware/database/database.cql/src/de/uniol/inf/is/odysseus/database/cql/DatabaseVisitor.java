@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.database.cql;
 import java.sql.SQLException;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -84,7 +83,7 @@ public class DatabaseVisitor extends CQLParser {
 			throw new QueryParseException("Table \"" + tableName + "\" does not exist!");
 		}
 
-		DatabaseSourceAO source = new DatabaseSourceAO(new SDFSource(name, "DatabaseAccesAO"), connection, tableName, isTimeSensitive, waitMillis);
+		DatabaseSourceAO source = new DatabaseSourceAO(name, connection, tableName, isTimeSensitive, waitMillis);
 		try {
 			getDataDictionary().setStream(name, source, getCaller());
 		} catch (DataDictionaryException e) {

@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -52,9 +51,6 @@ public interface IDataDictionary extends IAddDataType{
 
 	// no restirc
 	public void addSourceType(String sourcename, String sourcetype);
-
-	// no restric
-	public SDFSource createSDFSource(String sourcename) throws DataDictionaryException;
 
 	// no restric
 	public boolean emptySourceTypeMap();

@@ -26,7 +26,6 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -303,8 +302,7 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
     public void addToDD(ISourceAdvertisement adv, IDataDictionary dd, ISession caller) {
         dd.addEntitySchema(adv.getSourceName(), null, caller);
 
-        AccessAO source = new AccessAO();
-        source.setSource(new SDFSource(adv.getPeerID() + ":" + adv.getSourceName(), "P2PSource"));
+        AccessAO source = new AccessAO(adv.getPeerID() + ":" + adv.getSourceName(), "P2PSource", null);
         try {
             dd.setStream(adv.getSourceName(), source, caller);
         } catch (DataDictionaryException e) {

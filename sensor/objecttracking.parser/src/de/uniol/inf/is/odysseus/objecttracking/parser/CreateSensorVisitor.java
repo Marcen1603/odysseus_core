@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
@@ -88,8 +87,8 @@ public class CreateSensorVisitor extends AbstractDefaultVisitor {
 		// TODO: rekursiv ausgeben, was in der SDFSchemaExtended ist
 		// (extra Klasse oder so)
 		// accessao bauen
-		JDVEAccessMVAO source = new JDVEAccessMVAO(new SDFSource(name,
-				"JDVEAccessMVPO"));
+		JDVEAccessMVAO source = new JDVEAccessMVAO(name,
+				"JDVEAccessMVPO");
 		source.setPort(port.intValue());
 		source.setHost(host);
 		source.setOutputSchema(ex);

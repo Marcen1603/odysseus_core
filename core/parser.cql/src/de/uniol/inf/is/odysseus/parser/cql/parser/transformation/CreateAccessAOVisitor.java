@@ -16,18 +16,14 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.description.SDFSource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.QueryAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -47,7 +43,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private AttributeResolver attributeResolver;
 
-	private Map<SDFSource, ILogicalOperator> sources;
 
 	private ISession caller;
 	private IDataDictionary dd;
@@ -61,7 +56,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	public final void init() {
 		this.attributeResolver = new AttributeResolver();
-		this.sources = new HashMap<SDFSource, ILogicalOperator>();
 	}
 
 	public AttributeResolver getAttributeResolver() {
@@ -74,102 +68,29 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		String sourceString = ((ASTIdentifier) childNode).getName();
 		if (dd.existsSource(sourceString)){
 		
-		SDFSource source;
-		try {
-			source = dd.createSDFSource(sourceString);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		if (source.getSourceType().equals("RelationalStreaming")) {
-			relationalStreamingSource(node, source, sourceString);
+		String sourceType = dd.getSourceType(sourceString);
+
+		if ("RelationalStreaming".equalsIgnoreCase(sourceType)) {
+			relationalStreamingSource(node, sourceString);
 			return null;
-		} else if (source.getSourceType().equals("brokerStreaming")) {
+		} else if ("brokerStreaming".equalsIgnoreCase(sourceType)) {
 			brokerStreamingSource(node, data);
 			return null;
-		} else if (source.getSourceType().equals("ObjectRelationalStreaming")) {
-			relationalStreamingSource(node, source, sourceString);
+		} else if ("ObjectRelationalStreaming".equalsIgnoreCase(sourceType)) {
+			relationalStreamingSource(node, sourceString);
 			return null;
 		} else {
 			throw new QueryParseException("unknown type of source '"
-					+ source.getSourceType() + "' for source: " + sourceString);
+					+ sourceType + "' for source: " + sourceString);
 		}
 		}else{
 			throw new QueryParseException("Unkown Source "+sourceString);
 		}
-		// case Relational:
-		// relationalSource(node, source, sourceString);
-		// return null;
-		// case OSGI:
-		// WrapperArchitectureAO access = (WrapperArchitectureAO)
-		// sources.get(source);
-		// this.attributeResolver.addSource(node.getAlias(), access);
-		// return null;
-		// default:
 
 	}
 
-	// private void sensorStreamSource(ASTSimpleSource node, SDFSource source,
-	// String sourceName) {
-	// ILogicalOperator access = this.sources.get(source);
-	// if (access == null) {
-	// access = new AccessAO(source);
-	// SDFEntity entity = null;
-	// try {
-	// entity = DataDictionary.getInstance().getEntity(sourceName);
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// ((AccessAO) access).setOutputSchema(entity.getAttributes());
-	//
-	// this.sources.put(source, access);
-	// }
-	//
-	// ILogicalOperator inputOp = access;
-	// if (node.hasAlias()) {
-	// inputOp = new RenameAO();
-	// inputOp.subscribeToSource(access, 0, 0, access.getOutputSchema());
-	// ((RenameAO) inputOp).setOutputSchema(createAliasSchema(node.getAlias(),
-	// access));
-	// sourceName = node.getAlias();
-	// }
-	//
-	// if (node.hasWindow()) {
-	// WindowAO window = createWindow(node.getWindow(), inputOp);
-	// inputOp = window;
-	// }
-	// this.attributeResolver.addSource(sourceName, inputOp);
-	// }
 
-	// FIXME funktioniert nicht mehr, da datadictionary nicht mehr auf db basis
-	// arbeitet
-	// und noch keine neue repraesentation von relationsinfos da ist
-	@SuppressWarnings("unused")
-	private void relationalSource(ASTSimpleSource node, SDFSource source,
-			String sourceString) {
-		QueryAccessAO access = (QueryAccessAO) this.sources.get(source);
-		if (access == null) {
-			access = new QueryAccessAO(source);
-			// SDFSchema attributes = DataDictionary.getInstance()
-			// .attributesOfRelation(sourceString);
-			// access.setOutputSchema(attributes);
-			this.sources.put(source, access);
-		}
-
-		AbstractLogicalOperator operator = access;
-		if (node.hasAlias()) {
-			sourceString = node.getAlias();
-			operator = new RenameAO();
-			SDFSchema newSchema = createAliasSchema(node.getAlias(),
-					access);
-			operator.subscribeToSource(access, 0, 0, newSchema);
-		}
-
-		this.attributeResolver.addSource(sourceString, operator);
-	}
-
-	private void relationalStreamingSource(ASTSimpleSource node,
-			SDFSource source, String sourceName) {
+	private void relationalStreamingSource(ASTSimpleSource node, String sourceName) {
 		ILogicalOperator access;
 		try {
 			access = dd.getViewOrStream(sourceName, caller);
