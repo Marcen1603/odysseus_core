@@ -41,7 +41,7 @@ public class OdysseusDefaults {
 	}
 
 	static Properties props = new Properties();
-	
+
 	// TODO: Make Platform specific homedir
 	private static String odysseusDefaultHome = String.format("%s/%sodysseus/",
 			System.getProperty("user.home"),
@@ -68,7 +68,22 @@ public class OdysseusDefaults {
 		File f = FileUtils.openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
-		properties.load(in);
+//		try {
+//			properties.load(in);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		try {
+			properties.loadFromXML(in);
+		} catch (Exception e) {
+			// Migration of old format
+			try{
+				properties.load(in);
+				getLogger().debug("Property file migrated");
+			}catch(Exception e2){
+				e2.printStackTrace();
+			}
+		}
 		in.close();
 		// Save always because there could be new properties ... do only if
 		// there are new defaults?
@@ -111,7 +126,6 @@ public class OdysseusDefaults {
 		props.setProperty("queriesBuildParamFilename", odysseusHome
 				+ "store/queriesBuildParam.store");
 
-		
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
 		props.setProperty("reloadLogStoreFilename", odysseusHome
 				+ "reloadlog.store");
@@ -144,20 +158,23 @@ public class OdysseusDefaults {
 
 		// Odysseus Storing
 		props.setProperty("storing_database", odysseusHome + "database.conf");
-		
+
 		// AC
 		props.setProperty("ac_memHeadroom", "0.4");
 		props.setProperty("ac_cpuHeadroom", "0.4");
 		props.setProperty("ac_standardMemCost", "4");
 		props.setProperty("ac_standardCpuCost", "0.00002");
+
+		// Event Dispatcher
+		props.setProperty("EventHandlerDispatcherPoolSize", "10");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {
 		FileOutputStream out;
 		try {
 			out = new FileOutputStream(odysseusHome + "odysseus.conf");
-			props.store(out,
-					"--- Odysseus Property File edit only if you know what you are doing ---");
+			props.storeToXML(out,
+					"Odysseus Property File edit only if you know what you are doing");
 			out.close();
 			getLogger().info("New Odysseus-Config-File created");
 		} catch (Exception e2) {
@@ -167,8 +184,9 @@ public class OdysseusDefaults {
 
 	public static String get(String key) {
 		String ret = props.getProperty(key);
-		if (ret == null){
-			getLogger().warn("Try to get a property that is not registered "+key);
+		if (ret == null) {
+			getLogger().warn(
+					"Try to get a property that is not registered " + key);
 		}
 		return ret;
 	}
