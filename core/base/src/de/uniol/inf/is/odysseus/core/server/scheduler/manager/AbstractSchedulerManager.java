@@ -83,17 +83,12 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	 * parameter allowed).
 	 */
 	public AbstractSchedulerManager() {
-		this.eventHandler = new EventHandler(this);
+		this.eventHandler = EventHandler.getInstance(this);
 		this.logger = LoggerFactory.getLogger(AbstractSchedulerManager.class);
 		this.logger.trace("Scheduler manager activated.");
 		
 	}
-	
-	private void checkEventDispatcher() {
-	    if( !isEventDispatcherRunning() ) {
-	        startEventDispatcher();
-	    }
-    }
+
 
 	/**
 	 * OSGi-Method: Is called when this object will be deactivted by OSGi.
@@ -197,7 +192,6 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 			this.schedulingStrategyFactoryMap.put(stratName,
 					schedulingStrategyFactory);
 			
-			checkEventDispatcher();
 			fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULING_STRATEGY_ADDED, null));
 			// For internal processing
 			schedulingsChanged();
@@ -329,44 +323,24 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 		return null;
 	}
 
-	@Override
-    public void startEventDispatcher() {
-		eventHandler.startEventDispatcher();
+	public void subscribe(IEventListener listener, IEventType type) {
+		eventHandler.subscribe(this,listener, type);
 	}
 
-	@Override
-    public void stopEventDispatcher() {
-		eventHandler.stopEventDispatcher();
+	public void unsubscribe(IEventListener listener, IEventType type) {
+		eventHandler.unsubscribe(this,listener, type);
 	}
 
-	@Override
-    public boolean isEventDispatcherRunning() {
-		return eventHandler.isEventDispatcherRunning();
+	public void subscribeToAll(IEventListener listener) {
+		eventHandler.subscribeToAll(this,listener);
 	}
 
-	@Override
-    public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(listener, type);
+	public void unSubscribeFromAll(IEventListener listener) {
+		eventHandler.unSubscribeFromAll(this,listener);
 	}
 
-	@Override
-    public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(listener, type);
-	}
-
-	@Override
-    public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(listener);
-	}
-
-	@Override
-    public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(listener);
-	}
-
-	@Override
-    public final void fire(IEvent<?, ?> event) {
-		eventHandler.fire(event);
+	public final void fire(IEvent<?, ?> event) {
+		eventHandler.fire(this,event);
 	}
 	
 	

@@ -28,9 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
-
 import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -80,46 +78,31 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private IEventHandler eventHandler = new EventHandler(this);
+	private EventHandler eventHandler = EventHandler.getInstance(this);
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(listener, type);
+		eventHandler.subscribe(this,listener, type);
 	}
 
 	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(listener, type);
+		eventHandler.unsubscribe(this,listener, type);
 	}
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(listener);
+		eventHandler.subscribeToAll(this,listener);
 	}
 
 	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(listener);
+		eventHandler.unSubscribeFromAll(this,listener);
 	}
 
 	@Override
 	public void fire(IEvent<?, ?> event) {
-		eventHandler.fire(event);
-	}
-
-	@Override
-	public void startEventDispatcher() {
-		eventHandler.startEventDispatcher();
-	}
-
-	@Override
-	public void stopEventDispatcher() {
-		eventHandler.stopEventDispatcher();
-	}
-
-	@Override
-	public boolean isEventDispatcherRunning() {
-		return eventHandler.isEventDispatcherRunning();
+		eventHandler.fire(this,event);
 	}
 
 	final private POEvent openInitEvent;
@@ -193,7 +176,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// OPEN
 	// ------------------------------------------------------------------------
 	@Override
-	public synchronized void open() throws OpenFailedException {
+	public void open() throws OpenFailedException {
 		open(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
 
@@ -201,7 +184,6 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 			throws OpenFailedException {
 		// getLogger().debug("open() " + this);
 		if (!isOpen()) {
-			startEventDispatcher();
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
@@ -280,13 +262,12 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 		close(new ArrayList<PhysicalSubscription<ISink<?>>>());
 	}
 
-	public synchronized void close(List<PhysicalSubscription<ISink<?>>> callPath) {
+	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		if (this.isSinkOpen.get()) {
 			this.isSinkOpen.set(false);
 			process_close();
 			stopMonitoring();
 			callCloseOnChildren(callPath);
-			stopEventDispatcher();
 		}
 	}
 
@@ -312,7 +293,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	final synchronized public void done(int port) {
+	final public void done(int port) {
 		process_done(port);
 		this.allInputsDone = true;
 		for (PhysicalSubscription<ISource<? extends T>> sub : this.subscribedToSource) {

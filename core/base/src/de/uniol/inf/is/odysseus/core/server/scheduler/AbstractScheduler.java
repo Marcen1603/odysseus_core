@@ -96,7 +96,7 @@ public abstract class AbstractScheduler implements
 	 *            instance.
 	 */
 	public AbstractScheduler(ISchedulingFactory schedulingFactory) {
-		eventHandler = new EventHandler(this);
+		eventHandler = EventHandler.getInstance(this);
 		this.schedulingFactory = schedulingFactory;
 	}
 
@@ -191,10 +191,6 @@ public abstract class AbstractScheduler implements
 
 		} else {
 			file = null;
-		}
-		
-		if( !isEventDispatcherRunning() ) {
-		    startEventDispatcher();
 		}
 		
 		fire(schedulingStarted);
@@ -302,36 +298,24 @@ public abstract class AbstractScheduler implements
 		return null;
 	}
 
-	public void startEventDispatcher() {
-		eventHandler.startEventDispatcher();
-	}
-
-	public void stopEventDispatcher() {
-		eventHandler.stopEventDispatcher();
-	}
-
-	public boolean isEventDispatcherRunning() {
-		return eventHandler.isEventDispatcherRunning();
-	}
-
 	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(listener, type);
+		eventHandler.subscribe(this,listener, type);
 	}
 
 	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(listener, type);
+		eventHandler.unsubscribe(this,listener, type);
 	}
 
 	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(listener);
+		eventHandler.subscribeToAll(this,listener);
 	}
 
 	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(listener);
+		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
 	public final void fire(IEvent<?, ?> event) {
-		eventHandler.fire(event);
+		eventHandler.fire(this, event);
 	}
 	
 	

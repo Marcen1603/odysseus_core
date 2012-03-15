@@ -57,19 +57,4 @@ public interface IEventHandler {
 	 */
 	public void fire(IEvent<?, ?> event);
 
-	/**
-	 * Start of event dispatcher
-	 */
-	void startEventDispatcher();
-
-	/**
-	 * Stopping event dispatching
-	 */
-	void stopEventDispatcher();
-	
-	/**
-	 * 
-	 * @return
-	 */
-	boolean isEventDispatcherRunning();
 }

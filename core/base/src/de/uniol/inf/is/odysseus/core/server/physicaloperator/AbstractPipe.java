@@ -158,7 +158,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public synchronized void open(ISink<? super W> caller, int sourcePort,
+	public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 		super.open(caller, sourcePort, sinkPort, callPath);
@@ -219,7 +219,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public void close() {
-		this.delegateSink.close();
+		this.delegateSink.close();		
 	}
 
 	@Override
@@ -234,7 +234,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	final public synchronized void done(int port) {
+	final public void done(int port) {
 		process_done(port);
 		this.delegateSink.done(port);
 		if (isDone()) {

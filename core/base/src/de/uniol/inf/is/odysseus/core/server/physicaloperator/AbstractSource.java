@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.event.IEventHandler;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -78,46 +77,31 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// Eventhandling
 	// ------------------------------------------------------------------
 
-	private IEventHandler eventHandler = new EventHandler(this);
+	private EventHandler eventHandler = EventHandler.getInstance(this);
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(listener, type);
+		eventHandler.subscribe(this,listener, type);
 	}
 
 	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(listener, type);
+		eventHandler.unsubscribe(this,listener, type);
 	}
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(listener);
+		eventHandler.subscribeToAll(this,listener);
 	}
 
 	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(listener);
+		eventHandler.unSubscribeFromAll(this,listener);
 	}
 
 	@Override
 	public synchronized void fire(IEvent<?, ?> event) {
-		eventHandler.fire(event);
-	}
-
-	@Override
-	public void startEventDispatcher() {
-		eventHandler.startEventDispatcher();
-	}
-
-	@Override
-	public void stopEventDispatcher() {
-		eventHandler.stopEventDispatcher();
-	}
-
-	@Override
-	public boolean isEventDispatcherRunning() {
-		return eventHandler.isEventDispatcherRunning();
+		eventHandler.fire(this,event);
 	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
@@ -219,7 +203,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public synchronized void open(ISink<? super T> caller, int sourcePort,
+	public void open(ISink<? super T> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 
@@ -242,7 +226,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			sub.incOpenCalls();
 		}
 		if (!isOpen()) {
-			startEventDispatcher();
 			fire(openInitEvent);
 			process_open();
 			fire(openDoneEvent);
@@ -279,7 +262,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public synchronized void transfer(T object, int sourceOutPort) {
+	public void transfer(T object, int sourceOutPort) {
 		if (isOpen()) {
 			fire(this.pushInitEvent);
 			for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
@@ -298,7 +281,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public synchronized void transfer(Collection<T> object, int sourceOutPort) {
+	public void transfer(Collection<T> object, int sourceOutPort) {
 		fire(this.pushListInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
@@ -329,7 +312,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public synchronized void close(ISink<? super T> caller, int sourcePort,
+	public void close(ISink<? super T> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
@@ -347,7 +330,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				open.set(false);
 				stopMonitoring();
 				fire(this.closeDoneEvent);
-				stopEventDispatcher();
 			}
 		}
 
