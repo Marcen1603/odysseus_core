@@ -81,27 +81,27 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void subscribe(IEventListener listener, IEventType type) {
-		eventHandler.subscribe(this,listener, type);
+		eventHandler.subscribe(this, listener, type);
 	}
 
 	@Override
 	public void unsubscribe(IEventListener listener, IEventType type) {
-		eventHandler.unsubscribe(this,listener, type);
+		eventHandler.unsubscribe(this, listener, type);
 	}
 
 	@Override
 	public void subscribeToAll(IEventListener listener) {
-		eventHandler.subscribeToAll(this,listener);
+		eventHandler.subscribeToAll(this, listener);
 	}
 
 	@Override
 	public void unSubscribeFromAll(IEventListener listener) {
-		eventHandler.unSubscribeFromAll(this,listener);
+		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
 	@Override
 	public synchronized void fire(IEvent<?, ?> event) {
-		eventHandler.fire(this,event);
+		eventHandler.fire(this, event);
 	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
@@ -203,8 +203,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void open(ISink<? super T> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath)
+	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath)
 			throws OpenFailedException {
 
 		// Hint: ignore callPath on sources because the source does not call any
@@ -263,16 +263,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void transfer(T object, int sourceOutPort) {
-		if (isOpen()) {
-			fire(this.pushInitEvent);
-			for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
-				if (sink.getSourceOutPort() == sourceOutPort) {
-					sink.getTarget().process(object, sink.getSinkInPort(),
-							isTransferExclusive());
-				}
+		fire(this.pushInitEvent);
+		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				sink.getTarget().process(object, sink.getSinkInPort(),
+						isTransferExclusive());
 			}
-			fire(this.pushDoneEvent);
 		}
+		fire(this.pushDoneEvent);
 	}
 
 	@Override
@@ -312,8 +310,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super T> caller, int sourcePort,
-			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath) {
+	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<PhysicalSubscription<ISink<?>>> callPath) {
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {
