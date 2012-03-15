@@ -51,6 +51,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	private String errorText;
 
 	private BufferedWriter out;
+	private long startTime;
 
 	public void activate(ComponentContext context) {
 	}
@@ -225,7 +226,8 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		String text = "Testing Query " + key + " from file " + query + " with results from file " + result;
 		LOG.debug(text);
 		tryWrite(out, text);
-
+		
+		startTime = System.nanoTime();
 		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this));
 	}
 
@@ -241,8 +243,10 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 
 	@Override
 	public synchronized void processingDone() {
-		LOG.debug("Query processing done");
-		tryWrite(out, " ok " + NEWLINE);
+	    long elapsedTimeMillis = ( System.nanoTime() - startTime ) / 1000000;
+	    
+		LOG.debug("Query processing done. Duration = " + elapsedTimeMillis + " ms");
+		tryWrite(out, " ok duration=" + elapsedTimeMillis + NEWLINE);
 
 		processingDone = true;
 		errorText = null;
