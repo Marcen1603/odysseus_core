@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -38,7 +38,7 @@ public class TRelationalSocketSinkAORule extends
 
 			IDataHandler handler = new TupleDataHandler(
 					operator.getOutputSchema());
-			ObjectHandler<Tuple<ITimeInterval>> objectHandler = new ObjectHandler<Tuple<ITimeInterval>>(
+			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
 			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
 					getStreamHandler(operator), true, operator.isLoginNeeded(),

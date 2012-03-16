@@ -22,7 +22,7 @@ import java.nio.channels.SocketChannel;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 
@@ -41,7 +41,7 @@ public class StreamClient {
 	public StreamClient(Socket connection, SDFSchema schema) {
 		this.connection = connection;
 		
-		this.objectHandler = new ObjectHandler<Tuple<IMetaAttribute>>(new TupleDataHandler(schema));
+		this.objectHandler = new ByteBufferHandler<Tuple<IMetaAttribute>>(new TupleDataHandler(schema));
 	}
 	
 	public void writeObject(Tuple<IMetaAttribute> tuple) throws IOException {

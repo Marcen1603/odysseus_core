@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
@@ -45,7 +45,7 @@ public class NEXMarkClient {
 	private Socket connection;
 	// private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 	private ByteBufferStreamHandler nioStreamHandler;
-	private ObjectHandler<Tuple<ITimeInterval>> objectHandler;
+	private ByteBufferHandler<Tuple<ITimeInterval>> objectHandler;
 
 	// /**
 	// * Filtert aus der sourceURI die Relation herraus, die simuliert werden
@@ -91,7 +91,7 @@ public class NEXMarkClient {
 		}
 		IDataHandler handler = new TupleDataHandler(
 				NEXMarkStreamType.getSchema(streamType));
-		objectHandler = new ObjectHandler<Tuple<ITimeInterval>>(
+		objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);
 		nioStreamHandler = new ByteBufferStreamHandler(connection);
 	}

@@ -18,19 +18,19 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-public class ObjectHandler<T> implements
+public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {
 
 	ByteBuffer byteBuffer = null;
 	private IDataHandler dataHandler;
 		
-	public ObjectHandler(IDataHandler dataHandler) {
+	public ByteBufferHandler(IDataHandler dataHandler) {
 		byteBuffer = ByteBuffer.allocate(1024);
 		this.dataHandler = dataHandler;		
 	}
 	
-	public ObjectHandler(
-			ObjectHandler<T> objectHandler) {
+	public ByteBufferHandler(
+			ByteBufferHandler<T> objectHandler) {
 		super();
 		this.dataHandler = objectHandler.dataHandler;
 	}
@@ -112,8 +112,8 @@ public class ObjectHandler<T> implements
 	}
 	
 	@Override
-	public ObjectHandler<T> clone() {
-		return new ObjectHandler<T>(this);
+	public ByteBufferHandler<T> clone() {
+		return new ByteBufferHandler<T>(this);
 	}
 
 
