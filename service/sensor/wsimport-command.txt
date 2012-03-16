@@ -1,0 +1,1 @@
+wsimport -d bin -s src -p de.uniol.inf.is.odysseus.service.sensor.webservice http://localhost:9999/odysseus?wsdl
