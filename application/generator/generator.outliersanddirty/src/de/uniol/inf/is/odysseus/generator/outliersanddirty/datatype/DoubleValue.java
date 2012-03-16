@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class DoubleValue extends AbstractDataHandler<Double> {
+public class DoubleValue extends AbstractDataType<Double> {
 
 	public DoubleValue(Double value) {
 		super(value);		

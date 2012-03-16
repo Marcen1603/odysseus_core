@@ -19,20 +19,12 @@ package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
+public interface IDataType<T> {
+	
+	public T add(T value);
+	public T mult(T value);
+	public T div(T value);
+	public T min(T value);
+	public T getValue();
 
-	protected T value;
-	
-	public AbstractDataHandler(T value){
-		this.value = value;
-	}
-	
-	@Override
-    public T getValue(){
-		return this.value;
-	}
-	
-	public void setValue(T value){
-		this.value = value;
-	}
 }

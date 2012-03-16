@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class LongValue extends AbstractDataHandler<Long> {
+public class LongValue extends AbstractDataType<Long> {
 
 	public LongValue(Long value) {
 		super(value);		
