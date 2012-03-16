@@ -34,7 +34,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
 		try {
 			while (buffer.remaining() > 0) {
 

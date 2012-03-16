@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnection;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransferHandler;
@@ -61,7 +61,7 @@ public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
 		try {
 
 			while (buffer.remaining() > 0) {

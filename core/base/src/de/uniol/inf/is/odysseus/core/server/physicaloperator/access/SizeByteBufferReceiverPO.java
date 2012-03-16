@@ -9,7 +9,7 @@ public class SizeByteBufferReceiverPO<W> extends
 		ReceiverPO<ByteBuffer,W> {
 
 	public SizeByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler) {
 		super(objectHandler, new SizeByteBufferHandler<W>(), accessHandler);
 	}
 

@@ -5,6 +5,6 @@ public interface IInputDataHandler<R,W> {
 
 	void init();
 	void done();
-	void process(R input, IObjectHandler<W> objectHandler, IAccessConnection<R> accessHandler, ITransferHandler transferHandler);
+	void process(R input, IObjectHandler<W> objectHandler, IAccessConnectionHandler<R> accessHandler, ITransferHandler transferHandler);
 	IInputDataHandler<R,W> clone();
 }

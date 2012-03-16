@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.RouterConnection;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.RouterConnectionHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
@@ -44,7 +44,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		try {
 			accessPO = new ReceiverPO(new ByteBufferHandler(new TupleDataHandler(accessAO.getOutputSchema())), 
 					new SizeByteBufferHandler(),
-					new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
+					new RouterConnectionHandler(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}

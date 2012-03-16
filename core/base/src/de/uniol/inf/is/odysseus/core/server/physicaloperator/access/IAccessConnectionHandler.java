@@ -5,10 +5,10 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
-public interface IAccessConnection<T> extends IClone {
+public interface IAccessConnectionHandler<T> extends IClone {
 
 	@Override
-	IAccessConnection<T> clone();
+	IAccessConnectionHandler<T> clone();
 	
 	public void open(IAccessConnectionListener<T> caller) throws OpenFailedException;
 	public void close(IAccessConnectionListener<T> caller) throws IOException;

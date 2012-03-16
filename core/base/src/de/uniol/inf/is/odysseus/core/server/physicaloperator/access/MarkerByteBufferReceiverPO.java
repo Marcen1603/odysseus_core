@@ -9,12 +9,12 @@ public class MarkerByteBufferReceiverPO<W> extends
 		ReceiverPO<ByteBuffer,W> {
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler, byte start, byte end) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, byte start, byte end) {
 		super(objectHandler, new MarkerByteBufferHandler<W>(start, end), accessHandler);
 	}
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler, byte marker) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, byte marker) {
 		super(objectHandler, new MarkerByteBufferHandler<W>(marker, marker), accessHandler);
 	}
 

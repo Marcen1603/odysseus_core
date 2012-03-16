@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnection;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 
 /**
@@ -38,7 +38,7 @@ public class BrokerByteBufferReceiverPO<W> extends ReceiverPO<ByteBuffer, W> {
 	 * @param port the port
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, IAccessConnection<ByteBuffer> accessHandler) throws IOException {
+	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, IAccessConnectionHandler<ByteBuffer> accessHandler) throws IOException {
 		super(handler, new BrokerByteBufferHandler<W>(), accessHandler);
 	}
 

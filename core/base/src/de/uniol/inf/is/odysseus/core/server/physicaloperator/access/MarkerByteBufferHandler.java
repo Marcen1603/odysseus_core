@@ -30,7 +30,7 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnection<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
 		try {
 			int pos = 0;
 			while (buffer.remaining() > 0) {

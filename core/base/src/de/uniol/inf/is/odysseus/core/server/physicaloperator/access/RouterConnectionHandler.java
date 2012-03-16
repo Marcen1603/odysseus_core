@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
-public class RouterConnection implements IAccessConnection<ByteBuffer>, IConnectionListener {
+public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener {
 
-	Logger logger = LoggerFactory.getLogger(RouterConnection.class);
+	Logger logger = LoggerFactory.getLogger(RouterConnectionHandler.class);
 	
 	final private Router router;
 	final private String host;
@@ -23,7 +23,7 @@ public class RouterConnection implements IAccessConnection<ByteBuffer>, IConnect
 	private int tries = 0;
 	private int waitingForNextReconnect;
 
-	public RouterConnection(String host, int port, boolean autoconnect,
+	public RouterConnectionHandler(String host, int port, boolean autoconnect,
 			String user, String password) throws IOException {
 		this.host = host;
 		this.port = port;
@@ -40,7 +40,7 @@ public class RouterConnection implements IAccessConnection<ByteBuffer>, IConnect
 		router.addConnectionListener(this);
 	}
 
-	public RouterConnection(RouterConnection routerConnection) {
+	public RouterConnectionHandler(RouterConnectionHandler routerConnection) {
 		this.router = routerConnection.router;
 		this.host = routerConnection.host;
 		this.port = routerConnection.port;
@@ -99,8 +99,8 @@ public class RouterConnection implements IAccessConnection<ByteBuffer>, IConnect
 	}
 
 	@Override
-	public RouterConnection clone() {
-		return new RouterConnection(this);
+	public RouterConnectionHandler clone() {
+		return new RouterConnectionHandler(this);
 	}
 
 	@Override

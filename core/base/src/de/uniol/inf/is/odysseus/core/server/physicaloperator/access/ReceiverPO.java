@@ -37,11 +37,11 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 	protected IObjectHandler<W> objectHandler;
 	private boolean opened;
 	
-	final IAccessConnection<R> accessHandler;
+	final IAccessConnectionHandler<R> accessHandler;
 	final private IInputDataHandler<R,W> inputDataHandler;
 
 
-	public ReceiverPO(IObjectHandler<W> objectHandler, IInputDataHandler<R,W> inputDataHandler, IAccessConnection<R> accessHandler) {
+	public ReceiverPO(IObjectHandler<W> objectHandler, IInputDataHandler<R,W> inputDataHandler, IAccessConnectionHandler<R> accessHandler) {
 		super();
 		this.objectHandler = objectHandler;
 		this.inputDataHandler = inputDataHandler;
@@ -55,7 +55,7 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 		super();
 		objectHandler = (IObjectHandler<W>) other.objectHandler.clone();
 		inputDataHandler = other.inputDataHandler.clone();
-		accessHandler = (IAccessConnection<R>) other.clone();
+		accessHandler = (IAccessConnectionHandler<R>) other.clone();
 		
 		opened = other.opened;
 	}
