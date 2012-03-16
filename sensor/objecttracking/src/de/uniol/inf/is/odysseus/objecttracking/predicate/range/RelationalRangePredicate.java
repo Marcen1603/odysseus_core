@@ -221,7 +221,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 						// TODO at the moment we only have one solution for each predicate
 						// because of the use of only linear prediction functions.
 						String compareOperator = entry.getValue().getCompareOperator();
-						ITimeInterval timeInterval = this.createApplicationTime(compareOperator, result);
+						ITimeInterval timeInterval = RelationalRangePredicate.createApplicationTime(compareOperator, result);
 						intervals.add(timeInterval);
 					}
 				}
@@ -276,7 +276,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 					if(result > 0){
 						
 						String compareOperator = entry.getValue().getCompareOperator();
-						ITimeInterval timeInterval = this.createApplicationTime(compareOperator, result);
+						ITimeInterval timeInterval = RelationalRangePredicate.createApplicationTime(compareOperator, result);
 						intervals.add(timeInterval);
 						
 					}

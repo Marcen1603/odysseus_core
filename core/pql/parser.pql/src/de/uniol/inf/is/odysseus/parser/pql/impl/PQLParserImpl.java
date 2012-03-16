@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 
-@SuppressWarnings({"all"})
+@SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
