@@ -425,7 +425,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
   }
 
   static final public List < InputOperatorItem > operatorList(Map < String, ILogicalOperator > namedOps) throws ParseException {
-  List list = new LinkedList();
+  List<InputOperatorItem> list = new LinkedList<InputOperatorItem>();
   Token tPort = null;
   ILogicalOperator operator;
   int port = 0;
