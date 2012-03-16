@@ -65,6 +65,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 
 			this.jdbcConnection = this.connection.getConnection();
 			this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
+			this.preparedStatement.setFetchSize(100);
 			this.jdbcConnection.setAutoCommit(false);
 			this.thread = new TransferThread();
 			this.thread.start();
@@ -79,11 +80,11 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		String s = "SELECT ";
 		String sep = "";
 		for (SDFAttribute a : this.getOutputSchema()) {
-			String name = a.getAttributeName();
+			String name = "\""+a.getAttributeName()+"\"";
 			s = s + sep + name;
 			sep = ", ";
 		}
-		s = s + " FROM " + tablename + "";
+		s = s + " FROM \"" + tablename + "\"";
 		return s;
 	}
 

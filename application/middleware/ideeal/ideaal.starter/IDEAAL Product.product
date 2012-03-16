@@ -36,17 +36,17 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <plugins>
       <plugin id="com.ibm.icu"/>
-      <plugin id="com.springsource.org.apache.log4j"/>
-      <plugin id="com.springsource.slf4j.api"/>
-      <plugin id="com.springsource.slf4j.bridge"/>
+      <plugin id="com.springsource.org.apache.log4j" fragment=""/>
+      <plugin id="com.springsource.slf4j.api" fragment=""/>
+      <plugin id="com.springsource.slf4j.bridge" fragment=""/>
       <plugin id="com.springsource.slf4j.log4j" fragment="true"/>
-      <plugin id="de.uniol.inf.is.odysseus"/>
+      <plugin id="de.uniol.inf.is.odysseus" fragment=""/>
       <plugin id="de.uniol.inf.is.odysseus.julproperties" fragment="true"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp.starter"/>
       <plugin id="javax.transaction" fragment="true"/>
       <plugin id="log4jproperties" fragment="true"/>
-      <plugin id="org.apache.commons.collections"/>
+      <plugin id="org.apache.commons.collections" fragment=""/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -114,6 +114,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.webservice.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.gef" version="3.7.2.v20110927-2020-777D381B4Bz0755B465D34242"/>
    </features>
 
 
