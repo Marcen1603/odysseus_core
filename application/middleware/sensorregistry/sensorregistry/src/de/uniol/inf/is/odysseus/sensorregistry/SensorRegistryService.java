@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.sensorregistry;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -39,13 +39,14 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 @XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorRegistryService extends WebserviceServer {
 
+	private static Logger LOG = LoggerFactory.getLogger(SensorRegistryService.class); 
 	private static final String TRANSFORMATION_CONFIGURATION = "Standard";
 
 	public static void startServer() {
 		SensorRegistryService server = new SensorRegistryService();
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9999/odysseus", server);
 		if (endpoint.isPublished()) {
-			Logger.getAnonymousLogger().log(Level.FINE, "Webservice published!");
+			LOG.debug("Webservice published!");
 		}
 
 	}
@@ -68,12 +69,12 @@ public class SensorRegistryService extends WebserviceServer {
 			Sensor sensor = new Sensor(host, port);
 			boolean result = SensorRegistry.getInstance().registerSensor(name, sensor);
 			if (result) {
-				Logger.getAnonymousLogger().info("Sensor " + name + " registered");
+				LOG.debug("Sensor " + name + " registered");
 				String query = "CREATE STREAM " + name + "(" + buildParamList(schema) + ") CHANNEL " + host + " : " + port;
-				Logger.getAnonymousLogger().info("Creating Stream in Odysseus: " + query);
+				LOG.debug("Creating Stream in Odysseus: " + query);
 				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION);				
 			}else{
-				Logger.getAnonymousLogger().info("Sensor "+name+" was already registered");
+				LOG.debug("Sensor "+name+" was already registered");
 			}
 			return result;
 		} catch (Exception e) {
@@ -99,12 +100,12 @@ public class SensorRegistryService extends WebserviceServer {
 			
 			boolean result = SensorRegistry.getInstance().unregisterSensor(name);
 			if (result) {				
-				Logger.getAnonymousLogger().info("Sensor " + name + " unregistered");
+				LOG.debug("Sensor " + name + " unregistered");
 				String query = "DROP STREAM " + name;
-				Logger.getAnonymousLogger().info("Creating Stream in Odysseus: " + query);
+				LOG.debug("Creating Stream in Odysseus: " + query);
 				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION);				
 			}else{
-				Logger.getAnonymousLogger().info("Sensor "+name+" was never registered");
+				LOG.debug("Sensor "+name+" was never registered");
 			}
 			return result;
 		} catch (Exception e) {
