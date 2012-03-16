@@ -86,7 +86,7 @@ public class SimpleSensor extends Thread{
 		schema.addAttribute(ATTRIBUTE_Y_VALUE, DataType.DOUBLE);
 		schema.addAttribute(ATTRIBUTE_NUMBER, DataType.INTEGER);
 		//erstelle einen neuen Sensor
-		sensorService.createSensor(SENSOR_NAME, schema, false);
+		sensorService.createSensor(SENSOR_NAME, schema, true);
 		System.out.println("Sensor created.");
 		this.start();
 		System.out.println("Sensor is running.");

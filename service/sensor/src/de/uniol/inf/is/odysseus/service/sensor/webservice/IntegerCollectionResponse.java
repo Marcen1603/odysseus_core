@@ -10,18 +10,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for sensorSchema complex type.
+ * <p>Java class for integerCollectionResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="sensorSchema">
+ * &lt;complexType name="integerCollectionResponse">
  *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *     &lt;extension base="{http://sensorregistry.odysseus.is.inf.uniol.de/}response">
  *       &lt;sequence>
- *         &lt;element name="attributes" type="{http://sensorregistry.odysseus.is.inf.uniol.de/}sensorAttribute" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="responseValue" type="{http://www.w3.org/2001/XMLSchema}int" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *     &lt;/restriction>
+ *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -29,41 +29,43 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sensorSchema", propOrder = {
-    "attributes"
+@XmlType(name = "integerCollectionResponse", propOrder = {
+    "responseValue"
 })
-public class SensorSchema {
+public class IntegerCollectionResponse
+    extends Response
+{
 
     @XmlElement(nillable = true)
-    protected List<SensorAttribute> attributes;
+    protected List<Integer> responseValue;
 
     /**
-     * Gets the value of the attributes property.
+     * Gets the value of the responseValue property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributes property.
+     * This is why there is not a <CODE>set</CODE> method for the responseValue property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributes().add(newItem);
+     *    getResponseValue().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link SensorAttribute }
+     * {@link Integer }
      * 
      * 
      */
-    public List<SensorAttribute> getAttributes() {
-        if (attributes == null) {
-            attributes = new ArrayList<SensorAttribute>();
+    public List<Integer> getResponseValue() {
+        if (responseValue == null) {
+            responseValue = new ArrayList<Integer>();
         }
-        return this.attributes;
+        return this.responseValue;
     }
 
 }

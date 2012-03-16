@@ -8,16 +8,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for addQueryResponse complex type.
+ * <p>Java class for getLogicalQueryResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="addQueryResponse">
+ * &lt;complexType name="getLogicalQueryResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://sensorregistry.odysseus.is.inf.uniol.de/}integerCollectionResponse" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://sensorregistry.odysseus.is.inf.uniol.de/}queryResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,23 +27,23 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "addQueryResponse", propOrder = {
+@XmlType(name = "getLogicalQueryResponse", propOrder = {
     "_return"
 })
-public class AddQueryResponse {
+public class GetLogicalQueryResponse {
 
     @XmlElement(name = "return")
-    protected IntegerCollectionResponse _return;
+    protected QueryResponse _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link IntegerCollectionResponse }
+     *     {@link QueryResponse }
      *     
      */
-    public IntegerCollectionResponse getReturn() {
+    public QueryResponse getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class AddQueryResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link IntegerCollectionResponse }
+     *     {@link QueryResponse }
      *     
      */
-    public void setReturn(IntegerCollectionResponse value) {
+    public void setReturn(QueryResponse value) {
         this._return = value;
     }
 

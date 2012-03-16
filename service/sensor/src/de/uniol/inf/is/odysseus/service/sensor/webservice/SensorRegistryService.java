@@ -101,20 +101,6 @@ public interface SensorRegistryService {
      * 
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "initialize", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.Initialize")
-    @ResponseWrapper(localName = "initializeResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.InitializeResponse")
-    public Response initialize(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
      *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.BooleanResponse
      */
     @WebMethod
@@ -122,6 +108,34 @@ public interface SensorRegistryService {
     @RequestWrapper(localName = "isRunning", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.IsRunning")
     @ResponseWrapper(localName = "isRunningResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.IsRunningResponse")
     public BooleanResponse isRunning(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getCurrentSchedulerID", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulerID")
+    @ResponseWrapper(localName = "getCurrentSchedulerIDResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulerIDResponse")
+    public StringResponse getCurrentSchedulerID(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "startExecution", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartExecution")
+    @ResponseWrapper(localName = "startExecutionResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartExecutionResponse")
+    public Response startExecution(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
@@ -146,13 +160,27 @@ public interface SensorRegistryService {
      * 
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringResponse
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getCurrentSchedulerID", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulerID")
-    @ResponseWrapper(localName = "getCurrentSchedulerIDResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulerIDResponse")
-    public StringResponse getCurrentSchedulerID(
+    @RequestWrapper(localName = "getInstalledSources", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledSources")
+    @ResponseWrapper(localName = "getInstalledSourcesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledSourcesResponse")
+    public StringListResponse getInstalledSources(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInstalledQueries", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledQueries")
+    @ResponseWrapper(localName = "getInstalledQueriesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledQueriesResponse")
+    public StringListResponse getInstalledQueries(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
@@ -167,85 +195,6 @@ public interface SensorRegistryService {
     @RequestWrapper(localName = "getCurrentSchedulingStrategyID", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulingStrategyID")
     @ResponseWrapper(localName = "getCurrentSchedulingStrategyIDResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetCurrentSchedulingStrategyIDResponse")
     public StringResponse getCurrentSchedulingStrategyID(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "startExecution", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartExecution")
-    @ResponseWrapper(localName = "startExecutionResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartExecutionResponse")
-    public Response startExecution(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryBuildConfigurationNames", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetQueryBuildConfigurationNames")
-    @ResponseWrapper(localName = "getQueryBuildConfigurationNamesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetQueryBuildConfigurationNamesResponse")
-    public StringListResponse getQueryBuildConfigurationNames(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSupportedQueryParsers", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetSupportedQueryParsers")
-    @ResponseWrapper(localName = "getSupportedQueryParsersResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetSupportedQueryParsersResponse")
-    public StringListResponse getSupportedQueryParsers(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param query
-     * @param transformationconfig
-     * @param parser
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addQuery", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.AddQuery")
-    @ResponseWrapper(localName = "addQueryResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.AddQueryResponse")
-    public Response addQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "parser", targetNamespace = "")
-        String parser,
-        @WebParam(name = "query", targetNamespace = "")
-        String query,
-        @WebParam(name = "transformationconfig", targetNamespace = "")
-        String transformationconfig);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "startAllClosedQueries", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartAllClosedQueries")
-    @ResponseWrapper(localName = "startAllClosedQueriesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartAllClosedQueriesResponse")
-    public Response startAllClosedQueries(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
@@ -285,9 +234,96 @@ public interface SensorRegistryService {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryBuildConfigurationNames", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetQueryBuildConfigurationNames")
+    @ResponseWrapper(localName = "getQueryBuildConfigurationNamesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetQueryBuildConfigurationNamesResponse")
+    public StringListResponse getQueryBuildConfigurationNames(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "startAllClosedQueries", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartAllClosedQueries")
+    @ResponseWrapper(localName = "startAllClosedQueriesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StartAllClosedQueriesResponse")
+    public Response startAllClosedQueries(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param id
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.QueryResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQuery", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetLogicalQuery")
+    @ResponseWrapper(localName = "getLogicalQueryResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetLogicalQueryResponse")
+    public QueryResponse getLogicalQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "id", targetNamespace = "")
+        String id);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSupportedQueryParsers", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetSupportedQueryParsers")
+    @ResponseWrapper(localName = "getSupportedQueryParsersResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetSupportedQueryParsersResponse")
+    public StringListResponse getSupportedQueryParsers(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getRegisteredSchedulers", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetRegisteredSchedulers")
     @ResponseWrapper(localName = "getRegisteredSchedulersResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetRegisteredSchedulersResponse")
     public StringListResponse getRegisteredSchedulers(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "stopExecution", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StopExecution")
+    @ResponseWrapper(localName = "stopExecutionResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StopExecutionResponse")
+    public Response stopExecution(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.SimpleGraph
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPlan", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetPlan")
+    @ResponseWrapper(localName = "getPlanResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetPlanResponse")
+    public SimpleGraph getPlan(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
@@ -310,20 +346,6 @@ public interface SensorRegistryService {
         String scheduler,
         @WebParam(name = "scheduler_strategy", targetNamespace = "")
         String schedulerStrategy);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "updateExecutionPlan", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.UpdateExecutionPlan")
-    @ResponseWrapper(localName = "updateExecutionPlanResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.UpdateExecutionPlanResponse")
-    public Response updateExecutionPlan(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
 
     /**
      * 
@@ -361,6 +383,20 @@ public interface SensorRegistryService {
 
     /**
      * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInfos", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInfos")
+    @ResponseWrapper(localName = "getInfosResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInfosResponse")
+    public StringResponse getInfos(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
      * @param queryID
      * @param securitytoken
      * @return
@@ -378,72 +414,25 @@ public interface SensorRegistryService {
 
     /**
      * 
+     * @param query
+     * @param transformationconfig
+     * @param parser
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.SimpleGraph
+     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.IntegerCollectionResponse
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPlan", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetPlan")
-    @ResponseWrapper(localName = "getPlanResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetPlanResponse")
-    public SimpleGraph getPlan(
+    @RequestWrapper(localName = "addQuery", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.AddQuery")
+    @ResponseWrapper(localName = "addQueryResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.AddQueryResponse")
+    public IntegerCollectionResponse addQuery(
         @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "stopExecution", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StopExecution")
-    @ResponseWrapper(localName = "stopExecutionResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.StopExecutionResponse")
-    public Response stopExecution(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInfos", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInfos")
-    @ResponseWrapper(localName = "getInfosResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInfosResponse")
-    public StringResponse getInfos(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstalledSources", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledSources")
-    @ResponseWrapper(localName = "getInstalledSourcesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledSourcesResponse")
-    public StringListResponse getInstalledSources(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.service.sensor.webservice.StringListResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstalledQueries", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledQueries")
-    @ResponseWrapper(localName = "getInstalledQueriesResponse", targetNamespace = "http://sensorregistry.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.service.sensor.webservice.GetInstalledQueriesResponse")
-    public StringListResponse getInstalledQueries(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
+        String securitytoken,
+        @WebParam(name = "parser", targetNamespace = "")
+        String parser,
+        @WebParam(name = "query", targetNamespace = "")
+        String query,
+        @WebParam(name = "transformationconfig", targetNamespace = "")
+        String transformationconfig);
 
 }

@@ -46,8 +46,8 @@ public class SensorService implements ISensorService {
 				for(String attributeName :schema.getNameOrder()){
 					SensorAttribute sa = new SensorAttribute();
 					sa.setName(attributeName);
-					sa.setType(schema.getDatatype(attributeName).toString());
-					sensorSchema.addAttribute(sa);
+					sa.setType(schema.getDatatype(attributeName).toString());					
+					sensorSchema.getAttributes().add(sa);
 				}
 						
 				boolean result = srs.registerSensor(securityToken, name, sensor.getOwnHost(), sensor.getPort(), sensorSchema);

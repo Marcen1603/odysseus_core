@@ -46,5 +46,10 @@ public enum DataType {
 	 * Dieser gibt an, ab wann der Messwert nicht mehr gültig ist. 
 	 * Wird eigentlich in der Regel vom System gesetzt.
 	 */
-	ENDTIMESTAMP
+	ENDTIMESTAMP,
+	/**
+	 * Ein Boolean
+	 */
+	BOOLEAN
+	
 }
