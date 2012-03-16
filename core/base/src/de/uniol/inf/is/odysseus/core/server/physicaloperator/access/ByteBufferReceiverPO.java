@@ -24,13 +24,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener {
+public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener, ITransferHandler {
 
 	volatile protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(AbstractByteBufferReceiverPO.class);
+			_logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
 		}
 		return _logger;
 	}
@@ -39,21 +39,25 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 	private boolean opened;
 	
 	final IAccessConnection accessHandler;
+	final private IByteBufferHandler<W> byteBufferHandler;
 
 
-	public AbstractByteBufferReceiverPO(IObjectHandler<W> objectHandler, IAccessConnection accessHandler) {
+	public ByteBufferReceiverPO(IObjectHandler<W> objectHandler, IByteBufferHandler<W> byteBufferHandler, IAccessConnection accessHandler) {
 		super();
 		this.objectHandler = objectHandler;
+		this.byteBufferHandler = byteBufferHandler;
 		this.accessHandler = accessHandler;
 		setName("ByteBufferReceiverPO " + accessHandler);
 		this.opened = false;
 	}
 
 	@SuppressWarnings("unchecked")
-	public AbstractByteBufferReceiverPO(AbstractByteBufferReceiverPO<W> byteBufferReceiverPO) {
+	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
 		super();
 		objectHandler = (IObjectHandler<W>) byteBufferReceiverPO.objectHandler.clone();
+		byteBufferHandler = byteBufferReceiverPO.byteBufferHandler.clone();
 		accessHandler = (IAccessConnection) byteBufferReceiverPO.clone();
+		
 		opened = byteBufferReceiverPO.opened;
 	}
 
@@ -68,6 +72,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 		if (!opened) {
 			try {
 				objectHandler.clear();
+				byteBufferHandler.init();
 				accessHandler.open(this);
 				opened = true;
 			} catch (Exception e) {
@@ -83,6 +88,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 			try {
 				opened = false; // Do not read any data anymore
 				accessHandler.close(this);
+				byteBufferHandler.done();
 				objectHandler.clear();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -90,6 +96,7 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 		}
 	}
 
+	
 	@Override
 	public void done() {
 		propagateDone();
@@ -97,8 +104,8 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 
   
 
-
-	protected synchronized void transfer()  {
+	@Override
+	public synchronized void transfer()  {
 
 		W toTrans = null;
 		try {
@@ -115,7 +122,9 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 	}
 	
 	@Override
-	abstract public void process(ByteBuffer buffer);
+	public void process(ByteBuffer buffer){
+		byteBufferHandler.process(buffer, objectHandler, accessHandler, this);
+	}
 
 	@Override
 	public String getSourceName() {
@@ -124,15 +133,20 @@ abstract public class AbstractByteBufferReceiverPO<W> extends AbstractSource<W> 
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof AbstractByteBufferReceiverPO)) {
+		if (!(ipo instanceof ByteBufferReceiverPO)) {
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		AbstractByteBufferReceiverPO bbrpo = (AbstractByteBufferReceiverPO) ipo;
+		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
 		if (this.objectHandler.equals(bbrpo.objectHandler) && this.accessHandler.equals(bbrpo.accessHandler)) {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public AbstractSource<W> clone() {
+		return new ByteBufferReceiverPO<W>(this);
 	}
 
 

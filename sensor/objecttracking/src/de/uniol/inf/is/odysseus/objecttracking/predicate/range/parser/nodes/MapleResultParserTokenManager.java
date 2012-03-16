@@ -2,7 +2,6 @@
 package de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class MapleResultParserTokenManager implements MapleResultParserConstants
 {
 

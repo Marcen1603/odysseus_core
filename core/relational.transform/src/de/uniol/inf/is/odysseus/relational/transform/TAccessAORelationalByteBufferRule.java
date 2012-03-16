@@ -20,8 +20,9 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.RouterConnection;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -39,9 +40,11 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
-		SizeByteBufferReceiverPO accessPO = null;
+		ByteBufferReceiverPO accessPO = null;
 		try {
-			accessPO = new SizeByteBufferReceiverPO(new ByteBufferHandler(new TupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
+			accessPO = new ByteBufferReceiverPO(new ByteBufferHandler(new TupleDataHandler(accessAO.getOutputSchema())), 
+					new SizeByteBufferHandler(),
+					new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
