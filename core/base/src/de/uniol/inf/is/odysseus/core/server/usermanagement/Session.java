@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.UUID;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class Session implements ISession {
-    private final static long SESSION_TIMEOUT = 10 * 60000;
+    private final static long SESSION_TIMEOUT = OdysseusDefaults.getLong("sessionTimeout", 10 * 60000);
     private final String id = UUID.randomUUID().toString();
     private final IUser user;
     private final long start;
