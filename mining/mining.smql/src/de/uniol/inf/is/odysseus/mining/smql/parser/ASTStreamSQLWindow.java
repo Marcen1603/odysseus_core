@@ -23,6 +23,7 @@ public class ASTStreamSQLWindow extends SimpleNode {
 	}
 
 	/** Accept the visitor. **/
+	@Override
 	public Object jjtAccept(SMQLParserVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}

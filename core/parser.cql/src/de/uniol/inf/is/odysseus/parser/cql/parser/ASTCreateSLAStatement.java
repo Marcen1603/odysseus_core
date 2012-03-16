@@ -32,7 +32,8 @@ class ASTCreateSLAStatement extends SimpleNode {
   }
 
   /** Accept the visitor. **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
   

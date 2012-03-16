@@ -16,7 +16,8 @@ class ASTAdditiveExpression extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   
@@ -25,7 +26,8 @@ class ASTAdditiveExpression extends SimpleNode {
 	  this.str = s;
   }
   
-  public String toString(){
+  @Override
+public String toString(){
 	  return this.str;
   }
 }

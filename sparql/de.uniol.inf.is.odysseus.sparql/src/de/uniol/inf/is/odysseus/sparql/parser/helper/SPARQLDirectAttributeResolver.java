@@ -65,7 +65,8 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
         return found;
     }
     
-    public SPARQLDirectAttributeResolver clone(){
+    @Override
+	public SPARQLDirectAttributeResolver clone(){
     	return new SPARQLDirectAttributeResolver(this);
     }
 

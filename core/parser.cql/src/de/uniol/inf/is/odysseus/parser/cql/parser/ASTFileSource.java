@@ -23,6 +23,7 @@ public class ASTFileSource extends SimpleNode {
 	}
 
 	/** Accept the visitor. **/
+	@Override
 	public Object jjtAccept(NewSQLParserVisitor visitor, Object data)
 			throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException {
 		return visitor.visit(this, data);

@@ -24,7 +24,8 @@ class ASTGroupBy extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
   

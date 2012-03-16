@@ -72,6 +72,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 	}
 
 	// TODO: This is the only valid Entry point ... how can the other elements be set to private?? 
+	@Override
 	public Object visit(ASTSelectStatement statement, Object data) throws QueryParseException {
 
 		SimpleNode node = (SimpleNode) statement.jjtGetChild(0);

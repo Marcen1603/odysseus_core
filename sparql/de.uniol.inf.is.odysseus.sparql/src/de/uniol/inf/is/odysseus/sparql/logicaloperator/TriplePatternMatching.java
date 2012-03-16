@@ -134,7 +134,8 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
         this.replacePrefixes();
     }
     
-    public TriplePatternMatching clone(){
+    @Override
+	public TriplePatternMatching clone(){
         return new TriplePatternMatching(this);
     }
     

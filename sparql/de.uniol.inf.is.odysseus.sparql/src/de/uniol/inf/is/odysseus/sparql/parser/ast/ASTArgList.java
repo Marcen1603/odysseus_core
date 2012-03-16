@@ -7,6 +7,7 @@ class ASTArgList extends SimpleNode {
   
 	public String string;
 	
+	@Override
 	public String toString() {
 		return string;
 	}
@@ -25,7 +26,8 @@ class ASTArgList extends SimpleNode {
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
+  @Override
+public Object jjtAccept(SPARQLParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }

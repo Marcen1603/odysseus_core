@@ -17,7 +17,8 @@ class ASTSlaWindowDef extends SimpleNode {
 
   /** Accept the visitor. 
  * @throws QueryParseException **/
-  public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
+  @Override
+public Object jjtAccept(NewSQLParserVisitor visitor, Object data) throws QueryParseException {
     return visitor.visit(this, data);
   }
 }

@@ -31,6 +31,7 @@ public class MarkovQLBuilder implements BundleActivator, IQueryParser {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		MarkovQLBuilder.context = bundleContext;
 	}
@@ -41,6 +42,7 @@ public class MarkovQLBuilder implements BundleActivator, IQueryParser {
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		MarkovQLBuilder.context = null;
 	}

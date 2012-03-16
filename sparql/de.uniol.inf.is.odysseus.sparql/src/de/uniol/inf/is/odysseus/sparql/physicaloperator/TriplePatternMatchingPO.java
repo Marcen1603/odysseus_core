@@ -67,6 +67,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		this.outputSchema = original.outputSchema;
 	}
 	
+	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
 		
 		// first the object has to be transformed
@@ -143,9 +144,11 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 	
 	
+	@Override
 	public void process_close(){
 	}
 	
+	@Override
 	public void process_done(){
 		System.out.println("TPM (" + this.hashCode() + ").processDone()");
 		super.process_done();
@@ -168,6 +171,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		return new TriplePatternMatchingPO(this);
 	}
 	
+	@Override
 	public String toString(){
 		return "TriplePatternMatchingPO (" + this.hashCode() + "): " + this.predicate;
 	}
