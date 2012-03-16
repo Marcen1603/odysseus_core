@@ -7,7 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
 public class ExtPolygonScreen extends JFrame{
@@ -34,7 +34,7 @@ public class ExtPolygonScreen extends JFrame{
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    public void onFeature(final RelationalTuple<? extends IMetaAttribute> segment) {
+    public void onFeature(final Tuple<? extends IMetaAttribute> segment) {
         this.map.onFeature(segment);
     }
     

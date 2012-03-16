@@ -16,22 +16,22 @@
 package de.uniol.inf.is.odysseus.mining.clustering.feature;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 06.09.2011
  */
-public class RelationalTIClusteringFeature<M extends ITimeInterval> extends ClusteringFeature<RelationalTuple<M>>{
+public class RelationalTIClusteringFeature<M extends ITimeInterval> extends ClusteringFeature<Tuple<M>>{
 	
-	public RelationalTIClusteringFeature(RelationalTuple<M> tuple){
+	public RelationalTIClusteringFeature(Tuple<M> tuple){
 		createRelationalTuple(tuple);
 	}
 	
-	private void createRelationalTuple(RelationalTuple<M> tuple){
-		RelationalTuple<M> linearSum = new RelationalTuple<M>(tuple.size());
-		RelationalTuple<M> squareSum = new RelationalTuple<M>(tuple.size());		
+	private void createRelationalTuple(Tuple<M> tuple){
+		Tuple<M> linearSum = new Tuple<M>(tuple.size());
+		Tuple<M> squareSum = new Tuple<M>(tuple.size());		
 		for(int i=0;i<tuple.size();i++){
 			if(tuple.getAttribute(i) instanceof Number){
 				linearSum.setAttribute(i, 0);
@@ -52,9 +52,9 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	@Override
-	public void add(RelationalTuple<M> tuple){
-		RelationalTuple<M> linearSum = super.getLinearSum();
-		RelationalTuple<M> squareSum = super.getSquareSum();
+	public void add(Tuple<M> tuple){
+		Tuple<M> linearSum = super.getLinearSum();
+		Tuple<M> squareSum = super.getSquareSum();
 		if(linearSum.size()!=tuple.size() || squareSum.size() != tuple.size()){
 			throw new RuntimeException("Number of attributes are not equal");
 		}
@@ -67,7 +67,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 
 	
 	@Override
-	public ClusteringFeature<RelationalTuple<M>> merge(ClusteringFeature<RelationalTuple<M>> other) {
+	public ClusteringFeature<Tuple<M>> merge(ClusteringFeature<Tuple<M>> other) {
 		for(int i=0;i<other.getLinearSum().size();i++){
 			this.addToSum(i, other.getLinearSum(), this.getLinearSum(), false);
 			this.addToSum(i, other.getSquareSum(), this.getSquareSum(), false);
@@ -77,7 +77,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 		return this;
 	}	
 	
-	private void addToSum(int pos, RelationalTuple<M> tuple, RelationalTuple<M> sumTuple, boolean square){
+	private void addToSum(int pos, Tuple<M> tuple, Tuple<M> sumTuple, boolean square){
 		Object value = tuple.getAttribute(pos);
 		Object newvalue = value;
 		if(value instanceof Double){
@@ -95,7 +95,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}	
 	
 	@SuppressWarnings("static-method")
-    private Object addValue(RelationalTuple<M> tuple, int pos, Double value, boolean square){
+    private Object addValue(Tuple<M> tuple, int pos, Double value, boolean square){
 		Double old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -104,7 +104,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	@SuppressWarnings("static-method")
-    private Object addValue(RelationalTuple<M> tuple, int pos, Integer value, boolean square){
+    private Object addValue(Tuple<M> tuple, int pos, Integer value, boolean square){
 		Integer old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -113,7 +113,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	@SuppressWarnings("static-method")
-    private Object addValue(RelationalTuple<M> tuple, int pos, Float value, boolean square){
+    private Object addValue(Tuple<M> tuple, int pos, Float value, boolean square){
 		Float old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -122,7 +122,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	@SuppressWarnings("static-method")
-    private Object addValue(RelationalTuple<M> tuple, int pos, Long value, boolean square){
+    private Object addValue(Tuple<M> tuple, int pos, Long value, boolean square){
 		Long old = tuple.getAttribute(pos);
 		if(square){
 			value = value*value;
@@ -131,7 +131,7 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	@SuppressWarnings("static-method")
-    private Object addValue(RelationalTuple<M> tuple, int pos, String value, boolean square){
+    private Object addValue(Tuple<M> tuple, int pos, String value, boolean square){
 		String old = tuple.getAttribute(pos);				
 		return old+value;
 	}

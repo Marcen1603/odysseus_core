@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalObjectTrackingLatency;
@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
  *
  * @author Nico Klein, Volker Janz
  */
-public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 	
 	private String oldObjListPath;
 	private String newObjListPath;
@@ -89,13 +89,13 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 	 * Diese Funktion sorgt dafuer, dass nur noch eindeutige Zuordnungen
 	 * vorhanden sind.
 	 */
-	private ConnectionList matchObjects(MVRelationalTuple<M> mainTuple, ConnectionList connectionList) {
+	private ConnectionList matchObjects(MVTuple<M> mainTuple, ConnectionList connectionList) {
 
-		Map<MVRelationalTuple<M>, List<IConnection>> connections = new HashMap<MVRelationalTuple<M>, List<IConnection>>();
+		Map<MVTuple<M>, List<IConnection>> connections = new HashMap<MVTuple<M>, List<IConnection>>();
 
 		for (IConnection connection : connectionList) {
 			@SuppressWarnings("unchecked")
-			MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) connection.getLeftPath().getTupleObject();
+			MVTuple<M> tuple = (MVTuple<M>) connection.getLeftPath().getTupleObject();
 			List<IConnection> tuples = new ArrayList<IConnection>();
 			if (!connections.containsKey(tuple)) {
 				tuples.add(connection);
@@ -109,10 +109,10 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 	}
 
 	@SuppressWarnings("static-method")
-    private ConnectionList getSingleMatchingList(Map<MVRelationalTuple<M>, List<IConnection>> connections, MVRelationalTuple<M> mainTuple) {
-		Map<MVRelationalTuple<M>, IConnection> singleMatchingTuples = new HashMap<MVRelationalTuple<M>, IConnection>();
+    private ConnectionList getSingleMatchingList(Map<MVTuple<M>, List<IConnection>> connections, MVTuple<M> mainTuple) {
+		Map<MVTuple<M>, IConnection> singleMatchingTuples = new HashMap<MVTuple<M>, IConnection>();
 
-		for (MVRelationalTuple<M> matchingTuple : connections.keySet()) {
+		for (MVTuple<M> matchingTuple : connections.keySet()) {
 			IConnection connection = null;
 			for (IConnection connectionComparator : connections.get(matchingTuple)) {
 				if (connection == null) {
@@ -126,9 +126,9 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 			}
 		}
 
-		List<MVRelationalTuple<M>> removeTupleList = new ArrayList<MVRelationalTuple<M>>();
-		for (MVRelationalTuple<M> tuple : singleMatchingTuples.keySet()) {
-			for (MVRelationalTuple<M> tuple2 : singleMatchingTuples.keySet()) {
+		List<MVTuple<M>> removeTupleList = new ArrayList<MVTuple<M>>();
+		for (MVTuple<M> tuple : singleMatchingTuples.keySet()) {
+			for (MVTuple<M> tuple2 : singleMatchingTuples.keySet()) {
 				if (tuple != tuple2) {
 					if (singleMatchingTuples.get(tuple).getRightPath().getTupleObject() == singleMatchingTuples.get(tuple2).getRightPath().getTupleObject()) {
 						if (singleMatchingTuples.get(tuple).getRating() > singleMatchingTuples.get(tuple2).getRating()) {
@@ -141,12 +141,12 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 			}
 		}
 
-		for (MVRelationalTuple<M> mvRelationalTuple : removeTupleList) {
-			singleMatchingTuples.remove(mvRelationalTuple);
+		for (MVTuple<M> mvTuple : removeTupleList) {
+			singleMatchingTuples.remove(mvTuple);
 		}
 
 		ConnectionList resultConnectionList = new ConnectionList();
-		for (MVRelationalTuple<M> tuple : singleMatchingTuples.keySet()) {
+		for (MVTuple<M> tuple : singleMatchingTuples.keySet()) {
 			resultConnectionList.add(singleMatchingTuples.get(tuple));
 		}
 
@@ -154,7 +154,7 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 	}
 
 	@SuppressWarnings("static-method")
-    private List<Object> getDifferenceSet(MVRelationalTuple<M> mainTuple, TupleIndexPath baseObjects, ConnectionList matchedObjects) {
+    private List<Object> getDifferenceSet(MVTuple<M> mainTuple, TupleIndexPath baseObjects, ConnectionList matchedObjects) {
 		List<Object> tupleList = new ArrayList<Object>();
 //		TupleHelper tupleHelper = new TupleHelper(mainTuple);
 		for (TupleIndexPath obj : matchedObjects.getAllElements()) {
@@ -188,7 +188,7 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
 		object.getMetadata().setObjectTrackingLatencyStart("Association Selection");
 		// PORT: 1, get matched objects
@@ -196,7 +196,7 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 		if( matchedObjects.size() > 0 ) {
 			object.getMetadata().setConnectionList(matchedObjects);
 //			hasDublicates(object);
-			MVRelationalTuple<M> tmpObject = object.clone();
+			MVTuple<M> tmpObject = object.clone();
 			tmpObject.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 			tmpObject.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(tmpObject, 1);
@@ -205,12 +205,12 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 		}
 
 		// PORT: 0, get new not matching objects
-		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		MVTuple<M> base = new MVTuple<M>(1);
 		base.setMetadata((M)object.getMetadata().clone());
 		Object[] objArray = new Object[2];
 		objArray[0] = TupleIndexPath.fromSchemaIndexPath(schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName()), object).getTupleObject();
 		objArray[1] = getDifferenceSet(object, TupleIndexPath.fromSchemaIndexPath(this.scannedObjectListPath, object), matchedObjects);
-		base.setAttribute(0, new MVRelationalTuple<M>(objArray));
+		base.setAttribute(0, new MVTuple<M>(objArray));
 
 		base.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
 		base.getMetadata().setObjectTrackingLatencyEnd();
@@ -219,11 +219,11 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 		// PORT: 2, get predicted not matching objects
 		List<Object> predictedNotMatchedObjects = getDifferenceSet(object, TupleIndexPath.fromSchemaIndexPath(this.predictedObjectListPath, object), matchedObjects);
 		if (predictedNotMatchedObjects.size() > 0) {
-//			MVRelationalTuple<M> predictedTuple = new MVRelationalTuple<M>(predictedNotMatchedObjects.size());
+//			MVTuple<M> predictedTuple = new MVTuple<M>(predictedNotMatchedObjects.size());
 //			for (int i = 0; i < predictedNotMatchedObjects.size(); i++) {
 //				predictedTuple.setAttribute(i, predictedNotMatchedObjects.get(i));
 //			}
-			MVRelationalTuple<M> predictedNotMatchedTuple = object.clone();
+			MVTuple<M> predictedNotMatchedTuple = object.clone();
 			TupleIndexPath predictedObjectList = TupleIndexPath.fromSchemaIndexPath(this.predictedObjectListPath, predictedNotMatchedTuple);
 			predictedObjectList.setTupleObject(predictedNotMatchedObjects);
 			predictedNotMatchedTuple.getMetadata().setObjectTrackingLatencyEnd("Association Selection");
@@ -240,7 +240,7 @@ public class HypothesisSelectionPO<M extends IProbabilityConnectionContainerTime
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new HypothesisSelectionPO<M>(this);
 	}
 }

@@ -22,11 +22,11 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityTimeIntervalObjectTrackingLatency;
 
-public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrackingLatency> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private String objListPath;
 	private double threshold;
@@ -58,21 +58,21 @@ public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrac
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> obj, int port) {
+	protected void process_next(MVTuple<M> obj, int port) {
 		obj.getMetadata().setObjectTrackingLatencyStart();
-		MVRelationalTuple<M> object = obj.clone();
+		MVTuple<M> object = obj.clone();
 
 		SchemaHelper sh = new SchemaHelper(getSubscribedToSource(0).getSchema());
 		// Get the list of cars
 		List<Object> carListTuple = (List<Object>) TupleIndexPath.fromSchemaIndexPath(sh.getSchemaIndexPath(this.objListPath), object).getTupleObject();
 		// Init an arraylist for the elements that should be transfered
-		ArrayList<MVRelationalTuple<M>> transferCarListArrayList = new ArrayList<MVRelationalTuple<M>>();
+		ArrayList<MVTuple<M>> transferCarListArrayList = new ArrayList<MVTuple<M>>();
 
 		PointInTime timestamp = object.getMetadata().getStart();
 
 		double val = 0;
 		for(Object carObject : carListTuple) {
-			MVRelationalTuple<M> car = (MVRelationalTuple<M>) carObject;
+			MVTuple<M> car = (MVTuple<M>) carObject;
 			val = 0;
 			double[][] cov = car.getMetadata().getCovariance();
 			for(int i = 0; i < cov.length; i++) {
@@ -103,10 +103,10 @@ public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrac
 			}
 		}
 
-//		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(transferCarListArrayList.size());
+//		MVTuple<M> tuples = new MVTuple<M>(transferCarListArrayList.size());
 //		int counter = 0;
-//		for (MVRelationalTuple<M> mvRelationalTuple : transferCarListArrayList) {
-//			tuples.setAttribute(counter++, mvRelationalTuple);
+//		for (MVTuple<M> mvTuple : transferCarListArrayList) {
+//			tuples.setAttribute(counter++, mvTuple);
 //		}
 
 		SchemaIndexPath schemaPath = sh.getSchemaIndexPath(this.objListPath);
@@ -129,7 +129,7 @@ public class TemporaryDataBouncerPO<M extends IProbabilityTimeIntervalObjectTrac
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new TemporaryDataBouncerPO<M>(this);
 	}
 

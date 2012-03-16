@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.ApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPair;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  *
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RelationalRangePredicate<M extends IApplicationTime> extends AbstractRangePredicate<RelationalTuple<M>>{
+public class RelationalRangePredicate<M extends IApplicationTime> extends AbstractRangePredicate<Tuple<M>>{
 
 	private static final long serialVersionUID = 1222104352250883947L;
 	
@@ -189,7 +189,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	
 	
 	@Override
-	public List<ITimeInterval> evaluate(RelationalTuple<M> input) {
+	public List<ITimeInterval> evaluate(Tuple<M> input) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
 		
@@ -245,7 +245,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 	}
 
 	@Override
-	public List<ITimeInterval> evaluate(RelationalTuple<M> left, RelationalTuple<M> right) {
+	public List<ITimeInterval> evaluate(Tuple<M> left, Tuple<M> right) {
 		this.evaluationCount++;
 		List<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
 		
@@ -263,7 +263,7 @@ public class RelationalRangePredicate<M extends IApplicationTime> extends Abstra
 					int[] curAttributePositions = this.attributePositions.get(entry.getKey());
 					Object[] values = new Object[curAttributePositions.length];
 					for(int i = 0; i<values.length; ++i){
-						RelationalTuple<?> r = this.fromRightChannel.get(entry.getKey())[i] ? right : left;
+						Tuple<?> r = this.fromRightChannel.get(entry.getKey())[i] ? right : left;
 						values[i] = r.getAttribute(curAttributePositions[i]);
 					}
 					

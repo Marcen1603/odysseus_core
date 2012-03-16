@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndex;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 
 /**
@@ -177,19 +177,19 @@ public class StreamCarsExpressionVariable implements IStreamCarsExpressionVariab
 	}
 
 	@Override
-	public void bindTupleValue(MVRelationalTuple<?> tuple) {
+	public void bindTupleValue(MVTuple<?> tuple) {
 		Object currentAttr = tuple;
 		int depth = absolutePath.length - 1;
 		for(int i=0; i<depth; i++) {
-			if(currentAttr instanceof MVRelationalTuple) {
-				currentAttr = ((MVRelationalTuple<?>)currentAttr).getAttribute(absolutePath[i]);
+			if(currentAttr instanceof MVTuple) {
+				currentAttr = ((MVTuple<?>)currentAttr).getAttribute(absolutePath[i]);
 			} else if(currentAttr instanceof List) {
 				currentAttr = ((List<?>)currentAttr).get(absolutePath[i]);
 			}
 		}
 		
-		if(currentAttr instanceof MVRelationalTuple) {
-			bind(((MVRelationalTuple<?>)currentAttr).getAttribute(absolutePath[depth]));
+		if(currentAttr instanceof MVTuple) {
+			bind(((MVTuple<?>)currentAttr).getAttribute(absolutePath[depth]));
 		} else if(currentAttr instanceof List) {
 			bind(((List<?>)currentAttr).get(absolutePath[depth]));
 		}

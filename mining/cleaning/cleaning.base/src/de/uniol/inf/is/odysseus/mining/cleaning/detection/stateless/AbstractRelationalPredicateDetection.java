@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @author Dennis Geesen
  * Created at: 23.06.2011
  */
-public abstract class AbstractRelationalPredicateDetection implements IUnaryDetection<RelationalTuple<?>> {
+public abstract class AbstractRelationalPredicateDetection implements IUnaryDetection<Tuple<?>> {
 
 	private RelationalPredicate predicate;
 	private String attributeName;
@@ -62,7 +62,7 @@ public abstract class AbstractRelationalPredicateDetection implements IUnaryDete
 	public abstract String createPredicate();
 	
 	@Override
-	public IPredicate<RelationalTuple<?>> getPredicate() {		
+	public IPredicate<Tuple<?>> getPredicate() {		
 		return predicate;
 	}
 	

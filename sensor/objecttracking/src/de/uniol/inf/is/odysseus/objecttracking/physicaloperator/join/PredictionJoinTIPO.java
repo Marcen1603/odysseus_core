@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.ITimeIntervalProbabilityPredictionFunction;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 
 /**
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
  *            Datentyp
  */
 @SuppressWarnings({"rawtypes"})
-public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunction, T extends MVRelationalTuple<K>>
+public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunction, T extends MVTuple<K>>
 		extends AbstractPipe<T, T> {
 
 	@Override
@@ -217,7 +217,7 @@ public class PredictionJoinTIPO<K extends ITimeIntervalProbabilityPredictionFunc
 //		}
 //		
 //		// Testausgabe
-////		if(((RelationalTuple)object).getAttribute(0).toString().equals("1951")){
+////		if(((Tuple)object).getAttribute(0).toString().equals("1951")){
 ////			System.out.println("Found object");
 ////		}
 //		

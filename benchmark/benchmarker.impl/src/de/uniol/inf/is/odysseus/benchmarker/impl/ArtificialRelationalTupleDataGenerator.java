@@ -19,7 +19,7 @@ import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Andre Bolles
@@ -71,16 +71,16 @@ public class ArtificialRelationalTupleDataGenerator {
 				values[4] = humidity;
 				values[5] = light;
 				values[6] = voltage;
-				RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(
+				Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
 						values);
 				// Sortierung nach Zeitstempel nicht notwendig, da ohnehin aufsteigend erzeugt
 				o.writeObject(tuple);
 			}
 //			System.out.println("#elements: " + l.size());
-//			Collections.sort(l, new Comparator<RelationalTuple<?>>() {
+//			Collections.sort(l, new Comparator<Tuple<?>>() {
 //
 //				@Override
-//				public int compare(RelationalTuple<?> o1, RelationalTuple<?> o2) {
+//				public int compare(Tuple<?> o1, Tuple<?> o2) {
 //					if (o1.getAttribute(0).equals(o2.getAttribute(0))) {
 //						return 0;
 //					}

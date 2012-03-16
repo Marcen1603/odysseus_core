@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class RelationalAggregateFunctionBuilder implements
 		IAggregateFunctionBuilder {
@@ -49,9 +49,9 @@ public class RelationalAggregateFunctionBuilder implements
 	}
 	
 	@Override
-    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+    public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(
 			AggregateFunction key, int[] pos) {
-		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
+		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if ((key.getName().equalsIgnoreCase("AVG"))
 				|| (key.getName().equalsIgnoreCase("SUM"))) {
 			aggFunc = RelationalAvgSum.getInstance(pos[0],

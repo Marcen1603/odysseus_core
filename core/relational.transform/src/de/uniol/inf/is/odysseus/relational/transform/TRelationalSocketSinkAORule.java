@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSink
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -36,9 +36,9 @@ public class TRelationalSocketSinkAORule extends
 
 		if (socketSinkPO == null) {
 
-			IDataHandler handler = new RelationalTupleDataHandler(
+			IDataHandler handler = new TupleDataHandler(
 					operator.getOutputSchema());
-			ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
+			ObjectHandler<Tuple<ITimeInterval>> objectHandler = new ObjectHandler<Tuple<ITimeInterval>>(
 					handler);
 			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
 					getStreamHandler(operator), true, operator.isLoginNeeded(),

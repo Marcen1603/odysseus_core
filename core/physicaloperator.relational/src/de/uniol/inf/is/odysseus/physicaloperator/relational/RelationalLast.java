@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Last;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RelationalLast extends Last<RelationalTuple<?>, RelationalTuple<?>> {
+public class RelationalLast extends Last<Tuple<?>, Tuple<?>> {
 
     /**
 	 * 
@@ -28,8 +28,8 @@ public class RelationalLast extends Last<RelationalTuple<?>, RelationalTuple<?>>
     }
 
     @Override
-    public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
-        ElementPartialAggregate<RelationalTuple<?>> pa = (ElementPartialAggregate<RelationalTuple<?>>) p;
+    public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
+        ElementPartialAggregate<Tuple<?>> pa = (ElementPartialAggregate<Tuple<?>>) p;
         return pa.getElem();
     }
 

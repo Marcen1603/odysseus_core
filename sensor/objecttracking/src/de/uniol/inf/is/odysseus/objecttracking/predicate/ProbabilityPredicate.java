@@ -24,10 +24,10 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
-public class ProbabilityPredicate<T extends IProbability> extends AbstractPredicate<MVRelationalTuple<T>> {
+public class ProbabilityPredicate<T extends IProbability> extends AbstractPredicate<MVTuple<T>> {
 
     private static final long serialVersionUID = 6467624302125491583L;
 
@@ -163,7 +163,7 @@ public class ProbabilityPredicate<T extends IProbability> extends AbstractPredic
      * Only the left values are set.
      */
     @Override
-    public boolean evaluate(MVRelationalTuple<T> input) {
+    public boolean evaluate(MVTuple<T> input) {
 
         double[] leftMVarray = new double[input.getMeasurementValuePositions().length];
         for (int i = 0; i < input.getMeasurementValuePositions().length; i++) {
@@ -261,7 +261,7 @@ public class ProbabilityPredicate<T extends IProbability> extends AbstractPredic
     }
 
     @Override
-    public boolean evaluate(MVRelationalTuple<T> left, MVRelationalTuple<T> right) {
+    public boolean evaluate(MVTuple<T> left, MVTuple<T> right) {
 
         double[] leftMVarray = new double[left.getMeasurementValuePositions().length];
         for (int i = 0; i < left.getMeasurementValuePositions().length; i++) {

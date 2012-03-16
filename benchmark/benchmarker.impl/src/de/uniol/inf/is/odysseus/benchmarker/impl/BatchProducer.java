@@ -22,17 +22,17 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class BatchProducer extends
-		AbstractSource<RelationalTuple<IntervalLatencyPriority>> {
+		AbstractSource<Tuple<IntervalLatencyPriority>> {
 
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int jedeswievielteelementprio;
-	private RelationalTuple<IntervalLatencyPriority> nonprio = new RelationalTuple<IntervalLatencyPriority>(
+	private Tuple<IntervalLatencyPriority> nonprio = new Tuple<IntervalLatencyPriority>(
 			0);
-	private RelationalTuple<IntervalLatencyPriority> prio = new RelationalTuple<IntervalLatencyPriority>(
+	private Tuple<IntervalLatencyPriority> prio = new Tuple<IntervalLatencyPriority>(
 			0);
 
 	public BatchProducer(int percentagePrios) {

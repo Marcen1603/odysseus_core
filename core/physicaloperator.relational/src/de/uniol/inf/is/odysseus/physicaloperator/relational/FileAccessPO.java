@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 
 /**
  * @author Kai Pancratz, Marco Grawunder
@@ -49,14 +49,15 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	private boolean isDone = false;
 	private BufferedReader bf;
 
-	private RelationalTupleDataHandler dataHandler;
+	final private IDataHandler dataHandler;
 
 	final private String separator;
 
-	public FileAccessPO(String path, String fileType, String separator, ) {
+	public FileAccessPO(String path, String fileType, String separator, IDataHandler dataHandler ) {
 		this.path = path;
 		this.fileType = fileType;
 		this.separator = separator;
+		this.dataHandler = dataHandler;
 	}
 
 	@Override
@@ -116,9 +117,6 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	protected synchronized void process_open() throws OpenFailedException {
 
 		try {
-			this.dataHandler = new RelationalTupleDataHandler(
-					this.getOutputSchema());
-
 			// logger.debug(fileType);
 			if (fileType.equalsIgnoreCase("csv")) {
 				File file = new File(path);

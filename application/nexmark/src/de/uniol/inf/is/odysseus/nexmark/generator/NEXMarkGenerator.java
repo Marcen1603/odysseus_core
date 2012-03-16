@@ -21,7 +21,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * The NEXMarkGenerator creates a simulation of the streams person, auction
@@ -41,10 +41,10 @@ public class NEXMarkGenerator extends Thread {
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 
-	private RelationalTuple<ITimeInterval> personTuple;
-	private RelationalTuple<ITimeInterval> auctionTuple;
-	private RelationalTuple<ITimeInterval> bidTuple;
-	private RelationalTuple<ITimeInterval> currentTuple;
+	private Tuple<ITimeInterval> personTuple;
+	private Tuple<ITimeInterval> auctionTuple;
+	private Tuple<ITimeInterval> bidTuple;
+	private Tuple<ITimeInterval> currentTuple;
 
 	private boolean burst = false;
 

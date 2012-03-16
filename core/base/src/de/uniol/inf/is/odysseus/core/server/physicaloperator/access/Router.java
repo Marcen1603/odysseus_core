@@ -306,27 +306,27 @@ public class Router extends Thread implements IConnection {
 	}
 
 	// private void testConnect() throws Exception {
-	// IObjectHandler<RelationalTuple<IClone>> handler = new
+	// IObjectHandler<Tuple<IClone>> handler = new
 	// RelationalTupleObjectHandler<IClone>(
 	// NEXMarkStreamType.getSchema(NEXMarkStreamType.PERSON));
-	// ISink<ByteBuffer> po = new ByteBufferReceiverPO<RelationalTuple<IClone>>(
+	// ISink<ByteBuffer> po = new ByteBufferReceiverPO<Tuple<IClone>>(
 	// handler, "localhost", 65430, 1);
 	// po.open();
 	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
 	// .getSchema(NEXMarkStreamType.AUCTION));
-	// po = new ByteBufferReceiverPO<RelationalTuple<IClone>>(handler,
+	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
 	// "localhost", 65431, 1);
 	// po.open();
 	//
 	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
 	// .getSchema(NEXMarkStreamType.BID));
-	// po = new ByteBufferReceiverPO<RelationalTuple<IClone>>(handler,
+	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
 	// "localhost", 65432, 1);
 	// po.open();
 	//
 	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
 	// .getSchema(NEXMarkStreamType.CATEGORY));
-	// po = new ByteBufferReceiverPO<RelationalTuple<IClone>>(handler,
+	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
 	// "localhost", 65433, 1);
 	// po.open();
 	// }

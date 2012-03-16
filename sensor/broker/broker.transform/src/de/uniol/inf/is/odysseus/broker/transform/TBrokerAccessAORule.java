@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.RouterConnection;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -48,7 +48,7 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 		try {
 			RouterConnection accessHandler = new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword());
-			accessPO = new BrokerByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), accessHandler);
+			accessPO = new BrokerByteBufferReceiverPO(new ObjectHandler(new TupleDataHandler(accessAO.getOutputSchema())), accessHandler);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

@@ -7,12 +7,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.salsa.playground.ui.ExtPolygonScreen;
 
-public class ExtSaLsAPolygonSinkPO extends AbstractSink<RelationalTuple<? extends IMetaAttribute>> {
+public class ExtSaLsAPolygonSinkPO extends AbstractSink<Tuple<? extends IMetaAttribute>> {
 
-    private final BlockingQueue<RelationalTuple<? extends IMetaAttribute>> segments = new LinkedBlockingQueue<RelationalTuple<? extends IMetaAttribute>>();
+    private final BlockingQueue<Tuple<? extends IMetaAttribute>> segments = new LinkedBlockingQueue<Tuple<? extends IMetaAttribute>>();
 
     private ExtPolygonScreen screen = new ExtPolygonScreen();
     private final SDFSchema schema;
@@ -34,10 +34,10 @@ public class ExtSaLsAPolygonSinkPO extends AbstractSink<RelationalTuple<? extend
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                RelationalTuple<? extends IMetaAttribute> segment;
+                Tuple<? extends IMetaAttribute> segment;
                 try {
                     while ((segment = ExtSaLsAPolygonSinkPO.this.segments.take()) != null) {
-                    	 //this.segments.offer((Geometry) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
+                    	 //this.segments.offer((Geometry) ((Tuple<TimeInterval>) object).getAttribute(0));
                     	ExtSaLsAPolygonSinkPO.this.screen.onFeature(segment);
                     }
                 }
@@ -61,7 +61,7 @@ public class ExtSaLsAPolygonSinkPO extends AbstractSink<RelationalTuple<? extend
 
 	@Override
 	protected void process_next(
-			RelationalTuple<? extends IMetaAttribute> object, int port,
+			Tuple<? extends IMetaAttribute> object, int port,
 			boolean isReadOnly) {
 		 this.segments.offer(object);
 		

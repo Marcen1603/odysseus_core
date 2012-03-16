@@ -17,14 +17,14 @@ package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class MergeBeliefeGrid extends
-		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -38,36 +38,36 @@ public class MergeBeliefeGrid extends
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(
-			final RelationalTuple<?> in) {
-		final IPartialAggregate<RelationalTuple<?>> grid = new GridPartialBeliefeAggregate<RelationalTuple<?>>(
+	public IPartialAggregate<Tuple<?>> init(
+			final Tuple<?> in) {
+		final IPartialAggregate<Tuple<?>> grid = new GridPartialBeliefeAggregate<Tuple<?>>(
 				(Grid) in.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(
-			final IPartialAggregate<RelationalTuple<?>> p,
-			final RelationalTuple<?> toMerge, final boolean createNew) {
-		GridPartialBeliefeAggregate<RelationalTuple<?>> grid = null;
+	public IPartialAggregate<Tuple<?>> merge(
+			final IPartialAggregate<Tuple<?>> p,
+			final Tuple<?> toMerge, final boolean createNew) {
+		GridPartialBeliefeAggregate<Tuple<?>> grid = null;
 		if (createNew) {
-			grid = new GridPartialBeliefeAggregate<RelationalTuple<?>>(
-					((GridPartialBeliefeAggregate<RelationalTuple<?>>) p)
+			grid = new GridPartialBeliefeAggregate<Tuple<?>>(
+					((GridPartialBeliefeAggregate<Tuple<?>>) p)
 							.getGrid());
 		} else {
-			grid = (GridPartialBeliefeAggregate<RelationalTuple<?>>) p;
+			grid = (GridPartialBeliefeAggregate<Tuple<?>>) p;
 		}
 		grid.merge((Grid) toMerge.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
-	public RelationalTuple<?> evaluate(
-			final IPartialAggregate<RelationalTuple<?>> p) {
-		final GridPartialBeliefeAggregate<RelationalTuple<?>> grid = (GridPartialBeliefeAggregate<RelationalTuple<?>>) p;
+	public Tuple<?> evaluate(
+			final IPartialAggregate<Tuple<?>> p) {
+		final GridPartialBeliefeAggregate<Tuple<?>> grid = (GridPartialBeliefeAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
-		final RelationalTuple<?> tuple = new RelationalTuple(1);
+		final Tuple<?> tuple = new Tuple(1);
 		tuple.setAttribute(0, grid.getGrid());
 		return tuple;
 	}

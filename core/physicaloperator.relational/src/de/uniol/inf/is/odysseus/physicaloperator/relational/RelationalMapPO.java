@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
  */
 public class RelationalMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	private int[][] variables;
 	private SDFExpression[] expressions;
@@ -69,8 +69,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	final protected void process_next(RelationalTuple<T> object, int port) {
-		RelationalTuple<T> outputVal = new RelationalTuple<T>(
+	final protected void process_next(Tuple<T> object, int port) {
+		Tuple<T> outputVal = new Tuple<T>(
 				this.expressions.length);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {

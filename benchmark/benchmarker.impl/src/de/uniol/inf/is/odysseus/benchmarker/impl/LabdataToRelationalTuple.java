@@ -25,7 +25,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
@@ -39,7 +39,7 @@ public class LabdataToRelationalTuple {
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
 			System.out
-					.println("Usage: LabdataToRelationalTuple <labdatafile> <outputfile>");
+					.println("Usage: LabdataToTuple <labdatafile> <outputfile>");
 			return;
 		}
 		String inputFilename = args[0];
@@ -51,7 +51,7 @@ public class LabdataToRelationalTuple {
 		@SuppressWarnings("unused")
 		int lineCount = 0;
 		String line = null;
-		LinkedList<RelationalTuple<ITimeInterval>> l = new LinkedList<RelationalTuple<ITimeInterval>>();
+		LinkedList<Tuple<ITimeInterval>> l = new LinkedList<Tuple<ITimeInterval>>();
 		try {
 			while (reader.ready()) {
 				try {
@@ -89,7 +89,7 @@ public class LabdataToRelationalTuple {
 					values[4] = Double.parseDouble(fields[fieldPos++]);
 					values[5] = Double.parseDouble(fields[fieldPos++]);
 					values[6] = Double.parseDouble(fields[fieldPos]);
-					RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(
+					Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
 							values);
 					l.add(tuple);
 				} catch (Exception e) {
@@ -99,10 +99,10 @@ public class LabdataToRelationalTuple {
 				}
 			}
 			System.out.println("#elements: " + l.size());
-			Collections.sort(l, new Comparator<RelationalTuple<?>>() {
+			Collections.sort(l, new Comparator<Tuple<?>>() {
 
 				@Override
-				public int compare(RelationalTuple<?> o1, RelationalTuple<?> o2) {
+				public int compare(Tuple<?> o1, Tuple<?> o2) {
 					if (o1.getAttribute(0).equals(o2.getAttribute(0))) {
 						return 0;
 					}

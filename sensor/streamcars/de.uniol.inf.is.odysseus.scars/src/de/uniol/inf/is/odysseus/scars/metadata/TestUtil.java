@@ -19,7 +19,7 @@ import java.util.Arrays;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaInfo;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIterator;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
@@ -43,7 +43,7 @@ public class TestUtil
     }
   }
   
-  public static <M extends IProbability> void printTuple(MVRelationalTuple<M> tuple, SDFSchema schema)
+  public static <M extends IProbability> void printTuple(MVTuple<M> tuple, SDFSchema schema)
   {
     for( TupleInfo info : new TupleIterator(tuple, schema) ) {
     	
@@ -63,12 +63,12 @@ public class TestUtil
       System.out.print("> ");
       
       Object obj = info.tupleObject;
-      MVRelationalTuple<?> currTuple = null;
+      MVTuple<?> currTuple = null;
       IProbability meta = null;
       double[][] matrix = null;
-      if (obj instanceof MVRelationalTuple<?>)
+      if (obj instanceof MVTuple<?>)
       {
-        currTuple = (MVRelationalTuple<?>) obj;
+        currTuple = (MVTuple<?>) obj;
         meta = currTuple.getMetadata();
         if (meta != null)
         {

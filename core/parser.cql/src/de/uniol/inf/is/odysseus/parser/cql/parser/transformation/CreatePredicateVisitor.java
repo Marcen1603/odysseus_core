@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 @SuppressWarnings("unchecked")
@@ -57,21 +57,21 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAndPredicate node, Object data) throws QueryParseException {
-		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
-		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) node.jjtGetChild(1).jjtAccept(this, data);
+		IPredicate<? super Tuple<?>> left = (IPredicate<? super Tuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		IPredicate<? super Tuple<?>> right = (IPredicate<? super Tuple<?>>) node.jjtGetChild(1).jjtAccept(this, data);
 		return ComplexPredicateHelper.createAndPredicate(left, right);
 	}
 
 	@Override
 	public Object visit(ASTOrPredicate node, Object data) throws QueryParseException {
-		IPredicate<? super RelationalTuple<?>> left = (IPredicate<? super RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
-		IPredicate<? super RelationalTuple<?>> right = (IPredicate<? super RelationalTuple<?>>) node.jjtGetChild(1).jjtAccept(this, data);
+		IPredicate<? super Tuple<?>> left = (IPredicate<? super Tuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		IPredicate<? super Tuple<?>> right = (IPredicate<? super Tuple<?>>) node.jjtGetChild(1).jjtAccept(this, data);
 		return ComplexPredicateHelper.createOrPredicate(left, right);
 	}
 
 	@Override
 	public Object visit(ASTNotPredicate node, Object data) throws QueryParseException {
-		IPredicate<RelationalTuple<?>> predicate = (IPredicate<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		IPredicate<Tuple<?>> predicate = (IPredicate<Tuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
 		return ComplexPredicateHelper.createNotPredicate(predicate);
 	}
 
@@ -92,8 +92,8 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		return (ILogicalOperator) v.visit(probPred, null, null);
 	}
 
-	public static IPredicate<RelationalTuple<?>> toPredicate(ASTPredicate predicate, IAttributeResolver resolver) throws QueryParseException {
-		IPredicate<RelationalTuple<?>> retVal = (IPredicate<RelationalTuple<?>>) new CreatePredicateVisitor().visit(predicate, resolver);
+	public static IPredicate<Tuple<?>> toPredicate(ASTPredicate predicate, IAttributeResolver resolver) throws QueryParseException {
+		IPredicate<Tuple<?>> retVal = (IPredicate<Tuple<?>>) new CreatePredicateVisitor().visit(predicate, resolver);
 		return retVal;
 	}
 

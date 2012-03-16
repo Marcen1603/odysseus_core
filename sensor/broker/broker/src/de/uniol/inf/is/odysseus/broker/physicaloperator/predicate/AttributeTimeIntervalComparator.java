@@ -18,13 +18,13 @@ import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class AttributeTimeIntervalComparator<T extends IClone> implements Comparator<RelationalTuple<ITimeInterval>>{
+public class AttributeTimeIntervalComparator<T extends IClone> implements Comparator<Tuple<ITimeInterval>>{
 	private int attributePos = 1;
 	
 	@Override
-	public int compare(RelationalTuple<ITimeInterval> left, RelationalTuple<ITimeInterval> right) {	
+	public int compare(Tuple<ITimeInterval> left, Tuple<ITimeInterval> right) {	
 		int compare = left.getMetadata().compareTo(right.getMetadata());
 		if(compare==0){
 			int idLeft = ((Integer)left.getAttribute(attributePos)).intValue();

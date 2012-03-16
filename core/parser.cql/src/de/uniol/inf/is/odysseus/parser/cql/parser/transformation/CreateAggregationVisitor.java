@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
@@ -166,7 +166,7 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		select = new SelectAO();
 		select.subscribeToSource(ao,0,0,ao.getOutputSchema());
-		IPredicate<RelationalTuple<?>> predicate;
+		IPredicate<Tuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node
 				.jjtGetChild(0), this.attributeResolver);
 		select.setPredicate(predicate);

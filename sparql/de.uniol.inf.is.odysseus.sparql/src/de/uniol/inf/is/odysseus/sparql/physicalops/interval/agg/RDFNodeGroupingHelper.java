@@ -96,7 +96,7 @@
 //			returnTuple.add(null);
 //		}
 //		
-//		//RelationalTuple returnTuple = new RelationalTuple(aggregateAO.getOutputSchema());
+//		//Tuple returnTuple = new RelationalTuple(aggregateAO.getOutputSchema());
 //		
 //		// in r stecken alle Aggregate drin
 //		// notwendig: Finde die Ziel-Position in dem returnTuple

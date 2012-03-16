@@ -22,12 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 
 /**
  * A NEXMarkClient wraps the data for a query: socket of connection, the
@@ -40,12 +40,12 @@ public class NEXMarkClient {
 	// Socket connection;
 	private ObjectOutputStream objectOutputStream;
 	public NEXMarkStreamType streamType;
-	// public IObjectHandler<RelationalTuple<ITimeInterval>> objectHandler;
+	// public IObjectHandler<Tuple<ITimeInterval>> objectHandler;
 	boolean useNIO = false;
 	private Socket connection;
 	// private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 	private ByteBufferStreamHandler nioStreamHandler;
-	private ObjectHandler<RelationalTuple<ITimeInterval>> objectHandler;
+	private ObjectHandler<Tuple<ITimeInterval>> objectHandler;
 
 	// /**
 	// * Filtert aus der sourceURI die Relation herraus, die simuliert werden
@@ -89,9 +89,9 @@ public class NEXMarkClient {
 			this.objectOutputStream = new ObjectOutputStream(
 					connection.getOutputStream());
 		}
-		IAtomicDataHandler handler = new RelationalTupleDataHandler(
+		IDataHandler handler = new TupleDataHandler(
 				NEXMarkStreamType.getSchema(streamType));
-		objectHandler = new ObjectHandler<RelationalTuple<ITimeInterval>>(
+		objectHandler = new ObjectHandler<Tuple<ITimeInterval>>(
 				handler);
 		nioStreamHandler = new ByteBufferStreamHandler(connection);
 	}
@@ -101,7 +101,7 @@ public class NEXMarkClient {
 		return streamType.name + "-Client";
 	}
 
-	public void writeObject(RelationalTuple<ITimeInterval> tuple, boolean flush)
+	public void writeObject(Tuple<ITimeInterval> tuple, boolean flush)
 			throws IOException {
 		if (tuple != null) {
 			if (useNIO) {

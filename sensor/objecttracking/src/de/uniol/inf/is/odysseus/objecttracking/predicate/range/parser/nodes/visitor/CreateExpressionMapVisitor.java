@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTS
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTString;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParserVisitor;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.SimpleNode;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
@@ -76,7 +76,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
     public Object visit(ASTMaple node, Object data) {
         if (node.jjtGetChild(0) instanceof ASTSolution) {
             ISolution solution = (ISolution) node.jjtGetChild(0).jjtAccept(this, data);
-            Map<IPredicate<RelationalTuple<?>>, ISolution> solutions = new HashMap<IPredicate<RelationalTuple<?>>, ISolution>();
+            Map<IPredicate<Tuple<?>>, ISolution> solutions = new HashMap<IPredicate<Tuple<?>>, ISolution>();
             // TODO: Funktioniert das wirklich oder ist das TruePredicate in
             // Konkurrenz zum
             // default predicate des prediction assign operators?
@@ -94,7 +94,7 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
 
     @Override
     public Object visit(ASTMaplePiecewise node, Object data) {
-        Map<IPredicate<RelationalTuple<?>>, ISolution> solutions = new HashMap<IPredicate<RelationalTuple<?>>, ISolution>();
+        Map<IPredicate<Tuple<?>>, ISolution> solutions = new HashMap<IPredicate<Tuple<?>>, ISolution>();
 
         // the children of this node are the condition/solution combinations
 
@@ -112,23 +112,23 @@ public class CreateExpressionMapVisitor implements MapleResultParserVisitor {
                 // create a NotPredicate(OrPredicate) from all other predicates
                 // all the other predicates must already be in the map
                 if (solutions.entrySet().size() == 1) {
-                    for (Entry<IPredicate<RelationalTuple<?>>, ISolution> entry : solutions.entrySet()) {
+                    for (Entry<IPredicate<Tuple<?>>, ISolution> entry : solutions.entrySet()) {
                         IPredicate notPred = ComplexPredicateHelper.createNotPredicate(entry.getKey());
                         solutions.put(notPred, solution);
                     }
                 } else if (solutions.entrySet().size() == 2) {
-                    Iterator<Entry<IPredicate<RelationalTuple<?>>, ISolution>> iter = solutions.entrySet().iterator();
+                    Iterator<Entry<IPredicate<Tuple<?>>, ISolution>> iter = solutions.entrySet().iterator();
                     IPredicate orPred = ComplexPredicateHelper.createOrPredicate(iter.next().getKey(), iter.next().getKey());
 
                     IPredicate notPred = ComplexPredicateHelper.createNotPredicate(orPred);
                     solutions.put(notPred, solution);
                 } else if (solutions.entrySet().size() > 2) {
-                    // Iterator<Entry<IPredicate<RelationalTuple<?>>,
+                    // Iterator<Entry<IPredicate<Tuple<?>>,
                     // ISolution>> iter = solutions
                     // .entrySet().iterator();
 
-                    ArrayList<IPredicate<RelationalTuple<?>>> listOfPreds = new ArrayList<IPredicate<RelationalTuple<?>>>();
-                    for (Entry<IPredicate<RelationalTuple<?>>, ISolution> entry : solutions.entrySet()) {
+                    ArrayList<IPredicate<Tuple<?>>> listOfPreds = new ArrayList<IPredicate<Tuple<?>>>();
+                    for (Entry<IPredicate<Tuple<?>>, ISolution> entry : solutions.entrySet()) {
                         listOfPreds.add(entry.getKey());
                     }
 

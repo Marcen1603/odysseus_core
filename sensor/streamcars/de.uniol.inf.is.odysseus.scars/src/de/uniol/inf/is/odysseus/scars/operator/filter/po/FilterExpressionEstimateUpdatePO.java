@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpression;
@@ -81,7 +81,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGainIProbabilityIObject
 	}
 
 	@Override
-	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	public MVTuple<M> computeAll(MVTuple<M> object) {
 		// latency
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Est Update");
 		
@@ -103,7 +103,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGainIProbabilityIObject
 	}
 
 	@SuppressWarnings("unchecked")
-	private void compute(MVRelationalTuple<M> root, TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex) {
+	private void compute(MVTuple<M> root, TupleIndexPath scannedObjectTupleIndex, TupleIndexPath predictedObjectTupleIndex) {
 		for(IStreamCarsExpression expr : expressions) {
 			for(IStreamCarsExpressionVariable variable : expr.getVariables()) {
 				if(variable.isSchemaVariable() && !variable.hasMetadataInfo()) {
@@ -115,7 +115,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGainIProbabilityIObject
 						variable.bindTupleValue(root);
 					}
 				} else if(variable.hasMetadataInfo() && variable.getMetadataInfo().equals(GAIN)) {
-					MVRelationalTuple<M> car = (MVRelationalTuple<M>)predictedObjectTupleIndex.getTupleObject();
+					MVTuple<M> car = (MVTuple<M>)predictedObjectTupleIndex.getTupleObject();
 					double gain = car.getMetadata().getRestrictedGain(variable.getName());
 					variable.bind(gain);
 				}
@@ -127,20 +127,20 @@ public class FilterExpressionEstimateUpdatePO<M extends IGainIProbabilityIObject
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void setValue(int[] path, MVRelationalTuple<M> root, Object value) {
+	protected void setValue(int[] path, MVTuple<M> root, Object value) {
 		Object currentTuple = root;
 		for(int depth=0; depth<path.length-1; depth++) {
-			if( currentTuple instanceof MVRelationalTuple) {
-				currentTuple = ((MVRelationalTuple<?>) currentTuple).getAttribute(path[depth]);
+			if( currentTuple instanceof MVTuple) {
+				currentTuple = ((MVTuple<?>) currentTuple).getAttribute(path[depth]);
 			} else if( currentTuple instanceof List) {
 				currentTuple = ((List<?>) currentTuple).get(path[depth]);
 			}
 		}
 		Object oldValue = null;
-		if( currentTuple instanceof MVRelationalTuple ) {
-			oldValue = ((MVRelationalTuple<?>)currentTuple).getAttribute(path[path.length - 1]);
+		if( currentTuple instanceof MVTuple ) {
+			oldValue = ((MVTuple<?>)currentTuple).getAttribute(path[path.length - 1]);
 			Object newValue = TypeCaster.cast(value, oldValue);
-			((MVRelationalTuple<?>)currentTuple).setAttribute(path[path.length-1], newValue);
+			((MVTuple<?>)currentTuple).setAttribute(path[path.length-1], newValue);
 
 		} else if( currentTuple instanceof List ) {
 			oldValue = ((List<?>)currentTuple).get(path[path.length - 1]);
@@ -151,7 +151,7 @@ public class FilterExpressionEstimateUpdatePO<M extends IGainIProbabilityIObject
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new FilterExpressionEstimateUpdatePO<M>(this);
 	}
 

@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class MinCorrection extends AbstractAggregateCorrection{
 	}
 
 	@Override
-	public RelationalTuple<?> correctedValue(RelationalTuple<?> toCorrect) {
+	public Tuple<?> correctedValue(Tuple<?> toCorrect) {
 		// TODO Auto-generated method stub
 		return null;
 	}

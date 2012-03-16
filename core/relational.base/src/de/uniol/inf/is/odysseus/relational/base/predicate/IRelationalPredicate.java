@@ -17,12 +17,12 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
  */
-public interface IRelationalPredicate extends IPredicate<RelationalTuple<?>>{
+public interface IRelationalPredicate extends IPredicate<Tuple<?>>{
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema);
 	public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr);
 }

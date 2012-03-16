@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.markov.operator.aggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class ForwardAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+public class ForwardAggregationFunction extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -17,19 +17,19 @@ public class ForwardAggregationFunction extends AbstractAggregateFunction<Relati
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(IPartialAggregate<RelationalTuple<?>> p, RelationalTuple<?> toMerge, boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge, boolean createNew) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
+	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		// TODO Auto-generated method stub
 		return null;
 	}

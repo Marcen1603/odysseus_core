@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREME
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class PriorityAOBuilder extends AbstractOperatorBuilder {
 
@@ -41,9 +41,9 @@ public class PriorityAOBuilder extends AbstractOperatorBuilder {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
-		PriorityAO<RelationalTuple<?>> priorityAO = new PriorityAO<RelationalTuple<?>>();
+		PriorityAO<Tuple<?>> priorityAO = new PriorityAO<Tuple<?>>();
 		priorityAO.setPriority((byte) 1,
-				(IPredicate<? super RelationalTuple<?>>) prioritize.getValue());
+				(IPredicate<? super Tuple<?>>) prioritize.getValue());
 		priorityAO.setDefaultPriority((byte) 0);
 
 		return priorityAO;

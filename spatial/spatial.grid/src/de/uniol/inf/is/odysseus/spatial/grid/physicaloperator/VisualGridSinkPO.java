@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
@@ -94,7 +94,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	protected void process_next(final Object object, final int port,
 			final boolean isReadOnly) {
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			Grid grid = (Grid) ((RelationalTuple<TimeInterval>) object)
+			Grid grid = (Grid) ((Tuple<TimeInterval>) object)
 					.getAttribute(0);
 			IplImage image = IplImage.create(
 					opencv_core.cvSize(grid.width, grid.depth),

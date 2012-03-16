@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceHelper;
@@ -79,7 +79,7 @@ public class FilterExpressionGainPO<M extends IGainIProbabilityIObjectTrackingLa
 	}
 
 	@Override
-	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	public MVTuple<M> computeAll(MVTuple<M> object) {
 		
 		// latency
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Gain");
@@ -100,14 +100,14 @@ public class FilterExpressionGainPO<M extends IGainIProbabilityIObjectTrackingLa
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void compute(MVRelationalTuple<M> root, IConnection con) {
+	protected void compute(MVTuple<M> root, IConnection con) {
 		
 		for(IStreamCarsExpressionVariable variable : expression.getVariables()) {
 			
 			if(variable.isSchemaVariable() && variable.getMetadataInfo().equals(METADATA_COV)) {
 				if(variable.isInList(scannedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getLeftPath().getLastTupleIndex().toInt());
-					MVRelationalTuple<M> car = (MVRelationalTuple<M>)TupleIndexPath.fromSchemaIndexPath(variable.getSchemaIndexPath(), root).getTupleObject();
+					MVTuple<M> car = (MVTuple<M>)TupleIndexPath.fromSchemaIndexPath(variable.getSchemaIndexPath(), root).getTupleObject();
 //					double[][] cov = car.getMetadata().getCovariance();
 					double[][] cov = covHelper.getCovarianceForRestictedAttributes(this.restrictedScanVariables, car.getMetadata());
 //					cov = scanCovHelper.getCovarianceForRestrictedVariables(cov);
@@ -115,7 +115,7 @@ public class FilterExpressionGainPO<M extends IGainIProbabilityIObjectTrackingLa
 //					variable.bind(scanCovHelper.getCovarianceForRestrictedVariables(cov));
 				} else if(variable.isInList(predictedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getRightPath().getLastTupleIndex().toInt());
-					MVRelationalTuple<M> car = (MVRelationalTuple<M>)TupleIndexPath.fromSchemaIndexPath(variable.getSchemaIndexPath(), root).getTupleObject();
+					MVTuple<M> car = (MVTuple<M>)TupleIndexPath.fromSchemaIndexPath(variable.getSchemaIndexPath(), root).getTupleObject();
 //					double[][] cov = car.getMetadata().getCovariance();
 //					cov = predCovHelper.getCovarianceForRestrictedVariables(cov);
 //					variable.bind(predCovHelper.getCovarianceForRestrictedVariables(cov));
@@ -127,9 +127,9 @@ public class FilterExpressionGainPO<M extends IGainIProbabilityIObjectTrackingLa
 		
 		expression.evaluate();
 		double[][] gain = (double[][])expression.getValue();
-		MVRelationalTuple<M> scannedCar = (MVRelationalTuple<M>)con.getLeftPath().getTupleObject();
+		MVTuple<M> scannedCar = (MVTuple<M>)con.getLeftPath().getTupleObject();
 		scannedCar.getMetadata().setRestrictedList(getRestrictedScanVariables().toArray(new String[0]));
-		MVRelationalTuple<M> predictedCar = (MVRelationalTuple<M>)con.getRightPath().getTupleObject();
+		MVTuple<M> predictedCar = (MVTuple<M>)con.getRightPath().getTupleObject();
 		predictedCar.getMetadata().setRestrictedGain(gain, getRestrictedPredVariables().toArray(new String[0]));
 
 	}

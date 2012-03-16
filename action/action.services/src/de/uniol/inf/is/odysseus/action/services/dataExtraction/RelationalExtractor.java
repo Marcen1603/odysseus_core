@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.action.services.dataExtraction;
 import de.uniol.inf.is.odysseus.action.services.exception.DataextractionException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Extractor for relational tuples.
@@ -34,7 +34,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 		try {
 			//check if identifier is an index
 			int index = ((Number)identifier).intValue();
-			value = ((RelationalTuple)datastreamElement).getAttribute(index);
+			value = ((Tuple)datastreamElement).getAttribute(index);
 		}catch (ClassCastException e){
 			throw new DataextractionException(e.getMessage());
 		}
@@ -55,7 +55,7 @@ public class RelationalExtractor implements IAttributeExtractor {
 			//check for uri since it is unique
 			try {
 				if (attribute.getURI().equals(attributeIdentifier)){
-					return ((RelationalTuple)element).getAttribute(i);
+					return ((Tuple)element).getAttribute(i);
 				}
 			}catch (ClassCastException e){
 				throw new DataextractionException(e.getMessage());

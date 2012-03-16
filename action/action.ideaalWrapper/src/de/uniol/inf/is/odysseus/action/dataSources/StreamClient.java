@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandler;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 
 /**
  * Client writing tuples to client connected to
@@ -34,17 +34,17 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
  */
 public class StreamClient {
 
-	private IObjectHandler<RelationalTuple<IMetaAttribute>> objectHandler;
+	private IObjectHandler<Tuple<IMetaAttribute>> objectHandler;
 	private Socket connection;
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 
 	public StreamClient(Socket connection, SDFSchema schema) {
 		this.connection = connection;
 		
-		this.objectHandler = new ObjectHandler<RelationalTuple<IMetaAttribute>>(new RelationalTupleDataHandler(schema));
+		this.objectHandler = new ObjectHandler<Tuple<IMetaAttribute>>(new TupleDataHandler(schema));
 	}
 	
-	public void writeObject(RelationalTuple<IMetaAttribute> tuple) throws IOException {
+	public void writeObject(Tuple<IMetaAttribute> tuple) throws IOException {
 		if (tuple != null){
 			objectHandler.put(tuple);
 			ByteBuffer buffer = objectHandler.getByteBuffer();

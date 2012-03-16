@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
 
-public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements ILeftMergeFunction<RelationalTuple<M>> {
+public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements ILeftMergeFunction<Tuple<M>> {
 	
 	protected int schemaSize;
 
@@ -32,11 +32,11 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 
 	
 	@Override
-	public RelationalTuple<M> merge(RelationalTuple<M> left,
-			RelationalTuple<M> right) {
+	public Tuple<M> merge(Tuple<M> left,
+			Tuple<M> right) {
 		Object[] newAttributes = this.mergeAttributes(left != null ? left.getAttributes(): null, 
 				right != null ? right.getAttributes() : null);
-		RelationalTuple<M> r = new RelationalTuple<M>(newAttributes);
+		Tuple<M> r = new Tuple<M>(newAttributes);
 		return r;
 	}
 
@@ -60,10 +60,10 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 	 * null. The metadata is used from the original.
 	 */
 	@Override
-    public RelationalTuple<M> createLeftFilledUp(RelationalTuple<M> original){
+    public Tuple<M> createLeftFilledUp(Tuple<M> original){
 		// copy the original element, because otherwise the hashmap
 		// in the left join will not work any more
-		RelationalTuple<M> retVal = new RelationalTuple<M>(this.schemaSize);
+		Tuple<M> retVal = new Tuple<M>(this.schemaSize);
 		retVal.setMetadata(original.getMetadata());
 		
 		// add attribute values from left

@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaH
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaInfo;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIterator;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 
@@ -61,7 +61,7 @@ public class UtilPrinter {
    *           Wenn mindestens einer der angegebenen Parameter <code>null</code>
    *           ist.
    */
-  public static void printTuple(MVRelationalTuple<?> tuple, SDFSchema schema, String attributeName) {
+  public static void printTuple(MVTuple<?> tuple, SDFSchema schema, String attributeName) {
     if (tuple == null)
       throw new IllegalArgumentException("tuple is null");
     if (schema == null)
@@ -81,7 +81,7 @@ public class UtilPrinter {
 
       // Infos ausgeben
       Object obj = info.tupleObject;
-      if (obj instanceof MVRelationalTuple) {
+      if (obj instanceof MVTuple) {
         System.out.print("TUPLE");
       } else {
         System.out.print(obj);

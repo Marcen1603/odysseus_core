@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  */
 public class AggregationJSR223 extends
-		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
@@ -124,7 +124,7 @@ public class AggregationJSR223 extends
 	 * .IInitializer#init(java.lang.Object)
 	 */
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		Bindings bindings = this.engine.createBindings();
 		Object[] attributes = getAttributes(in, this.positions);
 		for (int i = 0; i < attributes.length; ++i) {
@@ -163,9 +163,9 @@ public class AggregationJSR223 extends
 	 * .IPartialAggregate, java.lang.Object, boolean)
 	 */
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(
-			IPartialAggregate<RelationalTuple<?>> partial,
-			RelationalTuple<?> in, boolean create) {
+	public IPartialAggregate<Tuple<?>> merge(
+			IPartialAggregate<Tuple<?>> partial,
+			Tuple<?> in, boolean create) {
 		Bindings bindings = this.engine.createBindings();
 		Object[] attributes = getAttributes(in, this.positions);
 		for (int i = 0; i < attributes.length; ++i) {
@@ -204,13 +204,13 @@ public class AggregationJSR223 extends
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public RelationalTuple<?> evaluate(
-			IPartialAggregate<RelationalTuple<?>> partial) {
+	public Tuple<?> evaluate(
+			IPartialAggregate<Tuple<?>> partial) {
 		Bindings bindings = this.engine.createBindings();
 		bindings.put(KEY_META, null);
 		bindings
 				.put(KEY_PARTIAL, ((PartialAggregateData) partial).getPartial());
-		RelationalTuple<?> result = new RelationalTuple(1);
+		Tuple<?> result = new Tuple(1);
 		try {
 			InputStream is = this.getClass().getResourceAsStream(this.fileName);
 			if ((this.script == null) && (engine instanceof Compilable)) {
@@ -236,7 +236,7 @@ public class AggregationJSR223 extends
 	 * @param positions
 	 * @return
 	 */
-	private static Object[] getAttributes(RelationalTuple<?> in, int[] positions) {
+	private static Object[] getAttributes(Tuple<?> in, int[] positions) {
 		Object[] attributes = new Object[positions.length];
 		for (int i = 0; i < positions.length; ++i) {
 			attributes[i] = in.getAttribute(positions[i]);
@@ -250,7 +250,7 @@ public class AggregationJSR223 extends
 	 * 
 	 */
 	public static class PartialAggregateData implements
-			IPartialAggregate<RelationalTuple<?>> {
+			IPartialAggregate<Tuple<?>> {
 		public Object partial = null;
 
 		public PartialAggregateData(PartialAggregateData partialAggregateData) {

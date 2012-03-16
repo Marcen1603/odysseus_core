@@ -20,7 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.CovarianceExpressionHelper;
@@ -68,14 +68,14 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 	}
 
 	@SuppressWarnings("unchecked")
-	public void compute(IConnection con, MVRelationalTuple<M> tuple) {
+	public void compute(IConnection con, MVTuple<M> tuple) {
 		for (IStreamCarsExpressionVariable variable : expression.getVariables()) {
 			if (variable.isSchemaVariable()
 					&& METADATA_COV.equals(variable.getMetadataInfo())) {
 				if (variable.isInList(scannedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getLeftPath()
 							.getLastTupleIndex().toInt());
-					MVRelationalTuple<M> car = (MVRelationalTuple<M>) con
+					MVTuple<M> car = (MVTuple<M>) con
 							.getLeftPath().getTupleObject();
 					// double[][] cov = car.getMetadata().getCovariance();
 					String[] restrictedVariables = car.getMetadata()
@@ -90,7 +90,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 				} else if (variable.isInList(predictedTupleIndexPath)) {
 					variable.replaceVaryingIndex(con.getRightPath()
 							.getLastTupleIndex().toInt());
-					MVRelationalTuple<M> car = (MVRelationalTuple<M>) con
+					MVTuple<M> car = (MVTuple<M>) con
 							.getRightPath().getTupleObject();
 					// double[][] cov = car.getMetadata().getCovariance();
 					String[] restrictedVariables = car.getMetadata()
@@ -106,12 +106,12 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 				}
 			} else if (variable.isSchemaVariable()
 					&& variable.getMetadataInfo().equals(GAIN)) {
-				MVRelationalTuple<M> car = (MVRelationalTuple<M>) con
+				MVTuple<M> car = (MVTuple<M>) con
 						.getRightPath().getTupleObject();
 				variable.bind(car.getMetadata().getGain());
 			} else if (!variable.isSchemaVariable()
 					&& variable.getName().equals(IDENTITY_MATRIX)) {
-				MVRelationalTuple<M> car = (MVRelationalTuple<M>) con
+				MVTuple<M> car = (MVTuple<M>) con
 						.getRightPath().getTupleObject();
 				double[][] gain = car.getMetadata().getGain();
 				variable.bind(makeIdentityMatrix(gain));
@@ -119,7 +119,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 		}
 		expression.evaluate();
 		double[][] newCovariance = (double[][]) expression.getValue();
-		MVRelationalTuple<M> car = (MVRelationalTuple<M>) con.getRightPath()
+		MVTuple<M> car = (MVTuple<M>) con.getRightPath()
 				.getTupleObject();
 		String[] restrictedVariables = car.getMetadata().getRestrictedList();
 		updateCovariance(car, newCovariance, restrictedVariables);
@@ -127,7 +127,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 	}
 
 	@SuppressWarnings("static-method")
-    private void updateCovariance(MVRelationalTuple<M> car, double[][] restCov,
+    private void updateCovariance(MVTuple<M> car, double[][] restCov,
 			String[] restrictedList) {
 		List<Integer> restrictedIndicesList = new ArrayList<Integer>(
 				restrictedList.length);
@@ -173,7 +173,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 	}
 
 	@Override
-	public MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object) {
+	public MVTuple<M> computeAll(MVTuple<M> object) {
 
 		// latency
 		object.getMetadata().setObjectTrackingLatencyStart("Filter Cov Update");
@@ -197,7 +197,7 @@ public class FilterExpressionCovarianceUpdatePO<M extends IGainIProbabilityIObje
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new FilterExpressionCovarianceUpdatePO<M>(this);
 	}
 

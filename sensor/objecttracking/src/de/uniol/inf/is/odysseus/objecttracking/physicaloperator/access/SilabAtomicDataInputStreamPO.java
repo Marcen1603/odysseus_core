@@ -23,18 +23,18 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Dennis Wiemann
  */
-public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends AbstractSensorAccessPO<RelationalTuple<M>, M>{
+public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends AbstractSensorAccessPO<Tuple<M>, M>{
 	
 	final private String hostName;
 	final private int port;
 	private BufferedInputStream channel;
 	private boolean isOpen;
-	private RelationalTuple<M> buffer;
+	private Tuple<M> buffer;
 	private AbstractSILABDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
@@ -155,7 +155,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			return false;
 		}
 //		if(!this.attributeData[this.typeAttribute].equals("punctuation")){
-			this.buffer = new RelationalTuple<M>(this.attributeData);
+			this.buffer = new Tuple<M>(this.attributeData);
 			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 //		}
 //		else{

@@ -50,7 +50,7 @@
 //	
 //	public NodeList evaluate(PartialAggregate p) {
 //		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
-//		//RelationalTuple r = new RelationalTuple(schema);
+//		//Tuple r = new RelationalTuple(schema);
 //		NodeList r = new NodeList();
 //		if (isAvg){
 //			Node n = Node.createLiteral("" + pa.getAggValue().doubleValue()/pa.getCount());

@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTPercent;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.AbstractSMQLParserVisitor;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements ISMQLFeature {
 
@@ -108,10 +108,10 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	public Object visit(ASTDetectionMethodStateless node, Object data) {
 		AttributeOperator ao = (AttributeOperator) data;
 		ILogicalOperator topOp = ao.getOperator();		
-		StatelessDetectionAO<RelationalTuple<?>> detectionAO = new StatelessDetectionAO<RelationalTuple<?>>();
+		StatelessDetectionAO<Tuple<?>> detectionAO = new StatelessDetectionAO<Tuple<?>>();
 		detectionAO.setOutputSchema(topOp.getOutputSchema());
 		@SuppressWarnings("unchecked")
-		IUnaryDetection<RelationalTuple<?>> detection = (IUnaryDetection<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		IUnaryDetection<Tuple<?>> detection = (IUnaryDetection<Tuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
 		detectionAO.addDetection(detection);
 		topOp.subscribeSink(detectionAO, 0, 0, topOp.getOutputSchema());
 		return detectionAO;
@@ -140,7 +140,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 		}
 				
 		//erstelle daten-seite				
-		StatefulDetectionAO<RelationalTuple<?>> detectionAO = new StatefulDetectionAO<RelationalTuple<?>>();
+		StatefulDetectionAO<Tuple<?>> detectionAO = new StatefulDetectionAO<Tuple<?>>();
 		detectionAO.setOutputSchema(topOp.getOutputSchema());
 		detectionAO.addDetection(detection);
 		
@@ -207,7 +207,7 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	public Object visit(ASTCorrectionMethodDiscard node, Object data) {		
 		AttributeOperator ao = (AttributeOperator) data;
 		ILogicalOperator topOp = ao.getOperator();		
-		StatelessCorrectionAO<RelationalTuple<?>> scao = new StatelessCorrectionAO<RelationalTuple<?>>();
+		StatelessCorrectionAO<Tuple<?>> scao = new StatelessCorrectionAO<Tuple<?>>();
 		scao.setOutputSchema(topOp.getOutputSchema());		
 		DiscardCorrection dc = new DiscardCorrection(ao.getAttribute());
 		scao.addCorrection(dc);
@@ -225,10 +225,10 @@ public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements IS
 	public Object visit(ASTCorrectionMethodFunctionStateless node, Object data) {
 		AttributeOperator ao = (AttributeOperator) data;
 		ILogicalOperator topOp = ao.getOperator();		
-		StatelessCorrectionAO<RelationalTuple<?>> scao = new StatelessCorrectionAO<RelationalTuple<?>>();
+		StatelessCorrectionAO<Tuple<?>> scao = new StatelessCorrectionAO<Tuple<?>>();
 		scao.setOutputSchema(topOp.getOutputSchema());		
 		@SuppressWarnings("unchecked")
-		IUnaryCorrection<RelationalTuple<?>> dc = (IUnaryCorrection<RelationalTuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
+		IUnaryCorrection<Tuple<?>> dc = (IUnaryCorrection<Tuple<?>>) node.jjtGetChild(0).jjtAccept(this, data);
 		scao.addCorrection(dc);
 		topOp.subscribeSink(scao, 0, 0, topOp.getOutputSchema());
 		return scao;

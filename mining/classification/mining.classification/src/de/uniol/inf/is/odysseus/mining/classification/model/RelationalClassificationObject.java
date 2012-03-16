@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.mining.classification.model;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class implements a classification object for relational tuples
@@ -31,12 +31,12 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	/**
 	 * the tuple wrapped by this classification object
 	 */
-	private RelationalTuple<T> tuple;
+	private Tuple<T> tuple;
 
 	/**
 	 * a version of teh tuple restricted to the classification attributes
 	 */
-	private RelationalTuple<T> restrictedTuple;
+	private Tuple<T> restrictedTuple;
 
 	/**
 	 * the class belonging to the tuple
@@ -58,7 +58,7 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	 * @param labelAttributePosition
 	 *            the position of the class attribute in the tuple
 	 */
-	public RelationalClassificationObject(RelationalTuple<T> tuple,
+	public RelationalClassificationObject(Tuple<T> tuple,
 			int[] restrictList, int labelAttributePosition) {
 		this.labelAttributePosition = labelAttributePosition;
 		this.tuple = tuple;
@@ -92,9 +92,9 @@ public class RelationalClassificationObject<T extends IMetaAttribute>
 	/** get a version of the wrapped tuple containing the class
 	 * @return a tuple with the belonging class
 	 */
-	public RelationalTuple<T> getClassifiedTuple() {
+	public Tuple<T> getClassifiedTuple() {
 		if (labelAttributePosition < tuple.size()) {
-			RelationalTuple<T> newTuple = tuple.clone();
+			Tuple<T> newTuple = tuple.clone();
 			newTuple.setAttribute(labelAttributePosition, getClassLabel());
 			return newTuple;
 		}

@@ -21,7 +21,7 @@ import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
 import de.uniol.inf.is.odysseus.scars.util.helper.TypeCaster;
@@ -47,7 +47,7 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	}
 
 	@Override
-	public void predictData(MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
+	public void predictData(MVTuple<M> scanRootTuple, MVTuple<M> timeTuple, int currentIndex) {
 		for(int index=0; index<expressions.length; index++) {
 			expressions[index].replaceVaryingAttributeIndex(scanSchema, currentIndex);
 			expressions[index].replaceVaryingAttributeIndex(timeSchema, currentIndex);
@@ -69,7 +69,7 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 	}
 	
 	@Override
-	public void predictMetadata(M metadata, MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int currentIndex) {
+	public void predictMetadata(M metadata, MVTuple<M> scanRootTuple, MVTuple<M> timeTuple, int currentIndex) {
 		
 		double[][] sigma = new double[metadata.getCovariance().length][metadata.getCovariance()[0].length];
 		for(int row=0; row<sigma.length; row++) {
@@ -173,11 +173,11 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		metadata.setCovariance(tmpCov2);
 	}
 	
-	protected Object resolveValue(int[] path, MVRelationalTuple<M> root) {
+	protected Object resolveValue(int[] path, MVTuple<M> root) {
 		Object currentTuple = root;
 		for(int depth=0; depth<path.length; depth++) {
-			if(currentTuple instanceof MVRelationalTuple<?>) {
-				currentTuple = ((MVRelationalTuple<?>) currentTuple).getAttribute(path[depth]);
+			if(currentTuple instanceof MVTuple<?>) {
+				currentTuple = ((MVTuple<?>) currentTuple).getAttribute(path[depth]);
 			} else if(currentTuple instanceof List) {
 				currentTuple = ((List<?>)currentTuple).get(path[depth]);
 			}
@@ -185,21 +185,21 @@ public class LinearPredictionFunction<M extends IProbability> implements IPredic
 		return currentTuple;
 	}
 	
-	protected void setValue(int[] path, MVRelationalTuple<M> root, Object value) {
+	protected void setValue(int[] path, MVTuple<M> root, Object value) {
 		Object currentAttr = root;
 		int depth = path.length-1;
 		for(int i=0; i<depth; i++) {
-			if(currentAttr instanceof MVRelationalTuple) {
-				currentAttr = ((MVRelationalTuple<?>)currentAttr).getAttribute(path[i]);
+			if(currentAttr instanceof MVTuple) {
+				currentAttr = ((MVTuple<?>)currentAttr).getAttribute(path[i]);
 			} else if(currentAttr instanceof List) {
 				currentAttr = ((List<?>)currentAttr).get(path[i]);
 			}
 		}
 		
-		if(currentAttr instanceof MVRelationalTuple) {
-			Object oldValue = ((MVRelationalTuple<?>)currentAttr).getAttribute(path[path.length - 1]);
+		if(currentAttr instanceof MVTuple) {
+			Object oldValue = ((MVTuple<?>)currentAttr).getAttribute(path[path.length - 1]);
 			Object newValue = TypeCaster.cast(value, oldValue);
-			((MVRelationalTuple<?>)currentAttr).setAttribute(path[depth], newValue);
+			((MVTuple<?>)currentAttr).setAttribute(path[depth], newValue);
 		}
 	}
 	

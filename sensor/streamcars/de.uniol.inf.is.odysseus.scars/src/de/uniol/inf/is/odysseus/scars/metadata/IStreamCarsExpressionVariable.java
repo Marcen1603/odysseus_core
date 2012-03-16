@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 
 /**
@@ -63,7 +63,7 @@ public interface IStreamCarsExpressionVariable {
 
 	public void bind(Object value);
 
-	public void bindTupleValue(MVRelationalTuple<?> tuple);
+	public void bindTupleValue(MVTuple<?> tuple);
 
 	public String getNameWithoutMetadata();
 	

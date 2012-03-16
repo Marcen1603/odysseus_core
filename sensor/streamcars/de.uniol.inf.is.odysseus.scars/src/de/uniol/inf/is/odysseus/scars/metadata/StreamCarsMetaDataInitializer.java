@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerTimeIntervalLatency;
 import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.scars.util.helper.CovarianceMapper;
  * @author Sven
  */
 public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionContainerTimeIntervalLatency>
-		extends AbstractMetadataUpdater<M, MVRelationalTuple<M>> {
+		extends AbstractMetadataUpdater<M, MVTuple<M>> {
 	// set by constructor/initMetadata
 	// used by updateMetadata
 	private CovarianceExpressionMatrix covarianceExpressionMatrix;
@@ -51,9 +51,9 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 
 	/**
 	 * Creates a StreamCarsMetaDataInitializer object and initializes the meta
-	 * data used by {@link #updateMetaData(MVRelationalTuple)}.
+	 * data used by {@link #updateMetaData(MVTuple)}.
 	 * <p>
-	 * NOTE: schema is used by {@link #updateMetaData(MVRelationalTuple)} as
+	 * NOTE: schema is used by {@link #updateMetaData(MVTuple)} as
 	 * root to navigate through the tuple given. So it has to represent the
 	 * schema of the tuples which shall be initialized by this object.
 	 * <p>
@@ -65,7 +65,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 * for each attribute or subattribute.
 	 * <p>
 	 * Finally, each row of the covariance matrix used by
-	 * {@link #updateMetaData(MVRelationalTuple)} is set to the covariance list
+	 * {@link #updateMetaData(MVTuple)} is set to the covariance list
 	 * of each measurement value attribute found in the schema respectively (see
 	 * {@link SDFAttribute#getAddInfo()}).
 	 * 
@@ -101,11 +101,11 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 	 *            to match schema given to constructor!
 	 */
 	@Override
-	public void updateMetadata(MVRelationalTuple<M> tuple) {
+	public void updateMetadata(MVTuple<M> tuple) {
 		this.initMetaDataOfTuple(tuple);
 	}
 
-	private void initMetaDataOfTuple(MVRelationalTuple<M> tupleGiven) {
+	private void initMetaDataOfTuple(MVTuple<M> tupleGiven) {
 		this.initProbabilityMetaDataOfTuple(tupleGiven);
 		this.initAssoziationMetaData(tupleGiven);
 		this.initTimeStampMetaData(tupleGiven);
@@ -113,22 +113,22 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 		// invoke more tuple metadata initializers here
 	}
 
-	private void initTimeStampMetaData(MVRelationalTuple<M> tupleGiven) {
+	private void initTimeStampMetaData(MVTuple<M> tupleGiven) {
 		PointInTime p = new PointInTime((Long) TupleIndexPath.fromSchemaIndexPath(timeStampSchemaIndexPath, tupleGiven).getTupleObject());
 		tupleGiven.getMetadata().setStart(p);
 	}
 
 	@SuppressWarnings("static-method")
-    private void initLatencyData(MVRelationalTuple<M> tupleGiven) {
+    private void initLatencyData(MVTuple<M> tupleGiven) {
 		tupleGiven.getMetadata().setLatencyStart(System.nanoTime());
 	}
 
 	@SuppressWarnings("static-method")
-    private void initAssoziationMetaData(MVRelationalTuple<M> tupleGiven) {
+    private void initAssoziationMetaData(MVTuple<M> tupleGiven) {
 		tupleGiven.getMetadata().setConnectionList(new ConnectionList());
 	}
 
-	private void initProbabilityMetaDataOfTuple(MVRelationalTuple<M> tupleGiven) {
+	private void initProbabilityMetaDataOfTuple(MVTuple<M> tupleGiven) {
 		if (this.objListSchemaIndexPath == null) {
 			this.objListSchemaIndexPath = this.schemaHelper
 					.getSchemaIndexPath(this.objectListPath);
@@ -144,7 +144,7 @@ public class StreamCarsMetaDataInitializer<M extends IProbabilityConnectionConta
 			CovarianceMapper mapper = new CovarianceMapper(this.schema);
 			for (int k = 0; k < objList.size(); k++) {
 				@SuppressWarnings("unchecked")
-				MVRelationalTuple<M> object = (MVRelationalTuple<M>)objList.get(k);
+				MVTuple<M> object = (MVTuple<M>)objList.get(k);
 				object.getMetadata().setCovariance(
 						this.covarianceExpressionMatrix.calculateMatrix(k));
 				object.getMetadata().setAttributeMapping(mapper.getMapping());

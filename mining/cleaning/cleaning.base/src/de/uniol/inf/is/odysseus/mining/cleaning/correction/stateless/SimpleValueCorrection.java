@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class SimpleValueCorrection extends AbstractSimpleRelationalCorrection{
 	}
 
 	@Override
-	public RelationalTuple<?> correctedValue(RelationalTuple<?> toCorrect) {
+	public Tuple<?> correctedValue(Tuple<?> toCorrect) {
 		return super.replaceAttribute(toCorrect, this.value);		
 	}	
 

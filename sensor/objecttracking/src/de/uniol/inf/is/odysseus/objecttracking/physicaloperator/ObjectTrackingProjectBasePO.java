@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  */
 @SuppressWarnings({"unchecked","rawtypes"})
 public class ObjectTrackingProjectBasePO<T extends IProbability> extends
-		AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>> {
+		AbstractPipe<MVTuple<T>, MVTuple<T>> {
 
 	
 	int[] restrictList;
@@ -95,12 +95,12 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<T> object, int port) {
+	protected void process_next(MVTuple<T> object, int port) {
 		
 		// restrict the original tuple and set the new metadata
 		//object.findMeasurementValuePositions(this.inputSchema);
 		object.setMeasurementValuePositions(this.inputMeasurementValuePositions);
-		MVRelationalTuple objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
+		MVTuple objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
 		
 		// transfer the new tuple
 		transfer(objectNew);

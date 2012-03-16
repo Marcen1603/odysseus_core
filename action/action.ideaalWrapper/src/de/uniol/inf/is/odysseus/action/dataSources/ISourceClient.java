@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Abstract client for reading data from sources and
@@ -113,7 +113,7 @@ public abstract class ISourceClient implements Runnable{
 	 */
 	public abstract SDFSchema getSchema();
 
-	protected void sendTupleToClients(RelationalTuple<IMetaAttribute> tuple) {
+	protected void sendTupleToClients(Tuple<IMetaAttribute> tuple) {
 		//send tuple to clients
 		this.logger.debug("Sent tuple :"+tuple.toString());
 		this.tupleCount++;

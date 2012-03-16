@@ -26,16 +26,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class RelationalSlidingElementWindowTIPO extends
-		SlidingElementWindowTIPO<RelationalTuple<ITimeInterval>> {
+		SlidingElementWindowTIPO<Tuple<ITimeInterval>> {
 
 	private int[] gRestrict;
-	Map<RelationalTuple<ITimeInterval>, Integer> keyMap = null;
+	Map<Tuple<ITimeInterval>, Integer> keyMap = null;
 	int maxId = 0;
-	private Map<Integer, List<RelationalTuple<ITimeInterval>>> buffers = null;
-	private DefaultTISweepArea<RelationalTuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<RelationalTuple<ITimeInterval>>();
+	private Map<Integer, List<Tuple<ITimeInterval>>> buffers = null;
+	private DefaultTISweepArea<Tuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 //
 //	public RelationalSlidingElementWindowTIPO(
 //			RelationalSlidingElementWindowTIPO po) {
@@ -51,8 +51,8 @@ public class RelationalSlidingElementWindowTIPO extends
 
 	@Override
 	public void process_open() {
-		keyMap = new HashMap<RelationalTuple<ITimeInterval>, Integer>();
-		buffers = new HashMap<Integer, List<RelationalTuple<ITimeInterval>>>();
+		keyMap = new HashMap<Tuple<ITimeInterval>, Integer>();
+		buffers = new HashMap<Integer, List<Tuple<ITimeInterval>>>();
 	}
 
 	private void init(WindowAO ao) {
@@ -68,12 +68,12 @@ public class RelationalSlidingElementWindowTIPO extends
 
 	@Override
 	protected synchronized void process_next(
-			RelationalTuple<ITimeInterval> object, int port) {
+			Tuple<ITimeInterval> object, int port) {
 		if (isPartitioned()) {
 			int bufferId = getGroupID(object);
-			List<RelationalTuple<ITimeInterval>> buffer = buffers.get(bufferId);
+			List<Tuple<ITimeInterval>> buffer = buffers.get(bufferId);
 			if (buffer == null) {
-				buffer = new LinkedList<RelationalTuple<ITimeInterval>>();
+				buffer = new LinkedList<Tuple<ITimeInterval>>();
 				buffers.put(bufferId, buffer);
 			}
 			buffer.add(object);
@@ -83,12 +83,12 @@ public class RelationalSlidingElementWindowTIPO extends
 		}
 	}
 
-	public int getGroupID(RelationalTuple<ITimeInterval> elem) {
+	public int getGroupID(Tuple<ITimeInterval> elem) {
 		// Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
 		if (gRestrict == null || gRestrict.length == 0)
 			return 0;
 		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-		RelationalTuple<ITimeInterval> gTuple = elem.restrict(gRestrict, true);
+		Tuple<ITimeInterval> gTuple = elem.restrict(gRestrict, true);
 		// Gibt es diese Kombination schon?
 		Integer id = keyMap.get(gTuple);
 		// Wenn nicht, neu eintragen
@@ -100,11 +100,11 @@ public class RelationalSlidingElementWindowTIPO extends
 	}
 
 	@Override
-	public void transfer(RelationalTuple<ITimeInterval> object) {
+	public void transfer(Tuple<ITimeInterval> object) {
 
 		outputQueue.insert(object);
 		PointInTime minTS = getMinTS();
-		Iterator<RelationalTuple<ITimeInterval>> out = outputQueue
+		Iterator<Tuple<ITimeInterval>> out = outputQueue
 				.extractElementsBefore(minTS);
 		while (out.hasNext()) {
 			super.transfer(out.next());
@@ -113,7 +113,7 @@ public class RelationalSlidingElementWindowTIPO extends
 
 	private PointInTime getMinTS() {
 		PointInTime minTS = PointInTime.getInfinityTime();
-		for (List<RelationalTuple<ITimeInterval>> b : buffers.values()) {
+		for (List<Tuple<ITimeInterval>> b : buffers.values()) {
 			// an der obersten Stelle eines jeden Puffers steht das pro
 			// partition aelteste Element
 			PointInTime p = b.get(0).getMetadata().getStart();

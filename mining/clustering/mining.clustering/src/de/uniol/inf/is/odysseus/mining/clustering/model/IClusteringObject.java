@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.model;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This interface represents objects that can be clustered by the different
@@ -61,14 +61,14 @@ public interface IClusteringObject<U extends IMetaAttribute,O> extends IMetaAttr
 	public O[] getClusterAttributes();
 
 	/**
-	 * Returns a RelationalTuple representing this object. The tuple contains
+	 * Returns a Tuple representing this object. The tuple contains
 	 * all the object's attributes as well as the an extra attribute for the
 	 * object's clusterID.
 	 * 
-	 * @return the RelationalTuple representing this object labeled with a
+	 * @return the Tuple representing this object labeled with a
 	 *         clusterID.
 	 */
-	public RelationalTuple<U> getLabeledTuple();
+	public Tuple<U> getLabeledTuple();
 
 	/**
 	 * Returns the number of attributes that should be used to cluster this

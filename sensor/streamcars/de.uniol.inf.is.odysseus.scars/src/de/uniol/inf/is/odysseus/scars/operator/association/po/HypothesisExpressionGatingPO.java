@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerObjectTrackingLatency;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpressionVariable;
  */
 
 public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContainerObjectTrackingLatency>
-		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+		extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private StreamCarsExpression expression;
 	private SchemaHelper schemaHelper;
@@ -66,7 +66,7 @@ public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContai
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new HypothesisExpressionGatingPO<M>(this);
 	}
 
@@ -104,7 +104,7 @@ public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContai
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		TupleIndexPath scannedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getScannedObjectListSIPath(), object);
 		TupleIndexPath predictedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getPredictedObjectListSIPath(), object);
 		TupleHelper tupleHelper = new TupleHelper(object);
@@ -163,9 +163,9 @@ public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContai
 								var.bind(covHelper
 										.getCovarianceForExpressionVariables(
 												this.expression,
-												((MVRelationalTuple<M>) val)
+												((MVTuple<M>) val)
 														.getMetadata()));
-								// var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>)
+								// var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVTuple<M>)
 								// val).getMetadata().getCovariance()));
 							}
 						} else if (var.isInList(predictedTupleIndexPath)) {
@@ -176,9 +176,9 @@ public class HypothesisExpressionGatingPO<M extends IProbabilityConnectionContai
 								var.bind(covHelper
 										.getCovarianceForExpressionVariables(
 												this.expression,
-												((MVRelationalTuple<M>) val)
+												((MVTuple<M>) val)
 														.getMetadata()));
-								// var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>)
+								// var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVTuple<M>)
 								// val).getMetadata().getCovariance()));
 							}
 						}

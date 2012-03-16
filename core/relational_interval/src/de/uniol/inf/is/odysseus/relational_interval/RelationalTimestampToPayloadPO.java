@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.relational_interval;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.TimestampToPayloadPO;
 
 public class RelationalTimestampToPayloadPO extends
-		TimestampToPayloadPO<ITimeInterval, RelationalTuple<ITimeInterval>> {
+		TimestampToPayloadPO<ITimeInterval, Tuple<ITimeInterval>> {
 
 	public RelationalTimestampToPayloadPO(
 			RelationalTimestampToPayloadPO relationalTimestampToPayloadPO) {
@@ -17,9 +17,9 @@ public class RelationalTimestampToPayloadPO extends
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<ITimeInterval> object, int port) {
+	protected void process_next(Tuple<ITimeInterval> object, int port) {
 		int inputSize = object.size();
-		RelationalTuple<ITimeInterval> out = new RelationalTuple<ITimeInterval>(
+		Tuple<ITimeInterval> out = new Tuple<ITimeInterval>(
 				object.size()+2);
 		
 		for (int i=0;i<inputSize;i++){
@@ -40,7 +40,7 @@ public class RelationalTimestampToPayloadPO extends
 	}
 
 	@Override
-	public AbstractPipe<RelationalTuple<ITimeInterval>, RelationalTuple<ITimeInterval>> clone() {
+	public AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> clone() {
 		return new RelationalTimestampToPayloadPO(this);
 	}
 

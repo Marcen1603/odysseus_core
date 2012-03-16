@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;
  * 
  */
 @SuppressWarnings({"rawtypes","unchecked"})
-public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractPipe<RelationalTuple<M>, RelationalTuple<M>>{
+public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>>{
 
 	private Triple queryTriple;
 	
@@ -67,21 +67,21 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		this.outputSchema = original.outputSchema;
 	}
 	
-	protected synchronized void process_next(RelationalTuple<M> object, int port) {
+	protected synchronized void process_next(Tuple<M> object, int port) {
 		
 		// first the object has to be transformed
 		// things like "xyz"^^http://...#string must be
 		// xyz	
-		RelationalTuple<M> preprocessed = preprocess(object);
+		Tuple<M> preprocessed = preprocess(object);
 		if (this.predicate.evaluate(preprocessed)) {
 			this.transfer(this.transform(preprocessed));
 		}
 
 	}
 	
-	private RelationalTuple<M> preprocess(RelationalTuple<M> element){
+	private Tuple<M> preprocess(Tuple<M> element){
 		// first clone the element
-		RelationalTuple<M> newElem = element.clone();
+		Tuple<M> newElem = element.clone();
 		
 //		if(!this.queryTriple.getSubject().isVariable()){
 			newElem = preprocess(newElem, 0);
@@ -99,7 +99,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 	
 	@SuppressWarnings("static-method")
-    private RelationalTuple<M> preprocess(RelationalTuple<M> element, int attrPos){
+    private Tuple<M> preprocess(Tuple<M> element, int attrPos){
 		// remove datatype information
 		int hatPos = ((String)element.getAttribute(attrPos)).indexOf("^^");
 		if(hatPos != -1){
@@ -114,9 +114,9 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		return element;
 	}
 	
-	private RelationalTuple<M> transform(RelationalTuple<M> element){
+	private Tuple<M> transform(Tuple<M> element){
 		
-		RelationalTuple<M> newTuple = new RelationalTuple<M>(this.outputSchema.size());
+		Tuple<M> newTuple = new Tuple<M>(this.outputSchema.size());
 		Object[] attrs = new Object[this.outputSchema.size()];
 		
 		int curI = 0;
@@ -163,7 +163,7 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 
 	@Override
-	public AbstractPipe<RelationalTuple<M>, RelationalTuple<M>> clone() {
+	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
 		// TODO Auto-generated method stub
 		return new TriplePatternMatchingPO(this);
 	}

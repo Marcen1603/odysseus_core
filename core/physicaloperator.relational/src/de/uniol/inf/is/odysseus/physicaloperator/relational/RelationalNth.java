@@ -6,12 +6,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Nth;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.NthPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RelationalNth extends Nth<RelationalTuple<?>, RelationalTuple<?>> {
+public class RelationalNth extends Nth<Tuple<?>, Tuple<?>> {
 
     /**
 	 * 
@@ -33,8 +33,8 @@ public class RelationalNth extends Nth<RelationalTuple<?>, RelationalTuple<?>> {
     }
 
     @Override
-    public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
-        NthPartialAggregate<RelationalTuple<?>> pa = (NthPartialAggregate<RelationalTuple<?>>) p;
+    public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
+        NthPartialAggregate<Tuple<?>> pa = (NthPartialAggregate<Tuple<?>>) p;
         if (pa.getN() == this.getN()) {
             return pa.getElem();
         }

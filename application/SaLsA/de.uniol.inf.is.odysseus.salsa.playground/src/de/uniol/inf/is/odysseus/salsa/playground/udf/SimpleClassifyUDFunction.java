@@ -4,12 +4,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 import com.vividsolutions.jts.geom.Polygon;
 
 @UserDefinedFunction(name="Classify")
-public class SimpleClassifyUDFunction implements IUserDefinedFunction<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class SimpleClassifyUDFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	String init = null;
 	
@@ -19,10 +19,10 @@ public class SimpleClassifyUDFunction implements IUserDefinedFunction<Relational
 	}
 
 	@Override
-	public RelationalTuple<? extends IMetaAttribute> process(RelationalTuple<? extends IMetaAttribute> in, int port) {
+	public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
 		Polygon polygon = (Polygon)in.getAttribute(0); 
 		
-		RelationalTuple<? extends IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(in.size()+1);
+		Tuple<? extends IMetaAttribute> tuple = new Tuple<IMetaAttribute>(in.size()+1);
 		
 		
 		

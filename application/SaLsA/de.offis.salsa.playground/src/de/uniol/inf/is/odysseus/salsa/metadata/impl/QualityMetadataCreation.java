@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.salsa.metadata.Quality;
 
 public class QualityMetadataCreation<M extends Quality> extends
-        MetadataCreationPO<M, RelationalTuple<M>> {
+        MetadataCreationPO<M, Tuple<M>> {
 
     /**
      * 
@@ -26,7 +26,7 @@ public class QualityMetadataCreation<M extends Quality> extends
     }
 
     @Override
-    public void process_next(RelationalTuple<M> tuple, int port) {
+    public void process_next(Tuple<M> tuple, int port) {
         try {
             assignMetadata(tuple);
             this.transfer(tuple);
@@ -48,7 +48,7 @@ public class QualityMetadataCreation<M extends Quality> extends
             ((IMetaAttributeContainer<M>) object).setMetadata(getType().newInstance());
         }
         else {
-            RelationalTuple<M> tuple = (RelationalTuple<M>) object;
+            Tuple<M> tuple = (Tuple<M>) object;
             for (int i = 0; i < tuple.size(); i++) {
                 assignMetadata(tuple.getAttribute(i));
             }

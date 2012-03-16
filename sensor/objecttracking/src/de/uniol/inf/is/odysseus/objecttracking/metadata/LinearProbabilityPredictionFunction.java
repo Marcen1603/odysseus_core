@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 
 /**
@@ -44,8 +44,8 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class LinearProbabilityPredictionFunction<M extends IProbability>
-			extends AbstractPredictionFunction<MVRelationalTuple<M>, M>
-			implements IProbabilityPredictionFunction<MVRelationalTuple<M>, M>{
+			extends AbstractPredictionFunction<MVTuple<M>, M>
+			implements IProbabilityPredictionFunction<MVTuple<M>, M>{
 	
 	/**
 	 * 
@@ -212,7 +212,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	 */
 	@Override
 	@Deprecated
-	public MVRelationalTuple<M> predictData(SDFSchema schema, MVRelationalTuple<M> object, PointInTime t){	
+	public MVTuple<M> predictData(SDFSchema schema, MVTuple<M> object, PointInTime t){	
 		counter++;
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
@@ -295,7 +295,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 			M newMetadata = null;
 			newMetadata = (M)object.getMetadata().clone();
 			
-			MVRelationalTuple<M> outputVal = new MVRelationalTuple<M>(tempValues);
+			MVTuple<M> outputVal = new MVTuple<M>(tempValues);
 			outputVal.setMetadata(newMetadata);
 			
 			long ee = System.currentTimeMillis();
@@ -309,7 +309,7 @@ public class LinearProbabilityPredictionFunction<M extends IProbability>
 	}
 	
 	@Override
-	public M predictMetadata(SDFSchema schem, MVRelationalTuple<M> object, PointInTime t){
+	public M predictMetadata(SDFSchema schem, MVTuple<M> object, PointInTime t){
 		long start = System.currentTimeMillis();
 		// if the PointInTime t is not in the interval, during which the expressions are applicable,
 		// throw an exception

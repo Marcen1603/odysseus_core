@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class represents a cluster for the simple single pass k-means algorithm
@@ -51,7 +51,7 @@ public class KMeansCluster<T extends IMetaAttribute> extends AbstractCluster<T,O
 	 */
 	@Override
 	public IClusteringObject<T,Object> getCenter() {
-		return new RelationalClusteringObject<T>(new RelationalTuple<T>(
+		return new RelationalClusteringObject<T>(new Tuple<T>(
 				clusteringFeature.getMean()), getId());
 	}
 

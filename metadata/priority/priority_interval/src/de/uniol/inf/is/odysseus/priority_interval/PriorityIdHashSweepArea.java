@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends RelationalTuple<K>>
+public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends Tuple<K>>
 		implements ITimeIntervalSweepArea<T> {
 
 	private LinkedHashMultimap<Long, T> elements = LinkedHashMultimap.create();

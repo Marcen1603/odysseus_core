@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class RelationalUnNestPO<T extends IMetaAttribute> extends
-        AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+        AbstractPipe<Tuple<T>, Tuple<T>> {
     private static Logger LOG = LoggerFactory.getLogger(RelationalUnNestPO.class);
 
     private int nestedAttribute;
@@ -77,17 +77,17 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final RelationalTuple<T> tuple, final int port) {
-        int depth = ((List<RelationalTuple<?>>) tuple.getAttribute(nestedAttribute)).size();
+    protected void process_next(final Tuple<T> tuple, final int port) {
+        int depth = ((List<Tuple<?>>) tuple.getAttribute(nestedAttribute)).size();
         for (int d = 0; d < depth; d++) {
             try {
-                final RelationalTuple<T> outputTuple = new RelationalTuple<T>(this
+                final Tuple<T> outputTuple = new Tuple<T>(this
                         .getOutputSchema().size());
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 int pos = 0;
                 for (int i = 0; i < this.inputSchema.size(); i++) {
                     if (i == this.nestedAttribute) {
-                        final List<RelationalTuple<?>> nestedTuple = (List<RelationalTuple<?>>) tuple
+                        final List<Tuple<?>> nestedTuple = (List<Tuple<?>>) tuple
                                 .getAttribute(i);
                         for (int j = 0; j < nestedTuple.get(d).size(); j++) {
                             outputTuple.setAttribute(pos, nestedTuple.get(d).getAttribute(j));

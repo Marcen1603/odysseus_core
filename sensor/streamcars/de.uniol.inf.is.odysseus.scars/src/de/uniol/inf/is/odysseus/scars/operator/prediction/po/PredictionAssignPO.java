@@ -19,11 +19,11 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 
-public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVTuple<M>>>> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private PredictionFunctionContainer<M> predictionFunctions;
 	private int[] pathToList;
@@ -51,7 +51,7 @@ public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTracking
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
 		object.getMetadata().setObjectTrackingLatencyStart("Prediction Assign");
 		TupleHelper helper = new TupleHelper(object);
@@ -64,7 +64,7 @@ public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTracking
 				return;
 			}
 			for(Object mvObj : objList ) {
-				evaluatePredicateKey((MVRelationalTuple<M>)mvObj);
+				evaluatePredicateKey((MVTuple<M>)mvObj);
 			}
 		}
 		object.getMetadata().setObjectTrackingLatencyEnd("Prediction Assign");
@@ -74,8 +74,8 @@ public class PredictionAssignPO<M extends ITimeIntervalProbabilityObjectTracking
 
 	}
 
-	private void evaluatePredicateKey(MVRelationalTuple<M> tuple) {
-		for(IPredicate<MVRelationalTuple<M>> pred : predictionFunctions) {
+	private void evaluatePredicateKey(MVTuple<M> tuple) {
+		for(IPredicate<MVTuple<M>> pred : predictionFunctions) {
 			if(pred.evaluate(tuple)) {
 				tuple.getMetadata().setPredictionFunctionKey(pred);
 				return;

@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.relational.base.schema;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Repräsentiert einen Indexeintrag in einem Tupelpfad. Der Indexeintrag
- * speichert den MVRelationalTuple<?>, worin sich der Indexeintrag verweist.
+ * speichert den MVTuple<?>, worin sich der Indexeintrag verweist.
  * Über getParent() lässt sich dieser abrufen.
  * <p>
  * Der dem Indexeintrag zugewiesene Wert kann abgerufen und gesetzt werden. Die
@@ -46,8 +46,8 @@ public class TupleIndex {
 		this.parent = parent;
 		this.valueIndex = valueIndex;
 		this.attribute = attribute;
-		if( parent instanceof RelationalTuple)
-			this.value = ((RelationalTuple)this.parent).getAttribute(this.valueIndex);
+		if( parent instanceof Tuple)
+			this.value = ((Tuple)this.parent).getAttribute(this.valueIndex);
 		else if( parent instanceof List)
 			this.value = ((List<Object>)this.parent).get(this.valueIndex);
 	}
@@ -60,21 +60,21 @@ public class TupleIndex {
 	}
 
 	/**
-	 * Liefert den übergeordneten MVRelationalTuple<?>, worin der Indexeintrag
+	 * Liefert den übergeordneten MVTuple<?>, worin der Indexeintrag
 	 * verweist. Der Index kann über getValueIndex() geliefert werden.
 	 * 
-	 * @return Übergeordnetes MVRelationalTuple<?>
+	 * @return Übergeordnetes MVTuple<?>
 	 */
 	public Object getParent() {
 		return parent;
 	}
 
 	/**
-	 * Liefert den Index innerhalb des MVRelationalTuple<?>, worin sich das
+	 * Liefert den Index innerhalb des MVTuple<?>, worin sich das
 	 * repräsentierte Objekt befindet. Das entsprechende MVRelationalTupel<?>
 	 * ist über getParent() erreichbar.
 	 * 
-	 * @return Index innerhalb der MVRelationalTuple<?>
+	 * @return Index innerhalb der MVTuple<?>
 	 */
 	public int getValueIndex() {
 		return valueIndex;
@@ -100,8 +100,8 @@ public class TupleIndex {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setValue(Object obj) {
-		if( parent instanceof RelationalTuple)
-			((RelationalTuple)parent).setAttribute(valueIndex, obj);
+		if( parent instanceof Tuple)
+			((Tuple)parent).setAttribute(valueIndex, obj);
 		else if( parent instanceof List ) 
 			((List<Object>)parent).set(valueIndex, obj);
 	}

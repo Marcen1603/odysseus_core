@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 @SuppressWarnings("all")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {
@@ -39,7 +39,7 @@ public class ASTSimpleTuple extends SimpleNode {
 		return visitor.visit(this, data);
 	}
 
-	public RelationalTuple getTuple(List<SDFAttribute> schema) {
+	public Tuple getTuple(List<SDFAttribute> schema) {
 		if (schema.size() != jjtGetNumChildren()) {
 			// TODO exceptionhandling anstaendig machen und bessere
 			// fehlermeldungen geben
@@ -65,6 +65,6 @@ public class ASTSimpleTuple extends SimpleNode {
 						"type of attribute does not match schema");
 			}
 		}
-		return new RelationalTuple(values);
+		return new Tuple(values);
 	}
 }

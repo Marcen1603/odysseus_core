@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionKeyLatency;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingProjectAO;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.logicaloperator.ObjectTrackingPro
  * @param <T>
  */
 @SuppressWarnings({"rawtypes"})
-public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKeyLatency> extends AbstractPipe<MVRelationalTuple<T>, MVRelationalTuple<T>>{
+public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKeyLatency> extends AbstractPipe<MVTuple<T>, MVTuple<T>>{
 
 //	private final String LOGGER_NAME = "ObjectTrackingProjectPO";
 	
@@ -72,11 +72,11 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 	}
 	
 	@Override
-	final protected void process_next(MVRelationalTuple<T> object, int port) {
+	final protected void process_next(MVTuple<T> object, int port) {
 
 		try {
 			// restrict the original tuple and set the new metadata
-			MVRelationalTuple<T> objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
+			MVTuple<T> objectNew = object.restrict(this.restrictList, this.projectMatrix, false);
 			
 			// updating the prediction function
 			// is not necessary, since the

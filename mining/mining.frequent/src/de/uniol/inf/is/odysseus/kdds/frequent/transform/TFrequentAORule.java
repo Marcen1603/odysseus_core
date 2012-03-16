@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.kdds.frequent.physical.LossyCountingFrequentItem
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SimpleFrequentItemPO;
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SpaceSavingFrequentItem;
 import de.uniol.inf.is.odysseus.logicaloperator.kdds.frequent.FrequentItemAO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,13 +37,13 @@ public class TFrequentAORule extends AbstractTransformationRule<FrequentItemAO> 
 		IPhysicalOperator po = null;
 		switch (operator.getStrategy()) {
 		case Simple:
-			po = new SimpleFrequentItemPO<RelationalTuple<?>>(operator.getRestrictList(), operator.getSize());
+			po = new SimpleFrequentItemPO<Tuple<?>>(operator.getRestrictList(), operator.getSize());
 			break;
 		case LossyCounting:
-			po = new LossyCountingFrequentItem<RelationalTuple<?>>(operator.getRestrictList(), operator.getSize());
+			po = new LossyCountingFrequentItem<Tuple<?>>(operator.getRestrictList(), operator.getSize());
 			break;
 		case SpaceSaving:
-			po = new SpaceSavingFrequentItem<RelationalTuple<?>>(operator.getRestrictList(), operator.getSize());
+			po = new SpaceSavingFrequentItem<Tuple<?>>(operator.getRestrictList(), operator.getSize());
 			break;
 		default:
 			break;

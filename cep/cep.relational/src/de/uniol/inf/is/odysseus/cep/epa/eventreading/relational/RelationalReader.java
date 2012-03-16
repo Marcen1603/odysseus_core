@@ -20,9 +20,9 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.AbstractEventReader;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class RelationalReader extends AbstractEventReader<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> {
+public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 
 	HashMap<String, Integer> scheme;
 	
@@ -57,7 +57,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 	 *            vom Typ {@link RelationalTuple} sein!
 	 */
 	@Override
-	public RelationalTuple<? extends ITimeInterval> getValue(String id, RelationalTuple<? extends ITimeInterval> event) {
+	public Tuple<? extends ITimeInterval> getValue(String id, Tuple<? extends ITimeInterval> event) {
 		if (id.isEmpty())
 			return null;//Leere Attribut id bei bstimmten Aggregationen (z.B. Count)
 		
@@ -78,7 +78,7 @@ public class RelationalReader extends AbstractEventReader<RelationalTuple<? exte
 	}
 	
 	@Override
-	public long getTime(RelationalTuple<? extends ITimeInterval> event) {
+	public long getTime(Tuple<? extends ITimeInterval> event) {
 		ITimeInterval meta = event.getMetadata();
 		return meta.getStart().getMainPoint(); // ACHTUNG: Natürlich nur ganze Zahlen liefern
 	}

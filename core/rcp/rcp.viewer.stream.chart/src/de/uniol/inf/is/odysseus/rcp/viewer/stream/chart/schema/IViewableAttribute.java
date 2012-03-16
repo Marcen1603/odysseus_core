@@ -16,11 +16,11 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public interface IViewableAttribute{
 
 	public String getName();
 	public SDFDatatype getSDFDatatype();
-	public Object evaluate(RelationalTuple<? extends IMetaAttribute> tuple);
+	public Object evaluate(Tuple<? extends IMetaAttribute> tuple);
 }

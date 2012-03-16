@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
-* A lightweight adaption of RelationalTuple from Odysseus with no direct dependencies!
+* A lightweight adaption of Tuple from Odysseus with no direct dependencies!
 * 
 * @author DGeesen
 * 

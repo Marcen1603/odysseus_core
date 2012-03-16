@@ -23,14 +23,14 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * 
  * @author Dennis Geesen Created at: 21.06.2011
  */
-public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>> {
+public class OutOfDomainDetection implements IUnaryDetection<Tuple<?>> {
 
 	private double min;
 	private double max;
@@ -60,7 +60,7 @@ public class OutOfDomainDetection implements IUnaryDetection<RelationalTuple<?>>
 	}
 
 	@Override
-	public IPredicate<RelationalTuple<?>> getPredicate() {
+	public IPredicate<Tuple<?>> getPredicate() {
 		return this.predicate;
 	}
 

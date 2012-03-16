@@ -22,13 +22,13 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 
-public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVRelationalTuple<M>>>> extends
-		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVTuple<M>>>> extends
+		AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private Double distanceThresholdYRight;
 	private Double distanceThresholdYLeft;
@@ -54,7 +54,7 @@ public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKe
 		this.trackedObjectList = distanceObjectSelectorPO.trackedObjectList;
 	}
 
-	protected double getValueByName(MVRelationalTuple<M> tuple, TupleIndexPath tupleIndexPath, String attributName) {
+	protected double getValueByName(MVTuple<M> tuple, TupleIndexPath tupleIndexPath, String attributName) {
 		for (TupleInfo info : new TupleIterator(tuple, tupleIndexPath)) {
 			if (info.attribute.getAttributeName().equals(attributName)) {
 				return new Double(info.tupleObject.toString());
@@ -70,9 +70,9 @@ public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKe
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		TupleIndexPath trackedObjectListTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.trackedObjectListSchemaIndexPath, object);
-		ArrayList<MVRelationalTuple<M>> newList = new ArrayList<MVRelationalTuple<M>>();
+		ArrayList<MVTuple<M>> newList = new ArrayList<MVTuple<M>>();
 
 		for (TupleInfo tupleInfo : trackedObjectListTupleIndexPath) {
 			double x = getValueByName(object, tupleInfo.tupleIndexPath, this.trackedObjectX);
@@ -82,7 +82,7 @@ public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKe
 			threat &= y >= -this.distanceThresholdYLeft && y <= this.distanceThresholdYRight;
 //			System.out.println("Threat: " + threat + " - " + tupleInfo.tupleObject.toString());
 			if (threat) {
-				newList.add((MVRelationalTuple<M>) tupleInfo.tupleObject);
+				newList.add((MVTuple<M>) tupleInfo.tupleObject);
 			}
 		}
 		
@@ -91,18 +91,18 @@ public class DistanceObjectSelectorPO<M extends IProbabilityPredictionFunctionKe
 		SchemaIndexPath path = schemaHelper.getSchemaIndexPath(schemaHelper.getStartTimestampFullAttributeName());
 		result[0] = TupleIndexPath.fromSchemaIndexPath(path, object).getTupleObject();
 
-		MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(newList.size());
+		MVTuple<M> tuples = new MVTuple<M>(newList.size());
 		int counter = 0;
-		for (MVRelationalTuple<M> mvRelationalTuple : newList) {
-			tuples.setAttribute(counter++, mvRelationalTuple);
+		for (MVTuple<M> mvTuple : newList) {
+			tuples.setAttribute(counter++, mvTuple);
 		}
 
 		// get scanned objects
-		result[1] = new MVRelationalTuple<M>(tuples);
+		result[1] = new MVTuple<M>(tuples);
 
-		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		MVTuple<M> base = new MVTuple<M>(1);
 		base.setMetadata(object.getMetadata());
-		base.setAttribute(0, new MVRelationalTuple<M>(result));
+		base.setAttribute(0, new MVTuple<M>(result));
 
 		transfer(base);
 	}

@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class LossyCountingFrequentItem<T extends RelationalTuple<?>> extends AbstractFrequentPO<T> {
+public class LossyCountingFrequentItem<T extends Tuple<?>> extends AbstractFrequentPO<T> {
 
 	private int count = 0;
 	private int delta = 0;
@@ -44,7 +44,7 @@ public class LossyCountingFrequentItem<T extends RelationalTuple<?>> extends Abs
 	@Override
 	protected void process_next(T newObject, int port) {
 		count++;
-		RelationalTuple<?> tuple = newObject.restrict(getOnAttributes(), true);
+		Tuple<?> tuple = newObject.restrict(getOnAttributes(), true);
 		if (this.items.containsKey(tuple)) {
 			int oldCount = this.items.get(tuple);
 			this.items.put(tuple, oldCount + 1);

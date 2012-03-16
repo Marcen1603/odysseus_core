@@ -13,10 +13,10 @@
   * limitations under the License.
   */
 package de.uniol.inf.is.odysseus.priority_interval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
-public class SingleAttributeHashFunctionWrapper<T extends RelationalTuple<?>> extends AbstractHashFunctionWrapper<T> {
+public class SingleAttributeHashFunctionWrapper<T extends Tuple<?>> extends AbstractHashFunctionWrapper<T> {
 
 	final private int hashCode;
 

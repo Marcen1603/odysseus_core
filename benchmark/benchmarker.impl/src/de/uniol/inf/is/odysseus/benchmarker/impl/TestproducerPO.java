@@ -22,10 +22,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class TestproducerPO extends
-		AbstractSource<RelationalTuple<IntervalLatencyPriority>>{
+		AbstractSource<Tuple<IntervalLatencyPriority>>{
 
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
@@ -52,7 +52,7 @@ public class TestproducerPO extends
 					Long frequency = frequencies.get(j);
 					long offset = 1000000000 / frequency;
 					for (int i = 0; i < count; ++i) {
-						RelationalTuple<IntervalLatencyPriority> r = new RelationalTuple<IntervalLatencyPriority>(
+						Tuple<IntervalLatencyPriority> r = new Tuple<IntervalLatencyPriority>(
 								1);
 						r.setAttribute(0, i);
 						long expectedTime = lastTime + offset;

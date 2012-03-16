@@ -20,10 +20,10 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSum;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RelationalAvgSum extends AvgSum<RelationalTuple<?>, RelationalTuple<?>>{
+public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>>{
 
 	/**
 	 * 
@@ -60,26 +60,26 @@ public class RelationalAvgSum extends AvgSum<RelationalTuple<?>, RelationalTuple
 
 	
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple in) {
-		AvgSumPartialAggregate<RelationalTuple<?>> pa = 
-			new AvgSumPartialAggregate<RelationalTuple<?>>(((Number)in.getAttribute(pos)).doubleValue(),1);
+	public IPartialAggregate<Tuple<?>> init(Tuple in) {
+		AvgSumPartialAggregate<Tuple<?>> pa = 
+			new AvgSumPartialAggregate<Tuple<?>>(((Number)in.getAttribute(pos)).doubleValue(),1);
 		return pa;
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(IPartialAggregate p, RelationalTuple toMerge, boolean createNew) {
-		AvgSumPartialAggregate<RelationalTuple> pa = null;
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p, Tuple toMerge, boolean createNew) {
+		AvgSumPartialAggregate<Tuple> pa = null;
 		if (createNew){
-			AvgSumPartialAggregate<RelationalTuple> h = (AvgSumPartialAggregate<RelationalTuple>) p;			
-			pa = new AvgSumPartialAggregate<RelationalTuple>(h.getAggValue(), h.getCount());
+			AvgSumPartialAggregate<Tuple> h = (AvgSumPartialAggregate<Tuple>) p;			
+			pa = new AvgSumPartialAggregate<Tuple>(h.getAggValue(), h.getCount());
 			
 		}else{
-			pa = (AvgSumPartialAggregate<RelationalTuple>) p;
+			pa = (AvgSumPartialAggregate<Tuple>) p;
 		}
 		return merge(pa, toMerge);
 	}
 	
-	public IPartialAggregate<RelationalTuple<?>> merge(IPartialAggregate p, RelationalTuple toMerge) {
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate p, Tuple toMerge) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
 		Double newAggValue = pa.getAggValue().doubleValue() + ((Number)toMerge.getAttribute(pos)).doubleValue(); 
 		pa.setAggValue(newAggValue, pa.getCount()+1);
@@ -87,9 +87,9 @@ public class RelationalAvgSum extends AvgSum<RelationalTuple<?>, RelationalTuple
 	}
 	
 	@Override
-	public RelationalTuple evaluate(IPartialAggregate p) {
+	public Tuple evaluate(IPartialAggregate p) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
-		RelationalTuple r = new RelationalTuple(1);
+		Tuple r = new Tuple(1);
 		if (isAvg()){
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()/pa.getCount()));
 		}else{

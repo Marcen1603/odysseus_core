@@ -19,12 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessCorrectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatelessCorrctionPO;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TStatelessCorrectionAORule extends AbstractTransformationRule<StatelessCorrectionAO<RelationalTuple<IMiningMetadata>>> {
+public class TStatelessCorrectionAORule extends AbstractTransformationRule<StatelessCorrectionAO<Tuple<IMiningMetadata>>> {
 
 	@Override
 	public int getPriority() {	
@@ -32,8 +32,8 @@ public class TStatelessCorrectionAORule extends AbstractTransformationRule<State
 	}
 
 	@Override
-	public void execute(StatelessCorrectionAO<RelationalTuple<IMiningMetadata>> correctAO, TransformationConfiguration config) {		
-		StatelessCorrctionPO<?> correctPO = new StatelessCorrctionPO<RelationalTuple<IMiningMetadata>>(correctAO.getCorrections());
+	public void execute(StatelessCorrectionAO<Tuple<IMiningMetadata>> correctAO, TransformationConfiguration config) {		
+		StatelessCorrctionPO<?> correctPO = new StatelessCorrctionPO<Tuple<IMiningMetadata>>(correctAO.getCorrections());
 		correctPO.setOutputSchema(correctAO.getOutputSchema());
 		replace(correctAO, correctPO, config);		
 		retract(correctAO);
@@ -41,7 +41,7 @@ public class TStatelessCorrectionAORule extends AbstractTransformationRule<State
 	}
 
 	@Override
-	public boolean isExecutable(StatelessCorrectionAO<RelationalTuple<IMiningMetadata>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatelessCorrectionAO<Tuple<IMiningMetadata>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

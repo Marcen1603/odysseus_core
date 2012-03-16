@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefault
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePredicateVisitor;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
@@ -55,7 +55,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTElementPriorities node, Object data) throws QueryParseException {
-		PriorityAO<RelationalTuple<? extends IPriority>> ao = new PriorityAO<RelationalTuple<? extends IPriority>>();
+		PriorityAO<Tuple<? extends IPriority>> ao = new PriorityAO<Tuple<? extends IPriority>>();
 		top.subscribeSink(ao, 0, 0, top.getOutputSchema());
 		node.childrenAccept(this, ao);
 		top = ao;
@@ -65,9 +65,9 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object visit(ASTElementPriority node, Object data) throws QueryParseException {
-		PriorityAO<RelationalTuple<IPriority>> ao = (PriorityAO<RelationalTuple<IPriority>>) data;
+		PriorityAO<Tuple<IPriority>> ao = (PriorityAO<Tuple<IPriority>>) data;
 
-		IPredicate<RelationalTuple<?>> predicate;
+		IPredicate<Tuple<?>> predicate;
 		IAttributeResolver tmpResolver = new DirectAttributeResolver(top
 				.getOutputSchema());
 		// TODO resolving mit dem anderen resolver auch machen und
@@ -81,7 +81,7 @@ public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 	@SuppressWarnings({"unchecked","rawtypes"})
 	@Override
 	public Object visit(ASTDefaultPriority node, Object data) throws QueryParseException {
-		((PriorityAO<RelationalTuple>) data).setDefaultPriority(node
+		((PriorityAO<Tuple>) data).setDefaultPriority(node
 				.getPriority());
 		return data;
 	}

@@ -26,15 +26,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIterator;
 import de.uniol.inf.is.odysseus.scars.util.server.DatagramServer;
 import de.uniol.inf.is.odysseus.scars.util.server.IServer;
 import de.uniol.inf.is.odysseus.scars.util.server.NIOServer;
 
-public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeIntervalLatency<IPredicate<MVRelationalTuple<M>>>>
-		extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeIntervalLatency<IPredicate<MVTuple<M>>>>
+		extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	public static final String SERVER_TYPE_UDP = "udp";
 	public static final String SERVER_TYPE_SOCKET = "socket";
@@ -169,7 +169,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		object.getMetadata().setLatencyEnd(System.nanoTime());
 
 //		Association Selection
@@ -185,7 +185,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 		// 2 -> objecttracking latency meridian
 		// 3 -> actual odysseus latency
 		// 4 -> actual objecttracking latency
-		MVRelationalTuple<M> output = new MVRelationalTuple<M>(4);
+		MVTuple<M> output = new MVTuple<M>(4);
 		output.setMetadata(object.getMetadata());
 
 		// the lists which contain the performance values should only contain <= countMax elements
@@ -407,7 +407,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 			} else if (info.attribute.getDatatype().getURIWithoutQualName()
 					.equals("List")) {
 				@SuppressWarnings("unchecked")
-				MVRelationalTuple<M> tuple = (MVRelationalTuple<M>) info.tupleObject;
+				MVTuple<M> tuple = (MVTuple<M>) info.tupleObject;
 				buffer.putLong(tuple.size());
 			}
 		}
@@ -430,7 +430,7 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new JDVESinkPO<M>(this);
 	}
 

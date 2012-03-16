@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  */
 public class AggregationBean extends
-		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
@@ -83,7 +83,7 @@ public class AggregationBean extends
 	 * .IInitializer#init(java.lang.Object)
 	 */
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		// Create the partial object for holding temp. results
 		PartialAggregateData result = new PartialAggregateData();
 		try {
@@ -160,9 +160,9 @@ public class AggregationBean extends
 	 * .IPartialAggregate, java.lang.Object, boolean)
 	 */
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(
-			IPartialAggregate<RelationalTuple<?>> partial,
-			RelationalTuple<?> in, boolean create) {
+	public IPartialAggregate<Tuple<?>> merge(
+			IPartialAggregate<Tuple<?>> partial,
+			Tuple<?> in, boolean create) {
 		// Create the partial object for holding temp. results
 		PartialAggregateData result = new PartialAggregateData();
 		try {
@@ -238,10 +238,10 @@ public class AggregationBean extends
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public RelationalTuple<?> evaluate(
-			IPartialAggregate<RelationalTuple<?>> partial) {
+	public Tuple<?> evaluate(
+			IPartialAggregate<Tuple<?>> partial) {
 		// The result tuple
-		RelationalTuple<?> result = new RelationalTuple(1);
+		Tuple<?> result = new Tuple(1);
 		try {
 			Object pojo = this.getBean();
 			if (pojo != null) {
@@ -330,7 +330,7 @@ public class AggregationBean extends
 	 * @param positions
 	 * @return
 	 */
-	private static Object[] getAttributes(RelationalTuple<?> in, int[] positions) {
+	private static Object[] getAttributes(Tuple<?> in, int[] positions) {
 		Object[] attributes = new Object[positions.length];
 		for (int i = 0; i < positions.length; ++i) {
 			attributes[i] = in.getAttribute(positions[i]);
@@ -344,7 +344,7 @@ public class AggregationBean extends
 	 * 
 	 */
 	public static class PartialAggregateData implements
-			IPartialAggregate<RelationalTuple<?>> {
+			IPartialAggregate<Tuple<?>> {
 		public Object partial = null;
 
 		public PartialAggregateData(PartialAggregateData partialAggregateData) {

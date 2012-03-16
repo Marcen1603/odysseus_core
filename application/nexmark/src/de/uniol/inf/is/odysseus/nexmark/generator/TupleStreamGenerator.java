@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Der TupleStreamGenerator erzeugt auf Anfrage Tupel vom Typ person, auction
@@ -102,8 +102,8 @@ public class TupleStreamGenerator {
 	 * 
 	 * @return das generierte Tupel
 	 */
-	public RelationalTuple<ITimeInterval> generateFirstRawPersonTuple() {
-		RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(
+	public Tuple<ITimeInterval> generateFirstRawPersonTuple() {
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
 				personAttributeCount);
 
 		// time to send
@@ -120,8 +120,8 @@ public class TupleStreamGenerator {
 	 * 
 	 * @return das generierte Tupel
 	 */
-	public RelationalTuple<ITimeInterval> generateRawPersonTuple() {
-		RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(
+	public Tuple<ITimeInterval> generateRawPersonTuple() {
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
 				personAttributeCount);
 
 		// time to send
@@ -139,7 +139,7 @@ public class TupleStreamGenerator {
 	 * Tupel mit Werten
 	 * 
 	 */
-	public void fillPersonTuple(RelationalTuple<ITimeInterval> tuple) {
+	public void fillPersonTuple(Tuple<ITimeInterval> tuple) {
 		personGenerator.generateValues(openAuctions);
 
 		// id
@@ -171,8 +171,8 @@ public class TupleStreamGenerator {
 	 * 
 	 * @return das generierte Tupel
 	 */
-	public RelationalTuple<ITimeInterval> generateRawAuctionTuple() {
-		RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(
+	public Tuple<ITimeInterval> generateRawAuctionTuple() {
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
 				auctionAttributeCount);
 
 		// time to send
@@ -194,7 +194,7 @@ public class TupleStreamGenerator {
 	 *             Nutzer gibt der es erstellt haben koennte
 	 * 
 	 */
-	public void fillAuctionTuple(RelationalTuple<ITimeInterval> tuple)
+	public void fillAuctionTuple(Tuple<ITimeInterval> tuple)
 			throws CouldNotGetExistingPersonId {
 		// Frage jetzt schon Person id an, da hier bereits eine Exception
 		// geworfen werden kann.
@@ -236,8 +236,8 @@ public class TupleStreamGenerator {
 	 * 
 	 * @return das generierte Tupel
 	 */
-	public RelationalTuple<ITimeInterval> generateRawBidTuple() {
-		RelationalTuple<ITimeInterval> tuple = new RelationalTuple<ITimeInterval>(bidAttributeCount);
+	public Tuple<ITimeInterval> generateRawBidTuple() {
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(bidAttributeCount);
 
 		// time to send
 		long timeToSend = getTimeToSend(lastBidGenerated==-1?lastAuctionGenerated:lastBidGenerated, configuration.minDistBetweenBids,
@@ -260,7 +260,7 @@ public class TupleStreamGenerator {
 	 *             wenn versucht wird eine Auktion zu erstellen aber es keinen
 	 *             Nutzer gibt der es erstellt haben koennte
 	 */
-	public void fillBidTuple(RelationalTuple<ITimeInterval> tuple)
+	public void fillBidTuple(Tuple<ITimeInterval> tuple)
 			throws CouldNotGetExistingAuctionIdException, CouldNotGetExistingPersonId {
 		OpenAuction auction = openAuctions.getExistingAuction();
 		int personId = persons.getExistingId();

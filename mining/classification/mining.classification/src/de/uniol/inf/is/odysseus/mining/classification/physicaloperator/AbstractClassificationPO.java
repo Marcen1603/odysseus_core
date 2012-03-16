@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.classification.model.IClassifier;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class represents an abstract physical operator used for classification
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  *            the type of the IMetaAttribute
  */
 public abstract class AbstractClassificationPO<T extends IMetaAttribute>
-		extends AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	/**
 	 * the positions of the classification attributes in a tuple
@@ -98,7 +98,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 * .lang.Object, int)
 	 */
 	@Override
-	protected void process_next(RelationalTuple<T> object, int port) {
+	protected void process_next(Tuple<T> object, int port) {
 		Object label = object.getAttribute(labelPosition);
 		if (label != null) {
 			// if the tuple has a class label wrap it into classification object
@@ -118,7 +118,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 *            the classifier to transfer
 	 */
 	protected void transferClassifier(IClassifier<T> classifier) {
-		transfer(new RelationalTuple<T>(new Object[] { classifier }));
+		transfer(new Tuple<T>(new Object[] { classifier }));
 	}
 
 	/**

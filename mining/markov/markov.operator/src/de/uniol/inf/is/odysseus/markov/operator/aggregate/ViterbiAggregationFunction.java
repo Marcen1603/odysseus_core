@@ -6,9 +6,9 @@ import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class ViterbiAggregationFunction extends AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>>{
+public class ViterbiAggregationFunction extends AbstractAggregateFunction<Tuple<?>, Tuple<?>>{
 
 	/**
 	 * 
@@ -22,10 +22,10 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 	}	
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		
 		Observation o = tupleToObservation(in);
-		MarkovPartialAggregate<RelationalTuple<?>> mpa = new MarkovPartialAggregate<RelationalTuple<?>>();
+		MarkovPartialAggregate<Tuple<?>> mpa = new MarkovPartialAggregate<Tuple<?>>();
 		System.out.println("------- init -------");
 		for (State s : hmm.getStates()) {
 			double prob = s.getEmissionToObservation(o).getProbability() * hmm.getStartState().getTransitionToState(s).getProbability();
@@ -37,10 +37,10 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(IPartialAggregate<RelationalTuple<?>> p, RelationalTuple<?> toMerge, boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge, boolean createNew) {
 		System.out.println("------- merge -------");		
-		//MarkovPartialAggregate<RelationalTuple<?>> mpa = (MarkovPartialAggregate<RelationalTuple<?>>)p;
-		MarkovPartialAggregate<RelationalTuple<?>> mpa = (MarkovPartialAggregate<RelationalTuple<?>>) p.clone();
+		//MarkovPartialAggregate<Tuple<?>> mpa = (MarkovPartialAggregate<Tuple<?>>)p;
+		MarkovPartialAggregate<Tuple<?>> mpa = (MarkovPartialAggregate<Tuple<?>>) p.clone();
 		Observation o = tupleToObservation(toMerge);
 		double stateMax = 0.0;
 		for (State s : hmm.getStates()) {
@@ -64,17 +64,17 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 	}
 
 	@Override
-	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
+	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		System.out.println("------- evaluate -------");
-		MarkovPartialAggregate<RelationalTuple<?>> mpa = (MarkovPartialAggregate<RelationalTuple<?>>)p;
+		MarkovPartialAggregate<Tuple<?>> mpa = (MarkovPartialAggregate<Tuple<?>>)p;
 		@SuppressWarnings("rawtypes")
-        RelationalTuple<?> tuple = new RelationalTuple(1);
+        Tuple<?> tuple = new Tuple(1);
 		State s = mpa.getCurrentState();
 		tuple.setAttribute(0, s.getName()+mpa.getValues().get(s));		
 		return tuple;
 	}
 	
-//	private State getMaxState(MarkovPartialAggregate<RelationalTuple<?>> mpa){
+//	private State getMaxState(MarkovPartialAggregate<Tuple<?>> mpa){
 //		State s = null;
 //		Double max = 0.0;
 //		for(Entry<State, Double> e : mpa.getValues().entrySet()){
@@ -86,7 +86,7 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Relati
 //		return s;
 //	}
 
-	private static Observation tupleToObservation(RelationalTuple<?> in){
+	private static Observation tupleToObservation(Tuple<?> in){
 		return new Observation(in.getAttribute(1).toString());
 	}
 	

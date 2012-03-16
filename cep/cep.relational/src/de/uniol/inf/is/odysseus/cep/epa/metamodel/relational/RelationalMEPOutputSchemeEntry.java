@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.cep.epa.metamodel.relational;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.MEPOutputSchemeEntry;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class RelationalMEPOutputSchemeEntry extends MEPOutputSchemeEntry {
 
@@ -32,7 +32,7 @@ public class RelationalMEPOutputSchemeEntry extends MEPOutputSchemeEntry {
 	@Override
 	@SuppressWarnings({"rawtypes"})
 	public void setValue(CepVariable varName, Object newValue) {
-		super.setValue(varName, ((RelationalTuple)newValue).getAttribute(0));
+		super.setValue(varName, ((Tuple)newValue).getAttribute(0));
 	}
 
 }

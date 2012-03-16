@@ -8,10 +8,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @UserDefinedFunction(name = "ENVERLOP")
-public class EnverlopUDFunction implements IUserDefinedFunction<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class EnverlopUDFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	String init = null;
 
@@ -22,14 +22,14 @@ public class EnverlopUDFunction implements IUserDefinedFunction<RelationalTuple<
 
 	@Override
 	@SuppressWarnings("all")
-	public RelationalTuple<? extends IMetaAttribute> process(
-			RelationalTuple<? extends IMetaAttribute> in, int port) {
-		RelationalTuple<IMetaAttribute> intuple = (RelationalTuple<IMetaAttribute>) in;
+	public Tuple<? extends IMetaAttribute> process(
+			Tuple<? extends IMetaAttribute> in, int port) {
+		Tuple<IMetaAttribute> intuple = (Tuple<IMetaAttribute>) in;
 		
-		for (int i = 0; i < ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).size(); i++) {
-			Geometry geometry = (Geometry) ((RelationalTuple) ((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i)).getAttribute(0);
+		for (int i = 0; i < ((List<Tuple<IMetaAttribute>>) intuple.getAttribute(0)).size(); i++) {
+			Geometry geometry = (Geometry) ((Tuple) ((List<Tuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i)).getAttribute(0);
 			//geometry = geometry.convexHull();
-			((List<RelationalTuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i).setAttribute(0, geometry.getEnvelope());
+			((List<Tuple<IMetaAttribute>>) intuple.getAttribute(0)).get(i).setAttribute(0, geometry.getEnvelope());
 		
 		}
 		

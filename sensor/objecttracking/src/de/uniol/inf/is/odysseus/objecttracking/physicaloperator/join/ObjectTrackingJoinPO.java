@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.sweeparea.ObjectTrackingJoinSweepArea;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
  *            Datentyp
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<K>>
+public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVTuple<K>>
 		extends AbstractPipe<T, T> { 
 
 	private ObjectTrackingJoinSweepArea<K, T>[] areas;

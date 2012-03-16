@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Implements a merge function for RelationalTuples. A full outer join is
@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  * @author Jonas Jacobi
  */
-public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractRelationalMergeFunction<RelationalTuple<M>, M> implements
-		IDataMergeFunction<RelationalTuple<M>> {
+public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractRelationalMergeFunction<Tuple<M>, M> implements
+		IDataMergeFunction<Tuple<M>> {
 
 
 	public RelationalMergeFunction(int resultSchemaSize) {
@@ -39,11 +39,11 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 	
 
 	@Override
-	public RelationalTuple<M> merge(RelationalTuple<M> left,
-			RelationalTuple<M> right) {
+	public Tuple<M> merge(Tuple<M> left,
+			Tuple<M> right) {
 		Object[] newAttributes = super.mergeAttributes(left != null ? left.getAttributes(): null, 
 				right != null ? right.getAttributes() : null);
-		RelationalTuple<M> r = new RelationalTuple<M>(newAttributes);
+		Tuple<M> r = new Tuple<M>(newAttributes);
 		return r;
 	}
 	

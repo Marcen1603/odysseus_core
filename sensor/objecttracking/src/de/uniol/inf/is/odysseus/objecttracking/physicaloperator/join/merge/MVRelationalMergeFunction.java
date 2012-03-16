@@ -15,11 +15,11 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.join.merge;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction;
 
-public class MVRelationalMergeFunction<M extends IProbability> extends AbstractRelationalMergeFunction<MVRelationalTuple<M>, M> implements IDataMergeFunction<MVRelationalTuple<M>> {
+public class MVRelationalMergeFunction<M extends IProbability> extends AbstractRelationalMergeFunction<MVTuple<M>, M> implements IDataMergeFunction<MVTuple<M>> {
 
 	
 	public MVRelationalMergeFunction(int resultSchemaSize){
@@ -31,10 +31,10 @@ public class MVRelationalMergeFunction<M extends IProbability> extends AbstractR
 	}
 	
 	@Override
-	public MVRelationalTuple<M> merge(MVRelationalTuple<M> left, MVRelationalTuple<M> right){
+	public MVTuple<M> merge(MVTuple<M> left, MVTuple<M> right){
 		Object[] newAttributes = super.mergeAttributes(left != null ? left.getAttributes(): null, 
 				right != null ? right.getAttributes() : null);
-		MVRelationalTuple<M> r = new MVRelationalTuple<M>(newAttributes);
+		MVTuple<M> r = new MVTuple<M>(newAttributes);
 		return r;
 	}
 	

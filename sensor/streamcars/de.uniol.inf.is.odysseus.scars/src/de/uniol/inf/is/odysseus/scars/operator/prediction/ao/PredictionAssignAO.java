@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
@@ -59,7 +59,7 @@ public class PredictionAssignAO<M extends IProbability> extends UnaryLogicalOp {
 		predictionFunctions.setDefaultPredictionFunction(defaultPredictionFunction);
 	}
 	
-	public void setPredictionFunction(PredictionExpression[] expressions, IPredicate<MVRelationalTuple<M>> predicate) {
+	public void setPredictionFunction(PredictionExpression[] expressions, IPredicate<MVTuple<M>> predicate) {
 		predictionFunctions.setPredictionFunction(expressions, predicate);
 	}
 	

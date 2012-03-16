@@ -25,20 +25,20 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 /**
  * @author Jonas Jacobi, Andre Bolles
  */
-public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVRelationalTuple<M>, M>{
+public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends AbstractSensorAccessPO<MVTuple<M>, M>{
 
-	// private IMetadataFactory<M, RelationalTuple<M>> metadataFactory;
+	// private IMetadataFactory<M, Tuple<M>> metadataFactory;
 	final private String hostName;
 	final private int port;
 	private ObjectInputStream channel;
 	private boolean isOpen;
-	private MVRelationalTuple<M> buffer;
+	private MVTuple<M> buffer;
 	private IDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
@@ -191,11 +191,11 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			return false;
 		}
 
-		this.buffer = new MVRelationalTuple<M>(this.attributeData);
+		this.buffer = new MVTuple<M>(this.attributeData);
 		this.elemCount++;
 		
 		return true;
-		// this.buffer = new MVRelationalTuple<M>(this.outputSchema,
+		// this.buffer = new MVTuple<M>(this.outputSchema,
 		// this.attributeData);
 		// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 	}
@@ -219,7 +219,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 
 	//
 	// public void setMetadataFactory(
-	// IMetadataFactory<M, RelationalTuple<M>> metadataFactory) {
+	// IMetadataFactory<M, Tuple<M>> metadataFactory) {
 	// this.metadataFactory = metadataFactory;
 	// }
 	

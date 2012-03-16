@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This sweep area is used for equi joins over non-windowed streams.
@@ -36,9 +36,9 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  *
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple<? extends ITimeInterval>> {
+public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends ITimeInterval>> {
 
-	private LinkedHashMultimap<RelationalTuple<? extends ITimeInterval>, Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> elements;
+	private LinkedHashMultimap<Tuple<? extends ITimeInterval>, Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>> elements;
 	/**
 	 * This list is used for
 	 * projecting new elements that
@@ -67,12 +67,12 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	/**
 	 * not used, only for compatibility and debug
 	 */
-	IPredicate<? super RelationalTuple<? extends ITimeInterval>> queryPredicate;
+	IPredicate<? super Tuple<? extends ITimeInterval>> queryPredicate;
 	
 	/**
 	 * not used, only for compatibility and debug
 	 */
-	IPredicate<? super RelationalTuple<? extends ITimeInterval>> removePredicate;
+	IPredicate<? super Tuple<? extends ITimeInterval>> removePredicate;
 	
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList){
 		this.elements = LinkedHashMultimap.create();		
@@ -89,22 +89,22 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 	
 	@Override
-	public void insert(RelationalTuple<? extends ITimeInterval> s) {
+	public void insert(Tuple<? extends ITimeInterval> s) {
 		synchronized (this.elements) {
-			RelationalTuple keyTuple = s.restrict(this.insertRestrictList, true);
+			Tuple keyTuple = s.restrict(this.insertRestrictList, true);
 			this.elements.put(keyTuple, new Pair(keyTuple, s));
 		}
 	}
 	
 	@Override
-	public Iterator<RelationalTuple<? extends ITimeInterval>> queryCopy(RelationalTuple<? extends ITimeInterval> element, Order order) {
-		LinkedList<RelationalTuple<? extends ITimeInterval>> result = new LinkedList<RelationalTuple<? extends ITimeInterval>>();
+	public Iterator<Tuple<? extends ITimeInterval>> queryCopy(Tuple<? extends ITimeInterval> element, Order order) {
+		LinkedList<Tuple<? extends ITimeInterval>> result = new LinkedList<Tuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
-			RelationalTuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);
-			Collection<Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> sameHashCode = this.elements.get(keyTuple);
+			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);
+			Collection<Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>> sameHashCode = this.elements.get(keyTuple);
 			
 			if(sameHashCode != null){ // otherwise there is no join partner
-				for(Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> pair: sameHashCode){
+				for(Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> pair: sameHashCode){
 					if(keyTuple.equals(pair.getE1())){
 						result.add(pair.getE2().clone());
 					}
@@ -119,17 +119,17 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	 * 
 	 */
 	@Override
-	public Iterator<RelationalTuple<? extends ITimeInterval>> extractElements(RelationalTuple<? extends ITimeInterval> element, Order order){
-		ArrayList<RelationalTuple<? extends ITimeInterval>> emptyList = new ArrayList<RelationalTuple<? extends ITimeInterval>>();
+	public Iterator<Tuple<? extends ITimeInterval>> extractElements(Tuple<? extends ITimeInterval> element, Order order){
+		ArrayList<Tuple<? extends ITimeInterval>> emptyList = new ArrayList<Tuple<? extends ITimeInterval>>();
 		return emptyList.iterator();
 	}
 	
 	@Override
-	public void purgeElements(RelationalTuple<? extends ITimeInterval> element, Order order){
+	public void purgeElements(Tuple<? extends ITimeInterval> element, Order order){
 	}
 
 	@Override
-	public Iterator<RelationalTuple<? extends ITimeInterval>> iterator() {
+	public Iterator<Tuple<? extends ITimeInterval>> iterator() {
 		return null;
 	}
 
@@ -140,8 +140,8 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public void insertAll(List<RelationalTuple<? extends ITimeInterval>> toBeInserted) {
-		for(RelationalTuple<? extends ITimeInterval> r: toBeInserted){
+	public void insertAll(List<Tuple<? extends ITimeInterval>> toBeInserted) {
+		for(Tuple<? extends ITimeInterval> r: toBeInserted){
 			this.insert(r);
 		}
 		
@@ -153,14 +153,14 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public Iterator<RelationalTuple<? extends ITimeInterval>> query(RelationalTuple<? extends ITimeInterval> element,
+	public Iterator<Tuple<? extends ITimeInterval>> query(Tuple<? extends ITimeInterval> element,
 			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
-		LinkedList<RelationalTuple<? extends ITimeInterval>> result = new LinkedList<RelationalTuple<? extends ITimeInterval>>();
+		LinkedList<Tuple<? extends ITimeInterval>> result = new LinkedList<Tuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
-			RelationalTuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);
-			Collection<Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>> sameHashCode = this.elements.get(keyTuple);
+			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);
+			Collection<Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>> sameHashCode = this.elements.get(keyTuple);
 			
-			for(Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>> pair: sameHashCode){
+			for(Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> pair: sameHashCode){
 				if(keyTuple.equals(pair.getE1())){
 					result.add(pair.getE2());
 				}
@@ -170,17 +170,17 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public RelationalTuple<? extends ITimeInterval> peek() {
+	public Tuple<? extends ITimeInterval> peek() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public RelationalTuple<? extends ITimeInterval> poll() {
-		RelationalTuple<? extends ITimeInterval> retVal = null;
+	public Tuple<? extends ITimeInterval> poll() {
+		Tuple<? extends ITimeInterval> retVal = null;
 		Iterator iter = this.elements.values().iterator();
 		if(iter.hasNext()){
-			retVal = ((Pair<RelationalTuple<? extends ITimeInterval>, RelationalTuple<? extends ITimeInterval>>) iter.next()).getE2();
+			retVal = ((Pair<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>>) iter.next()).getE2();
 			iter.remove();
 		}
 		
@@ -189,9 +189,9 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public boolean remove(RelationalTuple<? extends ITimeInterval> element) {
+	public boolean remove(Tuple<? extends ITimeInterval> element) {
 		synchronized(this.elements){
-			RelationalTuple<? extends ITimeInterval> keyTuple = element.restrict(this.insertRestrictList, true);
+			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.insertRestrictList, true);
 			this.elements.remove(keyTuple, new Pair(keyTuple, element));
 		}
 		
@@ -200,8 +200,8 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public void removeAll(List<RelationalTuple<? extends ITimeInterval>> toBeRemoved) {
-		for(RelationalTuple<? extends ITimeInterval> t: toBeRemoved){
+	public void removeAll(List<Tuple<? extends ITimeInterval>> toBeRemoved) {
+		for(Tuple<? extends ITimeInterval> t: toBeRemoved){
 			this.remove(t);
 		}
 	}
@@ -217,19 +217,19 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public IPredicate<? super RelationalTuple<? extends ITimeInterval>> getQueryPredicate() {
+	public IPredicate<? super Tuple<? extends ITimeInterval>> getQueryPredicate() {
 		// TODO Auto-generated method stub
 		return this.queryPredicate;
 	}
 
 	@Override
-	public void setQueryPredicate(IPredicate<? super RelationalTuple<? extends ITimeInterval>> queryPredicate) {
+	public void setQueryPredicate(IPredicate<? super Tuple<? extends ITimeInterval>> queryPredicate) {
 		this.queryPredicate = queryPredicate;
 		
 	}
 
 	@Override
-	public void setRemovePredicate(IPredicate<? super RelationalTuple<? extends ITimeInterval>> removePredicate) {
+	public void setRemovePredicate(IPredicate<? super Tuple<? extends ITimeInterval>> removePredicate) {
 		this.removePredicate = removePredicate;
 	}
 	
@@ -245,7 +245,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<RelationalTuple
 	}
 
 	@Override
-	public Iterator<RelationalTuple<? extends ITimeInterval>> extractElementsBefore(PointInTime time) {
+	public Iterator<Tuple<? extends ITimeInterval>> extractElementsBefore(PointInTime time) {
 		// return an empty iterator, since there is no temporal ordering
 		return new ArrayList().iterator();
 	}

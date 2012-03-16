@@ -18,10 +18,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
-public class MetadataObjectRelationalCreationPO<M extends IProbability> extends MetadataCreationPO<M, MVRelationalTuple<M>> {
+public class MetadataObjectRelationalCreationPO<M extends IProbability> extends MetadataCreationPO<M, MVTuple<M>> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,7 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 	}
 	
 	@Override
-	public void process_next(MVRelationalTuple<M> object, int port) {
+	public void process_next(MVTuple<M> object, int port) {
 		try {
 			assignMetadata(object);
 		} catch (Exception e) {
@@ -49,8 +49,8 @@ public class MetadataObjectRelationalCreationPO<M extends IProbability> extends 
 			if( tuple instanceof IMetaAttributeContainer ) {
 				((IMetaAttributeContainer<M>)tuple).setMetadata(getType().newInstance());
 			}
-			if( tuple instanceof MVRelationalTuple<?>) {
-				MVRelationalTuple<M> t = (MVRelationalTuple<M>) tuple;
+			if( tuple instanceof MVTuple<?>) {
+				MVTuple<M> t = (MVTuple<M>) tuple;
 				for( int i = 0; i < t.size(); i++ ) {
 					assignMetadata(t.getAttribute(i));
 				}

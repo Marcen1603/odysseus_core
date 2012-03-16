@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleInfo;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerObjectTrackingLatency;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
  *
  * @author Volker Janz
  */
-public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObjectTrackingLatency> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObjectTrackingLatency> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 	
 	private String sourcePredictedObjListPath;
 	private String sourceScannedObjListPath;
@@ -101,24 +101,24 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 		Object obj1 = next.get(1); // Port 1
 
 		// An Port 0 haben wir immer einen Tupel aus der Quelle/Selection
-		MVRelationalTuple<M> scannedTuple = (MVRelationalTuple<M>)obj0;
+		MVTuple<M> scannedTuple = (MVTuple<M>)obj0;
 		scannedTuple.getMetadata().setObjectTrackingLatencyStart();
 		scannedTuple.getMetadata().setObjectTrackingLatencyStart("Association Generation");
 
 		// Und an Port1 aus Prediction?
-		if( obj1 instanceof MVRelationalTuple) {
+		if( obj1 instanceof MVTuple) {
 			// Ein Tupel!
-			MVRelationalTuple<M> predictedTuple = (MVRelationalTuple<M>)obj1;
+			MVTuple<M> predictedTuple = (MVTuple<M>)obj1;
 
 			// Normale Function ausführen... wir haben Daten zum Senden
-			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, predictedTuple);
+			MVTuple<M> output = createOutputTuple(scannedTuple, predictedTuple);
 			output.getMetadata().setObjectTrackingLatencyEnd("Association Generation");
 			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
 
 		} else {
 			// Eine Punctuation! Prediction hat nix
-			MVRelationalTuple<M> output = createOutputTuple(scannedTuple, null);
+			MVTuple<M> output = createOutputTuple(scannedTuple, null);
 			output.getMetadata().setObjectTrackingLatencyEnd("Association Generation");
 			output.getMetadata().setObjectTrackingLatencyEnd();
 			transfer(output);
@@ -130,7 +130,7 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 	 * port 1 = old;
 	 */
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		synchronized (this) {
 			streamCollector.recieve(object, port);
 			if( streamCollector.isReady()) {
@@ -140,7 +140,7 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 	}
 
 	@SuppressWarnings("unchecked")
-	private MVRelationalTuple<M> createOutputTuple(MVRelationalTuple<M> scannedObject, MVRelationalTuple<M> predictedObject) {
+	private MVTuple<M> createOutputTuple(MVTuple<M> scannedObject, MVTuple<M> predictedObject) {
 		Object[] association = new Object[3];
 
 		// get timestamp path from scanned data
@@ -159,13 +159,13 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 			association[2] = replaceMetaDataNames(path, this.outputScannedObjListPath, this.outputPredictedObjListPath);
 		}
 
-		MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+		MVTuple<M> base = new MVTuple<M>(1);
 		base.setMetadata((M)scannedObject.getMetadata().clone());
 		if(predictedObject != null) {
 			base.getMetadata().getOperatorLatencies().put("Prediction Assign", predictedObject.getMetadata().getOperatorLatencies().get("Prediction Assign"));
 			base.getMetadata().getOperatorLatencies().put("Prediction", predictedObject.getMetadata().getOperatorLatencies().get("Prediction"));
 		}
-		base.setAttribute(0, new MVRelationalTuple<M>(association));
+		base.setAttribute(0, new MVTuple<M>(association));
 
 		return base;
 	}
@@ -175,7 +175,7 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 		List<Object> list = new ArrayList<Object>();
 		for (TupleInfo car : tupleIndexPath) {
 			@SuppressWarnings("unchecked")
-			MVRelationalTuple<M> carObject = (MVRelationalTuple<M>) car.tupleObject;
+			MVTuple<M> carObject = (MVTuple<M>) car.tupleObject;
 			List<String> newAttributeMapping = new ArrayList<String>(carObject.getMetadata().getAttributMapping());
 			
 			for (int i = 0; i < newAttributeMapping.size(); i++) {
@@ -193,7 +193,7 @@ public class HypothesisGenerationPO<M extends IProbabilityConnectionContainerObj
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new HypothesisGenerationPO<M>(this);
 	}
 

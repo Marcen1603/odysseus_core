@@ -23,14 +23,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 
-public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatencyPredictionFunctionKey<IPredicate<MVTuple<M>>>> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 	
 	private int[] objListPath;
 	private SchemaIndexPath currentTimeSchemaPath;
@@ -79,7 +79,7 @@ public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatenc
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		synchronized (this) {
 			streamCollector.recieve(object, port);
 			if( streamCollector.isReady() ) {
@@ -95,17 +95,17 @@ public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatenc
 
 		// An Port 0 sind nur Tupel.. (s. processPunctuation())
 		// trotzdem Checken
-		if( obj0 instanceof MVRelationalTuple) {
+		if( obj0 instanceof MVTuple) {
 			// Port 0 hat Tupel
-			MVRelationalTuple<M> currentTimeTuple = ((MVRelationalTuple<M>)obj0).clone();
-			if( obj1 instanceof MVRelationalTuple ) {
+			MVTuple<M> currentTimeTuple = ((MVTuple<M>)obj0).clone();
+			if( obj1 instanceof MVTuple ) {
 				// Port 1 hat Tupel
-				MVRelationalTuple<M> currentScanTuple = ((MVRelationalTuple<M>)obj1).clone();
+				MVTuple<M> currentScanTuple = ((MVTuple<M>)obj1).clone();
 
 				currentScanTuple.getMetadata().setObjectTrackingLatencyStart();
 				currentScanTuple.getMetadata().setObjectTrackingLatencyStart("Prediction");
 
-				MVRelationalTuple<M> predictedTuple = predictData(currentTimeTuple, currentScanTuple);
+				MVTuple<M> predictedTuple = predictData(currentTimeTuple, currentScanTuple);
 				predictedTuple.getMetadata().setObjectTrackingLatencyEnd();
 				predictedTuple.getMetadata().setObjectTrackingLatencyEnd("Prediction");
 				transfer( predictedTuple );
@@ -125,13 +125,13 @@ public class PredictionPO<M extends ITimeIntervalProbabilityObjectTrackingLatenc
 
 	// @SuppressWarnings("unchecked")
 	@SuppressWarnings("unchecked")
-	private MVRelationalTuple<M> predictData(MVRelationalTuple<M> currentTimeTuple, MVRelationalTuple<M> currentScanTuple) {
+	private MVTuple<M> predictData(MVTuple<M> currentTimeTuple, MVTuple<M> currentScanTuple) {
 
 		if (currentScanTuple != null) {
 			TupleHelper helper = new TupleHelper(currentScanTuple);
 			List<Object> list = (List<Object>) helper.getObject(objListPath);
 			for (int index = 0; index < list.size(); index++) {
-				MVRelationalTuple<M> obj = (MVRelationalTuple<M>)list.get(index);
+				MVTuple<M> obj = (MVTuple<M>)list.get(index);
 				IPredictionFunction<M> pf = predictionFunctions.get(obj.getMetadata().getPredictionFunctionKey());
 				if (pf != null) {
 					pf.predictData(currentScanTuple, currentTimeTuple, index);

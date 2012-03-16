@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
 import de.uniol.inf.is.odysseus.mining.distance.IDissimilarity;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class is a super class for physical clustering operators. It wraps
- * incoming RelationalTuple into RelationalClusteringObjects and passes them to
+ * incoming Tuple into RelationalClusteringObjects and passes them to
  * an abstract method, concrete physical clustering operators must implement,
  * for further processing. It also offers methods to transfer outgoing clusters
  * and data points.
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  * 
  */
 public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
-		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	protected int[] restrictList;
 
@@ -50,7 +50,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 
 	/**
 	 * Returns the resrictList, a list of indices identifying the positions of
-	 * the attributes in a RelationalTuple that should be used for clustering.
+	 * the attributes in a Tuple that should be used for clustering.
 	 * 
 	 * @return the list of indices.
 	 */
@@ -137,7 +137,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	}
 
 	/**
-	 * Wraps an incoming RelationalTuple into an {@link IClusteringObject} for
+	 * Wraps an incoming Tuple into an {@link IClusteringObject} for
 	 * further processing through an concrete implementation.
 	 * 
 	 * 
@@ -145,14 +145,14 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	 *      int)
 	 */
 	@Override
-    protected void process_next(RelationalTuple<T> object, int port) {
+    protected void process_next(Tuple<T> object, int port) {
 		IClusteringObject<T, Object> tuple = new RelationalClusteringObject<T>(
 				object, restrictList);
 		process_next(tuple, port);
 	}
 
 	/**
-	 * Transfers the RelationalTuple presentation of an
+	 * Transfers the Tuple presentation of an
 	 * {@link IClusteringObject}.
 	 * 
 	 * 
@@ -166,7 +166,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 
 	/**
 	 * Transfers a list {@link IClusteringObject}. For each object the
-	 * RelationalTuple representation is transfered.
+	 * Tuple representation is transfered.
 	 * 
 	 * @param objects
 	 *            list of objects to transfer.
@@ -174,10 +174,10 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	protected void transferTuples(
 			List<? extends IClusteringObject<T, O>> objects) {
 		Iterator<? extends IClusteringObject<T, O>> iter = objects.iterator();
-		ArrayList<RelationalTuple<T>> transferList = new ArrayList<RelationalTuple<T>>();
+		ArrayList<Tuple<T>> transferList = new ArrayList<Tuple<T>>();
 
 		while (iter.hasNext()) {
-			RelationalTuple<T> tuple = iter.next().getLabeledTuple();
+			Tuple<T> tuple = iter.next().getLabeledTuple();
 
 			transferList.add(tuple);
 		}
@@ -185,7 +185,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	}
 
 	/**
-	 * Transfers the RelationalTuple representation of an
+	 * Transfers the Tuple representation of an
 	 * {@link AbstractCluster}.
 	 * 
 	 * 
@@ -198,7 +198,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 
 	/**
 	 * Transfers a list of {@link AbstractCluster}. For each cluster its
-	 * RelationalTuple representation is transfered.
+	 * Tuple representation is transfered.
 	 * 
 	 * @param clusters
 	 *            the list of clusters to transfer.
@@ -206,7 +206,7 @@ public abstract class AbstractClusteringPO<T extends IMetaAttribute, O> extends
 	protected void transferClusters(
 			List<? extends AbstractCluster<T, O>> clusters) {
 		Iterator<? extends AbstractCluster<T, O>> iter = clusters.iterator();
-		ArrayList<RelationalTuple<T>> list = new ArrayList<RelationalTuple<T>>();
+		ArrayList<Tuple<T>> list = new ArrayList<Tuple<T>>();
 		while (iter.hasNext()) {
 			list.add(iter.next().getRelationalCluster());
 		}

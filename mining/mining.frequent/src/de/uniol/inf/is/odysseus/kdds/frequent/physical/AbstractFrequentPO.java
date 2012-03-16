@@ -22,9 +22,9 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public abstract class AbstractFrequentPO<T extends RelationalTuple<?>> extends AbstractPipe<T,T>{
+public abstract class AbstractFrequentPO<T extends Tuple<?>> extends AbstractPipe<T,T>{
 
 	private double size = 0;
 	private int[] onAttributes;
@@ -54,23 +54,23 @@ public abstract class AbstractFrequentPO<T extends RelationalTuple<?>> extends A
 	}
 	
 	public boolean isEqualOnAttributes(T left, T right){
-		RelationalTuple<?> leftTuple = left.restrict(onAttributes, true);
-		RelationalTuple<?> rightTuple = right.restrict(onAttributes, true);
+		Tuple<?> leftTuple = left.restrict(onAttributes, true);
+		Tuple<?> rightTuple = right.restrict(onAttributes, true);
 		return leftTuple.equals(rightTuple);		
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected List<T> listtoobjects(Map<RelationalTuple<?>, Integer> countedItems) {
+	protected List<T> listtoobjects(Map<Tuple<?>, Integer> countedItems) {
 		List<T> list = new ArrayList<T>();
-		for(Entry<RelationalTuple<?>, Integer> e : countedItems.entrySet()){
-			RelationalTuple<?> newOne = e.getKey().append(e.getValue());
+		for(Entry<Tuple<?>, Integer> e : countedItems.entrySet()){
+			Tuple<?> newOne = e.getKey().append(e.getValue());
 			list.add((T)newOne);
 		}		
 		return list;
 	}
 	
 	// Object T and its counter as an Integer
-	protected HashMap<RelationalTuple<?>, Integer> items = new HashMap<RelationalTuple<?>, Integer>();
+	protected HashMap<Tuple<?>, Integer> items = new HashMap<Tuple<?>, Integer>();
 	
 	
 

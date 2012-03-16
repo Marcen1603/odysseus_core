@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityLatencyObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeInterval;
 import de.uniol.inf.is.odysseus.scars.metadata.ConnectionList;
@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.scars.metadata.IConnection;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsMetaData;
 import de.uniol.inf.is.odysseus.scars.util.helper.PortSync;
 
-public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVRelationalTuple<M>>>> extends
-        AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPredictionFunctionKeyConnectionContainerTimeInterval<IPredicate<MVTuple<M>>>> extends
+        AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
     private String associationObjListPath;
     private String filteringObjListPath;
@@ -104,47 +104,47 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
         Object obj2 = next.get(2); // Temp. Broker
 
         List<Object> combinedListChildTmp = new ArrayList<Object>();
-        MVRelationalTuple<M> resultTuple = null;
+        MVTuple<M> resultTuple = null;
 
-        List<MVRelationalTuple<M>> associationObjList = new ArrayList<MVRelationalTuple<M>>();
-        List<MVRelationalTuple<M>> filteringObjList = new ArrayList<MVRelationalTuple<M>>();
-        List<MVRelationalTuple<M>> brokerObjList = new ArrayList<MVRelationalTuple<M>>();
+        List<MVTuple<M>> associationObjList = new ArrayList<MVTuple<M>>();
+        List<MVTuple<M>> filteringObjList = new ArrayList<MVTuple<M>>();
+        List<MVTuple<M>> brokerObjList = new ArrayList<MVTuple<M>>();
 
         // Association
-        if (obj0 instanceof MVRelationalTuple) {
-            MVRelationalTuple<M> associationMainObject = (MVRelationalTuple<M>) obj0;
-            resultTuple = new MVRelationalTuple<M>(associationMainObject);
+        if (obj0 instanceof MVTuple) {
+            MVTuple<M> associationMainObject = (MVTuple<M>) obj0;
+            resultTuple = new MVTuple<M>(associationMainObject);
             List<Object> associationListObject = (List<Object>) TupleIndexPath.fromSchemaIndexPath(shAssociationInput.getSchemaIndexPath(this.associationObjListPath), associationMainObject)
                     .getTupleObject();
             for (Object obj : associationListObject) {
-                associationObjList.add((MVRelationalTuple<M>) obj);
+                associationObjList.add((MVTuple<M>) obj);
             }
         }
         // Filter
-        if (obj1 instanceof MVRelationalTuple) {
+        if (obj1 instanceof MVTuple) {
 
-            MVRelationalTuple<M> filteringMainObject = (MVRelationalTuple<M>) obj1;
+            MVTuple<M> filteringMainObject = (MVTuple<M>) obj1;
 
             ConnectionList connectionList = filteringMainObject.getMetadata().getConnectionList();
-            resultTuple = new MVRelationalTuple<M>(filteringMainObject);
+            resultTuple = new MVTuple<M>(filteringMainObject);
             for (IConnection conn : connectionList) {
-                filteringObjList.add((MVRelationalTuple<M>) conn.getLeftPath().getTupleObject());
+                filteringObjList.add((MVTuple<M>) conn.getLeftPath().getTupleObject());
             }
         }
         // Temp. Broker
-        if (obj2 instanceof MVRelationalTuple) {
-            MVRelationalTuple<M> brokerMainObject = (MVRelationalTuple<M>) obj2;
-            resultTuple = new MVRelationalTuple<M>(brokerMainObject);
+        if (obj2 instanceof MVTuple) {
+            MVTuple<M> brokerMainObject = (MVTuple<M>) obj2;
+            resultTuple = new MVTuple<M>(brokerMainObject);
             List<Object> brokerListObject = (List<Object>) TupleIndexPath.fromSchemaIndexPath(shSecondBrokerInput.getSchemaIndexPath(this.brokerObjListPath), brokerMainObject).getTupleObject();
             for (Object obj : brokerListObject) {
-                brokerObjList.add((MVRelationalTuple<M>) obj);
+                brokerObjList.add((MVTuple<M>) obj);
             }
         }
 
         // Do the evaluation
         double val = 0;
 
-        for (MVRelationalTuple<M> tuple : brokerObjList) {
+        for (MVTuple<M> tuple : brokerObjList) {
             val = 0;
             double[][] cov = tuple.getMetadata().getCovariance();
             for (int i = 0; i < cov.length; i++) {
@@ -156,7 +156,7 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
             }
         }
 
-        for (MVRelationalTuple<M> tuple : associationObjList) {
+        for (MVTuple<M> tuple : associationObjList) {
             val = 0;
             double[][] cov = tuple.getMetadata().getCovariance();
             for (int i = 0; i < cov.length; i++) {
@@ -168,7 +168,7 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
             }
         }
 
-        for (MVRelationalTuple<M> tuple : filteringObjList) {
+        for (MVTuple<M> tuple : filteringObjList) {
             val = 0;
             double[][] cov = tuple.getMetadata().getCovariance();
             for (int i = 0; i < cov.length; i++) {
@@ -182,12 +182,12 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
 
         // Generate the output tuple
         if (combinedListChildTmp.size() > 0) {
-            // MVRelationalTuple<M> tuples = new MVRelationalTuple<M>(
+            // MVTuple<M> tuples = new MVTuple<M>(
             // combinedListChildTmp.size());
             // int counter = 0;
-            // for (MVRelationalTuple<M> mvRelationalTuple :
+            // for (MVTuple<M> mvTuple :
             // combinedListChildTmp) {
-            // tuples.setAttribute(counter++, mvRelationalTuple);
+            // tuples.setAttribute(counter++, mvTuple);
             // }
 
             Object[] association = new Object[2];
@@ -199,9 +199,9 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
             // get scanned objects
             association[1] = combinedListChildTmp;
 
-            MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+            MVTuple<M> base = new MVTuple<M>(1);
             base.setMetadata(resultTuple.getMetadata());
-            base.setAttribute(0, new MVRelationalTuple<M>(association));
+            base.setAttribute(0, new MVTuple<M>(association));
 
             // Transfer the generated tuple
             base.getMetadata().setObjectTrackingLatencyEnd();
@@ -218,23 +218,23 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
                 timestamp = ((PointInTime) obj1).getMainPoint();
             else if (obj2 instanceof PointInTime)
                 timestamp = ((PointInTime) obj2).getMainPoint();
-            else if (obj0 instanceof MVRelationalTuple) {
-                MVRelationalTuple<M> t = (MVRelationalTuple<M>) obj0;
+            else if (obj0 instanceof MVTuple) {
+                MVTuple<M> t = (MVTuple<M>) obj0;
                 timestamp = t.getMetadata().getStart().getMainPoint();
-            } else if (obj1 instanceof MVRelationalTuple) {
-                MVRelationalTuple<M> t = (MVRelationalTuple<M>) obj1;
+            } else if (obj1 instanceof MVTuple) {
+                MVTuple<M> t = (MVTuple<M>) obj1;
                 timestamp = t.getMetadata().getStart().getMainPoint();
-            } else if (obj2 instanceof MVRelationalTuple) {
-                MVRelationalTuple<M> t = (MVRelationalTuple<M>) obj2;
+            } else if (obj2 instanceof MVTuple) {
+                MVTuple<M> t = (MVTuple<M>) obj2;
                 timestamp = t.getMetadata().getStart().getMainPoint();
             } else
                 throw new IllegalArgumentException("Could not determine timestamp!");
 
             // sendPunctuation(new PointInTime(timestamp));
             // Leere Liste senden
-            MVRelationalTuple<M> base = new MVRelationalTuple<M>(1);
+            MVTuple<M> base = new MVTuple<M>(1);
 
-            MVRelationalTuple<M> tuple = new MVRelationalTuple<M>(2);
+            MVTuple<M> tuple = new MVTuple<M>(2);
             tuple.setAttribute(0, new Long(timestamp));
             tuple.setAttribute(1, new ArrayList<Object>(0));
 
@@ -252,7 +252,7 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
      */
     // @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(MVRelationalTuple<M> object, int port) {
+    protected void process_next(MVTuple<M> object, int port) {
         object.getMetadata().setObjectTrackingLatencyStart();
         streamCollector.recieve(object, port);
         if (streamCollector.isReady())
@@ -293,11 +293,11 @@ public class EvaluationPO<M extends IProbabilityLatencyObjectTrackingLatencyPred
         //
         // // Get iterators with valid objects according to the timestamp of the
         // current object
-        // Iterator<MVRelationalTuple<M>> itAssociation =
+        // Iterator<MVTuple<M>> itAssociation =
         // sweepAssociation.query(object, Order.LeftRight);
-        // Iterator<MVRelationalTuple<M>> itFiltering =
+        // Iterator<MVTuple<M>> itFiltering =
         // sweepFiltering.query(object, Order.LeftRight);
-        // Iterator<MVRelationalTuple<M>> itBroker = sweepBroker.query(object,
+        // Iterator<MVTuple<M>> itBroker = sweepBroker.query(object,
         // Order.LeftRight);
         //
         // if(!itAssociation.hasNext()) {

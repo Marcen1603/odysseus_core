@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.classification.model.IClassifier;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class represents a physical operator used to classify the relational
@@ -50,7 +50,7 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 	 * int)
 	 */
 	@Override
-	protected void process_next(RelationalTuple<T> object, int port) {
+	protected void process_next(Tuple<T> object, int port) {
 		if (port == 0) {
 			// set the new classifier
 			classifier = object.getAttribute(0);
@@ -90,7 +90,7 @@ public class ClassifyPO<T extends IMetaAttribute> extends
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
-	public AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> clone() {
+	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
 		return new ClassifyPO<T>(this);
 	}
 

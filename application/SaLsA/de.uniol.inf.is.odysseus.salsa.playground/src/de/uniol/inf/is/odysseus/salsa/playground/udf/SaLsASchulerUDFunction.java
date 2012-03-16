@@ -4,13 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
 
 @UserDefinedFunction(name="SchulerBG")
-public class SaLsASchulerUDFunction<R> implements IUserDefinedFunction< RelationalTuple<? extends IMetaAttribute>,  RelationalTuple<? extends IMetaAttribute>> {
+public class SaLsASchulerUDFunction<R> implements IUserDefinedFunction< Tuple<? extends IMetaAttribute>,  Tuple<? extends IMetaAttribute>> {
 
 	String init = null;
 	
@@ -20,7 +20,7 @@ public class SaLsASchulerUDFunction<R> implements IUserDefinedFunction< Relation
 	}
 
 	@Override
-	public RelationalTuple<? extends IMetaAttribute> process(RelationalTuple<? extends IMetaAttribute> in, int port) {
+	public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
 		//System.out.println(this+"("+init+") PROCESS "+in);
 		
 		MultiPoint multiPoint = (MultiPoint)in.getAttribute(0); 

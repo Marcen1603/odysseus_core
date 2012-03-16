@@ -28,13 +28,13 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
+public class RegExPredicate extends AbstractPredicate<Tuple<?>>
 		implements IRelationalPredicate {
 
 	/**
@@ -95,7 +95,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> input) {
+	public boolean evaluate(Tuple<?> input) {
 		String inputString = input.getAttribute(this.attributePosition)
 				.toString();
 		if (this.matcher == null) {
@@ -106,7 +106,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		return false;
 	}
 
@@ -178,7 +178,7 @@ public class RegExPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 	
 	@Override
-	public boolean equals(IPredicate<RelationalTuple<?>> pred) {
+	public boolean equals(IPredicate<Tuple<?>> pred) {
 		return this.equals((Object)pred);
 	}
 	

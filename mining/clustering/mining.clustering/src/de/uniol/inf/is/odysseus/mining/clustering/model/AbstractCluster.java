@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This class represents an abstract cluster and can be used as a super class to
@@ -63,20 +63,20 @@ public abstract class AbstractCluster<T extends IMetaAttribute, O> implements IM
 	}
 
 	/**
-	 * Returns a RelationalTuple representing the cluster.
+	 * Returns a Tuple representing the cluster.
 	 * The tuple contains the clusters id, the size of the cluster
 	 * and the clusters center.
 	 * 
 	 * @return
 	 */
-	public RelationalTuple<T> getRelationalCluster() {
+	public Tuple<T> getRelationalCluster() {
 		Object[] attributes = new Object[getCenter().getClusterAttributeCount() + 2];
 		attributes[0] = getId();
 		attributes[1] = getClusteringFeature().getSize();
 		System.arraycopy(getCenter().getAttributes(), 0, attributes, 2,
 				attributes.length - 2);
 
-		return new RelationalTuple<T>(attributes);
+		return new Tuple<T>(attributes);
 	}
 
 	/**

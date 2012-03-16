@@ -15,10 +15,10 @@
 package de.uniol.inf.is.odysseus.mining.clustering.model;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
- * This class wraps a RelationalTuple into an IClusteringObject.
+ * This class wraps a Tuple into an IClusteringObject.
  * 
  * @author Kolja Blohm
  * 
@@ -30,8 +30,8 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 */
 	private static final long serialVersionUID = 4096520200881866189L;
 	T metadata;
-	private RelationalTuple<T> tuple;
-	private RelationalTuple<T> restrictedTuple;
+	private Tuple<T> tuple;
+	private Tuple<T> restrictedTuple;
 	int clusterId;
 
 	/**
@@ -55,12 +55,12 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * RelationalTuple.
 	 * 
 	 * @param tuple
-	 *            the RelationalTuple to wrap.
+	 *            the Tuple to wrap.
 	 * @param restrictList
 	 *            this array determines which attributes are used for
 	 *            clustering.
 	 */
-	public RelationalClusteringObject(RelationalTuple<T> tuple,
+	public RelationalClusteringObject(Tuple<T> tuple,
 			int[] restrictList) {
 		clusterId = -1;
 		this.tuple = tuple;
@@ -78,7 +78,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 * @param clusterid
 	 *            the id of the cluster this object belongs to.
 	 */
-	public RelationalClusteringObject(RelationalTuple<T> restrictedTuple,
+	public RelationalClusteringObject(Tuple<T> restrictedTuple,
 			int clusterid) {
 		this.clusterId = clusterid;
 		this.tuple = restrictedTuple;
@@ -141,13 +141,13 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public RelationalTuple<T> getLabeledTuple() {
+	public Tuple<T> getLabeledTuple() {
 		Object[] attributes = new Object[tuple.size() + 1];
 		attributes[0] = getClusterId();
 
 		System.arraycopy(tuple.getAttributes(), 0, attributes, 1,
 				attributes.length - 1);
-		RelationalTuple<T> labeledTuple = new RelationalTuple<T>(attributes);
+		Tuple<T> labeledTuple = new Tuple<T>(attributes);
 		labeledTuple.setMetadata((T) getMetadata().clone());
 		return labeledTuple;
 	}

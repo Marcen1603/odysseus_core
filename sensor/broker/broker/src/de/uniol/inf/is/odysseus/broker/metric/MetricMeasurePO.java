@@ -22,9 +22,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	private int attributePosition = -1;
 	private int count = 0;
@@ -91,12 +91,12 @@ public class MetricMeasurePO<T extends IMetaAttribute> extends AbstractPipe<Rela
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<T> tuple, int port) {
+	protected void process_next(Tuple<T> tuple, int port) {
 		measure(tuple);
 		transfer(tuple);
 	}
 
-	private void measure(RelationalTuple<T> tuple) {
+	private void measure(Tuple<T> tuple) {
 		if (attributePosition >= 0) {
 			try {
 				Long attribute = (Long) tuple.getAttribute(attributePosition);

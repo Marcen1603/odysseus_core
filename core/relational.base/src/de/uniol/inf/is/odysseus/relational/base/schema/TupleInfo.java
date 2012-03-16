@@ -69,7 +69,7 @@ public class TupleInfo {
 	public int level = -1;
 
 	/**
-	 * <code>true</code>, wenn es sich um ein Tupel(MVRelationalTuple) handelt,
+	 * <code>true</code>, wenn es sich um ein Tupel(MVTuple) handelt,
 	 * sonst <code>false</code>.
 	 */
 	public boolean isTuple = false;

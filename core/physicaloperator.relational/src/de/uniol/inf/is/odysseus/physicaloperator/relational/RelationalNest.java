@@ -20,10 +20,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RelationalNest extends AbstractListAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	/**
 	 * 
@@ -37,14 +37,14 @@ public class RelationalNest extends AbstractListAggregation<RelationalTuple<? ex
 	}
 	
 	@Override
-	public RelationalTuple evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
+	public Tuple evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
 		
 		
 		
 		
 		
-		List<RelationalTuple<?>> elems = ((ListPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p).getElems();
-		RelationalTuple ret = new RelationalTuple<IMetaAttribute>(0);
+		List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
+		Tuple ret = new Tuple<IMetaAttribute>(0);
 		
 		
 		
@@ -53,7 +53,7 @@ public class RelationalNest extends AbstractListAggregation<RelationalTuple<? ex
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> merge(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p, RelationalTuple<? extends IMetaAttribute> toMerge,
+	public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(IPartialAggregate<Tuple<? extends IMetaAttribute>> p, Tuple<? extends IMetaAttribute> toMerge,
 			boolean createNew) {
 		return ((ListPartialAggregate)p).addElem(toMerge.restrict(restrictList, true));
 	}

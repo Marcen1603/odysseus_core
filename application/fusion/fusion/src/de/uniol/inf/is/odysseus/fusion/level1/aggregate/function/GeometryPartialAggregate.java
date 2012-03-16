@@ -12,29 +12,29 @@ import com.vividsolutions.jts.geom.TopologyException;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
-public class GeometryPartialAggregate<T> implements IPartialAggregate<RelationalTuple<? extends IMetaAttribute>>, Iterable<RelationalTuple<? extends IMetaAttribute>>{
+public class GeometryPartialAggregate<T> implements IPartialAggregate<Tuple<? extends IMetaAttribute>>, Iterable<Tuple<? extends IMetaAttribute>>{
 	
-	final List<RelationalTuple<? extends IMetaAttribute>> elems;
+	final List<Tuple<? extends IMetaAttribute>> elems;
 	final double mDistance = 35.00;
 	
 	
-	public GeometryPartialAggregate(RelationalTuple<? extends IMetaAttribute> elem) {
-		elems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>();
+	public GeometryPartialAggregate(Tuple<? extends IMetaAttribute> elem) {
+		elems = new LinkedList<Tuple<? extends IMetaAttribute>>();
 		addElem(elem);
 	}
 	
-	public GeometryPartialAggregate(GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
-		this.elems = new LinkedList<RelationalTuple<? extends IMetaAttribute>>(p.elems);
+	public GeometryPartialAggregate(GeometryPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
+		this.elems = new LinkedList<Tuple<? extends IMetaAttribute>>(p.elems);
 	}
 
-	public List<RelationalTuple<? extends IMetaAttribute>> getElems() {
+	public List<Tuple<? extends IMetaAttribute>> getElems() {
 		return elems;
 	}
 	
-	public GeometryPartialAggregate<T> addElem(RelationalTuple<? extends IMetaAttribute> elem) {
+	public GeometryPartialAggregate<T> addElem(Tuple<? extends IMetaAttribute> elem) {
 		boolean merged = false;
 		
 		Geometry geometry1 =  (Geometry)elem.getAttribute(0);
@@ -76,12 +76,12 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<Relational
 	}
 	
 	@Override
-	public ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>> clone(){
-		return new ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>>(this);
+	public ElementPartialAggregate<Tuple<? extends IMetaAttribute>> clone(){
+		return new ElementPartialAggregate<Tuple<? extends IMetaAttribute>>(this);
 	}
 
 	@Override
-	public Iterator<RelationalTuple<? extends IMetaAttribute>> iterator() {
+	public Iterator<Tuple<? extends IMetaAttribute>> iterator() {
 		return elems.iterator();
 	}
 
@@ -146,7 +146,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<Relational
 //	
 //	protected volatile static Logger LOGGER = LoggerFactory.getLogger(GeometryPartialAggregate.class);
 //
-//	public GeometryPartialAggregate(RelationalTuple<? extends IMetaAttribute> elem) {
+//	public GeometryPartialAggregate(Tuple<? extends IMetaAttribute> elem) {
 //		super(elem);
 //	
 //	}
@@ -156,7 +156,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<Relational
 //	}
 //	
 //	@Override
-//	public GeometryPartialAggregate addElem(RelationalTuple<? extends IMetaAttribute> elem) {
+//	public GeometryPartialAggregate addElem(Tuple<? extends IMetaAttribute> elem) {
 //		boolean merged = false;
 //		Geometry geometry1 = (Geometry) elem.getAttribute(0);
 //		
@@ -222,12 +222,12 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<Relational
 //	
 //
 //	@Override
-//	public ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>> clone() {
-//		return new ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>>(this);
+//	public ElementPartialAggregate<Tuple<? extends IMetaAttribute>> clone() {
+//		return new ElementPartialAggregate<Tuple<? extends IMetaAttribute>>(this);
 //	}
 //	
 //	@Override
-//	public List<RelationalTuple<? extends IMetaAttribute>> getElems() {
+//	public List<Tuple<? extends IMetaAttribute>> getElems() {
 //		return getElems();
 //	}
 //

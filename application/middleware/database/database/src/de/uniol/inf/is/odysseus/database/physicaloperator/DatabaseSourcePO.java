@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen Created at: 02.11.2011
  */
-public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
+public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 
 	private IDatabaseConnection connection;
 	private String tablename;
@@ -88,7 +88,7 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 	}
 
 	@Override
-	public AbstractSource<RelationalTuple<?>> clone() {
+	public AbstractSource<Tuple<?>> clone() {
 		return new DatabaseSourcePO(this);
 	}
 
@@ -114,7 +114,7 @@ public class DatabaseSourcePO extends AbstractSource<RelationalTuple<?>> {
 					for (int i = 1; i <= count; i++) {
 						attributes.add(rs.getObject(i));
 					}
-					RelationalTuple<?> t = new RelationalTuple<IMetaAttribute>(attributes.toArray());
+					Tuple<?> t = new Tuple<IMetaAttribute>(attributes.toArray());
 					transfer(t);
 					attributes.clear();
 					sleep(waitTimeMillis);

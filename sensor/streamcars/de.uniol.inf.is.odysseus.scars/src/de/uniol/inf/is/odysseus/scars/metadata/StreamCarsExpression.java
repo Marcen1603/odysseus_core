@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 /**
  * 
@@ -150,7 +150,7 @@ public class StreamCarsExpression implements IStreamCarsExpression {
 	}
 	
 	@Override
-	public void bindTupleValues(SDFSchema schema, MVRelationalTuple<?> tuple) {
+	public void bindTupleValues(SDFSchema schema, MVTuple<?> tuple) {
 		for(IStreamCarsExpressionVariable var : variables) {
 			if(var.isSchemaVariable(schema)) {
 				var.bindTupleValue(tuple);

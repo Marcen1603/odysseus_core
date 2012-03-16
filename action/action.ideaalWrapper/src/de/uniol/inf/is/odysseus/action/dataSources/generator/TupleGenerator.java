@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class TupleGenerator {
 	private SDFSchema schema;
@@ -118,7 +118,7 @@ public class TupleGenerator {
 		
 	}
 	
-	public RelationalTuple<IMetaAttribute> generateTuple() throws GeneratorException {
+	public Tuple<IMetaAttribute> generateTuple() throws GeneratorException {
 		this.datamodel.releaseResources();
 		
 		switch(this.genTyp){
@@ -137,8 +137,8 @@ public class TupleGenerator {
 		}
 	}
 
-	private RelationalTuple<IMetaAttribute> generateUsageTuple() throws GeneratorException {
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
+	private Tuple<IMetaAttribute> generateUsageTuple() throws GeneratorException {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());	
 		
 		//timestamp, machineID, rate
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -162,8 +162,8 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateInstallPureTuple() throws GeneratorException {
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());		
+	private Tuple<IMetaAttribute> generateInstallPureTuple() throws GeneratorException {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());		
 		//timestamp, id, machineID, limit1, limit2
 		tuple.setAttribute(0, System.currentTimeMillis());
 		
@@ -187,13 +187,13 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateMachineTuple() throws GeneratorException {
+	private Tuple<IMetaAttribute> generateMachineTuple() throws GeneratorException {
 		//stop condition
 		if (machineNo >= this.config.getNumberOfMachines()){
 			throw new GeneratorException("No more machines to generate");
 		}
 		
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
 
 		//timestamp, id, factoryID, name
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -214,8 +214,8 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateInstallDBTuple() throws GeneratorException {
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
+	private Tuple<IMetaAttribute> generateInstallDBTuple() throws GeneratorException {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
 		
 		//timestamp, id, machineID, limit1, limit2, pastUsageTime
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -240,13 +240,13 @@ public class TupleGenerator {
 		return tuple;
 	}
 
-	private RelationalTuple<IMetaAttribute> generateFactoryTuple() throws GeneratorException  {
+	private Tuple<IMetaAttribute> generateFactoryTuple() throws GeneratorException  {
 		//stop condition
 		if (factoryNo >= this.config.getNumberOfBuildings()){
 			throw new GeneratorException("No more factories to generate");
 		}
 		
-		RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
 		
 		//timestamp, id, name
 		tuple.setAttribute(0, System.currentTimeMillis());

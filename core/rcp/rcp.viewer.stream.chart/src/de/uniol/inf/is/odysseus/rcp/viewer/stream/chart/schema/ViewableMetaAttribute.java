@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class ViewableMetaAttribute implements IViewableAttribute {
 
@@ -59,7 +59,7 @@ public class ViewableMetaAttribute implements IViewableAttribute {
 	}
 	
 	@Override
-	public Object evaluate(RelationalTuple<? extends IMetaAttribute> tuple) {
+	public Object evaluate(Tuple<? extends IMetaAttribute> tuple) {
 		try {
 			Object value = method.invoke(tuple.getMetadata());							
 			return value;

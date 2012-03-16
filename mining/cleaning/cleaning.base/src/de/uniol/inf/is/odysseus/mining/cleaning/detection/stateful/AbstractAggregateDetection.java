@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
  * @author Dennis Geesen
  * Created at: 08.07.2011
  */
-public abstract class AbstractAggregateDetection implements IBinaryDetection<RelationalTuple<?>>{
+public abstract class AbstractAggregateDetection implements IBinaryDetection<Tuple<?>>{
 
 	
 	private List<AggregateFunction> aggregateFunctions = new ArrayList<AggregateFunction>();
@@ -52,7 +52,7 @@ public abstract class AbstractAggregateDetection implements IBinaryDetection<Rel
 	protected abstract String buildPredicateStirng();
 	
 	@Override
-	public IPredicate<RelationalTuple<?>> getPredicate() {
+	public IPredicate<Tuple<?>> getPredicate() {
 		return this.predicate;
 	}
 	

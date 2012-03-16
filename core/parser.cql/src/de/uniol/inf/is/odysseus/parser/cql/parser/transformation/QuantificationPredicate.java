@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * This is a dummy class for the conversion of the AST to real predicates. In a
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 @SuppressWarnings({"rawtypes"})
 public class QuantificationPredicate extends
-		AbstractPredicate<RelationalTuple<?>> {
+		AbstractPredicate<Tuple<?>> {
 
 	private static final long serialVersionUID = -125391059150938434L;
 	private AbstractQuantificationPredicate astPredicate;
@@ -43,12 +43,12 @@ public class QuantificationPredicate extends
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> input) {
+	public boolean evaluate(Tuple<?> input) {
 		throw new RuntimeException("Not implemented");
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		throw new RuntimeException("Not implemented");
 	}
 

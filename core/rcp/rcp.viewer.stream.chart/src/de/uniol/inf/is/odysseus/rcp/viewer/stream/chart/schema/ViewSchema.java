@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class ViewSchema<T> {
 
@@ -74,7 +74,7 @@ public class ViewSchema<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<T> convertToViewableFormat(RelationalTuple<? extends IMetaAttribute> tuple) {
+	public List<T> convertToViewableFormat(Tuple<? extends IMetaAttribute> tuple) {
 		List<T> values = new ArrayList<T>();
 		for (int index = 0; index < this.viewableAttributes.size(); index++) {
 			IViewableAttribute viewable = this.viewableAttributes.get(index);			

@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.scars.metadata;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 // creates objects for test purposes
 // author: sven
@@ -23,7 +23,7 @@ public class TestFactory
 {
   // test objects, set by create
   public static SDFSchema testSchema = null;
-  public static MVRelationalTuple<StreamCarsMetaData<Object>> testTuple = null;
+  public static MVTuple<StreamCarsMetaData<Object>> testTuple = null;
   public static double[][] testCovMatrix = null;
   
 //  public static void createTestObjects()
@@ -131,25 +131,25 @@ public class TestFactory
 //    
 //    Object[] objects60 = new Object[2];
 //    Arrays.fill(objects60, value);
-//    MVRelationalTuple<IProbability> tuple60 = new MVRelationalTuple<IProbability>(objects60);
+//    MVTuple<IProbability> tuple60 = new MVTuple<IProbability>(objects60);
 //    
 //    Object[] objects6 = new Object[1];
 //    objects6[0] = tuple60;
-//    MVRelationalTuple<IProbability> tuple6 = new MVRelationalTuple<IProbability>(objects6);
+//    MVTuple<IProbability> tuple6 = new MVTuple<IProbability>(objects6);
 //    
 //    Object[] objects1 = new Object[2];
 //    Arrays.fill(objects1, value);
-//    MVRelationalTuple<IProbability> tuple1 = new MVRelationalTuple<IProbability>(objects1);
+//    MVTuple<IProbability> tuple1 = new MVTuple<IProbability>(objects1);
 //    
 //    Object[] objects = new Object[7];
 //    Arrays.fill(objects, value);
 //    objects[1] = tuple1;
 //    objects[6] = tuple6;
-//    MVRelationalTuple<IProbability> tuple = new MVRelationalTuple<IProbability>(objects);
+//    MVTuple<IProbability> tuple = new MVTuple<IProbability>(objects);
 //    
 //    Object[] baseObjects = new Object[1];
 //    baseObjects[0] = tuple;
-//    MVRelationalTuple<StreamCarsMetaData<Object>> baseTuple = new MVRelationalTuple<StreamCarsMetaData<Object>>(baseObjects);
+//    MVTuple<StreamCarsMetaData<Object>> baseTuple = new MVTuple<StreamCarsMetaData<Object>>(baseObjects);
 //    
 //    TestFactory.testTuple = baseTuple;
 //    

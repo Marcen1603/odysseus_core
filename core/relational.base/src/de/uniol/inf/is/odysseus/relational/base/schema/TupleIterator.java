@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndex;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Iteratorklasse, um über ein oder mehrere Tuple zu iterieren. Die Tuple
@@ -56,7 +56,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
         }
     }
 
-    private RelationalTuple<?> tuple;
+    private Tuple<?> tuple;
     private Stack<IteratorEntry> pointer = new Stack<IteratorEntry>();
     private Stack<SchemaIndex> schemaIndices = new Stack<SchemaIndex>();
     private Stack<Boolean> insideList = new Stack<Boolean>();
@@ -73,7 +73,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      * SchemaIndexPath im Tupel und geht so tief wie möglich. Alle
      * übergeordneten Tupel werden nicht erfasst. Sollen <b>alle</b> Attribute
      * in einem Tupel erfasst werden, so sollte der Konstruktor
-     * <code>TupleIterator(MVRelationalTuple<?>,SDFSchema)</code> genutzt
+     * <code>TupleIterator(MVTuple<?>,SDFSchema)</code> genutzt
      * werden.
      * 
      * @param tuple
@@ -83,7 +83,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            SchemaIndexPath zu einer Stelle im Tuple, wo mit der Iteration
      *            begonnen werden soll. Darf nicht <code>null</code> sein.
      */
-    public TupleIterator(RelationalTuple<?> tuple, SchemaIndexPath start) {
+    public TupleIterator(Tuple<?> tuple, SchemaIndexPath start) {
         this(tuple, start, Integer.MAX_VALUE);
     }
 
@@ -101,7 +101,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            Zum Tupel zugehöriges Schema. Muss vollständig sein, darf
      *            nicht <code>null</code> sein.
      */
-    public TupleIterator(RelationalTuple<?> tuple, SDFSchema completeSchema) {
+    public TupleIterator(Tuple<?> tuple, SDFSchema completeSchema) {
         this(tuple, completeSchema, Integer.MAX_VALUE);
     }
 
@@ -127,7 +127,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
      *            soll.
      */
-    public TupleIterator(RelationalTuple<?> tuple, SDFSchema completeSchema, int maxLevels) {
+    public TupleIterator(Tuple<?> tuple, SDFSchema completeSchema, int maxLevels) {
         this.tuple = tuple;
         this.maxLevels = maxLevels;
 
@@ -147,7 +147,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      * TupleIndexPath im Tupel und geht so tief wie möglich. Alle
      * übergeordneten Tupel werden nicht erfasst. Sollen <b>alle</b> Attribute
      * in einem Tupel erfasst werden, so sollte der Konstruktor
-     * <code>TupleIterator(MVRelationalTuple<?>,SDFSchema)</code> genutzt
+     * <code>TupleIterator(MVTuple<?>,SDFSchema)</code> genutzt
      * werden.
      * 
      * @param tuple
@@ -157,7 +157,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            SchemaIndexPath zu einer Stelle im Tuple, wo mit der Iteration
      *            begonnen werden soll. Darf nicht <code>null</code> sein.
      */
-    public TupleIterator(RelationalTuple<?> tuple, TupleIndexPath start) {
+    public TupleIterator(Tuple<?> tuple, TupleIndexPath start) {
         this(tuple, start, Integer.MAX_VALUE);
     }
 
@@ -186,7 +186,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
      *            soll. Muss 0 oder positiv sein.
      */
-    public TupleIterator(RelationalTuple<?> tuple, TupleIndexPath start, int maxLevels) {
+    public TupleIterator(Tuple<?> tuple, TupleIndexPath start, int maxLevels) {
         this.tuple = tuple;
         this.maxLevels = maxLevels;
         reset(start);
@@ -217,7 +217,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
      *            Anzahl Ebenen in die Tiefe, durch die maximal iteriert werden
      *            soll. Muss 0 oder positiv sein.
      */
-    public TupleIterator(RelationalTuple<?> tuple, SchemaIndexPath start, int maxLevels) {
+    public TupleIterator(Tuple<?> tuple, SchemaIndexPath start, int maxLevels) {
         this.tuple = tuple;
         this.maxLevels = maxLevels;
         reset(start);
@@ -293,8 +293,8 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
             schemaIndices.push(start.getSchemaIndex(i));
 
             tupleIndices.push(new TupleIndex(parent, schemaIndices.peek().toInt(), schemaIndices.peek().getAttribute()));
-            if (parent instanceof RelationalTuple)
-                parent = ((RelationalTuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
+            if (parent instanceof Tuple)
+                parent = ((Tuple<?>) parent).getAttribute(schemaIndices.peek().toInt());
             else
                 throw new RuntimeException("Corrupted SchemaIndexPath: " + start);
 
@@ -321,10 +321,10 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
         info.tupleIndexPath = getTupleIndexPath();
         info.isInList = insideList.peek();
         info.level = tupleIndices.size() - 1;
-        info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof RelationalTuple) : false);
+        info.isTuple = (info.tupleObject != null ? (info.tupleObject instanceof Tuple) : false);
 
-        if (entry.obj instanceof RelationalTuple && pointer.size() <= maxLevels) {
-            RelationalTuple<?> t = (RelationalTuple<?>) entry.obj;
+        if (entry.obj instanceof Tuple && pointer.size() <= maxLevels) {
+            Tuple<?> t = (Tuple<?>) entry.obj;
             int size = t.size();
 
             if (entry.index == size) {
@@ -362,7 +362,7 @@ public class TupleIterator implements Iterable<TupleInfo>, Iterator<TupleInfo> {
                 else
                     parent = tuple;
 
-                if (parent instanceof RelationalTuple) {
+                if (parent instanceof Tuple) {
                     tupleIndices.push(new TupleIndex(parent, entry.index, schemaIndices.peek().getAttribute()));
                 } else {
                     // something wrong

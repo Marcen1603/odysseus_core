@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
  */
 public class RelationalProjectPO<T extends IMetaAttribute> extends
-		AbstractPipe<RelationalTuple<T>, RelationalTuple<T>> {
+		AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	Logger logger = LoggerFactory.getLogger(RelationalProjectPO.class);
 	
@@ -51,9 +51,9 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	}
 	
 	@Override
-	final protected void process_next(RelationalTuple<T> object, int port) {
+	final protected void process_next(Tuple<T> object, int port) {
 		try {
-			RelationalTuple<T> out = object.restrict(this.restrictList, false);
+			Tuple<T> out = object.restrict(this.restrictList, false);
 //			logger.debug(this+" transferNext() "+object);			
 			transfer(out);
 		} catch (Exception e) {

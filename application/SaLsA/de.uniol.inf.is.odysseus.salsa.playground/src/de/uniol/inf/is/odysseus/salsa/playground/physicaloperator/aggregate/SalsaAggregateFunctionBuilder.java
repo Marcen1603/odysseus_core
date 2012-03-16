@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.salsa.playground.physicaloperator.aggregate.functions.RelationalPolygonAggregation;
 
 public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder {
@@ -17,13 +17,13 @@ public class SalsaAggregateFunctionBuilder implements IAggregateFunctionBuilder 
 	}
 	
 	@Override
-    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(
+    public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(
 			AggregateFunction key, int[] pos) {
 		
-		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
+		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		
 		if(key.getName().equalsIgnoreCase("L1Merge")) {
-			aggFunc = new RelationalPolygonAggregation<RelationalTuple<?>, RelationalTuple<?>>(pos);
+			aggFunc = new RelationalPolygonAggregation<Tuple<?>, Tuple<?>>(pos);
 		}  
 		
 		else {

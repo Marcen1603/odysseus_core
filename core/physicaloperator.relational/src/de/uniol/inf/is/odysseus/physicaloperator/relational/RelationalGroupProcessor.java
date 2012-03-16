@@ -26,13 +26,13 @@ import de.uniol.inf.is.odysseus.core.server.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class RelationalGroupProcessor<T extends IMetaAttribute> implements
-        IGroupProcessor<RelationalTuple<T>, RelationalTuple<T>> {
+        IGroupProcessor<Tuple<T>, Tuple<T>> {
 
-    Map<RelationalTuple<T>, Integer> keyMap = null;
-    Map<Integer, RelationalTuple<T>> tupleMap = null;
+    Map<Tuple<T>, Integer> keyMap = null;
+    Map<Integer, Tuple<T>> tupleMap = null;
     int maxId = 0;
     int[] gRestrict = null;
     private final List<SDFAttribute> grAttribs;
@@ -54,12 +54,12 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
     }
 
     @Override
-    public Integer getGroupID(RelationalTuple<T> elem) {
+    public Integer getGroupID(Tuple<T> elem) {
         // Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
         if (gRestrict == null || gRestrict.length == 0)
             return Integer.valueOf(0);
         // Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
-        RelationalTuple<T> gTuple = elem.restrict(gRestrict, true);
+        Tuple<T> gTuple = elem.restrict(gRestrict, true);
         // Gibt es diese Kombination schon?
         Integer id = keyMap.get(gTuple);
         // Wenn nicht, neu eintragen
@@ -85,8 +85,8 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
             }
         }
         maxId = 0;
-        keyMap = new HashMap<RelationalTuple<T>, Integer>();
-        tupleMap = new HashMap<Integer, RelationalTuple<T>>();
+        keyMap = new HashMap<Tuple<T>, Integer>();
+        tupleMap = new HashMap<Integer, Tuple<T>>();
     }
 
     private int getOutputPos(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
@@ -111,23 +111,23 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
     }
 
     @Override
-    public RelationalTuple<T> createOutputElement(
+    public Tuple<T> createOutputElement(
             Integer groupID,
-            PairMap<SDFSchema, AggregateFunction, RelationalTuple<T>, ?> r) {
-        RelationalTuple<T> returnTuple = new RelationalTuple<T>(outputSchema
+            PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
+        Tuple<T> returnTuple = new Tuple<T>(outputSchema
                 .size());
 
         // in r stecken alle Aggregate drin
         // notwendig: Finde die Ziel-Position in dem returnTuple
         // ermittelt sich aus dem Attribute und der Aggregatfunktio
-        for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, RelationalTuple<T>> e : r
+        for (Entry<FESortedClonablePair<SDFSchema, AggregateFunction>, Tuple<T>> e : r
                 .entrySet()) {
             int pos = getOutputPos(e.getKey());
             returnTuple.setAttribute(pos, e.getValue().getAttribute(0));
         }
 
         // Jetzt die Gruppierungsattribute
-        RelationalTuple<T> gruppAttr = tupleMap.get(groupID);
+        Tuple<T> gruppAttr = tupleMap.get(groupID);
         int groupTupPos = 0;
         for (SDFAttribute ga : grAttribs) {
             int pos = getOutputPos(ga);

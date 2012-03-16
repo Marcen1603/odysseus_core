@@ -15,16 +15,16 @@
 package de.uniol.inf.is.odysseus.scars.metadata;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 public interface IPredictionFunction<M extends IProbability> {
 	
 	public void init(SDFSchema scanSchema, SDFSchema timeSchema);
 	
-	public void predictData(MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int index);
+	public void predictData(MVTuple<M> scanRootTuple, MVTuple<M> timeTuple, int index);
 
-	public void predictMetadata(M metadata, MVRelationalTuple<M> scanRootTuple, MVRelationalTuple<M> timeTuple, int index);
+	public void predictMetadata(M metadata, MVTuple<M> scanRootTuple, MVTuple<M> timeTuple, int index);
 
 	public void setExpressions(PredictionExpression[] expressions);
 	

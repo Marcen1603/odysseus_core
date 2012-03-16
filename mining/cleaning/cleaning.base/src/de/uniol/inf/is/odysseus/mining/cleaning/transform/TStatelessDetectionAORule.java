@@ -19,12 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessDetectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatelessDetectionPO;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TStatelessDetectionAORule extends AbstractTransformationRule<StatelessDetectionAO<RelationalTuple<IMiningMetadata>>> {
+public class TStatelessDetectionAORule extends AbstractTransformationRule<StatelessDetectionAO<Tuple<IMiningMetadata>>> {
 
 	@Override
 	public int getPriority() {	
@@ -32,8 +32,8 @@ public class TStatelessDetectionAORule extends AbstractTransformationRule<Statel
 	}
 
 	@Override
-	public void execute(StatelessDetectionAO<RelationalTuple<IMiningMetadata>> detectAO, TransformationConfiguration config) {
-		StatelessDetectionPO<?> detectPO = new StatelessDetectionPO<RelationalTuple<IMiningMetadata>>(detectAO.getDetections());
+	public void execute(StatelessDetectionAO<Tuple<IMiningMetadata>> detectAO, TransformationConfiguration config) {
+		StatelessDetectionPO<?> detectPO = new StatelessDetectionPO<Tuple<IMiningMetadata>>(detectAO.getDetections());
 		detectPO.setOutputSchema(detectAO.getOutputSchema());
 		replace(detectAO, detectPO, config);		
 		retract(detectAO);
@@ -41,7 +41,7 @@ public class TStatelessDetectionAORule extends AbstractTransformationRule<Statel
 	}
 
 	@Override
-	public boolean isExecutable(StatelessDetectionAO<RelationalTuple<IMiningMetadata>> operator, TransformationConfiguration config) {
+	public boolean isExecutable(StatelessDetectionAO<Tuple<IMiningMetadata>> operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

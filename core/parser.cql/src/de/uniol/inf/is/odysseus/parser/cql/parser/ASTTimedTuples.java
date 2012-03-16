@@ -21,7 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class ASTTimedTuples extends SimpleNode {
 	public ASTTimedTuples(int id) {
@@ -40,8 +40,8 @@ public class ASTTimedTuples extends SimpleNode {
 	}
 
 	@SuppressWarnings("unchecked")
-	public RelationalTuple<ITimeInterval>[] getTuples(List<SDFAttribute> schema) {
-		RelationalTuple<ITimeInterval>[] tuples = new RelationalTuple[jjtGetNumChildren()];
+	public Tuple<ITimeInterval>[] getTuples(List<SDFAttribute> schema) {
+		Tuple<ITimeInterval>[] tuples = new Tuple[jjtGetNumChildren()];
 		for (int i = 0; i < jjtGetNumChildren(); ++i) {
 			tuples[i] = ((ASTTimedTuple) jjtGetChild(i)).getTuple(schema);
 		}

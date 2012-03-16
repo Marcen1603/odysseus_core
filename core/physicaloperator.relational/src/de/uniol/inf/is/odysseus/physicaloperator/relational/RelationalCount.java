@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CountPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @SuppressWarnings({"rawtypes"})
-public class RelationalCount extends Count<RelationalTuple<?>, RelationalTuple<?>> {
+public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -40,9 +40,9 @@ public class RelationalCount extends Count<RelationalTuple<?>, RelationalTuple<?
 	}
 	
 	@Override
-	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
-		CountPartialAggregate<RelationalTuple<?>> pa = (CountPartialAggregate<RelationalTuple<?>>) p;
-		RelationalTuple<?> r = new RelationalTuple(1);
+	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
+		CountPartialAggregate<Tuple<?>> pa = (CountPartialAggregate<Tuple<?>>) p;
+		Tuple<?> r = new Tuple(1);
 		r.setAttribute(0, new Integer(pa.getCount()));
 		return r;
 	}

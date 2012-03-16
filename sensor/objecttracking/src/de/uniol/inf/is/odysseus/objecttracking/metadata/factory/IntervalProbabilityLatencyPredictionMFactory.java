@@ -19,7 +19,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLatencyPrediction;
 @SuppressWarnings({"rawtypes"})
 /**
@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IntervalProbabilityLaten
  *
  */
 @Deprecated
-public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetadataUpdater<IntervalProbabilityLatencyPrediction, MVRelationalTuple<IntervalProbabilityLatencyPrediction>>{
+public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetadataUpdater<IntervalProbabilityLatencyPrediction, MVTuple<IntervalProbabilityLatencyPrediction>>{
 
 	SDFSchema schema;
 	
@@ -45,7 +45,7 @@ public class IntervalProbabilityLatencyPredictionMFactory extends AbstractMetada
 	}
 	
 	@Override
-	public void updateMetadata(MVRelationalTuple<IntervalProbabilityLatencyPrediction> inElem) {
+	public void updateMetadata(MVTuple<IntervalProbabilityLatencyPrediction> inElem) {
 		inElem.getMetadata().setLatencyStart(System.nanoTime());
 		
 		double[][] cov = null;

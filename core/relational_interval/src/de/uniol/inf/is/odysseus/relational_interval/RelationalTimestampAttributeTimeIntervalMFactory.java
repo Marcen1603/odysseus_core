@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.relational_interval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
 public class RelationalTimestampAttributeTimeIntervalMFactory
-		extends AbstractMetadataUpdater<ITimeInterval, RelationalTuple<? extends ITimeInterval>> {
+		extends AbstractMetadataUpdater<ITimeInterval, Tuple<? extends ITimeInterval>> {
 
 	private int startAttrPos = -1;
 	private int endAttrPos = -1;
@@ -38,7 +38,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 	}
 	
 	@Override
-	public void updateMetadata(RelationalTuple<? extends ITimeInterval> inElem) {
+	public void updateMetadata(Tuple<? extends ITimeInterval> inElem) {
 		PointInTime start = extractTimestamp(inElem, startAttrPos);
 		inElem.getMetadata().setStart(start);
 		if (endAttrPos > 0){
@@ -48,7 +48,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory
 	}
 
 	private static PointInTime extractTimestamp(
-			RelationalTuple<? extends ITimeInterval> inElem, int attrPos) {
+			Tuple<? extends ITimeInterval> inElem, int attrPos) {
 		Number timeN = (Number) inElem.getAttribute(attrPos);
 		PointInTime time = null;
 		if (timeN.longValue() == -1){

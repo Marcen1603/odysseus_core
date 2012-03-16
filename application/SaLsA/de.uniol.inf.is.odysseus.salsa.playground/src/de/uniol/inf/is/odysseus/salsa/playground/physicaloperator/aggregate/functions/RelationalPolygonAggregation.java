@@ -6,9 +6,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class RelationalPolygonAggregation<T, R> extends AbstractAggregateFunction<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class RelationalPolygonAggregation<T, R> extends AbstractAggregateFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	private static final long serialVersionUID = -9112610790613631712L;
 	private int[] restrictList;
@@ -19,29 +19,29 @@ public class RelationalPolygonAggregation<T, R> extends AbstractAggregateFunctio
 	}
 
 	@Override
-	public RelationalTuple<? extends IMetaAttribute> evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
-		List<RelationalTuple<? extends IMetaAttribute>> elems = ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p).getElems();
+	public Tuple<? extends IMetaAttribute> evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
+		List<Tuple<? extends IMetaAttribute>> elems = ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
 		
-		RelationalTuple<? extends IMetaAttribute> ret = new RelationalTuple<IMetaAttribute>(1);
+		Tuple<? extends IMetaAttribute> ret = new Tuple<IMetaAttribute>(1);
 		ret.setAttribute(0, elems);
 		return ret;
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> merge(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p, RelationalTuple<? extends IMetaAttribute> toMerge, boolean createNew) {
-//		GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>> list = (GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>) p;
+	public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(IPartialAggregate<Tuple<? extends IMetaAttribute>> p, Tuple<? extends IMetaAttribute> toMerge, boolean createNew) {
+//		GeometryPartialAggregate<Tuple<? extends IMetaAttribute>> list = (GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>) p;
 //		if (createNew){
-//			list = new GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p);
+//			list = new GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>)p);
 //		}
 //		list.addElem(toMerge.restrict(restrictList, true));
 //		return list;
 //		
-		return ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>)p).addElem(toMerge.restrict(restrictList, true));
+		return ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>)p).addElem(toMerge.restrict(restrictList, true));
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> init(RelationalTuple<? extends IMetaAttribute> in) {
-		return new GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>(in);
+	public IPartialAggregate<Tuple<? extends IMetaAttribute>> init(Tuple<? extends IMetaAttribute> in) {
+		return new GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>(in);
 	}
 
 

@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerR
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class MVRelationalTupleObjectHandler<M extends IProbability> implements
-		IObjectHandler<RelationalTuple<M>> {
+		IObjectHandler<Tuple<M>> {
 
 	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
@@ -86,8 +86,8 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	}
 	
 	@Override
-	public synchronized RelationalTuple<M> create() throws IOException, ClassNotFoundException, BufferUnderflowException {
-		MVRelationalTuple<M> r = null;
+	public synchronized Tuple<M> create() throws IOException, ClassNotFoundException, BufferUnderflowException {
+		MVTuple<M> r = null;
 		synchronized(byteBuffer){		
 			byteBuffer.flip();
 			//logger.debug("create "+byteBuffer);
@@ -100,7 +100,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 					e.printStackTrace();
 				}
 			}
-			r = new MVRelationalTuple<M>(attributes);
+			r = new MVTuple<M>(attributes);
 			byteBuffer.clear();
 		}
 		return r;
@@ -150,13 +150,13 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	}
 	
 	@Override
-	public void put(RelationalTuple<M> relationalTuple) {
-		if (relationalTuple.size() != dataHandler.length){
+	public void put(Tuple<M> tuple) {
+		if (tuple.size() != dataHandler.length){
 			throw new IllegalArgumentException("Incompatible Relational Tuple");
 		}
 		synchronized(byteBuffer){
 			
-			int size = memSize(relationalTuple);
+			int size = memSize(tuple);
 
 			if (size > byteBuffer.capacity()) {
 				byteBuffer = ByteBuffer.allocate(size * 2);
@@ -165,14 +165,14 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 			byteBuffer.clear();
 			
 			for (int i=0;i<dataHandler.length;i++){
-				dataHandler[i].writeData(byteBuffer, relationalTuple.getAttribute(i));
+				dataHandler[i].writeData(byteBuffer, tuple.getAttribute(i));
 			}
 			byteBuffer.flip();
 		}
 	}
 	
 	public int memSize(Object attribute) {
-		RelationalTuple<?> r = (RelationalTuple<?>) attribute;
+		Tuple<?> r = (Tuple<?>) attribute;
 		int size = 0;
 		for (int i = 0; i < dataHandler.length; i++) {
 			size += dataHandler[i].memSize(r.getAttribute(i));
@@ -206,7 +206,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 //		h.put(3,"Hallo Folks");
 //			
 //		h.getByteBuffer();
-//		RelationalTuple<IMetaAttribute> r = h.create();
+//		Tuple<IMetaAttribute> r = h.create();
 //		System.out.println(r);
 //		
 //	}

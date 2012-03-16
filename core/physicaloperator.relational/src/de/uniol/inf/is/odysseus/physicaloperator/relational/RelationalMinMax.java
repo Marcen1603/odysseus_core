@@ -19,9 +19,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MinMax;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class RelationalMinMax extends MinMax<RelationalTuple<?>,RelationalTuple<?>> {
+public class RelationalMinMax extends MinMax<Tuple<?>,Tuple<?>> {
 
 	/**
 	 * 
@@ -57,13 +57,13 @@ public class RelationalMinMax extends MinMax<RelationalTuple<?>,RelationalTuple<
 	}
 	
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(RelationalTuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		return super.init(in.restrict(attrList, true));
 	}
 	
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(
-			IPartialAggregate<RelationalTuple<?>> p, RelationalTuple<?> toMerge,
+	public IPartialAggregate<Tuple<?>> merge(
+			IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge,
 			boolean createNew) {
 		return super.merge(p, toMerge.restrict(attrList, true), createNew);
 	}

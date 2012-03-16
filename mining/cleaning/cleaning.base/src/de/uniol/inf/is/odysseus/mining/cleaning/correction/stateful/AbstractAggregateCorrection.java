@@ -17,14 +17,14 @@ package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public abstract class AbstractAggregateCorrection implements IBinaryCorrection<RelationalTuple<?>>{
+public abstract class AbstractAggregateCorrection implements IBinaryCorrection<Tuple<?>>{
 
 	
 	private AggregateFunction aggregateFunction;
@@ -46,7 +46,7 @@ public abstract class AbstractAggregateCorrection implements IBinaryCorrection<R
 		return aggregateFunction.getName().toUpperCase()+"("+getAttribute()+")";
 	}
 	
-	protected RelationalTuple<?> replaceAttribute(RelationalTuple<?> tuple, Object value){		
+	protected Tuple<?> replaceAttribute(Tuple<?> tuple, Object value){		
 		tuple.setAttribute(attributePosition, value);
 		return tuple;		
 	}

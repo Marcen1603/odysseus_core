@@ -34,12 +34,12 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.NotOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
+public class RelationalPredicate extends AbstractPredicate<Tuple<?>>
 		implements IRelationalPredicate {
 
 	private static final long serialVersionUID = 1222104352250883947L;
@@ -130,7 +130,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> input) {
+	public boolean evaluate(Tuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
@@ -140,10 +140,10 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
-			RelationalTuple<?> r = fromRightChannel[i] ? right : left;
+			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
 		this.expression.bindVariables(values);
@@ -190,7 +190,7 @@ public class RelationalPredicate extends AbstractPredicate<RelationalTuple<?>>
 	}
 
 	@Override
-	public boolean equals(IPredicate<RelationalTuple<?>> pred) {
+	public boolean equals(IPredicate<Tuple<?>> pred) {
 		// Falls die Expressions nicht identisch sind, ist dennoch eine
 		// inhaltliche Äquivalenz möglich
 		if (!this.equals((Object) pred)) {

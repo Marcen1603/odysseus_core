@@ -32,13 +32,13 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.DataTypeMappingHandlerRegistry;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen Created at: 22.08.2011
  */
-public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>> {
+public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 
 	private static Logger logger = LoggerFactory.getLogger(DatabaseSinkPO.class);
 	private IDatabaseConnection connection;
@@ -127,7 +127,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	public void processPunctuation(PointInTime timestamp, int port) {
 	}
 
-	private void calcLatency(RelationalTuple<ITimeInterval> tuple) {
+	private void calcLatency(Tuple<ITimeInterval> tuple) {
 		long start = tuple.getAttribute(0);
 		long diff = System.currentTimeMillis() - start;
 		summe = summe + diff;
@@ -140,7 +140,7 @@ public class DatabaseSinkPO extends AbstractSink<RelationalTuple<ITimeInterval>>
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<ITimeInterval> tuple, int port, boolean isReadOnly) {
+	protected void process_next(Tuple<ITimeInterval> tuple, int port, boolean isReadOnly) {
 		if(!opened){
 			System.err.println("Error: not connected to database");
 			return;

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaInfo;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIterator;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 
 public class CovarianceExpressionMatrix {
@@ -39,7 +39,7 @@ public class CovarianceExpressionMatrix {
 		initialize(this.schema);
 	}
 
-	public void setRootTuple(MVRelationalTuple<?> rootTuple) {
+	public void setRootTuple(MVTuple<?> rootTuple) {
 		this.tupleHelper = new TupleHelper(rootTuple);
 	}
 

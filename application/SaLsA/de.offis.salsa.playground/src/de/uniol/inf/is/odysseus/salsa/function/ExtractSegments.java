@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * @param <T>
  * @param <IMetadata>
  */
-public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeInterval>>> {
+public class ExtractSegments extends AbstractFunction<List<Tuple<TimeInterval>>> {
     /**
      * 
      */
@@ -72,7 +72,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
 
     // FIXME need metadata to set timestamp
     @Override
-    public List<RelationalTuple<TimeInterval>> getValue() {
+    public List<Tuple<TimeInterval>> getValue() {
 
         PointInTime startTimestamp = PointInTime.getInfinityTime();
 
@@ -91,7 +91,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
         final Geometry geometry = (Geometry) this.getInputValue(0);
         final Double threshold = (Double) this.getInputValue(1);
         final Coordinate[] coordinates = geometry.getCoordinates();
-        final List<RelationalTuple<TimeInterval>> segments = new LinkedList<RelationalTuple<TimeInterval>>();
+        final List<Tuple<TimeInterval>> segments = new LinkedList<Tuple<TimeInterval>>();
         Coordinate tmp = new Coordinate(Double.MAX_VALUE, Double.MAX_VALUE);
         boolean isSegment = false;
         int start = 0;
@@ -113,7 +113,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
                             segment.add(coordinates[j]);
                         }
                     }
-                    RelationalTuple<TimeInterval> tuple = new RelationalTuple<TimeInterval>(1);
+                    Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1);
                     tuple.setMetadata(time);
                     if (segment.size() > 1) {
                         tuple.setAttribute(0, this.geometryFactory.createLineString(segment
@@ -149,7 +149,7 @@ public class ExtractSegments extends AbstractFunction<List<RelationalTuple<TimeI
                 }
             }
 
-            RelationalTuple<TimeInterval> tuple = new RelationalTuple<TimeInterval>(1);
+            Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1);
             if (segment.size() > 1) {
                 tuple.setMetadata(time);
                 tuple.setAttribute(0,

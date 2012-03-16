@@ -4,10 +4,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Rate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.RatePartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class RelationalRate extends
-		Rate<RelationalTuple<?>, RelationalTuple<?>> {
+		Rate<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -27,10 +27,10 @@ public class RelationalRate extends
 	}
 
 	@Override
-	public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<?>> p) {
+	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 
-		RatePartialAggregate<RelationalTuple<?>> pa = (RatePartialAggregate<RelationalTuple<?>>) p;
-		RelationalTuple<IMetaAttribute> ret = new RelationalTuple<IMetaAttribute>(
+		RatePartialAggregate<Tuple<?>> pa = (RatePartialAggregate<Tuple<?>>) p;
+		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(
 				1);
 
 		ret.setAttribute(0,

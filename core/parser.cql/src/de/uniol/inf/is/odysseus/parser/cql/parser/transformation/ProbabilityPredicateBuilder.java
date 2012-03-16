@@ -23,13 +23,13 @@
 //import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractPredicate;
 //import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.IPredicateBuilder;
 //import de.uniol.inf.is.odysseus.core.server.probability.predicate.ProbabilityPredicate;
-//import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+//import de.uniol.inf.is.odysseus.relational.base.Tuple;
 //import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 //
 //public class ProbabilityPredicateBuilder implements IPredicateBuilder {
 //
 //	@Override
-//	public IPredicate<RelationalTuple<?>> createPredicate(
+//	public IPredicate<Tuple<?>> createPredicate(
 //			AbstractPredicate predicate, IAttributeResolver resolver) {
 //		ASTProbabilityPredicate probPred = (ASTProbabilityPredicate) predicate;
 //

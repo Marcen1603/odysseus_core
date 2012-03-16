@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.salsa.ui.PolygonScreen;
 
 /**
@@ -62,7 +62,7 @@ public class VisualPolygonSinkPO extends AbstractSink<Object> {
     @SuppressWarnings("unchecked")
     @Override
     protected void process_next(final Object object, final int port, final boolean isReadOnly) {
-        this.segments.offer((Geometry) ((RelationalTuple<TimeInterval>) object).getAttribute(0));
+        this.segments.offer((Geometry) ((Tuple<TimeInterval>) object).getAttribute(0));
     }
 
     @Override

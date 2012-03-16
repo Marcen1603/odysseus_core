@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 class TagMap {
 	String xpathExpression;
@@ -126,7 +126,7 @@ public class NexmarkStaticClientHandler extends Thread {
 				Container<Node, ITimeInterval> container;
 				try {
 					while ((container = process_next()) != null) {
-						RelationalTuple<ITimeInterval> tuple = toRelationalTuple(container);
+						Tuple<ITimeInterval> tuple = toRelationalTuple(container);
 						client.writeObject(tuple, true);
 					}
 					client.writeObject(null, true);
@@ -154,9 +154,9 @@ public class NexmarkStaticClientHandler extends Thread {
 	/**
 	 * Transformiert eine Node Struktur in ein Relationales Tupel
 	 */
-	private RelationalTuple<ITimeInterval> toRelationalTuple(
+	private Tuple<ITimeInterval> toRelationalTuple(
 			Container<Node, ITimeInterval> container) {
-		RelationalTuple<ITimeInterval> r = new RelationalTuple<ITimeInterval>(tagMap.map.size());
+		Tuple<ITimeInterval> r = new Tuple<ITimeInterval>(tagMap.map.size());
 		r.setMetadata(container.getMetadata());
 		Node cargo = container.cargo;
 		NodeList nl = cargo.getFirstChild().getChildNodes();

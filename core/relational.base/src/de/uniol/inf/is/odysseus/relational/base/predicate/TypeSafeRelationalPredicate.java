@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	
@@ -19,7 +19,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	}
 	
 	@Override
-	public boolean evaluate(RelationalTuple<?> input) {
+	public boolean evaluate(Tuple<?> input) {
 		Object[] values = new Object[this.attributePositions.length];
 		ArrayList<Variable> vars = this.expression.getVariables();
 		for (int i = 0; i < values.length; ++i) {
@@ -49,10 +49,10 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
-			RelationalTuple<?> r = fromRightChannel[i] ? right : left;
+			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
 		this.expression.bindVariables(values);

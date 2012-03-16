@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational.base.schema;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Temporäre Klasse. Unterstützt die Auswertung von Tupel
@@ -28,14 +28,14 @@ import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
  */
 public class TupleHelper {
 
-	private RelationalTuple<?> tuple;
+	private Tuple<?> tuple;
 	
 	/**
 	 * Erstellt eine neue TupleHelper-Instanz mit dem angegebenen Tupel.
 	 * 
 	 * @param tuple Tupel
 	 */
-	public TupleHelper(RelationalTuple<?> tuple) {
+	public TupleHelper(Tuple<?> tuple) {
 		this.tuple = tuple;
 	}
 	
@@ -74,8 +74,8 @@ public class TupleHelper {
 		Object[] actualList = tuple.getAttributes();
 		for( int i = 0; i < path.length; i++ ) {
 			actualAttribute = actualList[path[i]];
-			if( actualAttribute instanceof RelationalTuple<?>) {
-				actualList = ((RelationalTuple<?>)actualAttribute).getAttributes();
+			if( actualAttribute instanceof Tuple<?>) {
+				actualList = ((Tuple<?>)actualAttribute).getAttributes();
 			} else if( actualAttribute instanceof List ) {
 				actualList = ((List<Object>)actualAttribute).toArray();
 			}
@@ -89,7 +89,7 @@ public class TupleHelper {
 	 * 
 	 * @return Das verwendete Tuple
 	 */
-	public RelationalTuple<?> getTuple() {
+	public Tuple<?> getTuple() {
 		return tuple;
 	}
 	

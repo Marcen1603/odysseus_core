@@ -21,9 +21,9 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class RelationalCreator<R> extends AbstractComplexEventFactory<R,RelationalTuple<? extends ITimeInterval>> {
+public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -35,7 +35,7 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 
 	@Override
 	@SuppressWarnings({"rawtypes"})
-	public RelationalTuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
+	public Tuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
 			MatchingTrace<R> matchingTrace, SymbolTable symTab, PointInTime timestamp) {
 //		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
 //		System.out.println("--------------------------------------------------------------------------");
@@ -60,7 +60,7 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Relation
 			attributes[i] = outputscheme.getEntries().get(i).getValue();
 		}
 
-		RelationalTuple<TimeInterval> ret = new RelationalTuple<TimeInterval>(attributes);
+		Tuple<TimeInterval> ret = new Tuple<TimeInterval>(attributes);
 		ret.setMetadata(new TimeInterval(timestamp));
 		//System.out.println("EVENT "+ret);
 		return ret;

@@ -17,17 +17,17 @@ package de.uniol.inf.is.odysseus.mining.clustering.feature;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 06.09.2011
  */
-public class RelationalTIClusteringFeatureMergeFunction<M extends ITimeInterval> implements ISnapshotMergeFunction<ClusteringFeature<RelationalTuple<ITimeInterval>>> {
+public class RelationalTIClusteringFeatureMergeFunction<M extends ITimeInterval> implements ISnapshotMergeFunction<ClusteringFeature<Tuple<ITimeInterval>>> {
 
 	@Override
-	public ClusteringFeature<RelationalTuple<ITimeInterval>> merge(ClusteringFeature<RelationalTuple<ITimeInterval>> left, ClusteringFeature<RelationalTuple<ITimeInterval>> right) {
+	public ClusteringFeature<Tuple<ITimeInterval>> merge(ClusteringFeature<Tuple<ITimeInterval>> left, ClusteringFeature<Tuple<ITimeInterval>> right) {
 		return left.merge(right);		
 	}
 

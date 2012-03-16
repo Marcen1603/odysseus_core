@@ -21,7 +21,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.FileAccessPO;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,8 +38,9 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	public void execute(FileAccessAO fileAccessAO,
 			TransformationConfiguration transformConfig) {
 		String fileAccessPOName = fileAccessAO.getSourcename();
-		ISource<?> fileAccessPO = new FileAccessPO<RelationalTuple<?>>(
-				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator());
+		ISource<?> fileAccessPO = new FileAccessPO<Tuple<?>>(
+				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator(), new TupleDataHandler(
+						fileAccessAO.getOutputSchema()));
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(fileAccessPOName, fileAccessPO);

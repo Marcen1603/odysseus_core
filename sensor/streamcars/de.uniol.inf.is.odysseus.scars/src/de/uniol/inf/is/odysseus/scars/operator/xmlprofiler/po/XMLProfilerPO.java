@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.po;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.profiler.ScarsXMLProfiler;
 
-public class XMLProfilerPO<M extends IProbabilityTimeIntervalConnectionContainerPredictionFunctionKey<IPredicate<MVRelationalTuple<M>>>>
-extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public class XMLProfilerPO<M extends IProbabilityTimeIntervalConnectionContainerPredictionFunctionKey<IPredicate<MVTuple<M>>>>
+extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	String operatorName;
 	String fileName;
@@ -45,7 +45,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		ScarsXMLProfiler p = ScarsXMLProfiler.getInstance(fileName, 0, 25);
 		p.profile(operatorName, getOutputSchema(), object);
 		transfer(object);
@@ -57,7 +57,7 @@ extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new XMLProfilerPO<M>(this);
 	}
 

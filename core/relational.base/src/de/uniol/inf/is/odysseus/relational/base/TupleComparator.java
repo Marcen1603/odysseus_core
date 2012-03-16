@@ -25,10 +25,13 @@ package de.uniol.inf.is.odysseus.relational.base;
  Log: Revision 1.2  2002/01/31 16:14:37  grawund
  Log: Versionsinformationskopfzeilen eingefuegt
  Log:
- @deprecated useTupleComparator
  */
 
-@Deprecated
-public class RelationalTupleComparator extends TupleComparator {
+import java.util.Comparator;
+public class TupleComparator implements Comparator<Object> {
 
+	@Override
+	public int compare(Object p0, Object p1) {
+		return ((Tuple<?>) p0).compareTo((Tuple<?>) p1);
+	}
 }

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.wrapper.base.SourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceConfiguration;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
@@ -143,7 +143,7 @@ public class SourcePool<T extends IMetaAttribute> {
 
     private void _transfer(final SourceSpec sourceSpec, final long timestamp, final Object[] data) {
         if (this.sources.containsKey(sourceSpec)) {
-            final RelationalTuple<TimeInterval> event = new RelationalTuple<TimeInterval>(
+            final Tuple<TimeInterval> event = new Tuple<TimeInterval>(
                     data.length);
             for (int i = 0; i < data.length; i++) {
                 event.setAttribute(i, data[i]);

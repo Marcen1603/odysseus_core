@@ -17,12 +17,12 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.mer
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionTimeInterval;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
-public class AssociationDataMergeFunction<M extends IProbabilityPredictionFunctionTimeInterval<RelationalTuple<M>, M>>
-		implements IDataMergeFunction<MVRelationalTuple<M>>{
+public class AssociationDataMergeFunction<M extends IProbabilityPredictionFunctionTimeInterval<Tuple<M>, M>>
+		implements IDataMergeFunction<MVTuple<M>>{
 
 	/**
 	 * This is the resultschema of elements
@@ -68,8 +68,8 @@ public class AssociationDataMergeFunction<M extends IProbabilityPredictionFuncti
 	/**
 	 * Metadata will not be merged. Returned object contains no metadata
 	 */
-	public MVRelationalTuple<M> merge(MVRelationalTuple<M> left,
-			MVRelationalTuple<M> right) {
+	public MVTuple<M> merge(MVTuple<M> left,
+			MVTuple<M> right) {
 		Object[] newAttributes = new Object[schema.size()];
 		if (left != null && right != null) {
 			Object[] leftAttributes = left.getAttributes();
@@ -96,7 +96,7 @@ public class AssociationDataMergeFunction<M extends IProbabilityPredictionFuncti
 			}
 		}
 
-		MVRelationalTuple<M> r = new MVRelationalTuple<M>(newAttributes);
+		MVTuple<M> r = new MVTuple<M>(newAttributes);
 		r.findMeasurementValuePositions(this.schema);
 		
 		return r;

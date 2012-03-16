@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.scars.metadata;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 /**
  * Die IStreamCarsExpression dient zur Kapsellung eines mathematischen Ausdrucks.
@@ -100,7 +100,7 @@ public interface IStreamCarsExpression {
 	 * @param schema
 	 * @param tuple
 	 */
-	public void bindTupleValues(SDFSchema schema, MVRelationalTuple<?> tuple);
+	public void bindTupleValues(SDFSchema schema, MVTuple<?> tuple);
 	
 
 	public void reset();

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectHandle
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.RouterConnection;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +41,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		String accessPOName = accessAO.getSourcename();
 		SizeByteBufferReceiverPO accessPO = null;
 		try {
-			accessPO = new SizeByteBufferReceiverPO(new ObjectHandler(new RelationalTupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
+			accessPO = new SizeByteBufferReceiverPO(new ObjectHandler(new TupleDataHandler(accessAO.getOutputSchema())), new RouterConnection(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator.predicate;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * The BrokerEqualPredicate evaluates to elements of type <T>.
@@ -72,8 +72,8 @@ public class BrokerEqualPredicate<T extends IMetaAttributeContainer<ITimeInterva
 		if (this.position == -1) {
 			return left.equals(right);
 		}
-        RelationalTuple<ITimeInterval> leftTuple = (RelationalTuple<ITimeInterval>) left;
-        RelationalTuple<ITimeInterval> rightTuple = (RelationalTuple<ITimeInterval>) right;	
+        Tuple<ITimeInterval> leftTuple = (Tuple<ITimeInterval>) left;
+        Tuple<ITimeInterval> rightTuple = (Tuple<ITimeInterval>) right;	
         if( leftTuple.getMetadata().getStart().equals(rightTuple.getMetadata().getStart()) ) {
 //			if (leftTuple.getAttribute(this.position).equals(rightTuple.getAttribute(this.position))) {				
         	return true;

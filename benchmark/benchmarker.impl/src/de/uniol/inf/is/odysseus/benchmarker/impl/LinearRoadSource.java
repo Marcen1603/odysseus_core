@@ -23,14 +23,14 @@ import java.util.NoSuchElementException;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class LinearRoadSource extends
-		AbstractIterableSource<RelationalTuple<? extends IClone>> {
+		AbstractIterableSource<Tuple<? extends IClone>> {
 
 	private String filename = "datafile3hours.dat.raw";
 	private ObjectInputStream iStream;
-	private RelationalTuple<?> buffer;
+	private Tuple<?> buffer;
 	private boolean isDone = false;
 	private long time;
 
@@ -60,7 +60,7 @@ public class LinearRoadSource extends
 			return (Integer) buffer.getAttribute(1) * 1000 + time <= System
 					.currentTimeMillis();
 		}
-		buffer = new RelationalTuple(9);
+		buffer = new Tuple(9);
 		try {
 			do {
 				for (int i = 0; i < 15; ++i) {

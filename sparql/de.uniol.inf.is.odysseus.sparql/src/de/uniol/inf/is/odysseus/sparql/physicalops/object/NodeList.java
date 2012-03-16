@@ -90,7 +90,7 @@
 //	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
 //	 * die Attribute 14 und 12 enthaelt.
 //	 * 
-//	 * Falls das aktuelle RelationalTuple keine Schemainformationen enthaelt,
+//	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt,
 //	 * wird das neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch
 //	 * die passenden Schemainformationen.
 //	 * 

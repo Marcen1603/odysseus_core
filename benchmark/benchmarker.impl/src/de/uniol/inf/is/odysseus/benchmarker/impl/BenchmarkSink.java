@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
  */
 public class BenchmarkSink<M extends ILatency> extends
-		AbstractSink<RelationalTuple<M>> {
+		AbstractSink<Tuple<M>> {
 
 	private Lock lock = new ReentrantLock();
 	private BlockingQueue<IBenchmarkResult<M>> resultQueue = new ArrayBlockingQueue<IBenchmarkResult<M>>(1);
@@ -63,7 +63,7 @@ public class BenchmarkSink<M extends ILatency> extends
 
 	int i = 0;
 	@Override
-	protected synchronized void process_next(RelationalTuple<M> object,
+	protected synchronized void process_next(Tuple<M> object,
 			int port, boolean isReadOnly) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
 			addToResult(object);
@@ -75,7 +75,7 @@ public class BenchmarkSink<M extends ILatency> extends
 		}
 	}
 
-	protected void addToResult(RelationalTuple<M> object) {
+	protected void addToResult(Tuple<M> object) {
 		result.add(object.getMetadata());
 	}
 

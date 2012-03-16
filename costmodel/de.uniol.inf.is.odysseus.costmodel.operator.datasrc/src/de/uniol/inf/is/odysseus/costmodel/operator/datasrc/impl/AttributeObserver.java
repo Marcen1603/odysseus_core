@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Combin
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualWidthHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.FreedmanDiaconisRule;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @SuppressWarnings("rawtypes")
 public class AttributeObserver implements IDataSourceObserverListener {
@@ -73,7 +73,7 @@ public class AttributeObserver implements IDataSourceObserverListener {
 			return;
 		}
 		
-		RelationalTuple<?> tuple = (RelationalTuple<?>)element;
+		Tuple<?> tuple = (Tuple<?>)element;
 		
 		Object value = tuple.getAttribute(schemaPosition);
 		getLogger().debug("Recieved value for " + attribute + ": " + value);

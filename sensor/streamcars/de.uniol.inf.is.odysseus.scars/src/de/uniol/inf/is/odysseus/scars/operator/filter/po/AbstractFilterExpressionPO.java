@@ -19,11 +19,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.scars.metadata.IStreamCarsExpression;
 import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpression;
 
-public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObjectTrackingLatencyIConnectionContainer> extends AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObjectTrackingLatencyIConnectionContainer> extends AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private String predictedObjectListPath;
 	private String scannedObjectListPath;
@@ -76,7 +76,7 @@ public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObj
 	}
 
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		object.getMetadata().setObjectTrackingLatencyStart();
 		object = computeAll(object);
 		// transfer to broker
@@ -84,10 +84,10 @@ public abstract class AbstractFilterExpressionPO<M extends IGainIProbabilityIObj
 		transfer(object);
 	}
 
-	public abstract MVRelationalTuple<M> computeAll(MVRelationalTuple<M> object);
+	public abstract MVTuple<M> computeAll(MVTuple<M> object);
 
 	@Override
-	public abstract AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone();
+	public abstract AbstractPipe<MVTuple<M>, MVTuple<M>> clone();
 
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {

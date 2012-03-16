@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.nexmark.generator.SimpleCalendar;
 import de.uniol.inf.is.odysseus.nexmark.generator.TupleContainer;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Der NexmarkStreamClientHandler bearbeitet eingehende Streamverbindungen
@@ -359,7 +359,7 @@ public class NexmarkStreamClientHandler extends Thread {
      *            bestimmt wird.
      * @return die zu wartende Zeit
      */
-    private long getTimeToWait(RelationalTuple<ITimeInterval> tuple, SimpleCalendar cal) {
+    private long getTimeToWait(Tuple<ITimeInterval> tuple, SimpleCalendar cal) {
         long timeToWait = ((Long) tuple.getAttribute(0) / configuration.accelerationFactor) - cal.getTimeInMS();
 
         return timeToWait;
@@ -400,7 +400,7 @@ public class NexmarkStreamClientHandler extends Thread {
      * @param type
      *            - Type des Tupels
      */
-    private void sendTupleToClients(RelationalTuple<ITimeInterval> tuple, NEXMarkStreamType type) {
+    private void sendTupleToClients(Tuple<ITimeInterval> tuple, NEXMarkStreamType type) {
         synchronized (this.clients) {
             Iterator<NEXMarkClient> iter = clients.iterator();
             while (iter.hasNext()) {

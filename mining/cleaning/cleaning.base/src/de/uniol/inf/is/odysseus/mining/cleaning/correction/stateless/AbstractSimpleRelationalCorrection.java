@@ -16,14 +16,14 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public abstract class AbstractSimpleRelationalCorrection implements IUnaryCorrection<RelationalTuple<?>> {
+public abstract class AbstractSimpleRelationalCorrection implements IUnaryCorrection<Tuple<?>> {
 
 	
 	private String attributeName;	
@@ -43,7 +43,7 @@ public abstract class AbstractSimpleRelationalCorrection implements IUnaryCorrec
 		}		
 	}
 		
-	protected RelationalTuple<?> replaceAttribute(RelationalTuple<?> tuple, Object value){		
+	protected Tuple<?> replaceAttribute(Tuple<?> tuple, Object value){		
 		tuple.setAttribute(attributePosition, value);
 		return tuple;		
 	}

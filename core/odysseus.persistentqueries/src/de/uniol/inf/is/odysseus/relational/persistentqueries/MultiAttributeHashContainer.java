@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.persistentqueries;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @SuppressWarnings({"rawtypes"})
 public class MultiAttributeHashContainer {
@@ -9,9 +9,9 @@ public class MultiAttributeHashContainer {
 	 * The relational tuple to store
 	 * in a hash map.
 	 */
-	private RelationalTuple tuple;
+	private Tuple tuple;
 	
-	private RelationalTuple restrictedTuple;
+	private Tuple restrictedTuple;
 	
 	/**
 	 * if the hashCode has been calculated once
@@ -19,7 +19,7 @@ public class MultiAttributeHashContainer {
 	 */
 	int hashCode;
 	
-	public MultiAttributeHashContainer(RelationalTuple tuple, RelationalTuple restrictedTuple){
+	public MultiAttributeHashContainer(Tuple tuple, Tuple restrictedTuple){
 		this.tuple = tuple;
 		this.restrictedTuple = restrictedTuple;
 		this.hashCode = this.restrictedTuple.hashCode();
@@ -34,11 +34,11 @@ public class MultiAttributeHashContainer {
 		return this.restrictedTuple.equals(other.restrictedTuple);
 	}
 	
-	public RelationalTuple getTuple(){
+	public Tuple getTuple(){
 		return this.tuple;
 	}
 	
-	public RelationalTuple getRestrictedTuple(){
+	public Tuple getRestrictedTuple(){
 		return this.restrictedTuple;
 	}
 }

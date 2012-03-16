@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleIndexPath;
 import de.uniol.inf.is.odysseus.scars.IProbabilityConnectionContainerObjectTrackingLatency;
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.scars.metadata.StreamCarsExpressionVariable;
  */
 
 public class HypothesisExpressionEvaluationPO<M extends IProbabilityConnectionContainerObjectTrackingLatency> extends
-		AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> {
+		AbstractPipe<MVTuple<M>, MVTuple<M>> {
 
 	private StreamCarsExpression expression;
 	private String expressionString;
@@ -64,7 +64,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbabilityConnectionCo
 	}
 
 	@Override
-	public AbstractPipe<MVRelationalTuple<M>, MVRelationalTuple<M>> clone() {
+	public AbstractPipe<MVTuple<M>, MVTuple<M>> clone() {
 		return new HypothesisExpressionEvaluationPO<M>(this);
 	}
 
@@ -98,7 +98,7 @@ public class HypothesisExpressionEvaluationPO<M extends IProbabilityConnectionCo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(MVRelationalTuple<M> object, int port) {
+	protected void process_next(MVTuple<M> object, int port) {
 		TupleIndexPath scannedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getScannedObjectListSIPath(), object);
 		TupleIndexPath predictedTupleIndexPath = TupleIndexPath.fromSchemaIndexPath(this.getPredictedObjectListSIPath(), object);
 
@@ -131,16 +131,16 @@ public class HypothesisExpressionEvaluationPO<M extends IProbabilityConnectionCo
 						Object val = tupleHelper.getObject(var.getPath());
 						String metaDataInfo = var.getMetadataInfo();
 						if (metaDataInfo.equals(METADATA_COV)) {
-							var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVRelationalTuple<M>) val).getMetadata()));
-//							var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
+							var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVTuple<M>) val).getMetadata()));
+//							var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVTuple<M>) val).getMetadata().getCovariance()));
 						}
 					} else if (var.isInList(predictedTupleIndexPath.toArray())) {
 						var.replaceVaryingIndex(con.getRightPath().getLastTupleIndex().toInt());
 						Object val = tupleHelper.getObject(var.getPath());
 						String metaDataInfo = var.getMetadataInfo();
 						if (metaDataInfo.equals(METADATA_COV)) {
-							var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVRelationalTuple<M>) val).getMetadata()));
-//							var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVRelationalTuple<M>) val).getMetadata().getCovariance()));
+							var.bind(covHelper.getCovarianceForExpressionVariables(this.expression, ((MVTuple<M>) val).getMetadata()));
+//							var.bind(this.covarianceHelper.getCovarianceForAttributes(((MVTuple<M>) val).getMetadata().getCovariance()));
 						}
 					}
 				}

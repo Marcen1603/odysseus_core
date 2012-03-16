@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.markov.operator.aggregate.ForwardAggregationFunc
 import de.uniol.inf.is.odysseus.markov.operator.aggregate.ViterbiAggregationFunction;
 import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -93,8 +93,8 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 	
-	protected IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos, HiddenMarkovModel hmm) {
-		IAggregateFunction<RelationalTuple<?>,RelationalTuple<?>> aggFunc = null;		
+	protected IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(AggregateFunction key, int[] pos, HiddenMarkovModel hmm) {
+		IAggregateFunction<Tuple<?>,Tuple<?>> aggFunc = null;		
 		if ((key.getName().equalsIgnoreCase("FORWARD"))) {
 			aggFunc = new ForwardAggregationFunction(hmm);
 		} else if (key.getName().equalsIgnoreCase("VITERBI")) {

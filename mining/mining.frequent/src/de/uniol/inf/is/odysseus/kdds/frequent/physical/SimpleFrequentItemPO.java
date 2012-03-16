@@ -21,9 +21,9 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class SimpleFrequentItemPO<T extends RelationalTuple<?>> extends AbstractFrequentPO<T> {
+public class SimpleFrequentItemPO<T extends Tuple<?>> extends AbstractFrequentPO<T> {
 
 	private static Logger logger = LoggerFactory.getLogger(SimpleFrequentItemPO.class);
 	
@@ -40,7 +40,7 @@ public class SimpleFrequentItemPO<T extends RelationalTuple<?>> extends Abstract
 	
 	@Override
 	protected void process_next(T newObject, int port) {		
-		RelationalTuple<?> tuple = newObject.restrict(getOnAttributes(), true);				
+		Tuple<?> tuple = newObject.restrict(getOnAttributes(), true);				
 		if (this.items.containsKey(tuple)) {
 			int oldCount = this.items.get(tuple);
 			this.items.put(tuple, oldCount + 1);

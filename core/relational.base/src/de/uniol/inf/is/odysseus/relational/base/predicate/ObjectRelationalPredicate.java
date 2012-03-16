@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 
-public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple<?>> implements IRelationalPredicate {
+public class ObjectRelationalPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate {
 
 	private static final long serialVersionUID = 1222104352250883947L;
 
@@ -126,7 +126,7 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> input) {
+	public boolean evaluate(Tuple<?> input) {
 		Object[] values = new Object[this.attributePaths.length];
 		TupleHelper th = new TupleHelper(input);
 		for (int i = 0; i < values.length; ++i) {
@@ -138,10 +138,10 @@ public class ObjectRelationalPredicate extends AbstractPredicate<RelationalTuple
 	}
 
 	@Override
-	public boolean evaluate(RelationalTuple<?> left, RelationalTuple<?> right) {
+	public boolean evaluate(Tuple<?> left, Tuple<?> right) {
 		Object[] values = new Object[this.attributePaths.length];
 		for (int i = 0; i < values.length; ++i) {
-			RelationalTuple<?> r = fromRightChannel[i] ? right : left;
+			Tuple<?> r = fromRightChannel[i] ? right : left;
 			TupleHelper th = new TupleHelper(r);
 //			values[i] = r.getORAttribute(this.attributePaths[i]);
 			values[i] = th.getObject(this.attributePaths[i]);

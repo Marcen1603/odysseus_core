@@ -21,7 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class LabdataToCSV {
 	@SuppressWarnings({"rawtypes"})
@@ -38,7 +38,7 @@ public class LabdataToCSV {
 		FileWriter writer = new FileWriter(outputFilename);
 		try {
 		while(true) {
-			RelationalTuple tuple = (RelationalTuple) in.readObject();
+			Tuple tuple = (Tuple) in.readObject();
 			writer.write(tuple.getAttribute(0).toString());
 			for(int i = 1; i < tuple.size(); ++i) {
 				writer.write(",");

@@ -31,13 +31,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Jonas Jacobi
  */
 public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
-		AbstractIterableSource<RelationalTuple<M>> {
+		AbstractIterableSource<Tuple<M>> {
 
 	static Logger _logger = null;
 
@@ -54,7 +54,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	final private String user;
 	final private String password;
 	private ObjectInputStream channel;
-	private RelationalTuple<M> buffer;
+	private Tuple<M> buffer;
 	private IDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
@@ -214,7 +214,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 				propagateDone();
 				return false;
 			}
-			this.buffer = new RelationalTuple<M>(this.attributeData);
+			this.buffer = new Tuple<M>(this.attributeData);
 			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 
 			return true;
@@ -238,7 +238,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 
 	//
 	// public void setMetadataFactory(
-	// IMetadataFactory<M, RelationalTuple<M>> metadataFactory) {
+	// IMetadataFactory<M, Tuple<M>> metadataFactory) {
 	// this.metadataFactory = metadataFactory;
 	// }
 

@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -24,7 +24,7 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
      * 
      */
     private static final long serialVersionUID = 8022249253673132751L;
-    private final List<RelationalTuple<? extends IMetaAttribute>> segments = new CopyOnWriteArrayList<RelationalTuple<? extends IMetaAttribute>>();
+    private final List<Tuple<? extends IMetaAttribute>> segments = new CopyOnWriteArrayList<Tuple<? extends IMetaAttribute>>();
     private int zoom = 20;
     private Double angle = 0.0;
     private Double[] offset = new Double[] {
@@ -36,7 +36,7 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
         this.addKeyListener(this);
     }
 
-    public void onFeature(final RelationalTuple<? extends IMetaAttribute> segment) {
+    public void onFeature(final Tuple<? extends IMetaAttribute> segment) {
         this.segments.add(segment);
         if (this.segments.size() > 10) {
             this.repaint();
@@ -52,7 +52,7 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
         graphics.drawLine(0, 500, 1000, 500);
 
         double angle = Math.toRadians(this.angle);
-        for (final RelationalTuple<? extends IMetaAttribute> tuple : this.segments) {
+        for (final Tuple<? extends IMetaAttribute> tuple : this.segments) {
         	Geometry segment = (Geometry)tuple.getAttribute(0);
         	String text = (String)tuple.getAttribute(1);
         	

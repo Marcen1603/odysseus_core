@@ -37,14 +37,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class StreamTableEditor implements IStreamEditorType {
 
 	private TableViewer viewer;
 	private SDFSchema schema;
 
-	private List<RelationalTuple<?>> tuples = new ArrayList<RelationalTuple<?>>();
+	private List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private int maxTuplesCount;
 
 	public StreamTableEditor(int maxTuples) {
@@ -53,12 +53,12 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
-		if (!(element instanceof RelationalTuple<?>)) {
+		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: StreamTable is only for relational tuple!");
 			return;
 		}
 
-		tuples.add(0, (RelationalTuple<?>) element);
+		tuples.add(0, (Tuple<?>) element);
 		if (tuples.size() > getMaxTuplesCount()) {
 			tuples.remove(tuples.size() - 1);
 		}
@@ -151,7 +151,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			col.setLabelProvider(new CellLabelProvider() {
 				@Override
 				public void update(ViewerCell cell) {
-					cell.setText(((RelationalTuple<?>) cell.getElement()).getAttribute(fi).toString());
+					cell.setText(((Tuple<?>) cell.getElement()).getAttribute(fi).toString());
 				}
 			});
 			layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));

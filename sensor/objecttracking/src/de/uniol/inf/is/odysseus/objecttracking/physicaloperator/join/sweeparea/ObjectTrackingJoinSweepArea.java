@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.IRangePredicate;
 import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
 
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.objecttracking.util.Pair;
  *
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
+public class ObjectTrackingJoinSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVTuple<M>> extends JoinTISweepArea<T>{
 	
 	SDFSchema leftSchema;
 	SDFSchema rightSchema;

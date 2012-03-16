@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe.TiltedTimeWindow;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -42,12 +42,12 @@ public class ExampleRun {
 
 		SDFSchema schema = new SDFSchema("dummy", attrs);
 
-		ISnapshotMergeFunction<ClusteringFeature<RelationalTuple<ITimeInterval>>> datamergeFunction = new RelationalTIClusteringFeatureMergeFunction<ITimeInterval>();
+		ISnapshotMergeFunction<ClusteringFeature<Tuple<ITimeInterval>>> datamergeFunction = new RelationalTIClusteringFeatureMergeFunction<ITimeInterval>();
 
-		TiltedTimeWindow<ClusteringFeature<RelationalTuple<ITimeInterval>>> window = new TiltedTimeWindow<ClusteringFeature<RelationalTuple<ITimeInterval>>>(datamergeFunction);
+		TiltedTimeWindow<ClusteringFeature<Tuple<ITimeInterval>>> window = new TiltedTimeWindow<ClusteringFeature<Tuple<ITimeInterval>>>(datamergeFunction);
 
 		for (int i = 1; i <= 10; i++) {
-			RelationalTuple<ITimeInterval> example = new RelationalTuple<ITimeInterval>(schema.size());
+			Tuple<ITimeInterval> example = new Tuple<ITimeInterval>(schema.size());
 			example.setAttribute(0, i);
 			example.setAttribute(1, "Item " + i);
 			RelationalTIClusteringFeature<ITimeInterval> cf = new RelationalTIClusteringFeature<ITimeInterval>(example); 			

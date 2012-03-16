@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.fusion.level1.aggregate.function.RelationalPolygonAggregation;
 import de.uniol.inf.is.odysseus.fusion.tracking.aggregate.function.TrackingAggregation;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class AggregateFunctionProvider implements IAggregateFunctionBuilder {
 
@@ -19,15 +19,15 @@ public class AggregateFunctionProvider implements IAggregateFunctionBuilder {
 	}
 	
 	@Override
-    public IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
+    public IAggregateFunction<Tuple<?>, Tuple<?>> createAggFunction(AggregateFunction key, int[] pos) {
 		
-		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
+		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		
 		if(key.getName().equalsIgnoreCase("L1Fusion")) {
-			aggFunc = new RelationalPolygonAggregation<RelationalTuple<?>, RelationalTuple<?>>(pos);
+			aggFunc = new RelationalPolygonAggregation<Tuple<?>, Tuple<?>>(pos);
 		}  
 		if(key.getName().equalsIgnoreCase("Tracker")) {
-			aggFunc = new TrackingAggregation<RelationalTuple<?>, RelationalTuple<?>>(pos);
+			aggFunc = new TrackingAggregation<Tuple<?>, Tuple<?>>(pos);
 		}  
 		
 		

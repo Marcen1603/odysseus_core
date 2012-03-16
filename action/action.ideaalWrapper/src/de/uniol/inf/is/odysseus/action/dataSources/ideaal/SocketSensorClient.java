@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * Client responsible for fetching values 
@@ -64,7 +64,7 @@ public class SocketSensorClient extends ISourceClient {
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
 			}
 			
-			RelationalTuple<IMetaAttribute> tuple = new RelationalTuple<IMetaAttribute>(this.schema.size());	
+			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());	
 			tuple.setAttribute(0, System.currentTimeMillis());
 			
 			tuple.setAttribute(1, tupleID);

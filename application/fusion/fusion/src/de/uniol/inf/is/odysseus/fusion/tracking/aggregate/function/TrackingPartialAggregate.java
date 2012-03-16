@@ -10,27 +10,27 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 
-public class TrackingPartialAggregate<T> implements IPartialAggregate<RelationalTuple<? extends IMetaAttribute>>, Iterable<RelationalTuple<? extends IMetaAttribute>>{
+public class TrackingPartialAggregate<T> implements IPartialAggregate<Tuple<? extends IMetaAttribute>>, Iterable<Tuple<? extends IMetaAttribute>>{
 	
-	final Map<Integer, RelationalTuple<? extends IMetaAttribute>> elems;
+	final Map<Integer, Tuple<? extends IMetaAttribute>> elems;
 	
-	public TrackingPartialAggregate(RelationalTuple<? extends IMetaAttribute> elem) {
-		elems = new HashMap<Integer,RelationalTuple<? extends IMetaAttribute>>();
+	public TrackingPartialAggregate(Tuple<? extends IMetaAttribute> elem) {
+		elems = new HashMap<Integer,Tuple<? extends IMetaAttribute>>();
 		addElem(elem);
 	}
 	
-	public TrackingPartialAggregate(TrackingPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
-		this.elems = new HashMap<Integer,RelationalTuple<? extends IMetaAttribute>>(p.elems);
+	public TrackingPartialAggregate(TrackingPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
+		this.elems = new HashMap<Integer,Tuple<? extends IMetaAttribute>>(p.elems);
 	}
 
-	public Map<Integer, RelationalTuple<? extends IMetaAttribute>> getElems() {
+	public Map<Integer, Tuple<? extends IMetaAttribute>> getElems() {
 		return elems;
 	}
 	
-	public TrackingPartialAggregate<T> addElem(RelationalTuple<? extends IMetaAttribute> elem) {
+	public TrackingPartialAggregate<T> addElem(Tuple<? extends IMetaAttribute> elem) {
 		boolean tracked = false;
 		
 		Geometry geometry1 =  (Geometry)elem.getAttribute(0);
@@ -55,14 +55,14 @@ public class TrackingPartialAggregate<T> implements IPartialAggregate<Relational
 	}
 	
 	@Override
-	public ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>> clone(){
-		return new ElementPartialAggregate<RelationalTuple<? extends IMetaAttribute>>(this);
+	public ElementPartialAggregate<Tuple<? extends IMetaAttribute>> clone(){
+		return new ElementPartialAggregate<Tuple<? extends IMetaAttribute>>(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterator<RelationalTuple<? extends IMetaAttribute>> iterator() {
-		return ((Iterable<RelationalTuple<? extends IMetaAttribute>>) elems).iterator();
+	public Iterator<Tuple<? extends IMetaAttribute>> iterator() {
+		return ((Iterable<Tuple<? extends IMetaAttribute>>) elems).iterator();
 	}
 
 	public int size() {

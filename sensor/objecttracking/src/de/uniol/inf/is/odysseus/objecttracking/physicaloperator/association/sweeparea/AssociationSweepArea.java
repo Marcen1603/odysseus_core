@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.objecttracking.physicaloperator.association.swe
 
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.objecttracking.IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 
 
 
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
  *
  */
 @SuppressWarnings({"rawtypes"})
-public class AssociationSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVRelationalTuple<M>> extends JoinTISweepArea<T>{
+public class AssociationSweepArea<M extends IPredictionFunctionKeyTimeIntervalProbabilityApplicationTime, T extends MVTuple<M>> extends JoinTISweepArea<T>{
 //
 //	SDFSchema leftSchema;
 //	SDFSchema rightSchema;

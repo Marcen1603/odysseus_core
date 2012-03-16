@@ -1,4 +1,4 @@
-The here used version of the NEXMark Generator is a modified version of the NEXMark Benchmark found at http://datalab.cs.pdx.edu/niagara/NEXMark/. Instead of generating XML documents it generates RelationalTuple structures.
+The here used version of the NEXMark Generator is a modified version of the NEXMark Benchmark found at http://datalab.cs.pdx.edu/niagara/NEXMark/. Instead of generating XML documents it generates Tuple structures.
 
 The NEXMark Generator simulates an auction house. It generates the streams people, auctions and bids. The auctions are created to static categories.
 

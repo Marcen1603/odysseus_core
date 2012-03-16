@@ -20,7 +20,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 
@@ -44,22 +44,22 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  *
  * @param <M>
  */
-public class PredictionFunctionContainer<M extends IProbability> implements Iterable<IPredicate<MVRelationalTuple<M>>>{
+public class PredictionFunctionContainer<M extends IProbability> implements Iterable<IPredicate<MVTuple<M>>>{
 	
-	private Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>> predictionFunctions;
-	private IPredicate<MVRelationalTuple<M>> defaultPredictionFunctionKey;
+	private Map<IPredicate<MVTuple<M>>, IPredictionFunction<M>> predictionFunctions;
+	private IPredicate<MVTuple<M>> defaultPredictionFunctionKey;
 	private IPredictionFunction<M> defaultPredictionFunction;
 	
 	
 	public PredictionFunctionContainer() {
-		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>>();
-		defaultPredictionFunctionKey = new TruePredicate<MVRelationalTuple<M>>();
+		predictionFunctions = new HashMap<IPredicate<MVTuple<M>>, IPredictionFunction<M>>();
+		defaultPredictionFunctionKey = new TruePredicate<MVTuple<M>>();
 		defaultPredictionFunctionKey.init();
 		defaultPredictionFunction = null;
 	}
 	
 	public PredictionFunctionContainer(PredictionFunctionContainer<M> container) {
-		predictionFunctions = new HashMap<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>>(container.getMap());
+		predictionFunctions = new HashMap<IPredicate<MVTuple<M>>, IPredictionFunction<M>>(container.getMap());
 		defaultPredictionFunctionKey = container.getDefaultPredictionFunctionKey();
 		defaultPredictionFunction = container.getDefaultPredictionFunction();
 	}
@@ -70,7 +70,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * @param key
 	 * @return
 	 */
-	public IPredictionFunction<M> get(IPredicate<MVRelationalTuple<M>> key) {
+	public IPredictionFunction<M> get(IPredicate<MVTuple<M>> key) {
 		if(key.equals(defaultPredictionFunctionKey)) {
 			return defaultPredictionFunction;
 		}
@@ -91,7 +91,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 		return defaultPredictionFunction;
 	}
 	
-	public IPredicate<MVRelationalTuple<M>> getDefaultPredictionFunctionKey() {
+	public IPredicate<MVTuple<M>> getDefaultPredictionFunctionKey() {
 		return defaultPredictionFunctionKey;
 	}
 	
@@ -101,7 +101,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * Note: the default prediction function and key are treated differently, and are not contained in this map.
 	 * @return 
 	 */
-	public Map<IPredicate<MVRelationalTuple<M>>, IPredictionFunction<M>> getMap() {
+	public Map<IPredicate<MVTuple<M>>, IPredictionFunction<M>> getMap() {
 		return predictionFunctions;
 	}
 	
@@ -111,7 +111,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	 * @param expressions
 	 * @param predicate
 	 */
-	public void setPredictionFunction(PredictionExpression[] expressions, IPredicate<MVRelationalTuple<M>> predicate) {
+	public void setPredictionFunction(PredictionExpression[] expressions, IPredicate<MVTuple<M>> predicate) {
 		if (this.predictionFunctions.containsKey(predicate)) {
 			throw new IllegalArgumentException("predictionFunction already exists: " + expressions);
 		}
@@ -123,7 +123,7 @@ public class PredictionFunctionContainer<M extends IProbability> implements Iter
 	}
 	
 	@Override
-	public Iterator<IPredicate<MVRelationalTuple<M>>> iterator() {
+	public Iterator<IPredicate<MVTuple<M>>> iterator() {
 		return predictionFunctions.keySet().iterator();
 	}
 	

@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataTransformation;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		extends AbstractInputStreamAccessPO<In, Out> {
@@ -108,7 +108,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 			if ((o instanceof Integer) && (((Integer) o).equals(0))) {
 				propagateDone();
 				return false;
-			} else if (o instanceof RelationalTuple) {
+			} else if (o instanceof Tuple) {
 				logger.debug("tuple received "+adv.getID().toString() +" "+o);
 			}
 

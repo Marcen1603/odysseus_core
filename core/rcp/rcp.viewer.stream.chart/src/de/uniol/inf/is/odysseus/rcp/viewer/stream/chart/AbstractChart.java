@@ -52,7 +52,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IChartSettingChangeable, IStreamElementListener<Object> {
 
@@ -144,13 +144,13 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
-		if (!(element instanceof RelationalTuple<?>)) {
+		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
 		}
 
 		@SuppressWarnings("unchecked")
-		final RelationalTuple<M> tuple = (RelationalTuple<M>) element;
+		final Tuple<M> tuple = (Tuple<M>) element;
 		try {
 			List<T> values = this.viewSchema.convertToChoosenFormat(this.viewSchema.convertToViewableFormat(tuple));
 			processElement(values, tuple.getMetadata(), port);

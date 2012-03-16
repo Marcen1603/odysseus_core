@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //creates join operators
@@ -137,7 +137,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
 		ASTPredicate wherePredicate = (ASTPredicate) node.jjtGetChild(0);
-		IPredicate<RelationalTuple<?>> predicate;
+		IPredicate<Tuple<?>> predicate;
 		predicate = CreatePredicateVisitor.toPredicate(wherePredicate,
 				this.attributeResolver);
 		predicate = ComplexPredicateHelper.pushDownNegation(predicate, false);
@@ -148,7 +148,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 				.iterator();
 		IPredicate<?> selectPredicate = null;
 		while (it.hasNext()) {
-			IPredicate<RelationalTuple<?>> next = (IPredicate<RelationalTuple<?>>) it.next();
+			IPredicate<Tuple<?>> next = (IPredicate<Tuple<?>>) it.next();
 			if (containsQuantification(next)) {
 				curInputAO = createQuantificationPlan(curInputAO, next);
 			} else {
@@ -191,7 +191,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	private AbstractLogicalOperator createQuantificationPlan(
 			AbstractLogicalOperator curInputAO,
-			IPredicate<RelationalTuple<?>> pred) throws QueryParseException {
+			IPredicate<Tuple<?>> pred) throws QueryParseException {
 		if (pred instanceof ComplexPredicate) {
 			AbstractLogicalOperator left = createQuantificationPlan(curInputAO,
 					((ComplexPredicate) pred).getLeft());

@@ -25,7 +25,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
-import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
+import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
 /**
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
  *
  * @param <T> The metadata of tuples must provide a covariance matrix
  */
-public class MahalanobisPredicate<T extends IProbability> extends AbstractPredicate<MVRelationalTuple<T>>{
+public class MahalanobisPredicate<T extends IProbability> extends AbstractPredicate<MVTuple<T>>{
 
 
 	private static final long serialVersionUID = 9146263764814383957L;
@@ -102,7 +102,7 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 	}
 
 	@Override
-	public boolean evaluate(MVRelationalTuple<T> input) {
+	public boolean evaluate(MVTuple<T> input) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -113,8 +113,8 @@ public class MahalanobisPredicate<T extends IProbability> extends AbstractPredic
 	 * (left - right)^T rightCov (left - right)
 	 */
 	@Override
-	public boolean evaluate(MVRelationalTuple<T> left,
-			MVRelationalTuple<T> right) {
+	public boolean evaluate(MVTuple<T> left,
+			MVTuple<T> right) {
 		left.setMeasurementValuePositions(this.leftMVpos.clone());
 		right.setMeasurementValuePositions(this.rightMVpos.clone());
 		

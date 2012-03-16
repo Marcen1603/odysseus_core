@@ -13,11 +13,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class SourcePO<T extends IMetaAttribute> extends
-        AbstractSource<RelationalTuple<TimeInterval>> {
+        AbstractSource<Tuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);
     private final SDFSchema schema;
     private final String adapterName;
@@ -84,7 +84,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     public void transfer(final long timestamp, final Object[] data) {
         if (this.isOpen()) {
-            final RelationalTuple<TimeInterval> event = new RelationalTuple<TimeInterval>(this
+            final Tuple<TimeInterval> event = new Tuple<TimeInterval>(this
                     .getOutputSchema().size());
             for (int i = 0; i < data.length; i++) {
                 event.setAttribute(i, data[i]);
