@@ -121,7 +121,6 @@ public class ObjectInputStreamAccessPO<M> extends
 		}
 	}
 
-	@SuppressWarnings("unchecked")
     @Override
 	public synchronized boolean hasNext() {
 		if (isOpen()) {
