@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -41,13 +41,13 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
 
     public GeometryPartialAggregate<T> addElem(T elem) {
         boolean merged = false;
-        Geometry geometry = (Geometry) ((RelationalTuple<?>) elem).getAttribute(0);
+        Geometry geometry = (Geometry) ((Tuple<?>) elem).getAttribute(0);
         Coordinate[] coordinates = geometry.getCoordinates();
         if (coordinates.length > 1) {
             Coordinate from = coordinates[0];
             Coordinate to = coordinates[coordinates.length - 1];
             for (int i = 0; i < elems.size(); i++) {
-                RelationalTuple<?> tuple = (RelationalTuple<?>) elems.get(i);
+                Tuple<?> tuple = (Tuple<?>) elems.get(i);
                 Geometry envelope = (Geometry) tuple.getAttribute(0);
                 Coordinate[] envelopeCoordinates = envelope.getCoordinates();
                 double minX = envelopeCoordinates[0].x;
@@ -75,7 +75,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
                 }
             }
             if (!merged) {
-                RelationalTuple<?> tuple = (RelationalTuple<?>) elem;
+                Tuple<?> tuple = (Tuple<?>) elem;
                 tuple.setAttribute(
                         0,
                         geometryFactory.createLineString(new Coordinate[] {
@@ -98,7 +98,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
             List<T> tmp = new ArrayList<T>(elems);
             int offset = 0;
             for (int i = 0; i < tmp.size(); i++) {
-                Geometry geometry = (Geometry) ((RelationalTuple<?>) tmp.get(i)).getAttribute(0);
+                Geometry geometry = (Geometry) ((Tuple<?>) tmp.get(i)).getAttribute(0);
                 Coordinate[] coordinates = geometry.getCoordinates();
                 Coordinate bottomLeft = coordinates[0];
                 Coordinate topLeft = coordinates[1];
@@ -107,7 +107,7 @@ public class GeometryPartialAggregate<T> implements IPartialAggregate<T>, Iterab
                 int index = -1;
                 for (int j = 0; j < elems.size(); j++) {
                     if ((i - offset) != j) {
-                        RelationalTuple<?> tuple = (RelationalTuple<?>) elems.get(j);
+                        Tuple<?> tuple = (Tuple<?>) elems.get(j);
                         Geometry envelope = (Geometry) tuple.getAttribute(0);
                         Coordinate[] envelopeCoordinates = envelope.getCoordinates();
                         double minX = envelopeCoordinates[0].x;

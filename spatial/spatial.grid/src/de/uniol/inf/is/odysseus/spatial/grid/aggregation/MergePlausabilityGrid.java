@@ -16,14 +16,14 @@ package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class MergePlausabilityGrid extends
-		AbstractAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> {
+		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -37,36 +37,36 @@ public class MergePlausabilityGrid extends
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> init(
-			final RelationalTuple<?> in) {
-		final IPartialAggregate<RelationalTuple<?>> grid = new GridPartialPlausabilityAggregate<RelationalTuple<?>>(
+	public IPartialAggregate<Tuple<?>> init(
+			final Tuple<?> in) {
+		final IPartialAggregate<Tuple<?>> grid = new GridPartialPlausabilityAggregate<Tuple<?>>(
 				(Grid) in.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
-	public IPartialAggregate<RelationalTuple<?>> merge(
-			final IPartialAggregate<RelationalTuple<?>> p,
-			final RelationalTuple<?> toMerge, final boolean createNew) {
-		GridPartialPlausabilityAggregate<RelationalTuple<?>> grid = null;
+	public IPartialAggregate<Tuple<?>> merge(
+			final IPartialAggregate<Tuple<?>> p,
+			final Tuple<?> toMerge, final boolean createNew) {
+		GridPartialPlausabilityAggregate<Tuple<?>> grid = null;
 		if (createNew) {
-			grid = new GridPartialPlausabilityAggregate<RelationalTuple<?>>(
-					((GridPartialPlausabilityAggregate<RelationalTuple<?>>) p)
+			grid = new GridPartialPlausabilityAggregate<Tuple<?>>(
+					((GridPartialPlausabilityAggregate<Tuple<?>>) p)
 							.getGrid());
 		} else {
-			grid = (GridPartialPlausabilityAggregate<RelationalTuple<?>>) p;
+			grid = (GridPartialPlausabilityAggregate<Tuple<?>>) p;
 		}
 		grid.merge((Grid) toMerge.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
-	public RelationalTuple<?> evaluate(
-			final IPartialAggregate<RelationalTuple<?>> p) {
-		final GridPartialPlausabilityAggregate<RelationalTuple<?>> grid = (GridPartialPlausabilityAggregate<RelationalTuple<?>>) p;
+	public Tuple<?> evaluate(
+			final IPartialAggregate<Tuple<?>> p) {
+		final GridPartialPlausabilityAggregate<Tuple<?>> grid = (GridPartialPlausabilityAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
-		final RelationalTuple<?> tuple = new RelationalTuple(1);
+		final Tuple<?> tuple = new Tuple(1);
 		tuple.setAttribute(0, grid.getGrid());
 		return tuple;
 	}

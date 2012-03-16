@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -48,7 +48,7 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 	@Override
 	public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key,
 			int[] pos) {
-		IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
+		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(MERGE_PLAUSABILITY_GRID)) {
 			aggFunc = new MergePlausabilityGrid(pos);
 		} else if (key.getName().equalsIgnoreCase(MERGE_BELIEFE_GRID)) {

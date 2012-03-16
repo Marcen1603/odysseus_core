@@ -4,14 +4,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class RelationalPolygonAggregation
         extends
-        AbstractGeometryAggregation<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+        AbstractGeometryAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
     /**
      * 
@@ -25,20 +25,20 @@ public class RelationalPolygonAggregation
     }
 
     @Override
-    public RelationalTuple<?> evaluate(IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p) {
-        ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>) p).compress();
-        List<RelationalTuple<?>> elems = ((GeometryPartialAggregate<RelationalTuple<? extends IMetaAttribute>>) p)
+    public Tuple<?> evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
+        ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>) p).compress();
+        List<Tuple<?>> elems = ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>) p)
                 .getElems();
-        RelationalTuple<?> ret = new RelationalTuple<IMetaAttribute>(1);
+        Tuple<?> ret = new Tuple<IMetaAttribute>(1);
         ret.setAttribute(0, elems);
         return ret;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> merge(
-            IPartialAggregate<RelationalTuple<? extends IMetaAttribute>> p,
-            RelationalTuple<? extends IMetaAttribute> toMerge, boolean createNew) {
+    public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(
+            IPartialAggregate<Tuple<? extends IMetaAttribute>> p,
+            Tuple<? extends IMetaAttribute> toMerge, boolean createNew) {
         return ((GeometryPartialAggregate) p).addElem(toMerge.restrict(restrictList, true));
     }
 }

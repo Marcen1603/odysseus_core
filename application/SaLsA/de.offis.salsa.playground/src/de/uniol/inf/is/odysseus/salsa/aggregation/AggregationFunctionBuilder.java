@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
     private final static String PMERGE = "PMERGE";
@@ -28,7 +28,7 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 
     @Override
     public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, int[] pos) {
-        IAggregateFunction<RelationalTuple<?>, RelationalTuple<?>> aggFunc = null;
+        IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(PMERGE)) {
             aggFunc = new RelationalPolygonAggregation(pos);
         }
