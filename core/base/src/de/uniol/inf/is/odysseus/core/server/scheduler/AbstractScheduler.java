@@ -298,23 +298,28 @@ public abstract class AbstractScheduler implements
 		return null;
 	}
 
-	public void subscribe(IEventListener listener, IEventType type) {
+	@Override
+    public void subscribe(IEventListener listener, IEventType type) {
 		eventHandler.subscribe(this,listener, type);
 	}
 
-	public void unsubscribe(IEventListener listener, IEventType type) {
+	@Override
+    public void unsubscribe(IEventListener listener, IEventType type) {
 		eventHandler.unsubscribe(this,listener, type);
 	}
 
-	public void subscribeToAll(IEventListener listener) {
+	@Override
+    public void subscribeToAll(IEventListener listener) {
 		eventHandler.subscribeToAll(this,listener);
 	}
 
-	public void unSubscribeFromAll(IEventListener listener) {
+	@Override
+    public void unSubscribeFromAll(IEventListener listener) {
 		eventHandler.unSubscribeFromAll(this, listener);
 	}
 
-	public final void fire(IEvent<?, ?> event) {
+	@Override
+    public final void fire(IEvent<?, ?> event) {
 		eventHandler.fire(this, event);
 	}
 	
