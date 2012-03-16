@@ -20,8 +20,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IdentityTransformation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.InputStreamAccessPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.relational.base.access.ObjectInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -40,7 +41,8 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.DEBUG, "Standard InputStream");
 		String accessPOName = accessAO.getSourcename();
-		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation(), accessAO.getLogin(), accessAO.getPassword());
+//		ISource<?> accessPO = new InputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), new IdentityTransformation(), accessAO.getLogin(), accessAO.getPassword());
+		ISource<?> accessPO = new ObjectInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), new ObjectDataHandler() , accessAO.getLogin(), accessAO.getPassword());	
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO, accessPO);
