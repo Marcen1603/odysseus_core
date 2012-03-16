@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AlgebraPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
@@ -29,11 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.PrintTreeVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 
+@SuppressWarnings({"all"})
 public class PQLParserImpl implements PQLParserImplConstants {
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
