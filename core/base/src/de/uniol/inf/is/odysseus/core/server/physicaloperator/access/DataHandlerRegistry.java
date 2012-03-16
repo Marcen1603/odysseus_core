@@ -34,9 +34,9 @@ public class DataHandlerRegistry {
 	/**
 	 * HashMap from datatype to data handler
 	 */
-	private static HashMap<String, IAtomicDataHandler> dataHandlers = new HashMap<String, IAtomicDataHandler>();
+	private static HashMap<String, IDataHandler> dataHandlers = new HashMap<String, IDataHandler>();
 	
-	public static void registerDataHandler(IAtomicDataHandler handler){
+	public static void registerDataHandler(IDataHandler handler){
 		String errMsg = "";
 		logger.debug("Register DataHandler "+handler+" for Datatypes "+handler.getSupportedDataTypes());
 		for(String type: handler.getSupportedDataTypes()){
@@ -57,7 +57,7 @@ public class DataHandlerRegistry {
 //		dataHandlers.remove(dataType);
 //	}
 	
-	public static void removeDataHandler(IAtomicDataHandler handler){
+	public static void removeDataHandler(IDataHandler handler){
 		for(String type: handler.getSupportedDataTypes()){
 			if(dataHandlers.containsKey(type.toLowerCase())){
 				dataHandlers.remove(type.toLowerCase());
@@ -65,7 +65,7 @@ public class DataHandlerRegistry {
 		}
 	}
 	
-	public static IAtomicDataHandler getDataHandler(String dataType){
+	public static IDataHandler getDataHandler(String dataType){
 		return dataHandlers.get(dataType.toLowerCase());
 	}
 }
