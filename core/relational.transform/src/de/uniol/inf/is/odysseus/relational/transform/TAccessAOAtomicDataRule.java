@@ -21,7 +21,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
-import de.uniol.inf.is.odysseus.relational.base.access.AtomicDataInputStreamAccessPO;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
+import de.uniol.inf.is.odysseus.relational.base.access.ObjectInputStreamAccessPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +38,9 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
-		ISource accessPO = new AtomicDataInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), accessAO.getLogin(), accessAO.getPassword());
+		ISource accessPO = new ObjectInputStreamAccessPO(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), 
+				new TupleDataHandler(accessAO.getOutputSchema()),
+				accessAO.getLogin(), accessAO.getPassword());
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);

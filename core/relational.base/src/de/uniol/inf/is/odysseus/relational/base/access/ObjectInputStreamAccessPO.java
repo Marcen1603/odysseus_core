@@ -23,40 +23,35 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
-public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
-		AbstractIterableSource<Tuple<M>> {
+public class ObjectInputStreamAccessPO<M> extends
+		AbstractIterableSource<M> {
 
 	static Logger _logger = null;
 
 	static synchronized public Logger getLogger() {
 		if (_logger == null) {
 			_logger = LoggerFactory
-					.getLogger(AtomicDataInputStreamAccessPO.class);
+					.getLogger(ObjectInputStreamAccessPO.class);
 		}
 		return _logger;
 	}
 
 	final private String hostName;
 	final private int port;
+	final private IDataHandler dataHandler;
 	final private String user;
 	final private String password;
 	private ObjectInputStream channel;
-	private Tuple<M> buffer;
-	private IDataHandler[] dataReader;
-	private Object[] attributeData;
+	private M buffer;
 	private boolean isDone;
 
 	private SDFSchema schema;
@@ -72,45 +67,14 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		this.connectToPipe = connectToPipe;
 	}
 
-	public AtomicDataInputStreamAccessPO(String host, int port,
-			SDFSchema schema, String user, String password) {
+	public ObjectInputStreamAccessPO(String host, int port,
+			SDFSchema schema, IDataHandler dataHandler, String user, String password) {
 		this.hostName = host;
 		this.port = port;
-		this.attributeData = new Object[schema.size()];
-		createDataReader(schema);
 		this.schema = schema;
+		this.dataHandler = dataHandler;
 		this.user = user;
 		this.password = password;
-	}
-
-	private void createDataReader(SDFSchema schema) {
-		this.dataReader = new IDataHandler[schema.size()];
-		int i = 0;
-		for (SDFAttribute attribute : schema) {
-			String uri = attribute.getDatatype().getURI(false);
-			IDataHandler handler = DataHandlerRegistry
-					.getDataHandler(uri);
-			if (handler == null) {
-				throw new IllegalArgumentException("No handler for datatype "
-						+ uri);
-			}
-            this.dataReader[i++] = handler;
-
-			// String upperCaseURI = uri.toUpperCase();
-			// if (upperCaseURI.equals("DOUBLE") || uri.equals("MV")) {
-			// this.dataReader[i++] = new DoubleHandler();
-			// } else if (upperCaseURI.equals("STRING")) {
-			// this.dataReader[i++] = new StringHandler();
-			// } else if (upperCaseURI.equals("INTEGER")) {
-			// this.dataReader[i++] = new IntegerHandler();
-			// } else if
-			// (upperCaseURI.equals("LONG")||upperCaseURI.endsWith("TIMESTAMP"))
-			// {
-			// this.dataReader[i++] = new LongHandler();
-			// } else {
-			// throw new RuntimeException("illegal datatype " + upperCaseURI);
-			// }
-		}
 	}
 
 	@Override
@@ -119,7 +83,6 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		try {
 			this.channel.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -128,13 +91,10 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	protected synchronized void process_open() throws OpenFailedException {
 		getLogger().debug("process_open()");
 
-		// // if (!p2p) {
-		// if (isOpen()) {
-		// return;
-		// }
 		try {
 			socket = new Socket(this.hostName, this.port);
 			this.channel = new ObjectInputStream(socket.getInputStream());
+			buffer = null;
 			// Send login information
 			if (user != null && password != null) {
 				PrintWriter out = new PrintWriter
@@ -146,11 +106,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			throw new OpenFailedException(e.getMessage() + " " + this.hostName
 					+ " " + this.port);
 		}
-		// for (IDataHandler reader : this.dataReader) {
-		// reader.setStream(this.channel);
-		// }
 		this.isDone = false;
-		// }
 	}
 
 	@Override
@@ -161,7 +117,6 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			channel.close();
 			getLogger().debug("Closing connection done");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -173,36 +128,9 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			if (buffer != null) {
 				return true;
 			}
-			// if (p2p) {
-			// if (!connectToPipe) {
-			// return false;
-			// }
-			// if (this.channel == null) {
-			// Socket s;
-			// while (true) {
-			// try {
-			// s = new Socket(this.hostName, this.port);
-			// this.channel = new ObjectInputStream(s.getInputStream());
-			// } catch (Exception e) {
-			// // throw new OpenFailedException(e.getMessage());
-			// System.err.println("Konnte Quelle nicht öffnen");
-			// try {
-			// Thread.sleep(5000);
-			// } catch (InterruptedException e1) {
-			// // TODO Auto-generated catch block
-			// e1.printStackTrace();
-			// }
-			// continue;
-			// }
-			// break;
-			// }
-			// }
-			// }
 
 			try {
-				for (int i = 0; i < this.dataReader.length; ++i) {
-					this.attributeData[i] = dataReader[i].readData(channel);
-				}
+				buffer = (M) dataHandler.readData(channel);
 			} catch (EOFException e) {
 				this.isDone = true;
 				propagateDone();
@@ -214,9 +142,6 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 				propagateDone();
 				return false;
 			}
-			this.buffer = new Tuple<M>(this.attributeData);
-			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
-
 			return true;
 		}
         return false;
@@ -236,31 +161,18 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 		}
 	}
 
-	//
-	// public void setMetadataFactory(
-	// IMetadataFactory<M, Tuple<M>> metadataFactory) {
-	// this.metadataFactory = metadataFactory;
-	// }
-
-	// public boolean isP2P() {
-	// return p2p;
-	// }
-	//
-	// public void setP2P(boolean p2p) {
-	// this.p2p = p2p;
-	// }
 
 	@Override
-	public AtomicDataInputStreamAccessPO<M> clone() {
+	public ObjectInputStreamAccessPO<M> clone() {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof AtomicDataInputStreamAccessPO)) {
+		if (!(ipo instanceof ObjectInputStreamAccessPO)) {
 			return false;
 		}
-		AtomicDataInputStreamAccessPO<?> adisapo = (AtomicDataInputStreamAccessPO<?>) ipo;
+		ObjectInputStreamAccessPO<?> adisapo = (ObjectInputStreamAccessPO<?>) ipo;
 		if (this.hostName.equals(adisapo.hostName) && this.port == adisapo.port
 				&& this.schema.equals(adisapo.schema)) {
 			return true;
