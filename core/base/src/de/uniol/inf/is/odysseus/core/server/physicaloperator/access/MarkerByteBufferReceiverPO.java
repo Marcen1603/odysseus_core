@@ -1,18 +1,20 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
+import java.nio.ByteBuffer;
+
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 @Deprecated
 public class MarkerByteBufferReceiverPO<W> extends
-		ByteBufferReceiverPO<W> {
+		ReceiverPO<ByteBuffer,W> {
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler, byte start, byte end) {
+			IAccessConnection<ByteBuffer> accessHandler, byte start, byte end) {
 		super(objectHandler, new MarkerByteBufferHandler<W>(start, end), accessHandler);
 	}
 
 	public MarkerByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler, byte marker) {
+			IAccessConnection<ByteBuffer> accessHandler, byte marker) {
 		super(objectHandler, new MarkerByteBufferHandler<W>(marker, marker), accessHandler);
 	}
 

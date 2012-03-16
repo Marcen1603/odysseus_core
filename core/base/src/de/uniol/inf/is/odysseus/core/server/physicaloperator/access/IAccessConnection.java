@@ -5,13 +5,13 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
-public interface IAccessConnection extends IClone {
+public interface IAccessConnection<T> extends IClone {
 
 	@Override
-	IAccessConnection clone();
+	IAccessConnection<T> clone();
 	
-	public void open(IAccessConnectionListener caller) throws OpenFailedException;
-	public void close(IAccessConnectionListener caller) throws IOException;
+	public void open(IAccessConnectionListener<T> caller) throws OpenFailedException;
+	public void close(IAccessConnectionListener<T> caller) throws IOException;
 	public void reconnect();
 	
 	public String getUser();

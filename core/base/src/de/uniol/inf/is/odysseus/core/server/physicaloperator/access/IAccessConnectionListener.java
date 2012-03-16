@@ -14,10 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
-import java.nio.ByteBuffer;
 
-public interface IAccessConnectionListener{
-	public void process(ByteBuffer buffer);
+public interface IAccessConnectionListener<T>{
+	public void process(T buffer);
 	public void done();
 	public String getSourceName();
 	boolean isOpened();

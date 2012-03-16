@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAccessConnectionListener, ITransferHandler {
+public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnectionListener<R>, ITransferHandler {
 
 	volatile protected static Logger _logger = null;
 
 	protected synchronized static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(ByteBufferReceiverPO.class);
+			_logger = LoggerFactory.getLogger(ReceiverPO.class);
 		}
 		return _logger;
 	}
@@ -38,27 +37,27 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 	protected IObjectHandler<W> objectHandler;
 	private boolean opened;
 	
-	final IAccessConnection accessHandler;
-	final private IByteBufferHandler<W> byteBufferHandler;
+	final IAccessConnection<R> accessHandler;
+	final private IInputDataHandler<R,W> inputDataHandler;
 
 
-	public ByteBufferReceiverPO(IObjectHandler<W> objectHandler, IByteBufferHandler<W> byteBufferHandler, IAccessConnection accessHandler) {
+	public ReceiverPO(IObjectHandler<W> objectHandler, IInputDataHandler<R,W> inputDataHandler, IAccessConnection<R> accessHandler) {
 		super();
 		this.objectHandler = objectHandler;
-		this.byteBufferHandler = byteBufferHandler;
+		this.inputDataHandler = inputDataHandler;
 		this.accessHandler = accessHandler;
-		setName("ByteBufferReceiverPO " + accessHandler);
+		setName("ReceiverPO " + accessHandler);
 		this.opened = false;
 	}
 
 	@SuppressWarnings("unchecked")
-	public ByteBufferReceiverPO(ByteBufferReceiverPO<W> byteBufferReceiverPO) {
+	public ReceiverPO(ReceiverPO<R,W> other) {
 		super();
-		objectHandler = (IObjectHandler<W>) byteBufferReceiverPO.objectHandler.clone();
-		byteBufferHandler = byteBufferReceiverPO.byteBufferHandler.clone();
-		accessHandler = (IAccessConnection) byteBufferReceiverPO.clone();
+		objectHandler = (IObjectHandler<W>) other.objectHandler.clone();
+		inputDataHandler = other.inputDataHandler.clone();
+		accessHandler = (IAccessConnection<R>) other.clone();
 		
-		opened = byteBufferReceiverPO.opened;
+		opened = other.opened;
 	}
 
 	@Override
@@ -72,7 +71,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 		if (!opened) {
 			try {
 				objectHandler.clear();
-				byteBufferHandler.init();
+				inputDataHandler.init();
 				accessHandler.open(this);
 				opened = true;
 			} catch (Exception e) {
@@ -88,7 +87,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 			try {
 				opened = false; // Do not read any data anymore
 				accessHandler.close(this);
-				byteBufferHandler.done();
+				inputDataHandler.done();
 				objectHandler.clear();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -122,8 +121,8 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 	}
 	
 	@Override
-	public void process(ByteBuffer buffer){
-		byteBufferHandler.process(buffer, objectHandler, accessHandler, this);
+	public void process(R buffer){
+		inputDataHandler.process(buffer, objectHandler, accessHandler, this);
 	}
 
 	@Override
@@ -133,11 +132,11 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ByteBufferReceiverPO)) {
+		if (!(ipo instanceof ReceiverPO)) {
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		ByteBufferReceiverPO bbrpo = (ByteBufferReceiverPO) ipo;
+		ReceiverPO bbrpo = (ReceiverPO) ipo;
 		if (this.objectHandler.equals(bbrpo.objectHandler) && this.accessHandler.equals(bbrpo.accessHandler)) {
 			return true;
 		}
@@ -146,7 +145,7 @@ public class ByteBufferReceiverPO<W> extends AbstractSource<W> implements IAcces
 
 	@Override
 	public AbstractSource<W> clone() {
-		return new ByteBufferReceiverPO<W>(this);
+		return new ReceiverPO<R,W>(this);
 	}
 
 

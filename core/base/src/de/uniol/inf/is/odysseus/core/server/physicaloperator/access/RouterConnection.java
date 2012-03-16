@@ -1,13 +1,14 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
-public class RouterConnection implements IAccessConnection, IConnectionListener {
+public class RouterConnection implements IAccessConnection<ByteBuffer>, IConnectionListener {
 
 	Logger logger = LoggerFactory.getLogger(RouterConnection.class);
 	
@@ -17,7 +18,7 @@ public class RouterConnection implements IAccessConnection, IConnectionListener 
 	final private boolean autoReconnect;
 	final private String user;
 	final private String password;
-	private IAccessConnectionListener caller;
+	private IAccessConnectionListener<ByteBuffer> caller;
 
 	private int tries = 0;
 	private int waitingForNextReconnect;
@@ -103,7 +104,7 @@ public class RouterConnection implements IAccessConnection, IConnectionListener 
 	}
 
 	@Override
-	public void open(IAccessConnectionListener caller)
+	public void open(IAccessConnectionListener<ByteBuffer> caller)
 			throws OpenFailedException {
 		try {
 			this.caller = caller;
@@ -114,7 +115,7 @@ public class RouterConnection implements IAccessConnection, IConnectionListener 
 	}
 
 	@Override
-	public void close(IAccessConnectionListener caller) throws IOException {
+	public void close(IAccessConnectionListener<ByteBuffer> caller) throws IOException {
 		router.disconnectFromServer(caller);
 	}
 

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
+public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuffer,T> {
 
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
@@ -34,7 +34,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnection accessHandler, ITransferHandler transferHandler) {
+			IAccessConnection<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
 		try {
 			while (buffer.remaining() > 0) {
 
@@ -80,7 +80,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 	
 	@Override
-	public IByteBufferHandler<T> clone() {
+	public IInputDataHandler<ByteBuffer,T> clone() {
 		return new SizeByteBufferHandler<T>(this);
 	}
 

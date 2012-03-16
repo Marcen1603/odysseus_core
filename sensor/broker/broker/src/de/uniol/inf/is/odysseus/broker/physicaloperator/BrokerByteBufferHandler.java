@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnection;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferHandler;
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBuff
 * Done means that a source has no more elements.
 */
 
-public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
+public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuffer,T> {
 
 	/** The size of the following element. */
 	private int size = -1;
@@ -61,7 +61,7 @@ public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnection accessHandler, ITransferHandler transferHandler) {
+			IAccessConnection<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
 		try {
 
 			while (buffer.remaining() > 0) {
@@ -125,7 +125,7 @@ public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public IByteBufferHandler<T> clone() {
+	public IInputDataHandler<ByteBuffer, T> clone() {
 		return new BrokerByteBufferHandler<T>();
 	}
 

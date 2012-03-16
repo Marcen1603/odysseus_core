@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
@@ -17,15 +17,15 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.DataStreamRateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 
 @SuppressWarnings("rawtypes")
-public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<ByteBufferReceiverPO> {
+public class ByteBufferRecieverPOEstimator implements IOperatorEstimator<ReceiverPO> {
 
 	@Override
-	public Class<ByteBufferReceiverPO> getOperatorClass() {
-		return ByteBufferReceiverPO.class;
+	public Class<ReceiverPO> getOperatorClass() {
+		return ReceiverPO.class;
 	}
 
 	@Override
-	public OperatorEstimation estimateOperator(ByteBufferReceiverPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
+	public OperatorEstimation estimateOperator(ReceiverPO instance, List<OperatorEstimation> prevOperators, Map<SDFAttribute, IHistogram> baseHistograms) {
 		
 		OperatorEstimation estimation = new OperatorEstimation(instance);
 		

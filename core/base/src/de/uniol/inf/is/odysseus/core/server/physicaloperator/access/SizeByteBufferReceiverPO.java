@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
+import java.nio.ByteBuffer;
+
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 @Deprecated
 public class SizeByteBufferReceiverPO<W> extends
-		ByteBufferReceiverPO<W> {
+		ReceiverPO<ByteBuffer,W> {
 
 	public SizeByteBufferReceiverPO(IObjectHandler<W> objectHandler,
-			IAccessConnection accessHandler) {
+			IAccessConnection<ByteBuffer> accessHandler) {
 		super(objectHandler, new SizeByteBufferHandler<W>(), accessHandler);
 	}
 

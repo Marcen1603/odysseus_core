@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
-abstract public class AbstractByteBufferHandler<T> implements IByteBufferHandler<T> {
+abstract public class AbstractByteBufferHandler<R,W> implements IInputDataHandler<R,W> {
 
-	public abstract IByteBufferHandler<T> clone();
+	public abstract IInputDataHandler<R,W> clone();
 	
 }

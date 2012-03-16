@@ -15,8 +15,9 @@
 package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnection;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandl
  * @param <W> the generic type
  */
 @Deprecated
-public class BrokerByteBufferReceiverPO<W> extends ByteBufferReceiverPO<W> {
+public class BrokerByteBufferReceiverPO<W> extends ReceiverPO<ByteBuffer, W> {
 		
 	/**
 	 * Instantiates a new BrokerByteBufferReceiverPO.
@@ -37,7 +38,7 @@ public class BrokerByteBufferReceiverPO<W> extends ByteBufferReceiverPO<W> {
 	 * @param port the port
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, IAccessConnection accessHandler) throws IOException {
+	public BrokerByteBufferReceiverPO(IObjectHandler<W> handler, IAccessConnection<ByteBuffer> accessHandler) throws IOException {
 		super(handler, new BrokerByteBufferHandler<W>(), accessHandler);
 	}
 
