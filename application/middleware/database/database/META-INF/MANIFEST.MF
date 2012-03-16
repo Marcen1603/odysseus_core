@@ -25,7 +25,8 @@ Import-Package: de.uniol.inf.is.odysseus.core,
 Service-Component: OSGI-INF/DataTypeMappingHandlerRegistry.xml, OSGI-INF/BooleanDataTypeMappingHandler.xml, OSGI-INF/DoubleDataTypeMappingHandler.xml, OSGI-INF/FloatDataTypeMappingHandler.xml, OSGI-INF/IntegerDataTypeMappingHandler.xml, OSGI-INF/LongDataTypeMappingHandler.xml, OSGI-INF/StringDataTypeMappingHandler.xml, OSGI-INF/TransformRuleProviderService.xml
 Bundle-ClassPath: mysql-connector-java-5.1.15-bin.jar,
  .,
- ojdbc6.jar
+ ojdbc6.jar,
+ postgresql-9.1-901.jdbc4.jar
 Export-Package: de.uniol.inf.is.odysseus.database.connection;uses:="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema",
  de.uniol.inf.is.odysseus.database.logicaloperator;
   uses:="de.uniol.inf.is.odysseus.sourcedescription.sdf.schema,
