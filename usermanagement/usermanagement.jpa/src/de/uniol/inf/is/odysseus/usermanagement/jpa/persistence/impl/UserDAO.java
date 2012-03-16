@@ -35,6 +35,7 @@ public class UserDAO extends GenericDAOImpl<UserImpl, String> {
         super(type);
     }
 
+    @Override
     public UserImpl findByName(final String name) {
         return this.getSingleResult(this.startNamedQuery(UserImpl.NQ_FIND_BY_NAME).add("name", name));
     }

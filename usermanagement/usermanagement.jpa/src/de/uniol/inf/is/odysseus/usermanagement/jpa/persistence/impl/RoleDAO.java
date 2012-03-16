@@ -35,6 +35,7 @@ public class RoleDAO extends GenericDAOImpl<RoleImpl, String> {
         super(type);
     }
 
+    @Override
     public RoleImpl findByName(final String name) {
         return this.getSingleResult(this.startNamedQuery(RoleImpl.NQ_FIND_BY_NAME).add("name", name));
     }

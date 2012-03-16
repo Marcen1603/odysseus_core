@@ -75,14 +75,16 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 	/**
 	 * @param permission
 	 */
-	public void addPermission(final IPermission permission) {
+	@Override
+    public void addPermission(final IPermission permission) {
 		this.permissions.add(permission);
 	}
 
 	/**
 	 * @param permission
 	 */
-	public void removePermission(final IPermission permission) {
+	@Override
+    public void removePermission(final IPermission permission) {
 		this.permissions.remove(permission);
 	}
 
@@ -101,7 +103,8 @@ public class PrivilegeImpl extends AbstractEntityImpl<PrivilegeImpl> implements
 	 * @param objectURI
 	 *            The objectURI to set.
 	 */
-	public void setObjectURI(final String objectURI) {
+	@Override
+    public void setObjectURI(final String objectURI) {
 		this.objectURI = objectURI;
 	}
 

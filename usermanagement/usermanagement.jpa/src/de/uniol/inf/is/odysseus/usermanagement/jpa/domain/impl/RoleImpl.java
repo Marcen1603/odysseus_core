@@ -66,7 +66,8 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	 * @param name
 	 *            The name to set.
 	 */
-	public void setName(final String name) {
+	@Override
+    public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -83,7 +84,8 @@ public class RoleImpl extends AbstractEntityImpl<RoleImpl> implements IRole {
 	/**
 	 * @param privilege
 	 */
-	public void addPrivilege(final IPrivilege privilege) {
+	@Override
+    public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}
 

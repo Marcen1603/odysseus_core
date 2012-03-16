@@ -81,7 +81,8 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @param name
 	 *            The name to set.
 	 */
-	public void setName(final String name) {
+	@Override
+    public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -91,9 +92,9 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	public String getAlgorithm() {
 		if (this.algorithm == null || "".equals(this.algorithm)) {
 			return "SHA-256";
-		} else {
-			return this.algorithm;
-		}
+		} 
+		
+		return this.algorithm;
 	}
 
 	/**
@@ -107,9 +108,10 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/**
 	 * @param password
 	 */
-	public void setPassword(final byte[] password) {
+	@Override
+    public void setPassword(final byte[] password) {
 		try {
-			this.password = this.getPasswordDigest(this.getAlgorithm(),
+			this.password = getPasswordDigest(this.getAlgorithm(),
 					password);
 		} catch (final NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
@@ -131,7 +133,8 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @param active
 	 *            The active to set.
 	 */
-	public void setActive(final boolean active) {
+	@Override
+    public void setActive(final boolean active) {
 		this.active = active;
 	}
 
@@ -156,14 +159,16 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/**
 	 * @param role
 	 */
-	public void addRole(final IRole role) {
+	@Override
+    public void addRole(final IRole role) {
 		this.roles.add(role);
 	}
 
 	/**
 	 * @param role
 	 */
-	public void removeRole(final IRole role) {
+	@Override
+    public void removeRole(final IRole role) {
 		this.roles.remove(role);
 	}
 
@@ -188,7 +193,8 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	/**
 	 * @param privilege
 	 */
-	public void addPrivilege(final IPrivilege privilege) {
+	@Override
+    public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}
 
@@ -209,7 +215,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	@Override
 	public boolean validatePassword(final byte[] password) {
 		try {
-			return this.password.equals(this.getPasswordDigest(this.getAlgorithm(), password));
+			return this.password.equals(getPasswordDigest(this.getAlgorithm(), password));
 		} catch (final NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,7 +272,7 @@ public class UserImpl extends AbstractEntityImpl<UserImpl> implements IUser {
 	 * @return The digist using the given algorithm.
 	 * @throws NoSuchAlgorithmException
 	 */
-	private String getPasswordDigest(final String algorithmName,
+	private static String getPasswordDigest(final String algorithmName,
 			final byte[] password) throws NoSuchAlgorithmException {
 		final MessageDigest algorithm = MessageDigest
 				.getInstance(algorithmName);

@@ -21,6 +21,7 @@ import javax.persistence.Persistence;
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.PrivilegeImpl;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.RoleImpl;
@@ -33,8 +34,14 @@ import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,RoleImpl,PrivilegeImpl> implements IUserManagement {
-	private EntityManagerFactory entityManagerFactory;
-
+	
+    private EntityManagerFactory entityManagerFactory;
+    private EntityManager em;
+    
+	private UserDAO userDAO;
+	private RoleDAO roleDAO;
+	private PrivilegeDAO privDAO;
+	
 	@Override
 	protected UserImpl createEmptyUser() {
 		return new UserImpl();
@@ -51,25 +58,40 @@ public class UserManagementServiceImpl extends AbstractUserManagement<UserImpl,R
 	}
 
 	protected void activate(ComponentContext context) {
-		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
-		final EntityManager em = this.entityManagerFactory
-				.createEntityManager();
-		
-		userDAO = new UserDAO();
-		roleDAO = new RoleDAO();
-		privilegeDAO = new PrivilegeDAO();
-
-		
-		((UserDAO)userDAO).setEntityManager(em);
-		((RoleDAO)roleDAO).setEntityManager(em);
-		((PrivilegeDAO)privilegeDAO).setEntityManager(em);
-	
+		entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
+		em = entityManagerFactory.createEntityManager();
 		initDefaultUsers();
-		
 	}
 
 	protected void deactivate(ComponentContext context) {
 
 	}
+
+    @Override
+    protected IGenericDAO<UserImpl, String> getUserDAO() {
+        if( userDAO == null ) {
+            userDAO = new UserDAO();
+            userDAO.setEntityManager(em);
+        }
+        return userDAO;
+    }
+
+    @Override
+    protected IGenericDAO<RoleImpl, String> getRoleDAO() {
+        if( roleDAO == null ) {
+            roleDAO = new RoleDAO();
+            roleDAO.setEntityManager(em);
+        }
+        return roleDAO;
+    }
+
+    @Override
+    protected IGenericDAO<PrivilegeImpl, String> getPrivilegeDAO() {
+        if( privDAO == null ) {
+            privDAO = new PrivilegeDAO();
+            privDAO.setEntityManager(em);
+        }
+        return privDAO;
+    }
 
 }
