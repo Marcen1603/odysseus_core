@@ -16,5 +16,5 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 
 @Deprecated
-public interface IAtomicDataHandler extends IDataHandler{
+public interface IAtomicDataHandler<T> extends IDataHandler<T>{
 }

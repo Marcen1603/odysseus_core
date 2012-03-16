@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DoubleHandler extends AbstractDataHandler {
+public class DoubleHandler extends AbstractDataHandler<Double> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Double");
@@ -33,22 +33,22 @@ public class DoubleHandler extends AbstractDataHandler {
 	}
 	
 	@Override
-	final public Object readData() throws IOException {
+	final public Double readData() throws IOException {
 		return stream.readDouble();
 	}
 	
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public Double readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readDouble();
 	}
 	
 	@Override
-	public Object readData(String string) {
+	public Double readData(String string) {
 		return Double.parseDouble(string);
 	}
 
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public Double readData(ByteBuffer buffer) {
 		double d = buffer.getDouble();
 		//System.out.println("read Double Data: "+d);
 		return d;

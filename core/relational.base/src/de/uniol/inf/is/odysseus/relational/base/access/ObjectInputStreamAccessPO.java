@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.relational.base.access;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -28,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
+import de.uniol.inf.is.odysseus.core.server.store.OsgiObjectInputStream;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -47,10 +47,10 @@ public class ObjectInputStreamAccessPO<M> extends
 
 	final private String hostName;
 	final private int port;
-	final private IDataHandler dataHandler;
+	final private IDataHandler<M> dataHandler;
 	final private String user;
 	final private String password;
-	private ObjectInputStream channel;
+	private OsgiObjectInputStream channel;
 	private M buffer;
 	private boolean isDone;
 
@@ -68,7 +68,7 @@ public class ObjectInputStreamAccessPO<M> extends
 	}
 
 	public ObjectInputStreamAccessPO(String host, int port,
-			SDFSchema schema, IDataHandler dataHandler, String user, String password) {
+			SDFSchema schema, IDataHandler<M> dataHandler, String user, String password) {
 		this.hostName = host;
 		this.port = port;
 		this.schema = schema;
@@ -93,7 +93,7 @@ public class ObjectInputStreamAccessPO<M> extends
 
 		try {
 			socket = new Socket(this.hostName, this.port);
-			this.channel = new ObjectInputStream(socket.getInputStream());
+			this.channel = new OsgiObjectInputStream(socket.getInputStream());
 			buffer = null;
 			// Send login information
 			if (user != null && password != null) {

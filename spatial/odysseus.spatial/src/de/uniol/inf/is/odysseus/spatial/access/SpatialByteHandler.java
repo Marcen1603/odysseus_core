@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractData
  * @author Andr� Bolles
  * 
  */
-public class SpatialByteHandler extends AbstractDataHandler {
+public class SpatialByteHandler extends AbstractDataHandler<Object>{
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("SpatialGeometry");

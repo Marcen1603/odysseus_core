@@ -28,31 +28,31 @@ import java.util.List;
  * @author Andre Bolles
  *
  */
-public class DateHandler extends AbstractDataHandler {
+public class DateHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Date");
 	}
 	
 	@Override
-	public final Object readData() throws IOException {
+	public final Long readData() throws IOException {
 		return stream.readLong();
 	}
 
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public Long readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readLong();
 	}
 	
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public Long readData(ByteBuffer buffer) {
 		long l = buffer.getLong();
 		//System.out.println("read Long Data: "+l);
 		return l;
 	}
 	
 	@Override
-	public Object readData(String string) {
+	public Long readData(String string) {
 		return Long.parseLong(string);
 	}
 

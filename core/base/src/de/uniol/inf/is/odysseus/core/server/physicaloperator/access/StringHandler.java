@@ -20,24 +20,24 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringHandler extends AbstractDataHandler {
+public class StringHandler extends AbstractDataHandler<String> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("String");
 	}
 	
 	@Override
-	public Object readData() throws IOException {
+	public String readData() throws IOException {
 		return stream.readUTF();
 	}
 	
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public String readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readUTF();
 	}
 
 	@Override
-	public Object readData(ByteBuffer b) {
+	public String readData(ByteBuffer b) {
 		StringBuffer buf = new StringBuffer();
 		int size = b.getInt();
 		//System.out.println("size "+size);
@@ -51,7 +51,7 @@ public class StringHandler extends AbstractDataHandler {
 	}
 	
 	@Override
-	public Object readData(String string) {
+	public String readData(String string) {
 		return string;
 	}
 	

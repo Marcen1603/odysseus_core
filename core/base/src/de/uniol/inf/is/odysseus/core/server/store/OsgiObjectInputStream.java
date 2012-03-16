@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.store;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
@@ -16,7 +17,11 @@ public class OsgiObjectInputStream extends ObjectInputStream {
         super(fileInputStream);
     }
 
-    @Override
+    public OsgiObjectInputStream(InputStream inputStream) throws IOException {
+    	super(inputStream);
+    }
+
+	@Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
         Preconditions.checkNotNull(desc, "Desc must not be null!");
 

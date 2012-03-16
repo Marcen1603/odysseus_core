@@ -49,11 +49,11 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 	private boolean isDone = false;
 	private BufferedReader bf;
 
-	final private IDataHandler dataHandler;
+	final private IDataHandler<?> dataHandler;
 
 	final private String separator;
 
-	public FileAccessPO(String path, String fileType, String separator, IDataHandler dataHandler ) {
+	public FileAccessPO(String path, String fileType, String separator, IDataHandler<?> dataHandler ) {
 		this.path = path;
 		this.fileType = fileType;
 		this.separator = separator;

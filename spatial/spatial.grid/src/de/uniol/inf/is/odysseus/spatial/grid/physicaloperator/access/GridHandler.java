@@ -29,19 +29,19 @@ import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GridHandler extends AbstractDataHandler {
+public class GridHandler extends AbstractDataHandler<Grid> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Grid");
 	}
 
 	@Override
-	public Object readData() throws IOException {
+	public Grid readData() throws IOException {
 		return readData(stream);
 	}
 
 	@Override
-	public Object readData(ObjectInputStream stream) throws IOException {
+	public Grid readData(ObjectInputStream stream) throws IOException {
 		int x = stream.readInt();
 		int y = stream.readInt();
 		short width = stream.readShort();
@@ -55,7 +55,7 @@ public class GridHandler extends AbstractDataHandler {
 	}
 	
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public Grid readData(ByteBuffer buffer) {
 		int x = buffer.getInt();
 		int y = buffer.getInt();
 		short width = buffer.getShort();
@@ -70,7 +70,7 @@ public class GridHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData(String string) {
+	public Grid readData(String string) {
 		return readData(ByteBuffer.wrap(string.getBytes()));
 	}
 

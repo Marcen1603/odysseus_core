@@ -16,6 +16,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 
 @Deprecated
-public abstract class AbstractAtomicDataHandler extends AbstractDataHandler{
+public abstract class AbstractAtomicDataHandler<T> extends AbstractDataHandler<T>{
 
 }

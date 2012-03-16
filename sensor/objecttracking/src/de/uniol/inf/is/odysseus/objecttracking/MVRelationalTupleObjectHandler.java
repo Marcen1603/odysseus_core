@@ -31,7 +31,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 
 	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
-	private IDataHandler[] dataHandler;
+	private IDataHandler<?>[] dataHandler;
 		
 	public MVRelationalTupleObjectHandler(SDFSchema schema) {
 		byteBuffer = ByteBuffer.allocate(1024);
@@ -59,7 +59,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			
-			IDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(uri);
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype "+ uri);
 			}

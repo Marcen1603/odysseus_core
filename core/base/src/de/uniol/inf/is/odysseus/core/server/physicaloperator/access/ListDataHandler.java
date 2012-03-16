@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author André Bolles
  *
  */
-public class SetDataHandler extends AbstractDataHandler{
+public class ListDataHandler extends AbstractDataHandler<List<?>>{
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
@@ -34,9 +34,9 @@ public class SetDataHandler extends AbstractDataHandler{
 	}
 	
 	SDFDatatype subType = null;
-	IDataHandler handler = null;
+	IDataHandler<?> handler = null;
 	
-	public SetDataHandler(SDFDatatype subType){
+	public ListDataHandler(SDFDatatype subType){
 		this.subType = subType;
 		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getURI());
 	}
@@ -45,12 +45,12 @@ public class SetDataHandler extends AbstractDataHandler{
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData()
 	 */
 	@Override
-	public Object readData() throws IOException {
+	public List<?> readData() throws IOException {
 		return readData(stream);
 	}
 	
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public List<?> readData(ObjectInputStream inputStream) throws IOException {
 		ArrayList<Object> values = new ArrayList<Object>();
 		int size = inputStream.readInt();
 		for(int i = 0; i<size; i++){
@@ -62,7 +62,7 @@ public class SetDataHandler extends AbstractDataHandler{
 	}
 	
 	@Override
-	public Object readData(String string) {
+	public List<?> readData(String string) {
 		throw new RuntimeException("Sorry. Currently not implemented");
 	}
 
@@ -70,7 +70,7 @@ public class SetDataHandler extends AbstractDataHandler{
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData(java.nio.ByteBuffer)
 	 */
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public List<?> readData(ByteBuffer buffer) {
 		ArrayList<Object> values = new ArrayList<Object>();
 		int size = buffer.getInt();
 		for(int i = 0; i<size; i++){

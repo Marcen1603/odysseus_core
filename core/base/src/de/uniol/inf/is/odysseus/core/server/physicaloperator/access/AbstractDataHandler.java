@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-public abstract class AbstractDataHandler implements IDataHandler {
+public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	protected ObjectInputStream stream;
 		
@@ -37,7 +37,7 @@ public abstract class AbstractDataHandler implements IDataHandler {
 	}
 	
 	@Override
-	public Object readData(String[] input) {
+	public T readData(String[] input) {
 		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
 		return readData(input[0]);
 	}

@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntegerHandler extends AbstractDataHandler {
+public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Integer");
@@ -30,24 +30,24 @@ public class IntegerHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData() throws IOException {
+	public Integer readData() throws IOException {
 		return stream.readInt();
 	}
 
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public Integer readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readInt();
 	}
 	
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public Integer readData(ByteBuffer buffer) {
 		int i = buffer.getInt();
 		// System.out.println("read Int Data: "+i);
 		return i;
 	}
 
 	@Override
-	public Object readData(String string) {
+	public Integer readData(String string) {
 		return Integer.parseInt(string);
 	}
 

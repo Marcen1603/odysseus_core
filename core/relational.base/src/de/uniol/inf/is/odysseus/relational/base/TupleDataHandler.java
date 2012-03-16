@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SetDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ListDataHandler;
 
 /**
  * @author André Bolles
  * 
  */
-public class TupleDataHandler extends AbstractDataHandler {
+public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -42,7 +42,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 
 	SDFSchema schema;
 
-	IDataHandler[] dataHandlers = null;
+	IDataHandler<?>[] dataHandlers = null;
 
 	public TupleDataHandler(SDFSchema schema) {
 		this.schema = schema;
@@ -57,13 +57,13 @@ public class TupleDataHandler extends AbstractDataHandler {
 	 * ()
 	 */
 	@Override
-	public Object readData() throws IOException {
+	public Tuple<?> readData() throws IOException {
 		return readData(stream);
 	}
 
 	
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
 		Object[] attributes = new Object[schema.size()];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
 			attributes[i] = dataHandlers[i].readData(inputStream);
@@ -73,7 +73,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData(String[] input) {
+	public Tuple<?> readData(String[] input) {
 		Object[] attributes = new Object[schema.size()];
 		for (int i = 0; i < input.length; i++) {
 			attributes[i] = dataHandlers[i].readData(input[i]);
@@ -90,7 +90,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 	 * (java.nio.ByteBuffer)
 	 */
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public Tuple<?> readData(ByteBuffer buffer) {
 		Tuple<?> r = null;
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
@@ -108,7 +108,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData(String string) {
+	public Tuple<?> readData(String string) {
 		throw new RuntimeException("Sorry. Currently not implemented");
 	}
 
@@ -149,7 +149,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 	}
 
 	private void createDataReader() {
-		this.dataHandlers = new IDataHandler[schema.size()];
+		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 
@@ -157,7 +157,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 
 			if (type.isBase() || type.isBean()) {
 				String uri = attribute.getDatatype().getURI(false);
-				IDataHandler handler = DataHandlerRegistry
+				IDataHandler<?> handler = DataHandlerRegistry
 						.getDataHandler(uri);
 
 				if (handler == null) {
@@ -170,7 +170,7 @@ public class TupleDataHandler extends AbstractDataHandler {
 						type.getSchema());
 				this.dataHandlers[i++] = handler;
 			} else if (type.isMultiValue()) {
-				SetDataHandler handler = new SetDataHandler(type.getSubType());
+				ListDataHandler handler = new ListDataHandler(type.getSubType());
 				this.dataHandlers[i++] = handler;
 			}
 		}

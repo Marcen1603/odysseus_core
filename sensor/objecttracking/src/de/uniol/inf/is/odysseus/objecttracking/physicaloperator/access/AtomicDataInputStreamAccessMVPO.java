@@ -39,7 +39,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private ObjectInputStream channel;
 	private boolean isOpen;
 	private MVTuple<M> buffer;
-	private IDataHandler[] dataReader;
+	private IDataHandler<?>[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFSchema outputSchema;
@@ -72,7 +72,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			
-			IDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(uri);
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype " + uri);
 			}

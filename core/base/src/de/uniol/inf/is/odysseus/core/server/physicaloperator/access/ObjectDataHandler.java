@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectDataHandler extends AbstractDataHandler {
+public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
@@ -14,14 +14,15 @@ public class ObjectDataHandler extends AbstractDataHandler {
 	}
 	
 	@Override
-	public Object readData(ByteBuffer buffer) {
+	public M readData(ByteBuffer buffer) {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object readData(ObjectInputStream inputStream) throws IOException {
+	public M readData(ObjectInputStream inputStream) throws IOException {
 		try {
-			return inputStream.readObject();
+			return (M) inputStream.readObject();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -29,7 +30,7 @@ public class ObjectDataHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData(String string) {
+	public M readData(String string) {
 		return null;
 	}
 
@@ -43,7 +44,7 @@ public class ObjectDataHandler extends AbstractDataHandler {
 	}
 
 	@Override
-	public Object readData() throws IOException {
+	public M readData() throws IOException {
 		return null;
 	}
 
