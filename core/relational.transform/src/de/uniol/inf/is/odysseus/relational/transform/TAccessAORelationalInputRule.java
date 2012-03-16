@@ -19,7 +19,6 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IdentityTransformation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.access.ObjectInputStreamAccessPO;
@@ -36,7 +35,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 		return 1;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration trafo) {
 		LoggerSystem.printlog(Accuracy.DEBUG, "Standard InputStream");

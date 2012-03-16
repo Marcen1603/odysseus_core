@@ -25,21 +25,18 @@ abstract public class AbstractInputStreamAccessPO <In, Out extends IMetaAttribut
 AbstractIterableSource<Out>{
 	
 	protected ObjectInputStream iStream;
-	final protected IDataTransformation<In, Out> transformation;
 	final protected String user;
 	final protected String password;
 	protected Out buffer;
 	protected boolean done = false;
 	
-	public AbstractInputStreamAccessPO(IDataTransformation<In, Out> transformation, String user, String password) {
-		this.transformation = transformation;
+	public AbstractInputStreamAccessPO(String user, String password) {
 		this.user = user;
 		this.password = password;
 	}
 	
 	public AbstractInputStreamAccessPO(
-			InputStreamAccessPO<In, Out> inputStreamAccessPO) {
-		this.transformation = inputStreamAccessPO.transformation;
+			AbstractInputStreamAccessPO<In, Out> inputStreamAccessPO) {
 		this.user = inputStreamAccessPO.user;
 		this.password = inputStreamAccessPO.password;
 	}

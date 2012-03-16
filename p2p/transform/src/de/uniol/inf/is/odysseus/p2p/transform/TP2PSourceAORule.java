@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.p2p.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IdentityTransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.PeerGroupTool;
 import de.uniol.inf.is.odysseus.p2p.logicaloperator.P2PSourceAO;
@@ -33,11 +32,11 @@ public class TP2PSourceAORule extends AbstractTransformationRule<P2PSourceAO> {
 		return 0;
 	}
 
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	@Override
 	public void execute(P2PSourceAO p2pSourceAO, TransformationConfiguration transformConfig) {
 		// TODO: Add Username and Password to P2PSourceAO?
-		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(new IdentityTransformation(), p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup(), null, null);
+		P2PInputStreamAccessPO<?,?> p2pAccessPO = new P2PInputStreamAccessPO(p2pSourceAO.getAdv(), PeerGroupTool.getPeerGroup(), null, null);
 		p2pAccessPO.setOutputSchema(p2pSourceAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(p2pSourceAO, p2pAccessPO);
 		for (ILogicalOperator o:toUpdate){

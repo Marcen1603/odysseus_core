@@ -14,9 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.p2p.operatorpeer.physicaloperator.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +22,13 @@ import java.io.ObjectInputStream;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaSocket;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractInputStreamAccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataTransformation;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
@@ -69,9 +69,8 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 
 	}
 
-	public P2PInputStreamAccessPO(IDataTransformation<In, Out> transformation,
-			String adv, PeerGroup peergroup, String user, String password) {
-		super(transformation, user, password);
+	public P2PInputStreamAccessPO(String adv, PeerGroup peergroup, String user, String password) {
+		super(user, password);
 		this.adv = MessageTool.createPipeAdvertisementFromXml(adv);
 		this.peerGroup = peergroup;
 		logger.debug("Initialisiere P2PInputStreamAccessPO: "
@@ -117,7 +116,7 @@ public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 			if (inElem == null) {
 				throw new Exception("null element from socket");
 			}
-			buffer = this.transformation.transform(inElem);
+			buffer = (Out) inElem;
 			return true;
 		} catch (EOFException e) {
 			e.printStackTrace();
