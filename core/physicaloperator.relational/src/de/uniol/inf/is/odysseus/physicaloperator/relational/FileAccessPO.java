@@ -53,7 +53,7 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	final private String separator;
 
-	public FileAccessPO(String path, String fileType, String separator) {
+	public FileAccessPO(String path, String fileType, String separator, ) {
 		this.path = path;
 		this.fileType = fileType;
 		this.separator = separator;

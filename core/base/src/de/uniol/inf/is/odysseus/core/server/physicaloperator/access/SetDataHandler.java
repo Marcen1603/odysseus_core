@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author André Bolles
  *
  */
-public class SetDataHandler extends AbstractAtomicDataHandler{
+public class SetDataHandler extends AbstractDataHandler{
 
 	static protected List<String> types = new ArrayList<String>();
 	static{
@@ -34,7 +34,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	}
 	
 	SDFDatatype subType = null;
-	IAtomicDataHandler handler = null;
+	IDataHandler handler = null;
 	
 	public SetDataHandler(SDFDatatype subType){
 		this.subType = subType;
@@ -42,7 +42,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData()
 	 */
 	@Override
 	public Object readData() throws IOException {
@@ -67,7 +67,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData(java.nio.ByteBuffer)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData(java.nio.ByteBuffer)
 	 */
 	@Override
 	public Object readData(ByteBuffer buffer) {
@@ -81,7 +81,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
 	@SuppressWarnings({"rawtypes"})
@@ -95,7 +95,7 @@ public class SetDataHandler extends AbstractAtomicDataHandler{
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler#getSupportedDataTypes()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler#getSupportedDataTypes()
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {

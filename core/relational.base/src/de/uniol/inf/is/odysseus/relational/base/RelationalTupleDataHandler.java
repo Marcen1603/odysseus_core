@@ -24,16 +24,16 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SetDataHandler;
 
 /**
  * @author André Bolles
  * 
  */
-public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
+public class RelationalTupleDataHandler extends AbstractDataHandler {
 
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -42,7 +42,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 
 	SDFSchema schema;
 
-	IAtomicDataHandler[] dataHandlers = null;
+	IDataHandler[] dataHandlers = null;
 
 	public RelationalTupleDataHandler(SDFSchema schema) {
 		this.schema = schema;
@@ -53,7 +53,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData
 	 * ()
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#readData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData
 	 * (java.nio.ByteBuffer)
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler#writeData
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#writeData
 	 * (java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler
 	 * #getSupportedDataTypes()
 	 */
 	@Override
@@ -149,7 +149,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 	}
 
 	private void createDataReader() {
-		this.dataHandlers = new IAtomicDataHandler[schema.size()];
+		this.dataHandlers = new IDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 
@@ -157,7 +157,7 @@ public class RelationalTupleDataHandler extends AbstractAtomicDataHandler {
 
 			if (type.isBase() || type.isBean()) {
 				String uri = attribute.getDatatype().getURI(false);
-				IAtomicDataHandler handler = DataHandlerRegistry
+				IDataHandler handler = DataHandlerRegistry
 						.getDataHandler(uri);
 
 				if (handler == null) {

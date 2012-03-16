@@ -23,13 +23,13 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GridHandler extends AbstractAtomicDataHandler {
+public class GridHandler extends AbstractDataHandler {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Grid");

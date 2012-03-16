@@ -28,7 +28,7 @@ import java.util.List;
  * @author Andre Bolles
  *
  */
-public class DateHandler extends AbstractAtomicDataHandler {
+public class DateHandler extends AbstractDataHandler {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Date");

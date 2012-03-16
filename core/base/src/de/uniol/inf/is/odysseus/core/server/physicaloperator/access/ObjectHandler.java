@@ -22,9 +22,9 @@ public class ObjectHandler<T> implements
 		IObjectHandler<T> {
 
 	ByteBuffer byteBuffer = null;
-	private IAtomicDataHandler dataHandler;
+	private IDataHandler dataHandler;
 		
-	public ObjectHandler(IAtomicDataHandler dataHandler) {
+	public ObjectHandler(IDataHandler dataHandler) {
 		byteBuffer = ByteBuffer.allocate(1024);
 		this.dataHandler = dataHandler;		
 	}

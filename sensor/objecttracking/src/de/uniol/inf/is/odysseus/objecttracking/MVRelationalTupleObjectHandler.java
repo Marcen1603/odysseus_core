@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
@@ -31,7 +31,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 
 	//private static final Logger logger = LoggerFactory.getLogger( ObjectHandler.class );
 	ByteBuffer byteBuffer = null;
-	private IAtomicDataHandler[] dataHandler;
+	private IDataHandler[] dataHandler;
 		
 	public MVRelationalTupleObjectHandler(SDFSchema schema) {
 		byteBuffer = ByteBuffer.allocate(1024);
@@ -43,7 +43,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		super();
 		if (relationalTupleObjectHandler.dataHandler != null){
 			int l = relationalTupleObjectHandler.dataHandler.length;
-			dataHandler = new IAtomicDataHandler[l];
+			dataHandler = new IDataHandler[l];
 			System.arraycopy(relationalTupleObjectHandler.dataHandler, 0, dataHandler, 0, l);
 		}
 	}
@@ -54,12 +54,12 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	}
 
 	private void createDataReader(SDFSchema schema) {
-		this.dataHandler = new IAtomicDataHandler[schema.size()];
+		this.dataHandler = new IDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			
-			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			IDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype "+ uri);
 			}

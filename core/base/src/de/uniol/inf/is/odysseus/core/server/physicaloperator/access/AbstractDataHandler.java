@@ -14,8 +14,34 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
+import java.io.ObjectInputStream;
+import java.util.List;
 
-@Deprecated
-public abstract class AbstractAtomicDataHandler extends AbstractDataHandler{
+public abstract class AbstractDataHandler implements IDataHandler {
 
+	protected ObjectInputStream stream;
+		
+	
+	protected AbstractDataHandler(){
+	}
+	
+	@Override
+	@Deprecated
+	public void setStream(ObjectInputStream stream) {
+		this.stream = stream;
+	}
+
+	@Deprecated
+	final public ObjectInputStream getStream() {
+		return stream;
+	}
+	
+	@Override
+	public Object readData(String[] input) {
+		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
+		return readData(input[0]);
+	}
+	
+	@Override
+	abstract public List<String> getSupportedDataTypes();
 }

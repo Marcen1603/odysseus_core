@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 import de.uniol.inf.is.odysseus.objecttracking.MVRelationalTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -39,7 +39,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private ObjectInputStream channel;
 	private boolean isOpen;
 	private MVRelationalTuple<M> buffer;
-	private IAtomicDataHandler[] dataReader;
+	private IDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
 	private SDFSchema outputSchema;
@@ -67,12 +67,12 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 
 	private void createDataReader(SDFSchema schema) {
 		this.outputSchema = schema;
-		this.dataReader = new IAtomicDataHandler[schema.size()];
+		this.dataReader = new IDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			
-			IAtomicDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
+			IDataHandler handler = DataHandlerRegistry.getDataHandler(uri);
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype " + uri);
 			}
@@ -125,7 +125,7 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 			} catch (IOException e) {
 				throw new OpenFailedException(e.getMessage());
 			}
-//			for (IAtomicDataHandler reader : this.dataReader) {
+//			for (IDataHandler reader : this.dataReader) {
 //				reader.setStream(this.channel);
 //			}
 			this.isOpen = true;

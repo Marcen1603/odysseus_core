@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAtomicDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
 
 /**
@@ -55,7 +55,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	final private String password;
 	private ObjectInputStream channel;
 	private RelationalTuple<M> buffer;
-	private IAtomicDataHandler[] dataReader;
+	private IDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
 
@@ -84,11 +84,11 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 	}
 
 	private void createDataReader(SDFSchema schema) {
-		this.dataReader = new IAtomicDataHandler[schema.size()];
+		this.dataReader = new IDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			IAtomicDataHandler handler = DataHandlerRegistry
+			IDataHandler handler = DataHandlerRegistry
 					.getDataHandler(uri);
 			if (handler == null) {
 				throw new IllegalArgumentException("No handler for datatype "
@@ -146,7 +146,7 @@ public class AtomicDataInputStreamAccessPO<M extends IMetaAttribute> extends
 			throw new OpenFailedException(e.getMessage() + " " + this.hostName
 					+ " " + this.port);
 		}
-		// for (IAtomicDataHandler reader : this.dataReader) {
+		// for (IDataHandler reader : this.dataReader) {
 		// reader.setStream(this.channel);
 		// }
 		this.isDone = false;

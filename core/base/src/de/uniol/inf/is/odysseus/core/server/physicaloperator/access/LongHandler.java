@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LongHandler extends AbstractAtomicDataHandler {
+public class LongHandler extends AbstractDataHandler {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Long");
