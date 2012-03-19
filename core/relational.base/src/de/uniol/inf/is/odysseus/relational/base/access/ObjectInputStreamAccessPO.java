@@ -130,7 +130,7 @@ public class ObjectInputStreamAccessPO<M> extends
 			}
 
 			try {
-				buffer = (M) dataHandler.readData(channel);
+				buffer = dataHandler.readData(channel);
 			} catch (EOFException e) {
 				this.isDone = true;
 				propagateDone();
