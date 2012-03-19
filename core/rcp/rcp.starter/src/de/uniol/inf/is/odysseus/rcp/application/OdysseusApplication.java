@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 /**
  * This class controls all aspects of the application's execution
  */
-public class Application implements IApplication {
+public class OdysseusApplication implements IApplication {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)

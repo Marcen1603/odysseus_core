@@ -8,7 +8,7 @@
       <application
             icon="icons/appicon.gif">
          <run
-               class="de.uniol.inf.is.odysseus.rcp.application.Application">
+               class="de.uniol.inf.is.odysseus.rcp.application.OdysseusApplication">
          </run>
       </application>
    </extension>
