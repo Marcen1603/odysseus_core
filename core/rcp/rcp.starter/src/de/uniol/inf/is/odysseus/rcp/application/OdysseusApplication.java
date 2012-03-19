@@ -19,12 +19,15 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.Connect;
 import de.uniol.inf.is.odysseus.rcp.Login;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 
 /**
@@ -32,19 +35,18 @@ import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
  */
 public class OdysseusApplication implements IApplication {
 
+    private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);
+    private static IExecutor executor;
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
 	public Object start(IApplicationContext context) {
+	    Preconditions.checkNotNull(executor, "No executor bound!");
+	    
 		Display display = PlatformUI.createDisplay();
 		try {
-			// TODO: use a servicetracker instead of sleep...
-			IExecutor executor = null;
-			while((executor = OdysseusRCPPlugIn.getExecutor()) == null){
-				Thread.sleep(2000);
-			}
-			//IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if(executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
 				String service = "WebserviceServerService";
@@ -89,5 +91,23 @@ public class OdysseusApplication implements IApplication {
 		});
 	}
 	
+	public void bindExecutor( IExecutor exec ) {
+	    if( executor == null ) {
+	        executor = exec;
+	        LOG.debug("Executor bound: " + exec);
+	    } else {
+	        LOG.error("One executor already bound: " + executor);
+	        LOG.error("Tried to bound new executor: " + exec);
+	    }
+	}
 	
+	public void unbindExecutor( IExecutor exec ) {
+	    if( executor == exec ) {
+	        exec = null;
+	        LOG.debug("Executor unbound: " + exec);
+	    } else {
+	        LOG.error("Tried to unbound executor " + exec + " which is not bound here.");
+	        LOG.error("Executor " + executor + " is bound.");
+	    }
+	}
 }
