@@ -40,13 +40,13 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 		nioConnection.addConnectionListener(this);
 	}
 
-	public NioConnectionHandler(NioConnectionHandler routerConnection) {
-		this.nioConnection = routerConnection.nioConnection;
-		this.host = routerConnection.host;
-		this.port = routerConnection.port;
-		this.autoReconnect = routerConnection.autoReconnect;
-		this.user = routerConnection.user;
-		this.password = routerConnection.password;
+	public NioConnectionHandler(NioConnectionHandler nioConnection) {
+		this.nioConnection = nioConnection.nioConnection;
+		this.host = nioConnection.host;
+		this.port = nioConnection.port;
+		this.autoReconnect = nioConnection.autoReconnect;
+		this.user = nioConnection.user;
+		this.password = nioConnection.password;
 	}
 
 	@Override
