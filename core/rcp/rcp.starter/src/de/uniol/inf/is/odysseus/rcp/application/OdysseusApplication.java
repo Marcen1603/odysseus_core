@@ -43,7 +43,7 @@ public class OdysseusApplication implements IApplication {
 	 */
 	@Override
 	public Object start(IApplicationContext context) {
-	    Preconditions.checkNotNull(executor, "No executor bound!");
+	    //Preconditions.checkNotNull(executor, "No executor bound!");
 	    
 		Display display = PlatformUI.createDisplay();
 		try {
