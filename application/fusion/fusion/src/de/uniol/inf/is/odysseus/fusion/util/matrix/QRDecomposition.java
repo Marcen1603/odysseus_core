@@ -16,11 +16,19 @@ package de.uniol.inf.is.odysseus.fusion.util.matrix;
 
 public class QRDecomposition implements java.io.Serializable {
 
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2220570558524939858L;
+
 /* ------------------------
    Class variables
  * ------------------------ */
 
-   /** Array for internal storage of decomposition.
+
+
+
+/** Array for internal storage of decomposition.
    @serial internal array storage.
    */
    private double[][] QR;

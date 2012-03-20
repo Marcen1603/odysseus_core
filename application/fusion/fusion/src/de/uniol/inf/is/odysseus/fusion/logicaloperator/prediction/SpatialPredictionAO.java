@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SpatialPredict")
 public class SpatialPredictionAO extends AbstractLogicalOperator  {
+	
+	@SuppressWarnings("unused")
 	private String predictionFunction = null;
 	
 	private static final long serialVersionUID = 3958945913160253013L;

@@ -68,7 +68,7 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 
 			Polygon segment = (Polygon) tuple.getAttribute(0);
 			int objectClass = tuple.getAttribute(1);
-			Polygon prediction = (Polygon) tuple.getAttribute(2);
+			//Polygon prediction = (Polygon) tuple.getAttribute(2);
 			Point centroid = tuple.getAttribute(3);
 			int objectInstance = tuple.getAttribute(4);
 			//objectInstance = 0;

@@ -5,9 +5,9 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.RelationalTuple;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class SpatialFilterPO  extends AbstractPipe<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> {
+public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
 	public SpatialFilterPO(SDFSchema outputSchema) { 
 		super();
@@ -20,7 +20,7 @@ public class SpatialFilterPO  extends AbstractPipe<RelationalTuple<? extends IMe
 	}
 
 	@Override
-	protected void process_next(RelationalTuple<? extends IMetaAttribute> object, int port) {
+	protected void process_next(Tuple<? extends IMetaAttribute> object, int port) {
 		
 		// compute the distance between Predicted State and Measurement 
 		
@@ -44,7 +44,7 @@ public class SpatialFilterPO  extends AbstractPipe<RelationalTuple<? extends IMe
 	}
 
 	@Override
-	public AbstractPipe<RelationalTuple<? extends IMetaAttribute>, RelationalTuple<? extends IMetaAttribute>> clone() {
+	public AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> clone() {
 		return this.clone();
 	}
 
