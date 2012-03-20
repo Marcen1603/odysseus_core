@@ -193,7 +193,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.StartQueryCommand"
                icon="icons/control_play_blue.png"
