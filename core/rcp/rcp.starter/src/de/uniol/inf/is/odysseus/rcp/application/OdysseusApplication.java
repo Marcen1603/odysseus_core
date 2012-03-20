@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.application;
 
 import org.eclipse.equinox.app.IApplication;
@@ -19,6 +19,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,19 +36,35 @@ import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
  */
 public class OdysseusApplication implements IApplication {
 
-    private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);
-    private static IExecutor executor;
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
+	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);
+	private static IExecutor executor;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
+	 * IApplicationContext)
 	 */
 	@Override
-	public Object start(IApplicationContext context) {
-	    //Preconditions.checkNotNull(executor, "No executor bound!");
-	    
+	public synchronized Object start(IApplicationContext context) {
+
+		// TODO: start seems not to wait for binding of executor in rcp
+		while (executor == null) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {				
+				e.printStackTrace();
+			}
+		}
+
+		// Preconditions.checkNotNull(executor, "No executor bound!");
+		// ServiceTracker tracker = new
+		// ServiceTracker(context.getBrandingBundle().getBundleContext(),
+		// IExecutor.class, null);
+
 		Display display = PlatformUI.createDisplay();
 		try {
-			if(executor instanceof IClientExecutor) {
+			if (executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
 				String service = "WebserviceServerService";
 				String serviceNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/";
@@ -57,7 +74,7 @@ public class OdysseusApplication implements IApplication {
 				ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
 				Connect.connectWindow(display, false, false);
 			}
-			
+
 			Login.loginWindow(display, false, false);
 
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
@@ -65,7 +82,7 @@ public class OdysseusApplication implements IApplication {
 				return IApplication.EXIT_RESTART;
 			}
 			return IApplication.EXIT_OK;
-		} catch(Throwable t){
+		} catch (Throwable t) {
 			t.printStackTrace();
 			return null;
 		} finally {
@@ -73,7 +90,9 @@ public class OdysseusApplication implements IApplication {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	@Override
@@ -90,24 +109,25 @@ public class OdysseusApplication implements IApplication {
 			}
 		});
 	}
-	
-	public void bindExecutor( IExecutor exec ) {
-	    if( executor == null ) {
-	        executor = exec;
-	        LOG.debug("Executor bound: " + exec);
-	    } else {
-	        LOG.error("One executor already bound: " + executor);
-	        LOG.error("Tried to bound new executor: " + exec);
-	    }
+
+	public synchronized void bindExecutor(IExecutor exec) {
+		if (executor == null) {
+			executor = exec;
+			LOG.debug("Executor bound: " + exec);
+			notifyAll();
+		} else {
+			LOG.error("One executor already bound: " + executor);
+			LOG.error("Tried to bound new executor: " + exec);
+		}
 	}
-	
-	public void unbindExecutor( IExecutor exec ) {
-	    if( executor == exec ) {
-	        exec = null;
-	        LOG.debug("Executor unbound: " + exec);
-	    } else {
-	        LOG.error("Tried to unbound executor " + exec + " which is not bound here.");
-	        LOG.error("Executor " + executor + " is bound.");
-	    }
+
+	public void unbindExecutor(IExecutor exec) {
+		if (executor == exec) {
+			exec = null;
+			LOG.debug("Executor unbound: " + exec);
+		} else {
+			LOG.error("Tried to unbound executor " + exec + " which is not bound here.");
+			LOG.error("Executor " + executor + " is bound.");
+		}
 	}
 }
