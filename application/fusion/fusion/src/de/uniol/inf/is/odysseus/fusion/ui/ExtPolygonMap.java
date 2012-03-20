@@ -56,9 +56,10 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 
 			Polygon segment = (Polygon) tuple.getAttribute(0);
 			int objectClass = tuple.getAttribute(1);
-			Polygon prediction = (Polygon) tuple.getAttribute(2);
-			int objectInstance = tuple.getAttribute(3);
-
+			//Polygon prediction = (Polygon) tuple.getAttribute(2);
+			//int objectInstance = tuple.getAttribute(3);
+			int objectInstance = 0;
+					
 			final Coordinate[] coordinates = segment.getCoordinates();
 			int[] xPoints = new int[coordinates.length];
 			int[] yPoints = new int[coordinates.length];
@@ -83,8 +84,7 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 			if (objectClass == 1) {
 				graphics.setColor(Color.RED);
 				graphics.drawString("Human", xPoints[0], yPoints[0]);
-				graphics.drawString("Instance " + objectInstance, xPoints[0],
-						yPoints[0] + 10);
+				graphics.drawString("Instance " + objectInstance, xPoints[0], yPoints[0] + 10);
 				graphics.drawPolyline(xPoints, yPoints, coordinates.length);
 			}
 			if (objectClass == 2) {

@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ */ 
 
 package de.uniol.inf.is.odysseus.context.store;
 
@@ -32,9 +32,9 @@ public class ContextStore<T> {
 
 	public static final String CONTEXT_STORE_NAME = "Contextstore";
 
-	private static ContextStore<Object> instance;
+	protected static ContextStore<Object> instance;
 
-	private ContextStore() {
+	protected ContextStore() {
 	}
 
 	public static synchronized ContextStore<Object> getInstance() {
@@ -42,9 +42,9 @@ public class ContextStore<T> {
 			instance = new ContextStore<Object>();
 		}
 		return instance;
-	}
+	} 
 
-	private HashMap<String, ContextStoreEntry<T>> stores = new HashMap<String, ContextStoreEntry<T>>();
+	protected HashMap<String, ContextStoreEntry<T>> stores = new HashMap<String, ContextStoreEntry<T>>();
 
 	public void createStore(String name, SDFSchema schema) throws ContextManagementException {
 		if (storeExists(name)) {

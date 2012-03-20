@@ -23,6 +23,7 @@ public class RuleProvider implements ITransformRuleProvider {
     public List<IRule<?, ?>> getRules() {
         final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
         rules.add(new TExtPolygonSinkAORule());
+        rules.add(new TContextStoreAORule());
         if (LOG.isDebugEnabled()) {
             for (IRule<?, ?> rule : rules) {
                 LOG.debug(String.format("Register rule: %s", rule));
