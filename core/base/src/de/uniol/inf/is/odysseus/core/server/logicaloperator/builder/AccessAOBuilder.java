@@ -75,16 +75,18 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		String adapterName = adapter.hasValue()?adapter.getValue():type.getValue(); 
 		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
-		for (final String item : options.getValue()) {
-			final String[] option = item.split(":");
-			if (option.length == 2) {
-				optionsMap.put(option[0],
-						item.substring(option[0].length() + 1));
-			} else {
-				optionsMap.put(option[0], "");
+		
+		if(options.hasValue()){
+			for (final String item : options.getValue()) {
+				final String[] option = item.split(":");
+				if (option.length == 2) {
+					optionsMap.put(option[0],
+							item.substring(option[0].length() + 1));
+				} else {
+					optionsMap.put(option[0], "");
+				}
 			}
 		}
-		
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
 		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
@@ -96,7 +98,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		
 		ao.setOptions(optionsMap);
-		ao.setAdapter(adapter.getValue());
+		ao.setAdapter(adapterName);
 		ILogicalOperator op = addTimestampAO(ao);
 		return op;
 	}
@@ -131,9 +133,16 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		} else {
-			if (!(type.hasValue() && adapter.hasValue()) || (type.hasValue() && adapter.hasValue())) {
+			if(type.hasValue() && adapter.hasValue()){
+					addError(new IllegalArgumentException(
+							"to much information for the creation of source "
+									+ sourceName
+									+ ". expecting type OR adapter."));
+					return false;
+			}
+			if(!type.hasValue() && !adapter.hasValue()){
 				addError(new IllegalArgumentException(
-						"missing information for the creation of source "
+						"to much information for the creation of source "
 								+ sourceName
 								+ ". expecting type OR adapter."));
 				return false;
