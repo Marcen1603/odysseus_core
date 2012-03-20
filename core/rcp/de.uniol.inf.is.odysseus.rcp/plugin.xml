@@ -31,9 +31,9 @@
       </view>
       <view
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.QueryView"
+            class="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
             icon="icons/prop_ps.gif"
-            id="de.uniol.inf.is.odysseus.rcp.views.QueryView"
+            id="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
             name="Queries"
             restorable="true">
       </view>
@@ -183,7 +183,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshQueryViewCommand"
                icon="icons/refresh.gif"

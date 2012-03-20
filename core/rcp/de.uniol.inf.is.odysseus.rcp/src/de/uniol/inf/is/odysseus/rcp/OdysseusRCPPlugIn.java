@@ -37,7 +37,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	public static final String USER_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.UserView";
 	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
-	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.QueryView";
+	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.query.QueryView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";

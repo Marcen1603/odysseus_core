@@ -5,7 +5,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <menu
                icon="icons/monitor.png"
                id="de.uniol.inf.is.odysseus.rcp.viewer.stream.charts.menu"

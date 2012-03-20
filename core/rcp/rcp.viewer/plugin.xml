@@ -268,7 +268,7 @@
       <menuContribution
             allPopups="false"
             class="de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamMenuFactory"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -277,7 +277,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.QueryView">
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor"
                icon="icons/graph.jpg"
