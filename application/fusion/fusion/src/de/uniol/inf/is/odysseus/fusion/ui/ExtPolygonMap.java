@@ -94,38 +94,36 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 						yPoints[0] + 10);
 				graphics.drawPolyline(xPoints, yPoints, coordinates.length);
 			}
-			
-			if (objectClass > 0) {
-				ArrayList<Coordinate> list;
-				if (paths.containsKey(objectInstance)) {
-					list = paths.get(objectInstance);
-					list.add(new Coordinate(xPoints[0], yPoints[0]));		
-				} else {
-					list = new ArrayList<Coordinate>();
-					list.add(new Coordinate(xPoints[0], yPoints[0]));
-					paths.put(objectInstance, list);
-				}
-			}
 
 			
-			
-			graphics.setColor(Color.GRAY);
-			for(ArrayList<Coordinate> list :paths.values()){
-			
-				int[] pathXPoints = new int[list.size()];
-				int[] pathYPoints = new int[list.size()];
-				int pathIndex = 0;
-				
-				if(list.size() > 400){
-					list.remove(0);
-				}
-				for (final Coordinate coordinate : list) {
-					pathXPoints[pathIndex] =  (int) coordinate.x;
-					pathYPoints[pathIndex] = (int) coordinate.y;
-					pathIndex++;
-				}
-				graphics.drawPolyline(pathXPoints, pathYPoints, list.size());
-			}
+//			if (objectClass > 0) {
+//				ArrayList<Coordinate> list;
+//				if (paths.containsKey(objectInstance)) {
+//					list = paths.get(objectInstance);
+//					list.add(new Coordinate(xPoints[0], yPoints[0]));		
+//				} else {
+//					list = new ArrayList<Coordinate>();
+//					list.add(new Coordinate(xPoints[0], yPoints[0]));
+//					paths.put(objectInstance, list);
+//				}
+//			}
+//			graphics.setColor(Color.GRAY);
+//			for(ArrayList<Coordinate> list :paths.values()){
+//			
+//				int[] pathXPoints = new int[list.size()];
+//				int[] pathYPoints = new int[list.size()];
+//				int pathIndex = 0;
+//				
+//				if(list.size() > 400){
+//					list.remove(0);
+//				}
+//				for (final Coordinate coordinate : list) {
+//					pathXPoints[pathIndex] =  (int) coordinate.x;
+//					pathYPoints[pathIndex] = (int) coordinate.y;
+//					pathIndex++;
+//				}
+//				graphics.drawPolyline(pathXPoints, pathYPoints, list.size());
+//			}
 			
 			
 			graphics.setColor(Color.YELLOW);
@@ -149,26 +147,26 @@ public class ExtPolygonMap extends JPanel implements KeyListener {
 //				graphics.drawPolyline(preXPoints, preYPoints,
 //						preCoordinates.length);
 //			}
-			if(prediction != null){
-				final Coordinate[] preCoordinates = prediction.getCoordinates();
-				int[] preXPoints = new int[preCoordinates.length];
-				int[] preYPoints = new int[preCoordinates.length];
-				int preIndex = 0;
-	
-				for (final Coordinate coordinate : preCoordinates) {
-					double x = ((coordinate.x - this.offset[0])
-							* Math.cos(angle) - (coordinate.y - this.offset[1])
-							* Math.sin(angle));
-					double y = ((coordinate.x - this.offset[0])
-							* Math.sin(angle) + (coordinate.y - this.offset[1])
-							* Math.cos(angle));
-					preXPoints[preIndex] = 500 + (int) (x / zoom);
-					preYPoints[preIndex] = 500 - (int) (y / zoom);
-					preIndex++;
-				}
-				graphics.drawPolyline(preXPoints, preYPoints,
-						preCoordinates.length);
-			}
+//			if(prediction != null){
+//				final Coordinate[] preCoordinates = prediction.getCoordinates();
+//				int[] preXPoints = new int[preCoordinates.length];
+//				int[] preYPoints = new int[preCoordinates.length];
+//				int preIndex = 0;
+//	
+//				for (final Coordinate coordinate : preCoordinates) {
+//					double x = ((coordinate.x - this.offset[0])
+//							* Math.cos(angle) - (coordinate.y - this.offset[1])
+//							* Math.sin(angle));
+//					double y = ((coordinate.x - this.offset[0])
+//							* Math.sin(angle) + (coordinate.y - this.offset[1])
+//							* Math.cos(angle));
+//					preXPoints[preIndex] = 500 + (int) (x / zoom);
+//					preYPoints[preIndex] = 500 - (int) (y / zoom);
+//					preIndex++;
+//				}
+//				graphics.drawPolyline(preXPoints, preYPoints,
+//						preCoordinates.length);
+//			}
 			
 			
 			graphics.setColor(Color.WHITE);

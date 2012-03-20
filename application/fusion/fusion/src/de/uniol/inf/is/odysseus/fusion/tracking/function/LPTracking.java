@@ -81,6 +81,10 @@ public class LPTracking extends AbstractFunction<Integer> {
 					}
 					candidates++;
 				}
+				
+				if(i > 1500){
+					list.clear();
+				}
 			}
 		}
 		//System.out.println("Objects Canndidates in Area: " + list.size());
