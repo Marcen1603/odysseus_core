@@ -21,8 +21,8 @@ import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.ViewHelper;
-import de.uniol.inf.is.odysseus.rcp.views.QueryView;
-
+//import de.uniol.inf.is.odysseus.rcp.views.QueryView;
+import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 public class RefreshQueryViewCommand extends AbstractHandler implements IHandler {
 
 	@Override
