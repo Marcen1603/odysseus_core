@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.fusion.metadata;
 
 import de.uniol.inf.is.odysseus.fusion.util.matrix.Matrix;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
-public class FusionProbability implements IFusionProbability {
+public class FusionProbability extends TimeInterval implements IFusionProbability {
 	
+	private static final long serialVersionUID = -3479265910143541469L;
+
 	// priori error estimate covariance matrix (P'(k)): P'(k)=A*P(k-1)*At + Q) 
 	private Matrix error_cov_pre = null;
 	 

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.fusion.logicaloperator.association.SpatialAssociationAO;
-import de.uniol.inf.is.odysseus.fusion.physicaloperator.association.SpatialFilterPO;
+import de.uniol.inf.is.odysseus.fusion.physicaloperator.association.SpatialAssociationPO;
 
 
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -29,7 +29,7 @@ public class TSpatialAssociationAORule extends AbstractTransformationRule<Spatia
     @Override
     public void execute(final SpatialAssociationAO operator, final TransformationConfiguration config) {
         try {
-            final SpatialFilterPO po = new SpatialFilterPO(operator.getOutputSchema());
+            final SpatialAssociationPO po = new SpatialAssociationPO(operator.getOutputSchema());
             po.setOutputSchema(operator.getOutputSchema());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);

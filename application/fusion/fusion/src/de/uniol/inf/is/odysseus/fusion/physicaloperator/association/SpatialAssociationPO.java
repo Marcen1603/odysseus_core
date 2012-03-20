@@ -3,13 +3,14 @@ package de.uniol.inf.is.odysseus.fusion.physicaloperator.association;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+public class SpatialAssociationPO  extends AbstractPipe<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
-	public SpatialFilterPO(SDFSchema outputSchema) { 
+	
+	public SpatialAssociationPO(SDFSchema outputSchema) { 
 		// TODO Auto-generated constructor stub
 	}
 
@@ -19,16 +20,11 @@ public class SpatialFilterPO  extends AbstractPipe<Tuple<? extends IMetaAttribut
 	}
 
 	@Override
-	protected void process_next(Tuple<? extends IMetaAttribute> object, int port) {
-		// TODO Auto-generated method stub
-		// System.out.println("Inputport: " + port + " Tuple: " + object.toString());
-		System.out.println("Start: " + ((ITimeInterval)object.getMetadata()).getStart() + " Ende: " + ((ITimeInterval)object.getMetadata()).getEnd() + " Interval: " + (((ITimeInterval)object.getMetadata()).getEnd().minus(((ITimeInterval)object.getMetadata()).getStart())));
-		if(port == 0)
-			transfer(object);
-		
-		System.out.println(object.getAttribute(3));
-		
+	protected void process_next(Tuple<? extends IMetaAttribute> tuple, int port) {
+
+		transfer(tuple);
 		process_done();
+		throw new RuntimeException("Association is not Implemented.");
 	}
 
 	@Override
