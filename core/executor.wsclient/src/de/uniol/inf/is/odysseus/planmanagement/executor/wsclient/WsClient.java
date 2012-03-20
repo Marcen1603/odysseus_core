@@ -19,8 +19,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -65,12 +67,17 @@ public class WsClient implements IExecutor, IClientExecutor{
 	
 	private List<IQueryListener> queryListener = new ArrayList<IQueryListener>();
 	
+	// Map of all added queries accessible by queryId
+	private Map<Integer, ILogicalQuery> queries = new HashMap<Integer, ILogicalQuery>();
+	
 	// manages the connection to the WebserviceServer
 	WebserviceServerService service;
 	// create handle for WebserviceServer
 	WebserviceServer server;
 	// SecurityToken
 	String securitytoken;
+	// User
+	ISession user;
 	
 	/**
 	 * connect
@@ -133,6 +140,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 		IUser user = new WsClientUser(username, password, true);
 		WsClientSession session = new WsClientSession(user);
 		session.setToken(this.securitytoken);
+		this.user = session;
 		return session;
 	}
 	
@@ -141,6 +149,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 			throws PlanManagementException {
 		if(getWebserviceServer() != null) {
 			getWebserviceServer().removeQuery(caller.getToken(), queryID);
+			queries.remove(queryID);
 		}
 	}
 
@@ -268,8 +277,8 @@ public class WsClient implements IExecutor, IClientExecutor{
 			throws PlanManagementException {
 		Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName).getResponseValue();
 		for(Integer val : response) {
-			getLogger().error(getLogicalQuery(val).getQueryText());
-			// TODO logicalQuery holen und firePlanModification aufrufen.
+			// TODO firePlanModification aufrufen.
+			this.queries.put(val, getLogicalQuery(val));
 		}
 		return response;
 	}
@@ -291,9 +300,20 @@ public class WsClient implements IExecutor, IClientExecutor{
 		query.setParserId(info.getParserID());
 		query.setPriority(info.getPriority());
 		query.setQueryText(info.getQueryText());
+		query.setUser(this.user);
 		return query;
 	}
 	
+	public Collection<ILogicalQuery> getQueries() {
+		return this.queries.values();
+	}
+	
+	public void setQueries(Collection<ILogicalQuery> qs) {
+		this.queries.clear();
+		for(ILogicalQuery q : qs) {
+			this.queries.put(q.getID(), q);
+		}
+	}
 
 	
 /********************************************************************
