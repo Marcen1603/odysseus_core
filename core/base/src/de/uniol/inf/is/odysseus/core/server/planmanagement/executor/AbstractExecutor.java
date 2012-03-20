@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.Router;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.NioConnection;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -511,9 +511,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		getLogger().info("Stop Scheduler.");
 		try {
 			getSchedulerManager().stopScheduling();
-			// Stopp Router only if it has an instance
-			if (Router.hasInstance()) {
-				Router.getInstance().stopRouting();
+			// Stopp only if it has an instance
+			if (NioConnection.hasInstance()) {
+				NioConnection.getInstance().stopRouting();
 			}
 		} catch (Exception e) {
 			throw new SchedulerException(e);

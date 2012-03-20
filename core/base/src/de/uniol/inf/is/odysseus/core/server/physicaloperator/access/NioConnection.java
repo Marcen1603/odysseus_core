@@ -36,45 +36,36 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.collection.IPair;
 import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 
-public class Router extends Thread implements IConnection {
+public class NioConnection extends Thread implements IConnection {
 	
 	static private Logger _logger = null;
 	static private Logger getLogger(){
 		if (_logger == null){
-			_logger = LoggerFactory.getLogger(Router.class);
+			_logger = LoggerFactory.getLogger(NioConnection.class);
 		}
 		return _logger;
 	}
 
 	private ByteBuffer buffer = ByteBuffer.allocate(1024);
 	Selector selector = null;
-	static Router instance = null;
-	private Map<IAccessConnectionListener<ByteBuffer>,SocketChannel> routerReceiverMap = new HashMap<IAccessConnectionListener<ByteBuffer>, SocketChannel>();
+	static NioConnection instance = null;
+	private Map<IAccessConnectionListener<ByteBuffer>,SocketChannel> receiverMap = new HashMap<IAccessConnectionListener<ByteBuffer>, SocketChannel>();
 	private LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>> deferredList = new LinkedList<IPair<SocketChannel, IAccessConnectionListener<ByteBuffer>>>();
 	boolean registerAction = false;
 	boolean doRouting = true;
 	private List<IConnectionListener> connectionlistener = new ArrayList<IConnectionListener>();
 
-	public static synchronized Router getInstance() throws IOException {
+	public static synchronized NioConnection getInstance() throws IOException {
 		if (instance == null) {
-			instance = new Router();
+			instance = new NioConnection();
 			instance.start();
 		}
 		return instance;
 	}
 
-	public Set<IAccessConnectionListener<ByteBuffer>> getRouterReceiver(){
-		return routerReceiverMap.keySet();
+	public Set<IAccessConnectionListener<ByteBuffer>> getReceiver(){
+		return receiverMap.keySet();
 	}
-	
-	// Keine gute Idee, da der Router u.U. nie gestarted wird
-//	public static synchronized Router getInstanceWithOutStarting()
-//			throws IOException {
-//		if (instance == null) {
-//			instance = new Router();
-//		}
-//		return instance;
-//	}
 	
 	public static synchronized boolean hasInstance(){
 		return instance != null;
@@ -94,7 +85,7 @@ public class Router extends Thread implements IConnection {
 		}
 	}
 
-	private Router() throws IOException {
+	private NioConnection() throws IOException {
 		selector = Selector.open();
 	}
 
@@ -106,7 +97,7 @@ public class Router extends Thread implements IConnection {
 
 	@Override
 	public void run() {
-		getLogger().debug("Router started ...");
+		getLogger().debug("Nio Connection Handler started ...");
 		while (doRouting) {
 			try {
 				int n = selector.select();
@@ -184,13 +175,8 @@ public class Router extends Thread implements IConnection {
 				notifyConnectionListeners(ConnectionMessageReason.ConnectionAbort);
 			}
 		}
-		getLogger().debug("Router terminated ...");
+		getLogger().debug("Nio Connection Handler terminated ...");
 	}
-
-//	public void connectToServer(IAccessConnectionListener sink, String host, int port)
-//			throws Exception {
-//		connectToServer(sink, host, port, null, null);
-//	}
 	
 	public void connectToServer(IAccessConnectionListener<ByteBuffer> sink, String host, int port, String username, String password)
 			throws Exception {
@@ -219,8 +205,8 @@ public class Router extends Thread implements IConnection {
 	}
 	
 	public void disconnectFromServer(IAccessConnectionListener<ByteBuffer> sink) throws IOException{
-		synchronized(routerReceiverMap){
-			SocketChannel s = routerReceiverMap.remove(sink);
+		synchronized(receiverMap){
+			SocketChannel s = receiverMap.remove(sink);
 			if (s!=null){
 				s.close();
 			}
@@ -231,8 +217,8 @@ public class Router extends Thread implements IConnection {
 		synchronized (deferredList) {
 			deferredList.add(new Pair<SocketChannel, IAccessConnectionListener<ByteBuffer>>(
 					sc, sink));
-			synchronized(routerReceiverMap){
-				routerReceiverMap.put(sink, sc);
+			synchronized(receiverMap){
+				receiverMap.put(sink, sc);
 			}
 			registerAction = true;
 		}
@@ -256,19 +242,7 @@ public class Router extends Thread implements IConnection {
 		}
 	}
 
-	// private Selector startServer(Selector selector, int port) throws
-	// IOException,
-	// ClosedChannelException {
-	// for (int i=0;i<4;i++){
-	// System.out.println("Listening on port "+port+i);
-	// ServerSocketChannel serverChannel = ServerSocketChannel.open();
-	// ServerSocket serverSocket = serverChannel.socket();
-	// serverSocket.bind(new InetSocketAddress(port+i));
-	// serverChannel.configureBlocking(false);
-	// serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-	// }
-	// return selector;
-	// }
+
 
 	private void readDataFromSocket(SocketChannel socketChannel,
 			IAccessConnectionListener<ByteBuffer> os) throws IOException {
@@ -306,35 +280,5 @@ public class Router extends Thread implements IConnection {
 		}
 	}
 
-	// private void testConnect() throws Exception {
-	// IObjectHandler<Tuple<IClone>> handler = new
-	// RelationalTupleObjectHandler<IClone>(
-	// NEXMarkStreamType.getSchema(NEXMarkStreamType.PERSON));
-	// ISink<ByteBuffer> po = new ByteBufferReceiverPO<Tuple<IClone>>(
-	// handler, "localhost", 65430, 1);
-	// po.open();
-	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
-	// .getSchema(NEXMarkStreamType.AUCTION));
-	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
-	// "localhost", 65431, 1);
-	// po.open();
-	//
-	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
-	// .getSchema(NEXMarkStreamType.BID));
-	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
-	// "localhost", 65432, 1);
-	// po.open();
-	//
-	// handler = new RelationalTupleObjectHandler<IClone>(NEXMarkStreamType
-	// .getSchema(NEXMarkStreamType.CATEGORY));
-	// po = new ByteBufferReceiverPO<Tuple<IClone>>(handler,
-	// "localhost", 65433, 1);
-	// po.open();
-	// }
-	//
-	// public static void main(String[] args) throws Exception {
-	// Router r = Router.getInstance();
-	// r.testConnect();
-	// }
 
 }

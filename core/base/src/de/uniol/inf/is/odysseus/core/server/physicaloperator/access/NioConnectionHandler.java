@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
-public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener {
+public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener {
 
-	Logger logger = LoggerFactory.getLogger(RouterConnectionHandler.class);
+	Logger logger = LoggerFactory.getLogger(NioConnectionHandler.class);
 	
-	final private Router router;
+	final private NioConnection nioConnection;
 	final private String host;
 	final private int port;
 	final private boolean autoReconnect;
@@ -23,7 +23,7 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 	private int tries = 0;
 	private int waitingForNextReconnect;
 
-	public RouterConnectionHandler(String host, int port, boolean autoconnect,
+	public NioConnectionHandler(String host, int port, boolean autoconnect,
 			String user, String password) throws IOException {
 		this.host = host;
 		this.port = port;
@@ -36,12 +36,12 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 					"Auto Reconnect currently not supported");
 		}
 
-		router = Router.getInstance();
-		router.addConnectionListener(this);
+		nioConnection = NioConnection.getInstance();
+		nioConnection.addConnectionListener(this);
 	}
 
-	public RouterConnectionHandler(RouterConnectionHandler routerConnection) {
-		this.router = routerConnection.router;
+	public NioConnectionHandler(NioConnectionHandler routerConnection) {
+		this.nioConnection = routerConnection.nioConnection;
 		this.host = routerConnection.host;
 		this.port = routerConnection.port;
 		this.autoReconnect = routerConnection.autoReconnect;
@@ -50,7 +50,7 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 	}
 
 	@Override
-	public void notify(IConnection router, ConnectionMessageReason reason) {
+	public void notify(IConnection nioConnection, ConnectionMessageReason reason) {
 		switch (reason) {
 		case ConnectionAbort:
 			reconnect();
@@ -99,8 +99,8 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 	}
 
 	@Override
-	public RouterConnectionHandler clone() {
-		return new RouterConnectionHandler(this);
+	public NioConnectionHandler clone() {
+		return new NioConnectionHandler(this);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 			throws OpenFailedException {
 		try {
 			this.caller = caller;
-			router.connectToServer(caller, host, port, user, password);
+			nioConnection.connectToServer(caller, host, port, user, password);
 		} catch (Exception e) {
 			throw new OpenFailedException(e);
 		}
@@ -116,7 +116,7 @@ public class RouterConnectionHandler implements IAccessConnectionHandler<ByteBuf
 
 	@Override
 	public void close(IAccessConnectionListener<ByteBuffer> caller) throws IOException {
-		router.disconnectFromServer(caller);
+		nioConnection.disconnectFromServer(caller);
 	}
 
 	@Override
