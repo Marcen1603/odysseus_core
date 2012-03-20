@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.fusion.logicaloperator.visualisation.ExtPolygonSinkAO;
-import de.uniol.inf.is.odysseus.fusion.physicaloperator.visualisation.ExtPolygonSinkPO;
+import de.uniol.inf.is.odysseus.fusion.logicaloperator.context.ContextStoreAO;
+import de.uniol.inf.is.odysseus.fusion.physicaloperator.context.ContextStorePO;
 
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Kai Pancratz <kai@pancratz.net>
  */
-public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygonSinkAO> {
-    private static Logger LOG = LoggerFactory.getLogger(TExtPolygonSinkAORule.class);
+public class TContextStoreAORule extends AbstractTransformationRule<ContextStoreAO> {
+    private static Logger LOG = LoggerFactory.getLogger(TContextStoreAORule.class);
 
     /*
      * (non-Javadoc)
@@ -26,9 +26,9 @@ public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygon
      * java.lang.Object)
      */
     @Override
-    public void execute(final ExtPolygonSinkAO operator, final TransformationConfiguration config) {
+    public void execute(final ContextStoreAO operator, final TransformationConfiguration config) {
         try {
-            final ExtPolygonSinkPO po = new ExtPolygonSinkPO(operator.getOutputSchema());
+            final ContextStorePO po = new ContextStorePO(operator.getOutputSchema());
             po.setOutputSchema(operator.getOutputSchema());
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
@@ -40,7 +40,7 @@ public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygon
 
         }
         catch (final Exception e) {
-        	TExtPolygonSinkAORule.LOG.error(e.getMessage(), e);
+        	TContextStoreAORule.LOG.error(e.getMessage(), e);
         }
     }
 
@@ -50,7 +50,7 @@ public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygon
      */
     @Override
     public String getName() {
-        return "VExtPolygonSinkAO -> ExtPolygonSinkPO";
+        return "ContextStoreAO -> ContextStorePO";
     }
 
     /*
@@ -77,13 +77,13 @@ public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygon
      * java.lang.Object)
      */
     @Override
-    public boolean isExecutable(final ExtPolygonSinkAO operator,
+    public boolean isExecutable(final ContextStoreAO operator,
             final TransformationConfiguration config) {
         return operator.isAllPhysicalInputSet();
     }
 
     @Override
     public Class<?> getConditionClass() {
-        return ExtPolygonSinkAO.class;
+        return ContextStoreAO.class;
     }
 }

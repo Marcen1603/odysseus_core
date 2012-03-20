@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.fusion.level1.aggregate.function.RelationalPolygonAggregation;
-import de.uniol.inf.is.odysseus.fusion.tracking.aggregate.function.TrackingAggregation;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.fusion.aggregate.function.spatialfusion.RelationalPolygonAggregation;
+import de.uniol.inf.is.odysseus.fusion.aggregate.function.tracking.TrackingAggregation;
 
 public class AggregateFunctionProvider implements IAggregateFunctionBuilder {
 

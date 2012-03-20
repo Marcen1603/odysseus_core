@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 public class ExtPolygonScreen extends JFrame{
 
     private static final long serialVersionUID = 253561357461155938L;
-    private static final int HEIGHT = 1000;
-    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 805;
+    private static final int WIDTH = 330;
     private final ExtPolygonMap map;
 
     public ExtPolygonScreen() {

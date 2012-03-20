@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
@@ -26,7 +27,8 @@ import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
 import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAO;
 
-public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "Prediction")
+public class PredictionAO<M extends IProbability> extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -75,26 +77,27 @@ public class PredictionAO<M extends IProbability> extends BinaryLogicalOp {
 		this.objListPath = helper.getSchemaIndexPath(objListPathName).toArray(true);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
-		super.subscribeToSource(source, sinkInPort, sourceOutPort, inputSchema);
-		if(sinkInPort == RIGHT) {
-			SDFSchemaExtended schema = (SDFSchemaExtended)getInputSchema(RIGHT);
-			Object metadata = schema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
-			if(metadata instanceof PredictionFunctionContainer<?>) {
-				setPredictionFunctions((PredictionFunctionContainer<M>)metadata);
-			}
-		}
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
+//		super.subscribeToSource(source, sinkInPort, sourceOutPort, inputSchema);
+//		if(sinkInPort == RIGHT) {
+//			SDFSchemaExtended schema = (SDFSchemaExtended)getInputSchema(RIGHT);
+//			Object metadata = schema.getMetadata(SDFSchemaMetadataTypes.PREDICTION_FUNCTIONS);
+//			if(metadata instanceof PredictionFunctionContainer<?>) {
+//				setPredictionFunctions((PredictionFunctionContainer<M>)metadata);
+//			}
+//		}
+//	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(RIGHT);
-	}
 	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new PredictionAO<M>(this);
+	}
+
+	@Override
+	public SDFSchema getOutputSchema() {
+		return getInputSchema(0);
 	}
 }

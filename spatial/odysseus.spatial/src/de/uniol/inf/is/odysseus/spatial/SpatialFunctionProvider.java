@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialTouches;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
+import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 
 public class SpatialFunctionProvider implements IFunctionProvider {
 
@@ -67,6 +68,7 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new AsMultiLineString());
 		functions.add(new AsPolygon());
 		functions.add(new AsMultiPolygon());	
+		functions.add(new GetCentroid());
 		
 		functions.add(new SpatialIsPolygon());
 		functions.add(new SpatialIsLine());

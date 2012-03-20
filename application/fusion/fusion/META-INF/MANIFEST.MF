@@ -8,7 +8,6 @@ Import-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.store,
- de.uniol.inf.is.odysseus.fusion.logicaloperator,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
@@ -21,8 +20,22 @@ Import-Package: com.vividsolutions.jts,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
 Service-Component: OSGI-INF/AggregateFunctionProvider.xml, OSGI-INF/TransformRuleProvider.xml, OSGI-INF/FunctionProvider.xml
-Export-Package: de.uniol.inf.is.odysseus.fusion.function,
- de.uniol.inf.is.odysseus.fusion.logicaloperator,
+Export-Package: 
+ de.uniol.inf.is.odysseus.fusion.aggregate.function.spatialfusion,
+ de.uniol.inf.is.odysseus.fusion.aggregate.function.tracking,
+ de.uniol.inf.is.odysseus.fusion.function.classification,
+ de.uniol.inf.is.odysseus.fusion.function.extrapolation,
+ de.uniol.inf.is.odysseus.fusion.function.tracking,
+ de.uniol.inf.is.odysseus.fusion.logicaloperator.association,
+ de.uniol.inf.is.odysseus.fusion.logicaloperator.context,
+ de.uniol.inf.is.odysseus.fusion.logicaloperator.prediction,
+ de.uniol.inf.is.odysseus.fusion.logicaloperator.visualisation,
+ de.uniol.inf.is.odysseus.fusion.physicaloperator.context,
+ de.uniol.inf.is.odysseus.fusion.physicaloperator.prediction,
+ de.uniol.inf.is.odysseus.fusion.physicaloperator.visualisation,
  de.uniol.inf.is.odysseus.fusion.provider,
- de.uniol.inf.is.odysseus.fusion.udf
+ de.uniol.inf.is.odysseus.fusion.store.context,
+ de.uniol.inf.is.odysseus.fusion.transform,
+ de.uniol.inf.is.odysseus.fusion.udf,
+ de.uniol.inf.is.odysseus.fusion.ui
 Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0", de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
