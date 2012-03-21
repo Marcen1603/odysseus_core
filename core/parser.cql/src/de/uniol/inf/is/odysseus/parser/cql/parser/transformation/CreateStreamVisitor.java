@@ -322,7 +322,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			throws QueryParseException {
 		String filename = node.getFilename();
 		String type = "csv";
-		if (node.jjtGetNumChildren() > 1) {
+		if (node.jjtGetNumChildren() > 0) {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
 		FileAccessAO source = new FileAccessAO(name, type,null);
