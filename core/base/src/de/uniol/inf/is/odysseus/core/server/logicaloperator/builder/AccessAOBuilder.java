@@ -44,6 +44,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
+	private final ListParameter<String> inputSchema = new ListParameter<String>(
+			"INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final ListParameter<String> options = new ListParameter<String>(
 			"OPTIONS", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final StringParameter adapter = new StringParameter("ADAPTER",
@@ -51,7 +53,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		super(0, 0);
-		addParameters(sourceName, host, port, attributes, type, options);
+		addParameters(sourceName, host, port, attributes, type, options, inputSchema);
 	}
 
 	@Override
@@ -94,9 +96,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		ao.setHost(host.getValue());
 		ao.setPort(port.getValue());
 		ao.setOutputSchema(schema);
+		ao.setInputSchema(inputSchema.getValue());
 
-
-		
 		ao.setOptions(optionsMap);
 		ao.setAdapter(adapterName);
 		ILogicalOperator op = addTimestampAO(ao);
@@ -146,6 +147,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 								+ sourceName
 								+ ". expecting type OR adapter."));
 				return false;
+			}
+		}
+		
+		if (this.attributes.hasValue() && this.inputSchema.hasValue()){
+			if (this.attributes.getValue().size() != this.inputSchema.getValue().size()){
+				addError(new IllegalArgumentException("For each attribute there must be at least one reader in the input schema"));
 			}
 		}
 		return true;

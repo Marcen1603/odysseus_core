@@ -29,6 +29,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 
 	private String source = null;
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private List<String> inputSchema = null;
 
 	private int port;
 	private String host;
@@ -76,6 +77,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		this.autoreconnect = po.autoreconnect;
 		this.adapter = po.adapter;
 		this.optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
+		this.inputSchema = po.inputSchema;
 	}
 
 	public AbstractAccessAO(String source, String adapter, Map<String, String> optionsMap) {
@@ -117,6 +119,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);
+	}
+	
+	public void setInputSchema(List<String> inputSchema) {
+		this.inputSchema = inputSchema;
+	}
+	
+	public List<String> getInputSchema() {
+		return inputSchema;
 	}
 
 	@Override

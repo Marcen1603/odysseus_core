@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ListDataHandler;
 
 /**
- * @author André Bolles
+ * @author André Bolles, Marco Grawunder
  * 
  */
 public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
@@ -40,22 +41,39 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		types.add("Tuple");
 	}
 
-	SDFSchema schema;
-
 	IDataHandler<?>[] dataHandlers = null;
-	
+
 	// Default Constructor for declarative Service needed
-	public TupleDataHandler(){
+	public TupleDataHandler() {
+	}
+
+	public TupleDataHandler(SDFSchema schema) {
+		this.createDataHandler(schema);
+	}
+
+	public TupleDataHandler(List<String> schema) {
+		this.createDataHandler(schema);
+	}
+
+	public void init(SDFSchema schema) {
+		if (dataHandlers == null) {
+			createDataHandler(schema);
+		}else{
+			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+		}
 	}
 	
-	public TupleDataHandler(SDFSchema schema) {
-		this.schema = schema;
-		this.createDataReader();
+	public void init(List<String> schema) {
+		if (dataHandlers == null) {
+			createDataHandler(schema);
+		}else{
+			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+		}
 	}
 	
 	@Override
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
-		Object[] attributes = new Object[schema.size()];
+		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
 			attributes[i] = dataHandlers[i].readData(inputStream);
 		}
@@ -65,7 +83,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public Tuple<?> readData(String[] input) {
-		Object[] attributes = new Object[schema.size()];
+		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < input.length; i++) {
 			attributes[i] = dataHandlers[i].readData(input[i]);
 		}
@@ -77,8 +95,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData
-	 * (java.nio.ByteBuffer)
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
+	 * #readData (java.nio.ByteBuffer)
 	 */
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
@@ -107,8 +125,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#writeData
-	 * (java.nio.ByteBuffer, java.lang.Object)
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
+	 * #writeData (java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
@@ -130,16 +148,15 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractDataHandler
-	 * #getSupportedDataTypes()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.
+	 * AbstractDataHandler #getSupportedDataTypes()
 	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
-		return types;
+		return Collections.unmodifiableList(types);
 	}
 
-	private void createDataReader() {
+	private void createDataHandler(SDFSchema schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -152,7 +169,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 						.getDataHandler(uri);
 
 				if (handler == null) {
-					throw new RuntimeException("illegal datatype " + uri);
+					throw new IllegalArgumentException("Unregistered datatype "
+							+ uri);
 				}
 
 				this.dataHandlers[i++] = handler;
@@ -164,6 +182,23 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				ListDataHandler handler = new ListDataHandler(type.getSubType());
 				this.dataHandlers[i++] = handler;
 			}
+		}
+	}
+
+	private void createDataHandler(List<String> schema) {
+		this.dataHandlers = new IDataHandler<?>[schema.size()];
+		int i = 0;
+		for (String attribute : schema) {
+
+			IDataHandler<?> handler = DataHandlerRegistry
+					.getDataHandler(attribute);
+
+			if (handler == null) {
+				throw new IllegalArgumentException("Unregistered datatype "
+						+ attribute);
+			}
+
+			this.dataHandlers[i++] = handler;
 		}
 	}
 
