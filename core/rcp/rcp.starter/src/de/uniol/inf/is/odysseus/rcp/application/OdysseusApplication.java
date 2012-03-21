@@ -19,11 +19,8 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -48,7 +45,11 @@ public class OdysseusApplication implements IApplication {
 	@Override
 	public synchronized Object start(IApplicationContext context) {
 
-		// TODO: start seems not to wait for binding of executor in rcp
+		/* An IApplication has another lifecycle than bundles and services of OSGi,
+		 * so that the application is not (absolutely) started after all services are
+		 * bound. See also "Die OSGi Service Platform", pages 407ff.  
+		 * Therefore, we need not wait until the executor is bound.
+		 */
 		while (executor == null) {
 			try {
 				wait(1000);
