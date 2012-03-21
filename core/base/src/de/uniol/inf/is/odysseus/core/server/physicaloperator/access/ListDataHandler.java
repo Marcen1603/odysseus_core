@@ -41,14 +41,6 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getURI());
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData()
-	 */
-	@Override
-	public List<?> readData() throws IOException {
-		return readData(stream);
-	}
-	
 	@Override
 	public List<?> readData(ObjectInputStream inputStream) throws IOException {
 		ArrayList<Object> values = new ArrayList<Object>();

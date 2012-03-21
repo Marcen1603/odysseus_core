@@ -4,6 +4,7 @@ import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.RoleDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.UserDAO;
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Role;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.User;
 
-public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
+public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> implements IUserManagement {
 
     private IGenericDAO<User, String> userDAO;
     private IGenericDAO<Role, String> roleDAO;

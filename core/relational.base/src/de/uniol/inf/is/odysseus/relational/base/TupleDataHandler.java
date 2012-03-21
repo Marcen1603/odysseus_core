@@ -43,24 +43,15 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	SDFSchema schema;
 
 	IDataHandler<?>[] dataHandlers = null;
-
+	
+	// Default Constructor for declarative Service needed
+	public TupleDataHandler(){
+	}
+	
 	public TupleDataHandler(SDFSchema schema) {
 		this.schema = schema;
 		this.createDataReader();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData
-	 * ()
-	 */
-	@Override
-	public Tuple<?> readData() throws IOException {
-		return readData(stream);
-	}
-
 	
 	@Override
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {

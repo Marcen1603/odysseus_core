@@ -30,11 +30,6 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	}
 
 	@Override
-	public Integer readData() throws IOException {
-		return stream.readInt();
-	}
-
-	@Override
 	public Integer readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readInt();
 	}

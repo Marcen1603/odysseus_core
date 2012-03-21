@@ -13,10 +13,4 @@ public interface IDataHandler<T> {
 	public void writeData(ByteBuffer buffer, Object data);
 	public List<String> getSupportedDataTypes();
 	public int memSize(Object attribute);
-	
-	@Deprecated
-	public T readData() throws IOException;
-	@Deprecated
-	public void setStream(ObjectInputStream stream);
-
 }

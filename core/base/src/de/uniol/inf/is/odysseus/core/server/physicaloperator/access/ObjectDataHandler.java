@@ -44,11 +44,6 @@ public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 	}
 
 	@Override
-	public M readData() throws IOException {
-		return null;
-	}
-
-	@Override
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}

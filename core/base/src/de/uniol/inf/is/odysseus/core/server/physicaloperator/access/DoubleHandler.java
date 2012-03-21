@@ -33,11 +33,6 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	}
 	
 	@Override
-	final public Double readData() throws IOException {
-		return stream.readDouble();
-	}
-	
-	@Override
 	public Double readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readDouble();
 	}

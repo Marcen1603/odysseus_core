@@ -30,11 +30,6 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	}
 	
 	@Override
-	public final Long readData() throws IOException {
-		return stream.readLong();
-	}
-
-	@Override
 	public Long readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readLong();
 	}

@@ -25,12 +25,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 	static{
 		types.add("String");
 	}
-	
-	@Override
-	public String readData() throws IOException {
-		return stream.readUTF();
-	}
-	
+		
 	@Override
 	public String readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readUTF();

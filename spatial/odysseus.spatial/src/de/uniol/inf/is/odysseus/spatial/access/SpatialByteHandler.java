@@ -58,11 +58,6 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		this.reader = new WKBReader();
 		this.writer = new WKBWriter();
 	}
-
-	@Override
-	public Object readData() throws IOException {
-		return readData(stream);
-	}
 	
 	@Override
 	public Object readData(ObjectInputStream inputStream) throws IOException {

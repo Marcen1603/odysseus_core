@@ -36,11 +36,6 @@ public class GridHandler extends AbstractDataHandler<Grid> {
 	}
 
 	@Override
-	public Grid readData() throws IOException {
-		return readData(stream);
-	}
-
-	@Override
 	public Grid readData(ObjectInputStream stream) throws IOException {
 		int x = stream.readInt();
 		int y = stream.readInt();
