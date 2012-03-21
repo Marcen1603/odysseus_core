@@ -14,18 +14,13 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.prediction.ao;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaHelper;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaExtended;
-import de.uniol.inf.is.odysseus.objecttracking.sdf.SDFSchemaMetadataTypes;
 import de.uniol.inf.is.odysseus.scars.metadata.IPredictionFunction;
 import de.uniol.inf.is.odysseus.scars.metadata.PredictionFunctionContainer;
-import de.uniol.inf.is.odysseus.scars.operator.prediction.ao.PredictionAO;
 
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "Prediction")
 public class PredictionAO<M extends IProbability> extends AbstractLogicalOperator {
