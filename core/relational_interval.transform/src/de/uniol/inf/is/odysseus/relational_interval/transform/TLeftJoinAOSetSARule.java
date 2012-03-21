@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;

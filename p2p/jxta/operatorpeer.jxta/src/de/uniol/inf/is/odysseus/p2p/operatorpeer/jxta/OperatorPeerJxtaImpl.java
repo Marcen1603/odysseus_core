@@ -33,10 +33,10 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
-import de.uniol.inf.is.odysseus.core.server.collection.IPair;
-import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;

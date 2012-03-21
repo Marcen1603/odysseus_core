@@ -19,11 +19,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
+import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionHandler;
-import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionListener;
-import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnectionListener<R>, ITransferHandler<W> {

@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;

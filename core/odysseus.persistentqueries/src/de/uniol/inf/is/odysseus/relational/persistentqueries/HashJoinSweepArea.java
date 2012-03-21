@@ -22,9 +22,9 @@ import java.util.List;
 
 import com.google.common.collect.LinkedHashMultimap;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;

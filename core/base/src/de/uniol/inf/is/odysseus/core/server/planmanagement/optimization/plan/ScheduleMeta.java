@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
-import de.uniol.inf.is.odysseus.core.server.collection.IPair;
-import de.uniol.inf.is.odysseus.core.server.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class ScheduleMeta implements ICSVToString{
 	private long lastSchedule;

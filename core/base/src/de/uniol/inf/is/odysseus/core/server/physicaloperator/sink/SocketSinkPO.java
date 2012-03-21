@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })

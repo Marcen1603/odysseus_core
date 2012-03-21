@@ -30,7 +30,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 
-import de.uniol.inf.is.odysseus.core.server.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 
 /**
  * @author Andr� Bolles

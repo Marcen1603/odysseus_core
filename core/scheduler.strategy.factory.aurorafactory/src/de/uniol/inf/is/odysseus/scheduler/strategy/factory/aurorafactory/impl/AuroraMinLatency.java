@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.server.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;

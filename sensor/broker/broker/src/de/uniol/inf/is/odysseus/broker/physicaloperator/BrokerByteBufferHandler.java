@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator;
 
 import java.nio.ByteBuffer;
 
+import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionHandler;
-import de.uniol.inf.is.odysseus.core.server.objecthandler.AbstractByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.server.objecthandler.SizeByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.AbstractByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 
 /**
 * It works like {@link SizeByteBufferHandler}, but it differs between normal elements and punctuations. 

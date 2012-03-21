@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import de.uniol.inf.is.odysseus.core.server.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class AggregateFunctionBuilderRegistry implements
 		IAggregateFunctionBuilderRegistry {

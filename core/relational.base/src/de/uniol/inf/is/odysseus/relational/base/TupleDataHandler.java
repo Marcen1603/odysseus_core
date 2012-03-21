@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.ListDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datahandler.AbstractDataHandler;
-import de.uniol.inf.is.odysseus.core.server.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.datahandler.ListDataHandler;
 
 /**
  * @author André Bolles, Marco Grawunder

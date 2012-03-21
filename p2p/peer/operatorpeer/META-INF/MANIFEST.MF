@@ -5,6 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p.op
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p.operatorpeer.Activator
 Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datadictionary,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement,
@@ -24,4 +25,5 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Service-Component: OSGI-INF/component.xml, OSGI-INF/Administrationpeer.xml, OSGI-INF/AbstractOperatorPeer.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: de.uniol.inf.is.odysseus.core.server
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

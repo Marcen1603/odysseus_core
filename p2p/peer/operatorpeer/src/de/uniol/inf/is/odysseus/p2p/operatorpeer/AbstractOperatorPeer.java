@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.collection.IPair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.p2p.distribution.client.IDistributionClient;
 import de.uniol.inf.is.odysseus.p2p.gui.Log;
@@ -33,6 +32,8 @@ import de.uniol.inf.is.odysseus.p2p.peer.ILogListener;
 import de.uniol.inf.is.odysseus.p2p.peer.communication.ISocketServerListener;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
+
+import de.uniol.inf.is.odysseus.core.collection.IPair;
 
 public abstract class AbstractOperatorPeer extends AbstractOdysseusPeer {
 
