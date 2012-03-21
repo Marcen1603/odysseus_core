@@ -53,7 +53,8 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 	final private String separator;
 
-	public FileAccessPO(String path, String fileType, String separator, IDataHandler<?> dataHandler ) {
+	public FileAccessPO(String path, String fileType, String separator,
+			IDataHandler<?> dataHandler) {
 		this.path = path;
 		this.fileType = fileType;
 		this.separator = separator;
@@ -93,15 +94,22 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 			String line = "";
 			try {
 				line = bf.readLine();
-				if (line!=null && !(line).isEmpty()) {
-					String[] splittedLine = line.split(separator);
+				if (line != null && !(line).isEmpty()) {
+					String[] splittedLine;
+					if ("csv".equalsIgnoreCase(fileType)) {
+						splittedLine = line.split(separator);
+					} else {
+						splittedLine = new String[1];
+						splittedLine[0] = line;
+					}
 					transfer((T) dataHandler.readData(splittedLine));
+
 				} else {
 					isDone = true;
 					propagateDone();
 				}
 			} catch (Exception e) {
-                LOG.error("Exception during transfering next line", e);
+				LOG.error("Exception during transfering next line", e);
 				isDone = true;
 				propagateDone();
 			}
@@ -118,11 +126,9 @@ public class FileAccessPO<T extends IMetaAttributeContainer<? extends IClone>>
 
 		try {
 			// logger.debug(fileType);
-			if (fileType.equalsIgnoreCase("csv")) {
-				File file = new File(path);
-				bf = new BufferedReader(new FileReader(file));
-				// logger.debug(path);
-			}
+			File file = new File(path);
+			bf = new BufferedReader(new FileReader(file));
+			// logger.debug(path);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
