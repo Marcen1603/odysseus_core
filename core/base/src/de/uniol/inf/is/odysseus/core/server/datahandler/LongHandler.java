@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,40 +20,38 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DoubleHandler extends AbstractDataHandler<Double> {
+
+public class LongHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Double");
-		types.add("Float");
-		types.add("MV");
-	}
-	
-	public DoubleHandler() {
-		super();
+		types.add("Long");
+		types.add("Timestamp");
+		types.add("StartTimestamp");
+		types.add("EndTimestamp");
 	}
 	
 	@Override
-	public Double readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readDouble();
+	public Long readData(ObjectInputStream inputStream) throws IOException {
+		return inputStream.readLong();
 	}
 	
 	@Override
-	public Double readData(String string) {
-		return Double.parseDouble(string);
+	public Long readData(ByteBuffer buffer) {
+		long l = buffer.getLong();
+		//System.out.println("read Long Data: "+l);
+		return l;
 	}
-
+	
 	@Override
-	public Double readData(ByteBuffer buffer) {
-		double d = buffer.getDouble();
-		//System.out.println("read Double Data: "+d);
-		return d;
+	public Long readData(String string) {
+		return Long.parseLong(string);
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		//System.out.println("write Double Data "+(Double)data);
-		buffer.putDouble(((Number)data).doubleValue());		
-	}
+		//System.out.println("write Long Data "+((Number)data).longValue());
+		buffer.putLong(((Number)data).longValue());
+	}	
 
 	@Override
 	final public List<String> getSupportedDataTypes() {
@@ -62,6 +60,6 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	
 	@Override
 	public int memSize(Object attribute) {
-		return Double.SIZE / 8;
+		return Long.SIZE / 8;
 	}
 }

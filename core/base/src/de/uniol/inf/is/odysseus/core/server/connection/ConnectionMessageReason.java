@@ -13,13 +13,16 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.connection;
 /**
  * 
  * @author Dennis Geesen
  * Created at: 16.08.2011
  */
-public interface IConnectionListener {
+public enum ConnectionMessageReason {
 
-	public void notify(IConnection connection, ConnectionMessageReason reason);
+	ConnectionAbort,	
+	ConnectionRefused,
+	ConnectionClosed,
+	ConnectionOpened
 }

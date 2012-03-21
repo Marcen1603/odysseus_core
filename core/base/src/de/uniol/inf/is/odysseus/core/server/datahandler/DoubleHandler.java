@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,44 +20,42 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Used for getting DATE attributes out of a streams.
- * Handles these attributes as simple long values, because of
- * faster processing.
- * 
- * @author Andre Bolles
- *
- */
-public class DateHandler extends AbstractDataHandler<Long> {
+
+public class DoubleHandler extends AbstractDataHandler<Double> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Date");
+		types.add("Double");
+		types.add("Float");
+		types.add("MV");
+	}
+	
+	public DoubleHandler() {
+		super();
 	}
 	
 	@Override
-	public Long readData(ObjectInputStream inputStream) throws IOException {
-		return inputStream.readLong();
+	public Double readData(ObjectInputStream inputStream) throws IOException {
+		return inputStream.readDouble();
 	}
 	
 	@Override
-	public Long readData(ByteBuffer buffer) {
-		long l = buffer.getLong();
-		//System.out.println("read Long Data: "+l);
-		return l;
+	public Double readData(String string) {
+		return Double.parseDouble(string);
 	}
-	
+
 	@Override
-	public Long readData(String string) {
-		return Long.parseLong(string);
+	public Double readData(ByteBuffer buffer) {
+		double d = buffer.getDouble();
+		//System.out.println("read Double Data: "+d);
+		return d;
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		//System.out.println("write Long Data "+((Number)data).longValue());
-		buffer.putLong(((Number)data).longValue());
+		//System.out.println("write Double Data "+(Double)data);
+		buffer.putDouble(((Number)data).doubleValue());		
 	}
 
-	
 	@Override
 	final public List<String> getSupportedDataTypes() {
 		return types;
@@ -65,8 +63,6 @@ public class DateHandler extends AbstractDataHandler<Long> {
 	
 	@Override
 	public int memSize(Object attribute) {
-		return Long.SIZE / 8;
+		return Double.SIZE / 8;
 	}
-	
-	
 }

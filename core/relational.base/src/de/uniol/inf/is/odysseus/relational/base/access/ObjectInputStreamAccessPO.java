@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.store.OsgiObjectInputStream;
 
 /**

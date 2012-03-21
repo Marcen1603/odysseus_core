@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

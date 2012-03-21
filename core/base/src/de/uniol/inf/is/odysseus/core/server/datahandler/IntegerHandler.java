@@ -12,13 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static protected List<String> types = new ArrayList<String>();

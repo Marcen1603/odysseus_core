@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.connection;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -277,6 +277,10 @@ public class NioConnection extends Thread implements IConnection {
 			os.done();
 			socketChannel.close();
 			// throw e;
+		} catch(ClassNotFoundException ex){
+			ex.printStackTrace();
+			os.done();
+			socketChannel.close();
 		}
 	}
 

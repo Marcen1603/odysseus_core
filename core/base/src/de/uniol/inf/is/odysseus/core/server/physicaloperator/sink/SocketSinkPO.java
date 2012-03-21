@@ -20,8 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SocketSinkPO extends AbstractSink<Object> {

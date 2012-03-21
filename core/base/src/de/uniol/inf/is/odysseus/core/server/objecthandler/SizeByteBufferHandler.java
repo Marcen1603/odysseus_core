@@ -1,7 +1,11 @@
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.objecthandler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IInputDataHandler;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransferHandler;
 
 public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuffer,T> {
 
@@ -34,7 +38,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler<T> transferHandler) throws ClassNotFoundException {
 		try {
 			while (buffer.remaining() > 0) {
 
@@ -65,7 +69,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 						// logger.debug(" "+(size-currentSize));
 						objectHandler.put(buffer, size - currentSize);
 						// 2. das fertige Objekt weiterleiten
-						transferHandler.transfer();
+						transferHandler.transfer(objectHandler.create());
 						size = -1;
 						sizeBuffer.clear();
 						currentSize = 0;

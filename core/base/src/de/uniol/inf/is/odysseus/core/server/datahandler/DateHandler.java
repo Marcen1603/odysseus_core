@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,13 +20,19 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LongHandler extends AbstractDataHandler<Long> {
+
+/**
+ * Used for getting DATE attributes out of a streams.
+ * Handles these attributes as simple long values, because of
+ * faster processing.
+ * 
+ * @author Andre Bolles
+ *
+ */
+public class DateHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
-		types.add("Long");
-		types.add("Timestamp");
-		types.add("StartTimestamp");
-		types.add("EndTimestamp");
+		types.add("Date");
 	}
 	
 	@Override
@@ -50,8 +56,9 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	public void writeData(ByteBuffer buffer, Object data) {
 		//System.out.println("write Long Data "+((Number)data).longValue());
 		buffer.putLong(((Number)data).longValue());
-	}	
+	}
 
+	
 	@Override
 	final public List<String> getSupportedDataTypes() {
 		return types;
@@ -61,4 +68,6 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	public int memSize(Object attribute) {
 		return Long.SIZE / 8;
 	}
+	
+	
 }

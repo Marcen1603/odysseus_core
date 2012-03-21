@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.connection;
 
 import java.io.IOException;
 

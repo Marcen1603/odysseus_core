@@ -19,7 +19,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 

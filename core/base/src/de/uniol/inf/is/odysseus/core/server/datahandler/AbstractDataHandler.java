@@ -12,14 +12,23 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
+
+import java.util.List;
 
 
-public interface IAccessConnectionListener<T>{
-	public void process(T buffer);
-	public void done();
-	public String getSourceName();
-	boolean isOpened();
-	public void process_close();
-	public void process_open();	
+public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
+
+	
+	protected AbstractDataHandler(){
+	}
+		
+	@Override
+	public T readData(String[] input) {
+		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
+		return readData(input[0]);
+	}
+	
+	@Override
+	abstract public List<String> getSupportedDataTypes();
 }

@@ -1,4 +1,4 @@
-/** Copyright [2011] [The Odysseus Team]
+/** Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -12,10 +12,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+
+package de.uniol.inf.is.odysseus.core.server.connection;
 
 
-@Deprecated
-public abstract class AbstractAtomicDataHandler<T> extends AbstractDataHandler<T>{
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 16.08.2011
+ */
+public interface IConnectionListener {
 
+	public void notify(IConnection connection, ConnectionMessageReason reason);
 }

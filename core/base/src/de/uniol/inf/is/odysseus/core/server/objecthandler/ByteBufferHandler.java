@@ -12,11 +12,13 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.objecthandler;
 
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+
+import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
 
 public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {

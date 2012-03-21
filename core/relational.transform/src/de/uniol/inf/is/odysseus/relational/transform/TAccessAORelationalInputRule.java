@@ -18,8 +18,8 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.server.datahandler.ObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.access.ObjectInputStreamAccessPO;

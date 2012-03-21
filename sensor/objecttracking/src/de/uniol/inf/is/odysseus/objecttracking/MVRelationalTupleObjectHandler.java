@@ -20,9 +20,9 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.server.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 

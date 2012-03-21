@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.broker.physicaloperator;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.AbstractByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransferHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.SizeByteBufferHandler;
 
 /**
 * It works like {@link SizeByteBufferHandler}, but it differs between normal elements and punctuations. 
@@ -61,7 +61,7 @@ public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 
 	@Override
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
-			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler transferHandler) {
+			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler<T> transferHandler) {
 		try {
 
 			while (buffer.remaining() > 0) {
@@ -91,7 +91,7 @@ public class BrokerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 							objectHandler.put(buffer);
 						} else {
 							objectHandler.put(buffer, size - currentSize);
-							transferHandler.transfer();
+							transferHandler.transfer(objectHandler.create());
 						}
 					} else {
 						if (type == 1) {

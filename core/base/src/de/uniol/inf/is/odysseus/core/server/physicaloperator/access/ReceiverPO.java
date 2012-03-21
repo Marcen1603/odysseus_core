@@ -21,9 +21,12 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionHandler;
+import de.uniol.inf.is.odysseus.core.server.connection.IAccessConnectionListener;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnectionListener<R>, ITransferHandler {
+public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnectionListener<R>, ITransferHandler<W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -104,24 +107,12 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
   
 
 	@Override
-	public synchronized void transfer()  {
-
-		W toTrans = null;
-		try {
-			toTrans = objectHandler.create();
-		} catch (Exception e) {
-			getLogger().error(e.getMessage() + ". Terminating Processing ...");
-			e.printStackTrace();
-			process_done();
-			process_close();
-			return;
-		}
-		// logger.debug("Transfer "+toTrans);
-		transfer(toTrans);
+	public synchronized void transfer(W toTransfer)  {
+		super.transfer(toTransfer);
 	}
 	
 	@Override
-	public void process(R buffer){
+	public void process(R buffer) throws ClassNotFoundException{
 		inputDataHandler.process(buffer, objectHandler, accessHandler, this);
 	}
 

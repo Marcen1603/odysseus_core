@@ -21,9 +21,9 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;

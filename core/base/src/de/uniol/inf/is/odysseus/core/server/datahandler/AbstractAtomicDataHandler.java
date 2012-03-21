@@ -12,18 +12,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+package de.uniol.inf.is.odysseus.core.server.datahandler;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 
-public interface IObjectHandler<T> extends IClone {
-	public void put(ByteBuffer buffer) throws IOException;
-	public void put(ByteBuffer buffer, int size) throws IOException;
-	public void put(T object);
-	public void clear();
-	public ByteBuffer getByteBuffer();
-	public T create() throws IOException, ClassNotFoundException;
+@Deprecated
+public abstract class AbstractAtomicDataHandler<T> extends AbstractDataHandler<T>{
+
 }

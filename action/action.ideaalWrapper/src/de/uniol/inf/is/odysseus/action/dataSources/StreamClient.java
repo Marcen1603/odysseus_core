@@ -21,8 +21,8 @@ import java.nio.channels.SocketChannel;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.server.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 
