@@ -4,7 +4,7 @@
 #RUNQUERY
 DROP STREAM nexmark:auction2;
 #RUNQUERY
-ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE 'nexmark/daten/nexmark_auction2.csv' AS string
+ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE 'nexmark/daten/nexmark_auction2.csv' AS csv
 
 #RUNQUERY
 SELECT * FROM nexmark:auction2;
