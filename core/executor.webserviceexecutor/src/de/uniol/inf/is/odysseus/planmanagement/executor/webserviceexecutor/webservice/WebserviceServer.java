@@ -15,6 +15,8 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
@@ -26,6 +28,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.ws.Endpoint;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -60,6 +63,11 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 		LogicalQuery.class })
 public class WebserviceServer {
 
+	// Session management needed for logout. 
+	// identified by securitytoken
+	@XmlTransient
+	private Map<String, ISession> sessions = new HashMap<String, ISession>();
+
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus",
@@ -82,9 +90,21 @@ public class WebserviceServer {
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
+			// session-management...
+			sessions.put(token, user);
 			return response;
 		}
 		return new StringResponse(null, false);
+	}
+
+	public Response logout(
+			@WebParam(name = "securitytoken") String securityToken) {
+		ISession user = sessions.get(securityToken);
+		if (user != null) {
+			UserManagement.getSessionmanagement().logout(user);
+			return new Response(true);
+		}
+		return new Response(false);
 	}
 
 	public IntegerCollectionResponse addQuery(
