@@ -14,6 +14,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice,
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception,
  de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response,
+ de.uniol.inf.is.odysseus.slf4j,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

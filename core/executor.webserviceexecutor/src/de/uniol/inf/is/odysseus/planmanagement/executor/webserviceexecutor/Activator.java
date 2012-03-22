@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
+import de.uniol.inf.is.odysseus.slf4j.LoggingConfiguration;
 
 public class Activator implements BundleActivator {
 
@@ -19,6 +20,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
+		LoggingConfiguration.load();
 		Activator.context = bundleContext;
 		WebserviceServer.startServer();
 	}
