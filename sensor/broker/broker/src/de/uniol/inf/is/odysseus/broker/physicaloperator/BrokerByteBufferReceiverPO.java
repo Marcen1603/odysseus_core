@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 
 /**
  * The BrokerByteBufferReceiverPO is a physical source which is able to receive elements of type W.

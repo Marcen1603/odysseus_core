@@ -19,7 +19,10 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.FileAccessPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.CSVTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.LineFileInput;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.LineTransformer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
@@ -38,8 +41,16 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	public void execute(FileAccessAO fileAccessAO,
 			TransformationConfiguration transformConfig) {
 		String fileAccessPOName = fileAccessAO.getSourcename();
-		ISource<?> fileAccessPO = new FileAccessPO<Tuple<?>>(
-				fileAccessAO.getPath(), fileAccessAO.getFileType(), fileAccessAO.getSeparator(), new TupleDataHandler(
+		LineFileInput input = new LineFileInput(fileAccessAO.getPath());
+		LineTransformer transform = null;
+		// TODO: auslagern !
+		if ("csv".equalsIgnoreCase(fileAccessAO.getFileType())){
+			transform = new CSVTransformer(fileAccessAO.getSeparator());
+		}else{
+			transform = new LineTransformer();
+		}
+		
+		ISource<?> fileAccessPO = new AccessPO<String,Tuple<?>>(input, transform, new TupleDataHandler(
 						fileAccessAO.getOutputSchema()));
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ReceiverPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModelCfg;
