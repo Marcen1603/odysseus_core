@@ -14,6 +14,10 @@
   */
 
 package de.uniol.inf.is.odysseus.parser.cql;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * @author Dennis Geesen
@@ -21,15 +25,17 @@ package de.uniol.inf.is.odysseus.parser.cql;
  */
 public class VisitorService {
 	
+	private Logger logger = LoggerFactory.getLogger(VisitorService.class);
+	
 	public void addVisitor(IVisitor visitor){
 		String name = generateName(visitor);
-		System.out.println("add visitor: "+name);
+		logger.debug("Adding visitor for CQL: "+name);
 		VisitorFactory.getInstance().setVisitor(visitor, name);
 	}
 	
 	public void removeVisitor(IVisitor visitor){
 		String name = generateName(visitor);
-		System.out.println("remove visitor: "+name);
+		logger.debug("Removing visitor for CQL: "+name);
 		VisitorFactory.getInstance().removeVisitor(name);
 	}
 	
