@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
@@ -105,24 +104,6 @@ public class WebserviceServer {
 			e.printStackTrace();
 		}
 		return new IntegerCollectionResponse(null, false);
-	}
-
-	public IntegerResponse addQuery(
-			@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "logicalPlan") ILogicalOperator logicalPlan,
-			@WebParam(name = "queryBuildConfigName") String queryBuildConfName) {
-		try {
-			ISession user = loginWithSecurityToken(securityToken);
-			IntegerResponse response = new IntegerResponse(
-					ExecutorServiceBinding.getExecutor().addQuery(logicalPlan,
-							user, queryBuildConfName), true);
-			return response;
-		} catch (WebserviceException e) {
-			e.printStackTrace();
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
-		}
-		return new IntegerResponse(null, false);
 	}
 
 	public StringListResponse getInstalledSources(
