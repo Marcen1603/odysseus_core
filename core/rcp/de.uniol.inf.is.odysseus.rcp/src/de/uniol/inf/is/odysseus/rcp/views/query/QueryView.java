@@ -40,502 +40,336 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class QueryView extends ViewPart implements IPlanModificationListener, IQueryListener {
+public class QueryView extends ViewPart {
 
-	private Logger logger = LoggerFactory.getLogger(QueryView.class);
-	private IExecutor executor;
+    private TableViewer tableViewer;
+    private Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
 
-	private TableViewer tableViewer;
+    Timer refreshTimer = null;
+    private boolean doAutoRefresh;
 
-	private Collection<IPhysicalQuery> queries = new ArrayList<IPhysicalQuery>();
+    @Override
+    public void createPartControl(Composite parent) {
 
-	public QueryView() {
-	}
+        Composite tableComposite = new Composite(parent, SWT.NONE);
+        TableColumnLayout tableColumnLayout = new TableColumnLayout();
+        tableComposite.setLayout(tableColumnLayout);
 
-	Timer refreshTimer = null;
-	private boolean doAutoRefresh;
+        tableViewer = new QueryTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
 
-	@Override
-	public void createPartControl(Composite parent) {
+        /************* ID ****************/
+        TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        idColumn.getColumn().setText(OdysseusNLS.ID);
+        idColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                cell.setText(String.valueOf(((IQueryViewData) cell.getElement()).getId()));
+            }
+        });
+        tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5, 25, true));
+        ColumnViewerSorter sorter = new ColumnViewerSorter(tableViewer, idColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData id1 = (IQueryViewData) e1;
+                IQueryViewData id2 = (IQueryViewData) e2;
+                if (id1.getId() > id2.getId())
+                    return 1;
+                else if (id1.getId() < id2.getId())
+                    return -1;
+                else
+                    return 0;
+            }
+        };
 
-		Composite tableComposite = new Composite(parent, SWT.NONE);
-		TableColumnLayout tableColumnLayout = new TableColumnLayout();
-		tableComposite.setLayout(tableColumnLayout);
+        /************* Status ****************/
+        TableViewerColumn statusColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        statusColumn.getColumn().setText(OdysseusNLS.Status);
+        // statusColumn.getColumn().setWidth(100);
+        statusColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                String text = ((IQueryViewData) cell.getElement()).getStatus();
+                cell.setText(text);
+            }
+        });
+        tableColumnLayout.setColumnData(statusColumn.getColumn(), new ColumnWeightData(5, 25, true));
+        new ColumnViewerSorter(tableViewer, statusColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData id1 = (IQueryViewData) e1;
+                IQueryViewData id2 = (IQueryViewData) e2;
+                String s1 = id1.getStatus();
+                String s2 = id2.getStatus();
 
-		tableViewer = new TableViewer(tableComposite, SWT.MULTI
-				| SWT.FULL_SELECTION);
-		tableViewer.getTable().setHeaderVisible(true);
-		tableViewer.getTable().setLinesVisible(true);
-
-		/************* ID ****************/
-		TableViewerColumn idColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		idColumn.getColumn().setText(OdysseusNLS.ID);
-		idColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IPhysicalQuery) cell.getElement())
-						.getID()));
-			}
-		});
-		tableColumnLayout.setColumnData(idColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		ColumnViewerSorter sorter = new ColumnViewerSorter(tableViewer,
-				idColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IPhysicalQuery id1 = (IPhysicalQuery) e1;
-				IPhysicalQuery id2 = (IPhysicalQuery) e2;
-				if (id1.getID() > id2.getID())
-					return 1;
-				else if (id1.getID() < id2.getID())
-					return -1;
-				else
-					return 0;
-			}
-		};
-
-		/************* Status ****************/
-		TableViewerColumn statusColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		statusColumn.getColumn().setText(OdysseusNLS.Status);
-		// statusColumn.getColumn().setWidth(100);
-		statusColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				String text = getQueryStatus((IPhysicalQuery) cell.getElement());
-				cell.setText(text);
-			}
-		});
-		tableColumnLayout.setColumnData(statusColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(tableViewer, statusColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IPhysicalQuery id1 = (IPhysicalQuery) e1;
-				IPhysicalQuery id2 = (IPhysicalQuery) e2;
-				String s1 = getQueryStatus(id1);
-				String s2 = getQueryStatus(id2);
-
-				if (s1.equals(s2))
-					return 0;
-				else if (s1.equals(OdysseusNLS.Opened))
-					return 1;
-				else if (s1.equals(OdysseusNLS.Active)) {
+                if (s1.equals(s2))
+                    return 0;
+                else if (s1.equals(OdysseusNLS.Opened))
+                    return 1;
+                else if (s1.equals(OdysseusNLS.Active)) {
                     if (s2.equals(OdysseusNLS.Inactive))
-						return 1;
+                        return 1;
                     return -1;
                 } else
-					return -1;
-			}
-		};
+                    return -1;
+            }
+        };
 
-		/************* Priority ****************/
-		TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		priorityColumn.getColumn().setText(OdysseusNLS.Priority);
-		priorityColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				cell.setText(String.valueOf(((IPhysicalQuery) cell.getElement())
-						.getPriority()));
-			}
-		});
-		tableColumnLayout.setColumnData(priorityColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(tableViewer, priorityColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IPhysicalQuery id1 = (IPhysicalQuery) e1;
-				IPhysicalQuery id2 = (IPhysicalQuery) e2;
-				if (id1.getPriority() > id2.getPriority())
-					return 1;
-				else if (id1.getPriority() < id2.getPriority())
-					return -1;
-				else
-					return 0;
-			}
-		};
+        /************* Priority ****************/
+        TableViewerColumn priorityColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        priorityColumn.getColumn().setText(OdysseusNLS.Priority);
+        priorityColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                cell.setText(String.valueOf(((IQueryViewData) cell.getElement()).getPriority()));
+            }
+        });
+        tableColumnLayout.setColumnData(priorityColumn.getColumn(), new ColumnWeightData(5, 25, true));
+        new ColumnViewerSorter(tableViewer, priorityColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData id1 = (IQueryViewData) e1;
+                IQueryViewData id2 = (IQueryViewData) e2;
+                if (id1.getPriority() > id2.getPriority())
+                    return 1;
+                else if (id1.getPriority() < id2.getPriority())
+                    return -1;
+                else
+                    return 0;
+            }
+        };
 
-		/************* Parser ID ****************/
-		TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		parserIdColumn.getColumn().setText(OdysseusNLS.Parser);
-		// parserIdColumn.getColumn().setWidth(100);
-		parserIdColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
-				if (query.getLogicalQuery() != null) {
-					cell.setText(query.getLogicalQuery().getParserId());
-				}
-			}
-		});
-		tableColumnLayout.setColumnData(parserIdColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(tableViewer, parserIdColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+        /************* Parser ID ****************/
+        TableViewerColumn parserIdColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        parserIdColumn.getColumn().setText(OdysseusNLS.Parser);
+        // parserIdColumn.getColumn().setWidth(100);
+        parserIdColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                IQueryViewData query = (IQueryViewData) cell.getElement();
+                cell.setText(query.getParserId());
+            }
+        });
+        tableColumnLayout.setColumnData(parserIdColumn.getColumn(), new ColumnWeightData(5, 25, true));
+        new ColumnViewerSorter(tableViewer, parserIdColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData q1 = (IQueryViewData) e1;
+                IQueryViewData q2 = (IQueryViewData) e2;
+                String id1 = q1.getParserId();
+                String id2 = q2.getParserId();
+                return id1.compareToIgnoreCase(id2);
+            }
+        };
 
-				IPhysicalQuery q1 = (IPhysicalQuery) e1;
-				IPhysicalQuery q2 = (IPhysicalQuery) e2;
-				String id1 = q1.getLogicalQuery() != null ? q1
-						.getLogicalQuery().getParserId() : "";
-				String id2 = q2.getLogicalQuery() != null ? q2
-						.getLogicalQuery().getParserId() : "";
-				return id1.compareToIgnoreCase(id2);
-			}
-		};
+        /************* User ****************/
+        TableViewerColumn userColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        userColumn.getColumn().setText(OdysseusNLS.User);
+        // userColumn.getColumn().setWidth(400);
+        userColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                IQueryViewData query = (IQueryViewData) cell.getElement();
+                cell.setText(query.getUserName());
+            }
+        });
+        tableColumnLayout.setColumnData(userColumn.getColumn(), new ColumnWeightData(5, 25, true));
+        new ColumnViewerSorter(tableViewer, userColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData id1 = (IQueryViewData) e1;
+                IQueryViewData id2 = (IQueryViewData) e2;
+                return id1.getUserName().compareToIgnoreCase(id2.getUserName());
+            }
+        };
 
-		/************* User ****************/
-		TableViewerColumn userColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		userColumn.getColumn().setText(OdysseusNLS.User);
-		// userColumn.getColumn().setWidth(400);
-		userColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
-				if (query.getUser() != null)
-					cell.setText(query.getUser().getUser().getName());
-				else
-					cell.setText("[No user]");
-			}
-		});
-		tableColumnLayout.setColumnData(userColumn.getColumn(),
-				new ColumnWeightData(5, 25, true));
-		new ColumnViewerSorter(tableViewer, userColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IPhysicalQuery id1 = (IPhysicalQuery) e1;
-				IPhysicalQuery id2 = (IPhysicalQuery) e2;
-				String user1 = id1.getUser() != null ? id1.getUser().getUser()
-						.getName() : "[No User]";
-				String user2 = id2.getUser() != null ? id2.getUser().getUser()
-						.getName() : "[No User]";
-				return user1.compareToIgnoreCase(user2);
-			}
-		};
+        /************* Query Text ****************/
+        TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+        queryTextColumn.getColumn().setText(OdysseusNLS.QueryText);
+        // queryTextColumn.getColumn().setWidth(400);
+        queryTextColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                IQueryViewData query = (IQueryViewData) cell.getElement();
+                String text = query.getQueryText();
+                if (text == null) {
+                    cell.setText("[No Text]");
+                    return;
+                }
+                text = text.replace('\n', ' ');
+                text = text.replace('\r', ' ');
+                text = text.replace('\t', ' ');
+                cell.setText(text);
+            }
+        });
+        tableColumnLayout.setColumnData(queryTextColumn.getColumn(), new ColumnWeightData(50, 200, true));
+        new ColumnViewerSorter(tableViewer, queryTextColumn) {
+            @Override
+            protected int doCompare(Viewer viewer, Object e1, Object e2) {
+                IQueryViewData q1 = (IQueryViewData) e1;
+                IQueryViewData q2 = (IQueryViewData) e2;
+                String text1 = q1.getQueryText();
+                String text2 = q2.getQueryText();
 
-		/************* Query Text ****************/
-		TableViewerColumn queryTextColumn = new TableViewerColumn(tableViewer,
-				SWT.NONE);
-		queryTextColumn.getColumn().setText(OdysseusNLS.QueryText);
-		// queryTextColumn.getColumn().setWidth(400);
-		queryTextColumn.setLabelProvider(new CellLabelProvider() {
-			@Override
-			public void update(ViewerCell cell) {
-				IPhysicalQuery query = (IPhysicalQuery) cell.getElement();
-				String text = query.getLogicalQuery() != null ? query
-						.getLogicalQuery().getQueryText() : null;
-				if (text == null) {
-					cell.setText("[No Text]");
-					return;
-				}
-				text = text.replace('\n', ' ');
-				text = text.replace('\r', ' ');
-				text = text.replace('\t', ' ');
-				cell.setText(text);
-			}
-		});
-		tableColumnLayout.setColumnData(queryTextColumn.getColumn(),
-				new ColumnWeightData(50, 200, true));
-		new ColumnViewerSorter(tableViewer, queryTextColumn) {
-			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				IPhysicalQuery q1 = (IPhysicalQuery) e1;
-				IPhysicalQuery q2 = (IPhysicalQuery) e2;
-				String text1 = q1.getLogicalQuery() != null ? q1
-						.getLogicalQuery().getQueryText() : null;
-				String text2 = q2.getLogicalQuery() != null ? q2
-						.getLogicalQuery().getQueryText() : null;
+                return text1.compareToIgnoreCase(text2);
+            }
+        };
 
-				return text1.compareToIgnoreCase(text2);
-			}
-		};
+        tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+        tableViewer.setInput(queries);
+        getSite().setSelectionProvider(tableViewer);
 
-		// /************* Monitor ****************/
-		// TableViewerColumn monitorColumn = new TableViewerColumn(tableViewer,
-		// SWT.NONE);
-		// monitorColumn.getColumn().setText("Monitors");
-		// // monitorColumn.getColumn().setWidth(100);
-		// monitorColumn.setLabelProvider(new CellLabelProvider() {
-		// @Override
-		// public void update(ViewerCell cell) {
-		// String text = ((IQuery) cell.getElement()).getPlanMonitors() + "";
-		// cell.setText(text);
-		// }
-		// });
-		// tableColumnLayout.setColumnData(monitorColumn.getColumn(), new
-		// ColumnWeightData(40, 50, true));
-		// new ColumnViewerSorter(tableViewer, monitorColumn) {
-		// @Override
-		// protected int doCompare(Viewer viewer, Object e1, Object e2) {
-		// IQuery id1 = (IQuery) e1;
-		// IQuery id2 = (IQuery) e2;
-		// return (id1.getPlanMonitors() +
-		// "").compareToIgnoreCase(id2.getPlanMonitors() + "");
-		// }
-		// };
-		//
-		// /************* Penalty ****************/
-		// TableViewerColumn penaltyColumn = new TableViewerColumn(tableViewer,
-		// SWT.NONE);
-		// penaltyColumn.getColumn().setText("Penalty");
-		// // monitorColumn.getColumn().setWidth(100);
-		// penaltyColumn.setLabelProvider(new CellLabelProvider() {
-		// @Override
-		// public void update(ViewerCell cell) {
-		// String text = ((IQuery) cell.getElement()).getPenalty() + "";
-		// cell.setText(text);
-		// }
-		// });
-		// tableColumnLayout.setColumnData(penaltyColumn.getColumn(), new
-		// ColumnWeightData(40, 50, true));
-		// new ColumnViewerSorter(tableViewer, penaltyColumn) {
-		// @Override
-		// protected int doCompare(Viewer viewer, Object e1, Object e2) {
-		// IQuery id1 = (IQuery) e1;
-		// IQuery id2 = (IQuery) e2;
-		// return Double.compare(id1.getPenalty(), id2.getPenalty());
-		// }
-		// };
+        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+            @Override
+            public void doubleClick(DoubleClickEvent event) {
+                IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 
-		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		tableViewer.setInput(queries);
-		getSite().setSelectionProvider(tableViewer);
+                try {
+                    handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IHandlerService handlerService = (IHandlerService) getSite()
-						.getService(IHandlerService.class);
+        sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 
-				try {
-					handlerService
-							.executeCommand(
-									"de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand",
-									null);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+        // Contextmenu
+        MenuManager menuManager = new MenuManager();
+        Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
+        // Set the MenuManager
+        tableViewer.getTable().setMenu(contextMenu);
+        getSite().registerContextMenu(menuManager, tableViewer);
 
-		sorter.setSorter(sorter, ColumnViewerSorter.NONE);
+        initData();
 
-		// Contextmenu
-		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager
-				.createContextMenu(tableViewer.getTable());
-		// Set the MenuManager
-		tableViewer.getTable().setMenu(contextMenu);
-		getSite().registerContextMenu(menuManager, tableViewer);
+        if (doAutoRefresh) {
+            refreshTimer = createRefreshTimer();
+        }
+    }
+    
+    private Timer createRefreshTimer() {
+    	Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
 
-		Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    refreshTable();
+                } catch (Exception e) {
+                    this.cancel();
+                }
+            }
+        }, 1000, 1000);
+        
+        return t;
+    }
 
-			// @SuppressWarnings({ "rawtypes", "unchecked" })
-			@Override
-			public void run() {
-				executor = OdysseusRCPPlugIn.getExecutor();
-				if (executor instanceof IServerExecutor) {
-					IServerExecutor se = (IServerExecutor) executor;
-
-					// ServiceTracker execTracker = new
-					// ServiceTracker(OdysseusRCPPlugIn.getDefault().getBundle().getBundleContext(),
-					// IExecutor.class.getName(), null);
-					// execTracker.open();
-					try {
-						// executor = (IExecutor) execTracker.waitForService(0);
-						if (se != null) {
-							if (se.getExecutionPlan() != null) {
-								addQueries(se.getExecutionPlan().getQueries());
-							}
-
-							se.addPlanModificationListener(QueryView.this);
-						} else {
-							logger.error(OdysseusNLS.NoExecutorFound);
-						}
-						// execTracker.close();
-						// } catch (InterruptedException e) {
-						// logger.error("cannot get executor service", e);
-					} catch (PlanManagementException e) {
-						logger.error("cannot get queries", e);
-
-					}
-				}else if (executor instanceof IClientExecutor){
-					IClientExecutor ce = (IClientExecutor) executor;
-					ce.addQueryListener(QueryView.this);
-				}
-			}
-		});
-
-		t.start();
-
-		if (doAutoRefresh) {
-			refreshTimer = new Timer();
-			refreshTimer.scheduleAtFixedRate(new TimerTask() {
-
-				@Override
-				public void run() {
-					try {
-						refreshTable();
-					} catch (Exception e) {
-						this.cancel();
-					}
-				}
-			}, 1000, 1000);
-		}
+	private void initData() {
+		IQueryViewDataProvider dataProvider = OdysseusRCPPlugIn.getQueryViewDataProvider();
+        Preconditions.checkNotNull(dataProvider, "DataProvider for QueryView must not be null!");
+        dataProvider.init(this);
+        queries.addAll(dataProvider.getData());
 	}
 
-	@Override
-	public void dispose() {
-		super.dispose();
-	}
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
 
-	@Override
-	public void setFocus() {
+    @Override
+    public void setFocus() {
 
-	}
+    }
 
-	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
-				.getEventType())) {
-			removeQuery((IPhysicalQuery) eventArgs.getValue());
-		} else if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
-				.getEventType())) {
-			addQuery((IPhysicalQuery) eventArgs.getValue());
-		}
-		refreshTable();
-	}
+    public void refreshTable() {
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-	public void refreshTable() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                queries.clear();
+                queries.addAll(OdysseusRCPPlugIn.getQueryViewDataProvider().getData());
 
-			@Override
-			public void run() {
-				if (!tableViewer.getControl().isDisposed())
-					tableViewer.refresh();
-			}
+                if (!tableViewer.getControl().isDisposed())
+                    tableViewer.refresh();
+            }
 
-		});
-	}
+        });
+    }
 
-	private void addQueries(Collection<IPhysicalQuery> qs) {
-		queries.addAll(qs);
-		refreshTable();
-	}
+    private static abstract class ColumnViewerSorter extends ViewerComparator {
+        public static final int ASC = 1;
 
-	private void removeQuery(IPhysicalQuery q) {
-		queries.remove(q);
-		refreshTable();
-	}
+        public static final int NONE = 0;
 
-	private void addQuery(IPhysicalQuery q) {
-		queries.add(q);
-		refreshTable();
-	}
+        public static final int DESC = -1;
 
-	private static String getQueryStatus(IPhysicalQuery q) {
-		if (q.isOpened())
-			return OdysseusNLS.Running;
-        return OdysseusNLS.Inactive;
-	}
+        private int direction = 0;
 
-	private static abstract class ColumnViewerSorter extends ViewerComparator {
-		public static final int ASC = 1;
+        private TableViewerColumn column;
 
-		public static final int NONE = 0;
+        private ColumnViewer viewer;
 
-		public static final int DESC = -1;
+        public ColumnViewerSorter(ColumnViewer viewer, TableViewerColumn column) {
+            this.column = column;
+            this.viewer = viewer;
+            this.column.getColumn().addSelectionListener(new SelectionAdapter() {
 
-		private int direction = 0;
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    if (ColumnViewerSorter.this.viewer.getComparator() != null) {
+                        if (ColumnViewerSorter.this.viewer.getComparator() == ColumnViewerSorter.this) {
+                            int tdirection = ColumnViewerSorter.this.direction;
 
-		private TableViewerColumn column;
+                            if (tdirection == ASC) {
+                                setSorter(ColumnViewerSorter.this, DESC);
+                            } else if (tdirection == DESC) {
+                                setSorter(ColumnViewerSorter.this, NONE);
+                            }
+                        } else {
+                            setSorter(ColumnViewerSorter.this, ASC);
+                        }
+                    } else {
+                        setSorter(ColumnViewerSorter.this, ASC);
+                    }
+                }
+            });
+        }
 
-		private ColumnViewer viewer;
+        public void setSorter(ColumnViewerSorter sorter, int direction) {
+            if (direction == NONE) {
+                column.getColumn().getParent().setSortColumn(null);
+                column.getColumn().getParent().setSortDirection(SWT.NONE);
+                viewer.setComparator(null);
+            } else {
+                column.getColumn().getParent().setSortColumn(column.getColumn());
+                sorter.direction = direction;
 
-		public ColumnViewerSorter(ColumnViewer viewer, TableViewerColumn column) {
-			this.column = column;
-			this.viewer = viewer;
-			this.column.getColumn().addSelectionListener(
-					new SelectionAdapter() {
+                if (direction == ASC) {
+                    column.getColumn().getParent().setSortDirection(SWT.DOWN);
+                } else {
+                    column.getColumn().getParent().setSortDirection(SWT.UP);
+                }
 
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							if (ColumnViewerSorter.this.viewer.getComparator() != null) {
-								if (ColumnViewerSorter.this.viewer
-										.getComparator() == ColumnViewerSorter.this) {
-									int tdirection = ColumnViewerSorter.this.direction;
+                if (viewer.getComparator() == sorter) {
+                    viewer.refresh();
+                } else {
+                    viewer.setComparator(sorter);
+                }
 
-									if (tdirection == ASC) {
-										setSorter(ColumnViewerSorter.this, DESC);
-									} else if (tdirection == DESC) {
-										setSorter(ColumnViewerSorter.this, NONE);
-									}
-								} else {
-									setSorter(ColumnViewerSorter.this, ASC);
-								}
-							} else {
-								setSorter(ColumnViewerSorter.this, ASC);
-							}
-						}
-					});
-		}
+            }
+        }
 
-		public void setSorter(ColumnViewerSorter sorter, int direction) {
-			if (direction == NONE) {
-				column.getColumn().getParent().setSortColumn(null);
-				column.getColumn().getParent().setSortDirection(SWT.NONE);
-				viewer.setComparator(null);
-			} else {
-				column.getColumn().getParent()
-						.setSortColumn(column.getColumn());
-				sorter.direction = direction;
+        @Override
+        public int compare(Viewer viewer, Object e1, Object e2) {
+            return direction * doCompare(viewer, e1, e2);
+        }
 
-				if (direction == ASC) {
-					column.getColumn().getParent().setSortDirection(SWT.DOWN);
-				} else {
-					column.getColumn().getParent().setSortDirection(SWT.UP);
-				}
-
-				if (viewer.getComparator() == sorter) {
-					viewer.refresh();
-				} else {
-					viewer.setComparator(sorter);
-				}
-
-			}
-		}
-
-		@Override
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			return direction * doCompare(viewer, e1, e2);
-		}
-
-		protected abstract int doCompare(Viewer viewer, Object e1, Object e2);
-	}
-
-	@Override
-	public void queryAdded(ILogicalQuery logicalQuery) {
-		queries.add(new PhysicalQuery(logicalQuery, null, null, null));
-	}
+        protected abstract int doCompare(Viewer viewer, Object e1, Object e2);
+    }
 }

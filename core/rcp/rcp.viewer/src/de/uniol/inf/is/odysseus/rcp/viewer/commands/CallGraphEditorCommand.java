@@ -25,9 +25,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
@@ -37,6 +41,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderSin
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CallGraphEditorCommand.class);
+    
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		Display.findDisplay(Thread.currentThread()).asyncExec(new Runnable() {
@@ -46,22 +52,17 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 				IWorkbenchPage page = window.getActivePage();
 
 				for (Object selection : SelectionProvider.getSelection(event)) {
-					// Auswahl holen
-					List<IPhysicalOperator> graph = null;
 					if (selection instanceof IPhysicalQuery) {
-						IPhysicalQuery query = (IPhysicalQuery) selection;
-						graph = query.getRoots();
-
-						ISink<?> sink = (ISink<?>) graph.get(0);
-						IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay(sink, query);
-						PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + query.getID());
-
-						try {
-							page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
-
-						} catch (PartInitException ex) {
-							System.out.println(ex.getStackTrace());
-						}
+						openGraphEditor(page, (IPhysicalQuery)selection);
+					} else if( selection instanceof Integer ) {
+					    Integer queryID = (Integer)selection;
+					    IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
+					    if( executor instanceof IServerExecutor ) {
+					        IServerExecutor serverExecutor = (IServerExecutor)executor;
+					        openGraphEditor(page, serverExecutor.getExecutionPlan().getQuery(queryID));
+					    } else {
+					        LOG.error("Could not show physical graphs outside server.");
+					    }
 					}
 				}
 			}
@@ -69,6 +70,21 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 		});
 		return null;
 
+	}
+	
+	private static void openGraphEditor(IWorkbenchPage page, IPhysicalQuery query) {
+        List<IPhysicalOperator> graph = query.getRoots();
+
+        ISink<?> sink = (ISink<?>) graph.get(0);
+        IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay(sink, query);
+        PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + query.getID());
+
+        try {
+            page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
+
+        } catch (PartInitException ex) {
+            System.out.println(ex.getStackTrace());
+        }
 	}
 
 }

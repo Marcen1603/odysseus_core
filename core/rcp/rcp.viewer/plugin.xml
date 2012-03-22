@@ -76,9 +76,14 @@
             <iterate
                   ifEmpty="false"
                   operator="or">
-               <instanceof
-                     value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
-               </instanceof>
+               <or>
+                  <instanceof
+                        value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
+                  </instanceof>
+                  <instanceof
+                        value="java.lang.Integer">
+                  </instanceof>
+               </or>
             </iterate>
          </with>
       </definition>

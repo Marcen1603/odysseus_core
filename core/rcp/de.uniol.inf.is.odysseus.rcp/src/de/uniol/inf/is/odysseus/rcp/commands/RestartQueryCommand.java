@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -52,27 +51,17 @@ public class RestartQueryCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		int qID;
-
-		List<IPhysicalQuery> selectedObj = SelectionProvider.getSelection(event);
-		for (IPhysicalQuery obj : selectedObj) {
-			if (obj != null) {
-				qID = obj.getID();
-			} else {
-				logger.error("Cannot find queryID");
-				return null;
-			}
-
+		List<Integer> selectedObj = SelectionProvider.getSelection(event);
+		for (final Integer qID: selectedObj) {
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			final int qID2 = qID; // final machen :-)
 			if (executor != null) {
 				Job job = new Job("Stopped query") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							executor.stopQuery(qID2, OdysseusRCPPlugIn.getActiveSession());
+							executor.stopQuery(qID, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Query stopped");
-							executor.startQuery(qID2, OdysseusRCPPlugIn.getActiveSession());
+							executor.startQuery(qID, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Query started");
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);

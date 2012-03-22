@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Physical Query View
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.queryview.physical
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.physical.PhysicalQueryViewDataProviderPlugIn
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/physicalQueryViewDataProvider.xml, OSGI-INF/executor.xml
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.usermanagement,
+ de.uniol.inf.is.odysseus.rcp.views.query,
+ org.slf4j

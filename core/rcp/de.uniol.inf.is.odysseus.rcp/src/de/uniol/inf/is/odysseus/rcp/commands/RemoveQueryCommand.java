@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -47,25 +46,15 @@ public class RemoveQueryCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-		int qID;
-
-		List<IPhysicalQuery> selectedObj = SelectionProvider.getSelection(event);
-		for (IPhysicalQuery obj : selectedObj) {
-			if (obj != null) {
-				qID = obj.getID();
-			} else {
-				logger.error("Cannot find queryID");
-				return null;
-			}
-
+		List<Integer> selectedObj = SelectionProvider.getSelection(event);
+		for (final Integer qID: selectedObj) {
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			final int qID2 = qID; // final machen :-)
 			if (executor != null) {
 				Job job = new Job("Starting query") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
-							executor.removeQuery(qID2, OdysseusRCPPlugIn.getActiveSession());
+							executor.removeQuery(qID, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Query removed successfully");
 						} catch (PlanManagementException e) {
 							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);

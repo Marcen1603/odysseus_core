@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -29,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.Sche
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
+import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 
-public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
-		IEventListener {
+public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListener {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
@@ -68,9 +70,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	public static final String WIZARD_PROJECT_ID = "de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard";
 
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPPlugIn.class);
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
-
+	private static IQueryViewDataProvider dataProvider;
 	private static ISession activeSession;
 
 	public static OdysseusRCPPlugIn getDefault() {
@@ -90,19 +93,14 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		super.start(bundleContext);
 
 		// Bilder registrieren
-		ImageManager.getInstance().register("repository",
-				"icons/repository_rep.gif");
+		ImageManager.getInstance().register("repository", "icons/repository_rep.gif");
 		ImageManager.getInstance().register("user", "icons/user.png");
-		ImageManager.getInstance().register("loggedinuser",
-				"icons/user--plus.png");
+		ImageManager.getInstance().register("loggedinuser", "icons/user--plus.png");
 		ImageManager.getInstance().register("users", "icons/users.png");
 		ImageManager.getInstance().register("sla", "icons/document-block.png");
-		ImageManager.getInstance().register("percentile",
-				"icons/document-tag.png");
-		ImageManager.getInstance().register("role",
-				"icons/tick-small-circle.png");
-		ImageManager.getInstance().register("source",
-				"icons/application-import.png");
+		ImageManager.getInstance().register("percentile", "icons/document-tag.png");
+		ImageManager.getInstance().register("role", "icons/tick-small-circle.png");
+		ImageManager.getInstance().register("source", "icons/application-import.png");
 		ImageManager.getInstance().register("view", "icons/table.png");
 		ImageManager.getInstance().register("attribute", "icons/status.png");
 
@@ -125,26 +123,15 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = ex;
 
-		StatusBarManager.getInstance().setMessage(
-				StatusBarManager.EXECUTOR_ID,
-				OdysseusNLS.Executor + " " + executor.getName() + " "
-						+ OdysseusNLS.Ready);
+		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
 		if (executor instanceof IServerExecutor) {
 			IServerExecutor se = (IServerExecutor) executor;
 
-			StatusBarManager.getInstance().setMessage(
-					StatusBarManager.SCHEDULER_ID,
-					se.getCurrentSchedulerID()
-							+ " ("
-							+ se.getCurrentSchedulingStrategyID()
-							+ ") "
-							+ (se.isRunning() ? OdysseusNLS.Running
-									: OdysseusNLS.Stopped));
+			StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, se.getCurrentSchedulerID() + " (" + se.getCurrentSchedulingStrategyID() + ") " + (se.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
 
 			if (se.getSchedulerManager() != null) {
 				se.getSchedulerManager().subscribeToAll(this);
-				se.getSchedulerManager().getActiveScheduler()
-						.subscribeToAll(this);
+				se.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
 			}
 			// New: Start Scheduler at Query Start
 			se.startExecution();
@@ -163,32 +150,40 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 			IServerExecutor se = (IServerExecutor) executor;
 
 			if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) {
-				((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(
-						this);
+				((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(this);
 			} else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
 				((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
 			}
 
-			if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED
-					|| event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
-					|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED
-					|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
+			if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED || event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
 				try {
-					StatusBarManager
-							.getInstance()
-							.setMessage(
-									StatusBarManager.SCHEDULER_ID,
-									se.getCurrentSchedulerID()
-											+ " ("
-											+ se
-													.getCurrentSchedulingStrategyID()
-											+ ") "
-											+ (se.isRunning() ? OdysseusNLS.Running
-													: OdysseusNLS.Stopped));
+					StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, se.getCurrentSchedulerID() + " (" + se.getCurrentSchedulingStrategyID() + ") " + (se.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
 				} catch (PlanManagementException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+	}
+
+	public void bindQueryViewDataProvider(IQueryViewDataProvider provider) {
+		if (dataProvider != null) {
+			LOG.error("More than one dataProvider for QueryView provided");
+		}
+		dataProvider = provider;
+		LOG.debug("DataProvider for QueryView bound: " + provider);
+	}
+
+	public void unbindQueryViewDataProvider(IQueryViewDataProvider provider) {
+		if (dataProvider == provider) {
+			dataProvider = null;
+			LOG.debug("DataProvider for QueryView unbound: " + provider);
+		} else {
+			LOG.error("Tried to unbound not used DataProvider "+ provider + " for QueryView");
+			LOG.error("Nothing unbound.");
+		}
+	}
+
+	public static IQueryViewDataProvider getQueryViewDataProvider() {
+		return dataProvider;
 	}
 }

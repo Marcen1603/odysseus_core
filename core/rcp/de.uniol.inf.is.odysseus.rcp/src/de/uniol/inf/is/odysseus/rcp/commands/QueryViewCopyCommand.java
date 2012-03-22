@@ -41,7 +41,8 @@ public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 				IPhysicalQuery query = (IPhysicalQuery) selection;
 				text = text + sep + query.getLogicalQuery().getQueryText();
 				sep = System.getProperty("line.separator");
-				
+			} else {
+				StatusBarManager.getInstance().setMessage("Copying querytexts not supported yet");
 			}
 		}
 		if (!text.isEmpty()) {
@@ -52,5 +53,4 @@ public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 		}
 		return null;
 	}
-
 }

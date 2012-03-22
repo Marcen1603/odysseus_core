@@ -29,8 +29,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
@@ -42,6 +46,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class ShowStreamCommand extends AbstractHandler implements IHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ShowStreamCommand.class);
+    
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
@@ -66,6 +72,17 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 					else
 						opForStream = query.getPhysicalChilds().get(0);
 
+				}
+				
+				if( selectedObject instanceof Integer ) {
+                    Integer queryID = (Integer)selectedObject;
+                    IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
+                    if( executor instanceof IServerExecutor ) {
+                        IServerExecutor serverExecutor = (IServerExecutor)executor;
+                        opForStream = serverExecutor.getExecutionPlan().getQuery(queryID).getPhysicalChilds().get(0);
+                    } else {
+                        LOG.error("Could not show stream outside server.");
+                    }
 				}
 
 				if (selectedObject instanceof IOdysseusNodeView) {
