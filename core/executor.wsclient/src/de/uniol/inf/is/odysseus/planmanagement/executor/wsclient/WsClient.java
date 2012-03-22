@@ -314,6 +314,11 @@ public class WsClient implements IExecutor, IClientExecutor{
 			this.queries.put(q.getID(), q);
 		}
 	}
+	
+	@Override
+	public void logout(ISession caller) {
+		getWebserviceServer().logout(caller.getToken());
+	}
 
 	
 /********************************************************************
@@ -333,12 +338,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 			throws PlanManagementException {
 		// TODO not implemented by server yet
 		return null;
-	}
-
-	@Override
-	public void logout(ISession caller) {
-		// TODO not implemented by server yet
-		
 	}
 
 	@Override
