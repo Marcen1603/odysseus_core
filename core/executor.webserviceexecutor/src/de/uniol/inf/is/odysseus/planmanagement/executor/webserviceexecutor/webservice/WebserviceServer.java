@@ -102,6 +102,7 @@ public class WebserviceServer {
 		ISession user = sessions.get(securityToken);
 		if (user != null) {
 			UserManagement.getSessionmanagement().logout(user);
+			sessions.remove(securityToken);
 			return new Response(true);
 		}
 		return new Response(false);
