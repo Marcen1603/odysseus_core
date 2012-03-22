@@ -116,8 +116,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	 * @param parser
 	 */
 	public void bindScriptParser(IOdysseusScriptParser parser){
-		scriptParser = parser;
-		System.out.println("Script Parser bound");
+		scriptParser = parser;		
 	}
 	
 	public void unbindScriptParser(IOdysseusScriptParser parser){

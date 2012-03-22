@@ -5,7 +5,7 @@ import org.eclipse.osgi.util.NLS;
 public class OdysseusNLS extends NLS {
 	private static final String BUNDLE_NAME = "OSGI-INF.l10n.bundle"; //$NON-NLS-1$
 
-	public static String LoginTitle;
+	public static String Login;
 	public static String Username;
 	public static String Password;
 	public static String OK;

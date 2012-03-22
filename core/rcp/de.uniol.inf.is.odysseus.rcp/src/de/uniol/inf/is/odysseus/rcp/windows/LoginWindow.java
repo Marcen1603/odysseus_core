@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 @SuppressWarnings("unused")
 public class LoginWindow {
 
-	private static final String TITLE_TEXT = "Odysseus RCP Login";
+	private static final String TITLE_TEXT = "Odysseus Studio Login";
 
 	private static final String USER_TEXT = "Username";
 	private static final String PASSWORD_TEXT = "Password";
