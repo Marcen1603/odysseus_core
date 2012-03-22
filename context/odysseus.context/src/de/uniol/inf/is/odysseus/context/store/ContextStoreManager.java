@@ -16,11 +16,15 @@
 package de.uniol.inf.is.odysseus.context.store;
 
 import java.util.HashMap;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
+import de.uniol.inf.is.odysseus.context.store.types.OneElementContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -28,30 +32,31 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @param <Key>
  * @param <Value>
  */
-public class ContextStore<T> {
+public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
 
 	public static final String CONTEXT_STORE_NAME = "Contextstore";
 
-	protected static ContextStore<Object> instance;
+	private static ContextStoreManager<Tuple<? extends ITimeInterval>> instance;
 
-	protected ContextStore() {
+	private ContextStoreManager() {
 	}
 
-	public static synchronized ContextStore<Object> getInstance() {
+	public static synchronized ContextStoreManager<Tuple<? extends ITimeInterval>> getInstance() {
 		if (instance == null) {
-			instance = new ContextStore<Object>();
+			instance = new ContextStoreManager<Tuple<? extends ITimeInterval>>();
 		}
 		return instance;
 	} 
 
-	protected HashMap<String, ContextStoreEntry<T>> stores = new HashMap<String, ContextStoreEntry<T>>();
+	private HashMap<String, IContextStore<T>> stores = new HashMap<String, IContextStore<T>>();
 
 	public void createStore(String name, SDFSchema schema) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
 		}
 
-		ContextStoreEntry<T> entry = new ContextStoreEntry<T>(schema);
+		// TODO: ist hier noch fix auf OneElementStore...
+		IContextStore<T> entry = new OneElementContextStore<T>(schema);
 		this.stores.put(name, entry);
 	}
 
@@ -64,7 +69,7 @@ public class ContextStore<T> {
 	}
 
 	public void insertValue(String storeName, T value) {
-		stores.get(storeName).setValue(value);
+		stores.get(storeName).insertValue(value);
 	}
 
 	public void removeStore(String storeName) {
@@ -73,11 +78,17 @@ public class ContextStore<T> {
 		}
 	}
 
-	public Object getValue(String storeName) throws ContextManagementException {
+	public List<T> getValues(String storeName, ITimeInterval ti) throws ContextManagementException {
 		if (storeExists(storeName)) {
-			return this.stores.get(storeName).getValue();
-		} 
-		
+			return this.stores.get(storeName).getValues(ti);
+		} 		
+		throw new ContextManagementException("Context store does not exists");
+	}
+	
+	public List<T> getLastValues(String storeName) throws ContextManagementException {
+		if (storeExists(storeName)) {
+			return this.stores.get(storeName).getLastValues();
+		} 		
 		throw new ContextManagementException("Context store does not exists");
 	}
 

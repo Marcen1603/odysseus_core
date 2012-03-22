@@ -1,4 +1,4 @@
-/** Copyright 2011 The Odysseus Team
+/** Copyright 2012 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,45 +15,21 @@
 
 package de.uniol.inf.is.odysseus.context.store;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 06.02.2012
+ * Created at: 22.03.2012
  */
-public class ContextStoreEntry<T> {
+public interface IContextStore<T> {
 
-	private SDFSchema schema;
-	private T value;
-	
-	
-	public ContextStoreEntry(SDFSchema schema) {
-		super();
-		this.schema = schema;		
-	}
-
-
-	public SDFSchema getSchema() {
-		return schema;
-	}
-
-
-	public void setSchema(SDFSchema schema) {
-		this.schema = schema;
-	}
-
-
-	public T getValue() {
-		return value;
-	}
-
-
-	public void setValue(T value) {
-		this.value = value;
-	}
-	
-	
-	
+	public SDFSchema getSchema();
+	public void insertValue(T value);	
+	public List<T> getValues(ITimeInterval timeinterval);
+	public List<T> getLastValues();	
 	
 }

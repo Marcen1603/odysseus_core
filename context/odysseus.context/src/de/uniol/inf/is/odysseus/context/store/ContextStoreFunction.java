@@ -15,12 +15,19 @@
 
 package de.uniol.inf.is.odysseus.context.store;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -29,7 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.Attribu
 public class ContextStoreFunction extends AbstractFunction<Object> {
 
 	private static final long serialVersionUID = 8083562782642549093L;
-
+	private static Logger LOG = LoggerFactory.getLogger(ContextStoreFunction.class);
+	
 	@Override
 	public int getArity() {
 		return 1;
@@ -55,12 +63,15 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	public Object getValue() {
 		String storeName = resolveStoreName();
 		try {
-			Object value = ContextStore.getInstance().getValue(storeName);
-			if (value == null) {
+			List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getInstance().getLastValues(storeName);
+			if (values == null) {
 				return "<empty>";
 			}
-            return value;
-		} catch (ContextManagementException e) {
+			if(values.size()>1){
+				LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
+			}
+            return values.get(0);
+		} catch (ContextManagementException e) {			
 			e.printStackTrace();
 		}
 		return null;
@@ -69,7 +80,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	@Override
 	public SDFDatatype getReturnType() {
 		try {
-			SDFSchema schema = ContextStore.getInstance().getStoreSchema(resolveStoreName());
+			SDFSchema schema = ContextStoreManager.getInstance().getStoreSchema(resolveStoreName());
 			AttributeResolver resolver = new AttributeResolver();
 			resolver.addAttributes(schema);
 			SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());

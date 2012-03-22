@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
-import de.uniol.inf.is.odysseus.context.store.ContextStore;
+import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -21,9 +21,7 @@ public class EnrichAO extends AbstractLogicalOperator {
 
 	public EnrichAO(EnrichAO op) {
 		super(op);
-		contextStoreNames = new ArrayList<String>(op.contextStoreNames);
-		// Eigentlich gar nicht mehr notwendig ... Schemata sind immutable ...
-		outputSchema = new SDFSchema(outputSchema.getURI(), outputSchema.getAttributes());
+		contextStoreNames = new ArrayList<String>(op.contextStoreNames);		
 	}
 
 	public EnrichAO() {
@@ -54,7 +52,7 @@ public class EnrichAO extends AbstractLogicalOperator {
 					attributeName = store.substring(pointPos + 1);
 				}
 				try {
-					SDFSchema s = ContextStore.getInstance().getStoreSchema(
+					SDFSchema s = ContextStoreManager.getInstance().getStoreSchema(
 							storeName);
 					if (attributeName != null){
 						SDFAttribute attribute = s.findAttribute(attributeName);

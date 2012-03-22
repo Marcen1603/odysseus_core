@@ -12,7 +12,10 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
- org.osgi.framework;version="1.3.0"
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.relational.base,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.store,

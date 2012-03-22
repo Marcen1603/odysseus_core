@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.context.cql;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
-import de.uniol.inf.is.odysseus.context.store.ContextStore;
+import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -37,15 +37,14 @@ public class ContextVisitor implements IVisitor {
 	private IDataDictionary datadictionary;
 
 	public Object visit(ASTCreateContextStore node, Object data) {
-		String name = ((ASTIdentifier)node.jjtGetChild(0)).getName();
-		System.out.println("Ctore name:" +name);
+		String name = ((ASTIdentifier)node.jjtGetChild(0)).getName();		
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary);
 		csv.visit(definitions, null);
 		SDFSchema schema = new SDFSchema("ContextStore."+name,csv.getAttributes());
 		try {
-			ContextStore.getInstance().createStore(name, schema);			
+			ContextStoreManager.getInstance().createStore(name, schema);			
 		} catch (ContextManagementException e) {		
 			e.printStackTrace();
 		}

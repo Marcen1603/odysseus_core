@@ -15,10 +15,12 @@
 
 package de.uniol.inf.is.odysseus.context.udf;
 
-import de.uniol.inf.is.odysseus.context.store.ContextStore;
+import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -26,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.Output
  * Created at: 06.02.2012
  */
 @UserDefinedFunction(name="STORE_CONTEXT")
-public class SimpleStoreOperator<R> implements IUserDefinedFunction<R, R> {
+public class SimpleStoreOperator<R extends Tuple<? extends ITimeInterval>> implements IUserDefinedFunction<R, R> {
 
 	private String storeName;
 	
@@ -37,7 +39,7 @@ public class SimpleStoreOperator<R> implements IUserDefinedFunction<R, R> {
 
 	@Override
 	public R process(R in, int port) {
-		ContextStore.getInstance().insertValue(storeName, in); 
+		ContextStoreManager.getInstance().insertValue(storeName, in); 
 		return in;
 	}
 
