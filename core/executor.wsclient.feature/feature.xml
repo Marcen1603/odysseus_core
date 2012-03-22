@@ -18,6 +18,7 @@
 
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
    </requires>
 
    <plugin
