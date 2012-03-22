@@ -18,7 +18,9 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.context,
+ de.uniol.inf.is.odysseus.context.logicaloperator,
  de.uniol.inf.is.odysseus.context.store,
+ de.uniol.inf.is.odysseus.context.store.types,
  de.uniol.inf.is.odysseus.context.udf
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/StoreService.xml

@@ -1,4 +1,4 @@
-/** Copyright 2011 The Odysseus Team
+/** Copyright 2012 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,56 +15,31 @@
 
 package de.uniol.inf.is.odysseus.context.store.types;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 06.02.2012
+ * Created at: 22.03.2012
  */
-public class OneElementContextStore<T> implements IContextStore<T>{
+public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterval>> implements IContextStore<T> {
 
 	private SDFSchema schema;
-	private T value;
 	
-	
-	public OneElementContextStore(SDFSchema schema) {
-		super();
-		this.schema = schema;		
+	public AbstractContextStore(SDFSchema schema){
+		this.schema = schema;
 	}
-
 
 	public SDFSchema getSchema() {
 		return schema;
 	}
 
-
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}
-
-	@Override
-	public void insertValue(T value) {
-		this.value = value;
-	}
-
-
-	@Override
-	public List<T> getValues(ITimeInterval timeinterval) {
-		return getLastValues();
-	}
-
-
-	@Override
-	public List<T> getLastValues() {
-		List<T> list = new ArrayList<T>();
-		list.add(value);
-		return list;
-	}	
+	
 	
 }

@@ -13,23 +13,16 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.context.store;
-
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-
+package de.uniol.inf.is.odysseus.context.store.types;
 /**
  * 
  * @author Dennis Geesen
  * Created at: 22.03.2012
  */
-public interface IContextStore<T>{
+public enum ContextStoreType {
 
-	public SDFSchema getSchema();
-	public void insertValue(T value);	
-	public List<T> getValues(ITimeInterval timeinterval);
-	public List<T> getLastValues();	
-	
+	SINGLE_ELEMENT_STORE,
+	SINGLE_HISTORY_STORE,
+	MULTI_ELEMENT_STORE,
+	MULTI_HISTORY_STORE
 }

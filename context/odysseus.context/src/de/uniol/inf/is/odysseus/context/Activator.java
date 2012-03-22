@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.context;
 
-import java.util.logging.Logger;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
-
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
@@ -19,8 +17,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		Logger.getLogger("Context Store").info("Starting context store...");
+		Activator.context = bundleContext;		
 	}
 
 	/*

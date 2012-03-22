@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
-import de.uniol.inf.is.odysseus.context.store.types.OneElementContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -32,32 +31,30 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
  * @param <Key>
  * @param <Value>
  */
-public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
+public class ContextStoreManager {
 
-	public static final String CONTEXT_STORE_NAME = "Contextstore";
+	public static final String CONTEXT_STORE_NAME = "Contextstore";	
 
-	private static ContextStoreManager<Tuple<? extends ITimeInterval>> instance;
+	private static ContextStoreManager instance;
 
 	private ContextStoreManager() {
+		
 	}
-
-	public static synchronized ContextStoreManager<Tuple<? extends ITimeInterval>> getInstance() {
+	
+	public static synchronized  ContextStoreManager getInstance() {
 		if (instance == null) {
-			instance = new ContextStoreManager<Tuple<? extends ITimeInterval>>();
+			instance = new ContextStoreManager();
 		}
-		return instance;
+		return  instance;
 	} 
 
-	private HashMap<String, IContextStore<T>> stores = new HashMap<String, IContextStore<T>>();
+	private HashMap<String, IContextStore<Tuple<? extends ITimeInterval>>> stores = new HashMap<String, IContextStore<Tuple<? extends ITimeInterval>>>();
 
-	public void createStore(String name, SDFSchema schema) throws ContextManagementException {
+	public void createStore(String name, IContextStore<Tuple<? extends ITimeInterval>> store) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
-		}
-
-		// TODO: ist hier noch fix auf OneElementStore...
-		IContextStore<T> entry = new OneElementContextStore<T>(schema);
-		this.stores.put(name, entry);
+		}		
+		this.stores.put(name, store);				
 	}
 
 	public SDFSchema getStoreSchema(String storeName) throws ContextManagementException {
@@ -68,7 +65,7 @@ public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
 		throw new ContextManagementException("Context store does not exists");
 	}
 
-	public void insertValue(String storeName, T value) {
+	public void insertValue(String storeName, Tuple<? extends ITimeInterval> value) {
 		stores.get(storeName).insertValue(value);
 	}
 
@@ -78,14 +75,14 @@ public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
 		}
 	}
 
-	public List<T> getValues(String storeName, ITimeInterval ti) throws ContextManagementException {
+	public List<Tuple<? extends ITimeInterval>> getValues(String storeName, ITimeInterval ti) throws ContextManagementException {
 		if (storeExists(storeName)) {
 			return this.stores.get(storeName).getValues(ti);
 		} 		
 		throw new ContextManagementException("Context store does not exists");
 	}
 	
-	public List<T> getLastValues(String storeName) throws ContextManagementException {
+	public List<Tuple<? extends ITimeInterval>> getLastValues(String storeName) throws ContextManagementException {
 		if (storeExists(storeName)) {
 			return this.stores.get(storeName).getLastValues();
 		} 		
