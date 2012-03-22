@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.DoubleDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.IntegerDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.LongDatatypeProvider;
@@ -35,6 +36,7 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	
 	private static BundleContext bundleContext;
+	private static IExecutor executor;
 	
 	/**
 	 * The constructor
@@ -75,4 +77,17 @@ public class Activator extends AbstractUIPlugin {
 		return bundleContext;
 	}
 
+	public void bindExecutor( IExecutor exec ) {
+		executor = exec;
+	}
+	
+	public void unbindExecutor( IExecutor exec ) {
+		if( exec == executor ) {
+			executor = null;
+		}
+	}
+	
+	public static IExecutor getExecutor() {
+		return executor;
+	}
 }

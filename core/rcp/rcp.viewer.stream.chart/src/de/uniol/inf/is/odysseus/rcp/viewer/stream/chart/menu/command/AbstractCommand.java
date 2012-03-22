@@ -22,14 +22,21 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public abstract class AbstractCommand extends AbstractHandler {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
+	
 	public AbstractChart<?,?> openView(AbstractChart<?,?> createView, IPhysicalOperator observingOperator) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -70,6 +77,17 @@ public abstract class AbstractCommand extends AbstractHandler {
 				IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 				// Auswahl holen
 				opForStream = nodeView.getModelNode().getContent();				
+			}
+			
+			if( selectedObject instanceof Integer ) {
+                Integer queryID = (Integer)selectedObject;
+                IExecutor executor = Activator.getExecutor();
+                if( executor instanceof IServerExecutor ) {
+                    IServerExecutor serverExecutor = (IServerExecutor)executor;
+                    opForStream = serverExecutor.getExecutionPlan().getQuery(queryID).getPhysicalChilds().get(0);
+                } else {
+                    LOG.error("Could not show charts outside server.");
+                }
 			}
 		}
 

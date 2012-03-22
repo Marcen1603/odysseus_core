@@ -28,7 +28,8 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
  de.uniol.inf.is.odysseus.rcp.wizard,
  de.uniol.inf.is.odysseus.relational.base,
- de.uniol.inf.is.odysseus.script.parser
+ de.uniol.inf.is.odysseus.script.parser,
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts,
@@ -37,3 +38,4 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings
+Service-Component: OSGI-INF/executor.xml
