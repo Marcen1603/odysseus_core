@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
@@ -77,11 +77,11 @@ public class OperatorPeerJxtaImpl extends AbstractOperatorPeer {
 
         String configFile = System.getenv("PeerConfig");
         if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/" + System.getenv("PeerConfigFile");
+            configFile = OdysseusConfiguration.getHomeDir() + "/" + System.getenv("PeerConfigFile");
         }
         // If no file given try first Odysseus-Home
         if (configFile == null || configFile.trim().length() == 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/OperatorPeer1Config.xml";
+            configFile = OdysseusConfiguration.getHomeDir() + "/OperatorPeer1Config.xml";
             try {
                 configuration = new JxtaConfiguration(configFile);
             } catch (IOException e) {

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateful;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**

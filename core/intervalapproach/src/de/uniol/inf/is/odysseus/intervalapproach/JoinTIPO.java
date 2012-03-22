@@ -31,11 +31,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.sa;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 

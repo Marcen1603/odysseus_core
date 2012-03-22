@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser;
 import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 @ SuppressWarnings("all") public class NewSQLParser/*@bgen(jjtree)*/implements NewSQLParserTreeConstants, NewSQLParserConstants {/*@bgen(jjtree)*/
   protected static JJTNewSQLParserState jjtree = new JJTNewSQLParserState();

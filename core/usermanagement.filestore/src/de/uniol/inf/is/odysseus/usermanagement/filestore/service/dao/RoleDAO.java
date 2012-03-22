@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
@@ -20,7 +20,7 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 	}
 	
 	RoleDAO() throws IOException {
-		super(new FileStore<String, Role>(OdysseusDefaults.get("roleStoreFilename")), new ArrayList<Role>());
+		super(new FileStore<String, Role>(OdysseusConfiguration.get("roleStoreFilename")), new ArrayList<Role>());
 	}
 
 }

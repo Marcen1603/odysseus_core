@@ -23,7 +23,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
@@ -50,7 +50,7 @@ public abstract class AbstractScheduler implements
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = OdysseusDefaults.getLong(
+	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.getLong(
 			"scheduler_TimeSlicePerStrategy", 10);
 
 	/**
@@ -72,11 +72,11 @@ public abstract class AbstractScheduler implements
 			SchedulingEventType.SCHEDULING_STOPPED, "");
 
 	// ---- Evaluations ----
-	final boolean outputDebug = Boolean.parseBoolean(OdysseusDefaults
+	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration
 			.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusDefaults.getLong(
+	final long limitDebug = OdysseusConfiguration.getLong(
 			"debug_Scheduler_maxLines", 1048476);
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
@@ -180,8 +180,8 @@ public abstract class AbstractScheduler implements
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(OdysseusDefaults.getHomeDir()
-						+ OdysseusDefaults.get("scheduler_DebugFileName") + "_"
+				file = new FileWriter(OdysseusConfiguration.getHomeDir()
+						+ OdysseusConfiguration.get("scheduler_DebugFileName") + "_"
 						+ System.currentTimeMillis() + ".csv");
 				file.write("Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!

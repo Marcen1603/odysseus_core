@@ -12,16 +12,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
-import java.util.Iterator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-
-
-public interface ITemporalSweepArea<T> extends ISweepArea<T> {
-	public void purgeElementsBefore(PointInTime time);
-	public Iterator<T> extractElementsBefore(PointInTime time);
-	@Override
-	public ITemporalSweepArea<T> clone();
+/**
+ * Marker interface for all buffer pipes. A call to {@link #hasNext()} may not
+ * block for a buffer.
+ * 
+ * @author Jonas Jacobi
+ */
+public interface IBuffer<T> extends IIterableSource<T>, IPipe<T, T> {
+	public int size();
+	public void transferNextBatch(int count);
+	public T peek();
 }

@@ -34,7 +34,7 @@ import net.jxta.protocol.PipeAdvertisement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p.administrationpeer.AbstractAdministrationPeer;
@@ -195,11 +195,11 @@ public class AdministrationPeerJxtaImpl extends AbstractAdministrationPeer {
         JxtaConfiguration configuration = null;
         String configFile = System.getenv("PeerConfig");
         if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/" + System.getenv("PeerConfigFile");
+            configFile = OdysseusConfiguration.getHomeDir() + "/" + System.getenv("PeerConfigFile");
         }
         // If no file given try first Odysseus-Home
         if (configFile == null || configFile.trim().length() == 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/AdminPeer1Config.xml";
+            configFile = OdysseusConfiguration.getHomeDir() + "/AdminPeer1Config.xml";
             try {
                 configuration = new JxtaConfiguration(configFile);
             } catch (IOException e) {

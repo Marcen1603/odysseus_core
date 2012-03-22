@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
  * Singleton-Klasse, welcher die Aufgabe hat, die Verarbeitungszeiten der
@@ -46,7 +46,7 @@ public class CPURateSaver {
 	 * Daten nicht, wird sie erstellt.
 	 */
 	public void load() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		// System.out.println("Loading CPURates from " + filename);
 
 		try {
@@ -120,7 +120,7 @@ public class CPURateSaver {
 	 * Konfigurationsdatei.
 	 */
 	public void save() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
 

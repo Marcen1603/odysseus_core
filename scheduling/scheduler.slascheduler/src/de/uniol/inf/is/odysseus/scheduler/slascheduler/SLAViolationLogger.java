@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 
 /**
@@ -22,7 +22,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	/**
 	 * path of log file
 	 */
-	public static final String PATH = OdysseusDefaults.getHomeDir();
+	public static final String PATH = OdysseusConfiguration.getHomeDir();
 	/**
 	 * filewriter used for logging
 	 */

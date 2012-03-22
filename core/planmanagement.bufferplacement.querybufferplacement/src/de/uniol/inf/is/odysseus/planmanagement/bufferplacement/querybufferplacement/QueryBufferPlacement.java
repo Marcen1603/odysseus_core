@@ -23,9 +23,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.BufferedPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 

@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItemParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1)
 public class AggregateAO extends UnaryLogicalOp {

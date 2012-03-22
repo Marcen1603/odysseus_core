@@ -11,6 +11,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.mep,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.core.server.predicate,
  de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
@@ -40,4 +41,5 @@ Export-Package: de.uniol.inf.is.odysseus.mining.cleaning,
  de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator,
  de.uniol.inf.is.odysseus.mining.cleaning.transform
 Service-Component: OSGI-INF/TransformRuleProvider.xml
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

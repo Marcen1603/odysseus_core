@@ -13,7 +13,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
  * Singleton-Klasse, welcher die Aufgabe besitzt, zu verschiedenen Datenquellen
@@ -60,7 +60,7 @@ public class DataStreamRateSaver {
 	 * angelegt.
 	 */
 	public void load() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		getLogger().debug("Loading datarates from " + filename);
 
 		try {
@@ -129,7 +129,7 @@ public class DataStreamRateSaver {
 	 * geladen werden können.
 	 */
 	public void save() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		getLogger().debug("Saving datarates in " + filename);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));

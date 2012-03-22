@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
 public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		implements UncaughtExceptionHandler, IPlanModificationListener {
 
-	private volatile int trainSize = (int) OdysseusDefaults.getLong(
+	private volatile int trainSize = (int) OdysseusConfiguration.getLong(
 			"scheduler_trainSize", 1);
 
 	Logger logger = LoggerFactory

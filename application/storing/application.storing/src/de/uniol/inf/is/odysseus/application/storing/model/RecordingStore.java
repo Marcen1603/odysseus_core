@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 // public class RecordingStore extends FileStore<String, RecordEntry> {
 public class RecordingStore {
 
-	private static final String PATH_TO_STORE = OdysseusDefaults.get("odysseusHome") + "recordings.store";
+	private static final String PATH_TO_STORE = OdysseusConfiguration.get("odysseusHome") + "recordings.store";
 
 	private MemoryStore<String, RecordEntry> cache = new MemoryStore<String, RecordEntry>();
 

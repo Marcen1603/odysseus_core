@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.AttributeObserver;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.DataSourceObserverSink;
 
@@ -246,7 +246,7 @@ public class DataSourceManager {
 	 * Konfigurationsdatei.
 	 */
 	public void save() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		System.out.println("Writing file " + filename);
 		BufferedWriter bw = null;
 		try {
@@ -312,7 +312,7 @@ public class DataSourceManager {
 	 * Läd alle Histogramme aus der Konfigurationsdatei.
 	 */
 	public void load() {
-		String filename = OdysseusDefaults.getHomeDir() + FILENAME;
+		String filename = OdysseusConfiguration.getHomeDir() + FILENAME;
 		System.out.println("Reading file " + filename);
 
 		BufferedReader bw = null;

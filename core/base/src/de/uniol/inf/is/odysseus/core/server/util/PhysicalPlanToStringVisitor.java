@@ -12,10 +12,9 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.util;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.util.INodeVisitor;
 
 /**
  * Builds an string representation of a physical plan.

@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
@@ -82,7 +82,7 @@ public class DataDictionary extends AbstractDataDictionary {
 
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key){
 		try {
-			return new FileStore<T, U>(OdysseusDefaults.get(key));
+			return new FileStore<T, U>(OdysseusConfiguration.get(key));
 		} catch (IOException e) {
 			LOG.error("Could not create fileStore-Instance for key " + key, e);
 			return null;

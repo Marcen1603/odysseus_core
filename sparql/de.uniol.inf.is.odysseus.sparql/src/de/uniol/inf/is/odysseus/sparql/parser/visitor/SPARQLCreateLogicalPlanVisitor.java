@@ -338,8 +338,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 							}
 						}
 						
-						de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction physAggFunc = 
-							new de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction(agg.getAggFunc().toString());
+						de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction physAggFunc = 
+							new de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction(agg.getAggFunc().toString());
 						aggAO.addAggregation(aggAttr, physAggFunc, outAttribute(aggAttr.getAttributeName(), agg.getAggFunc()));
 					}
 				}

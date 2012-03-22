@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.NoSuchAttributeException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;

@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 
 public class AggregateItem {
 	public final SDFAttribute outAttribute;

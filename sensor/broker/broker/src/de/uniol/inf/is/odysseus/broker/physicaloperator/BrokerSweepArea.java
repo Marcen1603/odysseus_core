@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.broker.physicaloperator.predicate.AttributeTimeI
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
 
 /**
  * The BrokerSweepArea allows to save the current valid content for the broker.

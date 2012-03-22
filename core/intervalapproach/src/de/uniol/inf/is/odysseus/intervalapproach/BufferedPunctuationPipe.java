@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 
 /**
  * This buffered pipe works the same way as BufferedPipe despite of the fact,

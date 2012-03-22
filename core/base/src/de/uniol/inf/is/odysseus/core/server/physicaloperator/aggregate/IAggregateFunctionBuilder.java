@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 import java.util.Collection;
 
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 public interface IAggregateFunctionBuilder {

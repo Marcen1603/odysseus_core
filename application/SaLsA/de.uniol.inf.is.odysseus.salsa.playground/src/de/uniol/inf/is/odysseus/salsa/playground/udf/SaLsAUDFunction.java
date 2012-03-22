@@ -7,9 +7,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 

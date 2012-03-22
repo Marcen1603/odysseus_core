@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
 
 public interface IGroupProcessor<R, W extends IClone> {
 

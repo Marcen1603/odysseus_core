@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 
 

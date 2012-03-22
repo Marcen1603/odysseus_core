@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.monitoring.StaticValueMonitoringData;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterablePipe;
 
 /**
  * @author Jonas Jacobi

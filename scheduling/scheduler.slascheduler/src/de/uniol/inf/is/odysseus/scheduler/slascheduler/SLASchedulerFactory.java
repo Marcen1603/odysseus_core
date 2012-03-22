@@ -4,7 +4,7 @@ import java.util.Dictionary;
 
 import org.osgi.service.component.ComponentContext;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -55,14 +55,14 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			@SuppressWarnings("rawtypes")
 			Dictionary properties = context.getProperties();
 			// get settings
-			this.starvationFreedomFuncName = OdysseusDefaults.get("sla_starvationFreedomFuncName");
+			this.starvationFreedomFuncName = OdysseusConfiguration.get("sla_starvationFreedomFuncName");
 			this.prio = new PriorityFunctionFactory()
-					.buildPriorityFunction(OdysseusDefaults
+					.buildPriorityFunction(OdysseusConfiguration
 							.get("sla_prioFuncName"));
-			this.decaySF = Float.parseFloat(OdysseusDefaults.get("sla_starvationFreedomDecay"));
-			this.querySharing = Boolean.parseBoolean(OdysseusDefaults.get("sla_querySharing"));
-			this.querySharingCostModelName = OdysseusDefaults.get("sla_querySharingCostModel");
-			this.costFunctionName = OdysseusDefaults.get("sla_costFunctionName");
+			this.decaySF = Float.parseFloat(OdysseusConfiguration.get("sla_starvationFreedomDecay"));
+			this.querySharing = Boolean.parseBoolean(OdysseusConfiguration.get("sla_querySharing"));
+			this.querySharingCostModelName = OdysseusConfiguration.get("sla_querySharingCostModel");
+			this.costFunctionName = OdysseusConfiguration.get("sla_costFunctionName");
 			super.setName(properties);
 		} catch (Exception e) {
 			e.printStackTrace();

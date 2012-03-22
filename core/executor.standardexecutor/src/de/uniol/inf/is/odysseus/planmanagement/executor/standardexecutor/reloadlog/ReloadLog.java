@@ -23,7 +23,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class ReloadLog {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
-	public static final String LOG_FILENAME = OdysseusDefaults.get("reloadLogStoreFilename");
+	public static final String LOG_FILENAME = OdysseusConfiguration.get("reloadLogStoreFilename");
 	
 	
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();

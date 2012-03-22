@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.priority.buffer;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 
 public interface IPrioBuffer<T> extends IBuffer<T> {
 	public Byte getTopElementPrio();

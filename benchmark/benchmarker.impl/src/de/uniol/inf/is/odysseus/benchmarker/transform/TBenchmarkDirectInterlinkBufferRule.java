@@ -18,7 +18,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.BufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.buffer.DirectInterlinkBufferedPipe;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

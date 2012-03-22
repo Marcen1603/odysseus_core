@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
@@ -154,7 +154,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public Iterator<Tuple<? extends ITimeInterval>> query(Tuple<? extends ITimeInterval> element,
-			de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order order) {
+			de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order order) {
 		LinkedList<Tuple<? extends ITimeInterval>> result = new LinkedList<Tuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
 			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);

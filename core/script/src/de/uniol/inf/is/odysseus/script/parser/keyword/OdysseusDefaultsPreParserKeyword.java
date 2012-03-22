@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -42,7 +42,7 @@ public class OdysseusDefaultsPreParserKeyword extends AbstractPreParserKeyword {
 					permanently = true;
 				}
 			}
-			OdysseusDefaults.set(params[0],params[1],permanently, caller);
+			OdysseusConfiguration.set(params[0],params[1],permanently, caller);
 		}
 
 		return null;

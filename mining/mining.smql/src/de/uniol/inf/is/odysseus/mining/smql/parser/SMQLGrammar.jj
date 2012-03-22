@@ -7,7 +7,7 @@
                                                                
   DEBUG_PARSER = false;
   //DEBUG_TOKEN_MANAGER = false;  STATIC = false;}PARSER_BEGIN(SMQLParser)package de.uniol.inf.is.odysseus.mining.smql.parser;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 @ SuppressWarnings("all") public class SMQLParser/*@bgen(jjtree)*/implements SMQLParserTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected JJTSMQLParserState jjtree = new JJTSMQLParserState();
 

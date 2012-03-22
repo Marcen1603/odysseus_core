@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
 public class FileSinkPO extends AbstractSink<Object> {

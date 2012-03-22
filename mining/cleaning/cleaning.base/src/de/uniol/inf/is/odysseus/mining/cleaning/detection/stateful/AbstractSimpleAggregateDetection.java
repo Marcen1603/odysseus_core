@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 
 /**
  * 

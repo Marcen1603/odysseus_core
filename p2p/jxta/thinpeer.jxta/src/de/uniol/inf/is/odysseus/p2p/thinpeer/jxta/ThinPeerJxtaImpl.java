@@ -26,7 +26,7 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import net.jxta.protocol.PipeAdvertisement;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -93,12 +93,12 @@ public class ThinPeerJxtaImpl extends AbstractThinPeer implements IAdministratio
         JxtaConfiguration configuration = null;
 
         if (configFile == null && System.getenv("PeerConfigFile") != null && System.getenv("PeerConfigFile").length() > 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/" + System.getenv("PeerConfigFile");
+            configFile = OdysseusConfiguration.getHomeDir() + "/" + System.getenv("PeerConfigFile");
         }
 
         // If no file given try first Odysseus-Home
         if (configFile == null || configFile.trim().length() == 0) {
-            configFile = OdysseusDefaults.getHomeDir() + "/ThinPeer1Config.xml";
+            configFile = OdysseusConfiguration.getHomeDir() + "/ThinPeer1Config.xml";
             try {
                 configuration = new JxtaConfiguration(configFile);
             } catch (IOException e) {

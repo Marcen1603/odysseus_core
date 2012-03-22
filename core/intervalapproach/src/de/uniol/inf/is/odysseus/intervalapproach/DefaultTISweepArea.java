@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSweepArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
 /**

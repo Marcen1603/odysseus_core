@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 
 /**
  * container for all data items managed by the maps of the SLARegistry

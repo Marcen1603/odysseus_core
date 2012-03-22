@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 
 /**
  * Works the same way as JoinTIPO, but only the left elements are passed

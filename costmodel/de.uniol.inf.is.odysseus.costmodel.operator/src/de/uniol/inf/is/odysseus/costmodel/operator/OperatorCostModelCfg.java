@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.costmodel.operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
  * Singleton-Klasse zur Konfiguration des Kostenmodells nach Operatoreigenschaften.
- * Verwendet {@link OdysseusDefaults}.
+ * Verwendet {@link OdysseusConfiguration}.
  * 
  * @author Timo Michelsen
  *
@@ -50,10 +50,10 @@ public class OperatorCostModelCfg {
 	// Ermittelt alle Einstellungen. Falls nicht vorhanden,
 	// werden Standardwerte gesetzt.
 	private OperatorCostModelCfg() {
-		stdMemCost = toDouble( OdysseusDefaults.get("ac_standardMemCost"), STD_MEM_COST);
-		stdCpuCost = toDouble( OdysseusDefaults.get("ac_standardCpuCost"), STD_CPU_COST);
-		memHeadroom = toDouble( OdysseusDefaults.get("ac_memHeadroom"), MEM_HEADROOM);
-		cpuHeadroom = toDouble( OdysseusDefaults.get("ac_cpuHeadroom"), CPU_HEADROOM);
+		stdMemCost = toDouble( OdysseusConfiguration.get("ac_standardMemCost"), STD_MEM_COST);
+		stdCpuCost = toDouble( OdysseusConfiguration.get("ac_standardCpuCost"), STD_CPU_COST);
+		memHeadroom = toDouble( OdysseusConfiguration.get("ac_memHeadroom"), MEM_HEADROOM);
+		cpuHeadroom = toDouble( OdysseusConfiguration.get("ac_cpuHeadroom"), CPU_HEADROOM);
 		
 		// check cfg
 		if( stdMemCost <= 0.0 ) {

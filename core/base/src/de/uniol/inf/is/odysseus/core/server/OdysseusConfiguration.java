@@ -29,13 +29,13 @@ import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
-public class OdysseusDefaults {
+public class OdysseusConfiguration {
 
 	static Logger _logger = null;
 
 	static Logger getLogger() {
 		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(OdysseusDefaults.class);
+			_logger = LoggerFactory.getLogger(OdysseusConfiguration.class);
 		}
 		return _logger;
 	}

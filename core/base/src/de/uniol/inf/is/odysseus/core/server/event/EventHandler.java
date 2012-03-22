@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
  * This class is a delegate and can handle event dispatching for
@@ -89,7 +89,7 @@ public class EventHandler {
 	}
 	
 	private EventHandler() {
-		initThreadPool((int) Math.max(1, OdysseusDefaults.getLong("EventHandlerDispatcherPoolSize", 10)));
+		initThreadPool((int) Math.max(1, OdysseusConfiguration.getLong("EventHandlerDispatcherPoolSize", 10)));
 	}
 
 	private void initThreadPool(int size) {

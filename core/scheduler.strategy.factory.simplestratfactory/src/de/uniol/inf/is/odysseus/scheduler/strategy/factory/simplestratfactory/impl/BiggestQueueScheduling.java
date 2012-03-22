@@ -14,8 +14,8 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory.impl;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.AbstractDynamicScheduling;
 

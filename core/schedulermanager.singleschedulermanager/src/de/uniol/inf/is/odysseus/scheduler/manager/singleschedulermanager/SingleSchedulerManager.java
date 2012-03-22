@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.OdysseusDefaults;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
@@ -97,7 +97,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
         if (schedulers != null && strats != null) {
 
             try {
-                File f = FileUtils.openOrCreateFile(OdysseusDefaults.get("schedulingConfigFile"));
+                File f = FileUtils.openOrCreateFile(OdysseusConfiguration.get("schedulingConfigFile"));
                 FileInputStream in;
                 in = new FileInputStream(f);
                 props.load(in);
@@ -109,7 +109,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
                     props.setProperty("defaultStrat", strats.iterator().hasNext() ? strats.iterator().next() : null);
                     FileOutputStream out;
                     try {
-                        out = new FileOutputStream(OdysseusDefaults.get("schedulingConfigFile"));
+                        out = new FileOutputStream(OdysseusConfiguration.get("schedulingConfigFile"));
                         props.store(out, "--- Scheduling Property File edit only if you know what you are doing ---");
                         out.close();
                         logger.info("New Scheduler-Config-File created");
