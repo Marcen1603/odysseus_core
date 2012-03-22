@@ -20,13 +20,22 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	final private IDataHandler<W> dataHandler;
 
-	final private ITransformer<R,String[]> transformator;
+	final private IStringArrayTransformer<R> stringTransformer;
+	final private IObjectInputStreamTransformer<R> oisTransformer;
 
-	public AccessPO(IInput<R> input, ITransformer<R,String[]> transformator,
+	public AccessPO(IInput<R> input, IStringArrayTransformer<R> transformer,
 			IDataHandler<W> dataHandler) {
 		this.input = input;
-		this.transformator = transformator;
+		this.stringTransformer = transformer;
 		this.dataHandler = dataHandler;
+		this.oisTransformer = null;
+	}
+
+	public AccessPO(IInput<R> input,IObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
+		this.input = input;
+		this.stringTransformer = null;
+		this.dataHandler = dataHandler;
+		this.oisTransformer = transformer;
 	}
 
 	@Override
@@ -59,7 +68,11 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			try {
 				object = input.getNext();				
 				if (object != null) {
-					transfer(dataHandler.readData(transformator.transform(object)));
+					if (stringTransformer != null){
+						transfer(dataHandler.readData(stringTransformer.transform(object)));
+					}else if (oisTransformer != null){
+						transfer(dataHandler.readData(oisTransformer.transform(object)));
+					}
 				} else {
 					isDone = true;
 					propagateDone();

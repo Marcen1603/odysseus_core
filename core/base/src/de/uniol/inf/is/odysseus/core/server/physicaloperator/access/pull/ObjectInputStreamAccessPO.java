@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.store.OsgiObjectInputStream;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class ObjectInputStreamAccessPO<M> extends
+class ObjectInputStreamAccessPO<M> extends
 		AbstractIterableSource<M> {
 
 	static Logger _logger = null;

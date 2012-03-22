@@ -14,12 +14,15 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
+import java.io.ObjectInputStream;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStreamAccessPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
@@ -39,9 +42,12 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@Override
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
-		ISource accessPO = new ObjectInputStreamAccessPO<Tuple<?>>(accessAO.getHost(), accessAO.getPort(), accessAO.getOutputSchema(), 
-				new TupleDataHandler(accessAO.getOutputSchema()),
-				accessAO.getLogin(), accessAO.getPassword());
+		
+		ObjectStreamInput input = new ObjectStreamInput(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
+		
+		ISource accessPO = new AccessPO<ObjectInputStream, Tuple<?>>(input, new ObjectInputStreamTransformer(), 
+				new TupleDataHandler(accessAO.getOutputSchema()));
+		
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);
