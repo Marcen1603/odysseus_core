@@ -10,6 +10,9 @@ public class QueryTableViewer extends TableViewer {
 
 	public QueryTableViewer(Composite parent, int style) {
 		super(parent, style);
+		
+		getTable().setHeaderVisible(true);
+		getTable().setLinesVisible(true);
 	}
 
 	@Override
