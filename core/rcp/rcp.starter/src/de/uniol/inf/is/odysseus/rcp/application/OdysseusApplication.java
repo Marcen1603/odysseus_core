@@ -50,20 +50,23 @@ public class OdysseusApplication implements IApplication {
 		 * bound. See also "Die OSGi Service Platform", pages 407ff.  
 		 * Therefore, we need not wait until the executor is bound.
 		 */
-		while (executor == null) {
-			try {
-				wait(1000);
-			} catch (InterruptedException e) {				
-				e.printStackTrace();
-			}
-		}
 
 		// Preconditions.checkNotNull(executor, "No executor bound!");
 		// ServiceTracker tracker = new
 		// ServiceTracker(context.getBrandingBundle().getBundleContext(),
 		// IExecutor.class, null);
 
+		// Nothing should happen before this!
 		Display display = PlatformUI.createDisplay();
+		
+		while (executor == null) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		try {
 			if (executor instanceof IClientExecutor) {
 				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
