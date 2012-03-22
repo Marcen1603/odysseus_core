@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
@@ -56,7 +57,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
-@XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class, LogicalQuery.class })
+@XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
+		LogicalQuery.class })
 public class WebserviceServer {
 
 	public static void startServer() {
@@ -103,6 +105,24 @@ public class WebserviceServer {
 			e.printStackTrace();
 		}
 		return new IntegerCollectionResponse(null, false);
+	}
+
+	public IntegerResponse addQuery(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "logicalPlan") ILogicalOperator logicalPlan,
+			@WebParam(name = "queryBuildConfigName") String queryBuildConfName) {
+		try {
+			ISession user = loginWithSecurityToken(securityToken);
+			IntegerResponse response = new IntegerResponse(
+					ExecutorServiceBinding.getExecutor().addQuery(logicalPlan,
+							user, queryBuildConfName), true);
+			return response;
+		} catch (WebserviceException e) {
+			e.printStackTrace();
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+		}
+		return new IntegerResponse(null, false);
 	}
 
 	public StringListResponse getInstalledSources(
@@ -396,8 +416,8 @@ public class WebserviceServer {
 			@WebParam(name = "id") String id) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor()
-					.getLogicalQuery(Integer.valueOf(id)), true);
+			return new QueryResponse((LogicalQuery) ExecutorServiceBinding
+					.getExecutor().getLogicalQuery(Integer.valueOf(id)), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new QueryResponse(null, false);
