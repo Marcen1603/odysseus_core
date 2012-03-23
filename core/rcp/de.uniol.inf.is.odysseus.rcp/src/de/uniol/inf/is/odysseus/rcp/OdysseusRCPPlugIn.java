@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.rcp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
@@ -31,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.Sche
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListener {
 
@@ -70,10 +67,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 
 	public static final String WIZARD_PROJECT_ID = "de.uniol.inf.is.odysseus.rcp.wizards.OdysseusProjectWizard";
 
-	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPPlugIn.class);
 	private static OdysseusRCPPlugIn instance;
 	private static IExecutor executor = null;
-	private static IQueryViewDataProvider dataProvider;
 	private static ISession activeSession;
 
 	public static OdysseusRCPPlugIn getDefault() {
@@ -163,27 +158,5 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 				}
 			}
 		}
-	}
-
-	public void bindQueryViewDataProvider(IQueryViewDataProvider provider) {
-		if (dataProvider != null) {
-			LOG.error("More than one dataProvider for QueryView provided");
-		}
-		dataProvider = provider;
-		LOG.debug("DataProvider for QueryView bound: " + provider);
-	}
-
-	public void unbindQueryViewDataProvider(IQueryViewDataProvider provider) {
-		if (dataProvider == provider) {
-			dataProvider = null;
-			LOG.debug("DataProvider for QueryView unbound: " + provider);
-		} else {
-			LOG.error("Tried to unbound not used DataProvider "+ provider + " for QueryView");
-			LOG.error("Nothing unbound.");
-		}
-	}
-
-	public static IQueryViewDataProvider getQueryViewDataProvider() {
-		return dataProvider;
 	}
 }

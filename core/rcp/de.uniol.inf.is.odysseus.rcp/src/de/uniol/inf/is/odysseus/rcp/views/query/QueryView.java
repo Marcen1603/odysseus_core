@@ -16,8 +16,6 @@ package de.uniol.inf.is.odysseus.rcp.views.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -43,7 +41,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class QueryView extends ViewPart {
@@ -51,11 +48,6 @@ public class QueryView extends ViewPart {
     private TableViewer tableViewer;
     private Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
 
-    Timer refreshTimer = null;
-    private boolean doAutoRefresh;
-
-    
-    
     @Override
     public void createPartControl(Composite parent) {
 
@@ -241,39 +233,21 @@ public class QueryView extends ViewPart {
 
         sorter.setSorter(sorter, ColumnViewerSorter.NONE);
 
-        // Contextmenu
+        createContextMenu();
+        initData();
+    }
+
+	private void createContextMenu() {
+		// Contextmenu
         MenuManager menuManager = new MenuManager();
         Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
         // Set the MenuManager
         tableViewer.getTable().setMenu(contextMenu);
         getSite().registerContextMenu(menuManager, tableViewer);
-
-        initData();
-
-        if (doAutoRefresh) {
-            refreshTimer = createRefreshTimer();
-        }
-    }
+	}
     
-    private Timer createRefreshTimer() {
-    	Timer t = new Timer();
-        t.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                try {
-                    refreshTable();
-                } catch (Exception e) {
-                    this.cancel();
-                }
-            }
-        }, 1000, 1000);
-        
-        return t;
-    }
-
 	private void initData() {
-		IQueryViewDataProvider dataProvider = OdysseusRCPPlugIn.getQueryViewDataProvider();
+		IQueryViewDataProvider dataProvider = QueryViewDataProviderManager.getQueryViewDataProvider();
         Preconditions.checkNotNull(dataProvider, "DataProvider for QueryView must not be null!");
         dataProvider.init(this);
         queries.addAll(dataProvider.getData());
@@ -281,7 +255,7 @@ public class QueryView extends ViewPart {
 
     @Override
     public void dispose() {
-    	OdysseusRCPPlugIn.getQueryViewDataProvider().dispose();
+    	QueryViewDataProviderManager.getQueryViewDataProvider().dispose();
     	
         super.dispose();
     }
@@ -297,7 +271,7 @@ public class QueryView extends ViewPart {
             @Override
             public void run() {
                 queries.clear();
-                queries.addAll(OdysseusRCPPlugIn.getQueryViewDataProvider().getData());
+                queries.addAll(QueryViewDataProviderManager.getQueryViewDataProvider().getData());
 
                 if (!tableViewer.getControl().isDisposed())
                     tableViewer.refresh();
