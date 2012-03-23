@@ -6,5 +6,6 @@ public interface IQueryViewDataProvider {
     
 	public void init(QueryView view);
     public Collection<? extends IQueryViewData> getData();
+	public void dispose();
     
 }

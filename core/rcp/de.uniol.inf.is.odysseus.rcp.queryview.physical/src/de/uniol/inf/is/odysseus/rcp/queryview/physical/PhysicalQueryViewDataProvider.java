@@ -22,7 +22,19 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 		
 		listenToExecutor();
 	}
+
+	@Override
+	public void dispose() {
+		this.view = null;
+		
+		unlistenToExecutor();
+	}
 	
+	private void unlistenToExecutor() {
+		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
+		executor.removePlanModificationListener(this);
+	}
+
 	private void listenToExecutor() {
 		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
 		executor.addPlanModificationListener(this);
@@ -63,4 +75,5 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		view.refreshTable();
 	}
+
 }

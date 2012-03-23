@@ -54,6 +54,8 @@ public class QueryView extends ViewPart {
     Timer refreshTimer = null;
     private boolean doAutoRefresh;
 
+    
+    
     @Override
     public void createPartControl(Composite parent) {
 
@@ -279,6 +281,8 @@ public class QueryView extends ViewPart {
 
     @Override
     public void dispose() {
+    	OdysseusRCPPlugIn.getQueryViewDataProvider().dispose();
+    	
         super.dispose();
     }
 
