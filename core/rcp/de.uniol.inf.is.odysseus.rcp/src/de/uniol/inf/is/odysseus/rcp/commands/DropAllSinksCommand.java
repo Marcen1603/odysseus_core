@@ -10,6 +10,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +41,23 @@ public class DropAllSinksCommand extends AbstractHandler {
 
 		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		
-		if (executor != null) {
+		if (executor != null ) {
+			final Set<Entry<String, ILogicalOperator>> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
+			if( sinks == null || sinks.isEmpty() ) {
+				LOG.debug("Nothing to drop");
+				StatusBarManager.getInstance().setMessage("No sinks to drop");
+				return null;
+			}
+			
+			if( !confirm() ) {
+				LOG.debug("Dropping all sinks not confirmed");
+				return null;
+			}
+			
 			Job job = new Job("Drop all sinks") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						Set<Entry<String, ILogicalOperator>> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
 						monitor.beginTask("Dropping sinks", sinks.size());
 						
 						ImmutableList<String> ids = determineIds(sinks);
@@ -68,6 +82,13 @@ public class DropAllSinksCommand extends AbstractHandler {
 			job.schedule();
 		} 
 		return null;
+	}
+	
+	private static boolean confirm() {
+		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+		box.setMessage("Are you sure to drop all sinks?");
+		box.setText("Drop all sinks");
+		return box.open() == SWT.OK;
 	}
 
 	private static ImmutableList<String> determineIds(Set<Entry<String, ILogicalOperator>> sinks) {
