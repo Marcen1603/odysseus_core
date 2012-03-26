@@ -153,6 +153,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DropSink"
             name="Drop Sink">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropAllSinksCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropAllSinks"
+            name="Drop All Sinks">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -257,6 +262,13 @@
       <menuContribution
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SinkView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSinks"
+               icon="icons/delete.png"
+               label="Drop all sinks"
+               style="push"
+               tooltip="Drop all sinks">
+         </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
                icon="icons/refresh.gif"

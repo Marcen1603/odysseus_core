@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.common.base,
+ com.google.common.collect,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.datadictionary,
  de.uniol.inf.is.odysseus.core.event,
