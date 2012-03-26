@@ -48,12 +48,16 @@ public class DropAllSinksCommand extends AbstractHandler {
 						
 						ImmutableList<String> ids = determineIds(sinks);
 						for( String id: ids) {
+							LOG.debug("Dropping sink " + id);
 							executor.removeSink(id, OdysseusRCPPlugIn.getActiveSession());
 							monitor.worked(1);
 						}
 						
 						StatusBarManager.getInstance().setMessage("All Sinks dropped");
+						LOG.debug("All sinks dropped");
+						
 					} catch (PermissionException e) {
+						LOG.error("Could not drop all sinks", e);
 						return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove sink:\n See error log for details", e);
 					}
 					return Status.OK_STATUS;
