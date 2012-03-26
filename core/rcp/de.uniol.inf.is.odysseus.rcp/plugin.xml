@@ -158,12 +158,24 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DropAllSinks"
             name="Drop All Sinks">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropAllSourcesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
+            name="Drop All Sources">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
+               icon="icons/delete.png"
+               label="Drop all sources"
+               style="push"
+               tooltip="Drop all sources">
+         </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand"
                icon="icons/refresh.gif"

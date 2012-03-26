@@ -63,6 +63,7 @@ public class DropAllSinksCommand extends AbstractHandler {
 						ImmutableList<String> ids = determineIds(sinks);
 						for( String id: ids) {
 							LOG.debug("Dropping sink " + id);
+							monitor.subTask("Dropping " + id);
 							executor.removeSink(id, OdysseusRCPPlugIn.getActiveSession());
 							monitor.worked(1);
 						}
