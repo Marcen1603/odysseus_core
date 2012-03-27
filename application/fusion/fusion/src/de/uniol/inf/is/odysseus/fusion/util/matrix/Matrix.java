@@ -205,7 +205,8 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
     /** Clone the Matrix object.
      */
-    public
+    @Override
+	public
 
     Object clone() {
         return this.copy();
@@ -1238,7 +1239,8 @@ public class Matrix implements Cloneable, java.io.Serializable {
      * Overrides the Object {@link java.lang.Object#toString toString()} method.
      * @return String tab-separated rows on separate lines
      */
-    public String toString() {
+    @Override
+	public String toString() {
         String result = "";
 
         for (int j = 0; j < m; j++) { // 4 columns

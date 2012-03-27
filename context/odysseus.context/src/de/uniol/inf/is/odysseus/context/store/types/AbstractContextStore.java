@@ -33,6 +33,7 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		this.schema = schema;
 	}
 
+	@Override
 	public SDFSchema getSchema() {
 		return schema;
 	}
