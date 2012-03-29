@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.relational.base;
 
 import java.io.Serializable;
@@ -32,13 +32,14 @@ import de.uniol.inf.is.odysseus.core.server.util.Primes;
  * 
  * @author Marco Grawunder, Jonas Jacobi
  */
-public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<Tuple<?>>, ICSVToString {
+public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
+		implements Serializable, Comparable<Tuple<?>>, ICSVToString {
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
 	protected Object[] attributes;
 	protected int memSize = -1;
-	
+
 	private boolean containsNull = false;
 	private boolean valueChanged = true;
 
@@ -57,14 +58,17 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
-		if (pos < 0) return null;
+		if (pos < 0)
+			return null;
 		return (K) this.attributes[pos];
 	}
 
 	@SuppressWarnings("unchecked")
 	public final void addAttributeValue(int pos, Object value) {
-		if (this.attributes[pos] != null && !(this.attributes[pos] instanceof Collection)) {
-			throw new RuntimeException("Cannot add value to non collection type");
+		if (this.attributes[pos] != null
+				&& !(this.attributes[pos] instanceof Collection)) {
+			throw new RuntimeException(
+					"Cannot add value to non collection type");
 		}
 		if (this.attributes[pos] == null) {
 			this.attributes[pos] = new ArrayList<Object>();
@@ -104,9 +108,9 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 	 * Beispiel: attrList[1]=14,attrList[2]=12 erzeugt ein neues Objekt, welches
 	 * die Attribute 14 und 12 enthaelt.
 	 * 
-	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt,
-	 * wird das neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch
-	 * die passenden Schemainformationen.
+	 * Falls das aktuelle Tuple keine Schemainformationen enthaelt, wird das
+	 * neue auch ohne erzeugt. Ansonsten enthaelt das neue Tuple auch die
+	 * passenden Schemainformationen.
 	 * 
 	 * @param attrList
 	 *            erzeugt ein neues Objekt das die Attribute der Positionen aus
@@ -129,40 +133,45 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 		newAttrs[0] = this.attributes[attr];
 		return restrictCreation(createNew, newAttrs);
 	}
-	
+
 	/**
-	 * Creates a new instance from the current tuple and 
-	 * appends the given attribute object to it
-	 * @param object the object to append
+	 * Creates a new instance from the current tuple and appends the given
+	 * attribute object to it
+	 * 
+	 * @param object
+	 *            the object to append
 	 * @return a new created and extended copy
 	 */
-	public Tuple<T> append(Object object){
+	public Tuple<T> append(Object object) {
 		return this.append(object, true);
 	}
-	
+
 	/**
-	 * Creates a new instance from the current tuple if the 
-	 * createNew param is true or uses the current instance 
-	 * and appends the given attribute object
-	 * @param object the object to append
-	 * @param createNew indicates if create a copy
+	 * Creates a new instance from the current tuple if the createNew param is
+	 * true or uses the current instance and appends the given attribute object
+	 * 
+	 * @param object
+	 *            the object to append
+	 * @param createNew
+	 *            indicates if create a copy
 	 * @return the extended tuple
 	 */
 	@SuppressWarnings("unchecked")
-	public Tuple<T> append(Object object, boolean createNew){
-		Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length+1);		
+	public Tuple<T> append(Object object, boolean createNew) {
+		Object[] newAttrs = Arrays.copyOf(this.attributes,
+				this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
-		
-		if(createNew){
+
+		if (createNew) {
 			Tuple<T> newTuple = new Tuple<T>(newAttrs.length);
-			newTuple.setAttributes(newAttrs);			
-			newTuple.setMetadata((T) this.getMetadata().clone());			
-			return newTuple;			
+			newTuple.setAttributes(newAttrs);
+			newTuple.setMetadata((T) this.getMetadata().clone());
+			return newTuple;
 		}
-        this.attributes = newAttrs;
-        return this;
+		this.attributes = newAttrs;
+		return this;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Tuple<T> restrictCreation(boolean createNew, Object[] newAttrs) {
 		if (createNew) {
@@ -171,9 +180,9 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 			newTuple.setMetadata((T) this.getMetadata().clone());
 			return newTuple;
 		}
-        this.attributes = newAttrs;
-        this.valueChanged = true;
-        return this;
+		this.attributes = newAttrs;
+		this.valueChanged = true;
+		return this;
 	}
 
 	/**
@@ -193,10 +202,27 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 	// -----------------------------------------------------------------
 	@Override
 	public final boolean equals(Object o) {
-		if (o instanceof Tuple) {
-			return this.compareTo((Tuple<?>) o) == 0;
+		if (!(o instanceof Tuple)) {
+			return false;
 		}
-        return false;
+		Tuple<?> t = (Tuple<?>) o;
+		if (this.attributes.length != t.attributes.length) {
+			return false;
+		}
+		for (int i = 0; i < attributes.length; i++) {
+			// test if attributes are not null and equal
+			// or both null (order is imporantant!)
+			if (this.attributes[i] != null) {
+				if (!this.attributes[i].equals(t.attributes[i])) {
+					return false;
+				}
+			}else{
+				if (t.attributes[i] != null){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -206,7 +232,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 	 * wenn das aktuelle Objekt kleiner ist ist der R�ckgabewert negativ
 	 * ansonsten positiv Es wird maximal die kleinere Anzahl der Felder
 	 * verglichen. Tupel mit NULL-Werten sind ungleich.
-	 */	
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public final int compareTo(Tuple<?> c) {
@@ -217,21 +243,21 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 		int compare = 0;
 		int i = 0;
 		for (i = 0; i < min && compare == 0; i++) {
-//			try {
-			if(this.attributes[i] == null || c.getAttribute(i) == null){
+			// try {
+			if (this.attributes[i] == null || c.getAttribute(i) == null) {
 				compare = i;
+			} else if (this.attributes[i] instanceof Comparable<?>) {
+				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c
+						.getAttribute(i));
 			}
-			else if (this.attributes[i] instanceof Comparable<?>) {
-				compare = ((Comparable<Object>) this.attributes[i]).compareTo(c.getAttribute(i));
-			}
-//			} catch (NullPointerException e) {
-//				System.out.println("Exception: " + this + " " + c + " " + i);
-//				System.out.println("this " + this);
-//				System.out.println("c " + c);
-//				System.out.println("this.attributes[i] " + this.attributes[i]);
-//				System.out.println("c.getAttribute(i) " + c.getAttribute(i));
-//				throw new NullPointerException();
-//			}
+			// } catch (NullPointerException e) {
+			// System.out.println("Exception: " + this + " " + c + " " + i);
+			// System.out.println("this " + this);
+			// System.out.println("c " + c);
+			// System.out.println("this.attributes[i] " + this.attributes[i]);
+			// System.out.println("c.getAttribute(i) " + c.getAttribute(i));
+			// throw new NullPointerException();
+			// }
 		}
 		if (compare < 0) {
 			compare = (-1) * i;
@@ -263,14 +289,14 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 		retBuff.append(" | META | " + getMetadata());
 		return retBuff.toString();
 	}
-	
+
 	@Override
 	public final String csvToString() {
 		return this.csvToString(true);
 	}
-	
+
 	@Override
-    public final String csvToString(boolean withMetadata){
+	public final String csvToString(boolean withMetadata) {
 		StringBuffer retBuff = new StringBuffer();
 		if (attributes.length > 0) {
 			retBuff.append(this.attributes[0] == null ? "" : this.attributes[0]);
@@ -282,16 +308,16 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 			retBuff.append(";");
 			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
 		}
-		if(withMetadata){
+		if (withMetadata) {
 			retBuff.append(";").append(getMetadata().csvToString());
 		}
 		return retBuff.toString();
 	}
-	
+
 	@Override
 	public String getCSVHeader() {
 		StringBuffer ret = new StringBuffer();
-		for (int i=0;i<attributes.length;i++){
+		for (int i = 0; i < attributes.length; i++) {
 			ret.append(";");
 		}
 		ret.append(getMetadata().getCSVHeader());
@@ -325,7 +351,8 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 		this.attributes = new Object[attributeLength];
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
-		System.arraycopy(copy.attributes, 0, this.attributes, 0, attributeLength);
+		System.arraycopy(copy.attributes, 0, this.attributes, 0,
+				attributeLength);
 	}
 
 	/**
@@ -342,10 +369,10 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 	@Override
 	public final int hashCode() {
 		int ret = 0;
-		for (int i = 0; i<this.attributes.length; i++) {
+		for (int i = 0; i < this.attributes.length; i++) {
 			Object o = this.attributes[i];
-			if(o != null){
-				ret += o.hashCode() * Primes.PRIMES[i%Primes.size()];
+			if (o != null) {
+				ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
 			}
 		}
 		return ret;
@@ -355,10 +382,10 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T> i
 		return attributes;
 	}
 
-	public boolean containsNull(){
-		if(this.valueChanged){
-			for(Object o: this.attributes){
-				if(o == null){
+	public boolean containsNull() {
+		if (this.valueChanged) {
+			for (Object o : this.attributes) {
+				if (o == null) {
 					this.containsNull = true;
 					break;
 				}
