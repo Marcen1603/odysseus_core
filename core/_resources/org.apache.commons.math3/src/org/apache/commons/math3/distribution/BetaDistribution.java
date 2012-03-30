@@ -107,12 +107,14 @@ public class BetaDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         recomputeZ();
         if (x < 0 || x > 1) {
             return 0;
@@ -134,7 +136,8 @@ public class BetaDistribution extends AbstractRealDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x)  {
+    @Override
+	public double cumulativeProbability(double x)  {
         if (x <= 0) {
             return 0;
         } else if (x >= 1) {
@@ -162,7 +165,8 @@ public class BetaDistribution extends AbstractRealDistribution {
      * For first shape parameter {@code alpha} and second shape parameter
      * {@code beta}, the mean is {@code alpha / (alpha + beta)}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         final double a = getAlpha();
         return a / (a + getBeta());
     }
@@ -174,7 +178,8 @@ public class BetaDistribution extends AbstractRealDistribution {
      * {@code beta}, the variance is
      * {@code (alpha * beta) / [(alpha + beta)^2 * (alpha + beta + 1)]}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         final double a = getAlpha();
         final double b = getBeta();
         final double alphabetasum = a + b;
@@ -188,7 +193,8 @@ public class BetaDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return 0;
     }
 
@@ -199,17 +205,20 @@ public class BetaDistribution extends AbstractRealDistribution {
      *
      * @return upper bound of the support (always 1)
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return 1;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return false;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -220,7 +229,8 @@ public class BetaDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

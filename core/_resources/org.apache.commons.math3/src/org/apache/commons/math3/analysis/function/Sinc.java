@@ -60,7 +60,8 @@ public class Sinc implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         if (normalized) {
             final double piTimesX = Math.PI * x;
             return sinc(piTimesX);
@@ -70,11 +71,13 @@ public class Sinc implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         if (normalized) {
             return new UnivariateFunction() {
                 /** {@inheritDoc} */
-                public double value(double x) {
+                @Override
+				public double value(double x) {
                     final double piTimesX = Math.PI * x;
                     return sincDerivative(piTimesX);
                 }
@@ -82,7 +85,8 @@ public class Sinc implements DifferentiableUnivariateFunction {
         } else {
             return new UnivariateFunction() {
                 /** {@inheritDoc} */
-                public double value(double x) {
+                @Override
+				public double value(double x) {
                     return sincDerivative(x);
                 }
             };

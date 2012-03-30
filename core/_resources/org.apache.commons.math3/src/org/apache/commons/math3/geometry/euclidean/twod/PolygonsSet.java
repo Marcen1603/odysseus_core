@@ -380,7 +380,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         }
 
         /** {@inheritDoc} */
-        public int compareTo(final ComparableSegment o) {
+        @Override
+		public int compareTo(final ComparableSegment o) {
             return sortingKey.compareTo(o.sortingKey);
         }
 
@@ -417,12 +418,14 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         }
 
         /** {@inheritDoc} */
-        public Order visitOrder(final BSPTree<Euclidean2D> node) {
+        @Override
+		public Order visitOrder(final BSPTree<Euclidean2D> node) {
             return Order.MINUS_SUB_PLUS;
         }
 
         /** {@inheritDoc} */
-        public void visitInternalNode(final BSPTree<Euclidean2D> node) {
+        @Override
+		public void visitInternalNode(final BSPTree<Euclidean2D> node) {
             @SuppressWarnings("unchecked")
             final BoundaryAttribute<Euclidean2D> attribute = (BoundaryAttribute<Euclidean2D>) node.getAttribute();
             if (attribute.getPlusOutside() != null) {
@@ -434,7 +437,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         }
 
         /** {@inheritDoc} */
-        public void visitLeafNode(final BSPTree<Euclidean2D> node) {
+        @Override
+		public void visitLeafNode(final BSPTree<Euclidean2D> node) {
         }
 
         /** Add he contribution of a boundary facet.

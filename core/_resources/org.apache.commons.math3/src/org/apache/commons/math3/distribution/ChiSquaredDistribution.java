@@ -77,17 +77,20 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         return gamma.density(x);
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x)  {
+    @Override
+	public double cumulativeProbability(double x)  {
         return gamma.cumulativeProbability(x);
     }
 
@@ -102,7 +105,8 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * For {@code k} degrees of freedom, the mean is {@code k}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return getDegreesOfFreedom();
     }
 
@@ -113,7 +117,8 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * @return {@inheritDoc}
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         return 2 * getDegreesOfFreedom();
     }
 
@@ -125,7 +130,8 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return 0;
     }
 
@@ -137,17 +143,20 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * @return upper bound of the support (always Double.POSITIVE_INFINITY)
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return true;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -158,7 +167,8 @@ public class ChiSquaredDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

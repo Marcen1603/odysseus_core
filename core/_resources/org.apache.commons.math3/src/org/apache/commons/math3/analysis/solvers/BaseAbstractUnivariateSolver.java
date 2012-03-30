@@ -96,11 +96,13 @@ public abstract class BaseAbstractUnivariateSolver<FUNC extends UnivariateFuncti
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return evaluations.getMaximalCount();
     }
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return evaluations.getCount();
     }
     /**
@@ -124,19 +126,22 @@ public abstract class BaseAbstractUnivariateSolver<FUNC extends UnivariateFuncti
     /**
      * {@inheritDoc}
      */
-    public double getAbsoluteAccuracy() {
+    @Override
+	public double getAbsoluteAccuracy() {
         return absoluteAccuracy;
     }
     /**
      * {@inheritDoc}
      */
-    public double getRelativeAccuracy() {
+    @Override
+	public double getRelativeAccuracy() {
         return relativeAccuracy;
     }
     /**
      * {@inheritDoc}
      */
-    public double getFunctionValueAccuracy() {
+    @Override
+	public double getFunctionValueAccuracy() {
         return functionValueAccuracy;
     }
 
@@ -182,7 +187,8 @@ public abstract class BaseAbstractUnivariateSolver<FUNC extends UnivariateFuncti
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, FUNC f, double min, double max, double startValue) {
+    @Override
+	public double solve(int maxEval, FUNC f, double min, double max, double startValue) {
         // Initialization.
         setup(maxEval, f, min, max, startValue);
 
@@ -191,12 +197,14 @@ public abstract class BaseAbstractUnivariateSolver<FUNC extends UnivariateFuncti
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, FUNC f, double min, double max) {
+    @Override
+	public double solve(int maxEval, FUNC f, double min, double max) {
         return solve(maxEval, f, min, max, min + 0.5 * (max - min));
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, FUNC f, double startValue) {
+    @Override
+	public double solve(int maxEval, FUNC f, double startValue) {
         return solve(maxEval, f, Double.NaN, Double.NaN, startValue);
     }
 

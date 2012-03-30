@@ -99,7 +99,8 @@ public class Min extends AbstractStorelessUnivariateStatistic implements Seriali
     /**
      * {@inheritDoc}
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 

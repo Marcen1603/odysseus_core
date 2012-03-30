@@ -158,7 +158,8 @@ public class RegionFactory<S extends Space> {
     /** BSP tree leaf merger computing union of two regions. */
     private class UnionMerger implements BSPTree.LeafMerger<S> {
         /** {@inheritDoc} */
-        public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
+        @Override
+		public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
                                 final BSPTree<S> parentTree,
                                 final boolean isPlusChild, final boolean leafFromInstance) {
             if ((Boolean) leaf.getAttribute()) {
@@ -175,7 +176,8 @@ public class RegionFactory<S extends Space> {
     /** BSP tree leaf merger computing union of two regions. */
     private class IntersectionMerger implements BSPTree.LeafMerger<S> {
         /** {@inheritDoc} */
-        public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
+        @Override
+		public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
                                 final BSPTree<S> parentTree,
                                 final boolean isPlusChild, final boolean leafFromInstance) {
             if ((Boolean) leaf.getAttribute()) {
@@ -192,7 +194,8 @@ public class RegionFactory<S extends Space> {
     /** BSP tree leaf merger computing union of two regions. */
     private class XorMerger implements BSPTree.LeafMerger<S> {
         /** {@inheritDoc} */
-        public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
+        @Override
+		public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
                                 final BSPTree<S> parentTree, final boolean isPlusChild,
                                 final boolean leafFromInstance) {
             BSPTree<S> t = tree;
@@ -208,7 +211,8 @@ public class RegionFactory<S extends Space> {
     /** BSP tree leaf merger computing union of two regions. */
     private class DifferenceMerger implements BSPTree.LeafMerger<S> {
         /** {@inheritDoc} */
-        public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
+        @Override
+		public BSPTree<S> merge(final BSPTree<S> leaf, final BSPTree<S> tree,
                                 final BSPTree<S> parentTree, final boolean isPlusChild,
                                 final boolean leafFromInstance) {
             if ((Boolean) leaf.getAttribute()) {
@@ -230,17 +234,20 @@ public class RegionFactory<S extends Space> {
     private class NodesCleaner implements  BSPTreeVisitor<S> {
 
         /** {@inheritDoc} */
-        public Order visitOrder(final BSPTree<S> node) {
+        @Override
+		public Order visitOrder(final BSPTree<S> node) {
             return Order.PLUS_SUB_MINUS;
         }
 
         /** {@inheritDoc} */
-        public void visitInternalNode(final BSPTree<S> node) {
+        @Override
+		public void visitInternalNode(final BSPTree<S> node) {
             node.setAttribute(null);
         }
 
         /** {@inheritDoc} */
-        public void visitLeafNode(final BSPTree<S> node) {
+        @Override
+		public void visitLeafNode(final BSPTree<S> node) {
         }
 
     }

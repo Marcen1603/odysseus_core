@@ -116,7 +116,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
     }
 
     /** {@inheritDoc} */
-    public Line copySelf() {
+    @Override
+	public Line copySelf() {
         return new Line(this);
     }
 
@@ -177,13 +178,15 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
     }
 
     /** {@inheritDoc} */
-    public Vector1D toSubSpace(final Vector<Euclidean2D> point) {
+    @Override
+	public Vector1D toSubSpace(final Vector<Euclidean2D> point) {
         Vector2D p2 = (Vector2D) point;
         return new Vector1D(cos * p2.getX() + sin * p2.getY());
     }
 
     /** {@inheritDoc} */
-    public Vector2D toSpace(final Vector<Euclidean1D> point) {
+    @Override
+	public Vector2D toSpace(final Vector<Euclidean1D> point) {
         final double abscissa = ((Vector1D) point).getX();
         return new Vector2D(abscissa * cos - originOffset * sin,
                             abscissa * sin + originOffset * cos);
@@ -204,7 +207,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
     }
 
     /** {@inheritDoc} */
-    public SubLine wholeHyperplane() {
+    @Override
+	public SubLine wholeHyperplane() {
         return new SubLine(this, new IntervalsSet());
     }
 
@@ -212,7 +216,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @return a region containing the instance (really a {@link
      * PolygonsSet PolygonsSet} instance)
      */
-    public PolygonsSet wholeSpace() {
+    @Override
+	public PolygonsSet wholeSpace() {
         return new PolygonsSet();
     }
 
@@ -232,13 +237,15 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
     }
 
     /** {@inheritDoc} */
-    public double getOffset(final Vector<Euclidean2D> point) {
+    @Override
+	public double getOffset(final Vector<Euclidean2D> point) {
         Vector2D p2 = (Vector2D) point;
         return sin * p2.getX() - cos * p2.getY() + originOffset;
     }
 
     /** {@inheritDoc} */
-    public boolean sameOrientationAs(final Hyperplane<Euclidean2D> other) {
+    @Override
+	public boolean sameOrientationAs(final Hyperplane<Euclidean2D> other) {
         final Line otherL = (Line) other;
         return (sin * otherL.sin + cos * otherL.cos) >= 0.0;
     }
@@ -377,7 +384,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
         }
 
         /** {@inheritDoc} */
-        public Vector2D apply(final Vector<Euclidean2D> point) {
+        @Override
+		public Vector2D apply(final Vector<Euclidean2D> point) {
             final Vector2D p2D = (Vector2D) point;
             final double  x   = p2D.getX();
             final double  y   = p2D.getY();
@@ -386,7 +394,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
         }
 
         /** {@inheritDoc} */
-        public Line apply(final Hyperplane<Euclidean2D> hyperplane) {
+        @Override
+		public Line apply(final Hyperplane<Euclidean2D> hyperplane) {
             final Line   line    = (Line) hyperplane;
             final double rOffset = c1X * line.cos + c1Y * line.sin + c11 * line.originOffset;
             final double rCos    = cXX * line.cos + cXY * line.sin;
@@ -398,7 +407,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
         }
 
         /** {@inheritDoc} */
-        public SubHyperplane<Euclidean1D> apply(final SubHyperplane<Euclidean1D> sub,
+        @Override
+		public SubHyperplane<Euclidean1D> apply(final SubHyperplane<Euclidean1D> sub,
                                                 final Hyperplane<Euclidean2D> original,
                                                 final Hyperplane<Euclidean2D> transformed) {
             final OrientedPoint op     = (OrientedPoint) sub.getHyperplane();

@@ -84,7 +84,8 @@ public class CauchyDistribution extends AbstractRealDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x) {
+    @Override
+	public double cumulativeProbability(double x) {
         return 0.5 + (FastMath.atan((x - median) / scale) / FastMath.PI);
     }
 
@@ -113,12 +114,14 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         final double dev = x - median;
         return (1 / FastMath.PI) * (scale / (dev * dev + scale * scale));
     }
@@ -157,7 +160,8 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return mean (always Double.NaN)
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return Double.NaN;
     }
 
@@ -168,7 +172,8 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return variance (always Double.NaN)
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         return Double.NaN;
     }
 
@@ -180,7 +185,8 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always Double.NEGATIVE_INFINITY)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return Double.NEGATIVE_INFINITY;
     }
 
@@ -192,17 +198,20 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return upper bound of the support (always Double.POSITIVE_INFINITY)
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return false;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -213,7 +222,8 @@ public class CauchyDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

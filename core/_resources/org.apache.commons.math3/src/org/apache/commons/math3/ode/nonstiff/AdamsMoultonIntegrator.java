@@ -365,13 +365,15 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
         }
 
         /** {@inheritDoc} */
-        public void start(int rows, int columns,
+        @Override
+		public void start(int rows, int columns,
                           int startRow, int endRow, int startColumn, int endColumn) {
             Arrays.fill(after, 0.0);
         }
 
         /** {@inheritDoc} */
-        public void visit(int row, int column, double value) {
+        @Override
+		public void visit(int row, int column, double value) {
             if ((row & 0x1) == 0) {
                 after[column] -= value;
             } else {
@@ -388,7 +390,8 @@ public class AdamsMoultonIntegrator extends AdamsIntegrator {
          * @return the normalized correction, if greater than 1, the step
          * must be rejected
          */
-        public double end() {
+        @Override
+		public double end() {
 
             double error = 0;
             for (int i = 0; i < after.length; ++i) {

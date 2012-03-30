@@ -66,12 +66,14 @@ public class DefaultMeasurementModel implements MeasurementModel {
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getMeasurementMatrix() {
+    @Override
+	public RealMatrix getMeasurementMatrix() {
         return measurementMatrix;
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getMeasurementNoise() {
+    @Override
+	public RealMatrix getMeasurementNoise() {
         return measurementNoise;
     }
 }

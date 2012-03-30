@@ -297,7 +297,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      *
      * @param value to be added to end of array
      */
-    public synchronized void addElement(double value) {
+    @Override
+	public synchronized void addElement(double value) {
         numElements++;
         if ((startIndex + numElements) > internalArray.length) {
             expand();
@@ -314,7 +315,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * @param values to be added to end of array
      * @since 2.2
      */
-    public synchronized void addElements(double[] values) {
+    @Override
+	public synchronized void addElements(double[] values) {
         final double[] tempArray = new double[numElements + values.length + 1];
         System.arraycopy(internalArray, startIndex, tempArray, 0, numElements);
         System.arraycopy(values, 0, tempArray, numElements, values.length);
@@ -339,7 +341,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * @return the value which has been discarded or "pushed" out of the array
      *         by this rolling insert
      */
-    public synchronized double addElementRolling(double value) {
+    @Override
+	public synchronized double addElementRolling(double value) {
         double discarded = internalArray[startIndex];
 
         if ((startIndex + (numElements + 1)) > internalArray.length) {
@@ -417,7 +420,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * Clear the array, reset the size to the initialCapacity and the number
      * of elements to zero.
      */
-    public synchronized void clear() {
+    @Override
+	public synchronized void clear() {
         numElements = 0;
         startIndex = 0;
         internalArray = new double[initialCapacity];
@@ -578,7 +582,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * @throws ArrayIndexOutOfBoundsException if <code>index</code> is less than
      *         zero or is greater than <code>getNumElements() - 1</code>.
      */
-    public synchronized double getElement(int index) {
+    @Override
+	public synchronized double getElement(int index) {
         if (index >= numElements) {
             throw new ArrayIndexOutOfBoundsException(index);
         } else if (index >= 0) {
@@ -595,7 +600,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      *  array have no effect on this <code>ResizableArray.</code>
      * @return the double array.
      */
-    public synchronized double[] getElements() {
+    @Override
+	public synchronized double[] getElements() {
         double[] elementArray = new double[numElements];
         System.arraycopy( internalArray, startIndex, elementArray, 0,
                 numElements);
@@ -647,7 +653,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      *
      * @return number of elements
      */
-    public synchronized int getNumElements() {
+    @Override
+	public synchronized int getNumElements() {
         return numElements;
     }
 
@@ -692,7 +699,8 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * @throws ArrayIndexOutOfBoundsException if <code>index</code> is less than
      *         zero.
      */
-    public synchronized void setElement(int index, double value) {
+    @Override
+	public synchronized void setElement(int index, double value) {
         if (index < 0) {
             throw new ArrayIndexOutOfBoundsException(index);
         }

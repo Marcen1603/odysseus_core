@@ -167,61 +167,72 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public Space getSpace() {
+    @Override
+	public Space getSpace() {
         return Euclidean2D.getInstance();
     }
 
     /** {@inheritDoc} */
-    public Vector2D getZero() {
+    @Override
+	public Vector2D getZero() {
         return ZERO;
     }
 
     /** {@inheritDoc} */
-    public double getNorm1() {
+    @Override
+	public double getNorm1() {
         return FastMath.abs(x) + FastMath.abs(y);
     }
 
     /** {@inheritDoc} */
-    public double getNorm() {
+    @Override
+	public double getNorm() {
         return FastMath.sqrt (x * x + y * y);
     }
 
     /** {@inheritDoc} */
-    public double getNormSq() {
+    @Override
+	public double getNormSq() {
         return x * x + y * y;
     }
 
     /** {@inheritDoc} */
-    public double getNormInf() {
+    @Override
+	public double getNormInf() {
         return FastMath.max(FastMath.abs(x), FastMath.abs(y));
     }
 
     /** {@inheritDoc} */
-    public Vector2D add(Vector<Euclidean2D> v) {
+    @Override
+	public Vector2D add(Vector<Euclidean2D> v) {
         Vector2D v2 = (Vector2D) v;
         return new Vector2D(x + v2.getX(), y + v2.getY());
     }
 
     /** {@inheritDoc} */
-    public Vector2D add(double factor, Vector<Euclidean2D> v) {
+    @Override
+	public Vector2D add(double factor, Vector<Euclidean2D> v) {
         Vector2D v2 = (Vector2D) v;
         return new Vector2D(x + factor * v2.getX(), y + factor * v2.getY());
     }
 
     /** {@inheritDoc} */
-    public Vector2D subtract(Vector<Euclidean2D> p) {
+    @Override
+	public Vector2D subtract(Vector<Euclidean2D> p) {
         Vector2D p3 = (Vector2D) p;
         return new Vector2D(x - p3.x, y - p3.y);
     }
 
     /** {@inheritDoc} */
-    public Vector2D subtract(double factor, Vector<Euclidean2D> v) {
+    @Override
+	public Vector2D subtract(double factor, Vector<Euclidean2D> v) {
         Vector2D v2 = (Vector2D) v;
         return new Vector2D(x - factor * v2.getX(), y - factor * v2.getY());
     }
 
     /** {@inheritDoc} */
-    public Vector2D normalize() {
+    @Override
+	public Vector2D normalize() {
         double s = getNorm();
         if (s == 0) {
             throw new MathArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);
@@ -229,27 +240,32 @@ public class Vector2D implements Vector<Euclidean2D> {
         return scalarMultiply(1 / s);
     }
     /** {@inheritDoc} */
-    public Vector2D negate() {
+    @Override
+	public Vector2D negate() {
         return new Vector2D(-x, -y);
     }
 
     /** {@inheritDoc} */
-    public Vector2D scalarMultiply(double a) {
+    @Override
+	public Vector2D scalarMultiply(double a) {
         return new Vector2D(a * x, a * y);
     }
 
     /** {@inheritDoc} */
-    public boolean isNaN() {
+    @Override
+	public boolean isNaN() {
         return Double.isNaN(x) || Double.isNaN(y);
     }
 
     /** {@inheritDoc} */
-    public boolean isInfinite() {
+    @Override
+	public boolean isInfinite() {
         return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y));
     }
 
     /** {@inheritDoc} */
-    public double distance1(Vector<Euclidean2D> p) {
+    @Override
+	public double distance1(Vector<Euclidean2D> p) {
         Vector2D p3 = (Vector2D) p;
         final double dx = FastMath.abs(p3.x - x);
         final double dy = FastMath.abs(p3.y - y);
@@ -257,7 +273,8 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public double distance(Vector<Euclidean2D> p) {
+    @Override
+	public double distance(Vector<Euclidean2D> p) {
         Vector2D p3 = (Vector2D) p;
         final double dx = p3.x - x;
         final double dy = p3.y - y;
@@ -265,7 +282,8 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public double distanceInf(Vector<Euclidean2D> p) {
+    @Override
+	public double distanceInf(Vector<Euclidean2D> p) {
         Vector2D p3 = (Vector2D) p;
         final double dx = FastMath.abs(p3.x - x);
         final double dy = FastMath.abs(p3.y - y);
@@ -273,7 +291,8 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public double distanceSq(Vector<Euclidean2D> p) {
+    @Override
+	public double distanceSq(Vector<Euclidean2D> p) {
         Vector2D p3 = (Vector2D) p;
         final double dx = p3.x - x;
         final double dy = p3.y - y;
@@ -281,7 +300,8 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public double dotProduct(final Vector<Euclidean2D> v) {
+    @Override
+	public double dotProduct(final Vector<Euclidean2D> v) {
         final Vector2D v2 = (Vector2D) v;
         return x * v2.x + y * v2.y;
     }
@@ -383,7 +403,8 @@ public class Vector2D implements Vector<Euclidean2D> {
     }
 
     /** {@inheritDoc} */
-    public String toString(final NumberFormat format) {
+    @Override
+	public String toString(final NumberFormat format) {
         return new Vector2DFormat(format).format(this);
     }
 

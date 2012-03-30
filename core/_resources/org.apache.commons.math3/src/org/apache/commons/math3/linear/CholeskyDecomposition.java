@@ -217,13 +217,15 @@ public class CholeskyDecomposition {
         }
 
         /** {@inheritDoc} */
-        public boolean isNonSingular() {
+        @Override
+		public boolean isNonSingular() {
             // if we get this far, the matrix was positive definite, hence non-singular
             return true;
         }
 
         /** {@inheritDoc} */
-        public RealVector solve(final RealVector b) {
+        @Override
+		public RealVector solve(final RealVector b) {
             final int m = lTData.length;
             if (b.getDimension() != m) {
                 throw new DimensionMismatchException(b.getDimension(), m);
@@ -254,7 +256,8 @@ public class CholeskyDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        @Override
+		public RealMatrix solve(RealMatrix b) {
             final int m = lTData.length;
             if (b.getRowDimension() != m) {
                 throw new DimensionMismatchException(b.getRowDimension(), m);
@@ -300,7 +303,8 @@ public class CholeskyDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix getInverse() {
+        @Override
+		public RealMatrix getInverse() {
             return solve(MatrixUtils.createRealIdentityMatrix(lTData.length));
         }
     }

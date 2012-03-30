@@ -78,7 +78,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(int x) {
+    @Override
+	public double probability(int x) {
         double ret;
         if (x < 0 || x > numberOfTrials) {
             ret = 0.0;
@@ -91,7 +92,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(int x) {
+    @Override
+	public double cumulativeProbability(int x) {
         double ret;
         if (x < 0) {
             ret = 0.0;
@@ -110,7 +112,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      * For {@code n} trials and probability parameter {@code p}, the mean is
      * {@code n * p}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return numberOfTrials * probabilityOfSuccess;
     }
 
@@ -120,7 +123,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      * For {@code n} trials and probability parameter {@code p}, the variance is
      * {@code n * p * (1 - p)}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         final double p = probabilityOfSuccess;
         return numberOfTrials * p * (1 - p);
     }
@@ -133,7 +137,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support (0 or the number of trials)
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return probabilityOfSuccess < 1.0 ? 0 : numberOfTrials;
     }
 
@@ -145,7 +150,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      *
      * @return upper bound of the support (number of trials or 0)
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return probabilityOfSuccess > 0.0 ? numberOfTrials : 0;
     }
 
@@ -156,7 +162,8 @@ public class BinomialDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

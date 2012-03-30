@@ -289,12 +289,14 @@ public class FieldLUDecomposition<T extends FieldElement<T>> {
         }
 
         /** {@inheritDoc} */
-        public boolean isNonSingular() {
+        @Override
+		public boolean isNonSingular() {
             return !singular;
         }
 
         /** {@inheritDoc} */
-        public FieldVector<T> solve(FieldVector<T> b) {
+        @Override
+		public FieldVector<T> solve(FieldVector<T> b) {
             try {
                 return solve((ArrayFieldVector<T>) b);
             } catch (ClassCastException cce) {
@@ -385,7 +387,8 @@ public class FieldLUDecomposition<T extends FieldElement<T>> {
         }
 
         /** {@inheritDoc} */
-        public FieldMatrix<T> solve(FieldMatrix<T> b) {
+        @Override
+		public FieldMatrix<T> solve(FieldMatrix<T> b) {
             final int m = pivot.length;
             if (b.getRowDimension() != m) {
                 throw new DimensionMismatchException(b.getRowDimension(), m);
@@ -440,7 +443,8 @@ public class FieldLUDecomposition<T extends FieldElement<T>> {
         }
 
         /** {@inheritDoc} */
-        public FieldMatrix<T> getInverse() {
+        @Override
+		public FieldMatrix<T> getInverse() {
             final int m = pivot.length;
             final T one = field.getOne();
             FieldMatrix<T> identity = new Array2DRowFieldMatrix<T>(field, m, m);

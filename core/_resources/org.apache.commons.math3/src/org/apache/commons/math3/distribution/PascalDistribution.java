@@ -110,7 +110,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(int x) {
+    @Override
+	public double probability(int x) {
         double ret;
         if (x < 0) {
             ret = 0.0;
@@ -124,7 +125,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(int x) {
+    @Override
+	public double cumulativeProbability(int x) {
         double ret;
         if (x < 0) {
             ret = 0.0;
@@ -141,7 +143,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * For number of successes {@code r} and probability of success {@code p},
      * the mean is {@code r * (1 - p) / p}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         final double p = getProbabilityOfSuccess();
         final double r = getNumberOfSuccesses();
         return (r * (1 - p)) / p;
@@ -153,7 +156,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * For number of successes {@code r} and probability of success {@code p},
      * the variance is {@code r * (1 - p) / p^2}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         final double p = getProbabilityOfSuccess();
         final double r = getNumberOfSuccesses();
         return r * (1 - p) / (p * p);
@@ -166,7 +170,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return 0;
     }
 
@@ -179,7 +184,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      * @return upper bound of the support (always {@code Integer.MAX_VALUE}
      * for positive infinity)
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return Integer.MAX_VALUE;
     }
 
@@ -190,7 +196,8 @@ public class PascalDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

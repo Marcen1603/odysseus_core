@@ -843,7 +843,8 @@ public class CMAESOptimizer
         }
 
         /** {@inheritDoc} */
-        public int compareTo(DoubleIndex o) {
+        @Override
+		public int compareTo(DoubleIndex o) {
             return Double.compare(value, o.value);
         }
 

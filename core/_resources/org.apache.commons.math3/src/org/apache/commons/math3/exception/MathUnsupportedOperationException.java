@@ -55,7 +55,8 @@ public class MathUnsupportedOperationException extends UnsupportedOperationExcep
     }
 
     /** {@inheritDoc} */
-    public ExceptionContext getContext() {
+    @Override
+	public ExceptionContext getContext() {
         return context;
     }
 

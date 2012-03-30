@@ -133,12 +133,14 @@ public class WeibullDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         if (x < 0) {
             return 0;
         }
@@ -157,7 +159,8 @@ public class WeibullDistribution extends AbstractRealDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(double x) {
+    @Override
+	public double cumulativeProbability(double x) {
         double ret;
         if (x <= 0.0) {
             ret = 0.0;
@@ -206,7 +209,8 @@ public class WeibullDistribution extends AbstractRealDistribution {
      * The mean is {@code scale * Gamma(1 + (1 / shape))}, where {@code Gamma()}
      * is the Gamma-function.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         if (!numericalMeanIsCalculated) {
             numericalMean = calculateNumericalMean();
             numericalMeanIsCalculated = true;
@@ -232,7 +236,8 @@ public class WeibullDistribution extends AbstractRealDistribution {
      * The variance is {@code scale^2 * Gamma(1 + (2 / shape)) - mean^2}
      * where {@code Gamma()} is the Gamma-function.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         if (!numericalVarianceIsCalculated) {
             numericalVariance = calculateNumericalVariance();
             numericalVarianceIsCalculated = true;
@@ -261,7 +266,8 @@ public class WeibullDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return 0;
     }
 
@@ -274,17 +280,20 @@ public class WeibullDistribution extends AbstractRealDistribution {
      * @return upper bound of the support (always
      * {@code Double.POSITIVE_INFINITY})
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return true;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -295,7 +304,8 @@ public class WeibullDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

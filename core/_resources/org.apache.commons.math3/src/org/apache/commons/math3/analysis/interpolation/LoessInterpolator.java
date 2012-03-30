@@ -177,7 +177,8 @@ public class LoessInterpolator
      * accomodate the size of the input data (i.e. the bandwidth must be
      * larger than 2/n).
      */
-    public final PolynomialSplineFunction interpolate(final double[] xval, final double[] yval) {
+    @Override
+	public final PolynomialSplineFunction interpolate(final double[] xval, final double[] yval) {
         return new SplineInterpolator().interpolate(xval, smooth(xval, yval));
     }
 

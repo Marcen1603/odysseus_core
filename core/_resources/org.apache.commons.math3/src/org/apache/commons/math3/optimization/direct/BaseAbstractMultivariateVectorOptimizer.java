@@ -69,17 +69,20 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return evaluations.getMaximalCount();
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return evaluations.getCount();
     }
 
     /** {@inheritDoc} */
-    public ConvergenceChecker<PointVectorValuePair> getConvergenceChecker() {
+    @Override
+	public ConvergenceChecker<PointVectorValuePair> getConvergenceChecker() {
         return checker;
     }
 
@@ -101,7 +104,8 @@ public abstract class BaseAbstractMultivariateVectorOptimizer<FUNC extends Multi
     }
 
     /** {@inheritDoc} */
-    public PointVectorValuePair optimize(int maxEval, FUNC f, double[] t, double[] w,
+    @Override
+	public PointVectorValuePair optimize(int maxEval, FUNC f, double[] t, double[] w,
                                             double[] startPoint) {
         // Checks.
         if (f == null) {

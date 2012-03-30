@@ -94,7 +94,8 @@ public class FastCosineTransformer implements RealTransformer, Serializable {
      * @throws MathIllegalArgumentException if the length of the data array is
      * not a power of two plus one
      */
-    public double[] transform(final double[] f, final TransformType type) {
+    @Override
+	public double[] transform(final double[] f, final TransformType type) {
         if (type == TransformType.FORWARD) {
             if (normalization == DctNormalization.ORTHOGONAL_DCT_I) {
                 final double s = FastMath.sqrt(2.0 / (f.length - 1));
@@ -122,7 +123,8 @@ public class FastCosineTransformer implements RealTransformer, Serializable {
      * @throws MathIllegalArgumentException if the number of sample points is
      * not a power of two plus one
      */
-    public double[] transform(final UnivariateFunction f,
+    @Override
+	public double[] transform(final UnivariateFunction f,
         final double min, final double max, final int n,
         final TransformType type) {
 

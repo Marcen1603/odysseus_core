@@ -98,7 +98,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
             // (we don't want equal size elements to be removed, so
             // we use a trick to fool the TreeSet)
             final TreeSet<SubHyperplane<S>> ordered = new TreeSet<SubHyperplane<S>>(new Comparator<SubHyperplane<S>>() {
-                public int compare(final SubHyperplane<S> o1, final SubHyperplane<S> o2) {
+                @Override
+				public int compare(final SubHyperplane<S> o1, final SubHyperplane<S> o2) {
                     final double size1 = o1.getSize();
                     final double size2 = o2.getSize();
                     return (size2 < size1) ? -1 : ((o1 == o2) ? 0 : +1);
@@ -114,16 +115,19 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
             tree.visit(new BSPTreeVisitor<S>() {
 
                 /** {@inheritDoc} */
-                public Order visitOrder(final BSPTree<S> node) {
+                @Override
+				public Order visitOrder(final BSPTree<S> node) {
                     return Order.PLUS_SUB_MINUS;
                 }
 
                 /** {@inheritDoc} */
-                public void visitInternalNode(final BSPTree<S> node) {
+                @Override
+				public void visitInternalNode(final BSPTree<S> node) {
                 }
 
                 /** {@inheritDoc} */
-                public void visitLeafNode(final BSPTree<S> node) {
+                @Override
+				public void visitLeafNode(final BSPTree<S> node) {
                     node.setAttribute((node == node.getParent().getPlus()) ?
                                                                             Boolean.FALSE : Boolean.TRUE);
                 }
@@ -162,7 +166,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public abstract AbstractRegion<S, T> buildNew(BSPTree<S> newTree);
+    @Override
+	public abstract AbstractRegion<S, T> buildNew(BSPTree<S> newTree);
 
     /** Recursively build a tree by inserting cut sub-hyperplanes.
      * @param node current tree node (it is a leaf node at the beginning
@@ -216,17 +221,20 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public AbstractRegion<S, T> copySelf() {
+    @Override
+	public AbstractRegion<S, T> copySelf() {
         return buildNew(tree.copySelf());
     }
 
     /** {@inheritDoc} */
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         return isEmpty(tree);
     }
 
     /** {@inheritDoc} */
-    public boolean isEmpty(final BSPTree<S> node) {
+    @Override
+	public boolean isEmpty(final BSPTree<S> node) {
 
         // we use a recursive function rather than the BSPTreeVisitor
         // interface because we can stop visiting the tree as soon as we
@@ -243,12 +251,14 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public boolean contains(final Region<S> region) {
+    @Override
+	public boolean contains(final Region<S> region) {
         return new RegionFactory<S>().difference(region, this).isEmpty();
     }
 
     /** {@inheritDoc} */
-    public Location checkPoint(final Vector<S> point) {
+    @Override
+	public Location checkPoint(final Vector<S> point) {
         return checkPoint(tree, point);
     }
 
@@ -274,7 +284,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public BSPTree<S> getTree(final boolean includeBoundaryAttributes) {
+    @Override
+	public BSPTree<S> getTree(final boolean includeBoundaryAttributes) {
         if (includeBoundaryAttributes && (tree.getCut() != null) && (tree.getAttribute() == null)) {
             // we need to compute the boundary attributes
             recurseBuildBoundary(tree);
@@ -368,14 +379,16 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public double getBoundarySize() {
+    @Override
+	public double getBoundarySize() {
         final BoundarySizeVisitor<S> visitor = new BoundarySizeVisitor<S>();
         getTree(true).visit(visitor);
         return visitor.getSize();
     }
 
     /** {@inheritDoc} */
-    public double getSize() {
+    @Override
+	public double getSize() {
         if (barycenter == null) {
             computeGeometricalProperties();
         }
@@ -390,7 +403,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public Vector<S> getBarycenter() {
+    @Override
+	public Vector<S> getBarycenter() {
         if (barycenter == null) {
             computeGeometricalProperties();
         }
@@ -410,7 +424,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     protected abstract void computeGeometricalProperties();
 
     /** {@inheritDoc} */
-    public Side side(final Hyperplane<S> hyperplane) {
+    @Override
+	public Side side(final Hyperplane<S> hyperplane) {
         final Sides sides = new Sides();
         recurseSides(tree, hyperplane.wholeHyperplane(), sides);
         return sides.plusFound() ?
@@ -554,7 +569,8 @@ public abstract class AbstractRegion<S extends Space, T extends Space> implement
     }
 
     /** {@inheritDoc} */
-    public SubHyperplane<S> intersection(final SubHyperplane<S> sub) {
+    @Override
+	public SubHyperplane<S> intersection(final SubHyperplane<S> sub) {
         return recurseIntersection(tree, sub);
     }
 

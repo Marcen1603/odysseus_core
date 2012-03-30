@@ -386,14 +386,16 @@ public class BracketingNthOrderBrentSolver
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, UnivariateFunction f, double min,
+    @Override
+	public double solve(int maxEval, UnivariateFunction f, double min,
                         double max, AllowedSolution allowedSolution) {
         this.allowed = allowedSolution;
         return super.solve(maxEval, f, min, max);
     }
 
     /** {@inheritDoc} */
-    public double solve(int maxEval, UnivariateFunction f, double min,
+    @Override
+	public double solve(int maxEval, UnivariateFunction f, double min,
                         double max, double startValue,
                         AllowedSolution allowedSolution) {
         this.allowed = allowedSolution;

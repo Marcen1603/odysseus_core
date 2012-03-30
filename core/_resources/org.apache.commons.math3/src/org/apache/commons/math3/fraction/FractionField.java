@@ -49,17 +49,20 @@ public class FractionField implements Field<Fraction>, Serializable  {
     }
 
     /** {@inheritDoc} */
-    public Fraction getOne() {
+    @Override
+	public Fraction getOne() {
         return Fraction.ONE;
     }
 
     /** {@inheritDoc} */
-    public Fraction getZero() {
+    @Override
+	public Fraction getZero() {
         return Fraction.ZERO;
     }
 
     /** {@inheritDoc} */
-    public Class<? extends FieldElement<Fraction>> getRuntimeClass() {
+    @Override
+	public Class<? extends FieldElement<Fraction>> getRuntimeClass() {
         return Fraction.class;
     }
     // CHECKSTYLE: stop HideUtilityClassConstructor

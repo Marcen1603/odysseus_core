@@ -192,7 +192,8 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     /**
      * {@inheritDoc}
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return moment.getN();
     }
 
@@ -310,7 +311,8 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights,
+    @Override
+	public double evaluate(final double[] values, final double[] weights,
                            final int begin, final int length) {
 
         double var = Double.NaN;
@@ -366,7 +368,8 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights) {
+    @Override
+	public double evaluate(final double[] values, final double[] weights) {
         return evaluate(values, weights, 0, values.length);
     }
 

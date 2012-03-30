@@ -57,12 +57,14 @@ public abstract class BaseAbstractUnivariateOptimizer
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return evaluations.getMaximalCount();
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return evaluations.getCount();
     }
 
@@ -109,7 +111,8 @@ public abstract class BaseAbstractUnivariateOptimizer
     }
 
     /** {@inheritDoc} */
-    public UnivariatePointValuePair optimize(int maxEval, UnivariateFunction f,
+    @Override
+	public UnivariatePointValuePair optimize(int maxEval, UnivariateFunction f,
                                                  GoalType goalType,
                                                  double min, double max,
                                                  double startValue) {
@@ -135,7 +138,8 @@ public abstract class BaseAbstractUnivariateOptimizer
     }
 
     /** {@inheritDoc} */
-    public UnivariatePointValuePair optimize(int maxEval,
+    @Override
+	public UnivariatePointValuePair optimize(int maxEval,
                                                  UnivariateFunction f,
                                                  GoalType goalType,
                                                  double min, double max){
@@ -145,7 +149,8 @@ public abstract class BaseAbstractUnivariateOptimizer
     /**
      * {@inheritDoc}
      */
-    public ConvergenceChecker<UnivariatePointValuePair> getConvergenceChecker() {
+    @Override
+	public ConvergenceChecker<UnivariatePointValuePair> getConvergenceChecker() {
         return checker;
     }
 

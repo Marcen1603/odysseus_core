@@ -369,12 +369,14 @@ public enum LocalizedFormats implements Localizable {
     }
 
     /** {@inheritDoc} */
-    public String getSourceString() {
+    @Override
+	public String getSourceString() {
         return sourceFormat;
     }
 
     /** {@inheritDoc} */
-    public String getLocalizedString(final Locale locale) {
+    @Override
+	public String getLocalizedString(final Locale locale) {
         try {
             final String path = LocalizedFormats.class.getName().replaceAll("\\.", "/");
             ResourceBundle bundle =

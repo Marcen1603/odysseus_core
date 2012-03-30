@@ -193,7 +193,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * arithmetic mean </a> of the available values
      * @return The mean or Double.NaN if no values have been added.
      */
-    public double getMean() {
+    @Override
+	public double getMean() {
         return apply(meanImpl);
     }
 
@@ -217,7 +218,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @return The variance, Double.NaN if no values have been added
      * or 0.0 for a single value set.
      */
-    public double getVariance() {
+    @Override
+	public double getVariance() {
         return apply(varianceImpl);
     }
 
@@ -237,7 +239,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * @return The standard deviation, Double.NaN if no values have been added
      * or 0.0 for a single value set.
      */
-    public double getStandardDeviation() {
+    @Override
+	public double getStandardDeviation() {
         double stdDev = Double.NaN;
         if (getN() > 0) {
             if (getN() > 1) {
@@ -273,7 +276,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the maximum of the available values
      * @return The max or Double.NaN if no values have been added.
      */
-    public double getMax() {
+    @Override
+	public double getMax() {
         return apply(maxImpl);
     }
 
@@ -281,7 +285,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
     * Returns the minimum of the available values
     * @return The min or Double.NaN if no values have been added.
     */
-    public double getMin() {
+    @Override
+	public double getMin() {
         return apply(minImpl);
     }
 
@@ -289,7 +294,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the number of available values
      * @return The number of available values
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return eDA.getNumElements();
     }
 
@@ -297,7 +303,8 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * Returns the sum of the values that have been added to Univariate.
      * @return The sum or Double.NaN if no values have been added
      */
-    public double getSum() {
+    @Override
+	public double getSum() {
         return apply(sumImpl);
     }
 

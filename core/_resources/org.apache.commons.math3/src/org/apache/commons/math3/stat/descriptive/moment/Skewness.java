@@ -119,7 +119,8 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
     /**
      * {@inheritDoc}
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return moment.getN();
     }
 

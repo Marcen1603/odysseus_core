@@ -89,7 +89,8 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
     /**
      * {@inheritDoc}
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 
@@ -156,7 +157,8 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights,
+    @Override
+	public double evaluate(final double[] values, final double[] weights,
                            final int begin, final int length) {
         double product = Double.NaN;
         if (test(values, weights, begin, length, true)) {
@@ -191,7 +193,8 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * @throws IllegalArgumentException if the parameters are not valid
      * @since 2.1
      */
-    public double evaluate(final double[] values, final double[] weights) {
+    @Override
+	public double evaluate(final double[] values, final double[] weights) {
         return evaluate(values, weights, 0, values.length);
     }
 

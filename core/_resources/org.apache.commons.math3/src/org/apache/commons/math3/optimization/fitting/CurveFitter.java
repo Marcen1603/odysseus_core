@@ -176,9 +176,11 @@ public class CurveFitter {
         }
 
         /** {@inheritDoc} */
-        public MultivariateMatrixFunction jacobian() {
+        @Override
+		public MultivariateMatrixFunction jacobian() {
             return new MultivariateMatrixFunction() {
-                public double[][] value(double[] point) {
+                @Override
+				public double[][] value(double[] point) {
                     final double[][] jacobian = new double[observations.size()][];
 
                     int i = 0;
@@ -192,7 +194,8 @@ public class CurveFitter {
         }
 
         /** {@inheritDoc} */
-        public double[] value(double[] point) {
+        @Override
+		public double[] value(double[] point) {
             // compute the residuals
             final double[] values = new double[observations.size()];
             int i = 0;

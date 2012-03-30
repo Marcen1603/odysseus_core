@@ -112,27 +112,32 @@ public class DefaultProcessModel implements ProcessModel {
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getStateTransitionMatrix() {
+    @Override
+	public RealMatrix getStateTransitionMatrix() {
         return stateTransitionMatrix;
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getControlMatrix() {
+    @Override
+	public RealMatrix getControlMatrix() {
         return controlMatrix;
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getProcessNoise() {
+    @Override
+	public RealMatrix getProcessNoise() {
         return processNoiseCovMatrix;
     }
 
     /** {@inheritDoc} */
-    public RealVector getInitialStateEstimate() {
+    @Override
+	public RealVector getInitialStateEstimate() {
         return initialStateEstimateVector;
     }
 
     /** {@inheritDoc} */
-    public RealMatrix getInitialErrorCovariance() {
+    @Override
+	public RealMatrix getInitialErrorCovariance() {
         return initialErrorCovMatrix;
     }
 }

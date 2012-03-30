@@ -53,12 +53,14 @@ public class EuclideanIntegerPoint implements Clusterable<EuclideanIntegerPoint>
     }
 
     /** {@inheritDoc} */
-    public double distanceFrom(final EuclideanIntegerPoint p) {
+    @Override
+	public double distanceFrom(final EuclideanIntegerPoint p) {
         return MathArrays.distance(point, p.getPoint());
     }
 
     /** {@inheritDoc} */
-    public EuclideanIntegerPoint centroidOf(final Collection<EuclideanIntegerPoint> points) {
+    @Override
+	public EuclideanIntegerPoint centroidOf(final Collection<EuclideanIntegerPoint> points) {
         int[] centroid = new int[getPoint().length];
         for (EuclideanIntegerPoint p : points) {
             for (int i = 0; i < centroid.length; i++) {

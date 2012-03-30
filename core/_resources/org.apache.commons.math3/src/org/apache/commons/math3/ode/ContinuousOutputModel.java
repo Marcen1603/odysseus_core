@@ -167,7 +167,8 @@ public class ContinuousOutputModel
   }
 
   /** {@inheritDoc} */
-  public void init(double t0, double[] y0, double t) {
+  @Override
+public void init(double t0, double[] y0, double t) {
     initialTime = Double.NaN;
     finalTime   = Double.NaN;
     forward     = true;
@@ -181,7 +182,8 @@ public class ContinuousOutputModel
    * @param interpolator interpolator for the last accepted step.
    * @param isLast true if the step is the last one
    */
-  public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
+  @Override
+public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
 
     if (steps.size() == 0) {
       initialTime = interpolator.getPreviousTime();

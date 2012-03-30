@@ -171,7 +171,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * Returns the number of available values
      * @return The number of available values
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 
@@ -179,7 +180,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * Returns the sum of the values that have been added
      * @return The sum or <code>Double.NaN</code> if no values have been added
      */
-    public double getSum() {
+    @Override
+	public double getSum() {
         return sumImpl.getResult();
     }
 
@@ -201,7 +203,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * </p>
      * @return the mean
      */
-    public double getMean() {
+    @Override
+	public double getMean() {
         return meanImpl.getResult();
     }
 
@@ -212,7 +215,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * </p>
      * @return the standard deviation
      */
-    public double getStandardDeviation() {
+    @Override
+	public double getStandardDeviation() {
         double stdDev = Double.NaN;
         if (getN() > 0) {
             if (getN() > 1) {
@@ -235,7 +239,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      *
      * @return the variance
      */
-    public double getVariance() {
+    @Override
+	public double getVariance() {
         return varianceImpl.getResult();
     }
 
@@ -260,7 +265,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * </p>
      * @return the maximum
      */
-    public double getMax() {
+    @Override
+	public double getMax() {
         return maxImpl.getResult();
     }
 
@@ -271,7 +277,8 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      * </p>
      * @return the minimum
      */
-    public double getMin() {
+    @Override
+	public double getMin() {
         return minImpl.getResult();
     }
 

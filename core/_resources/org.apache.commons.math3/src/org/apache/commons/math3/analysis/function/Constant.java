@@ -37,12 +37,14 @@ public class Constant implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return c;
     }
 
     /** {@inheritDoc} */
-    public DifferentiableUnivariateFunction derivative() {
+    @Override
+	public DifferentiableUnivariateFunction derivative() {
         return new Constant(0);
     }
 }

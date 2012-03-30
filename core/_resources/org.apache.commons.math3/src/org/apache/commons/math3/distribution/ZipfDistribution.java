@@ -92,7 +92,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(final int x) {
+    @Override
+	public double probability(final int x) {
         if (x <= 0 || x > numberOfElements) {
             return 0.0;
         }
@@ -101,7 +102,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(final int x) {
+    @Override
+	public double cumulativeProbability(final int x) {
         if (x <= 0) {
             return 0.0;
         } else if (x >= numberOfElements) {
@@ -121,7 +123,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      *  <li>{@code Hs = generalizedHarmonic(N, s)}.</li>
      * </ul>
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         if (!numericalMeanIsCalculated) {
             numericalMean = calculateNumericalMean();
             numericalMeanIsCalculated = true;
@@ -155,7 +158,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      *  <li>{@code Hs = generalizedHarmonic(N, s)}.</li>
      * </ul>
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         if (!numericalVarianceIsCalculated) {
             numericalVariance = calculateNumericalVariance();
             numericalVarianceIsCalculated = true;
@@ -203,7 +207,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support (always 1)
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return 1;
     }
 
@@ -214,7 +219,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      *
      * @return upper bound of the support
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return getNumberOfElements();
     }
 
@@ -225,7 +231,8 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

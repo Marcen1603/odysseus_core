@@ -166,18 +166,22 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public Field<T> getField() {
+    @Override
+	public Field<T> getField() {
         return field;
     }
 
     /** {@inheritDoc} */
-    public abstract FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension);
+    @Override
+	public abstract FieldMatrix<T> createMatrix(final int rowDimension, final int columnDimension);
 
     /** {@inheritDoc} */
-    public abstract FieldMatrix<T> copy();
+    @Override
+	public abstract FieldMatrix<T> copy();
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> add(FieldMatrix<T> m) {
+    @Override
+	public FieldMatrix<T> add(FieldMatrix<T> m) {
         // safety check
         checkAdditionCompatible(m);
 
@@ -194,7 +198,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> subtract(final FieldMatrix<T> m) {
+    @Override
+	public FieldMatrix<T> subtract(final FieldMatrix<T> m) {
         // safety check
         checkSubtractionCompatible(m);
 
@@ -211,7 +216,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> scalarAdd(final T d) {
+    @Override
+	public FieldMatrix<T> scalarAdd(final T d) {
 
         final int rowCount    = getRowDimension();
         final int columnCount = getColumnDimension();
@@ -226,7 +232,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> scalarMultiply(final T d) {
+    @Override
+	public FieldMatrix<T> scalarMultiply(final T d) {
         final int rowCount    = getRowDimension();
         final int columnCount = getColumnDimension();
         final FieldMatrix<T> out = createMatrix(rowCount, columnCount);
@@ -240,7 +247,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> multiply(final FieldMatrix<T> m) {
+    @Override
+	public FieldMatrix<T> multiply(final FieldMatrix<T> m) {
         // safety check
         checkMultiplicationCompatible(m);
 
@@ -262,12 +270,14 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> preMultiply(final FieldMatrix<T> m) {
+    @Override
+	public FieldMatrix<T> preMultiply(final FieldMatrix<T> m) {
         return m.multiply(this);
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> power(final int p) {
+    @Override
+	public FieldMatrix<T> power(final int p) {
         if (p < 0) {
             throw new IllegalArgumentException("p must be >= 0");
         }
@@ -325,7 +335,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T[][] getData() {
+    @Override
+	public T[][] getData() {
         final T[][] data = buildArray(field, getRowDimension(), getColumnDimension());
 
         for (int i = 0; i < data.length; ++i) {
@@ -339,7 +350,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> getSubMatrix(final int startRow, final int endRow,
+    @Override
+	public FieldMatrix<T> getSubMatrix(final int startRow, final int endRow,
                                        final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
 
@@ -356,7 +368,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> getSubMatrix(final int[] selectedRows,
+    @Override
+	public FieldMatrix<T> getSubMatrix(final int[] selectedRows,
                                        final int[] selectedColumns) {
 
         // safety checks
@@ -380,7 +393,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void copySubMatrix(final int startRow, final int endRow,
+    @Override
+	public void copySubMatrix(final int startRow, final int endRow,
                               final int startColumn, final int endColumn,
                               final T[][] destination) {
         // safety checks
@@ -423,7 +437,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void copySubMatrix(int[] selectedRows, int[] selectedColumns, T[][] destination) {
+    @Override
+	public void copySubMatrix(int[] selectedRows, int[] selectedColumns, T[][] destination) {
         // safety checks
         checkSubMatrixIndex(selectedRows, selectedColumns);
         if ((destination.length < selectedRows.length) ||
@@ -445,7 +460,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void setSubMatrix(final T[][] subMatrix, final int row, final int column) {
+    @Override
+	public void setSubMatrix(final T[][] subMatrix, final int row, final int column) {
         if (subMatrix == null) {
             throw new NullArgumentException();
         }
@@ -478,7 +494,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> getRowMatrix(final int row) {
+    @Override
+	public FieldMatrix<T> getRowMatrix(final int row) {
         checkRowIndex(row);
         final int nCols = getColumnDimension();
         final FieldMatrix<T> out = createMatrix(1, nCols);
@@ -491,7 +508,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void setRowMatrix(final int row, final FieldMatrix<T> matrix) {
+    @Override
+	public void setRowMatrix(final int row, final FieldMatrix<T> matrix) {
         checkRowIndex(row);
         final int nCols = getColumnDimension();
         if ((matrix.getRowDimension() != 1) ||
@@ -507,7 +525,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> getColumnMatrix(final int column) {
+    @Override
+	public FieldMatrix<T> getColumnMatrix(final int column) {
 
         checkColumnIndex(column);
         final int nRows = getRowDimension();
@@ -521,7 +540,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void setColumnMatrix(final int column, final FieldMatrix<T> matrix) {
+    @Override
+	public void setColumnMatrix(final int column, final FieldMatrix<T> matrix) {
         checkColumnIndex(column);
         final int nRows = getRowDimension();
         if ((matrix.getRowDimension() != nRows) ||
@@ -537,12 +557,14 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> getRowVector(final int row) {
+    @Override
+	public FieldVector<T> getRowVector(final int row) {
         return new ArrayFieldVector<T>(field, getRow(row), false);
     }
 
     /** {@inheritDoc} */
-    public void setRowVector(final int row, final FieldVector<T> vector) {
+    @Override
+	public void setRowVector(final int row, final FieldVector<T> vector) {
         checkRowIndex(row);
         final int nCols = getColumnDimension();
         if (vector.getDimension() != nCols) {
@@ -556,12 +578,14 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> getColumnVector(final int column) {
+    @Override
+	public FieldVector<T> getColumnVector(final int column) {
         return new ArrayFieldVector<T>(field, getColumn(column), false);
     }
 
     /** {@inheritDoc} */
-    public void setColumnVector(final int column, final FieldVector<T> vector) {
+    @Override
+	public void setColumnVector(final int column, final FieldVector<T> vector) {
         checkColumnIndex(column);
         final int nRows = getRowDimension();
         if (vector.getDimension() != nRows) {
@@ -575,7 +599,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T[] getRow(final int row) {
+    @Override
+	public T[] getRow(final int row) {
         checkRowIndex(row);
         final int nCols = getColumnDimension();
         final T[] out = buildArray(field, nCols);
@@ -588,7 +613,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void setRow(final int row, final T[] array) {
+    @Override
+	public void setRow(final int row, final T[] array) {
         checkRowIndex(row);
         final int nCols = getColumnDimension();
         if (array.length != nCols) {
@@ -601,7 +627,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T[] getColumn(final int column) {
+    @Override
+	public T[] getColumn(final int column) {
         checkColumnIndex(column);
         final int nRows = getRowDimension();
         final T[] out = buildArray(field, nRows);
@@ -614,7 +641,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public void setColumn(final int column, final T[] array) {
+    @Override
+	public void setColumn(final int column, final T[] array) {
         checkColumnIndex(column);
         final int nRows = getRowDimension();
         if (array.length != nRows) {
@@ -626,19 +654,24 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public abstract T getEntry(int row, int column);
+    @Override
+	public abstract T getEntry(int row, int column);
 
     /** {@inheritDoc} */
-    public abstract void setEntry(int row, int column, T value);
+    @Override
+	public abstract void setEntry(int row, int column, T value);
 
     /** {@inheritDoc} */
-    public abstract void addToEntry(int row, int column, T increment);
+    @Override
+	public abstract void addToEntry(int row, int column, T increment);
 
     /** {@inheritDoc} */
-    public abstract void multiplyEntry(int row, int column, T factor);
+    @Override
+	public abstract void multiplyEntry(int row, int column, T factor);
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> transpose() {
+    @Override
+	public FieldMatrix<T> transpose() {
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
         final FieldMatrix<T> out = createMatrix(nCols, nRows);
@@ -654,18 +687,22 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public boolean isSquare() {
+    @Override
+	public boolean isSquare() {
         return getColumnDimension() == getRowDimension();
     }
 
     /** {@inheritDoc} */
-    public abstract int getRowDimension();
+    @Override
+	public abstract int getRowDimension();
 
     /** {@inheritDoc} */
-    public abstract int getColumnDimension();
+    @Override
+	public abstract int getColumnDimension();
 
     /** {@inheritDoc} */
-    public T getTrace() {
+    @Override
+	public T getTrace() {
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
         if (nRows != nCols) {
@@ -679,7 +716,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T[] operate(final T[] v) {
+    @Override
+	public T[] operate(final T[] v) {
 
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
@@ -700,7 +738,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> operate(final FieldVector<T> v) {
+    @Override
+	public FieldVector<T> operate(final FieldVector<T> v) {
         try {
             return new ArrayFieldVector<T>(field, operate(((ArrayFieldVector<T>) v).getDataRef()), false);
         } catch (ClassCastException cce) {
@@ -724,7 +763,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T[] preMultiply(final T[] v) {
+    @Override
+	public T[] preMultiply(final T[] v) {
 
         final int nRows = getRowDimension();
         final int nCols = getColumnDimension();
@@ -745,7 +785,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> preMultiply(final FieldVector<T> v) {
+    @Override
+	public FieldVector<T> preMultiply(final FieldVector<T> v) {
         try {
             return new ArrayFieldVector<T>(field, preMultiply(((ArrayFieldVector<T>) v).getDataRef()), false);
         } catch (ClassCastException cce) {
@@ -769,7 +810,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor) {
+    @Override
+	public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -784,7 +826,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor) {
+    @Override
+	public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -797,7 +840,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor,
+    @Override
+	public T walkInRowOrder(final FieldMatrixChangingVisitor<T> visitor,
                             final int startRow, final int endRow,
                             final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
@@ -814,7 +858,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor,
+    @Override
+	public T walkInRowOrder(final FieldMatrixPreservingVisitor<T> visitor,
                             final int startRow, final int endRow,
                             final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
@@ -829,7 +874,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor) {
+    @Override
+	public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -844,7 +890,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor) {
+    @Override
+	public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor) {
         final int rows    = getRowDimension();
         final int columns = getColumnDimension();
         visitor.start(rows, columns, 0, rows - 1, 0, columns - 1);
@@ -857,7 +904,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor,
+    @Override
+	public T walkInColumnOrder(final FieldMatrixChangingVisitor<T> visitor,
                                final int startRow, final int endRow,
                                final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
@@ -874,7 +922,8 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor,
+    @Override
+	public T walkInColumnOrder(final FieldMatrixPreservingVisitor<T> visitor,
                                final int startRow, final int endRow,
                                final int startColumn, final int endColumn) {
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
@@ -889,24 +938,28 @@ public abstract class AbstractFieldMatrix<T extends FieldElement<T>>
     }
 
     /** {@inheritDoc} */
-    public T walkInOptimizedOrder(final FieldMatrixChangingVisitor<T> visitor) {
+    @Override
+	public T walkInOptimizedOrder(final FieldMatrixChangingVisitor<T> visitor) {
         return walkInRowOrder(visitor);
     }
 
     /** {@inheritDoc} */
-    public T walkInOptimizedOrder(final FieldMatrixPreservingVisitor<T> visitor) {
+    @Override
+	public T walkInOptimizedOrder(final FieldMatrixPreservingVisitor<T> visitor) {
         return walkInRowOrder(visitor);
     }
 
     /** {@inheritDoc} */
-    public T walkInOptimizedOrder(final FieldMatrixChangingVisitor<T> visitor,
+    @Override
+	public T walkInOptimizedOrder(final FieldMatrixChangingVisitor<T> visitor,
                                   final int startRow, final int endRow,
                                   final int startColumn, final int endColumn) {
         return walkInRowOrder(visitor, startRow, endRow, startColumn, endColumn);
     }
 
     /** {@inheritDoc} */
-    public T walkInOptimizedOrder(final FieldMatrixPreservingVisitor<T> visitor,
+    @Override
+	public T walkInOptimizedOrder(final FieldMatrixPreservingVisitor<T> visitor,
                                   final int startRow, final int endRow,
                                   final int startColumn, final int endColumn) {
         return walkInRowOrder(visitor, startRow, endRow, startColumn, endColumn);

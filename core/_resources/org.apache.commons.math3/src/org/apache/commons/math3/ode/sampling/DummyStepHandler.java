@@ -51,7 +51,8 @@ public class DummyStepHandler implements StepHandler {
     }
 
     /** {@inheritDoc} */
-    public void init(double t0, double[] y0, double t) {
+    @Override
+	public void init(double t0, double[] y0, double t) {
     }
 
     /**
@@ -66,7 +67,8 @@ public class DummyStepHandler implements StepHandler {
      * copy.
      * @param isLast true if the step is the last one
      */
-    public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
+    @Override
+	public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
     }
 
     // CHECKSTYLE: stop HideUtilityClassConstructor

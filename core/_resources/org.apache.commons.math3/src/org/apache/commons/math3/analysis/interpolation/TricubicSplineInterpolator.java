@@ -31,7 +31,8 @@ public class TricubicSplineInterpolator
     /**
      * {@inheritDoc}
      */
-    public TricubicSplineInterpolatingFunction interpolate(final double[] xval,
+    @Override
+	public TricubicSplineInterpolatingFunction interpolate(final double[] xval,
                                                            final double[] yval,
                                                            final double[] zval,
                                                            final double[][][] fval) {

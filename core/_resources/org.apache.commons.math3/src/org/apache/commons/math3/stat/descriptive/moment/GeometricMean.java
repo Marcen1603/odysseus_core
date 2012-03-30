@@ -149,7 +149,8 @@ public class GeometricMean extends AbstractStorelessUnivariateStatistic implemen
     /**
      * {@inheritDoc}
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return sumOfLogs.getN();
     }
 

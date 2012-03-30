@@ -32,15 +32,18 @@ public class Log10 implements DifferentiableUnivariateFunction {
     private static final double LN_10 = FastMath.log(10);
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return FastMath.log10(x);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return 1 / (x * LN_10);
             }
         };

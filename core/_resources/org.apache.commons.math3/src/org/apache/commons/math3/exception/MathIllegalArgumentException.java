@@ -47,7 +47,8 @@ public class MathIllegalArgumentException extends IllegalArgumentException
     }
 
     /** {@inheritDoc} */
-    public ExceptionContext getContext() {
+    @Override
+	public ExceptionContext getContext() {
         return context;
     }
 

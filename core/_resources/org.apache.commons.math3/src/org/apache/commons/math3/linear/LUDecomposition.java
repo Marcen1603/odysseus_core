@@ -283,12 +283,14 @@ public class LUDecomposition {
         }
 
         /** {@inheritDoc} */
-        public boolean isNonSingular() {
+        @Override
+		public boolean isNonSingular() {
             return !singular;
         }
 
         /** {@inheritDoc} */
-        public RealVector solve(RealVector b) {
+        @Override
+		public RealVector solve(RealVector b) {
             final int m = pivot.length;
             if (b.getDimension() != m) {
                 throw new DimensionMismatchException(b.getDimension(), m);
@@ -325,7 +327,8 @@ public class LUDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        @Override
+		public RealMatrix solve(RealMatrix b) {
 
             final int m = pivot.length;
             if (b.getRowDimension() != m) {
@@ -379,7 +382,8 @@ public class LUDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix getInverse() {
+        @Override
+		public RealMatrix getInverse() {
             return solve(MatrixUtils.createRealIdentityMatrix(pivot.length));
         }
     }

@@ -88,7 +88,8 @@ public class PolynomialFunction implements DifferentiableUnivariateFunction, Ser
      * @return the value of the polynomial at the given point.
      * @see UnivariateFunction#value(double)
      */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
        return evaluate(coefficients, x);
     }
 
@@ -263,7 +264,8 @@ public class PolynomialFunction implements DifferentiableUnivariateFunction, Ser
      *
      * @return the derivative function.
      */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return polynomialDerivative();
     }
 
@@ -371,7 +373,8 @@ public class PolynomialFunction implements DifferentiableUnivariateFunction, Ser
      */
     public static class Parametric implements ParametricUnivariateFunction {
         /** {@inheritDoc} */
-        public double[] gradient(double x, double ... parameters) {
+        @Override
+		public double[] gradient(double x, double ... parameters) {
             final double[] gradient = new double[parameters.length];
             double xn = 1.0;
             for (int i = 0; i < parameters.length; ++i) {
@@ -382,7 +385,8 @@ public class PolynomialFunction implements DifferentiableUnivariateFunction, Ser
         }
 
         /** {@inheritDoc} */
-        public double value(final double x, final double ... parameters) {
+        @Override
+		public double value(final double x, final double ... parameters) {
             return PolynomialFunction.evaluate(parameters, x);
         }
     }

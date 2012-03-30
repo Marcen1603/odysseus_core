@@ -51,7 +51,8 @@ public class DividedDifferenceInterpolator
      * @throws org.apache.commons.math3.exception.NonMonotonicSequenceException
      * if {@code x} is not sorted in strictly increasing order.
      */
-    public PolynomialFunctionNewtonForm interpolate(double x[], double y[]) {
+    @Override
+	public PolynomialFunctionNewtonForm interpolate(double x[], double y[]) {
         /**
          * a[] and c[] are defined in the general formula of Newton form:
          * p(x) = a[0] + a[1](x-c[0]) + a[2](x-c[0])(x-c[1]) + ... +

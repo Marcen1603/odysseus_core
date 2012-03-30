@@ -129,7 +129,8 @@ public class PolynomialSplineFunction implements DifferentiableUnivariateFunctio
      * spline function (smaller than the smallest knot point or larger than the
      * largest knot point).
      */
-    public double value(double v) {
+    @Override
+	public double value(double v) {
         if (v < knots[0] || v > knots[n]) {
             throw new OutOfRangeException(v, knots[0], knots[n]);
         }
@@ -151,7 +152,8 @@ public class PolynomialSplineFunction implements DifferentiableUnivariateFunctio
      *
      * @return the derivative function.
      */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return polynomialSplineDerivative();
     }
 

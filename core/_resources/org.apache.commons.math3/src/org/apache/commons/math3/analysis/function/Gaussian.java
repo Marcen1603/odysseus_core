@@ -80,15 +80,18 @@ public class Gaussian implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return value(x - mean, norm, i2s2);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 final double diff = x - mean;
                 final double g = Gaussian.value(diff, norm, i2s2);
 
@@ -123,7 +126,8 @@ public class Gaussian implements DifferentiableUnivariateFunction {
          * not 3.
          * @throws NotStrictlyPositiveException if {@code param[2]} is negative.
          */
-        public double value(double x, double ... param) {
+        @Override
+		public double value(double x, double ... param) {
             validateParameters(param);
 
             final double diff = x - param[1];
@@ -145,7 +149,8 @@ public class Gaussian implements DifferentiableUnivariateFunction {
          * not 3.
          * @throws NotStrictlyPositiveException if {@code param[2]} is negative.
          */
-        public double[] gradient(double x, double ... param) {
+        @Override
+		public double[] gradient(double x, double ... param) {
             validateParameters(param);
 
             final double norm = param[0];

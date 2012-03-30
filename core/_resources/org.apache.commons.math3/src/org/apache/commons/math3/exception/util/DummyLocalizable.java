@@ -40,12 +40,14 @@ public class DummyLocalizable implements Localizable {
     }
 
     /** {@inheritDoc} */
-    public String getSourceString() {
+    @Override
+	public String getSourceString() {
         return source;
     }
 
     /** {@inheritDoc} */
-    public String getLocalizedString(Locale locale) {
+    @Override
+	public String getLocalizedString(Locale locale) {
         return source;
     }
 

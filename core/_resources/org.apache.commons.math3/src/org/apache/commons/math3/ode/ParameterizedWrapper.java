@@ -57,17 +57,20 @@ class ParameterizedWrapper implements ParameterizedODE {
     }
 
     /** {@inheritDoc} */
-    public Collection<String> getParametersNames() {
+    @Override
+	public Collection<String> getParametersNames() {
         return new ArrayList<String>();
     }
 
     /** {@inheritDoc} */
-    public boolean isSupported(String name) {
+    @Override
+	public boolean isSupported(String name) {
         return false;
     }
 
     /** {@inheritDoc} */
-    public double getParameter(String name)
+    @Override
+	public double getParameter(String name)
         throws MathIllegalArgumentException {
         if (!isSupported(name)) {
             throw new MathIllegalArgumentException(LocalizedFormats.UNKNOWN_PARAMETER, name);
@@ -76,7 +79,8 @@ class ParameterizedWrapper implements ParameterizedODE {
     }
 
     /** {@inheritDoc} */
-    public void setParameter(String name, double value) {
+    @Override
+	public void setParameter(String name, double value) {
     }
 
 }

@@ -176,7 +176,8 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
      * @return underlying function value
      * @see #unboundedToBounded(double[])
      */
-    public double value(double[] point) {
+    @Override
+	public double value(double[] point) {
         return bounded.value(unboundedToBounded(point));
     }
 
@@ -206,12 +207,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         }
 
         /** {@inheritDoc} */
-        public double unboundedToBounded(final double y) {
+        @Override
+		public double unboundedToBounded(final double y) {
             return y;
         }
 
         /** {@inheritDoc} */
-        public double boundedToUnbounded(final double x) {
+        @Override
+		public double boundedToUnbounded(final double x) {
             return x;
         }
 
@@ -231,12 +234,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         }
 
         /** {@inheritDoc} */
-        public double unboundedToBounded(final double y) {
+        @Override
+		public double unboundedToBounded(final double y) {
             return lower + FastMath.exp(y);
         }
 
         /** {@inheritDoc} */
-        public double boundedToUnbounded(final double x) {
+        @Override
+		public double boundedToUnbounded(final double x) {
             return FastMath.log(x - lower);
         }
 
@@ -256,12 +261,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         }
 
         /** {@inheritDoc} */
-        public double unboundedToBounded(final double y) {
+        @Override
+		public double unboundedToBounded(final double y) {
             return upper - FastMath.exp(-y);
         }
 
         /** {@inheritDoc} */
-        public double boundedToUnbounded(final double x) {
+        @Override
+		public double boundedToUnbounded(final double x) {
             return -FastMath.log(upper - x);
         }
 
@@ -286,12 +293,14 @@ public class MultivariateFunctionMappingAdapter implements MultivariateFunction 
         }
 
         /** {@inheritDoc} */
-        public double unboundedToBounded(final double y) {
+        @Override
+		public double unboundedToBounded(final double y) {
             return boundingFunction.value(y);
         }
 
         /** {@inheritDoc} */
-        public double boundedToUnbounded(final double x) {
+        @Override
+		public double boundedToUnbounded(final double x) {
             return unboundingFunction.value(x);
         }
 

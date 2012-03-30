@@ -96,7 +96,8 @@ public abstract class AbstractUnivariateStatistic
     /**
      * {@inheritDoc}
      */
-    public double evaluate(final double[] values) {
+    @Override
+	public double evaluate(final double[] values) {
         test(values, 0, 0);
         return evaluate(values, 0, values.length);
     }
@@ -104,12 +105,14 @@ public abstract class AbstractUnivariateStatistic
     /**
      * {@inheritDoc}
      */
-    public abstract double evaluate(final double[] values, final int begin, final int length);
+    @Override
+	public abstract double evaluate(final double[] values, final int begin, final int length);
 
     /**
      * {@inheritDoc}
      */
-    public abstract UnivariateStatistic copy();
+    @Override
+	public abstract UnivariateStatistic copy();
 
     /**
      * This method is used by <code>evaluate(double[], int, int)</code> methods

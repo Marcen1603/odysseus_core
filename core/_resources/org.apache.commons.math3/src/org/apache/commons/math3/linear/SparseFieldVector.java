@@ -174,7 +174,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> append(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> append(FieldVector<T> v) {
         if (v instanceof SparseFieldVector<?>) {
             return append((SparseFieldVector<T>) v);
         } else {
@@ -188,19 +189,22 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> append(T d) {
+    @Override
+	public FieldVector<T> append(T d) {
         FieldVector<T> res = new SparseFieldVector<T>(this, 1);
         res.setEntry(virtualSize, d);
         return res;
      }
 
     /** {@inheritDoc} */
-    public FieldVector<T> copy() {
+    @Override
+	public FieldVector<T> copy() {
         return new SparseFieldVector<T>(this);
    }
 
     /** {@inheritDoc} */
-    public T dotProduct(FieldVector<T> v) {
+    @Override
+	public T dotProduct(FieldVector<T> v) {
         checkVectorDimensions(v.getDimension());
         T res = field.getZero();
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
@@ -212,7 +216,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> ebeDivide(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> ebeDivide(FieldVector<T> v) {
         checkVectorDimensions(v.getDimension());
         SparseFieldVector<T> res = new SparseFieldVector<T>(this);
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
@@ -224,7 +229,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> ebeMultiply(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> ebeMultiply(FieldVector<T> v) {
         checkVectorDimensions(v.getDimension());
         SparseFieldVector<T> res = new SparseFieldVector<T>(this);
         OpenIntToFieldHashMap<T>.Iterator iter = res.entries.iterator();
@@ -236,7 +242,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
      /** {@inheritDoc} */
-     public T[] getData() {
+     @Override
+	public T[] getData() {
         T[] res = buildArray(virtualSize);
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
@@ -247,23 +254,27 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      }
 
      /** {@inheritDoc} */
-     public int getDimension() {
+     @Override
+	public int getDimension() {
         return virtualSize;
     }
 
      /** {@inheritDoc} */
-     public T getEntry(int index) {
+     @Override
+	public T getEntry(int index) {
         checkIndex(index);
         return entries.get(index);
    }
 
      /** {@inheritDoc} */
-     public Field<T> getField() {
+     @Override
+	public Field<T> getField() {
         return field;
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> getSubVector(int index, int n) {
+     @Override
+	public FieldVector<T> getSubVector(int index, int n) {
         checkIndex(index);
         checkIndex(index + n - 1);
         SparseFieldVector<T> res = new SparseFieldVector<T>(field,n);
@@ -280,12 +291,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapAdd(T d) {
+     @Override
+	public FieldVector<T> mapAdd(T d) {
         return copy().mapAddToSelf(d);
    }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapAddToSelf(T d) {
+     @Override
+	public FieldVector<T> mapAddToSelf(T d) {
         for (int i = 0; i < virtualSize; i++) {
             setEntry(i, getEntry(i).add(d));
         }
@@ -293,12 +306,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapDivide(T d) {
+     @Override
+	public FieldVector<T> mapDivide(T d) {
         return copy().mapDivideToSelf(d);
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapDivideToSelf(T d) {
+     @Override
+	public FieldVector<T> mapDivideToSelf(T d) {
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
@@ -308,12 +323,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
    }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapInv() {
+     @Override
+	public FieldVector<T> mapInv() {
         return copy().mapInvToSelf();
    }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapInvToSelf() {
+     @Override
+	public FieldVector<T> mapInvToSelf() {
         for (int i = 0; i < virtualSize; i++) {
             setEntry(i, field.getOne().divide(getEntry(i)));
         }
@@ -321,12 +338,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
    }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapMultiply(T d) {
+     @Override
+	public FieldVector<T> mapMultiply(T d) {
         return copy().mapMultiplyToSelf(d);
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapMultiplyToSelf(T d) {
+     @Override
+	public FieldVector<T> mapMultiplyToSelf(T d) {
         OpenIntToFieldHashMap<T>.Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
@@ -336,12 +355,14 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
    }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapSubtract(T d) {
+     @Override
+	public FieldVector<T> mapSubtract(T d) {
         return copy().mapSubtractToSelf(d);
     }
 
      /** {@inheritDoc} */
-     public FieldVector<T> mapSubtractToSelf(T d) {
+     @Override
+	public FieldVector<T> mapSubtractToSelf(T d) {
         return mapAddToSelf(field.getZero().subtract(d));
     }
 
@@ -368,7 +389,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldMatrix<T> outerProduct(FieldVector<T> v) {
+    @Override
+	public FieldMatrix<T> outerProduct(FieldVector<T> v) {
         if (v instanceof SparseFieldVector<?>) {
             return outerProduct((SparseFieldVector<T>)v);
         } else {
@@ -388,26 +410,30 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> projection(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> projection(FieldVector<T> v) {
         checkVectorDimensions(v.getDimension());
         return v.mapMultiply(dotProduct(v).divide(v.dotProduct(v)));
     }
 
     /** {@inheritDoc} */
-    public void set(T value) {
+    @Override
+	public void set(T value) {
         for (int i = 0; i < virtualSize; i++) {
             setEntry(i, value);
         }
     }
 
     /** {@inheritDoc} */
-    public void setEntry(int index, T value) {
+    @Override
+	public void setEntry(int index, T value) {
         checkIndex(index);
         entries.put(index, value);
    }
 
     /** {@inheritDoc} */
-    public void setSubVector(int index, FieldVector<T> v) {
+    @Override
+	public void setSubVector(int index, FieldVector<T> v) {
         checkIndex(index);
         checkIndex(index + v.getDimension() - 1);
         final int n = v.getDimension();
@@ -441,7 +467,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> subtract(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> subtract(FieldVector<T> v) {
         if (v instanceof SparseFieldVector<?>) {
             return subtract((SparseFieldVector<T>)v);
         } else {
@@ -460,7 +487,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public T[] toArray() {
+    @Override
+	public T[] toArray() {
         return getData();
     }
 
@@ -489,7 +517,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     }
 
     /** {@inheritDoc} */
-    public FieldVector<T> add(FieldVector<T> v) {
+    @Override
+	public FieldVector<T> add(FieldVector<T> v) {
         if (v instanceof SparseFieldVector<?>) {
             return add((SparseFieldVector<T>) v);
         } else {

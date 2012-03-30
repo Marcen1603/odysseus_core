@@ -109,7 +109,8 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * This implementation throws an {@link MathUnsupportedOperationException}
      * if no residual vector {@code r} was provided at construction time.
      */
-    public RealVector getResidual() {
+    @Override
+	public RealVector getResidual() {
         if (r != null) {
             return r;
         }

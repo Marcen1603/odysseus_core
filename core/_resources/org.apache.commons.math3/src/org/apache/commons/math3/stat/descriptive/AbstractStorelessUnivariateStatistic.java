@@ -101,17 +101,20 @@ public abstract class AbstractStorelessUnivariateStatistic
     /**
      * {@inheritDoc}
      */
-    public abstract void clear();
+    @Override
+	public abstract void clear();
 
     /**
      * {@inheritDoc}
      */
-    public abstract double getResult();
+    @Override
+	public abstract double getResult();
 
     /**
      * {@inheritDoc}
      */
-    public abstract void increment(final double d);
+    @Override
+	public abstract void increment(final double d);
 
     /**
      * This default implementation just calls {@link #increment} in a loop over
@@ -123,7 +126,8 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if values is null
      * @see org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic#incrementAll(double[])
      */
-    public void incrementAll(double[] values) {
+    @Override
+	public void incrementAll(double[] values) {
         if (values == null) {
             throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
@@ -142,7 +146,8 @@ public abstract class AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if values is null
      * @see org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic#incrementAll(double[], int, int)
      */
-    public void incrementAll(double[] values, int begin, int length) {
+    @Override
+	public void incrementAll(double[] values, int begin, int length) {
         if (test(values, begin, length)) {
             int k = begin + length;
             for (int i = begin; i < k; i++) {

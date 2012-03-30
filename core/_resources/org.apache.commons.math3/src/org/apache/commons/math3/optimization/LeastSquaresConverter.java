@@ -149,7 +149,8 @@ public class LeastSquaresConverter implements MultivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(final double[] point) {
+    @Override
+	public double value(final double[] point) {
         // compute residuals
         final double[] residuals = function.value(point);
         if (residuals.length != observations.length) {

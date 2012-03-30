@@ -131,12 +131,14 @@ public class OutlineExtractor {
         }
 
         /** {@inheritDoc} */
-        public Order visitOrder(final BSPTree<Euclidean3D> node) {
+        @Override
+		public Order visitOrder(final BSPTree<Euclidean3D> node) {
             return Order.MINUS_SUB_PLUS;
         }
 
         /** {@inheritDoc} */
-        public void visitInternalNode(final BSPTree<Euclidean3D> node) {
+        @Override
+		public void visitInternalNode(final BSPTree<Euclidean3D> node) {
             @SuppressWarnings("unchecked")
             final BoundaryAttribute<Euclidean3D> attribute =
                 (BoundaryAttribute<Euclidean3D>) node.getAttribute();
@@ -149,7 +151,8 @@ public class OutlineExtractor {
         }
 
         /** {@inheritDoc} */
-        public void visitLeafNode(final BSPTree<Euclidean3D> node) {
+        @Override
+		public void visitLeafNode(final BSPTree<Euclidean3D> node) {
         }
 
         /** Add he contribution of a boundary facet.

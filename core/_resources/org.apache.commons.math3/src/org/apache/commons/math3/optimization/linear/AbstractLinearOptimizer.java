@@ -104,17 +104,20 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     }
 
     /** {@inheritDoc} */
-    public void setMaxIterations(int maxIterations) {
+    @Override
+	public void setMaxIterations(int maxIterations) {
         this.maxIterations = maxIterations;
     }
 
     /** {@inheritDoc} */
-    public int getMaxIterations() {
+    @Override
+	public int getMaxIterations() {
         return maxIterations;
     }
 
     /** {@inheritDoc} */
-    public int getIterations() {
+    @Override
+	public int getIterations() {
         return iterations;
     }
 
@@ -130,7 +133,8 @@ public abstract class AbstractLinearOptimizer implements LinearOptimizer {
     }
 
     /** {@inheritDoc} */
-    public PointValuePair optimize(final LinearObjectiveFunction f,
+    @Override
+	public PointValuePair optimize(final LinearObjectiveFunction f,
                                        final Collection<LinearConstraint> constraints,
                                        final GoalType goalType, final boolean restrictToNonNegative)
          throws MathIllegalStateException {

@@ -262,7 +262,8 @@ public class NonLinearConjugateGradientOptimizer
     public static class IdentityPreconditioner implements Preconditioner {
 
         /** {@inheritDoc} */
-        public double[] precondition(double[] variables, double[] r) {
+        @Override
+		public double[] precondition(double[] variables, double[] r) {
             return r.clone();
         }
     }
@@ -288,7 +289,8 @@ public class NonLinearConjugateGradientOptimizer
         }
 
         /** {@inheritDoc} */
-        public double value(double x) {
+        @Override
+		public double value(double x) {
             // current point in the search direction
             final double[] shiftedPoint = point.clone();
             for (int i = 0; i < shiftedPoint.length; ++i) {

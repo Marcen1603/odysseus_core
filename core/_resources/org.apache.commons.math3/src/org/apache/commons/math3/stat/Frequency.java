@@ -311,14 +311,14 @@ public class Frequency implements Serializable {
      * @param v the value to lookup.
      * @return the proportion of values equal to v
      */
-    public long getCumFreq(Comparable<?> v) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public long getCumFreq(Comparable<?> v) {
         if (getSumFreq() == 0) {
             return 0;
         }
         if (v instanceof Integer) {
             return getCumFreq(((Integer) v).longValue());
         }
-        @SuppressWarnings("unchecked") // OK, freqTable is Comparable<?>
         Comparator<Comparable<?>> c = (Comparator<Comparable<?>>) freqTable.comparator();
         if (c == null) {
             c = new NaturalComparator();
@@ -472,7 +472,8 @@ public class Frequency implements Serializable {
          * @throws ClassCastException when <i>o1</i> is not a {@link Comparable Comparable},
          *         or when <code>((Comparable)o1).compareTo(o2)</code> does
          */
-        @SuppressWarnings("unchecked") // cast to (T) may throw ClassCastException, see Javadoc
+        @Override
+		@SuppressWarnings("unchecked") // cast to (T) may throw ClassCastException, see Javadoc
         public int compare(Comparable<T> o1, Comparable<T> o2) {
             return o1.compareTo((T) o2);
         }

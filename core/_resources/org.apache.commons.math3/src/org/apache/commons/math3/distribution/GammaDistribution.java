@@ -105,12 +105,14 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         if (x < 0) {
             return 0;
         }
@@ -132,7 +134,8 @@ public class GammaDistribution extends AbstractRealDistribution {
      *  </li>
      * </ul>
      */
-    public double cumulativeProbability(double x) {
+    @Override
+	public double cumulativeProbability(double x) {
         double ret;
 
         if (x <= 0) {
@@ -156,7 +159,8 @@ public class GammaDistribution extends AbstractRealDistribution {
      * For shape parameter {@code alpha} and scale parameter {@code beta}, the
      * mean is {@code alpha * beta}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return getAlpha() * getBeta();
     }
 
@@ -168,7 +172,8 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @return {@inheritDoc}
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         final double b = getBeta();
         return getAlpha() * b * b;
     }
@@ -180,7 +185,8 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return 0;
     }
 
@@ -192,17 +198,20 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @return upper bound of the support (always Double.POSITIVE_INFINITY)
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return true;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -213,7 +222,8 @@ public class GammaDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

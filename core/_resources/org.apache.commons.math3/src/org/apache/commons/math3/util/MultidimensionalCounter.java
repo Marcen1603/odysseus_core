@@ -88,7 +88,8 @@ public class MultidimensionalCounter implements Iterable<Integer> {
         /**
          * {@inheritDoc}
          */
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             for (int i = 0; i < dimension; i++) {
                 if (counter[i] != size[i] - 1) {
                     return true;
@@ -101,7 +102,8 @@ public class MultidimensionalCounter implements Iterable<Integer> {
          * @return the unidimensional count after the counter has been
          * incremented by {@code 1}.
          */
-        public Integer next() {
+        @Override
+		public Integer next() {
             for (int i = last; i >= 0; i--) {
                 if (counter[i] == size[i] - 1) {
                     counter[i] = 0;
@@ -149,7 +151,8 @@ public class MultidimensionalCounter implements Iterable<Integer> {
         /**
          * @throws UnsupportedOperationException
          */
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
     }
@@ -191,7 +194,8 @@ public class MultidimensionalCounter implements Iterable<Integer> {
      *
      * @return the iterator.
      */
-    public Iterator iterator() {
+    @Override
+	public Iterator iterator() {
         return new Iterator();
     }
 

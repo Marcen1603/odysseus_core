@@ -28,15 +28,18 @@ import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
  */
 public class Inverse implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return 1 / x;
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return -1 / (x * x);
             }
         };

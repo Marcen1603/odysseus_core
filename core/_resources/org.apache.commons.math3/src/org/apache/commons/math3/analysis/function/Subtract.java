@@ -27,7 +27,8 @@ import org.apache.commons.math3.analysis.BivariateFunction;
  */
 public class Subtract implements BivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x, double y) {
+    @Override
+	public double value(double x, double y) {
         return x - y;
     }
 }

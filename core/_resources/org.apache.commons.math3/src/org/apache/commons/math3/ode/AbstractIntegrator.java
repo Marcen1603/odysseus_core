@@ -101,27 +101,32 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** {@inheritDoc} */
-    public String getName() {
+    @Override
+	public String getName() {
         return name;
     }
 
     /** {@inheritDoc} */
-    public void addStepHandler(final StepHandler handler) {
+    @Override
+	public void addStepHandler(final StepHandler handler) {
         stepHandlers.add(handler);
     }
 
     /** {@inheritDoc} */
-    public Collection<StepHandler> getStepHandlers() {
+    @Override
+	public Collection<StepHandler> getStepHandlers() {
         return Collections.unmodifiableCollection(stepHandlers);
     }
 
     /** {@inheritDoc} */
-    public void clearStepHandlers() {
+    @Override
+	public void clearStepHandlers() {
         stepHandlers.clear();
     }
 
     /** {@inheritDoc} */
-    public void addEventHandler(final EventHandler handler,
+    @Override
+	public void addEventHandler(final EventHandler handler,
                                 final double maxCheckInterval,
                                 final double convergence,
                                 final int maxIterationCount) {
@@ -131,7 +136,8 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** {@inheritDoc} */
-    public void addEventHandler(final EventHandler handler,
+    @Override
+	public void addEventHandler(final EventHandler handler,
                                 final double maxCheckInterval,
                                 final double convergence,
                                 final int maxIterationCount,
@@ -141,7 +147,8 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** {@inheritDoc} */
-    public Collection<EventHandler> getEventHandlers() {
+    @Override
+	public Collection<EventHandler> getEventHandlers() {
         final List<EventHandler> list = new ArrayList<EventHandler>();
         for (EventState state : eventsStates) {
             list.add(state.getEventHandler());
@@ -150,32 +157,38 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** {@inheritDoc} */
-    public void clearEventHandlers() {
+    @Override
+	public void clearEventHandlers() {
         eventsStates.clear();
     }
 
     /** {@inheritDoc} */
-    public double getCurrentStepStart() {
+    @Override
+	public double getCurrentStepStart() {
         return stepStart;
     }
 
     /** {@inheritDoc} */
-    public double getCurrentSignedStepsize() {
+    @Override
+	public double getCurrentSignedStepsize() {
         return stepSize;
     }
 
     /** {@inheritDoc} */
-    public void setMaxEvaluations(int maxEvaluations) {
+    @Override
+	public void setMaxEvaluations(int maxEvaluations) {
         evaluations.setMaximalCount((maxEvaluations < 0) ? Integer.MAX_VALUE : maxEvaluations);
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return evaluations.getMaximalCount();
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return evaluations.getCount();
     }
 
@@ -208,7 +221,8 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** {@inheritDoc} */
-    public double integrate(final FirstOrderDifferentialEquations equations,
+    @Override
+	public double integrate(final FirstOrderDifferentialEquations equations,
                             final double t0, final double[] y0, final double t, final double[] y)
         throws MathIllegalStateException, MathIllegalArgumentException {
 
@@ -306,7 +320,8 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
             SortedSet<EventState> occuringEvents = new TreeSet<EventState>(new Comparator<EventState>() {
 
                 /** {@inheritDoc} */
-                public int compare(EventState es0, EventState es1) {
+                @Override
+				public int compare(EventState es0, EventState es1) {
                     return orderingSign * Double.compare(es0.getEventTime(), es1.getEventTime());
                 }
 

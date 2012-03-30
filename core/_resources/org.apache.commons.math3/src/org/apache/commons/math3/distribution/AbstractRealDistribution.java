@@ -58,7 +58,8 @@ implements RealDistribution, Serializable {
      * The default implementation uses the identity
      * <p>{@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}</p>
      */
-    public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
+    @Override
+	public double cumulativeProbability(double x0, double x1) throws NumberIsTooLargeException {
         if (x0 > x1) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
                     x0, x1, true);
@@ -75,7 +76,8 @@ implements RealDistribution, Serializable {
      * <li>{@link #getSupportUpperBound()} for {@code p = 1}.</li>
      * </ul>
      */
-    public double inverseCumulativeProbability(final double p) throws OutOfRangeException {
+    @Override
+	public double inverseCumulativeProbability(final double p) throws OutOfRangeException {
         /*
          * IMPLEMENTATION NOTES
          * --------------------
@@ -148,7 +150,8 @@ implements RealDistribution, Serializable {
 
         final UnivariateFunction toSolve = new UnivariateFunction() {
 
-            public double value(final double x) {
+            @Override
+			public double value(final double x) {
                 return cumulativeProbability(x) - p;
             }
         };
@@ -192,7 +195,8 @@ implements RealDistribution, Serializable {
     }
 
     /** {@inheritDoc} */
-    public void reseedRandomGenerator(long seed) {
+    @Override
+	public void reseedRandomGenerator(long seed) {
         randomData.reSeed(seed);
     }
 
@@ -204,7 +208,8 @@ implements RealDistribution, Serializable {
      * inversion method.
      * </a>
      */
-    public double sample() {
+    @Override
+	public double sample() {
         return randomData.nextInversionDeviate(this);
     }
 
@@ -214,7 +219,8 @@ implements RealDistribution, Serializable {
      * The default implementation generates the sample by calling
      * {@link #sample()} in a loop.
      */
-    public double[] sample(int sampleSize) {
+    @Override
+	public double[] sample(int sampleSize) {
         if (sampleSize <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
                     sampleSize);

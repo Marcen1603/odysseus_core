@@ -132,7 +132,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(int x) {
+    @Override
+	public double probability(int x) {
         double ret;
         if (x < 0 || x == Integer.MAX_VALUE) {
             ret = 0.0;
@@ -147,7 +148,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(int x) {
+    @Override
+	public double cumulativeProbability(int x) {
         if (x < 0) {
             return 0;
         }
@@ -179,7 +181,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      *
      * For mean parameter {@code p}, the mean is {@code p}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return getMean();
     }
 
@@ -188,7 +191,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      *
      * For mean parameter {@code p}, the variance is {@code p}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         return getMean();
     }
 
@@ -199,7 +203,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return 0;
     }
 
@@ -213,7 +218,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      * @return upper bound of the support (always {@code Integer.MAX_VALUE} for
      * positive infinity)
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return Integer.MAX_VALUE;
     }
 
@@ -224,7 +230,8 @@ public class PoissonDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 

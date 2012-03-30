@@ -60,15 +60,18 @@ public class Logit implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return value(x, lo, hi);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return (hi - lo) / ((x - lo) * (hi - x));
             }
         };
@@ -93,7 +96,8 @@ public class Logit implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double value(double x, double ... param) {
+        @Override
+		public double value(double x, double ... param) {
             validateParameters(param);
             return Logit.value(x, param[0], param[1]);
         }
@@ -111,7 +115,8 @@ public class Logit implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double[] gradient(double x, double ... param) {
+        @Override
+		public double[] gradient(double x, double ... param) {
             validateParameters(param);
 
             final double lo = param[0];

@@ -70,7 +70,8 @@ public class MathIllegalStateException extends IllegalStateException
     }
 
     /** {@inheritDoc} */
-    public ExceptionContext getContext() {
+    @Override
+	public ExceptionContext getContext() {
         return context;
     }
 

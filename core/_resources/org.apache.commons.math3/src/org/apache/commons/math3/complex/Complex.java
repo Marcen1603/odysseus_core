@@ -153,7 +153,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @return {@code this + addend}.
      * @throws NullArgumentException if {@code addend} is {@code null}.
      */
-    public Complex add(Complex addend) throws NullArgumentException {
+    @Override
+	public Complex add(Complex addend) throws NullArgumentException {
         MathUtils.checkNotNull(addend);
         if (isNaN || addend.isNaN) {
             return NaN;
@@ -243,7 +244,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @return {@code this / divisor}.
      * @throws NullArgumentException if {@code divisor} is {@code null}.
      */
-    public Complex divide(Complex divisor)
+    @Override
+	public Complex divide(Complex divisor)
         throws NullArgumentException {
         MathUtils.checkNotNull(divisor);
         if (isNaN || divisor.isNaN) {
@@ -296,7 +298,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
     }
 
     /** {@inheritDoc} */
-    public Complex reciprocal() {
+    @Override
+	public Complex reciprocal() {
         if (isNaN) {
             return NaN;
         }
@@ -433,7 +436,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @return {@code this * factor}.
      * @throws NullArgumentException if {@code factor} is {@code null}.
      */
-    public Complex multiply(Complex factor)
+    @Override
+	public Complex multiply(Complex factor)
         throws NullArgumentException {
         MathUtils.checkNotNull(factor);
         if (isNaN || factor.isNaN) {
@@ -458,7 +462,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @return {@code this * factor}.
      * @see #multiply(Complex)
      */
-    public Complex multiply(final int factor) {
+    @Override
+	public Complex multiply(final int factor) {
         if (isNaN) {
             return NaN;
         }
@@ -497,7 +502,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      *
      * @return {@code -this}.
      */
-    public Complex negate() {
+    @Override
+	public Complex negate() {
         if (isNaN) {
             return NaN;
         }
@@ -523,7 +529,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * @return {@code this - subtrahend}.
      * @throws NullArgumentException if {@code subtrahend} is {@code null}.
      */
-    public Complex subtract(Complex subtrahend)
+    @Override
+	public Complex subtract(Complex subtrahend)
         throws NullArgumentException {
         MathUtils.checkNotNull(subtrahend);
         if (isNaN || subtrahend.isNaN) {
@@ -1220,7 +1227,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
     }
 
     /** {@inheritDoc} */
-    public ComplexField getField() {
+    @Override
+	public ComplexField getField() {
         return ComplexField.getInstance();
     }
 

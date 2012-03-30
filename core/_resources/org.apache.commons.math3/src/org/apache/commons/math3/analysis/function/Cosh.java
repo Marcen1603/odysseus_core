@@ -28,12 +28,14 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class Cosh implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return FastMath.cosh(x);
     }
 
     /** {@inheritDoc} */
-    public DifferentiableUnivariateFunction derivative() {
+    @Override
+	public DifferentiableUnivariateFunction derivative() {
         return new Sinh();
     }
 }

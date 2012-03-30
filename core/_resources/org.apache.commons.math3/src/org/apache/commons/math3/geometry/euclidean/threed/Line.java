@@ -123,14 +123,16 @@ public class Line implements Embedding<Euclidean3D, Euclidean1D> {
     /** {@inheritDoc}
      * @see #getAbscissa(Vector3D)
      */
-    public Vector1D toSubSpace(final Vector<Euclidean3D> point) {
+    @Override
+	public Vector1D toSubSpace(final Vector<Euclidean3D> point) {
         return new Vector1D(getAbscissa((Vector3D) point));
     }
 
     /** {@inheritDoc}
      * @see #pointAt(double)
      */
-    public Vector3D toSpace(final Vector<Euclidean1D> point) {
+    @Override
+	public Vector3D toSpace(final Vector<Euclidean1D> point) {
         return pointAt(((Vector1D) point).getX());
     }
 

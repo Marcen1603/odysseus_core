@@ -80,7 +80,8 @@ public class UnivariatePeriodicInterpolator
      * @throws NumberIsTooSmallException if the number of extension points
      * iss larger then the size of {@code xval}.
      */
-    public UnivariateFunction interpolate(double[] xval,
+    @Override
+	public UnivariateFunction interpolate(double[] xval,
                                               double[] yval) {
         if (xval.length < extend) {
             throw new NumberIsTooSmallException(xval.length, extend, true);
@@ -113,7 +114,8 @@ public class UnivariatePeriodicInterpolator
 
         final UnivariateFunction f = interpolator.interpolate(x, y);
         return new UnivariateFunction() {
-            public double value(final double x) {
+            @Override
+			public double value(final double x) {
                 return f.value(MathUtils.reduce(x, period, offset));
             }
         };

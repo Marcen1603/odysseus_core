@@ -52,12 +52,14 @@ public abstract class AbstractParameterizable implements Parameterizable {
     }
 
     /** {@inheritDoc} */
-    public Collection<String> getParametersNames() {
+    @Override
+	public Collection<String> getParametersNames() {
         return parametersNames;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupported(final String name) {
+    @Override
+	public boolean isSupported(final String name) {
         for (final String supportedName : parametersNames) {
             if (supportedName.equals(name)) {
                 return true;

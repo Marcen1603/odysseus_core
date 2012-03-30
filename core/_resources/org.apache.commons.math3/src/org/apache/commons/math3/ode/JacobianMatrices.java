@@ -340,12 +340,14 @@ public class JacobianMatrices {
     private class JacobiansSecondaryEquations implements SecondaryEquations {
 
         /** {@inheritDoc} */
-        public int getDimension() {
+        @Override
+		public int getDimension() {
             return stateDim * (stateDim + paramDim);
         }
 
         /** {@inheritDoc} */
-        public void computeDerivatives(final double t, final double[] y, final double[] yDot,
+        @Override
+		public void computeDerivatives(final double t, final double[] y, final double[] yDot,
                                        final double[] z, final double[] zDot) {
 
             // Lazy initialization
@@ -436,17 +438,20 @@ public class JacobianMatrices {
         }
 
         /** {@inheritDoc} */
-        public int getDimension() {
+        @Override
+		public int getDimension() {
             return ode.getDimension();
         }
 
         /** {@inheritDoc} */
-        public void computeDerivatives(double t, double[] y, double[] yDot) {
+        @Override
+		public void computeDerivatives(double t, double[] y, double[] yDot) {
             ode.computeDerivatives(t, y, yDot);
         }
 
         /** {@inheritDoc} */
-        public void computeMainStateJacobian(double t, double[] y, double[] yDot,
+        @Override
+		public void computeMainStateJacobian(double t, double[] y, double[] yDot,
                                              double[][] dFdY) {
 
             final int n = ode.getDimension();

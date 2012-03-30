@@ -155,7 +155,8 @@ public class MathArrays {
      * @param strict Whether the order should be strict.
      * @return {@code true} if sorted, {@code false} otherwise.
      */
-    public static boolean isMonotonic(Comparable[] val,
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static boolean isMonotonic(Comparable[] val,
                                       OrderDirection dir,
                                       boolean strict) {
         Comparable previous = val[0];
@@ -481,7 +482,8 @@ public class MathArrays {
 
         final Comparator<Pair<Double, double[]>> comp
             = new Comparator<Pair<Double, double[]>>() {
-            public int compare(Pair<Double, double[]> o1,
+            @Override
+			public int compare(Pair<Double, double[]> o1,
                                Pair<Double, double[]> o2) {
                 int val;
                 switch (dir) {

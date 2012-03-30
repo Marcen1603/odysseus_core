@@ -262,7 +262,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-   public StepInterpolator copy() {
+   @Override
+public StepInterpolator copy() {
 
      // finalize the step before performing copy
      finalizeStep();
@@ -355,7 +356,8 @@ public abstract class AbstractStepInterpolator
    * @return previous soft grid point time
    * @see #setSoftPreviousTime(double)
    */
-  public double getPreviousTime() {
+  @Override
+public double getPreviousTime() {
     return softPreviousTime;
   }
 
@@ -364,23 +366,27 @@ public abstract class AbstractStepInterpolator
    * @return current soft grid point time
    * @see #setSoftCurrentTime(double)
    */
-  public double getCurrentTime() {
+  @Override
+public double getCurrentTime() {
     return softCurrentTime;
   }
 
   /** {@inheritDoc} */
-  public double getInterpolatedTime() {
+  @Override
+public double getInterpolatedTime() {
     return interpolatedTime;
   }
 
   /** {@inheritDoc} */
-  public void setInterpolatedTime(final double time) {
+  @Override
+public void setInterpolatedTime(final double time) {
       interpolatedTime = time;
       dirtyState       = true;
   }
 
   /** {@inheritDoc} */
-  public boolean isForward() {
+  @Override
+public boolean isForward() {
     return forward;
   }
 
@@ -408,7 +414,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedState() {
+  @Override
+public double[] getInterpolatedState() {
       evaluateCompleteInterpolatedState();
       primaryMapper.extractEquationData(interpolatedState,
                                         interpolatedPrimaryState);
@@ -416,7 +423,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedDerivatives() {
+  @Override
+public double[] getInterpolatedDerivatives() {
       evaluateCompleteInterpolatedState();
       primaryMapper.extractEquationData(interpolatedDerivatives,
                                         interpolatedPrimaryDerivatives);
@@ -424,7 +432,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedSecondaryState(final int index) {
+  @Override
+public double[] getInterpolatedSecondaryState(final int index) {
       evaluateCompleteInterpolatedState();
       secondaryMappers[index].extractEquationData(interpolatedState,
                                                   interpolatedSecondaryState[index]);
@@ -432,7 +441,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public double[] getInterpolatedSecondaryDerivatives(final int index) {
+  @Override
+public double[] getInterpolatedSecondaryDerivatives(final int index) {
       evaluateCompleteInterpolatedState();
       secondaryMappers[index].extractEquationData(interpolatedDerivatives,
                                                   interpolatedSecondaryDerivatives[index]);
@@ -493,11 +503,13 @@ public abstract class AbstractStepInterpolator
   }
 
   /** {@inheritDoc} */
-  public abstract void writeExternal(ObjectOutput out)
+  @Override
+public abstract void writeExternal(ObjectOutput out)
     throws IOException;
 
   /** {@inheritDoc} */
-  public abstract void readExternal(ObjectInput in)
+  @Override
+public abstract void readExternal(ObjectInput in)
     throws IOException, ClassNotFoundException;
 
   /** Save the base state of the instance.

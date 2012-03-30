@@ -191,7 +191,8 @@ public class MicrosphereInterpolatingFunction
      * @param point Interpolation point.
      * @return the interpolated value.
      */
-    public double value(double[] point) {
+    @Override
+	public double value(double[] point) {
         final RealVector p = new ArrayRealVector(point);
 
         // Reset.

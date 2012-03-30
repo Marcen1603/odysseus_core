@@ -173,7 +173,8 @@ public class StepNormalizer implements StepHandler {
     }
 
     /** {@inheritDoc} */
-    public void init(double t0, double[] y0, double t) {
+    @Override
+	public void init(double t0, double[] y0, double t) {
 
         firstTime       = Double.NaN;
         lastTime        = Double.NaN;
@@ -197,7 +198,8 @@ public class StepNormalizer implements StepHandler {
      * copy.
      * @param isLast true if the step is the last one
      */
-    public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
+    @Override
+	public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
         // The first time, update the last state with the start information.
         if (lastState == null) {
             firstTime = interpolator.getPreviousTime();

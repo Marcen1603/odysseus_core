@@ -77,7 +77,8 @@ public class StepFunction implements UnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         int index = Arrays.binarySearch(abscissa, x);
         double fx = 0;
 

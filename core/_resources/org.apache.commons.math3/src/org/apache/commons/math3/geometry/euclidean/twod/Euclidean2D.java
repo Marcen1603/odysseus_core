@@ -45,12 +45,14 @@ public class Euclidean2D implements Serializable, Space {
     }
 
     /** {@inheritDoc} */
-    public int getDimension() {
+    @Override
+	public int getDimension() {
         return 2;
     }
 
     /** {@inheritDoc} */
-    public Euclidean1D getSubSpace() {
+    @Override
+	public Euclidean1D getSubSpace() {
         return Euclidean1D.getInstance();
     }
 

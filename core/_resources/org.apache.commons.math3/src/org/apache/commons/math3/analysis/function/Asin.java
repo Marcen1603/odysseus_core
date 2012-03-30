@@ -29,15 +29,18 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class Asin implements DifferentiableUnivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return FastMath.asin(x);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return 1 / FastMath.sqrt(1 - x * x);
             }
         };

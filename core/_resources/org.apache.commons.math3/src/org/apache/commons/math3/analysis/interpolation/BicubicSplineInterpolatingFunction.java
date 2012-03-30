@@ -155,7 +155,8 @@ public class BicubicSplineInterpolatingFunction
     /**
      * {@inheritDoc}
      */
-    public double value(double x, double y) {
+    @Override
+	public double value(double x, double y) {
         final int i = searchIndex(x, xval);
         if (i == -1) {
             throw new OutOfRangeException(x, xval[0], xval[xval.length - 1]);
@@ -374,7 +375,8 @@ class BicubicSplineFunction
     /**
      * {@inheritDoc}
      */
-    public double value(double x, double y) {
+    @Override
+	public double value(double x, double y) {
         if (x < 0 || x > 1) {
             throw new OutOfRangeException(x, 0, 1);
         }
@@ -485,7 +487,8 @@ class BicubicSplineFunction
         }
 
         partialDerivativeX = new BivariateFunction() {
-                public double value(double x, double y)  {
+                @Override
+				public double value(double x, double y)  {
                     final double x2 = x * x;
                     final double[] pX = {0, 1, x, x2};
 
@@ -497,7 +500,8 @@ class BicubicSplineFunction
                 }
             };
         partialDerivativeY = new BivariateFunction() {
-                public double value(double x, double y)  {
+                @Override
+				public double value(double x, double y)  {
                     final double x2 = x * x;
                     final double x3 = x2 * x;
                     final double[] pX = {1, x, x2, x3};
@@ -509,7 +513,8 @@ class BicubicSplineFunction
                 }
             };
         partialDerivativeXX = new BivariateFunction() {
-                public double value(double x, double y)  {
+                @Override
+				public double value(double x, double y)  {
                     final double[] pX = {0, 0, 1, x};
 
                     final double y2 = y * y;
@@ -520,7 +525,8 @@ class BicubicSplineFunction
                 }
             };
         partialDerivativeYY = new BivariateFunction() {
-                public double value(double x, double y)  {
+                @Override
+				public double value(double x, double y)  {
                     final double x2 = x * x;
                     final double x3 = x2 * x;
                     final double[] pX = {1, x, x2, x3};
@@ -531,7 +537,8 @@ class BicubicSplineFunction
                 }
             };
         partialDerivativeXY = new BivariateFunction() {
-                public double value(double x, double y)  {
+                @Override
+				public double value(double x, double y)  {
                     final double x2 = x * x;
                     final double[] pX = {0, 1, x, x2};
 

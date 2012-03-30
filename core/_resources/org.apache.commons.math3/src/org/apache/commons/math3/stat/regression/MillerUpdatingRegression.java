@@ -160,7 +160,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * A getter method which determines whether a constant is included
      * @return true regression has an intercept, false no intercept
      */
-    public boolean hasIntercept() {
+    @Override
+	public boolean hasIntercept() {
         return this.hasIntercept;
     }
 
@@ -168,7 +169,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * Gets the number of observations added to the regression model
      * @return number of observations
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return this.nobs;
     }
 
@@ -179,7 +181,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * @exception ModelSpecificationException if the length of {@code x} does not equal
      * the number of independent variables in the model
      */
-    public void addObservation(final double[] x, final double y) {
+    @Override
+	public void addObservation(final double[] x, final double y) {
 
         if ((!this.hasIntercept && x.length != nvars) ||
                (this.hasIntercept && x.length + 1 != nvars)) {
@@ -206,7 +209,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * @throws ModelSpecificationException if {@code x} is not rectangular, does not match
      * the length of {@code y} or does not contain sufficient data to estimate the model
      */
-    public void addObservations(double[][] x, double[] y) {
+    @Override
+	public void addObservations(double[][] x, double[] y) {
         if ((x == null) || (y == null) || (x.length != y.length)) {
             throw new ModelSpecificationException(
                   LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
@@ -330,7 +334,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * As the name suggests,  clear wipes the internals and reorders everything in the
      * canonical order.
      */
-    public void clear() {
+    @Override
+	public void clear() {
         Arrays.fill(this.d, 0.0);
         Arrays.fill(this.rhs, 0.0);
         Arrays.fill(this.r, 0.0);
@@ -929,7 +934,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * @exception  ModelSpecificationException - thrown if number of observations is
      * less than the number of variables
      */
-    public RegressionResults regress() throws ModelSpecificationException {
+    @Override
+	public RegressionResults regress() throws ModelSpecificationException {
         return regress(this.nvars);
     }
 
@@ -1029,7 +1035,8 @@ public class MillerUpdatingRegression implements UpdatingMultipleLinearRegressio
      * is greater than the regressors in the model or a regressor index in
      * regressor array does not exist
      */
-    public RegressionResults regress(int[] variablesToInclude) throws ModelSpecificationException {
+    @Override
+	public RegressionResults regress(int[] variablesToInclude) throws ModelSpecificationException {
         if (variablesToInclude.length > this.nvars) {
             throw new ModelSpecificationException(
                     LocalizedFormats.TOO_MANY_REGRESSORS, variablesToInclude.length, this.nvars);

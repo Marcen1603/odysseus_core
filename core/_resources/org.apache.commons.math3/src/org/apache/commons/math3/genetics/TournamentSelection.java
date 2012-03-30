@@ -54,7 +54,8 @@ public class TournamentSelection implements SelectionPolicy {
      * @param population the population from which the chromosomes are choosen.
      * @return the selected chromosomes.
      */
-    public ChromosomePair select(final Population population) {
+    @Override
+	public ChromosomePair select(final Population population) {
         return new ChromosomePair(tournament((ListPopulation) population),
                                   tournament((ListPopulation)population));
     }
@@ -76,7 +77,8 @@ public class TournamentSelection implements SelectionPolicy {
         }
         // auxiliary population
         ListPopulation tournamentPopulation = new ListPopulation(this.arity) {
-            public Population nextGeneration() {
+            @Override
+			public Population nextGeneration() {
                 // not useful here
                 return null;
             }

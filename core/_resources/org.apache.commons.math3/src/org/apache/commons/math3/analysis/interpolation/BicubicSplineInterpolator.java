@@ -33,7 +33,8 @@ public class BicubicSplineInterpolator
     /**
      * {@inheritDoc}
      */
-    public BicubicSplineInterpolatingFunction interpolate(final double[] xval,
+    @Override
+	public BicubicSplineInterpolatingFunction interpolate(final double[] xval,
                                                           final double[] yval,
                                                           final double[][] fval) {
         if (xval.length == 0 || yval.length == 0 || fval.length == 0) {

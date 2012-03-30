@@ -94,7 +94,8 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
      * @throws NumberIsTooSmallException if the size of {@code x} is less
      * than 2.
      */
-    public double value(double z) {
+    @Override
+	public double value(double z) {
         return evaluateInternal(x, y, z);
     }
 

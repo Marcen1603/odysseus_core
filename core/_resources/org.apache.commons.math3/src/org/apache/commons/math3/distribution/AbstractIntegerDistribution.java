@@ -52,7 +52,8 @@ implements IntegerDistribution, Serializable {
      * The default implementation uses the identity
      * <p>{@code P(x0 < X <= x1) = P(X <= x1) - P(X <= x0)}</p>
      */
-    public double cumulativeProbability(int x0, int x1) throws NumberIsTooLargeException {
+    @Override
+	public double cumulativeProbability(int x0, int x1) throws NumberIsTooLargeException {
         if (x1 < x0) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT,
                     x0, x1, true);
@@ -71,7 +72,8 @@ implements IntegerDistribution, Serializable {
      *     {@code 0 < p < 1}.</li>
      * </ul>
      */
-    public int inverseCumulativeProbability(final double p) throws OutOfRangeException {
+    @Override
+	public int inverseCumulativeProbability(final double p) throws OutOfRangeException {
         if (p < 0.0 || p > 1.0) {
             throw new OutOfRangeException(p, 0, 1);
         }
@@ -151,7 +153,8 @@ implements IntegerDistribution, Serializable {
     }
 
     /** {@inheritDoc} */
-    public void reseedRandomGenerator(long seed) {
+    @Override
+	public void reseedRandomGenerator(long seed) {
         randomData.reSeed(seed);
     }
 
@@ -162,7 +165,8 @@ implements IntegerDistribution, Serializable {
      * <a href="http://en.wikipedia.org/wiki/Inverse_transform_sampling">
      * inversion method</a>.
      */
-    public int sample() {
+    @Override
+	public int sample() {
         return randomData.nextInversionDeviate(this);
     }
 
@@ -172,7 +176,8 @@ implements IntegerDistribution, Serializable {
      * The default implementation generates the sample by calling
      * {@link #sample()} in a loop.
      */
-    public int[] sample(int sampleSize) {
+    @Override
+	public int[] sample(int sampleSize) {
         if (sampleSize <= 0) {
             throw new NotStrictlyPositiveException(
                     LocalizedFormats.NUMBER_OF_SAMPLES, sampleSize);

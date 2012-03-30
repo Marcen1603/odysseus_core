@@ -40,7 +40,8 @@ public class GaussianRandomGenerator implements NormalizedRandomGenerator {
     /** Generate a random scalar with null mean and unit standard deviation.
      * @return a random scalar with null mean and unit standard deviation
      */
-    public double nextNormalizedDouble() {
+    @Override
+	public double nextNormalizedDouble() {
         return generator.nextGaussian();
     }
 

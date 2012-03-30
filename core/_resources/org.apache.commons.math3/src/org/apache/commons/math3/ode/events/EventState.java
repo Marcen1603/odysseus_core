@@ -198,7 +198,8 @@ public class EventState {
             final double h = dt / n;
 
             final UnivariateFunction f = new UnivariateFunction() {
-                public double value(final double t) {
+                @Override
+				public double value(final double t) {
                     interpolator.setInterpolatedTime(t);
                     return handler.g(t, interpolator.getInterpolatedState());
                 }

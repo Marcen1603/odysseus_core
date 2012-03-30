@@ -18,8 +18,6 @@
 
 package org.apache.commons.math3.optimization.direct;
 
-import java.util.Arrays;
-
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.exception.MathIllegalStateException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -29,8 +27,8 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.optimization.GoalType;
-import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.MultivariateOptimizer;
+import org.apache.commons.math3.optimization.PointValuePair;
 
 /**
  * Powell's BOBYQA algorithm. This implementation is translated and
@@ -2443,20 +2441,20 @@ public class BOBYQAOptimizer
      * @return an array containing {@code n} elements set to the given
      * {@code value}.
      */
-    private static double[] fillNewArray(int n,
-                                         double value) {
-        double[] ds = new double[n];
-        Arrays.fill(ds, value);
-        return ds;
-    }
+//    private static double[] fillNewArray(int n,
+//                                         double value) {
+//        double[] ds = new double[n];
+//        Arrays.fill(ds, value);
+//        return ds;
+//    }
 
-    // XXX utility for figuring out call sequence.
-    private static String caller(int n) {
-        final Throwable t = new Throwable();
-        final StackTraceElement[] elements = t.getStackTrace();
-        final StackTraceElement e = elements[n];
-        return e.getMethodName() + " (at line " + e.getLineNumber() + ")";
-    }
+//    // XXX utility for figuring out call sequence.
+//    private static String caller(int n) {
+//        final Throwable t = new Throwable();
+//        final StackTraceElement[] elements = t.getStackTrace();
+//        final StackTraceElement e = elements[n];
+//        return e.getMethodName() + " (at line " + e.getLineNumber() + ")";
+//    }
     // XXX utility for figuring out call sequence.
     private static void printState(int s) {
         //        System.out.println(caller(2) + ": state " + s);
@@ -2470,15 +2468,15 @@ public class BOBYQAOptimizer
      * Marker for code paths that are not explored with the current unit tests.
      * If the path becomes explored, it should just be removed from the code.
      */
-    private static class PathIsExploredException extends RuntimeException {
-        private static final long serialVersionUID = 745350979634801853L;
-
-        private static final String PATH_IS_EXPLORED
-            = "If this exception is thrown, just remove it from the code";
-
-        PathIsExploredException() {
-            super(PATH_IS_EXPLORED + " " + BOBYQAOptimizer.caller(3));
-        }
-    }
+//    private static class PathIsExploredException extends RuntimeException {
+//        private static final long serialVersionUID = 745350979634801853L;
+//
+//        private static final String PATH_IS_EXPLORED
+//            = "If this exception is thrown, just remove it from the code";
+//
+//        PathIsExploredException() {
+//            super(PATH_IS_EXPLORED + " " + BOBYQAOptimizer.caller(3));
+//        }
+//    }
 }
 //CHECKSTYLE: resume all

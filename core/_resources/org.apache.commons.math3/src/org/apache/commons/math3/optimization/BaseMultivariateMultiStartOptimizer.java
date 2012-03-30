@@ -117,24 +117,28 @@ public class BaseMultivariateMultiStartOptimizer<FUNC extends MultivariateFuncti
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return maxEvaluations;
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return totalEvaluations;
     }
 
     /** {@inheritDoc} */
-    public ConvergenceChecker<PointValuePair> getConvergenceChecker() {
+    @Override
+	public ConvergenceChecker<PointValuePair> getConvergenceChecker() {
         return optimizer.getConvergenceChecker();
     }
 
     /**
      * {@inheritDoc}
      */
-    public PointValuePair optimize(int maxEval, final FUNC f,
+    @Override
+	public PointValuePair optimize(int maxEval, final FUNC f,
                                        final GoalType goal,
                                        double[] startPoint) {
         maxEvaluations = maxEval;
@@ -174,7 +178,8 @@ public class BaseMultivariateMultiStartOptimizer<FUNC extends MultivariateFuncti
      */
     private void sortPairs(final GoalType goal) {
         Arrays.sort(optima, new Comparator<PointValuePair>() {
-                public int compare(final PointValuePair o1,
+                @Override
+				public int compare(final PointValuePair o1,
                                    final PointValuePair o2) {
                     if (o1 == null) {
                         return (o2 == null) ? 0 : 1;

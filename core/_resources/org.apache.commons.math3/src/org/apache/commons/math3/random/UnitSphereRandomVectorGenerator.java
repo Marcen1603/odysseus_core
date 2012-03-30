@@ -58,7 +58,8 @@ public class UnitSphereRandomVectorGenerator
     }
 
     /** {@inheritDoc} */
-    public double[] nextVector() {
+    @Override
+	public double[] nextVector() {
 
         final double[] v = new double[dimension];
 

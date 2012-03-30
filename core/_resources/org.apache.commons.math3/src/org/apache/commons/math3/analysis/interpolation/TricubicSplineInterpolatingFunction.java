@@ -306,7 +306,8 @@ public class TricubicSplineInterpolatingFunction
     /**
      * {@inheritDoc}
      */
-    public double value(double x, double y, double z) {
+    @Override
+	public double value(double x, double y, double z) {
         final int i = searchIndex(x, xval);
         if (i == -1) {
             throw new OutOfRangeException(x, xval[0], xval[xval.length - 1]);
@@ -446,7 +447,8 @@ class TricubicSplineFunction
      * @param z z-coordinate of the interpolation point.
      * @return the interpolated value.
      */
-    public double value(double x, double y, double z) {
+    @Override
+	public double value(double x, double y, double z) {
         if (x < 0 || x > 1) {
             throw new OutOfRangeException(x, 0, 1);
         }

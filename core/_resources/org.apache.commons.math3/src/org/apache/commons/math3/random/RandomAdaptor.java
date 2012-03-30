@@ -174,14 +174,16 @@ public class RandomAdaptor extends Random implements RandomGenerator {
     }
 
     /** {@inheritDoc} */
-    public void setSeed(int seed) {
+    @Override
+	public void setSeed(int seed) {
         if (randomGenerator != null) {  // required to avoid NPE in constructor
             randomGenerator.setSeed(seed);
         }
     }
 
     /** {@inheritDoc} */
-    public void setSeed(int[] seed) {
+    @Override
+	public void setSeed(int[] seed) {
         if (randomGenerator != null) {  // required to avoid NPE in constructor
             randomGenerator.setSeed(seed);
         }

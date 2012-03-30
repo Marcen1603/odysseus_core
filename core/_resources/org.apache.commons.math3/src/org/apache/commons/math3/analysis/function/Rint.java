@@ -28,7 +28,8 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class Rint implements UnivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return FastMath.rint(x);
     }
 }

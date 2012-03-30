@@ -88,17 +88,20 @@ public class UnivariateMultiStartOptimizer<FUNC extends UnivariateFunction>
     /**
      * {@inheritDoc}
      */
-    public ConvergenceChecker<UnivariatePointValuePair> getConvergenceChecker() {
+    @Override
+	public ConvergenceChecker<UnivariatePointValuePair> getConvergenceChecker() {
         return optimizer.getConvergenceChecker();
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return maxEvaluations;
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return totalEvaluations;
     }
 
@@ -137,14 +140,16 @@ public class UnivariateMultiStartOptimizer<FUNC extends UnivariateFunction>
     }
 
     /** {@inheritDoc} */
-    public UnivariatePointValuePair optimize(int maxEval, final FUNC f,
+    @Override
+	public UnivariatePointValuePair optimize(int maxEval, final FUNC f,
                                                  final GoalType goal,
                                                  final double min, final double max) {
         return optimize(maxEval, f, goal, min, max, min + 0.5 * (max - min));
     }
 
     /** {@inheritDoc} */
-    public UnivariatePointValuePair optimize(int maxEval, final FUNC f,
+    @Override
+	public UnivariatePointValuePair optimize(int maxEval, final FUNC f,
                                                  final GoalType goal,
                                                  final double min, final double max,
                                                  final double startValue) {
@@ -184,7 +189,8 @@ public class UnivariateMultiStartOptimizer<FUNC extends UnivariateFunction>
      */
     private void sortPairs(final GoalType goal) {
         Arrays.sort(optima, new Comparator<UnivariatePointValuePair>() {
-                public int compare(final UnivariatePointValuePair o1,
+                @Override
+				public int compare(final UnivariatePointValuePair o1,
                                    final UnivariatePointValuePair o2) {
                     if (o1 == null) {
                         return (o2 == null) ? 0 : 1;

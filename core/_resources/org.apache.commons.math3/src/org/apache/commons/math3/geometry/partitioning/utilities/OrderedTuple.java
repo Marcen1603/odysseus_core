@@ -244,7 +244,8 @@ public class OrderedTuple implements Comparable<OrderedTuple> {
      * instance is greater than the object
 
      */
-    public int compareTo(final OrderedTuple ot) {
+    @Override
+	public int compareTo(final OrderedTuple ot) {
         if (components.length == ot.components.length) {
             if (nan) {
                 return +1;

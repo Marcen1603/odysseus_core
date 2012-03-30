@@ -84,12 +84,14 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * @return 0
      */
-    public double probability(double x) {
+    @Override
+	public double probability(double x) {
         return 0.0;
     }
 
     /** {@inheritDoc} */
-    public double density(double x) {
+    @Override
+	public double density(double x) {
         if (x < 0) {
             return 0;
         }
@@ -106,7 +108,8 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      * Exponential Distribution</a>, equation (1).</li>
      * </ul>
      */
-    public double cumulativeProbability(double x)  {
+    @Override
+	public double cumulativeProbability(double x)  {
         double ret;
         if (x <= 0.0) {
             ret = 0.0;
@@ -164,7 +167,8 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * For mean parameter {@code k}, the mean is {@code k}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return getMean();
     }
 
@@ -173,7 +177,8 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * For mean parameter {@code k}, the variance is {@code k^2}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         final double m = getMean();
         return m * m;
     }
@@ -185,7 +190,8 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * @return lower bound of the support (always 0)
      */
-    public double getSupportLowerBound() {
+    @Override
+	public double getSupportLowerBound() {
         return 0;
     }
 
@@ -197,17 +203,20 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * @return upper bound of the support (always Double.POSITIVE_INFINITY)
      */
-    public double getSupportUpperBound() {
+    @Override
+	public double getSupportUpperBound() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportLowerBoundInclusive() {
+    @Override
+	public boolean isSupportLowerBoundInclusive() {
         return true;
     }
 
     /** {@inheritDoc} */
-    public boolean isSupportUpperBoundInclusive() {
+    @Override
+	public boolean isSupportUpperBoundInclusive() {
         return false;
     }
 
@@ -218,7 +227,8 @@ public class ExponentialDistribution extends AbstractRealDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

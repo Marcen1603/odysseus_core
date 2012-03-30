@@ -37,7 +37,8 @@ public class RandomKeyMutation implements MutationPolicy {
      * @throws MathIllegalArgumentException if <code>original</code> is not a
      * {@link RandomKey} instance
      */
-    public Chromosome mutate(final Chromosome original) {
+    @Override
+	public Chromosome mutate(final Chromosome original) {
         if (!(original instanceof RandomKey<?>)) {
             throw new MathIllegalArgumentException(LocalizedFormats.RANDOMKEY_MUTATION_WRONG_CLASS,
                                                    original.getClass().getSimpleName());

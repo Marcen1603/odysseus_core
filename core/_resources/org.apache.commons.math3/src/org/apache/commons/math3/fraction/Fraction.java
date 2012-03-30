@@ -303,7 +303,8 @@ public class Fraction
      * @return -1 if this is less than <tt>object</tt>, +1 if this is greater
      *         than <tt>object</tt>, 0 if they are equal.
      */
-    public int compareTo(Fraction object) {
+    @Override
+	public int compareTo(Fraction object) {
         long nOd = ((long) numerator) * object.denominator;
         long dOn = ((long) denominator) * object.numerator;
         return (nOd < dOn) ? -1 : ((nOd > dOn) ? +1 : 0);
@@ -402,7 +403,8 @@ public class Fraction
      * Return the additive inverse of this fraction.
      * @return the negation of this fraction.
      */
-    public Fraction negate() {
+    @Override
+	public Fraction negate() {
         if (numerator==Integer.MIN_VALUE) {
             throw new MathArithmeticException(LocalizedFormats.OVERFLOW_IN_FRACTION, numerator, denominator);
         }
@@ -413,7 +415,8 @@ public class Fraction
      * Return the multiplicative inverse of this fraction.
      * @return the reciprocal fraction
      */
-    public Fraction reciprocal() {
+    @Override
+	public Fraction reciprocal() {
         return new Fraction(denominator, numerator);
     }
 
@@ -427,7 +430,8 @@ public class Fraction
      * @throws MathArithmeticException if the resulting numerator or denominator exceeds
      *  {@code Integer.MAX_VALUE}
      */
-    public Fraction add(Fraction fraction) {
+    @Override
+	public Fraction add(Fraction fraction) {
         return addSub(fraction, true /* add */);
     }
 
@@ -450,7 +454,8 @@ public class Fraction
      * @throws MathArithmeticException if the resulting numerator or denominator
      *   cannot be represented in an {@code int}.
      */
-    public Fraction subtract(Fraction fraction) {
+    @Override
+	public Fraction subtract(Fraction fraction) {
         return addSub(fraction, false /* subtract */);
     }
 
@@ -530,7 +535,8 @@ public class Fraction
      * @throws MathArithmeticException if the resulting numerator or denominator exceeds
      *  {@code Integer.MAX_VALUE}
      */
-    public Fraction multiply(Fraction fraction) {
+    @Override
+	public Fraction multiply(Fraction fraction) {
         if (fraction == null) {
             throw new NullArgumentException(LocalizedFormats.FRACTION);
         }
@@ -551,7 +557,8 @@ public class Fraction
      * @param i the <tt>integer</tt> to multiply by.
      * @return this * i
      */
-    public Fraction multiply(final int i) {
+    @Override
+	public Fraction multiply(final int i) {
         return new Fraction(numerator * i, denominator);
     }
 
@@ -565,7 +572,8 @@ public class Fraction
      * @throws MathArithmeticException if the resulting numerator or denominator exceeds
      *  {@code Integer.MAX_VALUE}
      */
-    public Fraction divide(Fraction fraction) {
+    @Override
+	public Fraction divide(Fraction fraction) {
         if (fraction == null) {
             throw new NullArgumentException(LocalizedFormats.FRACTION);
         }
@@ -659,7 +667,8 @@ public class Fraction
     }
 
     /** {@inheritDoc} */
-    public FractionField getField() {
+    @Override
+	public FractionField getField() {
         return FractionField.getInstance();
     }
 

@@ -51,7 +51,8 @@ public class NevilleInterpolator implements UnivariateInterpolator,
      * @throws org.apache.commons.math3.exception.NonMonotonicSequenceException
      * if two abscissae have the same value.
      */
-    public PolynomialFunctionLagrangeForm interpolate(double x[], double y[]) {
+    @Override
+	public PolynomialFunctionLagrangeForm interpolate(double x[], double y[]) {
         return new PolynomialFunctionLagrangeForm(x, y);
     }
 }

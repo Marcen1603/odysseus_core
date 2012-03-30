@@ -313,7 +313,8 @@ public class QRDecomposition {
         }
 
         /** {@inheritDoc} */
-        public boolean isNonSingular() {
+        @Override
+		public boolean isNonSingular() {
             for (double diag : rDiag) {
                 if (FastMath.abs(diag) <= threshold) {
                     return false;
@@ -323,7 +324,8 @@ public class QRDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealVector solve(RealVector b) {
+        @Override
+		public RealVector solve(RealVector b) {
             final int n = qrt.length;
             final int m = qrt[0].length;
             if (b.getDimension() != m) {
@@ -366,7 +368,8 @@ public class QRDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        @Override
+		public RealMatrix solve(RealMatrix b) {
             final int n = qrt.length;
             final int m = qrt[0].length;
             if (b.getRowDimension() != m) {
@@ -445,7 +448,8 @@ public class QRDecomposition {
         }
 
         /** {@inheritDoc} */
-        public RealMatrix getInverse() {
+        @Override
+		public RealMatrix getInverse() {
             return solve(MatrixUtils.createRealIdentityMatrix(rDiag.length));
         }
     }

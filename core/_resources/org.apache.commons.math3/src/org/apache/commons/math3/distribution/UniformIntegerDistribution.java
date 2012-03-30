@@ -58,7 +58,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(int x) {
+    @Override
+	public double probability(int x) {
         if (x < lower || x > upper) {
             return 0;
         }
@@ -66,7 +67,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(int x) {
+    @Override
+	public double cumulativeProbability(int x) {
         if (x < lower) {
             return 0;
         }
@@ -82,7 +84,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      * For lower bound {@code lower} and upper bound {@code upper}, the mean is
      * {@code 0.5 * (lower + upper)}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return 0.5 * (lower + upper);
     }
 
@@ -92,7 +95,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      * For lower bound {@code lower} and upper bound {@code upper}, and
      * {@code n = upper - lower + 1}, the variance is {@code (n^2 - 1) / 12}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         double n = upper - lower + 1;
         return (n * n - 1) / 12.0;
     }
@@ -105,7 +109,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return lower;
     }
 
@@ -117,7 +122,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      *
      * @return upper bound of the support
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return upper;
     }
 
@@ -128,7 +134,8 @@ public class UniformIntegerDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 

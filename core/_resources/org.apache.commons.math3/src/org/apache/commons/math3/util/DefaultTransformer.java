@@ -44,7 +44,8 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
      * cannot successfully be transformed
      * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html">Commons Collections Transformer</a>
      */
-    public double transform(Object o)
+    @Override
+	public double transform(Object o)
         throws NullArgumentException, MathIllegalArgumentException {
 
         if (o == null) {

@@ -799,18 +799,21 @@ public class OpenMapRealVector extends SparseRealVector
         }
 
         /** {@inheritDoc} */
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return iter.hasNext();
         }
 
         /** {@inheritDoc} */
-        public Entry next() {
+        @Override
+		public Entry next() {
             iter.advance();
             return current;
         }
 
         /** {@inheritDoc} */
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException("Not supported");
         }
     }

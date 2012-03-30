@@ -75,49 +75,56 @@ public class StatisticalSummaryValues implements Serializable,
     /**
      * @return Returns the max.
      */
-    public double getMax() {
+    @Override
+	public double getMax() {
         return max;
     }
 
     /**
      * @return Returns the mean.
      */
-    public double getMean() {
+    @Override
+	public double getMean() {
         return mean;
     }
 
     /**
      * @return Returns the min.
      */
-    public double getMin() {
+    @Override
+	public double getMin() {
         return min;
     }
 
     /**
      * @return Returns the number of values.
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 
     /**
      * @return Returns the sum.
      */
-    public double getSum() {
+    @Override
+	public double getSum() {
         return sum;
     }
 
     /**
      * @return Returns the standard deviation
      */
-    public double getStandardDeviation() {
+    @Override
+	public double getStandardDeviation() {
         return FastMath.sqrt(variance);
     }
 
     /**
      * @return Returns the variance.
      */
-    public double getVariance() {
+    @Override
+	public double getVariance() {
         return variance;
     }
 

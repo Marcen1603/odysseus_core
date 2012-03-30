@@ -28,7 +28,8 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class Min implements BivariateFunction {
     /** {@inheritDoc} */
-    public double value(double x, double y) {
+    @Override
+	public double value(double x, double y) {
         return FastMath.min(x, y);
     }
 }

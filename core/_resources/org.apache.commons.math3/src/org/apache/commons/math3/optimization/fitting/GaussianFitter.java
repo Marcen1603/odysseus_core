@@ -85,7 +85,8 @@ public class GaussianFitter extends CurveFitter {
         final ParametricUnivariateFunction f = new ParametricUnivariateFunction() {
                 private final ParametricUnivariateFunction g = new Gaussian.Parametric();
 
-                public double value(double x, double ... p) {
+                @Override
+				public double value(double x, double ... p) {
                     double v = Double.POSITIVE_INFINITY;
                     try {
                         v = g.value(x, p);
@@ -95,7 +96,8 @@ public class GaussianFitter extends CurveFitter {
                     return v;
                 }
 
-                public double[] gradient(double x, double ... p) {
+                @Override
+				public double[] gradient(double x, double ... p) {
                     double[] v = { Double.POSITIVE_INFINITY,
                                    Double.POSITIVE_INFINITY,
                                    Double.POSITIVE_INFINITY };
@@ -301,7 +303,8 @@ public class GaussianFitter extends CurveFitter {
          */
         private Comparator<WeightedObservedPoint> createWeightedObservedPointComparator() {
             return new Comparator<WeightedObservedPoint>() {
-                public int compare(WeightedObservedPoint p1, WeightedObservedPoint p2) {
+                @Override
+				public int compare(WeightedObservedPoint p1, WeightedObservedPoint p2) {
                     if (p1 == null && p2 == null) {
                         return 0;
                     }

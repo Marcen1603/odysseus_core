@@ -37,13 +37,16 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     }
 
     /** {@inheritDoc} */
-    public abstract void setSeed(int seed);
+    @Override
+	public abstract void setSeed(int seed);
 
     /** {@inheritDoc} */
-    public abstract void setSeed(int[] seed);
+    @Override
+	public abstract void setSeed(int[] seed);
 
     /** {@inheritDoc} */
-    public abstract void setSeed(long seed);
+    @Override
+	public abstract void setSeed(long seed);
 
     /** Generate next pseudorandom number.
      * <p>This method is the core generation algorithm. It is used by all the
@@ -57,12 +60,14 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     protected abstract int next(int bits);
 
     /** {@inheritDoc} */
-    public boolean nextBoolean() {
+    @Override
+	public boolean nextBoolean() {
         return next(1) != 0;
     }
 
     /** {@inheritDoc} */
-    public void nextBytes(byte[] bytes) {
+    @Override
+	public void nextBytes(byte[] bytes) {
         int i = 0;
         final int iEnd = bytes.length - 3;
         while (i < iEnd) {
@@ -81,19 +86,22 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     }
 
     /** {@inheritDoc} */
-    public double nextDouble() {
+    @Override
+	public double nextDouble() {
         final long high = ((long) next(26)) << 26;
         final int  low  = next(26);
         return (high | low) * 0x1.0p-52d;
     }
 
     /** {@inheritDoc} */
-    public float nextFloat() {
+    @Override
+	public float nextFloat() {
         return next(23) * 0x1.0p-23f;
     }
 
     /** {@inheritDoc} */
-    public double nextGaussian() {
+    @Override
+	public double nextGaussian() {
 
         final double random;
         if (Double.isNaN(nextGaussian)) {
@@ -115,7 +123,8 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     }
 
     /** {@inheritDoc} */
-    public int nextInt() {
+    @Override
+	public int nextInt() {
         return next(32);
     }
 
@@ -134,7 +143,8 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
      * is generated. Rejection of this initial segment is necessary to ensure
      * a uniform distribution.</li></ul></p>
      */
-    public int nextInt(int n) throws IllegalArgumentException {
+    @Override
+	public int nextInt(int n) throws IllegalArgumentException {
         if (n > 0) {
             if ((n & -n) == n) {
                 return (int) ((n * (long) next(31)) >> 31);
@@ -151,7 +161,8 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     }
 
     /** {@inheritDoc} */
-    public long nextLong() {
+    @Override
+	public long nextLong() {
         final long high  = ((long) next(32)) << 32;
         final long  low  = ((long) next(32)) & 0xffffffffL;
         return high | low;

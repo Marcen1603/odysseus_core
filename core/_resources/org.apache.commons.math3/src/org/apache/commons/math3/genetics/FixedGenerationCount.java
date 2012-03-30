@@ -56,7 +56,8 @@ public class FixedGenerationCount implements StoppingCondition {
      * @param population ignored (no impact on result)
      * @return <code>true</code> IFF the maximum number of generations has been exceeded
      */
-    public boolean isSatisfied(final Population population) {
+    @Override
+	public boolean isSatisfied(final Population population) {
         if (this.numGenerations < this.maxGenerations) {
             numGenerations++;
             return false;

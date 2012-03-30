@@ -62,14 +62,16 @@ public abstract class AbstractSubHyperplane<S extends Space, T extends Space>
                                                             final Region<T> remaining);
 
     /** {@inheritDoc} */
-    public AbstractSubHyperplane<S, T> copySelf() {
+    @Override
+	public AbstractSubHyperplane<S, T> copySelf() {
         return buildNew(hyperplane, remainingRegion);
     }
 
     /** Get the underlying hyperplane.
      * @return underlying hyperplane
      */
-    public Hyperplane<S> getHyperplane() {
+    @Override
+	public Hyperplane<S> getHyperplane() {
         return hyperplane;
     }
 
@@ -85,12 +87,14 @@ public abstract class AbstractSubHyperplane<S extends Space, T extends Space>
     }
 
     /** {@inheritDoc} */
-    public double getSize() {
+    @Override
+	public double getSize() {
         return remainingRegion.getSize();
     }
 
     /** {@inheritDoc} */
-    public AbstractSubHyperplane<S, T> reunite(final SubHyperplane<S> other) {
+    @Override
+	public AbstractSubHyperplane<S, T> reunite(final SubHyperplane<S> other) {
         @SuppressWarnings("unchecked")
         AbstractSubHyperplane<S, T> o = (AbstractSubHyperplane<S, T>) other;
         return buildNew(hyperplane,
@@ -146,13 +150,16 @@ public abstract class AbstractSubHyperplane<S extends Space, T extends Space>
     }
 
     /** {@inheritDoc} */
-    public abstract Side side(Hyperplane<S> hyper);
+    @Override
+	public abstract Side side(Hyperplane<S> hyper);
 
     /** {@inheritDoc} */
-    public abstract SplitSubHyperplane<S> split(Hyperplane<S> hyper);
+    @Override
+	public abstract SplitSubHyperplane<S> split(Hyperplane<S> hyper);
 
     /** {@inheritDoc} */
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         return remainingRegion.isEmpty();
     }
 

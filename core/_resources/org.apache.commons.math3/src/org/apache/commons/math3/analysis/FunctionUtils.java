@@ -45,7 +45,8 @@ public class FunctionUtils {
     public static UnivariateFunction compose(final UnivariateFunction ... f) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = x;
                 for (int i = f.length - 1; i >= 0; i--) {
                     r = f[i].value(r);
@@ -66,7 +67,8 @@ public class FunctionUtils {
     public static DifferentiableUnivariateFunction compose(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = x;
                 for (int i = f.length - 1; i >= 0; i--) {
                     r = f[i].value(r);
@@ -75,10 +77,12 @@ public class FunctionUtils {
             }
 
             /** {@inheritDoc} */
-            public UnivariateFunction derivative() {
+            @Override
+			public UnivariateFunction derivative() {
                 return new UnivariateFunction() {
                     /** {@inheritDoc} */
-                    public double value(double x) {
+                    @Override
+					public double value(double x) {
                         double p = 1;
                         double r = x;
                         for (int i = f.length - 1; i >= 0; i--) {
@@ -101,7 +105,8 @@ public class FunctionUtils {
     public static UnivariateFunction add(final UnivariateFunction ... f) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = f[0].value(x);
                 for (int i = 1; i < f.length; i++) {
                     r += f[i].value(x);
@@ -120,7 +125,8 @@ public class FunctionUtils {
     public static DifferentiableUnivariateFunction add(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = f[0].value(x);
                 for (int i = 1; i < f.length; i++) {
                     r += f[i].value(x);
@@ -129,10 +135,12 @@ public class FunctionUtils {
             }
 
             /** {@inheritDoc} */
-            public UnivariateFunction derivative() {
+            @Override
+			public UnivariateFunction derivative() {
                 return new UnivariateFunction() {
                     /** {@inheritDoc} */
-                    public double value(double x) {
+                    @Override
+					public double value(double x) {
                         double r = f[0].derivative().value(x);
                         for (int i = 1; i < f.length; i++) {
                             r += f[i].derivative().value(x);
@@ -153,7 +161,8 @@ public class FunctionUtils {
     public static UnivariateFunction multiply(final UnivariateFunction ... f) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = f[0].value(x);
                 for (int i = 1; i < f.length; i++) {
                     r *= f[i].value(x);
@@ -172,7 +181,8 @@ public class FunctionUtils {
     public static DifferentiableUnivariateFunction multiply(final DifferentiableUnivariateFunction ... f) {
         return new DifferentiableUnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 double r = f[0].value(x);
                 for (int i = 1; i < f.length; i++) {
                     r *= f[i].value(x);
@@ -181,10 +191,12 @@ public class FunctionUtils {
             }
 
             /** {@inheritDoc} */
-            public UnivariateFunction derivative() {
+            @Override
+			public UnivariateFunction derivative() {
                 return new UnivariateFunction() {
                     /** {@inheritDoc} */
-                    public double value(double x) {
+                    @Override
+					public double value(double x) {
                         double sum = 0;
                         for (int i = 0; i < f.length; i++) {
                             double prod = f[i].derivative().value(x);
@@ -216,7 +228,8 @@ public class FunctionUtils {
                                                  final UnivariateFunction g) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return combiner.value(f.value(x), g.value(x));
             }
         };
@@ -237,7 +250,8 @@ public class FunctionUtils {
                                                      final double initialValue) {
         return new MultivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double[] point) {
+            @Override
+			public double value(double[] point) {
                 double result = combiner.value(initialValue, f.value(point[0]));
                 for (int i = 1; i < point.length; i++) {
                     result = combiner.value(result, f.value(point[i]));
@@ -272,7 +286,8 @@ public class FunctionUtils {
                                                         final double fixed) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return f.value(fixed, x);
             }
         };
@@ -288,7 +303,8 @@ public class FunctionUtils {
                                                         final double fixed) {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return f.value(x, fixed);
             }
         };

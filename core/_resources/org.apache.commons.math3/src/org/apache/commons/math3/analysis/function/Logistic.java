@@ -78,15 +78,18 @@ public class Logistic implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return value(m - x, k, b, q, a, oneOverN);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 final double exp = q * FastMath.exp(b * (m - x));
                 if (Double.isInfinite(exp)) {
                     // Avoid returning NaN in case of overflow.
@@ -118,7 +121,8 @@ public class Logistic implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
          */
-        public double value(double x, double ... param) {
+        @Override
+		public double value(double x, double ... param) {
             validateParameters(param);
             return Logistic.value(param[1] - x, param[0],
                                   param[2], param[3],
@@ -139,7 +143,8 @@ public class Logistic implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 6.
          */
-        public double[] gradient(double x, double ... param) {
+        @Override
+		public double[] gradient(double x, double ... param) {
             validateParameters(param);
 
             final double b = param[2];

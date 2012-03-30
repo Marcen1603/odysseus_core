@@ -69,7 +69,8 @@ public class ElitisticListPopulation extends ListPopulation {
      *
      * @return the beginnings of the next generation.
      */
-    public Population nextGeneration() {
+    @Override
+	public Population nextGeneration() {
         // initialize a new generation with the same parameters
         ElitisticListPopulation nextGeneration = new ElitisticListPopulation(this.getPopulationLimit(), this.getElitismRate());
 

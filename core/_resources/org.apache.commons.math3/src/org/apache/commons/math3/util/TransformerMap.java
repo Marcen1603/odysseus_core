@@ -138,7 +138,8 @@ public class TransformerMap implements NumberTransformer, Serializable {
      * transformed into a Double.
      * @see org.apache.commons.math3.util.NumberTransformer#transform(java.lang.Object)
      */
-    public double transform(Object o) throws MathIllegalArgumentException {
+    @Override
+	public double transform(Object o) throws MathIllegalArgumentException {
         double value = Double.NaN;
 
         if (o instanceof Number || o instanceof String) {

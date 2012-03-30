@@ -631,7 +631,8 @@ public class Dfp implements FieldElement<Dfp> {
      * </p>
      * @return {@link org.apache.commons.math3.Field Field} (really a {@link DfpField}) to which the instance belongs
      */
-    public DfpField getField() {
+    @Override
+	public DfpField getField() {
         return field;
     }
 
@@ -1248,7 +1249,8 @@ public class Dfp implements FieldElement<Dfp> {
      * @param x number to add
      * @return sum of this and x
      */
-    public Dfp add(final Dfp x) {
+    @Override
+	public Dfp add(final Dfp x) {
 
         // make sure we don't mix number with different precision
         if (field.getRadixDigits() != x.field.getRadixDigits()) {
@@ -1396,7 +1398,8 @@ public class Dfp implements FieldElement<Dfp> {
     /** Returns a number that is this number with the sign bit reversed.
      * @return the opposite of this
      */
-    public Dfp negate() {
+    @Override
+	public Dfp negate() {
         Dfp result = newInstance(this);
         result.sign = (byte) - result.sign;
         return result;
@@ -1406,7 +1409,8 @@ public class Dfp implements FieldElement<Dfp> {
      * @param x number to subtract
      * @return difference of this and a
      */
-    public Dfp subtract(final Dfp x) {
+    @Override
+	public Dfp subtract(final Dfp x) {
         return add(x.negate());
     }
 
@@ -1493,7 +1497,8 @@ public class Dfp implements FieldElement<Dfp> {
      * @param x multiplicand
      * @return product of this and x
      */
-    public Dfp multiply(final Dfp x) {
+    @Override
+	public Dfp multiply(final Dfp x) {
 
         // make sure we don't mix number with different precision
         if (field.getRadixDigits() != x.field.getRadixDigits()) {
@@ -1600,7 +1605,8 @@ public class Dfp implements FieldElement<Dfp> {
      * @param x multiplicand
      * @return product of this and x
      */
-    public Dfp multiply(final int x) {
+    @Override
+	public Dfp multiply(final int x) {
         Dfp result = newInstance(this);
 
         /* handle special cases */
@@ -1662,7 +1668,8 @@ public class Dfp implements FieldElement<Dfp> {
      * @param divisor divisor
      * @return quotient of this by divisor
      */
-    public Dfp divide(Dfp divisor) {
+    @Override
+	public Dfp divide(Dfp divisor) {
         int dividend[]; // current status of the dividend
         int quotient[]; // quotient
         int remainder[];// remainder
@@ -1938,7 +1945,8 @@ public class Dfp implements FieldElement<Dfp> {
     }
 
     /** {@inheritDoc} */
-    public Dfp reciprocal() {
+    @Override
+	public Dfp reciprocal() {
         return field.getOne().divide(this);
     }
 

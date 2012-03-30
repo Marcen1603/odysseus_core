@@ -94,7 +94,8 @@ public abstract class ListPopulation implements Population {
      * Add the given chromosome to the population.
      * @param chromosome the chromosome to add.
      */
-    public void addChromosome(final Chromosome chromosome) {
+    @Override
+	public void addChromosome(final Chromosome chromosome) {
         this.chromosomes.add(chromosome);
     }
 
@@ -102,7 +103,8 @@ public abstract class ListPopulation implements Population {
      * Access the fittest chromosome in this population.
      * @return the fittest chromosome.
      */
-    public Chromosome getFittestChromosome() {
+    @Override
+	public Chromosome getFittestChromosome() {
         // best so far
         Chromosome bestChromosome = this.chromosomes.get(0);
         for (Chromosome chromosome : this.chromosomes) {
@@ -118,7 +120,8 @@ public abstract class ListPopulation implements Population {
      * Access the maximum population size.
      * @return the maximum population size.
      */
-    public int getPopulationLimit() {
+    @Override
+	public int getPopulationLimit() {
         return this.populationLimit;
     }
 
@@ -134,7 +137,8 @@ public abstract class ListPopulation implements Population {
      * Access the current population size.
      * @return the current population size.
      */
-    public int getPopulationSize() {
+    @Override
+	public int getPopulationSize() {
         return this.chromosomes.size();
     }
 
@@ -151,7 +155,8 @@ public abstract class ListPopulation implements Population {
      *
      * @return chromosome iterator
      */
-    public Iterator<Chromosome> iterator() {
+    @Override
+	public Iterator<Chromosome> iterator() {
         return chromosomes.iterator();
     }
 }

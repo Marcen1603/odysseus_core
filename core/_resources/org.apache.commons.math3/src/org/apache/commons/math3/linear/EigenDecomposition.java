@@ -359,7 +359,8 @@ public class EigenDecomposition{
          * @throws DimensionMismatchException if the matrices dimensions do not match.
          * @throws SingularMatrixException if the decomposed matrix is singular.
          */
-        public RealVector solve(final RealVector b) {
+        @Override
+		public RealVector solve(final RealVector b) {
             if (!isNonSingular()) {
                 throw new SingularMatrixException();
             }
@@ -383,7 +384,8 @@ public class EigenDecomposition{
         }
 
         /** {@inheritDoc} */
-        public RealMatrix solve(RealMatrix b) {
+        @Override
+		public RealMatrix solve(RealMatrix b) {
 
             if (!isNonSingular()) {
                 throw new SingularMatrixException();
@@ -425,7 +427,8 @@ public class EigenDecomposition{
          *
          * @return true if the decomposed matrix is non-singular.
          */
-        public boolean isNonSingular() {
+        @Override
+		public boolean isNonSingular() {
             for (int i = 0; i < realEigenvalues.length; ++i) {
                 if (realEigenvalues[i] == 0 &&
                     imagEigenvalues[i] == 0) {
@@ -441,7 +444,8 @@ public class EigenDecomposition{
          * @return the inverse matrix.
          * @throws SingularMatrixException if the decomposed matrix is singular.
          */
-        public RealMatrix getInverse() {
+        @Override
+		public RealMatrix getInverse() {
             if (!isNonSingular()) {
                 throw new SingularMatrixException();
             }

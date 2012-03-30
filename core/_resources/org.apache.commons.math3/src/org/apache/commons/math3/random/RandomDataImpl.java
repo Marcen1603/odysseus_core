@@ -197,7 +197,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @return the random string.
      * @throws NotStrictlyPositiveException if {@code len <= 0}.
      */
-    public String nextHexString(int len) {
+    @Override
+	public String nextHexString(int len) {
         if (len <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.LENGTH, len);
         }
@@ -233,7 +234,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /** {@inheritDoc} */
-    public int nextInt(int lower, int upper) {
+    @Override
+	public int nextInt(int lower, int upper) {
         if (lower >= upper) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
                                                 lower, upper, false);
@@ -244,7 +246,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /** {@inheritDoc} */
-    public long nextLong(long lower, long upper) {
+    @Override
+	public long nextLong(long lower, long upper) {
         if (lower >= upper) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
                                                 lower, upper, false);
@@ -270,7 +273,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * </ol>
      * </p>
      */
-    public String nextSecureHexString(int len) {
+    @Override
+	public String nextSecureHexString(int len) {
         if (len <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.LENGTH, len);
         }
@@ -320,7 +324,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**  {@inheritDoc} */
-    public int nextSecureInt(int lower, int upper) {
+    @Override
+	public int nextSecureInt(int lower, int upper) {
         if (lower >= upper) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
                                                 lower, upper, false);
@@ -332,7 +337,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /** {@inheritDoc} */
-    public long nextSecureLong(long lower, long upper) {
+    @Override
+	public long nextSecureLong(long lower, long upper) {
 
         if (lower >= upper) {
             throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
@@ -357,7 +363,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i>
      * <strong>Computing</strong> vol. 26 pp. 197-207.</li></ul></p>
      */
-    public long nextPoisson(double mean) {
+    @Override
+	public long nextPoisson(double mean) {
         if (mean <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.MEAN, mean);
         }
@@ -449,7 +456,8 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /** {@inheritDoc} */
-    public double nextGaussian(double mu, double sigma) {
+    @Override
+	public double nextGaussian(double mu, double sigma) {
 
         if (sigma <= 0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.STANDARD_DEVIATION, sigma);
@@ -468,7 +476,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * Communications of the ACM, 15, 873-882.
      * </p>
      */
-    public double nextExponential(double mean) {
+    @Override
+	public double nextExponential(double mean) {
 
         if (mean <= 0.0) {
             throw new NotStrictlyPositiveException(LocalizedFormats.MEAN, mean);
@@ -525,7 +534,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @throws MathIllegalArgumentException if one of the bounds is infinite or
      * {@code NaN} or either bound is infinite or NaN
      */
-    public double nextUniform(double lower, double upper) {
+    @Override
+	public double nextUniform(double lower, double upper) {
 
         return nextUniform(lower, upper, false);
     }
@@ -545,7 +555,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * {@code NaN}
      * @since 3.0
      */
-    public double nextUniform(double lower, double upper,
+    @Override
+	public double nextUniform(double lower, double upper,
         boolean lowerInclusive) {
 
         if (lower >= upper) {
@@ -931,7 +942,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * here</a>.
      * </p>
      */
-    public int[] nextPermutation(int n, int k) {
+    @Override
+	public int[] nextPermutation(int n, int k) {
         if (k > n) {
             throw new NumberIsTooLargeException(LocalizedFormats.PERMUTATION_EXCEEDS_N,
                                                 k, n, true);
@@ -964,7 +976,8 @@ public class RandomDataImpl implements RandomData, Serializable {
      * here</a>
      * </p>
      */
-    public Object[] nextSample(Collection<?> c, int k) {
+    @Override
+	public Object[] nextSample(Collection<?> c, int k) {
 
         int len = c.size();
         if (k > len) {

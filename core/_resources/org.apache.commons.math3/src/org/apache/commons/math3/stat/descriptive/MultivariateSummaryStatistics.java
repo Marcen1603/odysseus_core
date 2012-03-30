@@ -165,7 +165,8 @@ public class MultivariateSummaryStatistics
      * Returns the dimension of the data
      * @return The dimension of the data
      */
-    public int getDimension() {
+    @Override
+	public int getDimension() {
         return k;
     }
 
@@ -173,7 +174,8 @@ public class MultivariateSummaryStatistics
      * Returns the number of available values
      * @return The number of available values
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 
@@ -197,7 +199,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component sums
      */
-    public double[] getSum() {
+    @Override
+	public double[] getSum() {
         return getResults(sumImpl);
     }
 
@@ -208,7 +211,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component sums of squares
      */
-    public double[] getSumSq() {
+    @Override
+	public double[] getSumSq() {
         return getResults(sumSqImpl);
     }
 
@@ -219,7 +223,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component log sums
      */
-    public double[] getSumLog() {
+    @Override
+	public double[] getSumLog() {
         return getResults(sumLogImpl);
     }
 
@@ -230,7 +235,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component means
      */
-    public double[] getMean() {
+    @Override
+	public double[] getMean() {
         return getResults(meanImpl);
     }
 
@@ -241,7 +247,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component standard deviations
      */
-    public double[] getStandardDeviation() {
+    @Override
+	public double[] getStandardDeviation() {
         double[] stdDev = new double[k];
         if (getN() < 1) {
             Arrays.fill(stdDev, Double.NaN);
@@ -261,7 +268,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the covariance matrix
      */
-    public RealMatrix getCovariance() {
+    @Override
+	public RealMatrix getCovariance() {
         return covarianceImpl.getResult();
     }
 
@@ -272,7 +280,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component maxima
      */
-    public double[] getMax() {
+    @Override
+	public double[] getMax() {
         return getResults(maxImpl);
     }
 
@@ -283,7 +292,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component minima
      */
-    public double[] getMin() {
+    @Override
+	public double[] getMin() {
         return getResults(minImpl);
     }
 
@@ -294,7 +304,8 @@ public class MultivariateSummaryStatistics
      *
      * @return the array of component geometric means
      */
-    public double[] getGeometricMean() {
+    @Override
+	public double[] getGeometricMean() {
         return getResults(geoMeanImpl);
     }
 

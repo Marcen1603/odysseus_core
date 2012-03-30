@@ -67,17 +67,20 @@ public abstract class BaseAbstractMultivariateOptimizer<FUNC extends Multivariat
     }
 
     /** {@inheritDoc} */
-    public int getMaxEvaluations() {
+    @Override
+	public int getMaxEvaluations() {
         return evaluations.getMaximalCount();
     }
 
     /** {@inheritDoc} */
-    public int getEvaluations() {
+    @Override
+	public int getEvaluations() {
         return evaluations.getCount();
     }
 
     /** {@inheritDoc} */
-    public ConvergenceChecker<PointValuePair> getConvergenceChecker() {
+    @Override
+	public ConvergenceChecker<PointValuePair> getConvergenceChecker() {
         return checker;
     }
 
@@ -99,7 +102,8 @@ public abstract class BaseAbstractMultivariateOptimizer<FUNC extends Multivariat
     }
 
     /** {@inheritDoc} */
-    public PointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
+    @Override
+	public PointValuePair optimize(int maxEval, FUNC f, GoalType goalType,
                                        double[] startPoint) {
         // Checks.
         if (f == null) {

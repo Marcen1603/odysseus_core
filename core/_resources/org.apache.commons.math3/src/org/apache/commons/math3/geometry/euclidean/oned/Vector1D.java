@@ -129,61 +129,72 @@ public class Vector1D implements Vector<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
-    public Space getSpace() {
+    @Override
+	public Space getSpace() {
         return Euclidean1D.getInstance();
     }
 
     /** {@inheritDoc} */
-    public Vector1D getZero() {
+    @Override
+	public Vector1D getZero() {
         return ZERO;
     }
 
     /** {@inheritDoc} */
-    public double getNorm1() {
+    @Override
+	public double getNorm1() {
         return FastMath.abs(x);
     }
 
     /** {@inheritDoc} */
-    public double getNorm() {
+    @Override
+	public double getNorm() {
         return FastMath.abs(x);
     }
 
     /** {@inheritDoc} */
-    public double getNormSq() {
+    @Override
+	public double getNormSq() {
         return x * x;
     }
 
     /** {@inheritDoc} */
-    public double getNormInf() {
+    @Override
+	public double getNormInf() {
         return FastMath.abs(x);
     }
 
     /** {@inheritDoc} */
-    public Vector1D add(Vector<Euclidean1D> v) {
+    @Override
+	public Vector1D add(Vector<Euclidean1D> v) {
         Vector1D v1 = (Vector1D) v;
         return new Vector1D(x + v1.getX());
     }
 
     /** {@inheritDoc} */
-    public Vector1D add(double factor, Vector<Euclidean1D> v) {
+    @Override
+	public Vector1D add(double factor, Vector<Euclidean1D> v) {
         Vector1D v1 = (Vector1D) v;
         return new Vector1D(x + factor * v1.getX());
     }
 
     /** {@inheritDoc} */
-    public Vector1D subtract(Vector<Euclidean1D> p) {
+    @Override
+	public Vector1D subtract(Vector<Euclidean1D> p) {
         Vector1D p3 = (Vector1D) p;
         return new Vector1D(x - p3.x);
     }
 
     /** {@inheritDoc} */
-    public Vector1D subtract(double factor, Vector<Euclidean1D> v) {
+    @Override
+	public Vector1D subtract(double factor, Vector<Euclidean1D> v) {
         Vector1D v1 = (Vector1D) v;
         return new Vector1D(x - factor * v1.getX());
     }
 
     /** {@inheritDoc} */
-    public Vector1D normalize() {
+    @Override
+	public Vector1D normalize() {
         double s = getNorm();
         if (s == 0) {
             throw new MathArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);
@@ -191,55 +202,64 @@ public class Vector1D implements Vector<Euclidean1D> {
         return scalarMultiply(1 / s);
     }
     /** {@inheritDoc} */
-    public Vector1D negate() {
+    @Override
+	public Vector1D negate() {
         return new Vector1D(-x);
     }
 
     /** {@inheritDoc} */
-    public Vector1D scalarMultiply(double a) {
+    @Override
+	public Vector1D scalarMultiply(double a) {
         return new Vector1D(a * x);
     }
 
     /** {@inheritDoc} */
-    public boolean isNaN() {
+    @Override
+	public boolean isNaN() {
         return Double.isNaN(x);
     }
 
     /** {@inheritDoc} */
-    public boolean isInfinite() {
+    @Override
+	public boolean isInfinite() {
         return !isNaN() && Double.isInfinite(x);
     }
 
     /** {@inheritDoc} */
-    public double distance1(Vector<Euclidean1D> p) {
+    @Override
+	public double distance1(Vector<Euclidean1D> p) {
         Vector1D p3 = (Vector1D) p;
         final double dx = FastMath.abs(p3.x - x);
         return dx;
     }
 
     /** {@inheritDoc} */
-    public double distance(Vector<Euclidean1D> p) {
+    @Override
+	public double distance(Vector<Euclidean1D> p) {
         Vector1D p3 = (Vector1D) p;
         final double dx = p3.x - x;
         return FastMath.abs(dx);
     }
 
     /** {@inheritDoc} */
-    public double distanceInf(Vector<Euclidean1D> p) {
+    @Override
+	public double distanceInf(Vector<Euclidean1D> p) {
         Vector1D p3 = (Vector1D) p;
         final double dx = FastMath.abs(p3.x - x);
         return dx;
     }
 
     /** {@inheritDoc} */
-    public double distanceSq(Vector<Euclidean1D> p) {
+    @Override
+	public double distanceSq(Vector<Euclidean1D> p) {
         Vector1D p3 = (Vector1D) p;
         final double dx = p3.x - x;
         return dx * dx;
     }
 
     /** {@inheritDoc} */
-    public double dotProduct(final Vector<Euclidean1D> v) {
+    @Override
+	public double dotProduct(final Vector<Euclidean1D> v) {
         final Vector1D v1 = (Vector1D) v;
         return x * v1.x;
     }
@@ -341,7 +361,8 @@ public class Vector1D implements Vector<Euclidean1D> {
     }
 
     /** {@inheritDoc} */
-    public String toString(final NumberFormat format) {
+    @Override
+	public String toString(final NumberFormat format) {
         return new Vector1DFormat(format).format(this);
     }
 

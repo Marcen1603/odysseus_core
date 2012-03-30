@@ -55,15 +55,18 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return value(omega * x + phase, amplitude);
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 return -amplitude * omega * FastMath.sin(omega * x + phase);
             }
         };
@@ -89,7 +92,8 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 3.
          */
-        public double value(double x, double ... param) {
+        @Override
+		public double value(double x, double ... param) {
             validateParameters(param);
             return HarmonicOscillator.value(x * param[1] + param[2], param[0]);
         }
@@ -107,7 +111,8 @@ public class HarmonicOscillator implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 3.
          */
-        public double[] gradient(double x, double ... param) {
+        @Override
+		public double[] gradient(double x, double ... param) {
             validateParameters(param);
 
             final double amplitude = param[0];

@@ -61,10 +61,12 @@ public class Sigmoid implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public UnivariateFunction derivative() {
+    @Override
+	public UnivariateFunction derivative() {
         return new UnivariateFunction() {
             /** {@inheritDoc} */
-            public double value(double x) {
+            @Override
+			public double value(double x) {
                 final double exp = FastMath.exp(-x);
                 if (Double.isInfinite(exp)) {
                     // Avoid returning NaN in case of overflow.
@@ -77,7 +79,8 @@ public class Sigmoid implements DifferentiableUnivariateFunction {
     }
 
     /** {@inheritDoc} */
-    public double value(double x) {
+    @Override
+	public double value(double x) {
         return value(x, lo, hi);
     }
 
@@ -100,7 +103,8 @@ public class Sigmoid implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double value(double x, double ... param) {
+        @Override
+		public double value(double x, double ... param) {
             validateParameters(param);
             return Sigmoid.value(x, param[0], param[1]);
         }
@@ -118,7 +122,8 @@ public class Sigmoid implements DifferentiableUnivariateFunction {
          * @throws DimensionMismatchException if the size of {@code param} is
          * not 2.
          */
-        public double[] gradient(double x, double ... param) {
+        @Override
+		public double[] gradient(double x, double ... param) {
             validateParameters(param);
 
             final double invExp1 = 1 / (1 + FastMath.exp(-x));

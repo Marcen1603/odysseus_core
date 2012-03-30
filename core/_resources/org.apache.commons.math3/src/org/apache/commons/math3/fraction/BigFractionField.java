@@ -49,17 +49,20 @@ public class BigFractionField implements Field<BigFraction>, Serializable  {
     }
 
     /** {@inheritDoc} */
-    public BigFraction getOne() {
+    @Override
+	public BigFraction getOne() {
         return BigFraction.ONE;
     }
 
     /** {@inheritDoc} */
-    public BigFraction getZero() {
+    @Override
+	public BigFraction getZero() {
         return BigFraction.ZERO;
     }
 
     /** {@inheritDoc} */
-    public Class<? extends FieldElement<BigFraction>> getRuntimeClass() {
+    @Override
+	public Class<? extends FieldElement<BigFraction>> getRuntimeClass() {
         return BigFraction.class;
     }
     // CHECKSTYLE: stop HideUtilityClassConstructor

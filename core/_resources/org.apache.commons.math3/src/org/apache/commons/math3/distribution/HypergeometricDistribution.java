@@ -92,7 +92,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double cumulativeProbability(int x) {
+    @Override
+	public double cumulativeProbability(int x) {
         double ret;
 
         int[] domain = getDomain(populationSize, numberOfSuccesses, sampleSize);
@@ -174,7 +175,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
     }
 
     /** {@inheritDoc} */
-    public double probability(int x) {
+    @Override
+	public double probability(int x) {
         double ret;
 
         int[] domain = getDomain(populationSize, numberOfSuccesses, sampleSize);
@@ -267,7 +269,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * For population size {@code N}, number of successes {@code m}, and sample
      * size {@code n}, the mean is {@code n * m / N}.
      */
-    public double getNumericalMean() {
+    @Override
+	public double getNumericalMean() {
         return (double) (getSampleSize() * getNumberOfSuccesses()) / (double) getPopulationSize();
     }
 
@@ -278,7 +281,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * size {@code n}, the variance is
      * {@code [n * m * (N - n) * (N - m)] / [N^2 * (N - 1)]}.
      */
-    public double getNumericalVariance() {
+    @Override
+	public double getNumericalVariance() {
         if (!numericalVarianceIsCalculated) {
             numericalVariance = calculateNumericalVariance();
             numericalVarianceIsCalculated = true;
@@ -307,7 +311,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      *
      * @return lower bound of the support
      */
-    public int getSupportLowerBound() {
+    @Override
+	public int getSupportLowerBound() {
         return FastMath.max(0,
                 getSampleSize() + getNumberOfSuccesses() - getPopulationSize());
     }
@@ -320,7 +325,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      *
      * @return upper bound of the support
      */
-    public int getSupportUpperBound() {
+    @Override
+	public int getSupportUpperBound() {
         return FastMath.min(getNumberOfSuccesses(), getSampleSize());
     }
 
@@ -331,7 +337,8 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      *
      * @return {@code true}
      */
-    public boolean isSupportConnected() {
+    @Override
+	public boolean isSupportConnected() {
         return true;
     }
 }

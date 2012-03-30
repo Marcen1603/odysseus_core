@@ -46,7 +46,8 @@ public class Euclidean1D implements Serializable, Space {
     }
 
     /** {@inheritDoc} */
-    public int getDimension() {
+    @Override
+	public int getDimension() {
         return 1;
     }
 
@@ -58,7 +59,8 @@ public class Euclidean1D implements Serializable, Space {
      * @return nothing
      * @throws MathUnsupportedOperationException in all cases
      */
-    public Space getSubSpace() throws MathUnsupportedOperationException {
+    @Override
+	public Space getSubSpace() throws MathUnsupportedOperationException {
         throw new MathUnsupportedOperationException(LocalizedFormats.NOT_SUPPORTED_IN_DIMENSION_N, 1);
     }
 

@@ -235,7 +235,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * @throws ModelSpecificationException if the length of {@code x} does not equal
      * the number of independent variables in the model
      */
-    public void addObservation(final double[] x,final double y) throws ModelSpecificationException{
+    @Override
+	public void addObservation(final double[] x,final double y) throws ModelSpecificationException{
         if( x == null || x.length == 0 ){
             throw new ModelSpecificationException(LocalizedFormats.INVALID_REGRESSION_OBSERVATION,x!=null?x.length:0, 1);
         }
@@ -253,7 +254,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * @throws ModelSpecificationException if {@code x} is not rectangular, does not match
      * the length of {@code y} or does not contain sufficient data to estimate the model
      */
-    public void addObservations(final double[][] x,final double[] y) {
+    @Override
+	public void addObservations(final double[][] x,final double[] y) {
         if ((x == null) || (y == null) || (x.length != y.length)) {
             throw new ModelSpecificationException(
                   LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
@@ -299,7 +301,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
     /**
      * Clears all data from the model.
      */
-    public void clear() {
+    @Override
+	public void clear() {
         sumX = 0d;
         sumXX = 0d;
         sumY = 0d;
@@ -313,7 +316,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      *
      * @return n number of observations that have been added.
      */
-    public long getN() {
+    @Override
+	public long getN() {
         return n;
     }
 
@@ -371,7 +375,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * @return true if the regression includes an intercept; false otherwise
      * @see #SimpleRegression(boolean)
      */
-    public boolean hasIntercept() {
+    @Override
+	public boolean hasIntercept() {
         return hasIntercept;
     }
 
@@ -715,7 +720,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * @return RegressionResults acts as a container of regression output
      * @throws ModelSpecificationException if the model is not correctly specified
      */
-    public RegressionResults regress() throws ModelSpecificationException{
+    @Override
+	public RegressionResults regress() throws ModelSpecificationException{
         if( hasIntercept ){
           if( n < 3 ){
               throw new NoDataException( LocalizedFormats.NOT_ENOUGH_DATA_REGRESSION );
@@ -771,7 +777,8 @@ public class SimpleRegression implements Serializable, UpdatingMultipleLinearReg
      * @throws MathIllegalArgumentException if the variablesToInclude array is null or zero length
      * @throws OutOfRangeException if a requested variable is not present in model
      */
-    public RegressionResults regress(int[] variablesToInclude) throws ModelSpecificationException{
+    @Override
+	public RegressionResults regress(int[] variablesToInclude) throws ModelSpecificationException{
         if( variablesToInclude == null || variablesToInclude.length == 0){
           throw new MathIllegalArgumentException(LocalizedFormats.ARRAY_ZERO_LENGTH_OR_NULL_NOT_ALLOWED);
         }

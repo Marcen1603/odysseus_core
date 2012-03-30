@@ -132,7 +132,8 @@ public class SimplexOptimizer
         // evaluations counter.
         final MultivariateFunction evalFunc
             = new MultivariateFunction() {
-                public double value(double[] point) {
+                @Override
+				public double value(double[] point) {
                     return computeObjectiveValue(point);
                 }
             };
@@ -140,7 +141,8 @@ public class SimplexOptimizer
         final boolean isMinim = getGoalType() == GoalType.MINIMIZE;
         final Comparator<PointValuePair> comparator
             = new Comparator<PointValuePair>() {
-            public int compare(final PointValuePair o1,
+            @Override
+			public int compare(final PointValuePair o1,
                                final PointValuePair o2) {
                 final double v1 = o1.getValue();
                 final double v2 = o2.getValue();

@@ -104,14 +104,16 @@ public abstract class BaseSecantSolver
     }
 
     /** {@inheritDoc} */
-    public double solve(final int maxEval, final UnivariateFunction f,
+    @Override
+	public double solve(final int maxEval, final UnivariateFunction f,
                         final double min, final double max,
                         final AllowedSolution allowedSolution) {
         return solve(maxEval, f, min, max, min + 0.5 * (max - min), allowedSolution);
     }
 
     /** {@inheritDoc} */
-    public double solve(final int maxEval, final UnivariateFunction f,
+    @Override
+	public double solve(final int maxEval, final UnivariateFunction f,
                         final double min, final double max, final double startValue,
                         final AllowedSolution allowedSolution) {
         this.allowed = allowedSolution;
