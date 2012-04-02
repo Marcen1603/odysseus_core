@@ -35,6 +35,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSplitAORule());
 		rules.add(new TTransformViewRule());
 		rules.add(new TUserDefinedOperatorPO());
+		rules.add(new TChangeDetectAORule());
 		return rules;
 	}
 
