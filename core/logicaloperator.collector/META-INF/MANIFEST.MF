@@ -11,3 +11,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  org.osgi.framework;version="1.5.0",
  org.slf4j
 Bundle-Activator: de.uniol.inf.is.odysseus.logicaloperator.LogicalOperatorBuilder
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

@@ -247,6 +247,9 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 			OperatorBuilderFactory.putOperatorBuilderType(
 					logicalOperatorAnnotation.name(), builder);
+		}catch(NoClassDefFoundError e){			
+			e.printStackTrace();
+			logger.error("LogicalOperator "+curOp.getCanonicalName()+" not found. Check if core and core-server plugins were added as dependencies in its bundle");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

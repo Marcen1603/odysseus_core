@@ -33,3 +33,5 @@ Export-Package: de.uniol.inf.is.odysseus.mining,
  de.uniol.inf.is.odysseus.mining.metadata,
  de.uniol.inf.is.odysseus.mining.model
 Service-Component: OSGI-INF/QueryBuildConfiguration.xml
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"

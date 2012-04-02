@@ -28,6 +28,11 @@ public class Activator implements BundleActivator {
 		System.out.println("Starting Weatherstation Generator server...");
 		StreamServer weatherServer = new StreamServer(54322, new WeatherStationGenerator());
 		weatherServer.start();
+		
+
+		System.out.println("Starting Regression Generator server...");
+		StreamServer regressionServer = new StreamServer(54323, new RegressionGenerator());
+		regressionServer.start();
 	}
 
 	/*

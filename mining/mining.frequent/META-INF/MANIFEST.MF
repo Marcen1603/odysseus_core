@@ -26,4 +26,5 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Service-Component: OSGI-INF/TransformRuleService.xml
 Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

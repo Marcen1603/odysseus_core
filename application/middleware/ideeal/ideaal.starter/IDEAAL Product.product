@@ -25,14 +25,12 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -114,12 +112,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.webservice.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
       <feature id="org.eclipse.gef" version="3.7.2.v20110927-2020-777D381B4Bz0755B465D34242"/>
-      <feature id="de.uniol.inf.is.odysseus.sensorregistry.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
    </features>
 
 
