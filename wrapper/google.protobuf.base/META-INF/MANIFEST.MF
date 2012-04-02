@@ -19,11 +19,7 @@ Import-Package: com.google.protobuf;version="2.4.1",
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
- de.uniol.inf.is.odysseus.transform.rule,
- org.jboss.netty.bootstrap,
- org.jboss.netty.channel,
- org.jboss.netty.channel.socket.nio,
- org.jboss.netty.handler.codec.protobuf
+ de.uniol.inf.is.odysseus.transform.rule
 Export-Package: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base
 Service-Component: OSGI-INF/ProtobufRegistry.xml, OSGI-INF/TransformRuleService.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

@@ -25,7 +25,7 @@ public class ProtobufTypeRegistry {
 	}
 	
 	public static GeneratedMessage getMessageType(String name) {
-		return typeRegistry.get(name);
+		return typeRegistry.get(name.toLowerCase());
 	}
 
 }
