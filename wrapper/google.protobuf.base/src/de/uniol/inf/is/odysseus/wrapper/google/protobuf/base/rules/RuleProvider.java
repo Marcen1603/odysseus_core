@@ -25,7 +25,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
-		//loading default rules		
+		rules.add(new TProtobufAccessAORule());
 		return rules;
 	}
 

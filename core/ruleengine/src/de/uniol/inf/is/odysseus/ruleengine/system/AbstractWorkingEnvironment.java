@@ -40,7 +40,7 @@ public abstract class AbstractWorkingEnvironment<T> implements IWorkingEnvironme
 		long currentmillis = System.currentTimeMillis();
 		this.workingMemory.process();		
 		long diffMillis = System.currentTimeMillis() - currentmillis;
-		LoggerSystem.printlog(Accuracy.DEBUG, "Ruleengine needed " + diffMillis + "!");
+		LoggerSystem.printlog(Accuracy.DEBUG, "Ruleengine needed " + diffMillis + " millis !");
 	}
 
 	@Override

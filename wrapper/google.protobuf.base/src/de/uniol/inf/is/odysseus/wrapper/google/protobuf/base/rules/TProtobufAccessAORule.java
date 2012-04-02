@@ -9,7 +9,6 @@ import com.google.protobuf.GeneratedMessage;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UserDefinedOperatorAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -56,7 +55,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		return (operator.getAdapter() != null && operator.getAdapter()
-				.equalsIgnoreCase("GoogleProtBuf"));
+				.equalsIgnoreCase("GoogleProtoBuf"));
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 
 	@Override
 	public Class<?> getConditionClass() {
-		return UserDefinedOperatorAO.class;
+		return AccessAO.class;
 	}
 
 }

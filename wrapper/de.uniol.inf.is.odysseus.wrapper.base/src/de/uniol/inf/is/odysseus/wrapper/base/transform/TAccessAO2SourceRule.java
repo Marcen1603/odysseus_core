@@ -49,7 +49,7 @@ public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
     @Override
     public boolean isExecutable(final AccessAO operator, final TransformationConfiguration config) {
     	//TODO: Remove hard coded google
-    	return (operator.getAdapter() != null && !"GoogleProtBuf".equalsIgnoreCase(operator.getAdapter()) );
+    	return (operator.getAdapter() != null && !"GoogleProtoBuf".equalsIgnoreCase(operator.getAdapter()) );
     }
 
     @Override

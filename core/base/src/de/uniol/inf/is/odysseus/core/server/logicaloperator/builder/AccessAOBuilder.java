@@ -53,7 +53,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	public AccessAOBuilder() {
 		super(0, 0);
-		addParameters(sourceName, host, port, attributes, type, options, inputSchema);
+		addParameters(sourceName, host, port, attributes, type, options, inputSchema, adapter);
 	}
 
 	@Override
