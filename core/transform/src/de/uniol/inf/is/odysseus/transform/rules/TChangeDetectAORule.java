@@ -19,7 +19,8 @@ public class TChangeDetectAORule extends
 	@Override
 	public void execute(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		ChangeDetectPO<?> po = new ChangeDetectPO<>();
+		@SuppressWarnings("rawtypes")
+		ChangeDetectPO<?> po = new ChangeDetectPO();
 		replace(operator, po, config);		
 		retract(operator);
 	}
