@@ -7,24 +7,32 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.GeneratedMessage;
 
+import debs.challenge.msg.CManufacturingMessages.CDataPoint;
+
 public class ProtobufTypeRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(ProtobufTypeRegistry.class);
+	
+	static ProtobufTypeRegistry instance = new ProtobufTypeRegistry();
 
-	private static HashMap<String, GeneratedMessage> typeRegistry = new HashMap<String, GeneratedMessage>();
+	private HashMap<String, GeneratedMessage> typeRegistry = new HashMap<String, GeneratedMessage>();
 	
-	public ProtobufTypeRegistry() {
-		logger.debug("Creating Protbuf Type Registry");
+	private ProtobufTypeRegistry() {
+		registerMessageType(CDataPoint.getDescriptor().getFullName(), CDataPoint.getDefaultInstance());
+	}	
+	
+	public static ProtobufTypeRegistry getInstance(){
+		return instance;
 	}
 	
-	public static void registerMessageType(GeneratedMessage message) {
-		String name = message.getDescriptorForType().getFullName();
-		logger.debug("Register Messagetype " + message
-				+ " for Datatypes with name " + name);
-		typeRegistry.put(name.toLowerCase(), message);
+
+	public void registerMessageType(String name, GeneratedMessage message) {
+			logger.debug("Register Messagetype " + message
+					+ " for Datatypes with name " + name);
+			typeRegistry.put(name.toLowerCase(), message);
 	}
-	
-	public static GeneratedMessage getMessageType(String name) {
+
+	public GeneratedMessage getMessageType(String name) {
 		return typeRegistry.get(name.toLowerCase());
 	}
 

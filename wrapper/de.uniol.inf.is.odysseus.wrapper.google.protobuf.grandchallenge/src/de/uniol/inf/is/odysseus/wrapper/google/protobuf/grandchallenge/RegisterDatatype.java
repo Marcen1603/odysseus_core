@@ -10,7 +10,7 @@ public class RegisterDatatype implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		ProtobufTypeRegistry.registerMessageType(CDataPoint.getDefaultInstance());
+		ProtobufTypeRegistry.registerMessageType(CDataPoint.getDescriptor().getFullName(), CDataPoint.getDefaultInstance());
 	}
 
 	@Override
