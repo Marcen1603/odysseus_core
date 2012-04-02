@@ -8,7 +8,18 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IStringArrayTransformer;
 
+/**
+ * This class represents all sources that need to be scheduled to deliver 
+ * input (pull). For all sources that push their data use ReceivePO
+ * 
+ * @author Marco Grawunder
+ *
+ * @param <R> The immediate values that are send to 
+ * @param <W> Die Output that is written by this operator.
+ */
 public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	private static final Logger LOG = LoggerFactory
@@ -23,6 +34,12 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	final private IStringArrayTransformer<R> stringTransformer;
 	final private IObjectInputStreamTransformer<R> oisTransformer;
 
+	/**
+	 * 
+	 * @param input
+	 * @param transformer
+	 * @param dataHandler
+	 */
 	public AccessPO(IInput<R> input, IStringArrayTransformer<R> transformer,
 			IDataHandler<W> dataHandler) {
 		this.input = input;

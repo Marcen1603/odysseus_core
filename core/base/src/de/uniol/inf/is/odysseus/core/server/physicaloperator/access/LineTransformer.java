@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
+
 
 public class LineTransformer extends AbstractTransformer<String, String[]> implements IStringArrayTransformer<String> {
 
