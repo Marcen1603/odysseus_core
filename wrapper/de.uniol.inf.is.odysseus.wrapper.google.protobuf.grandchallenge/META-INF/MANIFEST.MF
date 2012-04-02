@@ -6,4 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.protobuf;version="2.4.1",
  org.osgi.framework;version="1.6.0"
-Require-Bundle: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
