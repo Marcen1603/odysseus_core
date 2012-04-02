@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.user.UserView"
+            icon="icons/users.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.UserView"
+            name="Users"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.partialplan.PartialPlanView"
+            id="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
+            name="Partial Plan"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.sink.SinkView"
+            icon="icons/network-hub.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
+            name="Sinks"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesView"
+            icon="icons/repository_rep.gif"
+            id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+            name="Sources"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective">
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
+               minimized="false"
+               ratio="0.25f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+               minimized="false"
+               ratio="0.25f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.views.UserView"
+               minimized="false"
+               ratio="0.25f"
+               relationship="right"
+               relative="org.eclipse.ui.editorss">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.ExpandSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
+            name="Expand Sources View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.CollapseSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
+            name="Collapse Sources View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.RefreshSourcesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand"
+            name="Refresh Sources View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.RefreshSinksViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
+            name="Refresh Sinks View">
+      </command>
+    </extension>
+
+</plugin>

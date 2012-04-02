@@ -20,15 +20,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.core.planmanagement.query,
  de.uniol.inf.is.odysseus.core.sdf,
  de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,
- de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
- de.uniol.inf.is.odysseus.core.server.planmanagement.optimization,
- de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
- de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.core.server.scheduler,
- de.uniol.inf.is.odysseus.core.server.scheduler.event,
- de.uniol.inf.is.odysseus.core.server.scheduler.manager,
  de.uniol.inf.is.odysseus.core.usermanagement,
  org.eclipse.core.commands,
  org.eclipse.core.commands.common,
@@ -63,10 +54,11 @@ Import-Package: com.google.common.base,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.exception,
  de.uniol.inf.is.odysseus.rcp.status,
  de.uniol.inf.is.odysseus.rcp.util,
- de.uniol.inf.is.odysseus.rcp.views.query,
- de.uniol.inf.is.odysseus.rcp.windows
+ de.uniol.inf.is.odysseus.rcp.views.query
 Service-Component: OSGI-INF/Executor.xml, OSGI-INF/queryViewDataProvider.xml
 Require-Bundle: org.eclipse.ui.navigator;bundle-version="3.5.100",
- org.eclipse.ui.navigator.resources;bundle-version="3.4.300", de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
+ org.eclipse.ui.navigator.resources;bundle-version="3.4.300",
+ de.uniol.inf.is.odysseus.core

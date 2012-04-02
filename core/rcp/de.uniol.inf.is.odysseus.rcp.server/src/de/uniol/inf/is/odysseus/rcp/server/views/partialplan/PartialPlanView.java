@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.views;
+package de.uniol.inf.is.odysseus.rcp.server.views.partialplan;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPartialPlan;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class PartialPlanView extends ViewPart implements IPlanModificationListener {
 
@@ -64,7 +63,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableViewer.getTable().setLinesVisible(true);
 
 		TableViewerColumn idColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		idColumn.getColumn().setText(OdysseusNLS.ID);
+		idColumn.getColumn().setText("ID");
 		// idColumn.getColumn().setWidth(50);
 		idColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -75,7 +74,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(idColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn queryColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		queryColumn.getColumn().setText(OdysseusNLS.Queries);
+		queryColumn.getColumn().setText("Queries");
 		// idColumn.getColumn().setWidth(50);
 		queryColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -86,7 +85,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(queryColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn sourceColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		sourceColumn.getColumn().setText(OdysseusNLS.IteratableSources);
+		sourceColumn.getColumn().setText("Sources");
 		// idColumn.getColumn().setWidth(50);
 		sourceColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -97,7 +96,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(sourceColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn rootsColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		rootsColumn.getColumn().setText(OdysseusNLS.Roots);
+		rootsColumn.getColumn().setText("Roots");
 		// idColumn.getColumn().setWidth(50);
 		rootsColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -108,7 +107,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(rootsColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn basePrioColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		basePrioColumn.getColumn().setText(OdysseusNLS.BasePriority);
+		basePrioColumn.getColumn().setText("BasePriority");
 		// idColumn.getColumn().setWidth(50);
 		basePrioColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -119,7 +118,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(basePrioColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn curPrioColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		curPrioColumn.getColumn().setText(OdysseusNLS.CurrentPriority);
+		curPrioColumn.getColumn().setText("CurrentPriority");
 		// idColumn.getColumn().setWidth(50);
 		curPrioColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -130,7 +129,7 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 		tableColumnLayout.setColumnData(curPrioColumn.getColumn(), new ColumnWeightData(5, 25, true));
 
 		TableViewerColumn slaRateColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		slaRateColumn.getColumn().setText(OdysseusNLS.SLAInfos);
+		slaRateColumn.getColumn().setText("SLAInfos");
 		// idColumn.getColumn().setWidth(50);
 		slaRateColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
@@ -158,11 +157,11 @@ public class PartialPlanView extends ViewPart implements IPlanModificationListen
 						setExecutionPlan(executor.getExecutionPlan());
 						executor.addPlanModificationListener(PartialPlanView.this);
 					} else {
-						logger.error(OdysseusNLS.NoExecutorFound);
+						logger.error("No executor found");
 					}
 					execTracker.close();
 				} catch (InterruptedException e) {
-					logger.error(OdysseusNLS.NoExecutorFound, e);
+					logger.error("No executor found", e);
 				}
 			}
 

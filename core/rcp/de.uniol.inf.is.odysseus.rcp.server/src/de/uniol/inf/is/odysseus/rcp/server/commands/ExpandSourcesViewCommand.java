@@ -1,4 +1,4 @@
-/** Copyright 2011 The Odysseus Team
+/** Copyright [2011] [The Odysseus Team]
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -12,30 +12,24 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-
-package de.uniol.inf.is.odysseus.rcp.commands;
+package de.uniol.inf.is.odysseus.rcp.server.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.util.ViewHelper;
-import de.uniol.inf.is.odysseus.rcp.views.SinkViewPart;
+import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.util.ViewHelper;
+import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesView;
 
-/**
- * 
- * @author Dennis Geesen
- * Created at: 27.10.2011
- */
-public class RefreshSinksViewCommand extends AbstractHandler implements IHandler {
+public class ExpandSourcesViewCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		SinkViewPart viewer = ViewHelper.getView(OdysseusRCPPlugIn.SINK_VIEW_ID, event);
+		SourcesView viewer = ViewHelper.getView(OdysseusRCPServerPlugIn.SOURCES_VIEW_ID, event);
 		if( viewer != null ) 
-			viewer.refresh();
+			viewer.getTreeViewer().expandAll();
 		else
 			return false;
 		return true;

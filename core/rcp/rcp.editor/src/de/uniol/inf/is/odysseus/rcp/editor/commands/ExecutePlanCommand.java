@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.OdysseusRCPEditorPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.editors.LogicalPlanEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.model.Operator;
 import de.uniol.inf.is.odysseus.rcp.editor.model.OperatorPlan;
-import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 
 public class ExecutePlanCommand extends AbstractHandler implements IHandler {

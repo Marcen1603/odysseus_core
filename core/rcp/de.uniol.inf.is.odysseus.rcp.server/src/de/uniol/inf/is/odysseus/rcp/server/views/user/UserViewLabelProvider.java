@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.views;
+package de.uniol.inf.is.odysseus.rcp.server.views.user;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
-import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class UserViewLabelProvider extends LabelProvider {
 
@@ -44,10 +43,10 @@ public class UserViewLabelProvider extends LabelProvider {
 			return role.getName();
 		}
 		if (obj instanceof IPrivilege) {
-			return OdysseusNLS.Privilege+": " + ((IPrivilege) obj).getObjectURI();
+			return "Priviledge : " + ((IPrivilege) obj).getObjectURI();
 		}
 		if (obj instanceof IPermission){
-			return OdysseusNLS.Permission+":"+obj;
+			return "Permission : "+ obj;
 		}
 		return obj.toString();
 	}

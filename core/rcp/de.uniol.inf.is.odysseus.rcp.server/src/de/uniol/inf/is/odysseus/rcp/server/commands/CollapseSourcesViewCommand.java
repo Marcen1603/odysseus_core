@@ -12,22 +12,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.commands;
+package de.uniol.inf.is.odysseus.rcp.server.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.util.ViewHelper;
-import de.uniol.inf.is.odysseus.rcp.views.SourcesViewPart;
+import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.util.ViewHelper;
+import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesView;
 
 public class CollapseSourcesViewCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		SourcesViewPart viewer = ViewHelper.getView(OdysseusRCPPlugIn.SOURCES_VIEW_ID, event);
+		SourcesView viewer = ViewHelper.getView(OdysseusRCPServerPlugIn.SOURCES_VIEW_ID, event);
 		if( viewer != null ) 
 			viewer.getTreeViewer().collapseAll();
 		else

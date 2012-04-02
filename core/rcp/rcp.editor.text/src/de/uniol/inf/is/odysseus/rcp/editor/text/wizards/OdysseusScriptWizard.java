@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 public class OdysseusScriptWizard extends Wizard implements INewWizard {
 

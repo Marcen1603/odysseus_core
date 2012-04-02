@@ -18,26 +18,17 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
-import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
-import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 
-public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListener {
+public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
-	public static final String USER_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.UserView";
-	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.query.QueryView";
-	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 
 	public static final String QUERIES_PERSPECTIVE_ID = "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 
@@ -117,46 +108,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IEventListene
 
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = ex;
-
 		StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.Executor + " " + executor.getName() + " " + OdysseusNLS.Ready);
-		if (executor instanceof IServerExecutor) {
-			IServerExecutor se = (IServerExecutor) executor;
-
-			StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, se.getCurrentSchedulerID() + " (" + se.getCurrentSchedulingStrategyID() + ") " + (se.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
-
-			if (se.getSchedulerManager() != null) {
-				se.getSchedulerManager().subscribeToAll(this);
-				se.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
-			}
-			// New: Start Scheduler at Query Start
-			se.startExecution();
-
-		}
-
 	}
 
 	public void unbindExecutor(IExecutor ex) {
 		executor = null;
-	}
-
-	@Override
-	public void eventOccured(IEvent<?, ?> event, long eventNanoTime) {
-		if (executor instanceof IServerExecutor) {
-			IServerExecutor se = (IServerExecutor) executor;
-
-			if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) {
-				((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(this);
-			} else if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
-				((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
-			}
-
-			if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED || event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
-				try {
-					StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, se.getCurrentSchedulerID() + " (" + se.getCurrentSchedulingStrategyID() + ") " + (se.isRunning() ? OdysseusNLS.Running : OdysseusNLS.Stopped));
-				} catch (PlanManagementException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 }

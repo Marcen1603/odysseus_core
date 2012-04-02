@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.views;
+package de.uniol.inf.is.odysseus.rcp.server.views.source;
 
 import java.util.Map.Entry;
 import java.util.Set;

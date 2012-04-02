@@ -9,47 +9,16 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.UserView"
-            icon="icons/users.png"
-            id="de.uniol.inf.is.odysseus.rcp.views.UserView"
-            name="Users"
-            restorable="true">
-      </view>
       <category
             id="Odysseus"
             name="Odysseus">
       </category>
       <view
             category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.SourcesViewPart"
-            icon="icons/repository_rep.gif"
-            id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
-            name="Sources"
-            restorable="true">
-      </view>
-      <view
-            category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
             icon="icons/prop_ps.gif"
             id="de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
             name="Queries"
-            restorable="true">
-      </view>
-      <view
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
-            id="de.uniol.inf.is.odysseus.rcp.views.PartialPlanView"
-            name="Partial Plan"
-            restorable="true">
-      </view>
-      <view
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.views.SinkViewPart"
-            icon="icons/network-hub.png"
-            id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
-            name="Sinks"
             restorable="true">
       </view>
    </extension>
@@ -63,22 +32,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSourcesViewCommand"
-            name="Refresh Sources View">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.ExpandSourcesViewCommand"
-            name="Expand Sources View">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.CollapseSourcesViewCommand"
-            name="Collapse Sources View">
-      </command>
-      <command
+     <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand"
             name="Remove Query">
@@ -132,11 +86,6 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.LoginCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.LoginUserCommand"
             name="Login User">
-      </command>
-      <command
-            defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
-            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
-            name="Refresh Sinks View">
       </command>
       <command
             defaultHandler="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"

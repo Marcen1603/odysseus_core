@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
-import de.uniol.inf.is.odysseus.rcp.windows.ExceptionWindow;
+import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 

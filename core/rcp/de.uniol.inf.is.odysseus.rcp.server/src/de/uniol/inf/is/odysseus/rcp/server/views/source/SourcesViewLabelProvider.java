@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.rcp.views;
+package de.uniol.inf.is.odysseus.rcp.server.views.source;
 
 import java.util.Map.Entry;
 
@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class SourcesViewLabelProvider implements ILabelProvider {
 
@@ -71,10 +70,10 @@ public class SourcesViewLabelProvider implements ILabelProvider {
 				IUser user = ((IServerExecutor)OdysseusRCPPlugIn.getExecutor())
 						.getDataDictionary().getCreator(entry.getKey());
 				if (user != null) {
-					sb.append(" " + OdysseusNLS.CreatedBy + " ").append(
+					sb.append("Created by ").append(
 							user.getName());
 				} else {
-					sb.append(" " + OdysseusNLS.CreatedBy + " no user ??");
+					sb.append("Created by no user ??");
 				}
 			}
 			return sb.toString();

@@ -24,26 +24,24 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.status.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 
+	private static final Logger LOG = LoggerFactory.getLogger(QueryViewCopyCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Object> selections = SelectionProvider.getSelection(event);
 		String text = "";
-		String sep = "";
 		for (Object selection : selections) {
-			if (selection instanceof IPhysicalQuery) {
-				IPhysicalQuery query = (IPhysicalQuery) selection;
-				text = text + sep + query.getLogicalQuery().getQueryText();
-				sep = System.getProperty("line.separator");
-			} else {
-				StatusBarManager.getInstance().setMessage("Copying querytexts not supported yet");
-			}
+			LOG.debug("Selection for QueryViewCopy: " + selection);
+			
+			StatusBarManager.getInstance().setMessage("Copying querytexts not supported yet");
 		}
 		if (!text.isEmpty()) {
 			Clipboard cb = new Clipboard(HandlerUtil.getActiveWorkbenchWindow(event).getShell().getDisplay());

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.rcp.views;
+package de.uniol.inf.is.odysseus.rcp.server.views.sink;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -32,13 +32,14 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesViewContentProvider;
+import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesViewLabelProvider;
 
 /**
  * 
  * @author Dennis Geesen Created at: 24.08.2011
  */
-public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
-		IUserManagementListener {
+public class SinkView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
 	private TreeViewer viewer;
 
@@ -61,9 +62,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(
-							OdysseusRCPPlugIn.getExecutor().getSinks(
-									OdysseusRCPPlugIn.getActiveSession()));
+					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession()));
 					// getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
 					getTreeViewer().setInput("NOTHING");
@@ -84,14 +83,12 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
 	}
 
 	@Override
-	public void addedViewDefinition(AbstractDataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void addedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
 	@Override
-	public void removedViewDefinition(AbstractDataDictionary sender,
-			String name, ILogicalOperator op) {
+	public void removedViewDefinition(AbstractDataDictionary sender, String name, ILogicalOperator op) {
 		refresh();
 	}
 
@@ -109,8 +106,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
-				| SWT.MULTI));
+		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
 		getTreeViewer().setContentProvider(new SourcesViewContentProvider());
 		getTreeViewer().setLabelProvider(new SourcesViewLabelProvider());
 		refresh();
@@ -123,8 +119,7 @@ public class SinkViewPart extends ViewPart implements IDataDictionaryListener,
 
 		// Contextmenu
 		MenuManager menuManager = new MenuManager();
-		Menu contextMenu = menuManager.createContextMenu(getTreeViewer()
-				.getControl());
+		Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
