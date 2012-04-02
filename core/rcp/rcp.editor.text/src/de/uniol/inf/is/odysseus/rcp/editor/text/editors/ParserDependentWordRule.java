@@ -27,7 +27,6 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 /**
@@ -115,7 +114,7 @@ public class ParserDependentWordRule implements IRule {
 								}
 							}
 						}
-					} catch (NoCompilerLoadedException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

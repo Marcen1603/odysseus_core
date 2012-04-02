@@ -36,8 +36,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -47,9 +48,10 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
-
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
+	private static final Logger LOG = LoggerFactory.getLogger(RunQueryCommand.class);
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getSelectionService().getSelection();
@@ -71,7 +73,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
 			Document doc = (Document) docPro.getDocument(editor.getEditorInput());
 			String text = doc.get();
-			String lines[] = text.split(doc.getDefaultLineDelimiter());			
+			String lines[] = text.split(doc.getDefaultLineDelimiter());
 			execute(lines);
 			return null;
 		}
@@ -98,6 +100,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			execute(lines.toArray(new String[lines.size()]));
 
 		} catch (Exception ex) {
+			LOG.error("Exception during running query file" , ex);
+			
 			new ExceptionWindow(ex);
 		}
 	}
@@ -139,15 +143,12 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 						counter++;
 					}
 				} catch (OdysseusScriptException ex) {
-					Throwable cause = ex.getCause();
-					if (cause != null && cause instanceof QueryParseException){
-						status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parse Error: "+cause.getMessage(), cause);
-					}else{
-						status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Execution Error: "+ex.getMessage(), ex);
-					}										
-				} 
+					LOG.error("Exception during executing script", ex);
+					
+					status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: " + ex.getMessage(), ex);
+				}
 				monitor.done();
-			
+
 				return status;
 			}
 		};
