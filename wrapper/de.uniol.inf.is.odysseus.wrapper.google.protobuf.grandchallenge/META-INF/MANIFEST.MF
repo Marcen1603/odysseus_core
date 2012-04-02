@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Debs 2012 Grand Challenge Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.google.protobuf.debs2012.grandchallenge
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.google.protobuf;version="2.4.1",
+ org.osgi.framework;version="1.6.0"
+Require-Bundle: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base;bundle-version="1.0.0"
