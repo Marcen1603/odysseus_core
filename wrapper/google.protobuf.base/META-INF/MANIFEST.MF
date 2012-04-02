@@ -23,9 +23,9 @@ Import-Package: com.google.protobuf;version="2.4.1",
  org.jboss.netty.bootstrap,
  org.jboss.netty.channel,
  org.jboss.netty.channel.socket.nio,
- org.jboss.netty.handler.codec.protobuf,
- org.slf4j;version="1.6.1"
+ org.jboss.netty.handler.codec.protobuf
 Export-Package: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base
 Service-Component: OSGI-INF/ProtobufRegistry.xml, OSGI-INF/TransformRuleService.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"

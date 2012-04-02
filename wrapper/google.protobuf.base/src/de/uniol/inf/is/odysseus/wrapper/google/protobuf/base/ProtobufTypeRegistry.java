@@ -12,7 +12,11 @@ public class ProtobufTypeRegistry {
 	static Logger logger = LoggerFactory.getLogger(ProtobufTypeRegistry.class);
 
 	private static HashMap<String, GeneratedMessage> typeRegistry = new HashMap<String, GeneratedMessage>();
-
+	
+	public ProtobufTypeRegistry() {
+		logger.debug("Creating Protbuf Type Registry");
+	}
+	
 	public static void registerMessageType(GeneratedMessage message) {
 		String name = message.getDescriptorForType().getFullName();
 		logger.debug("Register Messagetype " + message

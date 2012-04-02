@@ -9,3 +9,4 @@ Import-Package: com.google.protobuf;version="2.4.1",
 Require-Bundle: de.uniol.inf.is.odysseus.wrapper.google.protobuf.base;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.google.protobuf.grandchallenge.RegisterDatatype
