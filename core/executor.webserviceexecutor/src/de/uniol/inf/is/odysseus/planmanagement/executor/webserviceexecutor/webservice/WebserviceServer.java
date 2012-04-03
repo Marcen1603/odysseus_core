@@ -70,7 +70,7 @@ public class WebserviceServer {
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
-		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9669/odysseus",
+		Endpoint endpoint = Endpoint.publish("http://127.0.0.1:9669/odysseus",
 				server);
 		if (endpoint.isPublished()) {
 			Logger.getAnonymousLogger()
