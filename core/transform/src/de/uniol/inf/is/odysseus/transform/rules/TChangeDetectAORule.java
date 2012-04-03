@@ -43,7 +43,7 @@ public class TChangeDetectAORule extends
 	
 	@Override
 	public Class<?> getConditionClass() {
-		return UserDefinedOperatorAO.class;
+		return ChangeDetectAO.class;
 	}
 
 }
