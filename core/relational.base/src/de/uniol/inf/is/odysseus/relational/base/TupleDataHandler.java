@@ -163,7 +163,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 			SDFDatatype type = attribute.getDatatype();
 
-			if (type.isBase() || type.isBean()) {
+			if (type.isTuple()) {
+				TupleDataHandler handler = new TupleDataHandler(
+						type.getSchema());
+				this.dataHandlers[i++] = handler;
+			} else if (type.isListValue()) {
+				ListDataHandler handler = new ListDataHandler(type.getSubType());
+				this.dataHandlers[i++] = handler;
+			} else {
 				String uri = attribute.getDatatype().getURI(false);
 				IDataHandler<?> handler = DataHandlerRegistry
 						.getDataHandler(uri);
@@ -173,13 +180,6 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 							+ uri);
 				}
 
-				this.dataHandlers[i++] = handler;
-			} else if (type.isTuple()) {
-				TupleDataHandler handler = new TupleDataHandler(
-						type.getSchema());
-				this.dataHandlers[i++] = handler;
-			} else if (type.isMultiValue()) {
-				ListDataHandler handler = new ListDataHandler(type.getSubType());
 				this.dataHandlers[i++] = handler;
 			}
 		}

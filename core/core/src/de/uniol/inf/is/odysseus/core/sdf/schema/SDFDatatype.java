@@ -32,7 +32,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * This enumerations contains the available type constructors.
 	 */
 	public static enum KindOfDatatype {
-		BASE, TUPLE, MULTI_VALUE, BEAN;
+		BASE, TUPLE, MULTI_VALUE, BEAN, LIST;
 	}
 
 	/**
@@ -214,6 +214,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE
 				|| this.type == SDFDatatype.KindOfDatatype.TUPLE
 				|| this.type == SDFDatatype.KindOfDatatype.BEAN;
+	}
+	
+	public boolean isListValue(){
+		return this.type == SDFDatatype.KindOfDatatype.LIST;
 	}
 
 	public boolean isMultiValue() {
