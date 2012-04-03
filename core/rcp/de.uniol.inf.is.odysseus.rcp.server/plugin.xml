@@ -43,22 +43,22 @@
                id="de.uniol.inf.is.odysseus.rcp.views.SinkView"
                minimized="false"
                ratio="0.25f"
-               relationship="left"
-               relative="org.eclipse.ui.editorss">
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
          </view>
          <view
                id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
                minimized="false"
                ratio="0.25f"
-               relationship="left"
-               relative="org.eclipse.ui.editorss">
+               relationship="bottom"
+               relative="de.uniol.inf.is.odysseus.rcp.views.SinkView">
          </view>
          <view
                id="de.uniol.inf.is.odysseus.rcp.views.UserView"
                minimized="false"
                ratio="0.25f"
-               relationship="right"
-               relative="org.eclipse.ui.editorss">
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline">
          </view>
       </perspectiveExtension>
    </extension>
