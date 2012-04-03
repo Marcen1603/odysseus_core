@@ -29,11 +29,12 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
+import com.vividsolutions.jts.io.WKTReader;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 
 /**
- * @author Andr� Bolles
+ * @author Andr� Bolles, Alexander Funk
  * 
  */
 public class SpatialByteHandler extends AbstractDataHandler<Object>{
@@ -51,12 +52,16 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		types.add("SpatialMutliPolygon");
 	}
 
-	WKBReader reader;
-	WKBWriter writer;
-
+	WKBReader wkbReader;
+	WKBWriter wkbWriter;
+	
+	WKTReader wktReader;
+	
 	public SpatialByteHandler() {
-		this.reader = new WKBReader();
-		this.writer = new WKBWriter();
+		this.wkbReader = new WKBReader();
+		this.wkbWriter = new WKBWriter();
+		
+		this.wktReader = new WKTReader();
 	}
 	
 	@Override
@@ -69,7 +74,7 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		inputStream.read(binData);
 
 		try {
-			return this.reader.read(binData);
+			return this.wkbReader.read(binData);
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -87,20 +92,24 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		//System.out.println("Read: " + binData.length);
 		
 		try {
-			return this.reader.read(binData);
+			return this.wkbReader.read(binData);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public Object readData(String string) {		
+		try {
+			return  wktReader.read(string);
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public Object readData(String string) {
-		throw new RuntimeException("Sorry. Currently not implemented");
-	}
-
-	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		byte[] binData = this.writer.write((Geometry) data);
+		byte[] binData = this.wkbWriter.write((Geometry) data);
 		
 //
 //		// split integer into 4 bytes
