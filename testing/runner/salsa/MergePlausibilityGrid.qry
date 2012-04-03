@@ -1,0 +1,5 @@
+///OdysseusScript
+///#PARSER PQL
+///#TRANSCFG salsa
+///#QUERY
+///# plsuibilitygrid = nur 1 laserscanner "sieht" den bereich, dieser ls meldet "frei"

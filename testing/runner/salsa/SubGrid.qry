@@ -1,0 +1,7 @@
+///OdysseusScript
+///#PARSER PQL
+///#TRANSCFG salsa
+///#QUERY
+
+///# Grid SubGrid(Grid grid, Coordinate point, double width, double depth, double angle)
+///ATTACH STREAM grid (x INTEGER, y INTEGER) FILE 'salsa/data/SubGrid_Grid.csv'

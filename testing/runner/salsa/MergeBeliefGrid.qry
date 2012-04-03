@@ -1,0 +1,5 @@
+///OdysseusScript
+///#PARSER PQL
+///#TRANSCFG salsa
+///#QUERY
+///# beliefGrid = der freie bereich den mehrere laserscanner als frei detektieren
