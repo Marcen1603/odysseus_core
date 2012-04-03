@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Logical
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.queryview.logical
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.logical.LogicalQueryViewDataProviderPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.rcp.views.query,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/executor.xml, OSGI-INF/logicalQueryViewDataProvider.xml
