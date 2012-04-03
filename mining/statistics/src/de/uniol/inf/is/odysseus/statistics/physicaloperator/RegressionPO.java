@@ -15,12 +15,15 @@
 
 package de.uniol.inf.is.odysseus.statistics.physicaloperator;
 
+import java.util.Iterator;
+
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
@@ -32,11 +35,13 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 	private SimpleRegression regression;
 	private int xAttribute;
 	private int yAttribute;
-	
-	
-	public RegressionPO(){
+	private DefaultTISweepArea<R> sweepArea = new DefaultTISweepArea<R>();
+	private double lastSlope = Double.NaN;
+	private double lastIntercept = Double.NaN;
+
+	public RegressionPO() {
 		super();
-	}	
+	}
 
 	public RegressionPO(int xAttribute, int yAttribute) {
 		this.xAttribute = xAttribute;
@@ -47,7 +52,7 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		this.xAttribute = regressionPO.xAttribute;
 		this.yAttribute = regressionPO.yAttribute;
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
@@ -60,20 +65,37 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 	}
 
 	@Override
-	protected void process_next(R object, int port) {
+	protected synchronized void process_next(R object, int port) {
 		double x = object.getAttribute(xAttribute);
 		double y = object.getAttribute(yAttribute);
-		regression.addData(x, y);
 
+		sweepArea.insert(object);
+
+		Iterator<R> iter = sweepArea.extractElementsBefore(object.getMetadata().getStart());
+		while (iter.hasNext()) {
+			R toRemove = iter.next();
+			double cuX = toRemove.getAttribute(xAttribute);
+			double cuY = toRemove.getAttribute(yAttribute);
+			regression.removeData(cuX, cuY);
+		}
+		regression.addData(x, y);
+		// System.err.println("Regression: "+regression.getN());
+		// System.err.println("----------------------");
+		// System.err.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
+		// System.err.println("----------------------");
 		double slope = regression.getSlope();
 		double intercept = regression.getIntercept();
-		
-		Tuple<M> ne = new Tuple<M>(2);
-		ne.setAttribute(0, slope);
-		ne.setAttribute(1, intercept);
-		M meta = object.getMetadata();
-		ne.setMetadata(meta);
-		transfer(ne);
+		//only transfer, if one of the parameters change
+		if (lastSlope != slope || lastIntercept != intercept) {
+			lastSlope = slope;
+			lastIntercept = intercept;
+			Tuple<M> ne = new Tuple<M>(2);
+			ne.setAttribute(0, slope);
+			ne.setAttribute(1, intercept);
+			M meta = object.getMetadata();
+			ne.setMetadata(meta);
+			transfer(ne);
+		}
 	}
 
 	@Override
