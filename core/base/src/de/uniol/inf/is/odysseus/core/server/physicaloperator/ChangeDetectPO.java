@@ -31,11 +31,15 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 		if (lastElement == null) {
 			lastElement = object;
 		} else {
-			if (object != null && !object.equals(lastElement)) {
+			if (object != null && compare(object, lastElement)) {
 				lastElement = object;
 				transfer(object);
 			}
 		}
+	}
+
+	protected boolean compare(R object, R lastElement) {
+		return !object.equals(lastElement);
 	}
 
 	@Override
@@ -52,5 +56,6 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	public AbstractPipe<R, R> clone() {
 		return new ChangeDetectPO<R>(this);
 	}
+
 
 }

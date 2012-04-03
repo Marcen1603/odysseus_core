@@ -38,7 +38,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 		if (msg == null){
 			throw new RuntimeException( new TransformationException("No valid type given: " +operator.getOptionsMap().get("type")));
 		}
-		ITransformer transformer = GeneratedMessageToTuple.getInstance();
+		ITransformer transformer = GeneratedMessageToTuple.getInstance(operator.getOutputSchema());
 		accessPO = new ChannelHandlerReceiverPO(socketAddress, msg, transformer);
 
 		accessPO.setOutputSchema(operator.getOutputSchema());
