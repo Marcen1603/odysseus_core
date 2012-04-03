@@ -599,7 +599,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         // User has right
         usrMgmt.hasPermission(caller, executorAction, "Query " + query.getID()) ||
         // User is owner
-                query.getUser().equals(caller) ||
+                query.getUser().getUser().getName().equals(caller.getUser().getName()) ||
         // User has higher right
         usrMgmt.hasPermission(caller, ExecutorPermission.hasSuperAction(executorAction), null))) {
             throw new PermissionException("No Right to execute " + executorAction + " on Query " + query.getID() + " for " + caller.getUser().getName());
