@@ -21,6 +21,8 @@ public class PQLKeywords implements IKeywordGroup {
 
 	@Override
 	public String[] getKeywords() {
+		// TODO: Dies klappt nicht immer: nur wenn zufällig das Logicaloperator-Bundle vorher geladen wurde 
+		// sollte also irgendwie ein service sein!
 		return OperatorBuilderFactory.getOperatorBuilderNames().toArray(new String[0]);
 	}
 

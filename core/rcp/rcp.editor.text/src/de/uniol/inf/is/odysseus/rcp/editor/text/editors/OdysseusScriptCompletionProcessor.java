@@ -54,8 +54,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			}
 			IDocument document = viewer.getDocument();
 			String prefix = lastWord(document, offset);
-			String tokenBefore = tokenBefore(document, offset);
-			System.out.println("TOKEN: "+tokenBefore);
+			String tokenBefore = tokenBefore(document, offset);		
 			int qlen = prefix.length();
 			List<String> words = new ArrayList<String>();
 			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();

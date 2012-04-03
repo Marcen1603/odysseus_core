@@ -39,7 +39,7 @@ public class KeywordRegistry {
 		
 	}
 	
-	public static KeywordRegistry getInstance() {
+	public static synchronized KeywordRegistry getInstance() {
 		if( instance == null ) 
 			instance = new KeywordRegistry();
 		return instance;

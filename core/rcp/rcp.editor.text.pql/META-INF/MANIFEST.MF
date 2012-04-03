@@ -10,4 +10,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
  de.uniol.inf.is.odysseus.rcp.editor.text,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
-Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
