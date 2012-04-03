@@ -55,7 +55,14 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	
 	@Override
 	public List<?> readData(String string) {
-		throw new RuntimeException("Sorry. Currently not implemented");
+		ArrayList<Object> values = new ArrayList<Object>();
+		String[] lines = string.split("\n");
+		int size = lines.length;
+		for(int i = 0; i<size; i++){
+			Object value = this.handler.readData(lines[i]);
+			values.add(value);
+		}
+		return values;
 	}
 
 	/* (non-Javadoc)
