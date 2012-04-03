@@ -12,7 +12,7 @@
 
 /// 1. fest definiertes Geometry-Objekt, x und y setzen
 GRANT READ ON nexmark:coordinates TO Public;
-ATTACH STREAM nexmark:coordinates (points SpatialMultiPoint) FILE 'salsa/data/MoveViewPoint_Geometry.csv'
+ATTACH STREAM nexmark:coordinates (timestamp STARTTIMESTAMP,	points SpatialMultiPoint) FILE 'salsa/data/MoveViewPoint_Geometry.csv'
 
 
 ///SELECT * FROM nexmark:coordinates
