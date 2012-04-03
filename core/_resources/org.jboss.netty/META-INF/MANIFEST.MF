@@ -2,9 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Netty
 Bundle-SymbolicName: org.jboss.netty
-Bundle-Version: 3.2.7
-Bundle-ClassPath: netty-3.2.7-src.jar,
- netty-3.2.7.jar
+Bundle-Version: 3.3.1
 Export-Package: org.jboss.netty.bootstrap,
  org.jboss.netty.buffer,
  org.jboss.netty.channel,
@@ -23,11 +21,13 @@ Export-Package: org.jboss.netty.bootstrap,
  org.jboss.netty.handler.codec.frame,
  org.jboss.netty.handler.codec.http,
  org.jboss.netty.handler.codec.http.websocket,
+ org.jboss.netty.handler.codec.http.websocketx,
  org.jboss.netty.handler.codec.oneone,
  org.jboss.netty.handler.codec.protobuf,
  org.jboss.netty.handler.codec.replay,
  org.jboss.netty.handler.codec.rtsp,
  org.jboss.netty.handler.codec.serialization,
+ org.jboss.netty.handler.codec.spdy,
  org.jboss.netty.handler.codec.string,
  org.jboss.netty.handler.execution,
  org.jboss.netty.handler.logging,
@@ -40,3 +40,5 @@ Export-Package: org.jboss.netty.bootstrap,
  org.jboss.netty.util.internal,
  org.jboss.netty.util.internal.jzlib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ com.google.protobuf;bundle-version="2.4.1"
