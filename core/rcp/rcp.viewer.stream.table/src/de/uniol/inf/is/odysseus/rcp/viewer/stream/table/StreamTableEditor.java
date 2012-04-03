@@ -156,7 +156,12 @@ public class StreamTableEditor implements IStreamEditorType {
 				@Override
 				public void update(ViewerCell cell) {
 					try {
-						cell.setText(((Tuple<?>) cell.getElement()).getAttribute(fi).toString());
+						Object attr = ((Tuple<?>) cell.getElement()).getAttribute(fi);
+						if (attr != null){
+							cell.setText(attr.toString());
+						}else{
+							cell.setText("<null>");
+						}
 					} catch( Throwable t ) {
 						LOG.error("Could not retrieve attributeValue", t);
 						cell.setText("###");
