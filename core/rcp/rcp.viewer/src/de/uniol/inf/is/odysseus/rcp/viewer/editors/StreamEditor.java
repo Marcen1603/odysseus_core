@@ -138,5 +138,7 @@ public class StreamEditor extends EditorPart {
 				}
 			}
 		});
+		
+		editorType.initToolbar(bar);
 	}
 }

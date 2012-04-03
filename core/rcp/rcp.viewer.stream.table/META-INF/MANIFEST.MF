@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Table Stream
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.table;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.ViewerStreamTablePlugIn
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -11,7 +11,9 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: de.uniol.inf.is.odysseus.core.server,
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.metadata,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
