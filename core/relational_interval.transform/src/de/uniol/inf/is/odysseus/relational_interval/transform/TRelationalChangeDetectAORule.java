@@ -20,6 +20,7 @@ public class TRelationalChangeDetectAORule extends
 			TransformationConfiguration config) {
 		RelationalChangeDetectPO po = new RelationalChangeDetectPO(operator.getComparePositions());
 		replace(operator, po, config);		
+		po.setOutputSchema(operator.getOutputSchema());
 		retract(operator);
 	}
 
