@@ -92,8 +92,6 @@ public class LoginWindow {
 		wnd.setText(TITLE_TEXT);
 		wnd.setSize(400, 180);
 
-		wnd.setLayout(new GridLayout());
-
 		wnd.addDisposeListener(new DisposeListener() {
 
 			@Override
