@@ -65,9 +65,6 @@ public interface IDataDictionary extends IAddDataType{
 
 	public ILogicalOperator getStreamForTransformation(String name, ISession caller);
 
-	// no restric
-	public boolean existsSource(String name);
-
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller);
 
 	public ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;

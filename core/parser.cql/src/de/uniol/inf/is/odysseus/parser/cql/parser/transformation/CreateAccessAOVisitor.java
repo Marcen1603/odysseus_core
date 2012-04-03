@@ -66,7 +66,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
 		String sourceString = ((ASTIdentifier) childNode).getName();
-		if (dd.existsSource(sourceString)){
+		if (dd.containsViewOrStream(sourceString, caller) ){
 		
 		String sourceType = dd.getSourceType(sourceString);
 

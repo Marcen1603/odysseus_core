@@ -351,12 +351,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		return streamDefinitions.get(name);
 	}
 
-	// no restric
-	@Override
-	public boolean existsSource(String name) {
-		return streamDefinitions.containsKey(name);
-	}
-
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreams(ISession caller) {
 		return getDefinitions(caller, streamDefinitions);
