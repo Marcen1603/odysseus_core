@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.MessageLite;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
@@ -14,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer
 
 
 public class ChannelHandlerReceiverPO<R extends MessageLite, W> extends AbstractSource<W>
-		implements ITransferHandler<W> {
+		implements ITransferHandler<W>, ISource<W> {
 
 	Logger logger = LoggerFactory.getLogger(ChannelHandlerReceiverPO.class);
 	private SocketAddress address;

@@ -88,7 +88,8 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends SimpleChanne
 	@SuppressWarnings("unchecked")
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		channelHandlerReceiverPO.newMessage((R)e.getMessage());
+		Object m = e.getMessage();
+		channelHandlerReceiverPO.newMessage((R)m);
 	}
 
 	/*
@@ -119,9 +120,11 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends SimpleChanne
 				ChannelPipeline cp = Channels.pipeline();
 
 				cp.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
+				MessageLite m = message.getDefaultInstanceForType();
+				ProtobufDecoder dec = new ProtobufDecoder(m);
 				cp.addLast(
 						"protobufDecoder",
-						new ProtobufDecoder(message.getDefaultInstanceForType()));
+						dec);
 				cp.addLast("application", ChannelReceiverDelegate.this);
 				return cp;
 			}

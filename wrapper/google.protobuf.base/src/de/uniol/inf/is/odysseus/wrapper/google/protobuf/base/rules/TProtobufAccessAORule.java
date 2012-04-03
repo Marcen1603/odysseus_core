@@ -23,7 +23,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 10;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -68,7 +68,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
+		return TransformRuleFlowGroup.ACCESS;
 	}
 
 	@Override
