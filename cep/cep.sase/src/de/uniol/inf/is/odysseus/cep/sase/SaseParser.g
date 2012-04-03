@@ -200,6 +200,6 @@ aggop
 	: MIN|MAX|SUM|COUNT|AVG
 	;
 	
-value 	:	 NUMBER | STRING_LITERAL;
+value 	:	 NUMBER | BOOLEAN | STRING_LITERAL ;
 	
 	

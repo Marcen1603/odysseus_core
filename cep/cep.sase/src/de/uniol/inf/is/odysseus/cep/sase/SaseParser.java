@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2012-03-20 10:14:21
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2012-04-03 17:39:32
  
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -30,7 +30,7 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class SaseParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ALT", "AND", "AS", "ASSIGN", "AVG", "BBRACKETLEFT", "BBRACKETRIGHT", "COMMA", "COMPAREOP", "COUNT", "CREATE", "DAY", "DIGIT", "DIVISION", "EQUALS", "FLOAT", "HOUR", "INTEGER", "LBRACKET", "LEFTCURLY", "LEN", "LETTER", "LOWER", "MAX", "MILLISECOND", "MIN", "MINUS", "MINUTE", "MULT", "NAME", "NEWLINE", "NONCONTROL_CHAR", "NOTSIGN", "NUMBER", "PARTITION_CONTIGUITY", "PATTERN", "PLUS", "POINT", "RBRACKET", "RETURN", "RIGHTCURLY", "SECOND", "SEQ", "SINGLEEQUALS", "SKIP_TILL_ANY_MATCH", "SKIP_TILL_NEXT_MATCH", "SPACE", "STREAM", "STRICT_CONTIGUITY", "STRING_LITERAL", "SUM", "UPPER", "VIEW", "WEEK", "WHERE", "WHITESPACE", "WITHIN", "AGGREGATION", "ASSIGNMENT", "ATTRIBUTE", "COMPAREEXPRESSION", "CREATEVIEW", "CURRENT", "FIRST", "IDEXPRESSION", "KATTRIBUTE", "KMEMBER", "KSTATE", "KTYPE", "MATHEXPRESSION", "MEMBER", "NOT", "PARAMLIST", "PREV", "QUERY", "STATE", "TERM", "TYPE", "WHEREEXPRESSION"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ALT", "AND", "AS", "ASSIGN", "AVG", "BBRACKETLEFT", "BBRACKETRIGHT", "BOOLEAN", "COMMA", "COMPAREOP", "COUNT", "CREATE", "DAY", "DIGIT", "DIVISION", "EQUALS", "FALSE", "FLOAT", "HOUR", "INTEGER", "LBRACKET", "LEFTCURLY", "LEN", "LETTER", "LOWER", "MAX", "MILLISECOND", "MIN", "MINUS", "MINUTE", "MULT", "NAME", "NEWLINE", "NONCONTROL_CHAR", "NOTSIGN", "NUMBER", "PARTITION_CONTIGUITY", "PATTERN", "PLUS", "POINT", "RBRACKET", "RETURN", "RIGHTCURLY", "SECOND", "SEQ", "SINGLEEQUALS", "SKIP_TILL_ANY_MATCH", "SKIP_TILL_NEXT_MATCH", "SPACE", "STREAM", "STRICT_CONTIGUITY", "STRING_LITERAL", "SUM", "TRUE", "UPPER", "VIEW", "WEEK", "WHERE", "WHITESPACE", "WITHIN", "AGGREGATION", "ASSIGNMENT", "ATTRIBUTE", "COMPAREEXPRESSION", "CREATEVIEW", "CURRENT", "FIRST", "IDEXPRESSION", "KATTRIBUTE", "KMEMBER", "KSTATE", "KTYPE", "MATHEXPRESSION", "MEMBER", "NOT", "PARAMLIST", "PREV", "QUERY", "STATE", "TERM", "TYPE", "WHEREEXPRESSION"
     };
 
     public static final int EOF=-1;
@@ -41,78 +41,81 @@ public class SaseParser extends Parser {
     public static final int AVG=8;
     public static final int BBRACKETLEFT=9;
     public static final int BBRACKETRIGHT=10;
-    public static final int COMMA=11;
-    public static final int COMPAREOP=12;
-    public static final int COUNT=13;
-    public static final int CREATE=14;
-    public static final int DAY=15;
-    public static final int DIGIT=16;
-    public static final int DIVISION=17;
-    public static final int EQUALS=18;
-    public static final int FLOAT=19;
-    public static final int HOUR=20;
-    public static final int INTEGER=21;
-    public static final int LBRACKET=22;
-    public static final int LEFTCURLY=23;
-    public static final int LEN=24;
-    public static final int LETTER=25;
-    public static final int LOWER=26;
-    public static final int MAX=27;
-    public static final int MILLISECOND=28;
-    public static final int MIN=29;
-    public static final int MINUS=30;
-    public static final int MINUTE=31;
-    public static final int MULT=32;
-    public static final int NAME=33;
-    public static final int NEWLINE=34;
-    public static final int NONCONTROL_CHAR=35;
-    public static final int NOTSIGN=36;
-    public static final int NUMBER=37;
-    public static final int PARTITION_CONTIGUITY=38;
-    public static final int PATTERN=39;
-    public static final int PLUS=40;
-    public static final int POINT=41;
-    public static final int RBRACKET=42;
-    public static final int RETURN=43;
-    public static final int RIGHTCURLY=44;
-    public static final int SECOND=45;
-    public static final int SEQ=46;
-    public static final int SINGLEEQUALS=47;
-    public static final int SKIP_TILL_ANY_MATCH=48;
-    public static final int SKIP_TILL_NEXT_MATCH=49;
-    public static final int SPACE=50;
-    public static final int STREAM=51;
-    public static final int STRICT_CONTIGUITY=52;
-    public static final int STRING_LITERAL=53;
-    public static final int SUM=54;
-    public static final int UPPER=55;
-    public static final int VIEW=56;
-    public static final int WEEK=57;
-    public static final int WHERE=58;
-    public static final int WHITESPACE=59;
-    public static final int WITHIN=60;
-    public static final int AGGREGATION=61;
-    public static final int ASSIGNMENT=62;
-    public static final int ATTRIBUTE=63;
-    public static final int COMPAREEXPRESSION=64;
-    public static final int CREATEVIEW=65;
-    public static final int CURRENT=66;
-    public static final int FIRST=67;
-    public static final int IDEXPRESSION=68;
-    public static final int KATTRIBUTE=69;
-    public static final int KMEMBER=70;
-    public static final int KSTATE=71;
-    public static final int KTYPE=72;
-    public static final int MATHEXPRESSION=73;
-    public static final int MEMBER=74;
-    public static final int NOT=75;
-    public static final int PARAMLIST=76;
-    public static final int PREV=77;
-    public static final int QUERY=78;
-    public static final int STATE=79;
-    public static final int TERM=80;
-    public static final int TYPE=81;
-    public static final int WHEREEXPRESSION=82;
+    public static final int BOOLEAN=11;
+    public static final int COMMA=12;
+    public static final int COMPAREOP=13;
+    public static final int COUNT=14;
+    public static final int CREATE=15;
+    public static final int DAY=16;
+    public static final int DIGIT=17;
+    public static final int DIVISION=18;
+    public static final int EQUALS=19;
+    public static final int FALSE=20;
+    public static final int FLOAT=21;
+    public static final int HOUR=22;
+    public static final int INTEGER=23;
+    public static final int LBRACKET=24;
+    public static final int LEFTCURLY=25;
+    public static final int LEN=26;
+    public static final int LETTER=27;
+    public static final int LOWER=28;
+    public static final int MAX=29;
+    public static final int MILLISECOND=30;
+    public static final int MIN=31;
+    public static final int MINUS=32;
+    public static final int MINUTE=33;
+    public static final int MULT=34;
+    public static final int NAME=35;
+    public static final int NEWLINE=36;
+    public static final int NONCONTROL_CHAR=37;
+    public static final int NOTSIGN=38;
+    public static final int NUMBER=39;
+    public static final int PARTITION_CONTIGUITY=40;
+    public static final int PATTERN=41;
+    public static final int PLUS=42;
+    public static final int POINT=43;
+    public static final int RBRACKET=44;
+    public static final int RETURN=45;
+    public static final int RIGHTCURLY=46;
+    public static final int SECOND=47;
+    public static final int SEQ=48;
+    public static final int SINGLEEQUALS=49;
+    public static final int SKIP_TILL_ANY_MATCH=50;
+    public static final int SKIP_TILL_NEXT_MATCH=51;
+    public static final int SPACE=52;
+    public static final int STREAM=53;
+    public static final int STRICT_CONTIGUITY=54;
+    public static final int STRING_LITERAL=55;
+    public static final int SUM=56;
+    public static final int TRUE=57;
+    public static final int UPPER=58;
+    public static final int VIEW=59;
+    public static final int WEEK=60;
+    public static final int WHERE=61;
+    public static final int WHITESPACE=62;
+    public static final int WITHIN=63;
+    public static final int AGGREGATION=64;
+    public static final int ASSIGNMENT=65;
+    public static final int ATTRIBUTE=66;
+    public static final int COMPAREEXPRESSION=67;
+    public static final int CREATEVIEW=68;
+    public static final int CURRENT=69;
+    public static final int FIRST=70;
+    public static final int IDEXPRESSION=71;
+    public static final int KATTRIBUTE=72;
+    public static final int KMEMBER=73;
+    public static final int KSTATE=74;
+    public static final int KTYPE=75;
+    public static final int MATHEXPRESSION=76;
+    public static final int MEMBER=77;
+    public static final int NOT=78;
+    public static final int PARAMLIST=79;
+    public static final int PREV=80;
+    public static final int QUERY=81;
+    public static final int STATE=82;
+    public static final int TERM=83;
+    public static final int TYPE=84;
+    public static final int WHEREEXPRESSION=85;
 
     // delegates
     public Parser[] getDelegates() {
@@ -288,7 +291,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_queryStmt.add(queryStmt6.getTree());
 
             // AST REWRITE
-            // elements: queryStmt, NAME
+            // elements: NAME, queryStmt
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -443,7 +446,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_returnPart.add(returnPart10.getTree());
 
             // AST REWRITE
-            // elements: returnPart, withinPart, wherePart, patternPart
+            // elements: wherePart, returnPart, patternPart, withinPart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -577,7 +580,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: WITHIN, NUMBER, timeunit
+            // elements: NUMBER, timeunit, WITHIN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -755,7 +758,7 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( (LA5_1==PARTITION_CONTIGUITY||(LA5_1 >= SKIP_TILL_ANY_MATCH && LA5_1 <= SKIP_TILL_NEXT_MATCH)||LA5_1==STRICT_CONTIGUITY) ) {
                     alt5=1;
                 }
-                else if ( ((LA5_1 >= AVG && LA5_1 <= BBRACKETLEFT)||LA5_1==COUNT||LA5_1==LBRACKET||LA5_1==MAX||LA5_1==MIN||LA5_1==NAME||LA5_1==NUMBER||(LA5_1 >= STRING_LITERAL && LA5_1 <= SUM)) ) {
+                else if ( ((LA5_1 >= AVG && LA5_1 <= BBRACKETLEFT)||LA5_1==BOOLEAN||LA5_1==COUNT||LA5_1==LBRACKET||LA5_1==MAX||LA5_1==MIN||LA5_1==NAME||LA5_1==NUMBER||(LA5_1 >= STRING_LITERAL && LA5_1 <= SUM)) ) {
                     alt5=2;
                 }
                 else {
@@ -806,7 +809,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: skipPart, whereExpressions, WHERE
+                    // elements: whereExpressions, skipPart, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -970,7 +973,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: skipMethod, parameterList
+            // elements: parameterList, skipMethod
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1153,7 +1156,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: PATTERN, patternDecl
+            // elements: patternDecl, PATTERN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1323,7 +1326,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: NAME, attributeTerm, RETURN
+            // elements: RETURN, NAME, attributeTerm
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1808,7 +1811,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_ktypeDefinition.add(ktypeDefinition43.getTree());
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1883,7 +1886,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_typeDefinition.add(typeDefinition45.getTree());
 
                     // AST REWRITE
-                    // elements: typeDefinition, NOTSIGN
+                    // elements: NOTSIGN, typeDefinition
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1966,7 +1969,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: ktypeDefinition, NOTSIGN
+                    // elements: NOTSIGN, ktypeDefinition
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -2049,7 +2052,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, typeDefinition
+                    // elements: typeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3624,6 +3627,7 @@ public TreeAdaptor getTreeAdaptor() {
                 }
                 break;
             case AVG:
+            case BOOLEAN:
             case COUNT:
             case LBRACKET:
             case MAX:
@@ -3776,7 +3780,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_mathExpression.add(f2.getTree());
 
                     // AST REWRITE
-                    // elements: op, f2, f1
+                    // elements: f1, f2, op
                     // token labels: op
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -3839,7 +3843,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_mathExpression.add(mathExpression97.getTree());
 
                     // AST REWRITE
-                    // elements: sAttributeName, mathExpression
+                    // elements: mathExpression, sAttributeName
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4226,6 +4230,7 @@ public TreeAdaptor getTreeAdaptor() {
                 alt26=1;
                 }
                 break;
+            case BOOLEAN:
             case NUMBER:
             case STRING_LITERAL:
                 {
@@ -4422,7 +4427,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: NAME, kAttributeUsage
+                    // elements: kAttributeUsage, NAME
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4476,7 +4481,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: member, aName
+                    // elements: aName, member
                     // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
@@ -4733,7 +4738,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
                     // AST REWRITE
-                    // elements: var, aggop, member
+                    // elements: member, var, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4829,7 +4834,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: member, aggop, var
+                    // elements: var, member, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4972,7 +4977,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "value"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:203:1: value : ( NUMBER | STRING_LITERAL );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:203:1: value : ( NUMBER | BOOLEAN | STRING_LITERAL );
     public final SaseParser.value_return value() throws RecognitionException {
         SaseParser.value_return retval = new SaseParser.value_return();
         retval.start = input.LT(1);
@@ -4985,7 +4990,7 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set132_tree=null;
 
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:203:8: ( NUMBER | STRING_LITERAL )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:203:8: ( NUMBER | BOOLEAN | STRING_LITERAL )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
@@ -4993,7 +4998,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             set132=(Token)input.LT(1);
 
-            if ( input.LA(1)==NUMBER||input.LA(1)==STRING_LITERAL ) {
+            if ( input.LA(1)==BOOLEAN||input.LA(1)==NUMBER||input.LA(1)==STRING_LITERAL ) {
                 input.consume();
                 if ( state.backtracking==0 ) adaptor.addChild(root_0, 
                 (CommonTree)adaptor.create(set132)
@@ -5038,63 +5043,63 @@ public TreeAdaptor getTreeAdaptor() {
 
     public static final BitSet FOLLOW_createStmt_in_start154 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_queryStmt_in_start160 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_CREATE_in_createStmt170 = new BitSet(new long[]{0x0100000000000000L});
-    public static final BitSet FOLLOW_VIEW_in_createStmt172 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_createStmt174 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_CREATE_in_createStmt170 = new BitSet(new long[]{0x0800000000000000L});
+    public static final BitSet FOLLOW_VIEW_in_createStmt172 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_createStmt174 = new BitSet(new long[]{0x0000020000000000L});
     public static final BitSet FOLLOW_queryStmt_in_createStmt176 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_patternPart_in_queryStmt196 = new BitSet(new long[]{0x1400080000000000L});
-    public static final BitSet FOLLOW_wherePart_in_queryStmt198 = new BitSet(new long[]{0x1000080000000000L});
-    public static final BitSet FOLLOW_withinPart_in_queryStmt201 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_patternPart_in_queryStmt196 = new BitSet(new long[]{0xA000200000000000L});
+    public static final BitSet FOLLOW_wherePart_in_queryStmt198 = new BitSet(new long[]{0x8000200000000000L});
+    public static final BitSet FOLLOW_withinPart_in_queryStmt201 = new BitSet(new long[]{0x0000200000000000L});
     public static final BitSet FOLLOW_returnPart_in_queryStmt204 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WITHIN_in_withinPart235 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_NUMBER_in_withinPart237 = new BitSet(new long[]{0x0200200090108002L});
+    public static final BitSet FOLLOW_WITHIN_in_withinPart235 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_NUMBER_in_withinPart237 = new BitSet(new long[]{0x1000800240410002L});
     public static final BitSet FOLLOW_timeunit_in_withinPart239 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WHERE_in_wherePart281 = new BitSet(new long[]{0x0013004000000000L});
-    public static final BitSet FOLLOW_skipPart_in_wherePart283 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_LEFTCURLY_in_wherePart285 = new BitSet(new long[]{0x0060002228402300L});
-    public static final BitSet FOLLOW_whereExpressions_in_wherePart287 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_WHERE_in_wherePart281 = new BitSet(new long[]{0x004C010000000000L});
+    public static final BitSet FOLLOW_skipPart_in_wherePart283 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_LEFTCURLY_in_wherePart285 = new BitSet(new long[]{0x01800088A1004B00L});
+    public static final BitSet FOLLOW_whereExpressions_in_wherePart287 = new BitSet(new long[]{0x0000400000000000L});
     public static final BitSet FOLLOW_RIGHTCURLY_in_wherePart289 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WHERE_in_wherePart306 = new BitSet(new long[]{0x0060002228402300L});
+    public static final BitSet FOLLOW_WHERE_in_wherePart306 = new BitSet(new long[]{0x01800088A1004B00L});
     public static final BitSet FOLLOW_whereExpressions_in_wherePart308 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_skipMethod_in_skipPart327 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_skipPart329 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_parameterList_in_skipPart331 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_skipMethod_in_skipPart327 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_skipPart329 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_parameterList_in_skipPart331 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_skipPart333 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PATTERN_in_patternPart382 = new BitSet(new long[]{0x0000400000000002L});
-    public static final BitSet FOLLOW_patternDecl_in_patternPart384 = new BitSet(new long[]{0x0000400000000002L});
-    public static final BitSet FOLLOW_RETURN_in_returnPart407 = new BitSet(new long[]{0x0040000228002100L});
-    public static final BitSet FOLLOW_attributeTerm_in_returnPart409 = new BitSet(new long[]{0x0000000000000842L});
-    public static final BitSet FOLLOW_COMMA_in_returnPart412 = new BitSet(new long[]{0x0040000228002100L});
-    public static final BitSet FOLLOW_attributeTerm_in_returnPart414 = new BitSet(new long[]{0x0000000000000842L});
-    public static final BitSet FOLLOW_AS_in_returnPart419 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_PATTERN_in_patternPart382 = new BitSet(new long[]{0x0001000000000002L});
+    public static final BitSet FOLLOW_patternDecl_in_patternPart384 = new BitSet(new long[]{0x0001000000000002L});
+    public static final BitSet FOLLOW_RETURN_in_returnPart407 = new BitSet(new long[]{0x01000008A0004100L});
+    public static final BitSet FOLLOW_attributeTerm_in_returnPart409 = new BitSet(new long[]{0x0000000000001042L});
+    public static final BitSet FOLLOW_COMMA_in_returnPart412 = new BitSet(new long[]{0x01000008A0004100L});
+    public static final BitSet FOLLOW_attributeTerm_in_returnPart414 = new BitSet(new long[]{0x0000000000001042L});
+    public static final BitSet FOLLOW_AS_in_returnPart419 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_returnPart421 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_seqPatternDecl_in_patternDecl447 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SEQ_in_seqPatternDecl459 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_seqPatternDecl461 = new BitSet(new long[]{0x0000001200400000L});
-    public static final BitSet FOLLOW_stateDef_in_seqPatternDecl463 = new BitSet(new long[]{0x0000040000000800L});
-    public static final BitSet FOLLOW_COMMA_in_seqPatternDecl466 = new BitSet(new long[]{0x0000001200400000L});
-    public static final BitSet FOLLOW_stateDef_in_seqPatternDecl468 = new BitSet(new long[]{0x0000040000000800L});
+    public static final BitSet FOLLOW_SEQ_in_seqPatternDecl459 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_seqPatternDecl461 = new BitSet(new long[]{0x0000004801000000L});
+    public static final BitSet FOLLOW_stateDef_in_seqPatternDecl463 = new BitSet(new long[]{0x0000100000001000L});
+    public static final BitSet FOLLOW_COMMA_in_seqPatternDecl466 = new BitSet(new long[]{0x0000004801000000L});
+    public static final BitSet FOLLOW_stateDef_in_seqPatternDecl468 = new BitSet(new long[]{0x0000100000001000L});
     public static final BitSet FOLLOW_RBRACKET_in_seqPatternDecl472 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOTSIGN_in_stateDef496 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_NOTSIGN_in_stateDef496 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_ktypeDefinition_in_stateDef500 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOTSIGN_in_stateDef519 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_NOTSIGN_in_stateDef519 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_typeDefinition_in_stateDef523 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOTSIGN_in_stateDef544 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_stateDef548 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_ktypeDefinition_in_stateDef550 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_NOTSIGN_in_stateDef544 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_stateDef548 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_ktypeDefinition_in_stateDef550 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_stateDef552 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NOTSIGN_in_stateDef570 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_stateDef574 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_typeDefinition_in_stateDef576 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_NOTSIGN_in_stateDef570 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_stateDef574 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_typeDefinition_in_stateDef576 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_stateDef578 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_typeDefinition603 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_NAME_in_typeDefinition603 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_sAttributeName_in_typeDefinition605 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_ktypeDefinition616 = new BitSet(new long[]{0x0000010000000000L});
-    public static final BitSet FOLLOW_PLUS_in_ktypeDefinition618 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_NAME_in_ktypeDefinition616 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_PLUS_in_ktypeDefinition618 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_kAttributeName_in_ktypeDefinition620 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_attributeName_in_parameterList634 = new BitSet(new long[]{0x0000000000000802L});
-    public static final BitSet FOLLOW_COMMA_in_parameterList637 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_attributeName_in_parameterList639 = new BitSet(new long[]{0x0000000000000802L});
+    public static final BitSet FOLLOW_attributeName_in_parameterList634 = new BitSet(new long[]{0x0000000000001002L});
+    public static final BitSet FOLLOW_COMMA_in_parameterList637 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_attributeName_in_parameterList639 = new BitSet(new long[]{0x0000000000001002L});
     public static final BitSet FOLLOW_kAttributeName_in_attributeName663 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_sAttributeName_in_attributeName677 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_NAME_in_kAttributeName699 = new BitSet(new long[]{0x0000000000000200L});
@@ -5109,76 +5114,76 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_last_in_kAttributeUsage765 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_NAME_in_kAttributeUsage778 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_len_in_kAttributeUsage780 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_current801 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_current801 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_current805 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_current807 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_first822 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_first822 = new BitSet(new long[]{0x0000008000000000L});
     public static final BitSet FOLLOW_NUMBER_in_first826 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_first828 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_last841 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_last845 = new BitSet(new long[]{0x0000000040000000L});
-    public static final BitSet FOLLOW_MINUS_in_last847 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_last841 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_last845 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_MINUS_in_last847 = new BitSet(new long[]{0x0000008000000000L});
     public static final BitSet FOLLOW_NUMBER_in_last851 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_last853 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_len869 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_len871 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_len873 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_len869 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_len871 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_len873 = new BitSet(new long[]{0x0000000004000000L});
     public static final BitSet FOLLOW_LEN_in_len875 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_len877 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions890 = new BitSet(new long[]{0x0000000000000822L});
-    public static final BitSet FOLLOW_AND_in_whereExpressions894 = new BitSet(new long[]{0x0060002228402300L});
-    public static final BitSet FOLLOW_COMMA_in_whereExpressions896 = new BitSet(new long[]{0x0060002228402300L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions899 = new BitSet(new long[]{0x0000000000000822L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression922 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions890 = new BitSet(new long[]{0x0000000000001022L});
+    public static final BitSet FOLLOW_AND_in_whereExpressions894 = new BitSet(new long[]{0x01800088A1004B00L});
+    public static final BitSet FOLLOW_COMMA_in_whereExpressions896 = new BitSet(new long[]{0x01800088A1004B00L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions899 = new BitSet(new long[]{0x0000000000001022L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression922 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_expression924 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_expression926 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_mathExpression_in_expression942 = new BitSet(new long[]{0x0000800000001000L});
-    public static final BitSet FOLLOW_SINGLEEQUALS_in_expression947 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_COMPAREOP_in_expression951 = new BitSet(new long[]{0x0060002228402100L});
+    public static final BitSet FOLLOW_mathExpression_in_expression942 = new BitSet(new long[]{0x0002000000002000L});
+    public static final BitSet FOLLOW_SINGLEEQUALS_in_expression947 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_COMPAREOP_in_expression951 = new BitSet(new long[]{0x01800088A1004900L});
     public static final BitSet FOLLOW_mathExpression_in_expression956 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_sAttributeName_in_expression978 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_ASSIGN_in_expression980 = new BitSet(new long[]{0x0060002228402100L});
+    public static final BitSet FOLLOW_ASSIGN_in_expression980 = new BitSet(new long[]{0x01800088A1004900L});
     public static final BitSet FOLLOW_mathExpression_in_expression982 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_mult_in_mathExpression1002 = new BitSet(new long[]{0x0000010040000002L});
-    public static final BitSet FOLLOW_PLUS_in_mathExpression1006 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_MINUS_in_mathExpression1009 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_mult_in_mathExpression1013 = new BitSet(new long[]{0x0000010040000002L});
-    public static final BitSet FOLLOW_term_in_mult1027 = new BitSet(new long[]{0x0000000100020002L});
-    public static final BitSet FOLLOW_MULT_in_mult1031 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_DIVISION_in_mult1034 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_term_in_mult1038 = new BitSet(new long[]{0x0000000100020002L});
+    public static final BitSet FOLLOW_mult_in_mathExpression1002 = new BitSet(new long[]{0x0000040100000002L});
+    public static final BitSet FOLLOW_PLUS_in_mathExpression1006 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_MINUS_in_mathExpression1009 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mult_in_mathExpression1013 = new BitSet(new long[]{0x0000040100000002L});
+    public static final BitSet FOLLOW_term_in_mult1027 = new BitSet(new long[]{0x0000000400040002L});
+    public static final BitSet FOLLOW_MULT_in_mult1031 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_DIVISION_in_mult1034 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_term_in_mult1038 = new BitSet(new long[]{0x0000000400040002L});
     public static final BitSet FOLLOW_attributeTerm_in_term1051 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_value_in_term1057 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LBRACKET_in_term1062 = new BitSet(new long[]{0x0060002228402100L});
-    public static final BitSet FOLLOW_mathExpression_in_term1065 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_term1062 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mathExpression_in_term1065 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_term1067 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_aggregation_in_attributeTerm1079 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_kAttributeUsage_in_attributeTerm1087 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_attributeTerm1089 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_kAttributeUsage_in_attributeTerm1087 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_attributeTerm1089 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_attributeTerm1091 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_attributeTerm1110 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_attributeTerm1112 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_NAME_in_attributeTerm1110 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_attributeTerm1112 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_attributeTerm1116 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggop_in_aggregation1141 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1143 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1141 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation1143 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_aggregation1147 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1149 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1151 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1153 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1157 = new BitSet(new long[]{0x0000000040000000L});
-    public static final BitSet FOLLOW_MINUS_in_aggregation1159 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1149 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1151 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1153 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1157 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_MINUS_in_aggregation1159 = new BitSet(new long[]{0x0000008000000000L});
     public static final BitSet FOLLOW_NUMBER_in_aggregation1163 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1165 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1167 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1171 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1165 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1167 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1171 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_aggregation1173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggop_in_aggregation1199 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1201 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1199 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation1201 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_NAME_in_aggregation1205 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1207 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1209 = new BitSet(new long[]{0x0000060000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1212 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1216 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1209 = new BitSet(new long[]{0x0000180000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1212 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1216 = new BitSet(new long[]{0x0000100000000000L});
     public static final BitSet FOLLOW_RBRACKET_in_aggregation1220 = new BitSet(new long[]{0x0000000000000002L});
 
 }

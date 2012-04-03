@@ -556,6 +556,10 @@ List<PathAttribute> tmpAttrib = new ArrayList<PathAttribute>();
                {
                 exp.append(num.getText());
                }
+  | bool=BOOLEAN
+  {
+    exp.append(bool.getText());
+  }
   | lit=STRING_LITERAL 
                        {
                         exp.append(lit.getText());
@@ -716,8 +720,9 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     	SDFAttribute attr = new SDFAttribute(null, e.getLabel(), SDFDatatype.STRING);
     	attrList.add(attr);
     }
+    String name = value != null && value.getText() != null ? value.getText() : "";
     SDFSchema outputSchema = new SDFSchema(
-    		value.getText() != null ? value.getText() : "", attrList);
+    		name, attrList);
     ;
     cepAo.getStateMachine().setOutputScheme(scheme);
     cepAo.setOutputSchema(outputSchema);

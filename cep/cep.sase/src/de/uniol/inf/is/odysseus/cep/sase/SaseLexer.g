@@ -76,6 +76,9 @@ LBRACKET
 RBRACKET 
 	: ')';
 
+BOOLEAN: TRUE|FALSE;
+fragment TRUE : ('T'|'t')('R'|'r')('U'|'u')('E'|'e');
+fragment FALSE: ('F'|'f')('A'|'a')('L'|'l')('S'|'s')('E'|'e');
 
 NUMBER	:	 INTEGER | FLOAT;
 fragment FLOAT	: INTEGER '.' DIGIT+;
