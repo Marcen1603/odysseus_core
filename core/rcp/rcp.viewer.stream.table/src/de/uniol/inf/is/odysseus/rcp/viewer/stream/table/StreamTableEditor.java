@@ -29,6 +29,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -41,6 +43,8 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class StreamTableEditor implements IStreamEditorType {
 
+	private static final Logger LOG = LoggerFactory.getLogger(StreamTableEditor.class);
+	
 	private TableViewer viewer;
 	private SDFSchema schema;
 
@@ -151,7 +155,12 @@ public class StreamTableEditor implements IStreamEditorType {
 			col.setLabelProvider(new CellLabelProvider() {
 				@Override
 				public void update(ViewerCell cell) {
-					cell.setText(((Tuple<?>) cell.getElement()).getAttribute(fi).toString());
+					try {
+						cell.setText(((Tuple<?>) cell.getElement()).getAttribute(fi).toString());
+					} catch( Throwable t ) {
+						LOG.error("Could not retrieve attributeValue", t);
+						cell.setText("###");
+					}
 				}
 			});
 			layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
