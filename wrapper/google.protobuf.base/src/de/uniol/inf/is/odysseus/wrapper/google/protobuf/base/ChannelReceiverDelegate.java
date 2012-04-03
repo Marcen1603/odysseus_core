@@ -23,11 +23,14 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 
 import com.google.protobuf.MessageLite;
 
-public class ChannelReceiverDelegate<R extends MessageLite> extends SimpleChannelHandler {
-	
-	public static Logger logger = LoggerFactory.getLogger(ChannelReceiverDelegate.class);
+public class ChannelReceiverDelegate<R extends MessageLite> extends
+		SimpleChannelHandler {
+
+	public static Logger logger = LoggerFactory
+			.getLogger(ChannelReceiverDelegate.class);
 	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
-	
+	private ServerBootstrap bootstrap;
+
 	public ChannelReceiverDelegate(
 			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {
 		this.channelHandlerReceiverPO = channelHandlerReceiverPO;
@@ -89,7 +92,7 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends SimpleChanne
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		Object m = e.getMessage();
-		channelHandlerReceiverPO.newMessage((R)m);
+		channelHandlerReceiverPO.newMessage((R) m);
 	}
 
 	/*
@@ -106,36 +109,41 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends SimpleChanne
 		ctx.getChannel().close();
 	}
 
-	public void open(SocketAddress address,
-			final R message) {
-		ChannelFactory factory = new NioServerSocketChannelFactory(
-				Executors.newCachedThreadPool(),
-				Executors.newCachedThreadPool());
+	public void open(SocketAddress address, final R message) {
+		if (bootstrap == null) {
+			ChannelFactory factory = new NioServerSocketChannelFactory(
+					Executors.newCachedThreadPool(),
+					Executors.newCachedThreadPool());
 
-		ServerBootstrap bootstrap = new ServerBootstrap(factory);
+			bootstrap = new ServerBootstrap(factory);
 
-		ChannelPipelineFactory cpf = new ChannelPipelineFactory() {
-			@Override
-			public ChannelPipeline getPipeline() throws Exception {
-				ChannelPipeline cp = Channels.pipeline();
+			ChannelPipelineFactory cpf = new ChannelPipelineFactory() {
+				@Override
+				public ChannelPipeline getPipeline() throws Exception {
+					ChannelPipeline cp = Channels.pipeline();
 
-				cp.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-				MessageLite m = message.getDefaultInstanceForType();
-				ProtobufDecoder dec = new ProtobufDecoder(m);
-				cp.addLast(
-						"protobufDecoder",
-						dec);
-				cp.addLast("application", ChannelReceiverDelegate.this);
-				return cp;
-			}
-		};
+					cp.addLast("frameDecoder",
+							new ProtobufVarint32FrameDecoder());
+					MessageLite m = message.getDefaultInstanceForType();
+					ProtobufDecoder dec = new ProtobufDecoder(m);
+					cp.addLast("protobufDecoder", dec);
+					cp.addLast("application", ChannelReceiverDelegate.this);
+					return cp;
+				}
+			};
 
-		bootstrap.setPipelineFactory(cpf);
-		bootstrap.setOption("child.tcpNoDelay", true);
-		bootstrap.setOption("child.keepAlive", true);
-		bootstrap.bind(address);
-		logger.info("Bound to: " + address + " for message type: "
-				+ message.getClass().getSimpleName());				
+			bootstrap.setPipelineFactory(cpf);
+			bootstrap.setOption("child.tcpNoDelay", true);
+			bootstrap.setOption("child.keepAlive", true);
+			bootstrap.bind(address);
+			logger.info("Bound to: " + address + " for message type: "
+					+ message.getClass().getSimpleName());
+		}
 	}
-	
+
+	public void close() {
+		// TODO: Close stream
+		// bootstrap = null;
+	}
+
 }

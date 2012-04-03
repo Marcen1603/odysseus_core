@@ -20,6 +20,7 @@ public class TChangeDetectAORule extends
 			TransformationConfiguration config) {
 		@SuppressWarnings("rawtypes")
 		ChangeDetectPO<?> po = new ChangeDetectPO();
+		po.setOutputSchema(operator.getOutputSchema());
 		replace(operator, po, config);		
 		retract(operator);
 	}

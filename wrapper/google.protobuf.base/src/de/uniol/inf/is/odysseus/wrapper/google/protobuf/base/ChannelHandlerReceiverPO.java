@@ -21,6 +21,7 @@ public class ChannelHandlerReceiverPO<R extends MessageLite, W> extends Abstract
 	private SocketAddress address;
 	private R message;
 	private ITransformer<R, W> transformer;
+	private ChannelReceiverDelegate<R> delegate;
 
 	public ChannelHandlerReceiverPO(SocketAddress address,
 			R message, ITransformer<R,W> inputTransformer) {
@@ -31,7 +32,8 @@ public class ChannelHandlerReceiverPO<R extends MessageLite, W> extends Abstract
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		new ChannelReceiverDelegate<R>(ChannelHandlerReceiverPO.this).open(address, message);
+		delegate = new ChannelReceiverDelegate<R>(ChannelHandlerReceiverPO.this);
+		delegate.open(address, message);
 	}
 	
 	public void newMessage(R message){
@@ -41,6 +43,11 @@ public class ChannelHandlerReceiverPO<R extends MessageLite, W> extends Abstract
 	@Override
 	public AbstractSource<W> clone() {
 		throw new RuntimeException("Clone currently not supported Exception");
+	}
+	
+	@Override
+	protected void process_close() {
+		delegate.close();
 	}
 	
 }

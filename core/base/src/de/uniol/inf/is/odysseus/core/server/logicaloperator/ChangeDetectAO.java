@@ -52,8 +52,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		SDFSchema inputSchema = getInputSchema();
 		if (attributes.size() > 0) {
 			int[] ret = new int[attributes.size()];
-			int i=0;
-			for (SDFAttribute a: attributes){
+			int i = 0;
+			for (SDFAttribute a : attributes) {
 				ret[i++] = inputSchema.indexOf(a);
 			}
 			return ret;
@@ -61,16 +61,18 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public boolean isValid() {
-		int[] comPos = getComparePositions();
-		for (int c:comPos){
-			if (c == -1){
-				addError(new IllegalParameterException("Not all attributes in input found!"));
+		if (attributes != null && attributes.size() > 0) {
+			int[] comPos = getComparePositions();
+			for (int c : comPos) {
+				if (c == -1) {
+					addError(new IllegalParameterException(
+							"Not all attributes in input found!"));
+				}
 			}
 		}
 		return super.isValid();
 	}
-
 }
