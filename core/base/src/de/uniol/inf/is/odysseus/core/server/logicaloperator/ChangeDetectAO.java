@@ -22,15 +22,16 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -9042464546094886480L;
 	private SDFSchema attributes;
 
-	public ChangeDetectAO(AbstractLogicalOperator po) {
+	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
+		attributes = po.attributes;
 	}
 
 	public ChangeDetectAO() {
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
-	public void setAttributes(List<SDFAttribute> outputSchema) {
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTR", isList = true)
+	public void setAttr(List<SDFAttribute> outputSchema) {
 		this.attributes = new SDFSchema("", outputSchema);
 	}
 
@@ -64,15 +65,21 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 
 	@Override
 	public boolean isValid() {
-		if (attributes != null && attributes.size() > 0) {
+		boolean isValid = true;
+		if (hasAttributes()) {
 			int[] comPos = getComparePositions();
 			for (int c : comPos) {
 				if (c == -1) {
 					addError(new IllegalParameterException(
 							"Not all attributes in input found!"));
+					isValid = false;
 				}
 			}
 		}
-		return super.isValid();
+		return isValid && super.isValid();
+	}
+
+	public boolean hasAttributes() {
+		return attributes != null && attributes.size() > 0;
 	}
 }

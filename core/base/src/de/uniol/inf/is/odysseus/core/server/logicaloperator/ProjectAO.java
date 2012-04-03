@@ -101,5 +101,12 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 		}
 
 	}
+	
+	@Override
+	public boolean isValid() {
+		//init
+		this.outputSchema = new SDFSchema(getInputSchema().getURI(), outputSchema);
+		return super.isValid();
+	}
 
 }

@@ -10,21 +10,29 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 	public RelationalChangeDetectPO(int[] comparePositions) {
 		super();
 		this.comparePositions = comparePositions;
+		StringBuffer tmp = new StringBuffer(" ");
+		for (int i:comparePositions){
+			tmp.append(i).append(",");
+		}
+		setName(getName()+tmp);
 	}
 
 	public RelationalChangeDetectPO(RelationalChangeDetectPO pipe) {
 		super(pipe);
+		this.comparePositions = pipe.comparePositions;
 	}
 
 	@Override
-	protected boolean compare(Tuple<?> object, Tuple<?> lastElement) {
+	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement) {
 		for (int i:comparePositions){
-			if (!object.getAttribute(i).equals(lastElement.getAttribute(i))){
-				return false;
+			Object a = object.getAttribute(i);
+			Object b = lastElement.getAttribute(i);
+			if (!a.equals(b)){
+				return true;
 			}
 		}
 		
-		return true;
+		return false;
 	}
 	
 	

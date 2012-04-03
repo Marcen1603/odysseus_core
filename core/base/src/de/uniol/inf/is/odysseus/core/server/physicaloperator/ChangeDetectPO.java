@@ -4,11 +4,13 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 /**
- * This operator can reduce traffic. It lets an event pass if its different than the last event 
+ * This operator can reduce traffic. It lets an event pass if its different than
+ * the last event
  * 
  * @author Marco Grawunder
- *
- * @param <R> The type of the objects to filter
+ * 
+ * @param <R>
+ *            The type of the objects to filter
  */
 public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 
@@ -27,18 +29,18 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	}
 
 	@Override
-	protected void process_next(R object, int port) {
+	protected synchronized void process_next(R object, int port) {
 		if (lastElement == null) {
 			lastElement = object;
 		} else {
-			if (object != null && compare(object, lastElement)) {
+			if (object != null && areDifferent(object, lastElement)) {
 				lastElement = object;
 				transfer(object);
 			}
 		}
 	}
 
-	protected boolean compare(R object, R lastElement) {
+	protected boolean areDifferent(R object, R lastElement) {
 		return !object.equals(lastElement);
 	}
 
@@ -56,6 +58,5 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	public AbstractPipe<R, R> clone() {
 		return new ChangeDetectPO<R>(this);
 	}
-
 
 }
