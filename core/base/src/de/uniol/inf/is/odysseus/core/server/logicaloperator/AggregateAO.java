@@ -39,9 +39,7 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
 	final private List<SDFAttribute> groupingAttributes;
-	private SDFSchema outputSchema;
 	final private List<SDFAttribute> outputAttributList;
-	private boolean recalcOutputSchema = true;
 	private int dumpAtValueCount = -1;
 
 	public AggregateAO() {
@@ -57,7 +55,6 @@ public class AggregateAO extends UnaryLogicalOp {
 				op.aggregations);
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
 		outputAttributList = new ArrayList<SDFAttribute>(op.outputAttributList);
-		outputSchema = op.outputSchema;
 		dumpAtValueCount = op.dumpAtValueCount;
 	}
 
@@ -77,7 +74,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 
 		outputAttributList.add(outAttribute);
-		recalcOutputSchema = true;
+		setOutputSchema(null);
 		Map<AggregateFunction, SDFAttribute> af = aggregations.get(attributes);
 		if (af == null) {
 			af = new HashMap<AggregateFunction, SDFAttribute>();
@@ -97,7 +94,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
-	@GetParameter(name="AGGREGATIONS")
+	@GetParameter(name = "AGGREGATIONS")
 	public Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> getAggregations() {
 		return this.aggregations;
 	}
@@ -112,9 +109,9 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 		groupingAttributes.add(attribute);
 		outputAttributList.add(attribute);
-		recalcOutputSchema = true;
+		setOutputSchema(null);
 	}
-	
+
 	public void addGroupingAttributes(SDFSchema attributes) {
 		for (SDFAttribute a : attributes) {
 			addGroupingAttribute(a);
@@ -128,7 +125,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 	}
 
-	@Parameter(name="AGGREGATIONS", type = AggregateItemParameter.class, isList = true)
+	@Parameter(name = "AGGREGATIONS", type = AggregateItemParameter.class, isList = true)
 	public void setAggregationItems(List<AggregateItem> aggregations) {
 		for (AggregateItem item : aggregations) {
 			addAggregation(item.inAttribute, item.aggregateFunction,
@@ -148,13 +145,14 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern() {
-		if (recalcOutputSchema){
-			if (getInputSchema() != null){
-			this.outputSchema = new SDFSchema(getInputSchema().getURI(), outputAttributList);
-			}else{
-				this.outputSchema = new SDFSchema("<tmp>", outputAttributList);
-			}
+		SDFSchema outputSchema;
+		if (getInputSchema() != null) {
+			outputSchema = new SDFSchema(getInputSchema().getURI(),
+					outputAttributList);
+		} else {
+			outputSchema = new SDFSchema("<tmp>", outputAttributList);
 		}
+		setOutputSchema(outputSchema);
 		return outputSchema;
 	}
 
