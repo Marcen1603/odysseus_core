@@ -19,21 +19,17 @@ import java.util.Collection;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.base.Preconditions;
 
 public class QueryView extends ViewPart {
 
-    private TableViewer tableViewer;
+    private QueryTableViewer tableViewer;
     private Collection<IQueryViewData> queries = new ArrayList<IQueryViewData>();
     private IQueryViewDataProvider dataProvider;
 
@@ -50,21 +46,12 @@ public class QueryView extends ViewPart {
         tableViewer.setInput(queries);
         getSite().setSelectionProvider(tableViewer);
 
-        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-            @Override
-            public void doubleClick(DoubleClickEvent event) {
-                IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-
-                try {
-                    handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
         createContextMenu();
     }
+	
+	public QueryTableViewer getTableViewer() {
+		return tableViewer;
+	}
 
 	private void createContextMenu() {
 		// Contextmenu
