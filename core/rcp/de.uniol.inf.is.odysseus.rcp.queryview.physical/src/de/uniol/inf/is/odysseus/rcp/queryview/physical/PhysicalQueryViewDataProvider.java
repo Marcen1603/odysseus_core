@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -12,21 +18,23 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener {
+public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener, IDoubleClickListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryViewDataProvider.class);
 	private QueryView view;
 	
 	@Override
 	public void init(QueryView view) {
 		this.view = view;
 		
-		listenToExecutor();
+        view.getTableViewer().addDoubleClickListener(this);
+        listenToExecutor();
 	}
 
 	@Override
 	public void dispose() {
+		view.getTableViewer().removeDoubleClickListener(this);
 		this.view = null;
-		
 		unlistenToExecutor();
 	}
 	
@@ -74,6 +82,16 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		view.refreshTable();
+	}
+
+	@Override
+	public void doubleClick(DoubleClickEvent event) {
+        IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+        try {
+            handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
+        } catch (Exception ex) {
+        	LOG.error("Exception during calling graph editor", ex);
+        }
 	}
 
 }
