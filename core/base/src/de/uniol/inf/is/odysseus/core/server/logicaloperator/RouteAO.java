@@ -23,19 +23,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
-@LogicalOperator(name="SPLIT", minInputPorts=1, maxInputPorts=1)
-public class SplitAO extends UnaryLogicalOp {
+@LogicalOperator(name="ROUTE", minInputPorts=1, maxInputPorts=1)
+public class RouteAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L;
 	List<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
 	
-	public SplitAO(){
+	public RouteAO(){
 		super();
 	}
 	
-	public SplitAO(SplitAO splitAO){
-		super(splitAO);
-		predicates = new ArrayList<IPredicate<?>>(splitAO.predicates);
+	public RouteAO(RouteAO routeAO){
+		super(routeAO);
+		predicates = new ArrayList<IPredicate<?>>(routeAO.predicates);
 	}
 
 	public List<IPredicate<?>> getPredicates() {
@@ -53,7 +53,7 @@ public class SplitAO extends UnaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new SplitAO(this);
+		return new RouteAO(this);
 	}
 
 //	@Override
@@ -73,7 +73,7 @@ public class SplitAO extends UnaryLogicalOp {
 //			return false;
 //		if (getClass() != obj.getClass())
 //			return false;
-//		SplitAO other = (SplitAO) obj;
+//		routeAO other = (routeAO) obj;
 //		if (predicates == null) {
 //			if (other.predicates != null)
 //				return false;

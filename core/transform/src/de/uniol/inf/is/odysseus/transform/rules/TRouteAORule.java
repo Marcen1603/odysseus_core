@@ -14,15 +14,15 @@
   */
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SplitAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SplitPO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RouteAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.RoutePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
+public class TRouteAORule extends AbstractTransformationRule<RouteAO> {
 
 	@Override
 	public int getPriority() {
@@ -31,22 +31,22 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 
 	
 	@Override
-	public void execute(SplitAO splitAO, TransformationConfiguration transformConfig) {		
-		SplitPO<?> splitPO = new SplitPO(splitAO.getPredicates());
-		splitPO.setOutputSchema(splitAO.getOutputSchema());
-		replace(splitAO, splitPO, transformConfig);
-		retract(splitAO);
+	public void execute(RouteAO routeAO, TransformationConfiguration transformConfig) {		
+		RoutePO<?> routePO = new RoutePO(routeAO.getPredicates());
+		routePO.setOutputSchema(routeAO.getOutputSchema());
+		replace(routeAO, routePO, transformConfig);
+		retract(routeAO);
 
 	}
 
 	@Override
-	public boolean isExecutable(SplitAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(RouteAO operator, TransformationConfiguration transformConfig) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "SplitAO -> SplitPO";
+		return "RouteAO -> RoutePO";
 	}
 	
 	@Override
@@ -56,7 +56,7 @@ public class TSplitAORule extends AbstractTransformationRule<SplitAO> {
 	
 	@Override
 	public Class<?> getConditionClass() {	
-		return SplitAO.class;
+		return RouteAO.class;
 	}
 
 }

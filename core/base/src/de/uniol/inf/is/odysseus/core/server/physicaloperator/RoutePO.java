@@ -26,16 +26,16 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  * @author Marco Grawunder
  */
 @SuppressWarnings({"rawtypes"})
-public class SplitPO<T> extends AbstractPipe<T, T> {
+public class RoutePO<T> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;
 
-	public SplitPO(List<IPredicate<? super T>> predicates)  {
+	public RoutePO(List<IPredicate<? super T>> predicates)  {
 		super();
 		initPredicates(predicates);
 	}
 
-	public SplitPO(SplitPO<T> splitPO) {
+	public RoutePO(RoutePO<T> splitPO) {
 		super();
 		initPredicates(splitPO.predicates);
 	}
@@ -74,8 +74,8 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	}
 	
 	@Override
-	public SplitPO<T> clone() {
-		return new SplitPO<T>(this);
+	public RoutePO<T> clone() {
+		return new RoutePO<T>(this);
 	}
 
 	@Override
@@ -85,10 +85,10 @@ public class SplitPO<T> extends AbstractPipe<T, T> {
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if(!(ipo instanceof SplitPO)) {
+		if(!(ipo instanceof RoutePO)) {
 			return false;
 		}
-		SplitPO spo = (SplitPO) ipo;
+		RoutePO spo = (RoutePO) ipo;
 		if(this.hasSameSources(spo) &&
 				this.predicates.size() == spo.predicates.size()) {
 			for(int i = 0; i<this.predicates.size(); i++) {

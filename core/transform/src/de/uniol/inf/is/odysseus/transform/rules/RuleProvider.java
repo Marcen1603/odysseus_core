@@ -32,7 +32,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TCreateMetadataRule());
 		rules.add(new TDeleteRenameAORule());
 		rules.add(new TSelectAORule());
-		rules.add(new TSplitAORule());
+		rules.add(new TRouteAORule());
 		rules.add(new TTransformViewRule());
 		rules.add(new TUserDefinedOperatorPO());
 		rules.add(new TChangeDetectAORule());
