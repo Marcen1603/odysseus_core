@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+
+
 public class TChangeDetectAORule extends
 		AbstractTransformationRule<ChangeDetectAO> {
 

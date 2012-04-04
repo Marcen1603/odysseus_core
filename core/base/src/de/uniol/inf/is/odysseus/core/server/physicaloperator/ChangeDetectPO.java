@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
- * the last event
+ * the last event. A heartbeat generation strategie can be used.
  * 
  * @author Marco Grawunder
  * 
@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 
 	R lastElement;
+	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 
 	public ChangeDetectPO() {
 	}
@@ -36,8 +37,11 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 			if (object != null && areDifferent(object, lastElement)) {
 				lastElement = object;
 				transfer(object);
+			}else{
+				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 			}
 		}
+		
 	}
 
 	protected boolean areDifferent(R object, R lastElement) {
@@ -57,6 +61,15 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	@Override
 	public AbstractPipe<R, R> clone() {
 		return new ChangeDetectPO<R>(this);
+	}
+	
+	public IHeartbeatGenerationStrategy<R> getHeartbeatGenerationStrategy() {
+		return heartbeatGenerationStrategy;
+	}
+
+	public void setHeartbeatGenerationStrategy(
+			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
+		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
 	}
 
 }

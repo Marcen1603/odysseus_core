@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
@@ -21,6 +22,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;
 	private SDFSchema attributes;
+	private int rate;
 
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
@@ -38,6 +40,16 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public SDFSchema getAttributes() {
 		return attributes;
 	}
+
+	@Parameter(type = IntegerParameter.class, name = "heartbeatrate")
+	public void setHeartbeatRate(int rate){
+		this.rate = rate;
+	}
+
+	public int getHeartbeatRate() {
+		return rate;
+	}
+
 
 	@Override
 	public AbstractLogicalOperator clone() {
@@ -77,4 +89,5 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public boolean hasAttributes() {
 		return attributes != null && attributes.size() > 0;
 	}
+
 }
