@@ -37,9 +37,6 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 
 	private List<SDFAttribute> choosenAttributes = new ArrayList<SDFAttribute>();
 
-	private SDFSchema outputschema;
-	private boolean recalc = true;
-
 	public enum Strategy {
 		Simple, LossyCounting, SpaceSaving
 	}
@@ -64,24 +61,20 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 		super(frequentItemAO);
 		this.size = frequentItemAO.size;
 		this.strategy = frequentItemAO.strategy;
-		this.recalc = frequentItemAO.recalc;
-		this.outputschema = frequentItemAO.outputschema;
 		this.choosenAttributes = frequentItemAO.choosenAttributes;
 	}
 
 	@Override
 	public SDFSchema getOutputSchemaIntern() {
-		if (recalc) {
-			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			for (SDFAttribute c : this.choosenAttributes) {
-				attrs.add(c.clone());
-			}
-			SDFAttribute a = new SDFAttribute(null,"itemcount", SDFDatatype.INTEGER);
-			attrs.add(a);
-			this.outputschema = new SDFSchema("FrequentItem", attrs);
-			recalc = false;
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		for (SDFAttribute c : this.choosenAttributes) {
+			attrs.add(c.clone());
 		}
-		return this.outputschema;
+		SDFAttribute a = new SDFAttribute(null, "itemcount",
+				SDFDatatype.INTEGER);
+		attrs.add(a);
+		setOutputSchema(new SDFSchema("FrequentItem", attrs));
+		return getOutputSchema();
 	}
 
 	@Override
@@ -117,12 +110,11 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 	}
 
 	public int[] getRestrictList() {
-		return calcRestrictList(getInputSchema(0),
-				new SDFSchema(getInputSchema(0).getURI(),this.getChoosenAttributeList()));
+		return calcRestrictList(getInputSchema(0), new SDFSchema(
+				getInputSchema(0).getURI(), this.getChoosenAttributeList()));
 	}
 
-	private static int[] calcRestrictList(SDFSchema in,
-			SDFSchema out) {
+	private static int[] calcRestrictList(SDFSchema in, SDFSchema out) {
 		int[] ret = new int[out.size()];
 		int i = 0;
 		for (SDFAttribute a : out) {

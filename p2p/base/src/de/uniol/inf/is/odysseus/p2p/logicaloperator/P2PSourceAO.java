@@ -14,12 +14,10 @@
   */
 package de.uniol.inf.is.odysseus.p2p.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class P2PSourceAO extends P2PAO {
 
 	private static final long serialVersionUID = -8494531216632839437L;
-	SDFSchema outputSchema = null;
 
 	public P2PSourceAO(String adv) {
 		super(adv);
@@ -27,7 +25,6 @@ public class P2PSourceAO extends P2PAO {
 
 	public P2PSourceAO(P2PSourceAO p2pSourceAO) {
 		super(p2pSourceAO);
-		this.outputSchema = p2pSourceAO.outputSchema.clone();		
 	}
 	
 	@Override

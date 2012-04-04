@@ -42,7 +42,6 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 	private IDataHandler<?>[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	private SDFSchema outputSchema;
 	private final String LOGGER_NAME = "AtomicDataInputStreamAccessMVPO";
 
 //	private int limit;
@@ -62,11 +61,9 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
-		this.outputSchema = schema;
 	}
 
 	private void createDataReader(SDFSchema schema) {
-		this.outputSchema = schema;
 		this.dataReader = new IDataHandler[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -212,10 +209,6 @@ public class AtomicDataInputStreamAccessMVPO<M extends IProbability> extends Abs
 		this.buffer = null;
 	}
 	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
 
 	//
 	// public void setMetadataFactory(

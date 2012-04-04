@@ -31,7 +31,6 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		String name = "";
 		
-		SDFSchema outputSchema = null;
 		if (getInputSchema(0) != null) {
 			outputAttributes.addAll(getInputSchema(0).getAttributes());
 			name = getInputSchema(0).getURI();
@@ -39,9 +38,9 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		outputAttributes.add(starttimeStamp);
 		outputAttributes.add(endtimeStamp);
 		
-		outputSchema = new SDFSchema(name,outputAttributes);
+		setOutputSchema(new SDFSchema(name,outputAttributes));
 
-		return outputSchema;
+		return getOutputSchema();
 	}
 
 	@Override

@@ -68,18 +68,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 	protected IDataMergeFunction<T> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferArea<T, T> transferFunction;
-	protected SDFSchema outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema;
-	}
 
 	public JoinTIPO(IDataMergeFunction<T> dataMerge,
 			IMetadataMergeFunction<K> metadataMerge,
@@ -117,7 +106,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer
 		metadataMerge.init();
 		this.transferFunction = join.transferFunction.clone();
 		this.transferFunction.init(this);
-		this.outputSchema = join.outputSchema.clone();
 		this.creationFunction = join.creationFunction.clone();
 
 	}

@@ -76,8 +76,8 @@ public class ClassifyAO extends BinaryLogicalOp {
         attrs.addAll(getInputSchema(1).clone().getAttributes());
         SDFAttribute classLabel = new SDFAttribute(null,"class_label", SDFDatatype.OBJECT);
         attrs.add(classLabel);
-        SDFSchema outputSchema = new SDFSchema("Classify", attrs);
-        return outputSchema;
+        setOutputSchema(new SDFSchema("Classify", attrs));
+        return getOutputSchema();
 	}
 
 	/**

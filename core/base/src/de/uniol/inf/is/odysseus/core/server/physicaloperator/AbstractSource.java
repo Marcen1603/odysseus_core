@@ -184,12 +184,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
+	final public void setOutputSchema(SDFSchema outputSchema) {
 		setOutputSchema(outputSchema, 0);
 	}
 
 	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
+	final public void setOutputSchema(SDFSchema outputSchema, int port) {
 		this.outputSchema.put(port, outputSchema);
 	}
 

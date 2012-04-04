@@ -38,7 +38,6 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 	private AbstractSILABDataHandler[] dataReader;
 	private Object[] attributeData;
 	private boolean isDone;
-	private SDFSchema outputSchema;
 //	private int typeAttribute;
 //	private int timestampAttribute;
 
@@ -59,7 +58,6 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 		this.port = port;
 		this.attributeData = new Object[schema.size()];
 		createDataReader(schema);
-		this.outputSchema = schema;
 //		this.typeAttribute = ;
 //		this.timestampAttribute = ;
 	}
@@ -177,10 +175,6 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 		this.buffer = null;
 	}
 	
-	@Override
-	public SDFSchema getOutputSchema(){
-		return this.outputSchema;
-	}
 	
 	@Override
 	public SilabAtomicDataInputStreamPO<M> clone()  {

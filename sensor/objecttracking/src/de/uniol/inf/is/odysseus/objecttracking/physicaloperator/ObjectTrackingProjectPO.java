@@ -40,7 +40,6 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 	int[] restrictList;
 	RealMatrix projectMatrix;
 	SDFSchema inputSchema;
-	SDFSchema outputSchema;
 	
 	
 	public ObjectTrackingProjectPO(ObjectTrackingProjectAO ao){
@@ -48,7 +47,6 @@ public class ObjectTrackingProjectPO<T extends IProbabilityPredictionFunctionKey
 		this.restrictList = ao.determineRestrictList();
 		this.projectMatrix = ao.determineProjectMatrix(this.restrictList);
 		this.inputSchema = ao.getInputSchema();
-		this.outputSchema = ao.getOutputSchema();
 		
 	}
 	

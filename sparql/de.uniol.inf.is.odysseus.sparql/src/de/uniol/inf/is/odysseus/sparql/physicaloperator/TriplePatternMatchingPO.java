@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.sparql.physicaloperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
@@ -46,15 +45,12 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	private String stream_name;
 	
 	private IPredicate predicate;
-	
-	private SDFSchema outputSchema;
-	
+		
 	public TriplePatternMatchingPO(TriplePatternMatching tpm){
 		this.queryTriple = tpm.getTriple();
 		this.graphVar = tpm.getGraphVar();
 		this.stream_name = tpm.getStream_name();
 		this.predicate = tpm.getPredicate();
-		this.outputSchema = tpm.getOutputSchema();
 		this.setName(super.getName() + ": " + this.predicate.toString());
 	}
 	
@@ -64,7 +60,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		this.graphVar = original.graphVar;
 		this.stream_name = original.stream_name;
 		this.predicate = original.predicate;
-		this.outputSchema = original.outputSchema;
 	}
 	
 	@Override
@@ -117,8 +112,8 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	
 	private Tuple<M> transform(Tuple<M> element){
 		
-		Tuple<M> newTuple = new Tuple<M>(this.outputSchema.size());
-		Object[] attrs = new Object[this.outputSchema.size()];
+		Tuple<M> newTuple = new Tuple<M>(this.getOutputSchema().size());
+		Object[] attrs = new Object[this.getOutputSchema().size()];
 		
 		int curI = 0;
 		if(this.queryTriple.getSubject().isVariable()){

@@ -39,7 +39,6 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	private JDVEData<M> data;
 	private int port;
 	protected MVTuple<M> buffer;
-	private SDFSchema outputSchema;
 
 	public JDVEAccessMVPO(int pPort) {
 		this.port = pPort;
@@ -50,15 +49,9 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	}
 
 	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		super.setOutputSchema(outputSchema);
-		this.outputSchema = outputSchema;
-	}
-
-	@Override
 	protected void process_open() throws OpenFailedException {
 		try {
-			data = new JDVEData<M>(this.port, outputSchema);
+			data = new JDVEData<M>(this.port, getOutputSchema());
 		} catch (SocketException ex) {
 			throw new OpenFailedException(ex);
 		}
@@ -100,11 +93,6 @@ public class JDVEAccessMVPO<M extends IProbability> extends AbstractSensorAccess
 	@Override
 	public AbstractSource<MVTuple<M>> clone() {
 		return new JDVEAccessMVPO<M>(this);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
 	}
 
 	@Override

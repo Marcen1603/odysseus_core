@@ -128,9 +128,9 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
         SDFAttribute id = new SDFAttribute(null, "cluster_id", SDFDatatype.INTEGER);
         elems.add(id);
         elems.addAll(getInputSchema().clone().getAttributes());
-        SDFSchema outputSchema = new SDFSchema("Cluster", elems);
+        setOutputSchema(new SDFSchema("Cluster", elems));
 
-        return outputSchema;
+        return getOutputSchema();
     }
 
     /*

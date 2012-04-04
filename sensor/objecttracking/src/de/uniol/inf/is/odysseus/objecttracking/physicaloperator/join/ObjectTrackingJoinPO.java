@@ -64,7 +64,6 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 	protected IPredicate<? super T> joinPredicate;
 	protected SDFSchema leftInputSchema;
 	protected SDFSchema rightInputSchema;
-	protected SDFSchema outputSchema;
 	
 	int counter = 0;
 	public long duration = 0;
@@ -80,7 +79,6 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 		this.joinPredicate = null;
 		this.leftInputSchema = null;
 		this.rightInputSchema = null;
-		this.outputSchema = null;
 		this.rangePredicates = null;
 	}
 
@@ -193,16 +191,6 @@ public class ObjectTrackingJoinPO<K extends IPredictionFunctionKeyTimeIntervalPr
 			this.rightInputSchema = schema;
 		}
 		
-	}
-	
-	@Override
-	public SDFSchema getOutputSchema(){
-		return this.outputSchema;
-	}
-	
-	@Override
-	public void setOutputSchema(SDFSchema outSchema){
-		this.outputSchema = outSchema;
 	}
 
 

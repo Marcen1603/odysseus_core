@@ -44,9 +44,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 	RealMatrix projectMatrix;
 	SDFSchema inputSchema;
 	int[] inputMeasurementValuePositions;
-	
-	SDFSchema outputSchema;
-	
+		
 	public ObjectTrackingProjectBasePO(ObjectTrackingProjectAO ao){
 		this.restrictList = ao.determineRestrictList();
 		this.projectMatrix = ao.determineProjectMatrix(this.restrictList);
@@ -65,7 +63,7 @@ public class ObjectTrackingProjectBasePO<T extends IProbability> extends
 			this.inputMeasurementValuePositions[i] = list.get(i);
 		}
 		
-		this.outputSchema = ao.getOutputSchema();
+		setOutputSchema(ao.getOutputSchema());
 	}
 	
 //	public ObjectTrackingProjectBasePO(int[] restrictList, RealMatrix projectMatrix, RealMatrix projectVector,

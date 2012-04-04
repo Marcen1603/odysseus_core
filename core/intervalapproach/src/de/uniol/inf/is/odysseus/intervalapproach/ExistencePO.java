@@ -23,13 +23,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 
 /**
  * Works the same way as JoinTIPO, but only the left elements are passed
@@ -69,20 +68,9 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 
 	protected ITransferArea<T,T> transferFunction;
 	
-	protected SDFSchema outputSchema;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	private int otherport = 0;
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema;
-	}
 
 	@SuppressWarnings("unchecked")
 	public ExistencePO(ITemporalSweepArea<T> leftArea, ITemporalSweepArea<T> rightArea) {
@@ -107,7 +95,6 @@ public class ExistencePO<K extends ITimeInterval, T extends IMetaAttributeContai
 		this.joinPredicate = join.joinPredicate.clone();
 		this.transferFunction = join.transferFunction.clone();
 		this.transferFunction.init(this);
-		this.outputSchema = join.outputSchema.clone();
 		this.creationFunction = join.creationFunction.clone();
 
 	}
