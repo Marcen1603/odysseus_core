@@ -39,7 +39,6 @@ public class UnNestAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -5918972476973244744L;
 	private static Logger LOG = LoggerFactory.getLogger(UnNestAO.class);
 	private SDFAttribute attribute;
-	private SDFSchema outputSchema = null;
 	private boolean recalculate = true;
 
 	/**
@@ -55,7 +54,6 @@ public class UnNestAO extends UnaryLogicalOp {
 	public UnNestAO(final UnNestAO ao) {
 		super(ao);
 		this.attribute = ao.getAttribute();
-		this.outputSchema = ao.getOutputSchema();
 	}
 
 	/*
@@ -79,31 +77,32 @@ public class UnNestAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public SDFSchema getOutputSchemaIntern() {
-		if (outputSchema == null || recalcOutputSchemata) {
-			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-			for (int i = 0; i < getInputSchema().size(); i++) {
-				SDFAttribute attribute = getInputSchema().getAttribute(i);
-				
-				if (attribute.equals(attribute) && (attribute.getDatatype().isComplex() && this.recalculate)) {
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		for (int i = 0; i < getInputSchema().size(); i++) {
+			SDFAttribute attribute = getInputSchema().getAttribute(i);
 
-					if (attribute.getDatatype().isMultiValue()) {
-						attrs.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute.getDatatype().getSubType()));
-					} else {
-						SDFSchema subschema = attribute.getDatatype().getSchema();
-						for (int j = 0; j < subschema.size(); j++) {
-							attrs.add(subschema.get(j));
-						}
-					}
+			if (attribute.equals(attribute)
+					&& (attribute.getDatatype().isComplex() && this.recalculate)) {
 
+				if (attribute.getDatatype().isMultiValue()) {
+					attrs.add(new SDFAttribute(attribute.getSourceName(),
+							attribute.getAttributeName(), attribute
+									.getDatatype().getSubType()));
 				} else {
-					attrs.add(getInputSchema().get(i));
+					SDFSchema subschema = attribute.getDatatype().getSchema();
+					for (int j = 0; j < subschema.size(); j++) {
+						attrs.add(subschema.get(j));
+					}
 				}
+
+			} else {
+				attrs.add(getInputSchema().get(i));
 			}
-			recalcOutputSchemata = false;
-			outputSchema = new SDFSchema("UNNEST", attrs);
-			LOG.debug("Set output schema to: {}", outputSchema);
 		}
-		return outputSchema;
+		recalcOutputSchemata = false;
+		setOutputSchema(new SDFSchema("UNNEST", attrs));
+		LOG.debug("Set output schema to: {}", getOutputSchema());
+		return getOutputSchema();
 	}
 
 	/**
