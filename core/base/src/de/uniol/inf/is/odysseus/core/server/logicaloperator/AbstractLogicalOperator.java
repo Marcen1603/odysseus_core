@@ -78,7 +78,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		setName(op.getName());
 		initOwner();
 		owners.addAll(op.owners);
-		this.outputSchema = createCleanClone(op.outputSchema);
+		this.outputSchema = op.outputSchema;
 
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
@@ -86,14 +86,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	// TODO: Is this needed???
-	private static Map<Integer, SDFSchema> createCleanClone(
-			Map<Integer, SDFSchema> old) {
-		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
-			copy.put(e.getKey(), e.getValue().clone());
-		}
-		return copy;
-	}
+//	private static Map<Integer, SDFSchema> createCleanClone(
+//			Map<Integer, SDFSchema> old) {
+//		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+//		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
+//			copy.put(e.getKey(), e.getValue().clone());
+//		}
+//		return copy;
+//	}
 	
 	public AbstractLogicalOperator() {
 		initOwner();
