@@ -12,13 +12,11 @@
 
 /// 1. fest definiertes Geometry-Objekt, x und y setzen
 GRANT READ ON nexmark:coordinates TO Public;
-ATTACH STREAM nexmark:coordinates (timestamp STARTTIMESTAMP,	points SpatialMultiPoint) FILE 'salsa/data/MoveViewPoint_Geometry.csv'
+ATTACH STREAM nexmark:coordinates (timestamp STARTTIMESTAMP, points SpatialMultiPoint, x DOUBLE, y DOUBLE) FILE 'salsa/data/MoveViewPoint_Geometry.csv'
 
-
-///SELECT * FROM nexmark:coordinates
 /// 2. fest definierte Werte als Parameter fuer MoveViewPoint benutzen und diese ausfuehren
 #RUNQUERY
-SELECT MoveViewPoint(points, 11.0 , 43.0) AS scan FROM nexmark:coordinates
+SELECT MoveViewPoint(points, x , y) AS scan FROM nexmark:coordinates
 
 /// (3. Die erwartete Ausgabe ist zu finden in der Datei MoveViewPoint.csv)
  

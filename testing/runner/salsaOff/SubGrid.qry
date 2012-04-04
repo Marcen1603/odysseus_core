@@ -1,0 +1,14 @@
+/// OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#ADDQUERY
+
+
+///# Grid SubGrid(Grid grid, Coordinate point, double width, double depth, double angle)
+///ATTACH STREAM grid (x INTEGER, y INTEGER) FILE 'salsa/data/SubGrid_Grid.csv'
+GRANT READ ON nexmark:coordinates TO Public;
+ATTACH STREAM nexmark:coordinates (timestamp STARTTIMESTAMP, point Coordinate, grid Grid) FILE 'salsa/data/SubGrid_Grid.csv'
+
+
+#RUNQUERY
+SELECT SubGrid(grid, point, 43.0, 5, 4) AS scan FROM nexmark:coordinates

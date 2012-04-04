@@ -1,0 +1,14 @@
+/// OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#ADDQUERY
+
+
+///# Grid ToGrid(Geometry g, double x, double y, double width, double depth, double cellsize)
+///ATTACH STREAM coordinates (x INTEGER, y INTEGER) FILE 'salsa/data/ToGrid_Geometry.csv'
+GRANT READ ON nexmark:coordinates TO Public;
+ATTACH STREAM nexmark:coordinates (timestamp STARTTIMESTAMP, points SpatialMultiPoint, x DOUBLE, y DOUBLE, width DOUBLE, depth DOUBLE, cellsize DOUBLE) FILE 'salsa/data/ToGrid_Geometry.csv'
+
+
+#RUNQUERY
+SELECT ToGrid(points, x, y, width, depth, cellsize) AS grid FROM nexmark:coordinates

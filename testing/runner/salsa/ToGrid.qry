@@ -1,9 +1,0 @@
-///OdysseusScript
-///#PARSER PQL
-///#TRANSCFG salsa
-///#QUERY
-
-
-///# Grid ToGrid(Geometry g, double x, double y, double width, double depth, double cellsize)
-
-///ATTACH STREAM coordinates (x INTEGER, y INTEGER) FILE 'salsa/data/ToGrid_Geometry.csv'
