@@ -17,7 +17,6 @@ public class EnrichAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -6701002329614782111L;
 	List<String> contextStoreNames = new ArrayList<String>();
-	private SDFSchema outputSchema = null;
 
 	public EnrichAO(EnrichAO op) {
 		super(op);
@@ -66,18 +65,18 @@ public class EnrichAO extends AbstractLogicalOperator {
 					// TODO: Error Handling if store not available
 				}
 			}
-			outputSchema = new SDFSchema(
-					getInputSchema(0).getURI() + "_ENRICH", outattribs);
+			setOutputSchema(new SDFSchema(
+					getInputSchema(0).getURI() + "_ENRICH", outattribs));
 		}
 
 	}
 
 	@Override
 	public SDFSchema getOutputSchemaIntern() {
-		if (outputSchema == null) {
+		if (getOutputSchema() == null) {
 			calcOutputSchema();
 		}
-		return outputSchema;
+		return getOutputSchema();
 	}
 
 	@Override
