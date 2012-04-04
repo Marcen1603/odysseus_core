@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
-	private SDFSchema outputSchema = null;
 
 	public JoinAO() {
 		super();
@@ -46,15 +45,11 @@ public class JoinAO extends BinaryLogicalOp {
 
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
-		SDFSchema schema = joinPO.getOutputSchema();
-		if (schema != null) {
-			this.outputSchema = schema.clone();
-		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	@Parameter(type = PredicateParameter.class, optional=true)
+	@Parameter(type = PredicateParameter.class, optional = true)
 	public synchronized void setPredicate(IPredicate joinPredicate) {
 		super.setPredicate(joinPredicate);
 	}
@@ -74,13 +69,11 @@ public class JoinAO extends BinaryLogicalOp {
 	@Override
 	public synchronized SDFSchema getOutputSchemaIntern() {
 		// The Sum of all InputSchema
-		if (outputSchema == null || recalcOutputSchemata) {
-			outputSchema = null;
-			for (LogicalSubscription l : getSubscribedToSource()) {
-				outputSchema = SDFSchema.union(outputSchema, l.getSchema());
-			}
-			recalcOutputSchemata = false;
+		SDFSchema outputSchema = null;
+		for (LogicalSubscription l : getSubscribedToSource()) {
+			outputSchema = SDFSchema.union(outputSchema, l.getSchema());
 		}
+		setOutputSchema(outputSchema);
 		return outputSchema;
 	}
 
