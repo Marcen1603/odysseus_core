@@ -7,7 +7,10 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.queryview.logical.LogicalQueryVie
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.common.base,
+ com.google.common.collect,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.rcp.views.query,
  org.osgi.framework;version="1.3.0",
  org.slf4j
