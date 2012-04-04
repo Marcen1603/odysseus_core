@@ -35,7 +35,6 @@ public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
 	private List<SDFExpression> expressions;
-	private SDFSchema outputSchema = null;
 
 	public MapAO() {
 		super();
@@ -94,22 +93,22 @@ public class MapAO extends UnaryLogicalOp {
 				// outputSchema.add(new SDFAttribute(expr.toString()));
 				// }
 			}
-			outputSchema = new SDFSchema(getInputSchema().getURI(), attrs);
+			setOutputSchema(new SDFSchema(getInputSchema().getURI(), attrs));
 		}
 	}
 
 	@Parameter(type = SDFExpressionParameter.class, isList = true)
 	public void setExpressions(List<SDFExpression> expressions) {
 		this.expressions = expressions;
-		this.outputSchema = null;
+		setOutputSchema(null);
 	}
 
 	@Override
 	public SDFSchema getOutputSchemaIntern() {
-		if (outputSchema == null){
+		if (getOutputSchema() == null){
 			calcOutputSchema();
 		}
-		return outputSchema;
+		return getOutputSchema();
 	}
 
 	@Override
