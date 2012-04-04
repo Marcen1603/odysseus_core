@@ -15,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 837012993098327414L;
-	private SDFSchema outputSchema = null;
 	private String operatorClass = null;
 	private String initString = null;
 	@SuppressWarnings("rawtypes")
@@ -27,7 +26,6 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	public UserDefinedOperatorAO(UserDefinedOperatorAO userDefinedOperatorAO) {
 		super(userDefinedOperatorAO);
-		this.outputSchema = userDefinedOperatorAO.outputSchema;
 		this.operatorClass = userDefinedOperatorAO.operatorClass;
 		this.initString = userDefinedOperatorAO.initString;
 		this.udf = userDefinedOperatorAO.udf;
