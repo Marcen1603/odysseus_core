@@ -12,8 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 
 @LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "UDO")
-public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
-		OutputSchemaSettable {
+public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 837012993098327414L;
 	private SDFSchema outputSchema = null;
@@ -32,14 +31,6 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 		this.operatorClass = userDefinedOperatorAO.operatorClass;
 		this.initString = userDefinedOperatorAO.initString;
 		this.udf = userDefinedOperatorAO.udf;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		if (outputSchema != null) {
-			return outputSchema;
-		}
-        return getInputSchema(0);
 	}
 
 	@Parameter(type = StringParameter.class, name = "class", optional = false)
@@ -68,22 +59,9 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator implements
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFSchema("", outputSchema);
+		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if (port == 0) {
-			setOutputSchema(outputSchema);
-		} else {
-			throw new IllegalArgumentException("no such port: " + port);
-		}
-	}
 
 	@Override
 	public UserDefinedOperatorAO clone() {

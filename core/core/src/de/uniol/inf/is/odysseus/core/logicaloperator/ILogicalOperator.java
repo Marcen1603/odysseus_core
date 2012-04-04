@@ -73,6 +73,13 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 */
 	public SDFSchema getOutputSchema(int pos);
 	
+	
+	
+	void setOutputSchema(int pos, SDFSchema outputSchema);
+
+	void setOutputSchema(SDFSchema outputSchema);
+
+	
 	/**
 	 * Deliever the input schema of this operator at a spefific input 
 	 * port. Typically this is the output schema of the input operator 
@@ -155,6 +162,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 */
 	@Override
 	public ILogicalOperator clone();
+
 
 
 }

@@ -122,15 +122,8 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
         this.attributes = attributes;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
-     * #getOutputSchema ()
-     */
     @Override
-    public SDFSchema getOutputSchema() {
+    protected SDFSchema getOutputSchemaIntern() {
         List<SDFAttribute> elems = new ArrayList<SDFAttribute>();
         SDFAttribute id = new SDFAttribute(null, "cluster_id", SDFDatatype.INTEGER);
         elems.add(id);
@@ -148,7 +141,7 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
      * # getOutputSchema(int)
      */
     @Override
-    public SDFSchema getOutputSchema(int port) {
+    protected SDFSchema getOutputSchemaIntern(int port) {
 
         if (port == 0) {
             return getOutputSchema();

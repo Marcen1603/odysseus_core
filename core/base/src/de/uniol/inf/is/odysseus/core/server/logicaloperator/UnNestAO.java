@@ -78,7 +78,7 @@ public class UnNestAO extends UnaryLogicalOp {
 	 * #getOutputSchema()
 	 */
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		if (outputSchema == null || recalcOutputSchemata) {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (int i = 0; i < getInputSchema().size(); i++) {

@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.bouncer.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
@@ -36,11 +35,6 @@ public class TemporaryDataBouncerAO<M extends IProbability> extends AbstractLogi
 		this.objListPath = copy.objListPath;
 		this.threshold = copy.threshold;
 		this.operator = copy.operator;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema(0);
 	}
 
 	@Override

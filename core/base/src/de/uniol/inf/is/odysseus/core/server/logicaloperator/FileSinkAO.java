@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
@@ -75,11 +74,6 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	@Parameter(type = LongParameter.class, optional = true)
 	public void setCacheSize(long value) {
 		this.writeAfterElements = value;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return null;
 	}
 
 	@Override

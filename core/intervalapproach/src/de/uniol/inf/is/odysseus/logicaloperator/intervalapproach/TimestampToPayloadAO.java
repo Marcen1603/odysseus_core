@@ -22,7 +22,7 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		SDFAttribute starttimeStamp = new SDFAttribute(null,
 				"meta_valid_start", SDFDatatype.TIMESTAMP);
 		SDFAttribute endtimeStamp = new SDFAttribute(null, "meta_valid_end",

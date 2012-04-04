@@ -296,7 +296,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator{
     }
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		if(this.outputSchema == null){
 			// the source name must be a unique artificial name, since
 			// every triple pattern needs its own source name.

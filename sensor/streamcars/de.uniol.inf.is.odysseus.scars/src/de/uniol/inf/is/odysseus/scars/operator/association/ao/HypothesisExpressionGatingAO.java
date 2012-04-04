@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
@@ -45,11 +44,6 @@ public class HypothesisExpressionGatingAO<M extends IProbability> extends UnaryL
 	@Override
 	public HypothesisExpressionGatingAO<M> clone(){
 		return new HypothesisExpressionGatingAO<M>(this);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema();
 	}
 
 	public void initPaths(String predObjListPath, String scanObjListPath) {

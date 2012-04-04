@@ -17,15 +17,14 @@ package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
@@ -137,11 +136,7 @@ public class ObjectTrackingSelectAO extends SelectAO implements IHasRangePredica
 	public ObjectTrackingSelectAO clone() {
 		return new ObjectTrackingSelectAO(this);
 	}
-	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
+
 	
 	/**
 	 * The input schema for this operator has been set with

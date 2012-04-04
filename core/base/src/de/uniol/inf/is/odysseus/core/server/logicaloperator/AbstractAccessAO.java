@@ -18,17 +18,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-
-abstract public class AbstractAccessAO extends AbstractLogicalOperator implements
-		OutputSchemaSettable {
+abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	private static final long serialVersionUID = -5423444612698319659L;
 
 	private String source = null;
-	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	private List<String> inputSchema = null;
 
 	private int port;
@@ -71,7 +66,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		this.source = po.source;
 		this.port = po.port;
 		this.host = po.host;
-		this.outputSchema = createCleanClone(po.outputSchema);
 		this.login = po.login;
 		this.password = po.password;
 		this.autoreconnect = po.autoreconnect;
@@ -99,26 +93,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	 */
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getOutputSchema(0);
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		setOutputSchema(outputSchema, 0);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema(int port) {
-		return outputSchema.get(port);
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		this.outputSchema.put(port, outputSchema);
 	}
 	
 	public void setInputSchema(List<String> inputSchema) {
@@ -174,15 +148,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		return true;
-	}
-
-	private static Map<Integer, SDFSchema> createCleanClone(
-			Map<Integer, SDFSchema> old) {
-		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
-			copy.put(e.getKey(), e.getValue().clone());
-		}
-		return copy;
 	}
 
 	public void setLoginInfo(String login, String password) {

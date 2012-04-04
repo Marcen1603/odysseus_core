@@ -67,7 +67,7 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		return getInputSchema(0);
 	}
 

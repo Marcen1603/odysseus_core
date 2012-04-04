@@ -138,7 +138,7 @@ public class ObjectTrackingJoinAO extends JoinAO implements IHasRangePredicates{
 	}
 	
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		// the output schema contains the attributes
 		// from the left and the attributes from the right.
 		// It also contains the prediction functions from

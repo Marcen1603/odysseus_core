@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -130,11 +129,6 @@ public class WindowAO extends UnaryLogicalOp {
 	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {
 		this.partitionedBy = partitionedBy;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

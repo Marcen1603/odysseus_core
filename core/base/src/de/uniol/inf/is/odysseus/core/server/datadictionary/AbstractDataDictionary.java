@@ -245,6 +245,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
 			}
+			// Set Type of view to name of view
+			SDFSchema oldSchema = topOperator.getOutputSchema();
+			SDFSchema newSchema = new SDFSchema(viewname, oldSchema.getAttributes());
+			topOperator.setOutputSchema(newSchema);
 			fireAddEvent(viewname, topOperator);
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName()

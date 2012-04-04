@@ -18,19 +18,16 @@ package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.mining.cleaning.detection.IDetection;
 
 /**
  * 
  * @author Dennis Geesen Created at: 06.07.2011
  */
-public abstract class AbstractDetectionAO<T, D extends IDetection<T>> extends BinaryLogicalOp implements OutputSchemaSettable {
+public abstract class AbstractDetectionAO<T, D extends IDetection<T>> extends BinaryLogicalOp{
 
 	private static final long serialVersionUID = -2193273482190920976L;
-	private SDFSchema outputschema;
 	private List<D> detections = new ArrayList<D>();
 
 	public AbstractDetectionAO() {
@@ -39,33 +36,13 @@ public abstract class AbstractDetectionAO<T, D extends IDetection<T>> extends Bi
 
 	public AbstractDetectionAO(AbstractDetectionAO<T,D> detectionAO) {
 		super(detectionAO);
-		this.outputschema = detectionAO.outputschema.clone();
 		this.detections = detectionAO.detections;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.outputschema;
 	}
 
 	public void addDetection(D detection) {
 		this.detections.add(detection);		
 	}
 
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputschema = outputSchema;		
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if(port>0){
-			throw new UnsupportedOperationException("no ports greater than 0 supported");
-		}
-		setOutputSchema(outputSchema);	
-
-	}
 	
 	public List<D> getDetections(){
 		return this.detections;

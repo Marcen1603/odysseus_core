@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
 
@@ -45,11 +44,6 @@ public class HypothesisExpressionEvaluationAO<M extends IProbability> extends Un
 	@Override
 	public HypothesisExpressionEvaluationAO<M> clone(){
 		return new HypothesisExpressionEvaluationAO<M>(this);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema();
 	}
 
 	public void initPaths(String predObjListPath, String scanObjListPath) {

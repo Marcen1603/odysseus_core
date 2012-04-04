@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
@@ -50,11 +49,6 @@ public class SplitAO extends UnaryLogicalOp {
 	
 	public void addPredicate(IPredicate<?> predicate) {
 		this.predicates.add(predicate);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

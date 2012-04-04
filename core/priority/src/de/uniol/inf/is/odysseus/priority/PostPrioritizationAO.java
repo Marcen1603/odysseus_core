@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.priority;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 public class PostPrioritizationAO extends UnaryLogicalOp {
@@ -69,11 +68,6 @@ public class PostPrioritizationAO extends UnaryLogicalOp {
 
 	public void setDefaultPriority(byte defaultPriority) {
 		this.defaultPriority = defaultPriority;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.fusion.logicaloperator.prediction;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -28,10 +27,6 @@ public class SpatialPredictionAO extends AbstractLogicalOperator  {
         return new SpatialPredictionAO(this);
     }
 
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
-    }
 
 	@Parameter(name = "Prediction", type = StringParameter.class)
 	public void setContextSources(String prediction) {

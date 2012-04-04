@@ -70,7 +70,7 @@ public class FrequentItemAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		if (recalc) {
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (SDFAttribute c : this.choosenAttributes) {

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scars.operator.filter.ao;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -50,11 +49,6 @@ public class FilterExpressionGainAO <M extends IProbabilityGain> extends UnaryLo
 		return new FilterExpressionGainAO<M>(this);
 	}
 		
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema();
-	}
-
 	// Getter & Setter
 	
 	public void setRestrictedPredVariables(List<String> restrictedVariables) {

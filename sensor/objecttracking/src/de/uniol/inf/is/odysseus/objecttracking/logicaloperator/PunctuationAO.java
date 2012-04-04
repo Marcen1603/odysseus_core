@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.objecttracking.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -53,10 +52,5 @@ public class PunctuationAO extends UnaryLogicalOp{
 		return new PunctuationAO(this);
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		// TODO Auto-generated method stub
-		return this.getInputSchema();
-	}
 
 }

@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
@@ -43,11 +42,6 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TimestampAO(this);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
 	}
 
 	public SDFAttribute getStartTimestamp() {

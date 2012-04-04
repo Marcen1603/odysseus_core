@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.objectselector.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 public class DistanceObjectSelectorAO extends UnaryLogicalOp {
@@ -40,11 +39,6 @@ public class DistanceObjectSelectorAO extends UnaryLogicalOp {
 		this.trackedObjectY = distanceObjectSelectorAO.trackedObjectY;
 		this.trackedObjectX = distanceObjectSelectorAO.trackedObjectX;
 		this.trackedObjectList = distanceObjectSelectorAO.trackedObjectList;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

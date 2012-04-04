@@ -133,7 +133,7 @@ public class ObjectTrackingPredictionAssignAO<T> extends UnaryLogicalOp{
 	}
 	
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		this.outputSchema = new SDFSchemaExtended(this.getInputSchema().getAttributes());
 		HashMap<IPredicate<? super T>, IPredictionFunction> outPredFcts = new HashMap<IPredicate<? super T>, IPredictionFunction>();
 		for(Entry<IPredicate<? super T>, IPredictionFunction> entry : this.predictionFunctions.entrySet()){

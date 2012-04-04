@@ -149,7 +149,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
         BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(name);
         broker.setSchema(result.getOutputSchema());
         if (!BrokerDictionary.getInstance().brokerExists(name)) {
-            BrokerDictionary.getInstance().addBroker(name, broker.getOutputSchema(), broker.getQueueSchema());
+            BrokerDictionary.getInstance().addBroker(name, (SDFSchemaExtended)broker.getOutputSchema(), broker.getQueueSchema());
         }
 
         // connect the source to broker
@@ -345,7 +345,7 @@ public class BrokerVisitor extends AbstractDefaultVisitor {
         BrokerAO broker = BrokerAOFactory.getFactory().createBrokerAO(brokerName);
         broker.setSchema(schema);
         broker.setQueueSchema(metaAttributSchema);
-        BrokerDictionary.getInstance().addBroker(brokerName, broker.getOutputSchema(), broker.getQueueSchema());
+        BrokerDictionary.getInstance().addBroker(brokerName, (SDFSchemaExtended)broker.getOutputSchema(), broker.getQueueSchema());
 
         // set the broker view in the data dictionary
         // used for procedural parser

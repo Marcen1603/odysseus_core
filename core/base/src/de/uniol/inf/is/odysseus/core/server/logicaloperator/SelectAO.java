@@ -19,7 +19,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
@@ -56,9 +55,5 @@ public class SelectAO extends UnaryLogicalOp {
 		return new SelectAO(this);
 	}
 	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
 
 }

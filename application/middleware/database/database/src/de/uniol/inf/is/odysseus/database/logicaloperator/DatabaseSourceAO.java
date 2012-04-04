@@ -15,9 +15,7 @@
 
 package de.uniol.inf.is.odysseus.database.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 
@@ -26,14 +24,12 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
  * @author Dennis Geesen Created at: 28.10.2011
  */
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="DATABASESOURCE")
-public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputSchemaSettable {
+public class DatabaseSourceAO extends AbstractLogicalOperator{
 	
 	
 
 	private static final long serialVersionUID = -5800479007184861697L;
 	private boolean timesensitiv = false;
-
-	private SDFSchema outputSchema;
 
 	private IDatabaseConnection connection;
 
@@ -58,11 +54,6 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 		this.waitMillis = original.waitMillis;
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
-
 	public IDatabaseConnection getConnection() {
 		return connection;
 	}
@@ -76,27 +67,12 @@ public class DatabaseSourceAO extends AbstractLogicalOperator implements OutputS
 		return new DatabaseSourceAO(this);
 	}
 
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema.clone();
-	}
-
 	public boolean isTimesensitiv() {
 		return timesensitiv;
 	}
 
 	public String getSourceName() {
 		return this.name;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if (port == 0) {
-			setOutputSchema(outputSchema);
-		} else {
-			throw new IllegalArgumentException("no such port: " + port);
-		}
-
 	}
 
 	public long getWaitMillis(){

@@ -84,7 +84,7 @@ public class RegressionAO extends UnaryLogicalOp{
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		if (recalcOutputSchema) {
 			SDFAttribute x = new SDFAttribute(SOURCE_NAME, "slope", SDFDatatype.DOUBLE);
 			SDFAttribute y = new SDFAttribute(SOURCE_NAME, "intercept", SDFDatatype.DOUBLE);

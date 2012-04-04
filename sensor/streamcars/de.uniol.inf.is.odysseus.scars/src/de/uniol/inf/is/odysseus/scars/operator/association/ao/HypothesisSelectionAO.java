@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.association.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -62,11 +61,6 @@ public class HypothesisSelectionAO<M extends IProbability> extends UnaryLogicalO
   
   public void setOldObjListPath(String oldObjListPath) {
     this.oldObjListPath = oldObjListPath;
-  }
-
-  @Override
-  public SDFSchema getOutputSchema() {
-    return this.getInputSchema();
   }
 
   @Override

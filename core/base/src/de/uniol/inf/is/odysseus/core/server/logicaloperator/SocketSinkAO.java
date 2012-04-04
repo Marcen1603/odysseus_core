@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -47,11 +46,6 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	
 	public String getSinkType(){
 		return sinkType;
-	}
-	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
 	}
 
 	@Override

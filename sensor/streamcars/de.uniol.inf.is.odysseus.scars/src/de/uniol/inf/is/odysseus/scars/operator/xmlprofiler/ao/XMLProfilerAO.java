@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.xmlprofiler.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
@@ -34,11 +33,6 @@ public class XMLProfilerAO<M extends IProbability> extends UnaryLogicalOp {
 		super(clone);
 		this.operatorName = clone.operatorName;
 		this.fileName = clone.fileName;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema();
 	}
 
 	@Override

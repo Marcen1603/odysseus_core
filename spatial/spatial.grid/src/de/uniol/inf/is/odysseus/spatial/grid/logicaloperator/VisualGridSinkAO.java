@@ -15,7 +15,6 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -41,11 +40,6 @@ public class VisualGridSinkAO extends AbstractLogicalOperator {
 	@Override
 	public VisualGridSinkAO clone() {
 		return new VisualGridSinkAO(this);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema(0);
 	}
 
 }

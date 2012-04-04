@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -378,7 +377,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data)
 			throws QueryParseException {
-		OutputSchemaSettable ao = (OutputSchemaSettable) invokeDatabaseVisitor(
+		ILogicalOperator ao =  (ILogicalOperator) invokeDatabaseVisitor(
 				ASTCreateFromDatabase.class, node, name);
 		ao.setOutputSchema(new SDFSchema(name, attributes));
 		return addTimestampAO((ILogicalOperator) ao);

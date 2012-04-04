@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.fusion.logicaloperator.filter;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -21,11 +20,6 @@ public class SpatialFilterAO extends AbstractLogicalOperator  {
     @Override
     public SpatialFilterAO clone() {
         return new SpatialFilterAO(this);
-    }
-
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
     }
 
 }

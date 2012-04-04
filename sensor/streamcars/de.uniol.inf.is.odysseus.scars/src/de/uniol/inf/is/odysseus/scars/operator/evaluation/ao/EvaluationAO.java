@@ -41,7 +41,7 @@ public class EvaluationAO<M extends IProbability> extends AbstractLogicalOperato
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		return getInputSchema(2);
 	}
 

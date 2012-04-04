@@ -73,7 +73,7 @@ public class BrokerAO extends AbstractLogicalOperator implements Serializable{
 	 * @see de.uniol.inf.is.odysseus.core.server.ILogicalOperator#getOutputSchema()
 	 */
 	@Override	
-	public synchronized SDFSchemaExtended getOutputSchema() {		
+	public synchronized SDFSchemaExtended getOutputSchemaIntern() {		
 		return this.schema;		
 	}		
 

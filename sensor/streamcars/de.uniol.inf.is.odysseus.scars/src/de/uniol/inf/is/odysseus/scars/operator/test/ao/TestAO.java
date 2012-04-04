@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.test.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -28,11 +27,6 @@ public class TestAO extends UnaryLogicalOp{
 	
 	public TestAO( TestAO copy ) {
 		this.setName(copy.getName());
-	}
-	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
 	}
 	
 	@Override

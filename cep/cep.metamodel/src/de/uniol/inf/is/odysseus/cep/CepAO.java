@@ -23,34 +23,23 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 
-public class CepAO<T> extends AbstractLogicalOperator implements
-		OutputSchemaSettable {
+public class CepAO<T> extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 1L;
 
 	private StateMachine<T> firstStateMachine = new StateMachine<T>();
 	private StateMachine<T> secondStateMachine;
-	private SDFSchema outSchema;
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 
 	public CepAO(CepAO<T> cepAO) {
 		super(cepAO);
 		this.firstStateMachine = cepAO.firstStateMachine;
-		this.outSchema = cepAO.outSchema == null ? null : new SDFSchema(
-				cepAO.outSchema.getURI(), cepAO.outSchema);
 		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
 	}
 
 	public CepAO() {
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outSchema;
 	}
 
 	public StateMachine<T> getStateMachine() {
@@ -124,20 +113,6 @@ public class CepAO<T> extends AbstractLogicalOperator implements
 					nextTransistions.add(t);
 				}
 			}
-		}
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outSchema = outputSchema.clone();
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if (port == 0) {
-			setOutputSchema(outputSchema);
-		} else {
-			throw new IllegalArgumentException("no such port: " + port);
 		}
 	}
 

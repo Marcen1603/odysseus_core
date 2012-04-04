@@ -20,7 +20,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.action.output.Action;
 import de.uniol.inf.is.odysseus.action.output.IActionParameter;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
 /**
@@ -53,10 +52,6 @@ public class EventTriggerAO extends AbstractLogicalOperator {
 		return actions;
 	}
 	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
-	}
 	
 	@Override
 	public AbstractLogicalOperator clone() {

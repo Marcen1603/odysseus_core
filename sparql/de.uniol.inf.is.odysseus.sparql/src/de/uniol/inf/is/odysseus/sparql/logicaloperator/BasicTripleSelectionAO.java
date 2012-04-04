@@ -8,15 +8,12 @@ import com.hp.hpl.jena.graph.Triple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 
-public class BasicTripleSelectionAO extends SelectAO implements
-		OutputSchemaSettable {
+public class BasicTripleSelectionAO extends SelectAO {
 
 	private static final long serialVersionUID = -8187061597335204197L;
 	protected Triple triple;
-	private SDFSchema outputSchema;
 
 	public BasicTripleSelectionAO(Triple t) {
 		this.triple = t;
@@ -68,18 +65,4 @@ public class BasicTripleSelectionAO extends SelectAO implements
 		return "BasicTripleSelection (" + this.triple.toString() + ")";
 	}
 
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		setOutputSchema(outputSchema);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
 }

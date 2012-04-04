@@ -1,5 +1,4 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -13,11 +12,6 @@ public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 	public TimeStampOrderValidatorAO(
 			TimeStampOrderValidatorAO timeStampOrderValidatorAO) {
 		super(timeStampOrderValidatorAO);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

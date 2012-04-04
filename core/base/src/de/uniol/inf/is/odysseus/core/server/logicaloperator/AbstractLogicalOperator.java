@@ -45,7 +45,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 /**
  * @author Marco Grawunder
  */
-public abstract class AbstractLogicalOperator implements Serializable, ILogicalOperator {
+public abstract class AbstractLogicalOperator implements Serializable,
+		ILogicalOperator {
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
@@ -70,16 +71,30 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private IPredicate<?> predicate = null;
 
+	private Map<Integer,SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
 		setName(op.getName());
 		initOwner();
 		owners.addAll(op.owners);
+		this.outputSchema = createCleanClone(op.outputSchema);
+
 		// physSubscriptionTo = op.physSubscriptionTo == null ? null
 		// : new
 		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
+	// TODO: Is this needed???
+	private static Map<Integer, SDFSchema> createCleanClone(
+			Map<Integer, SDFSchema> old) {
+		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
+		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
+			copy.put(e.getKey(), e.getValue().clone());
+		}
+		return copy;
+	}
+	
 	public AbstractLogicalOperator() {
 		initOwner();
 	}
@@ -87,7 +102,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#clone()
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #clone()
 	 */
 	@Override
 	abstract public AbstractLogicalOperator clone();
@@ -96,7 +113,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getPredicate ()
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #getPredicate ()
 	 */
 	@Override
 	public IPredicate<?> getPredicate() {
@@ -107,8 +125,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#setPredicate
-	 * (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #setPredicate (de.uniol.inf.is.odysseus.core.server.predicate.IPredicate)
 	 */
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
@@ -119,8 +137,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getInputSchema
-	 * (int)
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #getInputSchema (int)
 	 */
 	@Override
 	public SDFSchema getInputSchema(int pos) {
@@ -139,32 +157,52 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public SDFSchema getOutputSchema(int pos) {
-		return getOutputSchema();
+	final public SDFSchema getOutputSchema() {
+		return getOutputSchema(0);
 	}
 
+	@Override
+	final public SDFSchema getOutputSchema(int pos) {
+		if (this.outputSchema.get(pos) != null){
+			return outputSchema.get(pos);
+		}else{
+		return getOutputSchemaIntern(pos);
+		}
+	}
+
+	// Default-Implementation: Get the input from the
+	// input operator on port 0
+	protected SDFSchema getOutputSchemaIntern(int pos){
+		return getInputSchema(0);
+	}
+	
+	// Default-Implementation: Get the input from the
+	// input operator on port 0
+	protected SDFSchema getOutputSchemaIntern(){
+		return getInputSchema(0);
+	}
+	
+
+	@Override
+	final public void setOutputSchema(int pos, SDFSchema outputSchema){
+		this.outputSchema.put(pos, outputSchema);
+	}
+	
+	@Override
+	final public void setOutputSchema(SDFSchema outputSchema){
+		setOutputSchema(0,outputSchema);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#setInputSchema
-	 * (int,
-	 * de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFSchema)
-	 */
-	// public void setInputSchema(int pos, SDFSchema schema) {
-	// subscribedTo.get(pos).setInputSchema(schema);
-	// recalcOutputSchemata = true;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getPOName
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #getPOName ()
 	 */
 	@Override
 	public String getName() {
-	    return name == null ? this.getClass().getSimpleName() : name;
+		return name == null ? this.getClass().getSimpleName() : name;
 	}
 
 	@Override
@@ -180,8 +218,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#setPOName
-	 * (java.lang.String)
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #setPOName (java.lang.String)
 	 */
 	@Override
 	public void setName(String name) {
@@ -192,18 +231,22 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#setPhysInputPO
-	 * (int, de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #setPhysInputPO (int,
+	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
 	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
+		this.physInputOperators.put(subscription.getSinkInPort(),
+				subscription.getTarget());
 	}
 
 	@Override
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort, sourceOutPort, schema));
+	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
+		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort,
+				sourceOutPort, schema));
 	}
 
 	@Override
@@ -220,8 +263,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator#getPhysInputPO
-	 * (int)
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator
+	 * #getPhysInputPO (int)
 	 */
 	@Override
 	public Subscription<ISource<?>> getPhysSubscriptionTo(int port) {
@@ -294,8 +337,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
-		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
+	public void subscribeToSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFSchema inputSchema) {
+		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort,
+				sourceOutPort, inputSchema);
 		// Finde den maximalen verwendeten Port
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
@@ -303,7 +348,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		synchronized (this.subscribedToSource) {
 			if (!this.subscribedToSource.containsKey(sinkInPort)) {
 				this.subscribedToSource.put(sinkInPort, sub);
-				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
+				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort,
+						inputSchema);
 				recalcOutputSchemata = true;
 			}
 		}
@@ -323,7 +369,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
 		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
 			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
@@ -333,12 +380,16 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public void unsubscribeFromAllSources() {
 		synchronized (this.subscribedToSource) {
-			Iterator<Entry<Integer, LogicalSubscription>> it = this.subscribedToSource.entrySet().iterator();
+			Iterator<Entry<Integer, LogicalSubscription>> it = this.subscribedToSource
+					.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<Integer, LogicalSubscription> next = it.next();
 				it.remove();
 				LogicalSubscription subscription = next.getValue();
-				subscription.getTarget().unsubscribeSink(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				subscription.getTarget().unsubscribeSink(this,
+						subscription.getSinkInPort(),
+						subscription.getSourceOutPort(),
+						subscription.getSchema());
 			}
 			recalcOutputSchemata = true;
 		}
@@ -346,7 +397,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+		unsubscribeFromSource(subscription.getTarget(),
+				subscription.getSinkInPort(), subscription.getSourceOutPort(),
+				subscription.getSchema());
 	}
 
 	@Override
@@ -360,7 +413,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a) {
+	public Collection<LogicalSubscription> getSubscribedToSource(
+			ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
 		for (LogicalSubscription l : subscribedToSource.values()) {
 			if (l.getTarget() == a) {
@@ -371,11 +425,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
+	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFSchema inputSchema) {
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
-		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort, sourceOutPort, inputSchema);
+		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort,
+				sourceOutPort, inputSchema);
 		if (!this.subscriptions.contains(sub)) {
 			this.subscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
@@ -384,14 +440,18 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
+	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
+		unsubscribeSink(new LogicalSubscription(sink, sinkInPort,
+				sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+			subscription.getTarget().unsubscribeFromSource(this,
+					subscription.getSinkInPort(),
+					subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 		}
 	}
@@ -403,20 +463,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		// gelesen werden soll.
 		return new Vector<LogicalSubscription>(this.subscriptions);
 	}
-
-	// @Override
-	// public Collection<LogicalSubscription> getSubscriptions(ILogicalOperator
-	// a) {
-	// List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
-	// synchronized (subscriptions) {
-	// for (LogicalSubscription l : subscriptions) {
-	// if (l.getTarget() == a) {
-	// subs.add(l);
-	// }
-	// }
-	// }
-	// return subs;
-	// }
 
 	@Override
 	public int getNumberOfInputs() {
@@ -430,13 +476,15 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	public void connectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void connectSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
 
 	@Override
-	public void disconnectSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void disconnectSink(ILogicalOperator sink, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
 		// Nothing special in logical Operators
 		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 	}
@@ -495,20 +543,25 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 						if (otherMethod != null) {
 							Object value = otherMethod.invoke(this);
 							// it is e.g. a List<String>
-							if (p.isList()) {								
+							if (p.isList()) {
 								SerializePropertyList prop = new SerializePropertyList();
-								if (value != null) {									
-									for(Object o : (Collection<?>) value){
+								if (value != null) {
+									for (Object o : (Collection<?>) value) {
 										prop.addItemValue(o);
 									}
-								}								
+								}
 								values.put(name, prop);
 							} else {
 								// it is just a plain value
-								values.put(name, new SerializePropertyItem(value));
+								values.put(name, new SerializePropertyItem(
+										value));
 							}
 						} else {
-							System.err.println("WARN: could not serialize setting " + name + " for " + getClass().getName());
+							System.err
+									.println("WARN: could not serialize setting "
+											+ name
+											+ " for "
+											+ getClass().getName());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -555,38 +608,39 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public void deserialize(SerializeNode node) {
-//		for (Entry<String, ISerializeProperty<?>> prop : node.getProperties().entrySet()) {
-//			String name = prop.getKey();
-//			Object value = prop.getValue().getValue();
-//
-//			for (Method m : getClass().getDeclaredMethods()) {
-//				if (m.getName().equalsIgnoreCase(name)) {
-//					try {
-//						Class<?> propertyClass = prop.getValue().getType();
-//						boolean isList = prop.getValue().isList();
-//						Object propertyContent = propertyClass.newInstance();
-//						if (propertyContent instanceof IParameter) {
-//							IParameter<?> para = (IParameter<?>) propertyContent;
-//							para.setRequirement(REQUIREMENT.MANDATORY);
-//							para.setInputValue(value);
-//							para.validate();
-//							Object val = para.getValue();
-//							if (val != null) {
-//								m.invoke(this, val);
-//							}
-//						} else if (propertyContent instanceof List) {
-//							List<?> liste = new ArrayList<Object>();
-//						}
-//
-////						Object op = parameter.newInstance();
-////						if (op instanceof IParameter) {
-////
-////						}
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
-//		}
+		// for (Entry<String, ISerializeProperty<?>> prop :
+		// node.getProperties().entrySet()) {
+		// String name = prop.getKey();
+		// Object value = prop.getValue().getValue();
+		//
+		// for (Method m : getClass().getDeclaredMethods()) {
+		// if (m.getName().equalsIgnoreCase(name)) {
+		// try {
+		// Class<?> propertyClass = prop.getValue().getType();
+		// boolean isList = prop.getValue().isList();
+		// Object propertyContent = propertyClass.newInstance();
+		// if (propertyContent instanceof IParameter) {
+		// IParameter<?> para = (IParameter<?>) propertyContent;
+		// para.setRequirement(REQUIREMENT.MANDATORY);
+		// para.setInputValue(value);
+		// para.validate();
+		// Object val = para.getValue();
+		// if (val != null) {
+		// m.invoke(this, val);
+		// }
+		// } else if (propertyContent instanceof List) {
+		// List<?> liste = new ArrayList<Object>();
+		// }
+		//
+		// // Object op = parameter.newInstance();
+		// // if (op instanceof IParameter) {
+		// //
+		// // }
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }
+		// }
 	}
 }

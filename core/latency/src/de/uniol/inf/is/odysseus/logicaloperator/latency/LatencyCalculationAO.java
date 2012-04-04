@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.latency;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -30,11 +29,6 @@ public class LatencyCalculationAO extends UnaryLogicalOp {
 
 	public LatencyCalculationAO(LatencyCalculationAO ao) {
 		super(ao);
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
 	}
 
 	@Override

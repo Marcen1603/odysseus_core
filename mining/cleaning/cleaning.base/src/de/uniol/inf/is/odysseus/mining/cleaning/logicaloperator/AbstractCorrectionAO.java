@@ -18,9 +18,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
 
 /**
@@ -28,12 +26,10 @@ import de.uniol.inf.is.odysseus.mining.cleaning.correction.ICorrection;
  * @author Dennis Geesen
  * Created at: 11.07.2011
  */
-public abstract class AbstractCorrectionAO<T, C extends ICorrection<T>> extends BinaryLogicalOp implements OutputSchemaSettable{
+public abstract class AbstractCorrectionAO<T, C extends ICorrection<T>> extends BinaryLogicalOp{
 
 	private static final long serialVersionUID = -139230577687015814L;
-	private SDFSchema outputschema;
 	private List<C> corrections = new ArrayList<C>();
-
 	
 	public AbstractCorrectionAO() {
 
@@ -41,30 +37,9 @@ public abstract class AbstractCorrectionAO<T, C extends ICorrection<T>> extends 
 
 	public AbstractCorrectionAO(AbstractCorrectionAO<T, C> correctionAO) {
 		super(correctionAO);
-		this.outputschema = correctionAO.outputschema.clone();	
 		this.corrections = correctionAO.corrections;
 	}
 	
-	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.outputschema;
-	}
-	
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputschema = outputSchema;
-		
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if(port>0){
-			throw new UnsupportedOperationException("no ports greater than 0 supported");
-		}
-		setOutputSchema(outputSchema);	
-	}
 
 	public List<C> getCorrections() {
 		return corrections;

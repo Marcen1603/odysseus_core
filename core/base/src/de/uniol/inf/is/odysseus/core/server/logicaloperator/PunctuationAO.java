@@ -27,7 +27,7 @@ public class PunctuationAO extends BinaryLogicalOp {
     }
 
     @Override
-    public SDFSchema getOutputSchema() {
+    public SDFSchema getOutputSchemaIntern() {
         return getInputSchema(LEFT);
     }
 

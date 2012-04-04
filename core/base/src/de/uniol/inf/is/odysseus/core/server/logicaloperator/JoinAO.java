@@ -72,7 +72,7 @@ public class JoinAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public synchronized SDFSchema getOutputSchema() {
+	public synchronized SDFSchema getOutputSchemaIntern() {
 		// The Sum of all InputSchema
 		if (outputSchema == null || recalcOutputSchemata) {
 			outputSchema = null;

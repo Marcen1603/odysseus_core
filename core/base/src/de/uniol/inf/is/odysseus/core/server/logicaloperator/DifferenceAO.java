@@ -46,7 +46,7 @@ public class DifferenceAO extends BinaryLogicalOp{
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		return getInputSchema(LEFT);
 	}
 

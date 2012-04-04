@@ -71,7 +71,7 @@ public class PrioIdJoinAO extends AbstractLogicalOperator implements
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		SDFSchema outputSchema = null;
 		for (LogicalSubscription l : getSubscribedToSource()) {
 			outputSchema = SDFSchema.union(outputSchema, l.getSchema());

@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.OutputSchemaSettable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -111,7 +110,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
 					_top = (ILogicalOperator) v.visit(null, null, this);
 				}
-				((OutputSchemaSettable) _top).setOutputSchema(_outputSchema);
+				_top.setOutputSchema(_outputSchema);
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(_top, inputSchema);

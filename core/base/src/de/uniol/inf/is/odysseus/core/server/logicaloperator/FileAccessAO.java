@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FileAccessAO extends AbstractAccessAO implements
-		OutputSchemaSettable {
+public class FileAccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = 3955519214402695311L;
 

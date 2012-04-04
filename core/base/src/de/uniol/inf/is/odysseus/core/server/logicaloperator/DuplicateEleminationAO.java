@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DuplicateEleminationAO extends UnaryLogicalOp {
 
@@ -29,9 +28,5 @@ public class DuplicateEleminationAO extends UnaryLogicalOp {
 		return new DuplicateEleminationAO(this);
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
 	
 }

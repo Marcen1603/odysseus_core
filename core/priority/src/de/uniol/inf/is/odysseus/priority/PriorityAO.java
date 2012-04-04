@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ByteParameter;
@@ -108,9 +107,5 @@ public class PriorityAO<T> extends UnaryLogicalOp {
 		return isPunctuationActive;
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
 
 }

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.fusion.logicaloperator.association;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -21,11 +20,6 @@ public class SpatialAssociationAO extends AbstractLogicalOperator  {
     @Override
     public SpatialAssociationAO clone() {
         return new SpatialAssociationAO(this);
-    }
-
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
     }
 
 }

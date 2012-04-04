@@ -89,7 +89,7 @@ public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	public SDFSchema getOutputSchemaIntern() {
 		return getInputSchema(LEFT);
 	}
 	

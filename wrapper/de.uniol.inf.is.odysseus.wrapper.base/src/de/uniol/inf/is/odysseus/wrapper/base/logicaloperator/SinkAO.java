@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -42,21 +41,6 @@ public class SinkAO extends AbstractLogicalOperator {
 		this.options.putAll(ao.options);
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getOutputSchema(0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#
-	 * getOutputSchema(int)
-	 */
-	@Override
-	public SDFSchema getOutputSchema(final int port) {
-		return this.getInputSchema(port);
-	}
 
 	@Parameter(name = "OPTIONS", optional = true, type = StringParameter.class, isList = true)
 	public void setOptions(final List<String> optionsList) {

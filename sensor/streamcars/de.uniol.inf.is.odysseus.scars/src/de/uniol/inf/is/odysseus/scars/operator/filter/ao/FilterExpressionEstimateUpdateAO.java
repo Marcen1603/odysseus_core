@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.scars.operator.filter.ao;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -47,13 +46,7 @@ public class FilterExpressionEstimateUpdateAO <M extends IProbabilityGainConnect
 	public AbstractLogicalOperator clone() {
 		return new FilterExpressionEstimateUpdateAO<M>(this);
 	}
-	
-	  @Override
-	  public SDFSchema getOutputSchema() {
 		
-		  return this.getInputSchema();
-	  }
-	
 	
 	// Getter & Setter
 

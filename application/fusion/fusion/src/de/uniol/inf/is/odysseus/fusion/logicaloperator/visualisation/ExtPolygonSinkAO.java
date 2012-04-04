@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.fusion.logicaloperator.visualisation;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -23,10 +22,6 @@ public class ExtPolygonSinkAO extends AbstractLogicalOperator  {
         return new ExtPolygonSinkAO(this);
     }
 
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
-    }
 
 
 }

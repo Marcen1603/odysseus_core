@@ -29,10 +29,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Jonas Jacobi
  */
 @LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1)
-public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
+public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
-	protected SDFSchema outputSchema;
 	private List<String> aliases;
 
 	public RenameAO() {
@@ -41,18 +40,11 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	public RenameAO(AbstractLogicalOperator po) {
 		super(po);
-		outputSchema = po.getOutputSchema();		
 	}
 
 	public RenameAO(RenameAO ao) {
 		super(ao);
-		outputSchema = new SDFSchema(ao.outputSchema.getURI(), ao.outputSchema);
 		aliases = ao.aliases;
-	}
-
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema.clone();
 	}
 
 	@Parameter(type = StringParameter.class, isList = true)
@@ -72,7 +64,7 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 //			attribute.setSourceName(null);
 			attrs.add(attribute);
 		}
-		this.outputSchema = new SDFSchema(inputSchema.getURI(), attrs);
+		setOutputSchema(new SDFSchema(inputSchema.getURI(), attrs));
 
 	}
 	
@@ -81,23 +73,11 @@ public class RenameAO extends UnaryLogicalOp implements OutputSchemaSettable {
 		return this.aliases;
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
-	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RenameAO(this);
 	}
 
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if (port == 0) {
-			setOutputSchema(outputSchema);
-		} else {
-			throw new IllegalArgumentException("no such port: " + port);
-		}
-	}
 
 }

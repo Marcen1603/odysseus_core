@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.brokerinit.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -30,11 +29,6 @@ public class BrokerInitAO extends UnaryLogicalOp {
 	
 	public BrokerInitAO( BrokerInitAO other ) {
 		setSize( other.getSize() );
-	}
-	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
 	}
 
 	@Override

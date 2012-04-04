@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.fusion.logicaloperator.context;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -20,11 +19,6 @@ public class ContextStoreAO extends AbstractLogicalOperator  {
     @Override
     public ContextStoreAO clone() {
         return new ContextStoreAO(this);
-    }
-
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
     }
 
 

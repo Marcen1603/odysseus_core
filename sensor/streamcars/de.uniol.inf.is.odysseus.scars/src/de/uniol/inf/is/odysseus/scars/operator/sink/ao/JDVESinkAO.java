@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.scars.operator.sink.ao;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
@@ -58,11 +57,6 @@ public class JDVESinkAO extends UnaryLogicalOp {
 
 	public void setServerType(String serverType) {
 		this.serverType = serverType;
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return this.getInputSchema();
 	}
 
 	@Override

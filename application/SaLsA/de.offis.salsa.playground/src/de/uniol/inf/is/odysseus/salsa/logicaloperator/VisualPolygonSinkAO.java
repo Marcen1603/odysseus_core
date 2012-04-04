@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.salsa.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -26,11 +25,6 @@ public class VisualPolygonSinkAO extends AbstractLogicalOperator {
     @Override
     public VisualPolygonSinkAO clone() {
         return new VisualPolygonSinkAO(this);
-    }
-
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.getInputSchema(0);
     }
 
 }

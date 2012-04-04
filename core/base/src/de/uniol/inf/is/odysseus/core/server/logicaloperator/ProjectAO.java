@@ -31,10 +31,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT")
-public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
+public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
-
-	private SDFSchema outputSchema = null;
 
 	public ProjectAO() {
 		super();
@@ -42,8 +40,6 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 
 	public ProjectAO(ProjectAO ao) {
 		super(ao);
-		if (ao.outputSchema != null)
-			this.outputSchema = new SDFSchema(ao.getOutputSchema().getURI(), ao.outputSchema);
 	}
 
 	public @Override
@@ -58,18 +54,14 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		this.outputSchema = new SDFSchema("", outputSchema);
-	}
-	
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema) {
-		this.outputSchema = outputSchema.clone();
+		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 	
 	@Override
 	@GetParameter(name ="ATTRIBUTES")
-	public SDFSchema getOutputSchema() {
-		return outputSchema;
+	public SDFSchema getOutputSchemaIntern() {
+		// TODO: Dies ist nur wg. des GetParameters. Braucht man den überhaupt?
+		return getOutputSchema();
 	}
 
 	public static int[] calcRestrictList(SDFSchema in,
@@ -92,20 +84,11 @@ public class ProjectAO extends UnaryLogicalOp implements OutputSchemaSettable {
 		return ret;
 	}
 
-	@Override
-	public void setOutputSchema(SDFSchema outputSchema, int port) {
-		if (port == 0) {
-			setOutputSchema(outputSchema);
-		} else {
-			throw new IllegalArgumentException("no such port: " + port);
-		}
-
-	}
 	
 	@Override
 	public boolean isValid() {
 		//init
-		this.outputSchema = new SDFSchema(getInputSchema().getURI(), outputSchema);
+		setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
 		return super.isValid();
 	}
 

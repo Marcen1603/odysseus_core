@@ -91,8 +91,4 @@ public class PredictionAO<M extends IProbability> extends AbstractLogicalOperato
 		return new PredictionAO<M>(this);
 	}
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema(0);
-	}
 }

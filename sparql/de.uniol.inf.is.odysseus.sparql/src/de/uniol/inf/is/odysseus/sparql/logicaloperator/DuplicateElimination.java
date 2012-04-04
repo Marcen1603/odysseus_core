@@ -10,7 +10,6 @@
 package de.uniol.inf.is.odysseus.sparql.logicaloperator;
 
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 
 /**
@@ -39,9 +38,4 @@ public class DuplicateElimination extends UnaryLogicalOp{
         return new DuplicateElimination(this);
     }
 
-	@Override
-	public SDFSchema getOutputSchema() {
-		// TODO Auto-generated method stub
-		return this.getInputSchema();
-	}
 }

@@ -29,11 +29,6 @@ public class P2PSourceAO extends P2PAO {
 		super(p2pSourceAO);
 		this.outputSchema = p2pSourceAO.outputSchema.clone();		
 	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
 	
 	@Override
 	public P2PSourceAO clone() {

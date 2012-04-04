@@ -99,10 +99,4 @@ public class SortAO extends UnaryLogicalOp{
 		this.ascending = ascending;
 	}
 	
-	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
-	
-
 }

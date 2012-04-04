@@ -40,11 +40,6 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
-		return getInputSchema();
-	}
-
-	@Override
 	public AbstractLogicalOperator clone() {
 		return new ChangeDetectAO(this);
 	}
