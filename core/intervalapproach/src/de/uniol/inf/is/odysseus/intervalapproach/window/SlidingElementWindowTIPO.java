@@ -103,6 +103,7 @@ public class SlidingElementWindowTIPO<T extends IMetaAttributeContainer<ITimeInt
 
 	@Override
 	public void process_close() {
+		this._buffer.clear();
 	}
 
 }
