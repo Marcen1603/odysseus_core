@@ -30,6 +30,7 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 			.getLogger(ChannelReceiverDelegate.class);
 	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
 	private ServerBootstrap bootstrap;
+	private ChannelHandlerContext ctx;
 
 	public ChannelReceiverDelegate(
 			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {
@@ -48,6 +49,7 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	public void channelBound(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		logger.info("Channel bound: "
 				+ ((InetSocketAddress) e.getValue()).toString());
+		this.ctx = ctx;
 	}
 
 	/*
@@ -142,8 +144,9 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	}
 
 	public void close() {
-		// TODO: Close stream
-		// bootstrap = null;
+		// TODO: Funktioniert das so???
+		ctx.getChannel().close();
+		bootstrap = null;
 	}
 
 }
