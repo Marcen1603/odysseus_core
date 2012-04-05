@@ -33,11 +33,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	private int[][] variables;
 	private SDFExpression[] expressions;
-	private SDFSchema schema;
+	private SDFSchema inputSchema;
 
-	public RelationalMapPO(SDFSchema schema, SDFExpression[] expressions) {
-		this.schema = schema;
-		init(schema, expressions);
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
+		this.inputSchema = inputSchema;
+		init(inputSchema, expressions);
 	}
 
 	private void init(SDFSchema schema, SDFExpression[] expressions) {
@@ -59,7 +59,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 
 	public RelationalMapPO(RelationalMapPO<T> relationalMapPO) {
-		init(relationalMapPO.schema ,relationalMapPO.expressions);
+		init(relationalMapPO.inputSchema ,relationalMapPO.expressions);
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		}
 		RelationalMapPO rmpo = (RelationalMapPO) ipo;
 		if(this.hasSameSources(rmpo) &&
-					this.schema.compareTo(rmpo.schema) == 0) {
+					this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
 			if(this.expressions.length == rmpo.expressions.length) {
 				for(int i=0; i<this.expressions.length; i++) {
 					if(!this.expressions[i].equals(rmpo.expressions[i])) {

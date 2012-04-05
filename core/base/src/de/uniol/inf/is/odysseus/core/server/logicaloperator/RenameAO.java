@@ -26,13 +26,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 @LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1)
 public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
 	private List<String> aliases;
+	private String typeName;
 
 	public RenameAO() {
 		super();
@@ -50,6 +51,20 @@ public class RenameAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, isList = true)
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
+	}
+	
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setType(String typeName) {
+		this.typeName = typeName;
+	}	
+	
+	@GetParameter(name="setAliases")
+	public List<String> getAliases(){
+		return this.aliases;
+	}
+	
+	@Override
+	public void initialize() {
 		SDFSchema inputSchema = getInputSchema();
 		if (inputSchema.size() != aliases.size()) {
 			throw new IllegalArgumentException(
@@ -60,17 +75,10 @@ public class RenameAO extends UnaryLogicalOp {
 		for (String str : aliases) {
 			// use clone, so we have a datatype etc.
 			SDFAttribute attribute = it.next().clone(null,str);
-//			attribute.setAttributeName(str);
-//			attribute.setSourceName(null);
 			attrs.add(attribute);
 		}
-		setOutputSchema(new SDFSchema(inputSchema.getURI(), attrs));
-
-	}
-	
-	@GetParameter(name="setAliases")
-	public List<String> getAliases(){
-		return this.aliases;
+		String uri = typeName !=null ? typeName:inputSchema.getURI();
+		setOutputSchema(new SDFSchema(uri, attrs));
 	}
 
 

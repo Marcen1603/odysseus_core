@@ -50,7 +50,7 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T>{
 
 	@Override
 	public String toString() {
-		return ""+elements;
+		return getURI()+" "+elements;
 	}
 	
 	public void getXMLRepresentation(String indent, StringBuffer xmlRetValue) {

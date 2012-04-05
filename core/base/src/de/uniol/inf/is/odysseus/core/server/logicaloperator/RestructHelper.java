@@ -38,7 +38,12 @@ public class RestructHelper {
 					child.getSourceOutPort(),
 					reserveOutputSchema ? remove.getOutputSchema() : child
 							.getTarget().getOutputSchema());
-			ret.add(father.getTarget());
+			ret.add(father.getTarget());		
+			// Special case if father is top operator and operator is rename
+			// else rename would be lost
+			if (father.getTarget() instanceof TopAO){
+				child.getTarget().setOutputSchema(remove.getOutputSchema());
+			}
 		}
 		// prevents duplicate entry if child.getTarget=father.getTarget
 		if (!ret.contains(child.getTarget())) {

@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -38,7 +39,8 @@ public class RewriteExecutor implements IRewrite {
 		
 		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
 		TopAO top = new TopAO();
-		plan.subscribeSink(top, 0, 0, plan.getOutputSchema());
+		SDFSchema outputSchema = plan.getOutputSchema();
+		plan.subscribeSink(top, 0, 0, outputSchema);
 
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperator(top, list, env);
@@ -52,7 +54,6 @@ public class RewriteExecutor implements IRewrite {
 		LogicalSubscription sub = top.getSubscribedToSource(0);
 		ILogicalOperator ret = sub.getTarget();
 		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-
 		planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE, "After rewriting: \n"+planPrinter.createString(ret));
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Rewriting finished.");

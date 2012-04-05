@@ -140,6 +140,7 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 				parameterEntry.getKey().invoke(op, parameter.getValue());
 			}
 		}
+		op.initialize();
 	}
 
 	@Override

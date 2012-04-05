@@ -112,6 +112,11 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	@Override
+	public void initialize() {
+		calcOutputSchema();
+	}
+	
+	@Override
 	public MapAO clone() {
 		return new MapAO(this);
 	}

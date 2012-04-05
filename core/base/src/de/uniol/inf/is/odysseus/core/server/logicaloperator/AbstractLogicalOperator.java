@@ -79,21 +79,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		initOwner();
 		owners.addAll(op.owners);
 		this.outputSchema = op.outputSchema;
-
-		// physSubscriptionTo = op.physSubscriptionTo == null ? null
-		// : new
-		// HashMap<Integer,Subscription<ISource<?>>>(op.physSubscriptionTo);
 	}
 
-	// TODO: Is this needed???
-//	private static Map<Integer, SDFSchema> createCleanClone(
-//			Map<Integer, SDFSchema> old) {
-//		Map<Integer, SDFSchema> copy = new HashMap<Integer, SDFSchema>();
-//		for (Entry<Integer, SDFSchema> e : old.entrySet()) {
-//			copy.put(e.getKey(), e.getValue().clone());
-//		}
-//		return copy;
-//	}
 	
 	public AbstractLogicalOperator() {
 		initOwner();
@@ -205,16 +192,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return name == null ? this.getClass().getSimpleName() : name;
 	}
 
-	@Override
-	public boolean isAllPhysicalInputSet() {
-		for (Integer i : this.subscribedToSource.keySet()) {
-			if (this.physInputOperators.get(i) == null) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -226,6 +203,18 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		for (Integer i : this.subscribedToSource.keySet()) {
+			if (this.physInputOperators.get(i) == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -494,7 +483,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return getName() + "@" + hashCode() + " OwnerIDs: " + getOwnerIDs();
 	}
 
-	// TODO: Check if equals is needed in logical operators
 	@Override
 	final public boolean equals(Object arg0) {
 		return super.equals(arg0);
@@ -505,6 +493,16 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return super.hashCode();
 	}
 
+
+	// ---------------------------------------------------------------------------------------
+	// Methods mainly for GenericOperatorBuilder
+	// ---------------------------------------------------------------------------------------
+	
+	@Override
+	public void initialize() {
+		// Can be overwritten if needed
+	}
+	
 	@Override
 	public boolean isValid() {
 		return true;
@@ -521,6 +519,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public List<Exception> getErrors() {
 		return Collections.unmodifiableList(this.errors);
 	}
+
+
+	// ---------------------------------------------------------------------------------------
+	// Serialization
+	// ---------------------------------------------------------------------------------------
 
 	@Override
 	public SerializeNode serialize() {

@@ -108,6 +108,14 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 */
 	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator logicalOperator);
 
+
+	/**
+	 * This method can be called in scenarios where multiple input values that are set independently
+	 * together form one parameter of this operator. Needed in GenericOperatorBuilder and will be call
+	 * before validation and after all input sources are set
+	 */
+	public void initialize();
+	
 	/**
 	 * This Method can be called to check if all needed parameters are set or
 	 * the combination of parameters is valid. Needed in GenericOperatorBuilder.
@@ -163,6 +171,5 @@ public interface ILogicalOperator extends IOwnedOperator,
 	@Override
 	public ILogicalOperator clone();
 
-
-
 }
+

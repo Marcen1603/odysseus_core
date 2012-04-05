@@ -84,12 +84,9 @@ public class ProjectAO extends UnaryLogicalOp {
 		return ret;
 	}
 
-	
 	@Override
-	public boolean isValid() {
-		//init
+	public void initialize() {
 		setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
-		return super.isValid();
 	}
-
+	
 }
