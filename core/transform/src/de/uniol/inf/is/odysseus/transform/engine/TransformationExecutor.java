@@ -81,6 +81,9 @@ public class TransformationExecutor implements ITransformation {
 			throw new TransformationException("Error during transformation of " + op);
 		}
 
+		// if top operator has been rename, renaming is lost --> setOutputSchema of physicalPO to Schema in subscription
+		physicalPO.setOutputSchema(op.getOutputSchema());
+		
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
 		walker.prefixWalkPhysical(physicalPO, visitor);
