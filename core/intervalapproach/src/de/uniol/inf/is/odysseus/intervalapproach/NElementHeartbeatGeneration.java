@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -7,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 
 public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends IMetaAttributeContainer<K>> implements IHeartbeatGenerationStrategy<T>{
 
+	static private final Logger logger = LoggerFactory.getLogger(NElementHeartbeatGeneration.class);
+	
 	private int counter = 0;
 	final private int eachElement;
 	
@@ -29,6 +34,7 @@ public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends IMe
 		if (counter % eachElement == 0){
 			counter = 0;
 			source.sendPunctuation(object.getMetadata().getStart());
+			logger.debug("Sending punctuation ... ");
 		}
 		counter++;
 	}
