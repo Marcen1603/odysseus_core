@@ -60,9 +60,9 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
                     query.getID(), 
                     getQueryStatus(query),
                     query.getPriority(), 
-                    query.getLogicalQuery().getQueryText(), 
-                    query.getUser().getUser().getName(), 
-                    getQueryUser(query)) );
+                    query.getLogicalQuery().getParserId(),
+                    getQueryUser(query), 
+                    query.getLogicalQuery().getQueryText()) );
         }
 
         return result;
