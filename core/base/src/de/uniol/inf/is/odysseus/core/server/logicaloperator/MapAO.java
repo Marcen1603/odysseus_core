@@ -104,10 +104,12 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
-		if (getOutputSchema() == null){
-			calcOutputSchema();
-		}
+	public SDFSchema getOutputSchemaIntern(int pos) {
+//		if (getOutputSchema() == null){
+//			calcOutputSchema();
+//		}
+//		return getOutputSchema();
+		calcOutputSchema();
 		return getOutputSchema();
 	}
 
