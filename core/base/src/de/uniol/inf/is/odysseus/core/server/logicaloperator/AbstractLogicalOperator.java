@@ -145,8 +145,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	final public SDFSchema getOutputSchema() {
-		return getOutputSchema(0);
-	}
+		if (this.outputSchema.get(0) != null){
+			return outputSchema.get(0);
+		}else{
+		return getOutputSchemaIntern();
+		}	}
 
 	@Override
 	final public SDFSchema getOutputSchema(int pos) {
