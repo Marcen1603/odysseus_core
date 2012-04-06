@@ -89,6 +89,8 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
         tupleMap = new HashMap<Integer, Tuple<T>>();
     }
 
+    // TODO: FIX THIS. THIS SHOULD NOT BE DONE WITH STRING COMPARE AND
+    // CAN BE PRE-CALCULATED 
     private int getOutputPos(FESortedClonablePair<SDFSchema, AggregateFunction> p) {
         Integer pos = aggrOutputPos.get(p);
         if (pos == null) {
