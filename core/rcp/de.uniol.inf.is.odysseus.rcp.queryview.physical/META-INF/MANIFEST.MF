@@ -20,6 +20,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.planmanagement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event,
  de.uniol.inf.is.odysseus.core.server.planmanagement.plan,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
- de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.rcp.views.query,
  org.slf4j
