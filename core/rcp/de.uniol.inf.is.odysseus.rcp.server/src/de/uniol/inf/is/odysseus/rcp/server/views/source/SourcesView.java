@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
@@ -33,6 +35,8 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class SourcesView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
+	
 	private TreeViewer viewer;
 
 	@Override
@@ -82,8 +86,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 				try {
 					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
 				} catch (Exception e) {
-					getTreeViewer().setInput("NOTHING");
-					e.printStackTrace();// ?
+					LOG.error("Exception during setting input for treeViewer in sourcesView", e);
 				}
 			}
 
