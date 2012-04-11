@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.StreamMapEditorEarlyStartup">
+      </startup>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10Editor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10Editor"
+            label="Map 10">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10000Editor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMap10000Editor"
+            label="Map 10000">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapWindowEditor"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapWindowEditor"
+            label="Map Window">
+      </editor>
+   </extension>
+</plugin>
