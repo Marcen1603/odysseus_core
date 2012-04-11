@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp;
 
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -89,8 +88,6 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		ImageManager.getInstance().register("source", "icons/application-import.png");
 		ImageManager.getInstance().register("view", "icons/table.png");
 		ImageManager.getInstance().register("attribute", "icons/status.png");
-
-		IDE.registerAdapters();
 
 		instance = this;
 	}
