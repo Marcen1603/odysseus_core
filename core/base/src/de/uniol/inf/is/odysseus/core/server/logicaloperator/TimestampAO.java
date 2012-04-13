@@ -15,7 +15,11 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp")
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
 
@@ -48,6 +52,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestamp;
 	}
 
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "START", isList = false, optional = true)
 	public void setStartTimestamp(SDFAttribute startTimestamp) {
 		this.startTimestamp = startTimestamp;
 		if (this.startTimestamp == null) {
@@ -61,6 +66,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return endTimestamp;
 	}
 
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true)
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
 	}
