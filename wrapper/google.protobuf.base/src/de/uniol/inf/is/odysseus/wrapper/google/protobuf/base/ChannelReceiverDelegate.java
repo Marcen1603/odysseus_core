@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.Executors;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -30,7 +31,7 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 			.getLogger(ChannelReceiverDelegate.class);
 	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
 	private ServerBootstrap bootstrap;
-	private ChannelHandlerContext ctx;
+	private Channel openChannel;
 
 	public ChannelReceiverDelegate(
 			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {
@@ -49,7 +50,6 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	public void channelBound(ChannelHandlerContext ctx, ChannelStateEvent e) {
 		logger.info("Channel bound: "
 				+ ((InetSocketAddress) e.getValue()).toString());
-		this.ctx = ctx;
 	}
 
 	/*
@@ -137,16 +137,15 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 			bootstrap.setPipelineFactory(cpf);
 			bootstrap.setOption("child.tcpNoDelay", true);
 			bootstrap.setOption("child.keepAlive", true);
-			bootstrap.bind(address);
+			openChannel = bootstrap.bind(address);
 			logger.info("Bound to: " + address + " for message type: "
 					+ message.getClass().getSimpleName());
 		}
 	}
 
 	public void close() {
-		// TODO: Funktioniert das so???
-		ctx.getChannel().close();
-		bootstrap = null;
+		openChannel.disconnect();
+		openChannel.close().awaitUninterruptibly();
 	}
 
 }
