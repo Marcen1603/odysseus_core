@@ -58,6 +58,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		
 		rules.add(new TPunctuationAORule());
 		
+		rules.add(new TBufferedFilterAORule());
+		
 		return rules;
 	}
 

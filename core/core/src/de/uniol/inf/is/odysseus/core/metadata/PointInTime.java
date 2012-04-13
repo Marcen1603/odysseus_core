@@ -149,6 +149,23 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return before;
 	}
 
+	public static boolean beforeOrEquals(PointInTime left, PointInTime right) {
+		boolean before;
+		// Achtung: Vorher die Behandlung von unendlich testen
+		// Wenn der linke Punkt unendlich ist, kann der rechte nicht davor sein
+		if (left.isInfinite()) {
+			before = false;
+			// Wenn der rechte Punkt unendlich ist und der linke nicht (s.o.)
+			// dann ist er auf jeden Fall davor :-)
+		} else if (right.isInfinite()) {
+			before = true;
+		} else {
+			// Ansonsten ganz normal
+			before = left.point <= right.point;
+		}
+		return before;
+	}
+	
 	public static boolean equals(PointInTime left, PointInTime right) {
 		// Entweder gleich in den Werten oder unendlich
 		if (left.isInfinite) {
@@ -238,6 +255,11 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 			return this;
 		return new PointInTime(this.point + time.point);
 	}
+	
+	public static PointInTime plus(PointInTime time, long toAdd) {
+		return new PointInTime(time.point+toAdd);
+	}
+
 
 	public PointInTime plus(int time) {
 		if (isInfinite)
@@ -273,5 +295,11 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	public static PointInTime getZeroTime() {
 		return ZERO.clone();
 	}
+
+	public static PointInTime add(PointInTime start, long deliverTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

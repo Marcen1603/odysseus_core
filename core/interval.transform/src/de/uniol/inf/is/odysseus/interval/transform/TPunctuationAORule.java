@@ -54,4 +54,9 @@ public class TPunctuationAORule extends AbstractTransformationRule<PunctuationAO
         return TransformRuleFlowGroup.TRANSFORMATION;
     }
 
+    @Override
+    public Class<?> getConditionClass() {
+    	return PunctuationAO.class;
+    }
+    
 }
