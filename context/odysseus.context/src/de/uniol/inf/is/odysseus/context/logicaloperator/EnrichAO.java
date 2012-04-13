@@ -72,7 +72,7 @@ public class EnrichAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		if (getOutputSchema() == null) {
 			calcOutputSchema();
 		}

@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.benchmark;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -64,11 +63,6 @@ public class BenchmarkAO extends AbstractLogicalOperator {
 	@Parameter(type = DoubleParameter.class)
 	public void setSelectivity(double selectivity) {
 		this.selectivity = selectivity;
-	}
-
-	@Override
-	public SDFSchema getOutputSchemaIntern() {
-		return getInputSchema(0);
 	}
 
 	@Override

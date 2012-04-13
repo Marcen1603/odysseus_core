@@ -57,7 +57,6 @@ public class ProjectAO extends UnaryLogicalOp {
 		setOutputSchema(new SDFSchema("", outputSchema));
 	}
 	
-	@Override
 	@GetParameter(name ="ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
 		// TODO: Dies ist nur wg. des GetParameters. Braucht man den überhaupt?

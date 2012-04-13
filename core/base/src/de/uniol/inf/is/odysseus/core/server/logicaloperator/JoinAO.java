@@ -67,7 +67,7 @@ public class JoinAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public synchronized SDFSchema getOutputSchemaIntern() {
+	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
 		// The Sum of all InputSchema
 		SDFSchema outputSchema = null;
 		for (LogicalSubscription l : getSubscribedToSource()) {

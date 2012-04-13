@@ -67,7 +67,7 @@ public class ClassifyAO extends BinaryLogicalOp {
 	 * ()
 	 */
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		if (getLabelPosition() < getInputSchema(1).size()) {
 			return getInputSchema(1);
 		}

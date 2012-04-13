@@ -71,7 +71,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private IPredicate<?> predicate = null;
 
-	private Map<Integer,SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
+	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		predicate = (op.predicate == null) ? null : op.predicate.clone();
@@ -81,7 +81,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.outputSchema = op.outputSchema;
 	}
 
-	
 	public AbstractLogicalOperator() {
 		initOwner();
 	}
@@ -145,44 +144,42 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	final public SDFSchema getOutputSchema() {
-		if (this.outputSchema.get(0) != null){
+		if (this.outputSchema.get(0) != null) {
 			return outputSchema.get(0);
-		}else{
-		return getOutputSchemaIntern();
-		}	}
+		} else {
+			return getOutputSchemaIntern(0);
+		}
+	}
 
 	@Override
 	final public SDFSchema getOutputSchema(int pos) {
-		if (this.outputSchema.get(pos) != null){
+		if (this.outputSchema.get(pos) != null) {
 			return outputSchema.get(pos);
-		}else{
-		return getOutputSchemaIntern(pos);
+		} else {
+			return getOutputSchemaIntern(pos);
 		}
 	}
 
 	// Default-Implementation: Get the input from the
 	// input operator on port 0
-	protected SDFSchema getOutputSchemaIntern(int pos){
+	protected SDFSchema getOutputSchemaIntern(int pos) {
 		return getInputSchema(0);
 	}
-	
-	// Default-Implementation: Get the input from the
-	// input operator on port 0
-	protected SDFSchema getOutputSchemaIntern(){
-		return getInputSchema(0);
-	}
-	
+
 
 	@Override
-	final public void setOutputSchema(int pos, SDFSchema outputSchema){
+	final public void setOutputSchema(int pos, SDFSchema outputSchema) {
+		if (outputSchema == null){
+			this.outputSchema.remove(pos);
+		}
 		this.outputSchema.put(pos, outputSchema);
 	}
-	
+
 	@Override
-	final public void setOutputSchema(SDFSchema outputSchema){
-		setOutputSchema(0,outputSchema);
+	final public void setOutputSchema(SDFSchema outputSchema) {
+		setOutputSchema(0, outputSchema);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -207,7 +204,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		this.name = name;
 	}
 
-	
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		for (Integer i : this.subscribedToSource.keySet()) {
@@ -217,7 +213,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		}
 		return true;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -496,16 +491,15 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return super.hashCode();
 	}
 
-
 	// ---------------------------------------------------------------------------------------
 	// Methods mainly for GenericOperatorBuilder
 	// ---------------------------------------------------------------------------------------
-	
+
 	@Override
 	public void initialize() {
 		// Can be overwritten if needed
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return true;
@@ -522,7 +516,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	public List<Exception> getErrors() {
 		return Collections.unmodifiableList(this.errors);
 	}
-
 
 	// ---------------------------------------------------------------------------------------
 	// Serialization

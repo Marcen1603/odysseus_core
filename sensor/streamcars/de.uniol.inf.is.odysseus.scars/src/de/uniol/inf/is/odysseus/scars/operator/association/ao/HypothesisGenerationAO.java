@@ -73,7 +73,7 @@ public class HypothesisGenerationAO<M extends IProbability> extends BinaryLogica
 	// (analog zur �nderung des Tupels im PO)
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		SchemaHelper helper = null;
 
 		// copy scanned Objects

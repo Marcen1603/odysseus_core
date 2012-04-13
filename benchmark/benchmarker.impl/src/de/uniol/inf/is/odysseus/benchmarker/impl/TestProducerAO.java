@@ -33,7 +33,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		return outputSchema;
 	}
 	

@@ -180,6 +180,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public SDFSchema getOutputSchema(int port) {
+		
 		return outputSchema.get(port);
 	}
 

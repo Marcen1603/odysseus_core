@@ -95,7 +95,7 @@ public class ObjectTrackingProjectAO extends ProjectAO {
 	 * and the input schema of the preceding operator.
 	 */
 	@Override
-	public SDFSchema getOutputSchemaIntern(){
+	public SDFSchema getOutputSchemaIntern(int pos){
 		SDFSchemaExtended newOutputSchema = new SDFSchemaExtended(outAttributes.getAttributes());
 		SDFSchemaExtended inputSchema = (SDFSchemaExtended)this.getSubscribedToSource(0).getSchema();
 		

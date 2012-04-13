@@ -305,7 +305,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		// the source name must be a unique artificial name, since
 		// every triple pattern needs its own source name.
 		this.sourceName = "s" + TriplePatternMatching.sourceNameCounter++;

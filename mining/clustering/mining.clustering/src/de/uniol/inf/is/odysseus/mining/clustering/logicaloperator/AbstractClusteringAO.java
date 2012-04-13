@@ -121,17 +121,19 @@ public abstract class AbstractClusteringAO extends UnaryLogicalOp {
     public void setAttributes(List<SDFAttribute> attributes) {
         this.attributes = attributes;
     }
+    
+    // TODO: Wieso zwei unterschiedliche Methoden für die Ausgabeschemata?
 
-    @Override
-    protected SDFSchema getOutputSchemaIntern() {
-        List<SDFAttribute> elems = new ArrayList<SDFAttribute>();
-        SDFAttribute id = new SDFAttribute(null, "cluster_id", SDFDatatype.INTEGER);
-        elems.add(id);
-        elems.addAll(getInputSchema().clone().getAttributes());
-        setOutputSchema(new SDFSchema("Cluster", elems));
-
-        return getOutputSchema();
-    }
+//    @Override
+//    protected SDFSchema getOutputSchemaIntern(int pos) {
+//        List<SDFAttribute> elems = new ArrayList<SDFAttribute>();
+//        SDFAttribute id = new SDFAttribute(null, "cluster_id", SDFDatatype.INTEGER);
+//        elems.add(id);
+//        elems.addAll(getInputSchema().clone().getAttributes());
+//        setOutputSchema(new SDFSchema("Cluster", elems));
+//
+//        return getOutputSchema();
+//    }
 
     /*
      * (non-Javadoc)

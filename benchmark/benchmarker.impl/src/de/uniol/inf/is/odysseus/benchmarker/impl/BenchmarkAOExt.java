@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
 /**
@@ -53,11 +52,6 @@ public class BenchmarkAOExt extends AbstractLogicalOperator {
 		this.selectivity = selectivity;
 	}
 
-	@Override
-	public SDFSchema getOutputSchemaIntern() {
-		return getInputSchema(0);
-	}
-	
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		boolean set = true;

@@ -63,7 +63,7 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern() {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		return new SDFSchema("", new ArrayList<SDFAttribute>());
 	}
 
