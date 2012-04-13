@@ -139,6 +139,13 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 				sink.filterEstUpdateLatencies);
 		this.filterGainUpdateLatencies = new LinkedList<Long>(
 				sink.filterGainUpdateLatencies);
+	
+		SDFAttribute attr0 = new SDFAttribute("","Odysseus latency median", SDFDatatype.LONG);
+		SDFAttribute attr1 = new SDFAttribute("","Objecttracking latency median", SDFDatatype.LONG);
+		SDFAttribute attr2 = new SDFAttribute("","Odysseus latency",SDFDatatype.LONG);
+		SDFAttribute attr3 = new SDFAttribute("","Objecttracking latency", SDFDatatype.LONG);
+		setOutputSchema(new SDFSchema("",attr0,attr1,attr2,attr3));
+	
 	}
 
 	@Override
@@ -155,17 +162,6 @@ public class JDVESinkPO<M extends IProbabilityObjectTrackingLatencyPredictionFun
 			this.server = new DatagramServer(this.hostAdress, this.port);
 		}
 		this.server.start();
-	}
-
-	@Override
-	public SDFSchema getOutputSchema() {
-		
-		SDFAttribute attr0 = new SDFAttribute("","Odysseus latency median", SDFDatatype.LONG);
-		SDFAttribute attr1 = new SDFAttribute("","Objecttracking latency median", SDFDatatype.LONG);
-		SDFAttribute attr2 = new SDFAttribute("","Odysseus latency",SDFDatatype.LONG);
-		SDFAttribute attr3 = new SDFAttribute("","Objecttracking latency", SDFDatatype.LONG);
-		SDFSchema schema = new SDFSchema("",attr0,attr1,attr2,attr3);
-		return schema;
 	}
 
 	@Override
