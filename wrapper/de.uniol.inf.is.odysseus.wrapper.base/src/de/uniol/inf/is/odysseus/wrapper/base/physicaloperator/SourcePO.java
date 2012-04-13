@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 public class SourcePO<T extends IMetaAttribute> extends
         AbstractSource<Tuple<TimeInterval>> {
     private static Logger LOG = LoggerFactory.getLogger(SourcePO.class);
-    private final SDFSchema schema;
     private final String adapterName;
     private final Map<String, String> options = new HashMap<String, String>();
 
@@ -28,7 +27,7 @@ public class SourcePO<T extends IMetaAttribute> extends
      */
     public SourcePO(final SDFSchema schema, final String adapterName,
             final Map<String, String> options) {
-        this.schema = schema;
+        setOutputSchema(schema);
         this.adapterName = adapterName;
         this.options.putAll(options);
         if (options.containsKey("name")) {
@@ -40,7 +39,6 @@ public class SourcePO<T extends IMetaAttribute> extends
      * @param po
      */
     public SourcePO(final SourcePO<T> po) {
-        this.schema = po.schema;
         this.adapterName = po.adapterName;
         this.options.putAll(po.options);
         if (options.containsKey("name")) {
@@ -65,15 +63,6 @@ public class SourcePO<T extends IMetaAttribute> extends
     protected void process_close() {
         super.process_close();
         SourcePool.disableSource(this);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#getOutputSchema()
-     */
-    @Override
-    public SDFSchema getOutputSchema() {
-        return this.schema;
     }
 
     /**
