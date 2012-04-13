@@ -57,17 +57,10 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	 */
 	private LinkedList<R> inputBuffer = new LinkedList<R>();
 
-	/**
-	 * list with elements to deliver
-	 */
-	private LinkedList<R> deliveryList = new LinkedList<R>();
-
-
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
 		super(logical);
 		this.windowSlide = logical.getWindowSlide();
-		this.slideNo = 1;
 	}
 
 	public SlidingPeriodicWindowTIPO(SlidingPeriodicWindowTIPO<R> original) {
@@ -89,17 +82,12 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	protected void process_open() throws OpenFailedException {
 		slideNo = 1;
 		inputBuffer.clear();
-		deliveryList.clear();
 	}
 
 	@Override
 	public synchronized void process_next(R object, int port) {
 		this.inputBuffer.add(object);
 		process(object.getMetadata().getStart());
-
-		while (!this.deliveryList.isEmpty()) {
-			this.transfer(this.deliveryList.removeFirst());
-		}
 	}
 
 	private synchronized void process(PointInTime point) {
@@ -121,12 +109,12 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 				inputBuffer.removeFirst();
 			}
 			
-			// 2. all Elemente before p_end need to be processed
+			// 2. all elements before p_end need to be processed
 			while(!inputBuffer.isEmpty() && inputBuffer.getFirst().getMetadata().getStart().before(p_end)){
 				R elem = inputBuffer.removeFirst();
 				elem.getMetadata().setStart(p_start);
 				elem.getMetadata().setEnd(p_end);
-				this.deliveryList.add(elem);
+				transfer(elem);
 			}	
 		}
 	}
