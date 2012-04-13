@@ -34,7 +34,7 @@ public class TMarkovAORule extends AbstractTransformationRule<MarkovAO> {
 
 	@Override
 	public void execute(MarkovAO operator, TransformationConfiguration config) {
-		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>> aggregatePO = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchema(), operator.getGroupingAttributes(),
+		StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>> aggregatePO = new StreamGroupingWithAggregationPO<ITimeInterval,IMetaAttributeContainer<ITimeInterval>,IMetaAttributeContainer<ITimeInterval>>(operator.getInputSchema(), operator.getOutputSchemaIntern(0), operator.getGroupingAttributes(),
 				operator.getAggregations());
 		aggregatePO.setOutputSchema(operator.getOutputSchema());
 		aggregatePO.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());

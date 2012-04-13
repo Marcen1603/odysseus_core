@@ -49,7 +49,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
     private SDFSchema inputSchema = null;
     private IGroupProcessor<R, W> groupProcessor;
 
-    private final SDFSchema outputSchema;
+    private final SDFSchema internalOutputSchema;
 
     private final List<SDFAttribute> groupingAttributes;
 
@@ -69,7 +69,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
             List<SDFAttribute> groupingAttributes,
             Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
         this.inputSchema = inputSchema;
-        this.outputSchema = outputSchema;
+        this.internalOutputSchema = outputSchema;
         this.aggregations = aggregations;
         this.groupingAttributes = groupingAttributes;
     }
@@ -86,9 +86,8 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         return Collections.unmodifiableList(groupingAttributes);
     }
 
-    @Override
-    public SDFSchema getOutputSchema() {
-        return outputSchema;
+    public SDFSchema getInternalOutputSchema() {
+        return internalOutputSchema;
     }
 
     public AggregatePO(AggregatePO<M, R, W> agg) {
@@ -99,7 +98,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
         eval = new HashMap<FESortedClonablePair<SDFSchema, AggregateFunction>, IEvaluator<R, W>>(
                 agg.eval);
         this.inputSchema = agg.inputSchema;
-        this.outputSchema = agg.outputSchema;
+        this.internalOutputSchema = agg.internalOutputSchema;
         this.groupingAttributes = agg.groupingAttributes;
         this.aggregations = agg.aggregations;
         this.groupProcessor = agg.groupProcessor;
@@ -209,7 +208,7 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IMetaAttri
 		}
 		if(this.groupProcessor.getClass().toString().equals(apo.groupProcessor.getClass().toString())
 				&& this.inputSchema.compareTo(apo.inputSchema) == 0
-				&& this.outputSchema.compareTo(apo.outputSchema) == 0
+				&& this.internalOutputSchema.compareTo(apo.internalOutputSchema) == 0
 				&& this.groupingAttributes.size() == apo.groupingAttributes.size()) {
 			
 			// Vergleich der groupingAttributes

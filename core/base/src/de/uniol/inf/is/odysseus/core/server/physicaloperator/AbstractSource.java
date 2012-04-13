@@ -174,12 +174,12 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public SDFSchema getOutputSchema() {
+	final public SDFSchema getOutputSchema() {
 		return getOutputSchema(0);
 	}
 
 	@Override
-	public SDFSchema getOutputSchema(int port) {
+	final public SDFSchema getOutputSchema(int port) {
 		return outputSchema.get(port);
 	}
 

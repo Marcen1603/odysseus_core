@@ -144,7 +144,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
+	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema outputSchema;
 		if (getInputSchema() != null) {
 			outputSchema = new SDFSchema(getInputSchema().getURI(),
@@ -152,7 +152,6 @@ public class AggregateAO extends UnaryLogicalOp {
 		} else {
 			outputSchema = new SDFSchema("<tmp>", outputAttributList);
 		}
-		setOutputSchema(outputSchema);
 		return outputSchema;
 	}
 

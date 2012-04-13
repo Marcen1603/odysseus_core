@@ -36,7 +36,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	
 	@Override
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
-		StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchema(), aggregateAO.getGroupingAttributes(),
+		StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
 		po.setOutputSchema(aggregateAO.getOutputSchema()); 
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());

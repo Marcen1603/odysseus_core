@@ -45,7 +45,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 			TransformationConfiguration transformConfig) {
 		
 		RelationalGroupProcessor r = new RelationalGroupProcessor(
-				aggregatePO.getInputSchema(), aggregatePO.getOutputSchema(),
+				aggregatePO.getInputSchema(), aggregatePO.getInternalOutputSchema(),
 				aggregatePO.getGroupingAttribute(),
 				aggregatePO.getAggregations());
 		aggregatePO.setGroupProcessor(r);
