@@ -75,7 +75,8 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 			while (buffer.size() > 0 && !bufferCleard){
 				elem = buffer.get(0);
 				if (elem.getMetadata().getStart().getMainPoint()+bufferTime < timestamp.getMainPoint()){
-					buffer.remove(0);
+					// Send filtered data to output port 1
+					transfer(buffer.remove(0),1);
 					continue;
 				}else{
 					bufferCleard = true;
