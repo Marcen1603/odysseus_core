@@ -52,6 +52,8 @@ public class SelectPO<T> extends AbstractPipe<T, T> implements IHasPredicate{
 		if (predicate.evaluate(object)) {
 			transfer(object);
 		}else{
+			// Send filtered data to output port 1
+			transfer(object,1);
 			heartbeatGenerationStrategy.generateHeartbeat(object, this);
 		}
 	}
