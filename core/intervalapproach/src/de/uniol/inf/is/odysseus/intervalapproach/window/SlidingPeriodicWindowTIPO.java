@@ -101,15 +101,14 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 			// first check if elements have to be removed and/or delivered
 			long slide = pointInTime / delta;
 			if (slide > this.lastSlide) {
-				this.lastSlide = slide;
 
 				// Calc the start and end point of the window for all elements
 				// that will be transfered
 				// They are all in the last slide!
 				
-				long comp_t_start = slide * delta - winSize;
+				long comp_t_start = lastSlide * delta - winSize;
 				PointInTime p_start = new PointInTime(Math.max(comp_t_start, 0));
-				PointInTime p_end = new PointInTime(slide * delta);
+				PointInTime p_end = new PointInTime(lastSlide * delta);
 
 				// 1. Remove all Elements that are not within the window size!
 				while (!inputBuffer.isEmpty()
@@ -129,6 +128,9 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 					elem.getMetadata().setEnd(p_end);
 					transfer(elem);
 				}
+				
+				this.lastSlide = slide;
+
 			}
 		}
 	}
