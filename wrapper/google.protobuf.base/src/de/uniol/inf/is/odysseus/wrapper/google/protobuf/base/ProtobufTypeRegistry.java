@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.GeneratedMessage;
 
-import debs.challenge.msg.CManufacturingMessages.CDataPoint;
-
 public class ProtobufTypeRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(ProtobufTypeRegistry.class);
@@ -18,7 +16,6 @@ public class ProtobufTypeRegistry {
 	private HashMap<String, GeneratedMessage> typeRegistry = new HashMap<String, GeneratedMessage>();
 	
 	private ProtobufTypeRegistry() {
-		registerMessageType(CDataPoint.getDescriptor().getFullName(), CDataPoint.getDefaultInstance());
 	}	
 	
 	public static ProtobufTypeRegistry getInstance(){
