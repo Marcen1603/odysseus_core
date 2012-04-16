@@ -25,26 +25,33 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 public class RelationalTimestampAttributeTimeIntervalMFactory
 		extends AbstractMetadataUpdater<ITimeInterval, Tuple<? extends ITimeInterval>> {
 
-	private int startAttrPos = -1;
-	private int endAttrPos = -1;
+	final private int startAttrPos;
+	final private int endAttrPos;
+	final private boolean clearEnd;
+	
 
-	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos, int endAttrPos ) {
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos, int endAttrPos, boolean clearEnd) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
+		this.clearEnd = clearEnd;
 	}
 
-	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos) {
-		this(startAttrPos, -1);
+	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos, boolean clearEnd) {
+		this(startAttrPos, -1, clearEnd);
 	}
 	
 	@Override
 	public void updateMetadata(Tuple<? extends ITimeInterval> inElem) {
 		PointInTime start = extractTimestamp(inElem, startAttrPos);
+		if (clearEnd){
+			inElem.getMetadata().setEnd(PointInTime.getInfinityTime());
+		}
 		inElem.getMetadata().setStart(start);
 		if (endAttrPos > 0){
 			PointInTime end = extractTimestamp(inElem, endAttrPos);
 			inElem.getMetadata().setEnd(end);
 		}
+		
 	}
 
 	private static PointInTime extractTimestamp(

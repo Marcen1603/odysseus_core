@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp")
@@ -28,12 +29,15 @@ public class TimestampAO extends UnaryLogicalOp {
 	private boolean isUsingSystemTime;
 	private boolean isUsingNoTime;
 
+	private boolean clearEnd;
+
 	public TimestampAO(TimestampAO ao) {
 		super(ao);
 		this.startTimestamp = ao.startTimestamp;
 		this.endTimestamp = ao.endTimestamp;
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
+		this.clearEnd = ao.clearEnd;
 	}
 
 	public TimestampAO() {
@@ -41,6 +45,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		endTimestamp = null;
 		isUsingSystemTime = true;
 		isUsingNoTime = false;
+		clearEnd = false;
 	}
 
 	@Override
@@ -69,6 +74,15 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true)
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
+	}
+	
+	@Parameter(type = BooleanParameter.class, name = "clearEnd", isList = false, optional = true)
+	public void setClearEnd(boolean clearEnd) {
+		this.clearEnd = clearEnd;
+	}
+	
+	public boolean isClearEnd() {
+		return clearEnd;
 	}
 	
 	public boolean hasStartTimestamp() {
