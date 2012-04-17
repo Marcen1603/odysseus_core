@@ -27,18 +27,19 @@ public class LineStyle extends Style {
 
 	public LineStyle(int linewidth, Color lineColor) {
 		super();
-		this.width = linewidth;
-		this.color = lineColor;
+		this.setLineWidth(linewidth);
+		this.setLineColor(lineColor);
+		this.setFillColor(null);
 	}
 
 	@Override
 	public void draw(GC gc, int[] list) {
-		draw(gc, list, color, null);
+		draw(gc, list,  getLineColor(), getFillColor());
 	}
 
 	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
-		gc.setLineWidth(this.width);
+		gc.setLineWidth(this.getLineWidth());
 		Color tmp = gc.getForeground();
 		gc.setForeground(fcolor);
 		gc.drawPolyline(list);
@@ -48,9 +49,13 @@ public class LineStyle extends Style {
 
 	@Override
 	public Image getImage() {
-		int[] list = { width, DEFAULT_HEIGHT / 2, DEFAULT_WIDTH / 2, width,
-				DEFAULT_WIDTH / 2, DEFAULT_HEIGHT - width,
-				DEFAULT_WIDTH - width, DEFAULT_HEIGHT / 2 };
+		int width = getLineWidth();
+		int[] list = {
+				width, DEFAULT_HEIGHT/2, 
+				DEFAULT_WIDTH/2, width, 
+				DEFAULT_WIDTH/2, DEFAULT_HEIGHT-width, 
+				DEFAULT_WIDTH-width, DEFAULT_HEIGHT/2
+				};
 		return getImage(list);
 	}
 

@@ -65,10 +65,6 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class StreamMapEditor implements IStreamEditorType {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
-
-	private static final int[] COLORLIST = { SWT.COLOR_RED, SWT.COLOR_GREEN,
-			SWT.COLOR_BLUE, SWT.COLOR_YELLOW, SWT.COLOR_DARK_RED,
-			SWT.COLOR_DARK_GREEN, SWT.COLOR_DARK_BLUE, SWT.COLOR_DARK_YELLOW };
 	
 	private static final Color WHITE = Display.getCurrent().getSystemColor(
 			SWT.COLOR_WHITE);
@@ -92,9 +88,6 @@ public class StreamMapEditor implements IStreamEditorType {
 		transformation = new MapTransformation();
 		setRect(null);
 		setMaxTuplesCount(maxTuples);
-		for (int i : COLORLIST) {
-			this.getColors().put(i, Display.getCurrent().getSystemColor(i));
-		}
 	}
 
 	/**
@@ -179,7 +172,7 @@ public class StreamMapEditor implements IStreamEditorType {
 	public void punctuationElementRecieved(PointInTime point, int port) {
 		
 	}
-
+	
 	public final SDFSchema getSchema() {
 		return schema;
 	}
@@ -297,16 +290,6 @@ public class StreamMapEditor implements IStreamEditorType {
 		return getCanvasViewer() != null;
 	}
 
-	private Iterator<Color> coloriterator;
-
-	private Color getColor() {
-		if (coloriterator == null)
-			coloriterator = getColors().values().iterator();
-		if (!coloriterator.hasNext())
-			coloriterator = getColors().values().iterator();
-		return coloriterator.next();
-	}
-
 	private void setCanvasViewer(Canvas viewer) {
 		if(viewer != null){
 			this.viewer = viewer; 	
@@ -331,11 +314,11 @@ public class StreamMapEditor implements IStreamEditorType {
 
 					Style style = null;
 					if (spatialDatatype.isPoint()) {
-						style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, getColor());
+						style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, ColorManager.getInstance().randomColor());
 					} else if (spatialDatatype.isLineString()) {
-						style = new LineStyle(LineStyle.DEFAULT_WIDTH, getColor());
+						style = new LineStyle(1, ColorManager.getInstance().randomColor());
 					} else if (spatialDatatype.isPolygon()) {
-						style = new PolygonStyle(PolygonStyle.DEFAULT_WIDTH, getColor(), null);
+						style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
 					}
 					
 					if (style != null) {
@@ -361,11 +344,11 @@ public class StreamMapEditor implements IStreamEditorType {
 
 				Style style = null;
 				if (spatialDatatype.isPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, getColor());
+					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, ColorManager.getInstance().randomColor());
 				} else if (spatialDatatype.isLineString()) {
-					style = new LineStyle(LineStyle.DEFAULT_WIDTH, getColor());
+					style = new LineStyle(1, ColorManager.getInstance().randomColor());
 				} else if (spatialDatatype.isPolygon()) {
-					style = new PolygonStyle(PolygonStyle.DEFAULT_WIDTH, getColor(), null);
+					style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
 				}
 				
 				if (style != null) {

@@ -26,9 +26,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
  * @author Stephan Jansen

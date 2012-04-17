@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.Layer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 
 /**

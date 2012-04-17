@@ -29,23 +29,22 @@ public class PointStyle extends Style {
 		CIRCLE, TRIANGLE, SQUARE
 	}
 
-	Color fillColor = null;
 	private SHAPE shape;
 	int size = 1;
 
-	public PointStyle(SHAPE shape, int size, int linewidth, Color lineColor,
+	public PointStyle(SHAPE shape, int size, int lineWidth, Color lineColor,
 			Color fillColor) {
 		super();
 		this.shape = shape;
 		this.size = size;
-		this.width = linewidth;
-		this.color = lineColor;
-		this.fillColor = fillColor;
+		this.setLineWidth(lineWidth);
+		this.setLineColor(lineColor);
+		this.setFillColor(fillColor);
 	}
 
 	@Override
 	public void draw(GC gc, int[] list) {
-		draw(gc, list, color, fillColor);
+		draw(gc, list, getLineColor(), getFillColor());
 		super.draw(gc, list);
 	}
 
@@ -56,7 +55,7 @@ public class PointStyle extends Style {
 		gc.setForeground(fcolor);
 		switch (this.shape) {
 		case CIRCLE:
-			if (fillColor != null) {
+			if (getFillColor() != null) {
 				gc.setBackground(bcolor);
 				gc.fillOval(list[0] - halfsize, list[1] - halfsize, size, size);
 				gc.setBackground(tmpb);
@@ -66,7 +65,7 @@ public class PointStyle extends Style {
 		case TRIANGLE:
 			int[] corners = { list[0], list[1] - halfsize, list[0] + halfsize,
 					list[1] - halfsize, list[0] + halfsize, list[1] + halfsize };
-			if (fillColor != null) {
+			if (getFillColor() != null) {
 				gc.setBackground(bcolor);
 				gc.fillPolygon(corners);
 				gc.setBackground(tmpb);
@@ -74,7 +73,7 @@ public class PointStyle extends Style {
 			gc.drawPolygon(corners);
 			break;
 		case SQUARE:
-			if (fillColor != null) {
+			if (getFillColor() != null) {
 				gc.setBackground(bcolor);
 				gc.fillRectangle(list[0] - halfsize, list[1] - halfsize, size,
 						size);

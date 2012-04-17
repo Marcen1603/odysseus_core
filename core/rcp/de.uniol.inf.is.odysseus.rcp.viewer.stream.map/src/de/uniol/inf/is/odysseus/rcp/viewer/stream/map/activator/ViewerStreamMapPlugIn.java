@@ -21,6 +21,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline.StreamMapEditorAdapterFactory;
 
 /**
@@ -63,6 +64,7 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		ColorManager.getInstance().dispose();
 		super.stop(context);
 	}
 

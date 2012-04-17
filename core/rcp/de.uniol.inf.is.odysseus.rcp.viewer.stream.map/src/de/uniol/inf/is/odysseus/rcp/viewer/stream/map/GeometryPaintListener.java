@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @author Stephan Jansen
@@ -39,7 +40,7 @@ final class GeometryPaintListener implements PaintListener {
 		for (Layer layer : this.streamMapEditor.getSpatialDataIndex().values()) {
 			layer.drawGeometries(e.gc);
 		}
-		e.gc.setForeground(this.streamMapEditor.getColors().get(SWT.COLOR_GREEN));
+		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		if (this.streamMapEditor.getRect() != null)
 			e.gc.drawRectangle(this.streamMapEditor.getRect());
 	}

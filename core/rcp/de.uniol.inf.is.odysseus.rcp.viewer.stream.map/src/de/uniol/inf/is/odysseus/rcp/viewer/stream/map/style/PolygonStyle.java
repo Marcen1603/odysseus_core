@@ -24,39 +24,39 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
+
 /**
  * @author Stephan Jansen
  * @author Kai Pancratz
  * 
  */
-public class PolygonStyle extends Style {
-	Color fillColor = null;
+public class PolygonStyle extends Style{
 
-	public PolygonStyle(int linewidth, Color lineColor, Color fillColor) {
+	public PolygonStyle(int lineWidth, Color lineColor, Color fillColor) {
 		super();
-		this.width = linewidth;
-		this.color = lineColor;
-		this.fillColor = fillColor;
+		this.setLineWidth(lineWidth);
+		this.setLineColor(lineColor);
+		this.setFillColor(fillColor);
 	}
-
+	
 	public void draw(GC gc, int[][] list) {
-		draw(gc, list, color, fillColor);
+		draw(gc, list, getLineColor(), getFillColor());
 		super.draw(gc, list);
-	}
+	}	
 
 	protected void draw(GC gc, int[][] list, Color fcolor, Color bcolor) {
 		fill(gc, list, bcolor);
-		gc.setLineWidth(this.width);
+		gc.setLineWidth(this.getLineWidth());
 		for (int i = 0; i < list.length; i++) {
 			draw(gc, list[i], fcolor, bcolor);
 		}
-	}
-
+	}	
+	
 	@Override
 	public void draw(GC gc, int[] list) {
-		draw(gc, list, color, fillColor);
+		draw(gc, list, getLineColor(), getFillColor());
 	}
-
 	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
 		Color tmp = gc.getForeground();
@@ -64,15 +64,15 @@ public class PolygonStyle extends Style {
 		gc.drawPolygon(list);
 		gc.setForeground(tmp);
 		super.draw(gc, list);
-	}
+	}	
 
 	private void fill(GC gc, int[][] list, Color bcolor) {
-		if (fillColor != null) {
+		if (getFillColor() != null){
 			Region polygon = new Region();
 			polygon.add(list[0]);
 			for (int i = 1; i < list.length; i++) {
 				polygon.subtract(list[i]);
-			}
+			} 
 			gc.setClipping(polygon);
 			Color tmp = gc.getBackground();
 			gc.setBackground(bcolor);
@@ -87,46 +87,40 @@ public class PolygonStyle extends Style {
 	@Override
 	public Image getImage() {
 		int[][] list = new int[1][];
-		int[] l = { width, width, width, DEFAULT_HEIGHT / 2, DEFAULT_WIDTH / 2,
-				DEFAULT_HEIGHT - width, DEFAULT_WIDTH - width,
-				DEFAULT_HEIGHT / 2, DEFAULT_WIDTH / 2, DEFAULT_HEIGHT / 2,
-				DEFAULT_WIDTH / 2, width };
+		int width = getLineWidth();
+		int[] l = {width,width, width,DEFAULT_HEIGHT/2, DEFAULT_WIDTH/2,DEFAULT_HEIGHT-width, DEFAULT_WIDTH-width,DEFAULT_HEIGHT/2, DEFAULT_WIDTH/2,DEFAULT_HEIGHT/2, DEFAULT_WIDTH/2,width};
 		list[0] = l;
 		return getImage(list);
 	}
-
-	public Image getImage(int[][] list) {
-		if (icon != null)
-			icon.dispose();
+	
+	public Image getImage(int[][] list){
+		if (!hasChanged())
+			return ColorManager.getInstance().getImage(this);
 		Display display = Display.getCurrent();
-		Color white = display.getSystemColor(SWT.COLOR_WHITE);
-		Color black = display.getSystemColor(SWT.COLOR_BLACK);
-		// ImageData ideaData = new ImageData(size, size, 32, new
-		// PaletteData(0,0,0));
-		// ideaData.alpha = 0;
-		// Image image = new Image(Display.getCurrent(), ideaData);// size,
-		// size);
-		Image image = new Image(display, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		GC gc = new GC(image);
+	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
+	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
+//		ImageData ideaData = new ImageData(size, size, 32, new PaletteData(0,0,0));
+//		ideaData.alpha = 0;
+//		Image image = new Image(Display.getCurrent(), ideaData);// size, size);
+	    Image image = new Image(display, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	    GC gc = new GC(image);
 		draw(gc, list);
-		gc.dispose();
-		ImageData imageData = image.getImageData();
-
-		PaletteData palette = new PaletteData(new RGB[] { new RGB(0, 0, 0),
-				new RGB(0xFF, 0xFF, 0xFF), });
-		ImageData maskData = new ImageData(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1,
-				palette);
-		Image mask = new Image(Display.getCurrent(), maskData);
-		gc = new GC(mask);
-		gc.setBackground(black);
-		gc.fillRectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		draw(gc, list, white, white);
-		gc.dispose();
-		maskData = mask.getImageData();
-
-		icon = new Image(display, imageData, maskData);
-		// TODO Auto-generated method stub
-		gc.dispose();
+	    gc.dispose();
+	    ImageData imageData = image.getImageData();
+	    
+	    PaletteData palette = new PaletteData(new RGB[] { new RGB(0, 0, 0),
+		        new RGB(0xFF, 0xFF, 0xFF), });
+	    ImageData maskData = new ImageData(DEFAULT_WIDTH, DEFAULT_HEIGHT, 1, palette);
+	    Image mask = new Image(Display.getCurrent(), maskData);
+	    gc = new GC(mask);
+	    gc.setBackground(black);
+	    gc.fillRectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	    draw(gc, list, white, white);
+	    gc.dispose();
+	    maskData = mask.getImageData();
+		Image icon = new Image(display, imageData, maskData);
+		ColorManager.getInstance().getImage(this);
+		setChanged();
 		return icon;
 	}
 }
