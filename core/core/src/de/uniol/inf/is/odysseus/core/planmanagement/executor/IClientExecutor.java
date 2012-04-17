@@ -15,6 +15,10 @@
 
 package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
+import java.util.Collection;
+
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+
 /**
  * 
  * @author Merlin Wasmann
@@ -26,4 +30,6 @@ public interface IClientExecutor {
 	public boolean connect(String connectString);
 	public void addQueryListener(IQueryListener listener);
 	public void removeQueryListener(IQueryListener listener);
+	public Collection<ILogicalQuery> getLogicalQueryInfos();
+	
 }
