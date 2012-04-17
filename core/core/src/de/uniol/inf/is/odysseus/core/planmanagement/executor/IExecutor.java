@@ -79,7 +79,7 @@ public interface IExecutor extends IClientPlanManager{
 	 *            logischer Plan der Anfrage
 	 * @param queryBuildConfigurationName
 	 *            Name der zu verwendeden Build-Configuration
-	 * @return vorläufige ID der neuen Anfrage
+	 * @return vorlï¿½ufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
 	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
@@ -104,6 +104,13 @@ public interface IExecutor extends IClientPlanManager{
 	 * @return
 	 */
 	public ILogicalQuery getLogicalQuery(int id);
+	
+	/**
+	 * getLogicalQueryIds gibt die Query-IDs aller Anfragen zurÃ¼ck
+	 * 
+	 * @return IDs aller Anfragen
+	 */
+	public Collection<Integer> getLogicalQueryIds();
 	
 	/**
 	 * Start all queries that are currently not running
