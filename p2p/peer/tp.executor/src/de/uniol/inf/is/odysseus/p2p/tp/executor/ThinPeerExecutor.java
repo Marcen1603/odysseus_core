@@ -219,5 +219,11 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public Collection<Integer> getLogicalQueryIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
