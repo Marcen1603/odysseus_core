@@ -63,7 +63,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 		LogicalQuery.class })
 public class WebserviceServer {
 
-	// Session management needed for logout. 
+	// Session management needed for logout.
 	// identified by securitytoken
 	@XmlTransient
 	private Map<String, ISession> sessions = new HashMap<String, ISession>();
@@ -423,6 +423,17 @@ public class WebserviceServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new QueryResponse(null, false);
+		}
+	}
+
+	public IntegerCollectionResponse getLogicalQueryIds(
+			@WebParam(name = "securitytoken") String securityToken) {
+		try {
+			loginWithSecurityToken(securityToken);
+			return new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().getLogicalQueryIds(), true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new IntegerCollectionResponse(null, false);
 		}
 	}
 }

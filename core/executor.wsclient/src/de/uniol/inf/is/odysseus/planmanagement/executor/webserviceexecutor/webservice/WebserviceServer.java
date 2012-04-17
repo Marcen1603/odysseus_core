@@ -390,4 +390,18 @@ public interface WebserviceServer {
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.IntegerCollectionResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQueryIds", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQueryIds")
+    @ResponseWrapper(localName = "getLogicalQueryIdsResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQueryIdsResponse")
+    public IntegerCollectionResponse getLogicalQueryIds(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
 }
