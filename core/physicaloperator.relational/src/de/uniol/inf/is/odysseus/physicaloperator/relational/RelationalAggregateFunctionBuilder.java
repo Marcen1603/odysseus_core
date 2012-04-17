@@ -71,7 +71,7 @@ public class RelationalAggregateFunctionBuilder implements
 		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
 			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
-			aggFunc = RelationalLast.getInstance();
+			aggFunc = RelationalLast.getInstance(pos[0]);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
 			aggFunc = RelationalFirst.getInstance();
 		} else if (key.getName().equalsIgnoreCase(RATE)) {
