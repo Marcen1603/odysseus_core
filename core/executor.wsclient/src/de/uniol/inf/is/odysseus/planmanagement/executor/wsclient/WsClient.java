@@ -304,7 +304,8 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return query;
 	}
 	
-	public Collection<ILogicalQuery> getQueries() {
+	@Override
+	public Collection<ILogicalQuery> getLogicalQueryInfos() {
 		return this.queries.values();
 	}
 	
@@ -318,6 +319,14 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@Override
 	public void logout(ISession caller) {
 		getWebserviceServer().logout(caller.getToken());
+	}
+	
+	@Override
+	public Collection<Integer> getLogicalQueryIds() {
+		if(getWebserviceServer() != null) {
+			return getWebserviceServer().getLogicalQueryIds(getSecurityToken()).getResponseValue();
+		}
+		return null;
 	}
 
 	
