@@ -293,7 +293,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
                 optimizedQuery.addReoptimizeListener(this);
                 firePlanModificationEvent(new QueryPlanModificationEvent(this, PlanModificationEventType.QUERY_ADDED, optimizedQuery));
                 if (optimizedQuery.getLogicalQuery() != null) {
-                    // TODO: Bisher können nur Namen von Configuration
+                    // TODO: Bisher kï¿½nnen nur Namen von Configuration
                     // gespeichert werden
                     // es sollten aber echte Configs speicherbar sein!
                     getDataDictionary().addQuery(optimizedQuery.getLogicalQuery(), optimizedQuery.getUser(), conf.getName());
@@ -878,6 +878,15 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     @Override
     public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query) {
         return queryBuildParameter.get(query);
+    }
+    
+    @Override
+    public Collection<Integer> getLogicalQueryIds() {
+    	Collection<Integer> result = new ArrayList<Integer>();
+    	for(IPhysicalQuery pq : getExecutionPlan().getQueries()) {
+    		result.add(pq.getID());
+    	}
+    	return result;
     }
 
 }
