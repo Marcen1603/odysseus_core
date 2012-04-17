@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +47,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ImageLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
@@ -73,14 +76,16 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	private Canvas viewer;
 	private SDFSchema schema;
+
+	private LinkedList<Layer> layerOrder = new LinkedList<Layer>();
 	
-	private Map<Integer, Layer> spatialDataIndex = new TreeMap<Integer, Layer>();
-	private Map<Integer, Color> colors = new TreeMap<Integer, Color>();
 	private MapTransformation transformation = null;
 	private Rectangle rect = null;
-
+	
 	private int maxTuplesCount = 0;
 	
+	protected ImageLayer imageLayer = new ImageLayer("Background");
+	protected Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
 	protected Runnable update;
 
@@ -88,6 +93,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		transformation = new MapTransformation();
 		setRect(null);
 		setMaxTuplesCount(maxTuples);
+		layerOrder.add(imageLayer);
 	}
 
 	/**
@@ -113,15 +119,15 @@ public class StreamMapEditor implements IStreamEditorType {
 			LOG.error("Warning: StreamMap is only for relational tuple!");
 			return;
 		}
-		for (Integer key : getSpatialDataIndex().keySet()) {
-			getSpatialDataIndex().get(key).addGeometry(
+		for (Integer key : spatialDataIndex.keySet()) {
+			spatialDataIndex.get(key).addGeometry(
 					(Geometry) ((Tuple<?>) element).getAttribute(key));
 		}
 		
 		tuples.add(0, (Tuple<?>) element);
 		if (tuples.size() > getMaxTuplesCount()) {
 			tuples.remove(tuples.size() - 1);
-			for (Layer layer : getSpatialDataIndex().values()) {
+			for (VectorLayer layer : spatialDataIndex.values()) {
 				layer.removeLast();
 			}
 		}
@@ -322,7 +328,9 @@ public class StreamMapEditor implements IStreamEditorType {
 					}
 					
 					if (style != null) {
-						spatialDataIndex.put(i,new Layer(transformation, schema.getAttribute(i), style));
+						VectorLayer layer = new VectorLayer(transformation, schema.getAttribute(i), style);
+						spatialDataIndex.put(i,layer);
+						layerOrder.add(layer);
 					} else {
 						throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
 					}
@@ -335,8 +343,8 @@ public class StreamMapEditor implements IStreamEditorType {
 	 * Maybe it is better to return a SDFSchema
 	 */
 	@Deprecated
-	public Map<Integer, Layer> computeSpatialOutputSchema(SDFSchema inputSchema){
-		Map<Integer, Layer> spatialDataIndex = new TreeMap<Integer, Layer>();
+	public Map<Integer, VectorLayer> computeSpatialOutputSchema(SDFSchema inputSchema){
+		Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 		for (int i = 0; i < schema.size(); i++) {
 			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
 				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema
@@ -352,7 +360,7 @@ public class StreamMapEditor implements IStreamEditorType {
 				}
 				
 				if (style != null) {
-					spatialDataIndex.put(i,new Layer(transformation, schema.getAttribute(i), style));
+					spatialDataIndex.put(i,new VectorLayer(transformation, schema.getAttribute(i), style));
 				} else {
 					throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
 				}
@@ -374,22 +382,6 @@ public class StreamMapEditor implements IStreamEditorType {
 		
 	}
 
-	public Map<Integer, Layer> getSpatialDataIndex() {
-		return spatialDataIndex;
-	}
-
-	public void setSpatialDataIndex(Map<Integer, Layer> spatialDataIndex) {
-		this.spatialDataIndex = spatialDataIndex;
-	}
-
-	public Map<Integer, Color> getColors() {
-		return colors;
-	}
-
-	public void setColors(Map<Integer, Color> colors) {
-		this.colors = colors;
-	}
-
 	public Rectangle getRect() {
 		return rect;
 	}
@@ -397,4 +389,14 @@ public class StreamMapEditor implements IStreamEditorType {
 	public void setRect(Rectangle rect) {
 		this.rect = rect;
 	}
+
+	public LinkedList<Layer> getLayerOrder() {
+		return layerOrder;
+	}
+
+	public void setLayerOrder(LinkedList<Layer> layerOrder) {
+		this.layerOrder = layerOrder;
+	}
+
+	
 }

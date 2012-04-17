@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
@@ -44,8 +45,8 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 			LOG.error("Warning: StreamMap is only for relational tuple!");
 			return;
 		}
-		for (Integer key : getSpatialDataIndex().keySet()) {
-			getSpatialDataIndex().get(key).addGeometry(
+		for (Integer key : spatialDataIndex.keySet()) {
+			spatialDataIndex.get(key).addGeometry(
 					(Geometry) ((Tuple<?>) element).getAttribute(key));
 		}
 		
@@ -64,8 +65,8 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 				
 				if(this.metadata.getEnd().after(metadata.getStart())){
 					tuples.clear();
-					for (Layer layer : getSpatialDataIndex().values()) {
-						layer.clean();
+					for (Layer layer : spatialDataIndex.values()) {
+						//layer.clean();
 					}
 					this.metadata = metadata;
 				}

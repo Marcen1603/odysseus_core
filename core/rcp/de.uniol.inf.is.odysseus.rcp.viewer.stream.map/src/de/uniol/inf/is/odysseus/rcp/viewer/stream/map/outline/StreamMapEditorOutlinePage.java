@@ -31,8 +31,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.Layer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 /**
  * 
@@ -54,15 +54,13 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-
 		treeViewer = getTreeViewer();
-
 		treeViewer.setContentProvider(new StreamMapEditorOutlineTreeContentProvider());
 		treeViewer.setLabelProvider(new StreamMapEditorOutlineLabelProvider(editor));
 		treeViewer.addSelectionChangedListener(this);
 		Object[] input = new Object[2];
 		input[0] = editor.getSchema();
-		input[1] = editor.getSpatialDataIndex().values();
+		input[1] = editor.getLayerOrder();
 		treeViewer.setInput(input);
 		createContextMenu();
 	}
@@ -71,7 +69,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		this.editor = editor;
 		Object[] input = new Object[2];
 		input[0] = editor.getSchema();
-		input[1] = editor.getSpatialDataIndex().values();
+		input[1] = editor.getLayerOrder();
 		treeViewer.setInput(input);
 	}
 
@@ -122,8 +120,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Linecolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof Layer) {
-					Layer element = (Layer) i.getFirstElement();
+				if (i.getFirstElement() instanceof VectorLayer) {
+					VectorLayer element = (VectorLayer) i.getFirstElement();
 					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
 					RGB color = element.getStyle().getLineColor().getRGB();
 					colorDialog.setRGB(color);
@@ -139,8 +137,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Fillcolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof Layer) {
-					Layer element = (Layer) i.getFirstElement();
+				if (i.getFirstElement() instanceof VectorLayer) {
+					VectorLayer element = (VectorLayer) i.getFirstElement();
 					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
 					RGB color = element.getStyle().getFillColor().getRGB();
 					colorDialog.setRGB(color);

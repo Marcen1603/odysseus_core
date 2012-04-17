@@ -8,6 +8,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+
+/**
+ * @author Stephan Jansen
+ * @author Kai Pancratz
+ * 
+ */
 public class ColorManager {
 	
 	private static ColorManager instance = null;

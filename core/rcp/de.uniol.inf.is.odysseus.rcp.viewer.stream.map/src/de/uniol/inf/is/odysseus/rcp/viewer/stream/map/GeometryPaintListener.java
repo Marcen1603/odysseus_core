@@ -19,6 +19,8 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
+
 /**
  * @author Stephan Jansen
  * @author Kai Pancratz
@@ -37,8 +39,8 @@ final class GeometryPaintListener implements PaintListener {
 
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
-		for (Layer layer : this.streamMapEditor.getSpatialDataIndex().values()) {
-			layer.drawGeometries(e.gc);
+		for (Layer layer : this.streamMapEditor.getLayerOrder()) {
+			layer.draw(e.gc);
 		}
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		if (this.streamMapEditor.getRect() != null)

@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author Kai Pancratz
  * 
  */
-class MapTransformation {
+public class MapTransformation {
 	private Coordinate min = null;
 	private Double scale = null;
 	private Point center = null;
@@ -80,7 +80,7 @@ class MapTransformation {
 		min.x += scale;
 	}
 
-	int[] transformCoord(Coordinate coord) {
+	public int[] transformCoord(Coordinate coord) {
 		if (this.min == null) {
 			this.min = (Coordinate) coord.clone();
 			int[] uv = { new Double(center.x).intValue(),

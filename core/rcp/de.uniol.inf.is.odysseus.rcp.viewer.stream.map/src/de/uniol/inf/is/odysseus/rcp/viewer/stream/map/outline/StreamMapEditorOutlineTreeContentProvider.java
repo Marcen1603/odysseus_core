@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.Layer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 /**
  * @author Stephan Jansen
@@ -60,7 +60,7 @@ public class StreamMapEditorOutlineTreeContentProvider implements
 			return null;
 		} else if (parentElement instanceof Collection<?>) {
 			return ((Collection<?>) parentElement).toArray();
-		} else if (parentElement instanceof Layer) {
+		} else if (parentElement instanceof VectorLayer) {
 			return null;
 		}
 		// TODO Auto-generated method stub
@@ -75,7 +75,7 @@ public class StreamMapEditorOutlineTreeContentProvider implements
 			return this.input[0];
 		} else if (element instanceof Collection<?>) {
 			return null;
-		} else if (element instanceof Layer) {
+		} else if (element instanceof VectorLayer) {
 			return this.input[1];
 		}
 
