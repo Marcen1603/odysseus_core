@@ -1,21 +1,24 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
 /**
- * This class represents an operator that buffers elements for
- * a distinct time. If the predicate is positive evaluated, element are
+ * This class represents an operator that buffers elements on port 0 for
+ * a distinct time. 
+ * A predicate is evaluated over input port 1. If the predicate is positive evaluated, 
+ * buffered elements are merged with the elements that causes the true evaluation and is
  * send to the next operator for some time. 
  * 
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="BUFFEREDFILTER")
-public class BufferedFilterAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="BUFFEREDFILTER")
+public class BufferedFilterAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 5312945034141719894L;
 	private long bufferTime;
@@ -61,6 +64,19 @@ public class BufferedFilterAO extends UnaryLogicalOp {
 		this.deliverTime = deliverTime;
 	}
 	
-	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		SDFSchema outputSchemna = null;
+		if (pos == 0){
+			SDFSchema tupelSchema = getInputSchema(0);
+			SDFSchema predSchema = getInputSchema(RIGHT);
+			if (tupelSchema != null && predSchema != null){
+				// TODO: Schemata must be different!!
+				outputSchemna = SDFSchema.union(predSchema, tupelSchema);
+			}
+ 		}
+		return outputSchemna;
+		
+	}
 
 }
