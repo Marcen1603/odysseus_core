@@ -22,17 +22,17 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.BurstErrorModel;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.ContinuousErrorModel;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.NoError;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.ConstantValueGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.IValueGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.PredifinedValueGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution.UniformDistributionGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.AlternatingGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.IncreaseGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.DuplicateNoise;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.JitterNoise;
+import de.uniol.inf.is.odysseus.generator.error.BurstErrorModel;
+import de.uniol.inf.is.odysseus.generator.error.ContinuousErrorModel;
+import de.uniol.inf.is.odysseus.generator.error.NoError;
+import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
+import de.uniol.inf.is.odysseus.generator.noise.JitterNoise;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.PredifinedValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.UniformDistributionGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 
 /**
  * 

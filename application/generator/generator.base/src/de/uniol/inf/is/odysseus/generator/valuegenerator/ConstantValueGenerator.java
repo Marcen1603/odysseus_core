@@ -13,46 +13,32 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution;
+package de.uniol.inf.is.odysseus.generator.valuegenerator;
 
-import java.util.Random;
-
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class UniformDistributionGenerator extends AbstractValueGenerator{
+public class ConstantValueGenerator extends AbstractValueGenerator {
 
-	private double min;
-	private double max;
-	private Random random;
-
-	public UniformDistributionGenerator(IErrorModel errorModel, double min, double max) {
+	private double value;
+	
+	public ConstantValueGenerator(IErrorModel errorModel, double value) {
 		super(errorModel);
-		this.min = min;
-		this.max = max;
-		
-		if(max<min){
-			throw new IllegalArgumentException("Max must be higher than min");	
-		}
+		this.value = value;
 	}
 
 	@Override
 	public double generateValue() {
-		double val = random.nextDouble();
-		double range = max - min;
-		val = val * range + min;
-		return val;
+		return value;
 	}
 
 	@Override
 	public void initGenerator() {	
-		this.random = new Random();
+
 	}
-	
 
 }

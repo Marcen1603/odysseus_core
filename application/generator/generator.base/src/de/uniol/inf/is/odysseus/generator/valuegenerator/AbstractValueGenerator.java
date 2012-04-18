@@ -13,36 +13,37 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
+package de.uniol.inf.is.odysseus.generator.valuegenerator;
+
+import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class DoubleValue extends AbstractDataType<Double> {
+public abstract class AbstractValueGenerator implements IValueGenerator{
 
-	public DoubleValue(Double value) {
-		super(value);		
+	protected IErrorModel errorModel; 
+	
+	public AbstractValueGenerator(IErrorModel errorModel){
+		this.errorModel = errorModel;
 	}
-
+	
 	@Override
-	public Double add(Double value) {
-		return super.getValue()+ value;
+	public final double nextValue() {
+		double newValue = generateValue(); 
+		return this.errorModel.pollute(newValue);
 	}
-
+	
+	public abstract double generateValue();
+	public abstract void initGenerator();
+	
 	@Override
-	public Double mult(Double value) {
-		return super.value * value;
+	public final void init() {
+		errorModel.init();
+		initGenerator();
 	}
 
-	@Override
-	public Double div(Double value) {
-		return super.value / value;
-	}
-
-	@Override
-	public Double min(Double value) {
-		return super.value - value;
-	}
-
+	
 }

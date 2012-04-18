@@ -13,37 +13,16 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.error;
+package de.uniol.inf.is.odysseus.generator.valuegenerator;
 
-import java.util.Random;
-
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.INoise;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class RandomErrorModel extends AbstractErrorModel {
-
-	
-	
-	public RandomErrorModel(INoise noise) {
-		super(noise);		
-	}
-
-	@Override
-	public void init() {		
-
-	}
-
-	@Override
-	public double pollute(double value) {
-		Random rand = new Random();
-		if(rand.nextBoolean()){
-			value = noise.addNoise(value);
-		}
-		return value;
-	}
-
+public interface IValueGenerator{
+		
+	public double nextValue();
+	public void init();
 }

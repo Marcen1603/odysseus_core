@@ -13,35 +13,39 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.distribution;
+package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 
 import java.util.Random;
 
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class GaussianRandomGenerator extends AbstractValueGenerator {
-	
-	private Random random;
-	private double deviation;
-	private double mean;
+public class UniformDistributionGenerator extends AbstractValueGenerator{
 
-	public GaussianRandomGenerator(IErrorModel errorModel, double mean, double deviation){
+	private double min;
+	private double max;
+	private Random random;
+
+	public UniformDistributionGenerator(IErrorModel errorModel, double min, double max) {
 		super(errorModel);
-		this.mean = mean;
-		this.deviation = deviation;
+		this.min = min;
+		this.max = max;
+		
+		if(max<min){
+			throw new IllegalArgumentException("Max must be higher than min");	
+		}
 	}
-	
 
 	@Override
 	public double generateValue() {
-		double val = random.nextGaussian();		
-		val = (val * deviation) + mean;
+		double val = random.nextDouble();
+		double range = max - min;
+		val = val * range + min;
 		return val;
 	}
 
@@ -49,5 +53,6 @@ public class GaussianRandomGenerator extends AbstractValueGenerator {
 	public void initGenerator() {	
 		this.random = new Random();
 	}
+	
 
 }

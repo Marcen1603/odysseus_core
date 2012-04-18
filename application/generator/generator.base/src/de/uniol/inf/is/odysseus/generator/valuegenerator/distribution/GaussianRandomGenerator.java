@@ -13,31 +13,41 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.noise;
+package de.uniol.inf.is.odysseus.generator.valuegenerator.distribution;
 
 import java.util.Random;
+
+import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class JitterNoise implements INoise {
+public class GaussianRandomGenerator extends AbstractValueGenerator {
+	
+	private Random random;
+	private double deviation;
+	private double mean;
 
-	private double schwankung;
-
-	public JitterNoise(double wertschwankung){
-		this.schwankung = wertschwankung;
+	public GaussianRandomGenerator(IErrorModel errorModel, double mean, double deviation){
+		super(errorModel);
+		this.mean = mean;
+		this.deviation = deviation;
 	}
 	
+
 	@Override
-	public double addNoise(double value) {
-		Random rand = new Random();
-		double plusMinus = (rand.nextDouble() * schwankung)/2;
-		if(rand.nextBoolean()){
-			return value+plusMinus;
-		}
-        return value-plusMinus;
+	public double generateValue() {
+		double val = random.nextGaussian();		
+		val = (val * deviation) + mean;
+		return val;
+	}
+
+	@Override
+	public void initGenerator() {	
+		this.random = new Random();
 	}
 
 }

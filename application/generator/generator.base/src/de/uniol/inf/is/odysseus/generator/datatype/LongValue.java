@@ -13,7 +13,7 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
+package de.uniol.inf.is.odysseus.generator.datatype;
 /**
  * 
  * @author Dennis Geesen

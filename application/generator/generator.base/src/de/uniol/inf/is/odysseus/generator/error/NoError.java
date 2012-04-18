@@ -13,7 +13,8 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator;
+package de.uniol.inf.is.odysseus.generator.error;
+
 
 
 /**
@@ -21,8 +22,16 @@ package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator;
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public interface IValueGenerator{
-		
-	public double nextValue();
-	public void init();
+public class NoError implements IErrorModel {
+
+	@Override
+	public void init() {		
+
+	}	
+
+	@Override
+	public double pollute(double value) {
+		return value;
+	}
+
 }

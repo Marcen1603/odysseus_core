@@ -13,54 +13,38 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve;
+package de.uniol.inf.is.odysseus.generator.valuegenerator.evolve;
 
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.IErrorModel;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.AbstractValueGenerator;
+import de.uniol.inf.is.odysseus.generator.error.IErrorModel;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.AbstractValueGenerator;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class AlternatingGenerator extends AbstractValueGenerator {
-
+public class IncreaseGenerator extends AbstractValueGenerator {
+		
 	private double currentValue;
 	private double startValue;
 	private double increase;
-	private double max;
-	private double min;
-	private boolean down;
 
-	public AlternatingGenerator(IErrorModel errorModel, double start, double increase, double min, double max){
+	public IncreaseGenerator(IErrorModel errorModel, double start, double increase){
 		super(errorModel);	
 		this.startValue = start;
 		this.increase = increase;
-		this.min = min;
-		this.max = max;
 	}
 	
 	
 	@Override
 	public double generateValue() {
-		if(down){
-			currentValue = currentValue - increase;
-			if(currentValue<=min){
-				down = false;
-			}
-		}else{
-			currentValue = currentValue + increase;
-			if(currentValue>=max){
-				down = true;
-			}
-		}
+		currentValue = currentValue + increase;		
 		return currentValue;
 	}
 
 	@Override
 	public void initGenerator() {
-		currentValue = startValue;
-		down = false;
+		currentValue = startValue;		
 	}
 
 }

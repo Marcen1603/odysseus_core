@@ -13,37 +13,18 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator;
-
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.IErrorModel;
-
+package de.uniol.inf.is.odysseus.generator.datatype;
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public abstract class AbstractValueGenerator implements IValueGenerator{
+public interface IDataType<T> {
+	
+	public T add(T value);
+	public T mult(T value);
+	public T div(T value);
+	public T min(T value);
+	public T getValue();
 
-	protected IErrorModel errorModel; 
-	
-	public AbstractValueGenerator(IErrorModel errorModel){
-		this.errorModel = errorModel;
-	}
-	
-	@Override
-	public final double nextValue() {
-		double newValue = generateValue(); 
-		return this.errorModel.pollute(newValue);
-	}
-	
-	public abstract double generateValue();
-	public abstract void initGenerator();
-	
-	@Override
-	public final void init() {
-		errorModel.init();
-		initGenerator();
-	}
-
-	
 }

@@ -13,24 +13,21 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.error;
+package de.uniol.inf.is.odysseus.generator.error;
 
+import de.uniol.inf.is.odysseus.generator.noise.INoise;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class NoError implements IErrorModel {
+public abstract class AbstractErrorModel implements IErrorModel{
 
-	@Override
-	public void init() {		
+	protected INoise noise;
 
-	}	
-
-	@Override
-	public double pollute(double value) {
-		return value;
+	public AbstractErrorModel(INoise noise){
+		this.noise = noise;
 	}
 
 }

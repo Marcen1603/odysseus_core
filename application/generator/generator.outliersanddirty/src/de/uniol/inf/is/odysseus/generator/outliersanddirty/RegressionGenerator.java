@@ -20,9 +20,10 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.NoError;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.IValueGenerator;
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.generator.evolve.IncreaseGenerator;
+import de.uniol.inf.is.odysseus.generator.error.NoError;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
 
 /**
  * 
@@ -42,9 +43,10 @@ public class RegressionGenerator extends StreamClientHandler{
 		//Time
 				timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 				timeGenerator.init();
+								
 				
-				//xGenerator = new IncreaseGenerator(new NoError(), 100, 10);
-				xGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+				//xGenerator = new IncreaseGenerator(new NoError(), 0, 1);
+				xGenerator = new AlternatingGenerator(new NoError(), 0, 1, 0, 10);
 				xGenerator.init();
 
 				yGenerator = new IncreaseGenerator(new NoError(), 0, 1);
@@ -68,7 +70,7 @@ public class RegressionGenerator extends StreamClientHandler{
 		tuple.addDouble(xGenerator.nextValue());
 		// humidity (integer)
 		tuple.addDouble(yGenerator.nextValue());
-		
+		System.out.println(tuple);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

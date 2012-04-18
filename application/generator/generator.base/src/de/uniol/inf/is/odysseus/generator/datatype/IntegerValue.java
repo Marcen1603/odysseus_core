@@ -13,21 +13,35 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.error;
-
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.INoise;
-
+package de.uniol.inf.is.odysseus.generator.datatype;
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public abstract class AbstractErrorModel implements IErrorModel{
+public class IntegerValue extends AbstractDataType<Integer> {
 
-	protected INoise noise;
-
-	public AbstractErrorModel(INoise noise){
-		this.noise = noise;
+	public IntegerValue(Integer value) {
+		super(value);		
 	}
 
+	@Override
+	public Integer add(Integer value) {
+		return super.value + value;
+	}
+
+	@Override
+	public Integer mult(Integer value) {
+		return super.value * value;
+	}
+
+	@Override
+	public Integer div(Integer value) {
+		return super.value / value;
+	}
+
+	@Override
+	public Integer min(Integer value) {
+		return super.value - value;
+	}
 }

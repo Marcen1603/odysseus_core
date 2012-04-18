@@ -13,9 +13,9 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.error;
+package de.uniol.inf.is.odysseus.generator.error;
 
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.INoise;
+import de.uniol.inf.is.odysseus.generator.noise.INoise;
 
 /**
  * 

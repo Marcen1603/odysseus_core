@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.noise;
+package de.uniol.inf.is.odysseus.generator.noise;
+
 
 /**
  * 

@@ -13,39 +13,36 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.error;
+package de.uniol.inf.is.odysseus.generator.valuegenerator;
 
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.noise.INoise;
+import de.uniol.inf.is.odysseus.generator.error.NoError;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 27.06.2011
+ * Created at: 11.07.2011
  */
-public class ContinuousErrorModel extends AbstractErrorModel {
+public class PredifinedValueGenerator  extends AbstractValueGenerator {
 
-	private int counter;
-	private int errorAtStep;
+	private double[] values;
+	private int pointer = 0;
 
+	public PredifinedValueGenerator(double... values) {
+		super(new NoError());
+		this.values = values;
+	}
 	
-	public ContinuousErrorModel(INoise noise, int errorAtStep){
-		super(noise);
-		this.errorAtStep = errorAtStep;		
-	}	
-	
+		
 	@Override
-	public void init() {
-		this.counter = 0;
-	}	
-
-	@Override
-	public double pollute(double value) {
-		this.counter++;
-		if((this.counter%errorAtStep)==0){
-			this.counter = 0;
-			return noise.addNoise(value);
-		}		
+	public double generateValue() {
+		double value = values[pointer];
+		pointer = (pointer+1)%values.length;
 		return value;
+	}
+
+	@Override
+	public void initGenerator() {	
+		this.pointer = 0;
 	}
 
 }

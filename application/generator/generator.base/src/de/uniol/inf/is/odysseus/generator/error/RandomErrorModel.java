@@ -13,26 +13,37 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
+package de.uniol.inf.is.odysseus.generator.error;
+
+import java.util.Random;
+
+import de.uniol.inf.is.odysseus.generator.noise.INoise;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public abstract class AbstractDataType<T> implements IDataType<T> {
+public class RandomErrorModel extends AbstractErrorModel {
 
-	protected T value;
 	
-	public AbstractDataType(T value){
-		this.value = value;
+	
+	public RandomErrorModel(INoise noise) {
+		super(noise);		
 	}
-	
+
 	@Override
-    public T getValue(){
-		return this.value;
+	public void init() {		
+
 	}
-	
-	public void setValue(T value){
-		this.value = value;
+
+	@Override
+	public double pollute(double value) {
+		Random rand = new Random();
+		if(rand.nextBoolean()){
+			value = noise.addNoise(value);
+		}
+		return value;
 	}
+
 }

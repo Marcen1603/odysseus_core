@@ -13,35 +13,31 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.datatype;
+package de.uniol.inf.is.odysseus.generator.noise;
+
+import java.util.Random;
+
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class IntegerValue extends AbstractDataType<Integer> {
+public class JitterNoise implements INoise {
 
-	public IntegerValue(Integer value) {
-		super(value);		
+	private double schwankung;
+
+	public JitterNoise(double wertschwankung){
+		this.schwankung = wertschwankung;
 	}
-
+	
 	@Override
-	public Integer add(Integer value) {
-		return super.value + value;
+	public double addNoise(double value) {
+		Random rand = new Random();
+		double plusMinus = (rand.nextDouble() * schwankung)/2;
+		if(rand.nextBoolean()){
+			return value+plusMinus;
+		}
+        return value-plusMinus;
 	}
 
-	@Override
-	public Integer mult(Integer value) {
-		return super.value * value;
-	}
-
-	@Override
-	public Integer div(Integer value) {
-		return super.value / value;
-	}
-
-	@Override
-	public Integer min(Integer value) {
-		return super.value - value;
-	}
 }

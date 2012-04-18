@@ -13,32 +13,17 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.generator.outliersanddirty.generator;
+package de.uniol.inf.is.odysseus.generator.error;
 
-import de.uniol.inf.is.odysseus.generator.outliersanddirty.error.IErrorModel;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 27.06.2011
  */
-public class ConstantValueGenerator extends AbstractValueGenerator {
+public interface IErrorModel {
 
-	private double value;
-	
-	public ConstantValueGenerator(IErrorModel errorModel, double value) {
-		super(errorModel);
-		this.value = value;
-	}
-
-	@Override
-	public double generateValue() {
-		return value;
-	}
-
-	@Override
-	public void initGenerator() {	
-
-	}
+	public void init();
+	public double pollute(double value);
 
 }

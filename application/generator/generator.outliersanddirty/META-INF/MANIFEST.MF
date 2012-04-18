@@ -7,4 +7,10 @@ Bundle-Activator: de.uniol.inf.is.odysseus.generator.outliersanddirty.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.generator,
+ de.uniol.inf.is.odysseus.generator.datatype,
+ de.uniol.inf.is.odysseus.generator.error,
+ de.uniol.inf.is.odysseus.generator.noise,
+ de.uniol.inf.is.odysseus.generator.valuegenerator,
+ de.uniol.inf.is.odysseus.generator.valuegenerator.distribution,
+ de.uniol.inf.is.odysseus.generator.valuegenerator.evolve,
  org.osgi.framework;version="1.3.0"
