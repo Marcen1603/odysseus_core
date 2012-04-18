@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderMultipleSinkOneWay;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.OdysseusModelProviderSinkOneWay;
 
 public class CallGraphEditorCommand extends AbstractHandler implements IHandler {
@@ -75,8 +77,18 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 	private static void openGraphEditor(IWorkbenchPage page, IPhysicalQuery query) {
         List<IPhysicalOperator> graph = query.getRoots();
 
-        ISink<?> sink = (ISink<?>) graph.get(0);
-        IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderSinkOneWay(sink, query);
+        List<ISink<?>> sinks = new ArrayList<ISink<?>>();
+        for( IPhysicalOperator op : graph ) {
+        	sinks.add((ISink<?>)op);
+        }
+        
+        IModelProvider<IPhysicalOperator> provider = null;
+        if( sinks.size() == 1 ) {
+        	provider = new OdysseusModelProviderSinkOneWay(sinks.get(0), query);
+        } else {
+        	provider = new OdysseusModelProviderMultipleSinkOneWay(sinks, query);
+        }
+        
         PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "Query " + query.getID());
 
         try {
