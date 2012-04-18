@@ -66,17 +66,22 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		 
-		double x = ((Long)object.getAttribute(xAttribute)).doubleValue();
-		double y = ((Long)object.getAttribute(yAttribute)).doubleValue();
+		double x = 0;
+		if(object.getAttribute(xAttribute) instanceof Number){
+			x = ((Number)object.getAttribute(xAttribute)).doubleValue();
+		}
+		double y = 0;
+		if(object.getAttribute(yAttribute) instanceof Number){
+			y = ((Number)object.getAttribute(yAttribute)).doubleValue();
+		}		 
 
 		sweepArea.insert(object);
 
 		Iterator<R> iter = sweepArea.extractElementsBefore(object.getMetadata().getStart());
 		while (iter.hasNext()) {
 			R toRemove = iter.next();
-			double cuX = toRemove.getAttribute(xAttribute);
-			double cuY = toRemove.getAttribute(yAttribute);
+			double cuX = ((Number)toRemove.getAttribute(xAttribute)).doubleValue();
+			double cuY = ((Number)toRemove.getAttribute(yAttribute)).doubleValue();
 			regression.removeData(cuX, cuY);
 		}
 		regression.addData(x, y);

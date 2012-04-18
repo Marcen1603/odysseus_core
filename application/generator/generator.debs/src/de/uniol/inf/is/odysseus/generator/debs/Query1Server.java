@@ -93,7 +93,7 @@ public class Query1Server extends StreamClientHandler {
 		
 		System.out.println(tuple);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(250);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

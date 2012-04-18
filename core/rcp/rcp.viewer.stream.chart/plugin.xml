@@ -83,6 +83,16 @@
                   style="push"
                   tooltip="Shows a 3 dimensional pie chart">
             </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator1">
+            </separator>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowLinearFunctionCommand"
+                  icon="icons/layer-shape-line.png"
+                  label="Linear Function"
+                  style="push"
+                  tooltip="Visualize a linear function">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -150,6 +160,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowScatterPlotCommand"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowScatterPlotCommand"
             name="Scatter Plot Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowLinearFunctionChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowLinearFunctionCommand"
+            name="Linear Function Command">
       </command>
    </extension>
    <extension
@@ -235,6 +250,15 @@
             name="Scatter Plot Chart"
             restorable="true">
       </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChart"
+            icon="icons/layer-shape-line.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.linearFunctionChart"
+            name="Linear Function Chart"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.activities">
@@ -278,6 +302,10 @@
       <activityPatternBinding
             activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
             pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.scatterplotchart">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.HiddenViewActivity"
+            pattern="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart/de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.linearFunctionChart">
       </activityPatternBinding>
    </extension>
 
