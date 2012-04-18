@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.SetOwnerGraphVisitor;
 
 @SuppressWarnings("all")
 public class PQLParserImpl implements PQLParserImplConstants {
@@ -138,12 +138,13 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       String queryName = opEntry.getKey();
       ILogicalOperator topOperator = opEntry.getValue();
-      if (roots.contains(topOperator))
+      if (queries.size() == 0 && roots.contains(topOperator))
       {
         ILogicalQuery query = new LogicalQuery();
         // Set Owners for query 
-        AbstractTreeWalker walker = new AbstractTreeWalker();
-        SetOwnerVisitor visitor = new SetOwnerVisitor(query);
+        //AbstractTreeWalker walker = new AbstractTreeWalker();
+        AbstractGraphWalker walker = new AbstractGraphWalker();
+        SetOwnerGraphVisitor visitor = new SetOwnerGraphVisitor(query);
         walker.prefixWalk(topOperator, visitor);
         //		System.err.println("SET OWNER");
         //

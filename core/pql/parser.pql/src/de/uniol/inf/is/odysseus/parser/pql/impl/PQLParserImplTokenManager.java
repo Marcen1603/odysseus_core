@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.SetOwnerGraphVisitor;
 
 /** Token Manager. */
 @SuppressWarnings("all")
