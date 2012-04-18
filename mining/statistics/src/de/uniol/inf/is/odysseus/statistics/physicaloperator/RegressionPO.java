@@ -66,8 +66,9 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		double x = object.getAttribute(xAttribute);
-		double y = object.getAttribute(yAttribute);
+		 
+		double x = ((Long)object.getAttribute(xAttribute)).doubleValue();
+		double y = ((Long)object.getAttribute(yAttribute)).doubleValue();
 
 		sweepArea.insert(object);
 
