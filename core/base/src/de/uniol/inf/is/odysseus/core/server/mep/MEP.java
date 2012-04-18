@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.OrOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PlusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.PowerOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.RoundFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SinusFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SmallerThanOperator;
@@ -136,6 +137,7 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ToLongFunction());
 		registerFunction(new ToStringFunction());
 		registerFunction(new RandomFunction());
+		registerFunction(new RoundFunction());
 
 		registerFunction(new GetAbsoluteValue());
 		registerFunction(new SquareValue());
