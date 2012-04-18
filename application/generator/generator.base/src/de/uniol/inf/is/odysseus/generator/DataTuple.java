@@ -89,12 +89,12 @@ public class DataTuple {
 	}
 
 	public void addBoolean(boolean value) {
-		// this.attributes.add(Boolean.valueOf(value));
-		if (value) {
-			this.attributes.add(new Integer(1));
-		} else {
-			this.attributes.add(new Integer(0));
-		}
+		 this.attributes.add(Boolean.valueOf(value));
+//		if (value) {
+//			this.attributes.add(new Integer(1));
+//		} else {
+//			this.attributes.add(new Integer(0));
+//		}
 	}
 
 	public void addString(Object value) {
@@ -118,6 +118,8 @@ public class DataTuple {
 			return Double.SIZE / 8;
 		if (attObject instanceof Long)
 			return Long.SIZE / 8;
+		if (attObject instanceof Boolean)
+			return Integer.SIZE / 8;
 		if (attObject instanceof String)
 			return ((String) attObject).length() * 2 // Unicode!
 					+ Integer.SIZE / 8; // Für die Längeninformation

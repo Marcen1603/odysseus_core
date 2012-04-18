@@ -26,8 +26,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static {
 		types.add("Integer");
 		types.add("Byte");
-		types.add("Short");
-		types.add("Boolean");
+		types.add("Short");		
 	}
 
 	@Override
