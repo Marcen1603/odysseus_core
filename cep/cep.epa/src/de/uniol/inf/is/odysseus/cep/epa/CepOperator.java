@@ -241,16 +241,16 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private void removeInstances(StateMachine<R> sm,
 			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
-			if (onlyOneMatchPerInstance) {
-				// Remove all depending instances
-				LinkedList<StateMachineInstance<R>> toRemove = branchingBuffer
-						.getAllNestedStateMachineInstances(i);
-				for (StateMachineInstance<R> r : toRemove) {
-					removeInstance(sm, r);
-				}
-			} else {
-				removeInstance(sm, i);
-			}
+//			if (onlyOneMatchPerInstance) {
+//				// Remove all depending instances
+//				LinkedList<StateMachineInstance<R>> toRemove = branchingBuffer
+//						.getAllNestedStateMachineInstances(i);
+//				branchingBuffer.removeAllNestedBranches(i);
+//				for (StateMachineInstance<R> r : toRemove) {
+//					removeInstance(sm, r);
+//				}
+//			}
+			removeInstance(sm, i);
 		}
 	}
 
@@ -269,6 +269,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	private void removeInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
+		logger.debug("Remove Instance " + stateMachineInstance);
 		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
@@ -500,6 +501,13 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					logger.debug("Reached final state in " + instance);
 				}
 				createEvent(outdatedInstances, port, complexEvents, instance);
+				// depending on matching strategy add all instances to outdated
+				// else further events would be created
+				if (onlyOneMatchPerInstance) {
+					outdatedInstances.addAll(branchingBuffer
+							.getAllNestedStateMachineInstances(instance));
+					branchingBuffer.removeAllNestedBranches(instance);
+				}
 			}
 		}
 		return complexEvents;
