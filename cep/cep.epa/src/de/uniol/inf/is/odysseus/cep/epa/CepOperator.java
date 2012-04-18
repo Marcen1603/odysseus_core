@@ -78,6 +78,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * Liste aller Automaten-Instanzen, die gerade verarbeitet werden
 	 */
 	private Map<StateMachine<R>, LinkedList<StateMachineInstance<R>>> smInstances;
+
 	/**
 	 * Der Automat, der das zu suchende Event-Muster sowie die Event-Aggregation
 	 * und die Struktur des Zwischenspeichers enthält
@@ -85,16 +86,21 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private List<StateMachine<R>> stateMachines;
 
 	/**
+	 * Keep information about branched instances. Depending on consumption mode
+	 * elements are removed, if one instance detects a match
+	 */
+	private BranchingBuffer<R> branchingBuffer = new BranchingBuffer<R>();
+
+	/**
+	 * If set to true, each time a pattern is detected all instances that are
+	 * related to the detecting instance are removed
+	 */
+	final private boolean onlyOneMatchPerInstance;
+
+	/**
 	 * EventAgent
 	 */
 	private CEPEventAgent agent = new CEPEventAgent();
-
-	/**
-	 * leerer Standardkonstruktor
-	 */
-	public CepOperator() {
-		super();
-	}
 
 	/**
 	 * Erzeugt einen neuen EPA.
@@ -120,7 +126,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			Map<Integer, IEventReader<R, R>> eventReader,
 			IComplexEventFactory<R, W> complexEventFactory, boolean validate,
 			IInputStreamSyncArea<R> inputStreamSyncArea,
-			ITransferArea<R, W> outputTransferFunction) throws Exception {
+			ITransferArea<R, W> outputTransferFunction,
+			boolean onlyOneMatchPerInstance) throws Exception {
 		super();
 		this.stateMachines = new ArrayList<StateMachine<R>>();
 		stateMachines.add(stateMachine);
@@ -136,6 +143,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		}
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferFunction = outputTransferFunction;
+		this.onlyOneMatchPerInstance = onlyOneMatchPerInstance;
 	}
 
 	public CepOperator(CepOperator<R, W> cepOperator) {
@@ -206,6 +214,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 				validateTransitions(sm, event, outdatedInstances,
 						outofWindowInstances, branchedInstances, port);
+
 				addInstances(sm, branchedInstances);
 
 			}
@@ -232,7 +241,16 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	private void removeInstances(StateMachine<R> sm,
 			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
-			removeInstance(sm, i);
+			if (onlyOneMatchPerInstance) {
+				// Remove all depending instances
+				LinkedList<StateMachineInstance<R>> toRemove = branchingBuffer
+						.getAllNestedStateMachineInstances(i);
+				for (StateMachineInstance<R> r : toRemove) {
+					removeInstance(sm, r);
+				}
+			} else {
+				removeInstance(sm, i);
+			}
 		}
 	}
 
@@ -340,8 +358,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							Transition toTake = transitionsToTake.remove(0);
 							newInstance.takeTransition(toTake, event,
 									eventReader.get(port));
-							// this.branchingBuffer.addBranch(instance,
-							// newInstance);
+							this.branchingBuffer.addBranch(instance,
+									newInstance);
 							branchedInstances.add(newInstance);
 						}
 						// Now its save to update current Transition
@@ -388,7 +406,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			}
 			// I think, this can only happend, if there is an error in
 			// the expression (wrong var name used)
-			if (newValue == null){
+			if (newValue == null) {
 				return false;
 			}
 			// Set Value in Expression to evaluate
@@ -407,17 +425,18 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 		if (stateMachines.size() > 1) {
 
-			List<State> negState = stateMachines.get(0).getNegativeStateBeforeFinal();
+			List<State> negState = stateMachines.get(0)
+					.getNegativeStateBeforeFinal();
 			// Test outofWindowInstances --> Could be that the last state is
 			// negative,
 			// and the state machine reached the state before this last state in
 			// this case
-			for(State negBeforeFinal: negState) {
+			for (State negBeforeFinal : negState) {
 				for (StateMachineInstance<R> instance : outofWindowInstances) {
-					if (instance.getCurrentState().equals(negBeforeFinal)){
+					if (instance.getCurrentState().equals(negBeforeFinal)) {
 						logger.debug("Instance terminated with negative last state --> fire");
 						createEvent(outdatedInstances, port, complexEvents,
-								instance);	
+								instance);
 						// Hint: The corresponding automata is already outdated,
 						// because it does not have this negative state
 						// TODO: What about transisitions?

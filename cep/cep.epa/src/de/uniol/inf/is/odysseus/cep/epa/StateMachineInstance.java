@@ -40,7 +40,7 @@ public class StateMachineInstance<R> {
 
 	static int _instanceCounter = 0;
 	private int instance = 0;
-	private int derivedFrom = -1;
+	private StateMachineInstance<R> derivedFrom = null;
 
 	/**
 	 * Referenz auf den aktuellen Zustand der Automateninstanz
@@ -83,7 +83,7 @@ public class StateMachineInstance<R> {
 		this.matchingTrace = stateMachineInstance.matchingTrace.clone();
 		this.startTimestamp = stateMachineInstance.startTimestamp;
 		instance = _instanceCounter++;
-		derivedFrom = stateMachineInstance.instance;
+		derivedFrom = stateMachineInstance;
 		this.stateMachine = stateMachineInstance.stateMachine;
 		// logger.debug("Created new StateMachineInstance " + toString());
 	}
@@ -245,6 +245,10 @@ public class StateMachineInstance<R> {
 		return startTimestamp;
 	}
 
+	public StateMachineInstance<R> getDerivedFrom() {
+		return derivedFrom;
+	}
+	
 	public String getStats() {
 		String str = toString() + " ";
 		str += this.symTab.toString();
@@ -254,7 +258,7 @@ public class StateMachineInstance<R> {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "@" + instance
-				+ (derivedFrom >= 0 ? "[" + derivedFrom + "]" : "") + " ("
+				+ (derivedFrom != null ? "[" + derivedFrom.instance + "]" : "") + " ("
 				+ startTimestamp + ") Current State: " + currentState.getId()
 				+ " " + symTab.toString();
 	}

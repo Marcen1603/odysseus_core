@@ -64,11 +64,13 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		}
 		IComplexEventFactory complexEventFactory = new RelationalCreator();
 		CepOperator cepPO = null;
+		// TODO: Add to CepAO
+		boolean onlyOneMatchPerInstance = true;
 		try {
 			cepPO = new CepOperator(m, cepAO.getSecondStateMachine(), rMap,
 					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
 							.getSubscribedToSource().size()),
-					new TITransferArea(cepAO.getSubscribedToSource().size()));
+					new TITransferArea(cepAO.getSubscribedToSource().size()),onlyOneMatchPerInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
