@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Reader
+Bundle-SymbolicName: de.uniol.inf.is.debschallenge.reader
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.debschallenge.reader.Activator
+Require-Bundle: de.uniol.inf.is.odysseus.generator;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.osgi.framework;version="1.6.0"
