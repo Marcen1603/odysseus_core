@@ -25,7 +25,7 @@ mf01avg = AGGREGATE({aggregations=[
 		['MAX', 'mf03', 'mf03max'],
 		['MAX', 'ts', 'ts']]}, mf01prj)
 
-mf01rng = MAP({expressions=['mf01avg', '(mf01max-mf01min)/mf01max','mf02avg', '(mf02max-mf02min)/mf02max','mf03avg', '(mf03max-mf03min)/mf03max', 'ts']}, mf01avg)
+mf01rng = MAP({expressions=['mf01avg', 'round(((mf01max-mf01min)/mf01max),4)','mf02avg', 'round(((mf02max-mf02min)/mf02max),4)','mf03avg', 'round(((mf03max-mf03min)/mf03max),4)', 'ts']}, mf01avg)
 s1 = RENAME({      aliases=['avgmf01', 'rngmf01',                  'avgmf02', 'rngmf02',                  'avgmf03', 'rngmf03',                   'ts']}, Timestamp({start='ts', clearEnd='true'}, mf01rng))	
 
 
