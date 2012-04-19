@@ -665,7 +665,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
+		outputTransferFunction.newHeartbeat(timestamp, port);
 	}
 
 }

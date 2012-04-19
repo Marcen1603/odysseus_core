@@ -85,10 +85,10 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 			regression.removeData(cuX, cuY);
 		}
 		regression.addData(x, y);
-		System.err.println("Regression: " + regression.getN());
-		System.err.println("----------------------");
-		System.err.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
-		System.err.println("----------------------");
+//		System.err.println("Regression: " + regression.getN());
+//		System.err.println("----------------------");
+//		System.err.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
+//		System.err.println("----------------------");
 		double slope = regression.getSlope();
 		double intercept = regression.getIntercept();
 		// only transfer, if one of the parameters change
