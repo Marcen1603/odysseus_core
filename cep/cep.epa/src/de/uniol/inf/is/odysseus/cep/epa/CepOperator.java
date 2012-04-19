@@ -41,9 +41,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 
 /**
  * Objekte dieser Klasse stellen die Grundkomponente fuer das Complex Event
@@ -58,6 +60,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	Logger logger = LoggerFactory.getLogger(CepOperator.class);
 
+	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
+	
 	/**
 	 * Factory zum erzeugen komplexer Events
 	 */
@@ -176,7 +180,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	@Override
-	public void process_internal(R event, int port) {
+	public synchronized void process_internal(R event, int port) {
 		synchronized (stateMachines) {
 			LinkedList<StateMachineInstance<R>> outdatedInstances = new LinkedList<StateMachineInstance<R>>();
 			LinkedList<StateMachineInstance<R>> outofWindowInstances = new LinkedList<StateMachineInstance<R>>();
@@ -233,11 +237,17 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					}
 					outputTransferFunction.transfer(e);
 				}
-
+			}else{
+				heartbeatGenerationStrategy.generateHeartbeat(event, this);
 			}
 		}
 	}
 
+	public void setHeartbeatGenerationStrategy(
+			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
+		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
+	}
+	
 	private void removeInstances(StateMachine<R> sm,
 			LinkedList<StateMachineInstance<R>> instances) {
 		for (StateMachineInstance<R> i : instances) {
@@ -638,15 +648,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return this.agent;
 	}
 
-	// /**
-	// * Liefert den Verzweigungsspeicher des EPA zurück.
-	// *
-	// * @return Der aktuelle Verzweigungsspeicher.
-	// */
-	// public BranchingBuffer<R> getBranchingBuffer() {
-	// return branchingBuffer;
-	// }
-
 	/**
 	 * Liefert eine Liste, mit allen zur Zeit aktiven Automateninstanzen.
 	 * 
@@ -656,47 +657,6 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return Collections.unmodifiableList(smInstances.get(sm));
 	}
 
-	/**
-	 * ACHTUNG: Diese Methode ist fehlerhaft und wird deshalb bald entfernt!
-	 * ????
-	 * 
-	 * Entfernt die übergebene Automateninstanz aus dem {@link BranchingBuffer}
-	 * . Ist der Consumption-Mode onlyOneMatch, so werden zusätzlich alle
-	 * verwandten Automateninstanzen aus dem {@link BranchingBuffer} entfernt.
-	 * In einer Liste werden alle aus dem {@link BranchingBuffer} entfernten
-	 * Instanzen zurückgegeben, welche nach der Iteration über die Liste der
-	 * Atomateninstanzen aus dieser entfernt werden müssen. Die übergebene
-	 * Instanz ist in jedem Fall in der zurückgegebenen Liste enthalten. Auch
-	 * sie muss wie alle anderen gelieferten Automateninstanzen außerhalb der
-	 * Methode entfernt werden.
-	 * 
-	 * @param instance
-	 *            Die zu entfernende Automateninstanz
-	 * @return Eine Liste, die alle zu entfernenden Automateninstanzen in
-	 *         Abhängigkeit vom Consumption Mode enthält. Die übergebene
-	 *         Instanz instance ist immer in der Liste enthalten.
-	 */
-	// private LinkedList<StateMachineInstance<R>>
-	// getRemovableInstancesByConsumptionMode(
-	// StateMachineInstance<R> instance) {
-	// LinkedList<StateMachineInstance<R>> outdated = null;
-	// if (this.stateMachine.getConsumptionMode() ==
-	// EConsumptionMode.onlyOneMatch) {
-	// outdated = this.branchingBuffer
-	// .getAllNestedStateMachineInstances(instance);
-	// this.branchingBuffer.removeAllNestedBranches(instance);
-	// } else if (this.stateMachine.getConsumptionMode() ==
-	// EConsumptionMode.allMatches) {
-	// outdated = new LinkedList<StateMachineInstance<R>>();
-	// outdated.add(instance);
-	// this.branchingBuffer.removeBranch(instance);
-	// } else {
-	// throw new UndefinedConsumptionModeException(
-	// "Undefined consumption mode: "
-	// + this.stateMachine.getConsumptionMode());
-	// }
-	// return outdated;
-	// }
 
 	@Override
 	public CepOperator<R, W> clone() {
@@ -704,7 +664,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	}
 
 	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
+	public synchronized void processPunctuation(PointInTime timestamp, int port) {
+		sendPunctuation(timestamp);
 	}
 
 }

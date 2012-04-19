@@ -21,6 +21,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
 /**
@@ -30,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SELECT")
 public class SelectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
+	private int rate;
 
 	public SelectAO() {
 		super();
@@ -43,6 +45,15 @@ public class SelectAO extends UnaryLogicalOp {
 		setPredicate(predicate);
 	}
 
+	@Parameter(type = IntegerParameter.class, name = "heartbeatrate")
+	public void setHeartbeatRate(int rate){
+		this.rate = rate;
+	}
+
+	public int getHeartbeatRate() {
+		return rate;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Parameter(type=PredicateParameter.class)

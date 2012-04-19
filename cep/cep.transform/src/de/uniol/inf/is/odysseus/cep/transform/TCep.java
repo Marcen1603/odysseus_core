@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -77,6 +78,12 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		}
 
 		cepPO.setOutputSchema(cepAO.getOutputSchema());
+		
+		if (cepAO.getHeartbeatRate() > 0){
+			cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
+					cepAO.getHeartbeatRate()));
+		}
+		
 		Collection<ILogicalOperator> toUpdate = transformConfig
 				.getTransformationHelper().replace(cepAO, cepPO);
 		for (ILogicalOperator o : toUpdate) {

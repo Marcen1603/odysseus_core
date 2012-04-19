@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREME
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 public class SaseAOBuilder extends AbstractOperatorBuilder {
@@ -20,10 +21,13 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 	
 	private final BooleanParameter oneMatchPerInstance = new BooleanParameter("OneMatchPerInstance",
 			REQUIREMENT.OPTIONAL);
+	
+	private final IntegerParameter heartbeatrate = new IntegerParameter("heartbeatrate", REQUIREMENT.OPTIONAL);
+
 
 	public SaseAOBuilder() {
 		super(1, Integer.MAX_VALUE);
-		addParameters(query, oneMatchPerInstance);
+		addParameters(query, oneMatchPerInstance, heartbeatrate);
 	}
 
 	@Override
@@ -46,6 +50,10 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 		ret = op.get(0).getLogicalPlan();
 		if (oneMatchPerInstance.hasValue()){
 			((CepAO<?>)ret).setOneMatchPerInstance(oneMatchPerInstance.getValue());
+		}
+		
+		if (heartbeatrate.hasValue()){
+			((CepAO<?>)ret).setHeartbeatRate(heartbeatrate.getValue());
 		}
 
 		return ret;

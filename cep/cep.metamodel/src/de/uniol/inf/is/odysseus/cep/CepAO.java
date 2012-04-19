@@ -34,10 +34,17 @@ public class CepAO<T> extends AbstractLogicalOperator{
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 	private boolean oneMatchPerInstance = true;
 
+	private int rate;
+	
+	
+
 	public CepAO(CepAO<T> cepAO) {
 		super(cepAO);
 		this.firstStateMachine = cepAO.firstStateMachine;
+		this.secondStateMachine = cepAO.secondStateMachine;
 		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
+		this.oneMatchPerInstance = cepAO.oneMatchPerInstance;
+		this.rate =  cepAO.rate;
 	}
 
 	public CepAO() {
@@ -132,7 +139,14 @@ public class CepAO<T> extends AbstractLogicalOperator{
 	public void setOneMatchPerInstance(boolean oneMatchPerInstance) {
 		this.oneMatchPerInstance = oneMatchPerInstance;
 	}
-	
+		
+	public void setHeartbeatRate(int rate){
+		this.rate = rate;
+	}
+
+	public int getHeartbeatRate() {
+		return rate;
+	}
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new CepAO<T>(this);

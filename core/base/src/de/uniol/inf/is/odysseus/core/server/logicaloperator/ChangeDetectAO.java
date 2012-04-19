@@ -27,6 +27,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
 		attributes = po.attributes;
+		this.rate = po.rate;
 	}
 
 	public ChangeDetectAO() {
