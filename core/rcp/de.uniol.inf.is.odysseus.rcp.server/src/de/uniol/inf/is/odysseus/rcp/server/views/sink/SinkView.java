@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -41,6 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.server.views.source.SourcesViewLabelProvider
  */
 public class SinkView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SinkView.class);
 	private TreeViewer viewer;
 
 	@Override
@@ -63,10 +66,8 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 			public void run() {
 				try {
 					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession()));
-					// getTreeViewer().setInput(getDataDictionary().getStreamsAndViews(GlobalState.getActiveUser(OdysseusRCPPlugIn.RCP_USER_TOKEN)));
 				} catch (Exception e) {
-					getTreeViewer().setInput("NOTHING");
-					e.printStackTrace();// ?
+					LOG.error("Exception during setting input for treeViewer in sinkView", e);
 				}
 			}
 
