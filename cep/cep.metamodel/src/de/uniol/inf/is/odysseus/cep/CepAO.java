@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
@@ -160,7 +161,8 @@ public class CepAO<T> extends AbstractLogicalOperator{
 				.getAttributes();
 		for (SDFAttribute outAttr : outAttributes) {
 			String attr = outAttr.getQualName();
-			if (attr.startsWith("WRITE")) {
+			//WRITE|MIN|MAX|SUM|COUNT|AVG
+			if (attr.startsWith("WRITE") || attr.startsWith("MIN") || attr.startsWith("MAX")) {
 				int start = attr.lastIndexOf("_");
 				int point = attr.lastIndexOf(".");
 				String state = attr.substring(start + 1, point);
@@ -183,7 +185,13 @@ public class CepAO<T> extends AbstractLogicalOperator{
 					outAttributeList.add(outAttr);
 				}
 			} else if (outAttr.getQualName().startsWith("COUNT")) {
-
+				outAttributeList.add(new SDFAttribute(outAttr
+						.getSourceName(), outAttr
+						.getAttributeName(), SDFDatatype.LONG));
+			} else if (outAttr.getQualName().startsWith("AVG") || outAttr.getQualName().startsWith("SUM")) {
+				outAttributeList.add(new SDFAttribute(outAttr
+						.getSourceName(), outAttr
+						.getAttributeName(), SDFDatatype.DOUBLE));
 			}
 
 		}
