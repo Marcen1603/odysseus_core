@@ -21,8 +21,10 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		
 		System.out.println("Starting server...");
-		StreamServer regressionServer = new StreamServer(54321, new Query1Server());
-		regressionServer.start();
+		StreamServer server1 = new StreamServer(54321, new Query1Server());
+		server1.start();
+		StreamServer server2 = new StreamServer(54322, new Query1ChangingServer());
+		server2.start();
 	}
 
 	/*
