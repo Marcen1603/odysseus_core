@@ -36,6 +36,12 @@ public class ToLongFunction extends AbstractFunction<Long> {
 
 	@Override
 	public Long getValue() {
+		String s = getInputValue(0).toString();
+		if(s.equalsIgnoreCase("true")){
+			return 1L;
+		}else if(s.equalsIgnoreCase("false")){
+			return 0L;
+		}		
 		Double val = Double.parseDouble(getInputValue(0).toString());
 		return val.longValue();
 	}
@@ -45,7 +51,7 @@ public class ToLongFunction extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
-	private static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING};
+	private static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING, SDFDatatype.BOOLEAN};
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
