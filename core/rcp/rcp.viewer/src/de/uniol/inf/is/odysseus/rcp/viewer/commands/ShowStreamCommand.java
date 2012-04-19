@@ -28,9 +28,12 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -38,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.commands.windows.ChooseOperatorWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamEditorRegistry;
@@ -60,18 +64,14 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		if (selection == null)
 			return null;
 
-		IPhysicalOperator opForStream = null;
+		Optional<IPhysicalOperator> optionalOpForStream = null;
 		if (selection instanceof IStructuredSelection) {
 			List<Object> selections = SelectionProvider.getSelection(event);
 			nextSelection: for (Object selectedObject : selections) {
 
 				if (selectedObject instanceof IPhysicalQuery) {
 					IPhysicalQuery query = (IPhysicalQuery) selectedObject;
-					if (query.getRoots().size() > 0)
-						opForStream = query.getRoots().get(0);
-					else
-						opForStream = query.getPhysicalChilds().get(0);
-
+					optionalOpForStream = chooseOperator(query.getRoots());
 				}
 				
 				if( selectedObject instanceof Integer ) {
@@ -79,7 +79,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                     IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
                     if( executor instanceof IServerExecutor ) {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
-                        opForStream = serverExecutor.getExecutionPlan().getQuery(queryID).getPhysicalChilds().get(0);
+                        optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
                     } else {
                         LOG.error("Could not show stream outside server.");
                     }
@@ -89,11 +89,13 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 					IOdysseusNodeView nodeView = (IOdysseusNodeView) selectedObject;
 
 					// Auswahl holen
-					opForStream = nodeView.getModelNode().getContent();
+					optionalOpForStream = Optional.of(nodeView.getModelNode().getContent());
 				}
 
-				if (opForStream != null) {
+				
+				if (optionalOpForStream.isPresent()) {
 
+					IPhysicalOperator opForStream = optionalOpForStream.get();
 					// schauen, ob Editor für den Graphen schon offen ist
 					for (IEditorReference editorRef : page.getEditorReferences()) {
 						try {
@@ -138,5 +140,20 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			}
 		}
 		return null;
+	}
+	
+	private static Optional<IPhysicalOperator> chooseOperator( List<IPhysicalOperator> operators ) {
+		if( operators.size() == 1 ) {
+			return Optional.of(operators.get(0));
+		}
+		
+		ChooseOperatorWindow wnd = new ChooseOperatorWindow(PlatformUI.getWorkbench().getDisplay(), operators);
+		wnd.show();
+		
+		if( wnd.isCanceled() ) {
+			return Optional.absent();
+		} else {
+			return Optional.of(wnd.getSelectedOperator());
+		}
 	}
 }

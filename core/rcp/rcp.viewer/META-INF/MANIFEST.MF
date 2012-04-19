@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.core,
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.monitoring,
  de.uniol.inf.is.odysseus.core.physicaloperator,
