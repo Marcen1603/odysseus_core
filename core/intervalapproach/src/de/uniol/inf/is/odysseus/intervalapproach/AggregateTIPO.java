@@ -214,13 +214,15 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						if (p1.newElement()) {
 							// Insert new Element with interval from start to
 							// start
-							Q newMeta = p1.element_agg.getMetadata();
+							@SuppressWarnings("unchecked")
+							Q newMeta = (Q) p1.element_agg.getMetadata().clone();
 							newMeta.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, calcInit(elemToAdd), newMeta);
 						} else {// p2.newElement()
 								// Insert element again with shorter interval
 								// (start to start)
-							Q newMeta = p1.element_agg.getMetadata();
+							@SuppressWarnings("unchecked")
+							Q newMeta = (Q) p1.element_agg.getMetadata().clone();
 							newMeta.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, p1.element_agg, newMeta);
 						}
@@ -248,17 +250,20 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 					} else if (p1.isEnd() && p2.isStart()) {
 						// New element has a part that is newer than the partial
 						// aggregate
-						Q newTI = elemToAdd.getMetadata();
+						@SuppressWarnings("unchecked")
+						Q newTI = (Q) elemToAdd.getMetadata().clone();
 						newTI.setStartAndEnd(p1.point, p2.point);
 						saInsert(sa, calcInit(elemToAdd), newTI);
 					} else if (p1.isEnd() && p2.isEnd()) { // Element after
 						// OldEnd && NewEnd
 						if (p2.newElement()) {
-							Q newTI = elemToAdd.getMetadata();
+							@SuppressWarnings("unchecked")
+							Q newTI = (Q) elemToAdd.getMetadata().clone();
 							newTI.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, calcInit(elemToAdd), newTI);
 						} else { // New End && Old End
-							Q newTI = lastPartialAggregate.getMetadata();
+							@SuppressWarnings("unchecked")
+							Q newTI = (Q)lastPartialAggregate.getMetadata().clone();
 							newTI.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, lastPartialAggregate, newTI);
 						}
