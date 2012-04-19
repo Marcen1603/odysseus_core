@@ -95,7 +95,7 @@ public class DropAllSourcesCommand extends AbstractHandler {
 
 	private static boolean confirm() {
 		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
-		box.setMessage("Are you sure to drop all sources?");
+		box.setMessage("Are you sure to drop ALL sources?");
 		box.setText("Drop all sources");
 		return box.open() == SWT.OK;
 	}

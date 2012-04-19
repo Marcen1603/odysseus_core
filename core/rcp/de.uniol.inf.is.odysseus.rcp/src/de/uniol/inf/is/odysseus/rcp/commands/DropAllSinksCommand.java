@@ -87,7 +87,7 @@ public class DropAllSinksCommand extends AbstractHandler {
 	
 	private static boolean confirm() {
 		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
-		box.setMessage("Are you sure to drop all sinks?");
+		box.setMessage("Are you sure to drop ALL sinks?");
 		box.setText("Drop all sinks");
 		return box.open() == SWT.OK;
 	}
