@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.cep.sase;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -15,10 +17,13 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 
 	private final StringParameter query = new StringParameter("QUERY",
 			REQUIREMENT.MANDATORY);
+	
+	private final BooleanParameter oneMatchPerInstance = new BooleanParameter("OneMatchPerInstance",
+			REQUIREMENT.OPTIONAL);
 
 	public SaseAOBuilder() {
 		super(1, Integer.MAX_VALUE);
-		addParameters(query);
+		addParameters(query, oneMatchPerInstance);
 	}
 
 	@Override
@@ -39,6 +44,9 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 				getDataDictionary(), false);
 		// I know there is only one operator
 		ret = op.get(0).getLogicalPlan();
+		if (oneMatchPerInstance.hasValue()){
+			((CepAO<?>)ret).setOneMatchPerInstance(oneMatchPerInstance.getValue());
+		}
 
 		return ret;
 	}
