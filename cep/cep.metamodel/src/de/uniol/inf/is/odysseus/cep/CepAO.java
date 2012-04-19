@@ -19,10 +19,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
 public class CepAO<T> extends AbstractLogicalOperator{
@@ -33,6 +38,7 @@ public class CepAO<T> extends AbstractLogicalOperator{
 	private StateMachine<T> secondStateMachine;
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 	private boolean oneMatchPerInstance = true;
+	private SDFSchema outputSchemaIntern;
 
 	private int rate;
 	
@@ -45,11 +51,16 @@ public class CepAO<T> extends AbstractLogicalOperator{
 		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
 		this.oneMatchPerInstance = cepAO.oneMatchPerInstance;
 		this.rate =  cepAO.rate;
+		this.outputSchemaIntern = cepAO.outputSchemaIntern;
 	}
 
 	public CepAO() {
 	}
 
+	public void setOutputSchemaIntern(SDFSchema outputSchemaIntern) {
+		this.outputSchemaIntern = outputSchemaIntern;
+	}
+	
 	public StateMachine<T> getStateMachine() {
 		return firstStateMachine;
 	}
@@ -123,13 +134,91 @@ public class CepAO<T> extends AbstractLogicalOperator{
 			}
 		}
 	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		
+		StateMachine<T> m = this.getStateMachine();
+		Set<String> types = m.getStateTypeSet();
+		
+		for (LogicalSubscription s : this.getSubscribedToSource()) {
+			String name = this.getInputTypeName(s.getSinkInPort());
+			if (name == null) {
+				SDFSchema schema = s.getSchema();
+				name = schema.getURI();
+				if (!types.contains(name)) {
+					throw new IllegalArgumentException("Type " + name
+							+ " no input for Operator");
+				}
+				this.setInputTypeName(s.getSinkInPort(), name);
+			}
+		}
+		
+		List<SDFAttribute> outAttributeList = new LinkedList<SDFAttribute>();
+		// Try to optimize output types
+		List<SDFAttribute> outAttributes = outputSchemaIntern
+				.getAttributes();
+		for (SDFAttribute outAttr : outAttributes) {
+			String attr = outAttr.getQualName();
+			if (attr.startsWith("WRITE")) {
+				int start = attr.lastIndexOf("_");
+				int point = attr.lastIndexOf(".");
+				String state = attr.substring(start + 1, point);
+				String attributeName = attr.substring(point + 1);
+				int port = getPortForName(state);
+				SDFSchema inSchema = getInputSchema(port);
+				boolean found = false;
+				if (inSchema != null) {
+					for (SDFAttribute inAttr : inSchema) {
+						if (inAttr.getAttributeName().equalsIgnoreCase(
+								attributeName)) {
+							outAttributeList.add(new SDFAttribute(outAttr
+									.getSourceName(), outAttr
+									.getAttributeName(), inAttr.getDatatype()));
+							found = true;
+						}
+					}
+				}
+				if (!found) {
+					outAttributeList.add(outAttr);
+				}
+			} else if (outAttr.getQualName().startsWith("COUNT")) {
 
+			}
+
+		}
+
+		SDFSchema output = new SDFSchema(outputSchemaIntern.getURI(),
+				outAttributeList);
+		setOutputSchema(output);
+
+		return output;
+	}
+	
 	public void setInputTypeName(int port, String name) {
 		portNames.put(port, name);
 	}
 
 	public String getInputTypeName(int port) {
 		return portNames.get(port);
+	}
+	
+	public int getPortForName(String stateVarName){
+		String name = null;
+		List<State> states = firstStateMachine.getStates();
+		for (State s:states){
+			if (s.getVar().equalsIgnoreCase(stateVarName)){
+				name = s.getType();
+				break;
+			}
+		}
+		
+		for (Entry<Integer, String> e : portNames.entrySet()){
+			if (e.getValue().equals(name)){
+				return e.getKey();
+			}
+		}
+		return -1;
 	}
 
 	public boolean isOneMatchPerInstance() {

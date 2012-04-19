@@ -725,7 +725,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     		name, attrList);
     ;
     cepAo.getStateMachine().setOutputScheme(scheme);
-    cepAo.setOutputSchema(outputSchema);
+    cepAo.setOutputSchemaIntern(outputSchema);
    }
   |
   ;

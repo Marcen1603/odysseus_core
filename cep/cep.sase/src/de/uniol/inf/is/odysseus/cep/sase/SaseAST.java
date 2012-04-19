@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-04-19 09:23:38
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-04-19 11:56:58
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -2176,7 +2176,7 @@ public class SaseAST extends TreeParser {
                         		name, attrList);
                         ;
                         cepAo.getStateMachine().setOutputScheme(scheme);
-                        cepAo.setOutputSchema(outputSchema);
+                        cepAo.setOutputSchemaIntern(outputSchema);
                        
 
                     }

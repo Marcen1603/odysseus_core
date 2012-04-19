@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.cep.transform;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.cep.CepAO;
 import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
@@ -27,7 +26,6 @@ import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
@@ -49,18 +47,9 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		Map<Integer, RelationalReader> rMap = new HashMap<Integer, RelationalReader>();
 
 		StateMachine m = cepAO.getStateMachine();
-		Set<String> types = m.getStateTypeSet();
 
 		for (LogicalSubscription s : cepAO.getSubscribedToSource()) {
 			String name = cepAO.getInputTypeName(s.getSinkInPort());
-			if (name == null) {
-				SDFSchema schema = s.getSchema();
-				name = schema.getURI();
-				if (!types.contains(name)) {
-					throw new IllegalArgumentException("Type " + name
-							+ " no input for Operator");
-				}
-			}
 			rMap.put(s.getSinkInPort(), new RelationalReader(s.getSchema(),
 					name));
 		}
@@ -78,12 +67,12 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 		}
 
 		cepPO.setOutputSchema(cepAO.getOutputSchema());
-		
-		if (cepAO.getHeartbeatRate() > 0){
+
+		if (cepAO.getHeartbeatRate() > 0) {
 			cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					cepAO.getHeartbeatRate()));
 		}
-		
+
 		Collection<ILogicalOperator> toUpdate = transformConfig
 				.getTransformationHelper().replace(cepAO, cepPO);
 		for (ILogicalOperator o : toUpdate) {
