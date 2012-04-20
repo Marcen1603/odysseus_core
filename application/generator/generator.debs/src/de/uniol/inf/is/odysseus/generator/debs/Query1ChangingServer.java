@@ -93,9 +93,9 @@ public class Query1ChangingServer extends StreamClientHandler {
 
 		tuple.addLong(timeGenerator.nextValue());
 
-		System.out.println(tuple);
+		//System.out.println(tuple);
 		try {
-			Thread.sleep(250);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
