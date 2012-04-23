@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
-import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
@@ -40,15 +38,26 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
+	
+	private static final String TIME_NANO = "nanoseconds";
+	private static final String TIME_MICRO = "microseconds";
+	private static final String TIME_MILLI = "milliseconds";	
+
+	
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 100;
+	private static final String DEFAULT_TIME_GRANULARITY = TIME_MILLI;
 
 	private static final String CURRENT_TIME = "Current Time";
-
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
 
-	private String dateformat = "SSS";
+	// also milli 
+	private String dateformat = "HH:mm:ss";
 
 	private int choosenXValue = -1;
+
+	private Integer timefactor = 0;
+
+	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
 
 	@Override
 	public void chartSettingsChanged() {
@@ -63,6 +72,13 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 		}
 		NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
 		axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
+		if(this.timeinputgranularity.equals(TIME_MILLI)){
+			this.timefactor = 1;
+		}else if(this.timeinputgranularity.equals(TIME_MICRO)){
+			this.timefactor = 1000;
+		}else if(this.timeinputgranularity.equals(TIME_NANO)){
+			this.timefactor = 1000000;
+		}
 	}
 
 	@Override
@@ -80,7 +96,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 			public void run() {
 				try {
 					if (choosenXValue == -1) {
-						FixedMillisecond ms = new FixedMillisecond(metadata.getStart().getMainPoint());
+						long millis = metadata.getStart().getMainPoint();
+						millis = millis / timefactor;
+						FixedMillisecond ms = new FixedMillisecond(millis);
+						
 						for (int i = 0; i < tuple.size(); i++) {
 							double value = tuple.get(i);
 							series.get(getChoosenAttributes().get(i).getName()).add(ms, value);
@@ -125,14 +144,34 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 		this.maxItems = maxItems;
 	}
 
-	@ChartSetting(name = "Date Format", type = Type.GET)
+	@ChartSetting(name = "Date Time Format", type = Type.GET)
 	public String getDateFormat() {
 		return this.dateformat;
 	}
 
-	@ChartSetting(name = "Date Format", type = Type.SET)
+	@ChartSetting(name = "Date Time Format", type = Type.SET)
 	public void setDateFormat(String dateFormat) {
 		this.dateformat = dateFormat;
+	}
+	
+	@ChartSetting(name = "Time Input Granularity", type = Type.OPTIONS)
+	public List<String> getTimeInputGranularityValues(){
+		List<String> values = new ArrayList<String>();		
+		values.add(TIME_MILLI);
+		values.add(TIME_MICRO);
+		values.add(TIME_NANO);
+		return values;
+	}
+	
+	
+	@ChartSetting(name = "Time Input Granularity", type = Type.GET)
+	public String getTimeInputGranularity() {
+		return timeinputgranularity;
+	}
+
+	@ChartSetting(name = "Time Input Granularity", type = Type.SET)
+	public void setTimeInputGranularity(String value) {
+		this.timeinputgranularity = value;
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.OPTIONS)
