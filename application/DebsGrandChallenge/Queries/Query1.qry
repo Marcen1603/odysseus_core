@@ -1,30 +1,31 @@
 #PARSER PQL
 #TRANSCFG Standard
 #DEFINE TwentyFourHours 86400000000000
-#DOQUERYSHARING
+#DOQUERYSHARING false
 #QUERY
+projected = PROJECT({attributes=['ts', 'bm05', 'bm06', 'bm07', 'bm08', 'bm09', 'bm10']}, gchSource)
 /// Operator 1
-bm05 = PROJECT({attributes=['ts','bm05']},gchSource)
+bm05 = PROJECT({attributes=['ts','bm05']},projected)
 s05 = RENAME({type='s05', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm05'], heartbeatrate=100},bm05))
 
 /// Operator 2
-bm06 = PROJECT({attributes=['ts','bm06']},gchSource)
+bm06 = PROJECT({attributes=['ts','bm06']},projected)
 s06 = RENAME({type='s06', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm06'], heartbeatrate=100},bm06))
 
 /// Operator 3
-bm07 = PROJECT({attributes=['ts','bm07']},gchSource)
+bm07 = PROJECT({attributes=['ts','bm07']},projected)
 s07 = RENAME({type='s07', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm07'], heartbeatrate=100},bm07))
 
 /// Operator 4
-bm08 = PROJECT({attributes=['ts','bm08']},gchSource)
+bm08 = PROJECT({attributes=['ts','bm08']},projected)
 s08 = RENAME({type='s08', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm08'], heartbeatrate=100},bm08))
 
 /// Operator 5
-bm09 = PROJECT({attributes=['ts','bm09']},gchSource)
+bm09 = PROJECT({attributes=['ts','bm09']},projected)
 s09 = RENAME({type='s09', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm09'], heartbeatrate=100},bm09))
 
 /// Operator 6
-bm10 = PROJECT({attributes=['ts','bm10']},gchSource)
+bm10 = PROJECT({attributes=['ts','bm10']},projected)
 s10 = RENAME({type='s10', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm10'], heartbeatrate=100},bm10))
 
 /// Operator 7
