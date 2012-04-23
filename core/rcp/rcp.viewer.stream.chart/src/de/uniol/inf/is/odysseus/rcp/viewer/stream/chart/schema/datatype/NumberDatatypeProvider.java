@@ -17,21 +17,27 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 
-public class LongDatatypeProvider extends AbstractViewableDatatype<Double> {	
+public class NumberDatatypeProvider extends AbstractViewableDatatype<Double> {	
 	
-	public LongDatatypeProvider() {
+	public NumberDatatypeProvider() {
 		super.addProvidedSDFDatatype(SDFDatatype.LONG);
 		super.addProvidedSDFDatatype(SDFDatatype.START_TIMESTAMP);
 		super.addProvidedSDFDatatype(SDFDatatype.END_TIMESTAMP);
-		super.addProvidedSDFDatatype(SDFDatatype.TIMESTAMP);		
+		super.addProvidedSDFDatatype(SDFDatatype.TIMESTAMP);
+		super.addProvidedSDFDatatype(SDFDatatype.DOUBLE);		
+		super.addProvidedSDFDatatype(SDFDatatype.INTEGER);
+		super.addProvidedClass(Integer.class);
+		super.addProvidedClass(int.class);
+		super.addProvidedClass(Double.class);
+		super.addProvidedClass(double.class);		
 		super.addProvidedClass(Long.class);
 		super.addProvidedClass(long.class);
 	}
 	
 	@Override
 	public Double convertToValue(Object value) {
-		Long longValue = (Long) value;
-		return new Double(longValue.doubleValue());
+		Number num = (Number)value;
+		return new Double(num.doubleValue());
 	}
 
 }

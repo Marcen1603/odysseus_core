@@ -18,9 +18,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.DoubleDatatypeProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.IntegerDatatypeProvider;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.LongDatatypeProvider;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.NumberDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.PointInTimeDatatypeProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
 
@@ -51,9 +49,7 @@ public class Activator extends AbstractUIPlugin {
 		bundleContext= context;
 		
 		// register all allowed datatypes and convertes
-		ViewableDatatypeRegistry.getInstance().register(new LongDatatypeProvider());
-		ViewableDatatypeRegistry.getInstance().register(new IntegerDatatypeProvider());
-		ViewableDatatypeRegistry.getInstance().register(new DoubleDatatypeProvider());
+		ViewableDatatypeRegistry.getInstance().register(new NumberDatatypeProvider());		
 		ViewableDatatypeRegistry.getInstance().register(new PointInTimeDatatypeProvider());
 	}
 
