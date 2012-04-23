@@ -60,10 +60,9 @@ public class AbstractGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<
 	 * @return
 	 */
 	public /*<R,T extends ISubscriber, H extends ISubscription<T>>*/ void prefixWalk(S node, IGraphNodeVisitor<S, R> visitor) {
-		if(this.visited.contains(node)){
+		if(this.visited.contains(node)){				
 			return;
-		}
-		
+		}		
 		this.visited.add(node);
 		
 		visitor.nodeAction(node);
