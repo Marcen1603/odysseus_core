@@ -52,9 +52,9 @@ s710_windowed = WINDOW({SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s710)
 
 /// Operator 10
 sout10_agg = AGGREGATE({aggregations=[		
-		['MIN', 'dt', 'dtmin'],
-		['MAX', 'dt', 'dtmax'],
-		['MAX', 'ts', 'ts']]}, s58_windowed)
+		['MIN', 'dt', 'dtmin', 'long'],
+		['MAX', 'dt', 'dtmax', 'long'],
+		['MAX', 'ts', 'ts', 'long']]}, s58_windowed)
 
 sout10 = RENAME({aliases = ['alarm', 'ts']}, MAP({expressions=['1', 'ts']}, SELECT({ predicate=RelationalPredicate('dtmin<dtmax/1.01') }, sout10_agg)))	
 
@@ -63,9 +63,9 @@ reg11 = REGRESSION({X='dt', Y='ts'}, s58_windowed)
 
 /// Operator 12
 sout12_agg = AGGREGATE({aggregations=[		
-		['MIN', 'dt', 'dtmin'],
-		['MAX', 'dt', 'dtmax'],
-		['MAX', 'ts', 'ts']]}, s69_windowed)
+		['MIN', 'dt', 'dtmin', 'long'],
+		['MAX', 'dt', 'dtmax', 'long'],
+		['MAX', 'ts', 'ts', 'long']]}, s69_windowed)
 
 sout12 = RENAME({aliases = ['alarm', 'ts']}, MAP({expressions=['1', 'ts']}, SELECT({ predicate=RelationalPredicate('dtmin<dtmax/1.01') }, sout12_agg)))
 
@@ -74,9 +74,9 @@ reg13 = REGRESSION({X='dt', Y='ts'}, s69_windowed)
 
 /// Operator 14
 sout14_agg = AGGREGATE({aggregations=[		
-		['MIN', 'dt', 'dtmin'],
-		['MAX', 'dt', 'dtmax'],
-		['MAX', 'ts', 'ts']]}, s710_windowed)
+		['MIN', 'dt', 'dtmin', 'long'],
+		['MAX', 'dt', 'dtmax', 'long'],
+		['MAX', 'ts', 'ts', 'long']]}, s710_windowed)
 
 sout14 = RENAME({aliases = ['alarm', 'ts']}, MAP({expressions=['1', 'ts']}, SELECT({ predicate=RelationalPredicate('dtmin<dtmax/1.01') }, sout14_agg)))		
 
