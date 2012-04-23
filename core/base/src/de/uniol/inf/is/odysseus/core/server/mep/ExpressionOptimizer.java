@@ -120,7 +120,7 @@ public class ExpressionOptimizer {
 				function.setArgument(0, c);
 				while (i.hasNext()) {
 					function.setArgument(1, i.next());
-					c = new Constant<Object>(function.getValue(), SDFDatatype.OBJECT);
+					c = new Constant<Object>(function.getValue(), function.getReturnType());
 					function.setArgument(0, c);
 				}
 				return c;
@@ -191,7 +191,7 @@ public class ExpressionOptimizer {
 			}
 
 			if (isAllInputsConstant && function.optimizeConstantParameter()) {
-				return new Constant<Object>(function.getValue(), SDFDatatype.OBJECT);
+				return new Constant<Object>(function.getValue(), function.getReturnType());
 			}
 
 			if (function.getClass() == AndOperator.class) {
