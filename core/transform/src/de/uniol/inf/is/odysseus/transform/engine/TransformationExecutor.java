@@ -95,11 +95,12 @@ public class TransformationExecutor implements ITransformation {
 					+ logicalOp);
 		}
 
-		// if top operator has been rename, renaming is lost --> setOutputSchema
-		// of physicalPO to Schema in subscription
-		if (logicalOp instanceof RenameAO) {
-			physicalPO.setOutputSchema(logicalOp.getOutputSchema());
-		}
+		// FIX: Now done by an explicit RenanePO
+//		// if top operator has been rename, renaming is lost --> setOutputSchema
+//		// of physicalPO to Schema in subscription
+//		if (logicalOp instanceof RenameAO) {
+//			physicalPO.setOutputSchema(logicalOp.getOutputSchema());
+//		}
 		
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
 		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
