@@ -176,7 +176,7 @@
             icon="icons/chart_bar.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.barchart"
             name="Bar Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -185,7 +185,7 @@
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart"
             name="Pie Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -194,7 +194,7 @@
             icon="icons/chart_area.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.areachart"
             name="Area Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -203,7 +203,7 @@
             icon="icons/chart_curve.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.curvechart"
             name="Curve Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -212,7 +212,7 @@
             icon="icons/chart_bar.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xybarchart"
             name="XY Bar Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -221,7 +221,7 @@
             icon="icons/chart_line.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.xylinechart"
             name="XY Line Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -230,7 +230,7 @@
             icon="icons/chart_pie.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.piechart3d"
             name="Pie Chart 3D"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -239,7 +239,7 @@
             icon="icons/thermometer.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.thermometerchart"
             name="Thermometer"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -248,7 +248,7 @@
             icon="icons/chart_scatter.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.scatterplotchart"
             name="Scatter Plot Chart"
-            restorable="true">
+            restorable="false">
       </view>
       <view
             allowMultiple="true"
@@ -257,7 +257,7 @@
             icon="icons/layer-shape-line.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.linearFunctionChart"
             name="Linear Function Chart"
-            restorable="true">
+            restorable="false">
       </view>
    </extension>
    <extension
