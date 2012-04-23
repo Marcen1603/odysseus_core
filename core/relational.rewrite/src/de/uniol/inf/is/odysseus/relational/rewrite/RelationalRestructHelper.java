@@ -145,7 +145,8 @@ public class RelationalRestructHelper {
 		SDFSchema renameOutputSchema = son.getOutputSchema();
 		SDFSchema oldOutputSchema = father.getOutputSchema();
 		LogicalSubscription toDown = son.getSubscribedToSource(0);
-		LogicalSubscription toUp = father.getSubscription();
+		// TODO: Can there be more than one father??
+		LogicalSubscription toUp = father.getSubscriptions().iterator().next();
 
 		son.unsubscribeFromSource(toDown);
 		father.unsubscribeFromSource(son, 0, 0, son.getOutputSchema());

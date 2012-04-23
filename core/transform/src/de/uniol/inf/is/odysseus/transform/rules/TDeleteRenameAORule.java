@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -46,7 +47,10 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO>{
 
 	@Override
 	public boolean isExecutable(RenameAO operator, TransformationConfiguration transformConfig) {	
-		return !(operator.getInputAO() instanceof RenameAO);
+		// Remove only if child not rename. Do not remove top renaming
+		return !(operator.getInputAO() instanceof RenameAO) && 
+			   !(operator.getSubscriptions().size() == 1 && operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) &&
+			   !(operator.getSubscriptions().size() == 0);
 	}
 
 	@Override

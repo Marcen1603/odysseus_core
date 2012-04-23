@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -64,9 +63,5 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 			throw new IllegalArgumentException("illegal sink port for subscription in unary operatore: " + sinkInPort);
 		}
 		super.subscribeToSource(source, sinkInPort, sourceOutPort, inputSchema);
-	}
-	
-	public LogicalSubscription getSubscription() {
-		return getSubscriptions().iterator().next();
 	}
 }

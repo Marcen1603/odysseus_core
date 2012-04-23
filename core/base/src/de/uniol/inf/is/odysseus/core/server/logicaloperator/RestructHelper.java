@@ -82,12 +82,14 @@ public class RestructHelper {
 
 	public static Collection<ILogicalOperator> simpleOperatorSwitch(
 			UnaryLogicalOp father, UnaryLogicalOp son) {
-		son.unsubscribeSink(son.getSubscription());
+		// TODO: Can there be more than one father??
+		son.unsubscribeSink(son.getSubscriptions().iterator().next());
 
 		LogicalSubscription toDown = son.getSubscribedToSource(0);
 		son.unsubscribeFromSource(toDown);
 
-		LogicalSubscription toUp = father.getSubscription();
+		// TODO: Can there be more than one father??
+		LogicalSubscription toUp = father.getSubscriptions().iterator().next();
 		father.unsubscribeSink(toUp);
 
 		father.subscribeToSource(toDown.getTarget(), 0,
