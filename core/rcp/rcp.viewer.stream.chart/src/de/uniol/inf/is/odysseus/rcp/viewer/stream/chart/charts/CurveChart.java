@@ -27,6 +27,7 @@ public class CurveChart extends AbstractTimeSeriesChart{
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createXYLineChart(getTitle(), "", "", this.dataset, PlotOrientation.VERTICAL, true, true, false);
 		chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);	
+		chart.getLegend().setBackgroundPaint(DEFAULT_BACKGROUND_GRID);
 		chart.getXYPlot().setRenderer(new XYSplineRenderer());
 		return chart;
 	}

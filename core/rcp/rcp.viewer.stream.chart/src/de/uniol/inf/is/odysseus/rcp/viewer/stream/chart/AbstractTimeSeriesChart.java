@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,9 @@ import java.util.Map;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
@@ -38,24 +41,27 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
-	
 	private static final String TIME_NANO = "nanoseconds";
 	private static final String TIME_MICRO = "microseconds";
-	private static final String TIME_MILLI = "milliseconds";	
+	private static final String TIME_MILLI = "milliseconds";
 
-	
+	private double max = Double.NaN;
+	private double min = Double.NaN;
+	private boolean autoadjust = true;
+	private double margin = 0.05; // 5 percent
+
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 100;
 	private static final String DEFAULT_TIME_GRANULARITY = TIME_MILLI;
 
 	private static final String CURRENT_TIME = "Current Time";
 	private int maxItems = DEFAULT_MAX_NUMBER_OF_ITEMS;
 
-	// also milli 
+	// also milli
 	private String dateformat = "HH:mm:ss";
 
 	private int choosenXValue = -1;
 
-	private Integer timefactor = 0;
+	private Integer timefactor = 1;
 
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
 
@@ -70,15 +76,25 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 			series.put(name, serie);
 			this.dataset.addSeries(serie);
 		}
-		NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
-		axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
-		if(this.timeinputgranularity.equals(TIME_MILLI)){
+		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
+		if (domainAxis instanceof NumberAxis) {
+			NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
+			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
+		}
+		if(domainAxis instanceof DateAxis){
+			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
+			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
+		}
+		if (this.timeinputgranularity.equals(TIME_MILLI)) {
 			this.timefactor = 1;
-		}else if(this.timeinputgranularity.equals(TIME_MICRO)){
+		} else if (this.timeinputgranularity.equals(TIME_MICRO)) {
 			this.timefactor = 1000;
-		}else if(this.timeinputgranularity.equals(TIME_NANO)){
+		} else if (this.timeinputgranularity.equals(TIME_NANO)) {
 			this.timefactor = 1000000;
 		}
+
+		min = Double.NaN;
+		max = Double.NaN;
 	}
 
 	@Override
@@ -96,20 +112,22 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 			public void run() {
 				try {
 					if (choosenXValue == -1) {
-						long millis = metadata.getStart().getMainPoint();
-						millis = millis / timefactor;
+						long time = metadata.getStart().getMainPoint();
+						long millis = time / timefactor;
 						FixedMillisecond ms = new FixedMillisecond(millis);
-						
+
 						for (int i = 0; i < tuple.size(); i++) {
 							double value = tuple.get(i);
 							series.get(getChoosenAttributes().get(i).getName()).add(ms, value);
+							adjust(value);
 						}
 					} else {
 						for (int i = 0; i < tuple.size(); i++) {
-							double value = tuple.get(i);	
+							double value = tuple.get(i);
 							long x = tuple.get(choosenXValue).longValue();
 							FixedMillisecond ms = new FixedMillisecond(x);
 							series.get(getChoosenAttributes().get(i).getName()).add(ms, value);
+							adjust(value);
 						}
 					}
 
@@ -124,7 +142,27 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 
 				}
 			}
+
 		});
+	}
+
+	private void adjust(double value) {
+		if (Double.isNaN(max)) {
+			max = value;
+		}
+		if (Double.isNaN(min)) {
+			min = value;
+		}
+		if (value > max) {
+			max = value;
+		} else if (value < min) {
+			min = value;
+		}
+		if (autoadjust) {
+			getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
+			getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+		}
+
 	}
 
 	@Override
@@ -153,17 +191,16 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 	public void setDateFormat(String dateFormat) {
 		this.dateformat = dateFormat;
 	}
-	
+
 	@ChartSetting(name = "Time Input Granularity", type = Type.OPTIONS)
-	public List<String> getTimeInputGranularityValues(){
-		List<String> values = new ArrayList<String>();		
+	public List<String> getTimeInputGranularityValues() {
+		List<String> values = new ArrayList<String>();
 		values.add(TIME_MILLI);
 		values.add(TIME_MICRO);
 		values.add(TIME_NANO);
 		return values;
 	}
-	
-	
+
 	@ChartSetting(name = "Time Input Granularity", type = Type.GET)
 	public String getTimeInputGranularity() {
 		return timeinputgranularity;
@@ -209,6 +246,26 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 				return;
 			}
 		}
+	}
+	
+	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.SET)
+	public void setMin(Double min){
+		this.min = min;
+	}
+	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.GET)
+	public Double getMin(){
+		return this.min;
+	}
+	
+
+	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.SET)
+	public void setMax(Double max){
+		this.max = max;
+	}
+	
+	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.GET)
+	public Double getMax(){
+		return this.max;
 	}
 
 }

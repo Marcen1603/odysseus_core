@@ -31,6 +31,13 @@
                   style="push"
                   tooltip="Shows a thermometer for one attribute">
             </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowDialChartCommand"
+                  icon="icons/dashboard.png"
+                  label="Dial Chart"
+                  style="push"
+                  tooltip="Shows a dial chart">
+            </command>
             <separator
                   name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator1"
                   visible="true">
@@ -62,6 +69,13 @@
                   label="XY Bar Chart"
                   style="push"
                   tooltip="Shows a continuous bar chart">
+            </command>
+            <command
+                  commandId="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowStepChartCommand"
+                  icon="icons/border-horizontal.png"
+                  label="Step Chart"
+                  style="push"
+                  tooltip="Show a step chart">
             </command>
             <separator
                   name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.separator2"
@@ -166,6 +180,16 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowLinearFunctionCommand"
             name="Linear Function Command">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowStepChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowStepChartCommand"
+            name="Step Chart Command">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowDialChartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.ShowDialChartCommand"
+            name="Dial Chart Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -257,6 +281,24 @@
             icon="icons/layer-shape-line.png"
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.linearFunctionChart"
             name="Linear Function Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChart"
+            icon="icons/dashboard.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.dialchart"
+            name="Dial Chart"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChart"
+            icon="icons/border-horizontal.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.stepchart"
+            name="Step Chart"
             restorable="false">
       </view>
    </extension>

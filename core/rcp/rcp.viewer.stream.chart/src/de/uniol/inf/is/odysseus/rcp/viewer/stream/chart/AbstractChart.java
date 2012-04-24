@@ -165,7 +165,10 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	@Override
 	public void createPartControl(Composite parent) {
 		this.chart = createChart();
-		decorateChart(this.chart);
+//		if(this.chart.getPlot()!=null){
+//			this.chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
+//		}
+		decorateChart(this.chart);		
 		new ChartComposite(parent, SWT.NONE, this.chart, true);
 		createActions();
 		contributeToActionBars();		
