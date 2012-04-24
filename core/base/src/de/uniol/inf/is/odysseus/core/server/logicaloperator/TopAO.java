@@ -14,12 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.Iterator;
-
-import de.uniol.inf.is.odysseus.core.Subscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
 /**
  * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
@@ -28,14 +23,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
  * @author Marco Grawunder
  * 
  */
-public class TopAO extends UnaryLogicalOp {
+public class TopAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 6533111765567598018L;
-	transient private ISink<?> physicalInput = null;
+//	transient private ISink<?> physicalInput = null;
 
 	public TopAO(TopAO po) {
 		super(po);
-		this.physicalInput = po.physicalInput;
+//		this.physicalInput = po.physicalInput;
 	}
 
 	public TopAO() {
@@ -47,24 +42,24 @@ public class TopAO extends UnaryLogicalOp {
 		return new TopAO(this);
 	}
 
-	public void setPhysicalInputPO(ISink<?> physical) {
-		this.physicalInput = physical;
-	}
-
-	public IPhysicalOperator getPhysicalInput() {
-		if (physicalInput != null) {
-			return physicalInput;
-		}
-		IPhysicalOperator ret = null;
-		Iterator<Subscription<ISource<?>>> iter = getPhysSubscriptionsTo().iterator();
-		if (iter.hasNext()){
-			Subscription<ISource<?>> s = iter.next();
-			if (s!=null){
-				ret = s.getTarget();
-			}
-		}
-		return ret;
-	}
-	
+//	public void setPhysicalInputPO(ISink<?> physical) {
+//		this.physicalInput = physical;
+//	}
+//
+//	public IPhysicalOperator getPhysicalInput() {
+//		if (physicalInput != null) {
+//			return physicalInput;
+//		}
+//		IPhysicalOperator ret = null;
+//		Iterator<Subscription<ISource<?>>> iter = getPhysSubscriptionsTo().iterator();
+//		if (iter.hasNext()){
+//			Subscription<ISource<?>> s = iter.next();
+//			if (s!=null){
+//				ret = s.getTarget();
+//			}
+//		}
+//		return ret;
+//	}
+//	
 
 }

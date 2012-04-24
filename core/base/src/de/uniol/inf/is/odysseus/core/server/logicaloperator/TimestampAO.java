@@ -109,4 +109,9 @@ public class TimestampAO extends UnaryLogicalOp {
 		return this.isUsingNoTime;
 	}
 
+	@Override
+	public String toString() {
+		return  super.toString()+"s :"+startTimestamp+" e:"+endTimestamp+" "+isUsingSystemTime+" "+isUsingNoTime+" "+clearEnd;
+	}
+	
 }

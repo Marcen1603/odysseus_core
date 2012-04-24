@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -121,7 +122,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       roots.addAll(findRoots(op));
     }
-    List < ILogicalQuery > queries = new ArrayList < ILogicalQuery > ();
     BeanInfo beanInfo;
     try
     {
@@ -138,20 +138,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       String queryName = opEntry.getKey();
       ILogicalOperator topOperator = opEntry.getValue();
-      if (queries.size() == 0 && roots.contains(topOperator))
+      if (roots.contains(topOperator))
       {
         ILogicalQuery query = new LogicalQuery();
-        // Set Owners for query 
-        //AbstractTreeWalker walker = new AbstractTreeWalker();
-        AbstractGraphWalker walker = new AbstractGraphWalker();
-        SetOwnerGraphVisitor visitor = new SetOwnerGraphVisitor(query);
-        walker.prefixWalk(topOperator, visitor);
-        //		System.err.println("SET OWNER");
-        //
-        //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
-        //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
-        query.setLogicalPlan(topOperator, false);
-        queries.add(query);
         PQLParser.initQueryParameters(namedOpParameters.get(queryName));
         for (String parameterName : namedOpParameters.get(queryName).keySet())
         {
@@ -190,6 +179,27 @@ public class PQLParserImpl implements PQLParserImplConstants {
           }
         }
       }
+    }
+    List < ILogicalQuery > queries = new ArrayList < ILogicalQuery > ();
+    if (roots.size() > 0)
+    {
+      ILogicalOperator topOperator = new TopAO();
+      int inputPort = 0;
+      for (ILogicalOperator root : roots){
+                        root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
+      }
+      ILogicalQuery query = new LogicalQuery();
+      // Set Owners for query 
+      //AbstractTreeWalker walker = new AbstractTreeWalker();
+      AbstractGraphWalker walker = new AbstractGraphWalker();
+      SetOwnerGraphVisitor visitor = new SetOwnerGraphVisitor(query);
+      walker.prefixWalk(topOperator, visitor);
+      //		System.err.println("SET OWNER");
+      //
+      //		AbstractTreeWalker walker2 = new AbstractTreeWalker();
+      //		System.err.println(walker2.prefixWalk(topOperator, new AlgebraPlanToStringVisitor()));
+      query.setLogicalPlan(topOperator, false);
+      queries.add(query);
     }
     {if (true) return queries;}
     throw new Error("Missing return statement in function");
@@ -424,7 +434,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
   }
 
   static final public List < InputOperatorItem > operatorList(Map < String, ILogicalOperator > namedOps) throws ParseException {
-  List<InputOperatorItem> list = new LinkedList<InputOperatorItem>();
+  List < InputOperatorItem > list = new LinkedList < InputOperatorItem > ();
   Token tPort = null;
   ILogicalOperator operator;
   int port = 0;

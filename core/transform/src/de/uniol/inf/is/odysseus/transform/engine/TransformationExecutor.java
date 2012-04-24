@@ -16,10 +16,12 @@ package de.uniol.inf.is.odysseus.transform.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
@@ -53,12 +55,20 @@ public class TransformationExecutor implements ITransformation {
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO,
 				"Starting transformation of " + logicalOp + "...");
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE,
-				"Before transformation: \n" + planPrinter.createString(logicalOp));
+		LoggerSystem.printlog(
+				LOGGER_NAME,
+				Accuracy.TRACE,
+				"Before transformation: \n"
+						+ planPrinter.createString(logicalOp));
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		ArrayList<IPhysicalOperator> plan = new ArrayList<IPhysicalOperator>();
-		TopAO top = new TopAO();
-		logicalOp.subscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+		TopAO top = null;
+		if (logicalOp instanceof TopAO) {
+			top = (TopAO) logicalOp;
+		} else {
+			top = new TopAO();
+			logicalOp.subscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+		}
 		/**
 		 * creating a new transformation environment changes of inventory aren't
 		 * considered! Otherwise a rule is able to work on different WM.
@@ -79,8 +89,8 @@ public class TransformationExecutor implements ITransformation {
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE,
 				"Processing rules done.");
 
-		IPhysicalOperator physicalPO = top.getPhysicalInput();
-		if (physicalPO == null) {
+		Map<Integer, ISource<?>> roots = top.getPhysInputOperators();
+		if (roots == null) {
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
 					"PhysicalInput of TopAO is null!");
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
@@ -95,39 +105,42 @@ public class TransformationExecutor implements ITransformation {
 		}
 
 		// FIX: Now done by an explicit RenanePO
-//		// if top operator has been rename, renaming is lost --> setOutputSchema
-//		// of physicalPO to Schema in subscription
-//		if (logicalOp instanceof RenameAO) {
-//			physicalPO.setOutputSchema(logicalOp.getOutputSchema());
-//		}
-		
-		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
-		AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
-		walker.prefixWalkPhysical(physicalPO, visitor);
-		plan = visitor.getResult();
-		// Prefix Walker finds only roots that are not part of another query
-		// physicalPO is in every case root of this query, so if not already
-		// found, add to plan
-		if (!plan.contains(physicalPO)) {
-			plan.add(physicalPO);
-		}
-		if (plan.isEmpty()) {
-			LoggerSystem
-					.printlog(
-							LOGGER_NAME,
-							Accuracy.WARN,
-							"Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
-		}
-		SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
-		LoggerSystem.printlog(
-				LOGGER_NAME,
-				Accuracy.TRACE,
-				"After transformation: \n"
-						+ physicalPlanPrinter.createString(physicalPO));
+		// // if top operator has been rename, renaming is lost -->
+		// setOutputSchema
+		// // of physicalPO to Schema in subscription
+		// if (logicalOp instanceof RenameAO) {
+		// physicalPO.setOutputSchema(logicalOp.getOutputSchema());
+		// }
 
-		logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
-		LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO, "Transformation of "
-				+ logicalOp + " finished");
+		for (IPhysicalOperator physicalPO : roots.values()) {
+			IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
+			AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new AbstractGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
+			walker.prefixWalkPhysical(physicalPO, visitor);
+			plan = visitor.getResult();
+			// Prefix Walker finds only roots that are not part of another query
+			// physicalPO is in every case root of this query, so if not already
+			// found, add to plan
+			if (!plan.contains(physicalPO)) {
+				plan.add(physicalPO);
+			}
+			if (plan.isEmpty()) {
+				LoggerSystem
+						.printlog(
+								LOGGER_NAME,
+								Accuracy.WARN,
+								"Plan is empty! If transformation was successful, it is possible that there are no root-operators!");
+			}
+			SimplePlanPrinter<IPhysicalOperator> physicalPlanPrinter = new SimplePlanPrinter<IPhysicalOperator>();
+			LoggerSystem.printlog(
+					LOGGER_NAME,
+					Accuracy.TRACE,
+					"After transformation: \n"
+							+ physicalPlanPrinter.createString(physicalPO));
+
+			logicalOp.unsubscribeSink(top, 0, 0, logicalOp.getOutputSchema());
+			LoggerSystem.printlog(LOGGER_NAME, Accuracy.INFO,
+					"Transformation of " + logicalOp + " finished");
+		}
 		return plan;
 	}
 

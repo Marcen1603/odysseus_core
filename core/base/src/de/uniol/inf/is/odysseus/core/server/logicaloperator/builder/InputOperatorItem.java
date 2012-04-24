@@ -24,4 +24,9 @@ public class InputOperatorItem {
 
 	public final ILogicalOperator operator;
 	public final int outputPort;
+	
+	@Override
+	public String toString() {
+		return operator+" ("+outputPort+")";
+	}
 }

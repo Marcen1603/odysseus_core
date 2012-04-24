@@ -55,12 +55,12 @@ public class StandardTransformationHelper implements ITransformationHelper{
 			physical.subscribeToSource(psub.getTarget(),
 					(ignoreSocketSinkPort?-1:psub.getSinkInPort()), psub.getSourceOutPort(),psub.getSchema());
 		}
-		for (LogicalSubscription l : logical.getSubscriptions()) {
-			ILogicalOperator target = l.getTarget();
-			if (target instanceof TopAO) {
-				((TopAO) target).setPhysicalInputPO(physical);
-			}
-		}
+//		for (LogicalSubscription l : logical.getSubscriptions()) {
+//			ILogicalOperator target = l.getTarget();
+//			if (target instanceof TopAO) {
+//				((TopAO) target).setPhysicalInputPO(physical);
+//			}
+//		}
 		ret.add(logical);
 		return ret;
 	}
