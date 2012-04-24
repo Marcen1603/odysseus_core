@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
-import de.uniol.inf.is.odysseus.core.server.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 /**
  * this class is not used any more and will be deleted soon

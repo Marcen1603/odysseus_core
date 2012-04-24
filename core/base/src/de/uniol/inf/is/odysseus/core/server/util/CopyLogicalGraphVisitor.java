@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 		IGraphNodeVisitor<T, T> {

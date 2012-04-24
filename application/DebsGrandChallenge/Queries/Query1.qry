@@ -31,7 +31,7 @@ s10 = RENAME({type='s10', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['bm10'],
 s58_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s05, s08))
 s58_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s05, s08))
 s58_t = UNION(s58_t1, s58_t2)
-s58 = RENAME({type='s58',aliases = ['ts', 'dt']}, MAP({expressions = ['toLong(ts2)','toLong(ts2-ts1)']}, s58_t))
+s58 = RENAME({type='s58',aliases = ['ts', 'dt']}, MAP({expressions = ['toLoNG(ts2)','toLong(ts2-ts1)']}, s58_t))
 
 /// Operator 8
 s69_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s06, s09))

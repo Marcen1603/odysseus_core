@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.util;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 /**
  * This visitor finds children of a physical plan

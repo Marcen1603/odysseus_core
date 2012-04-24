@@ -29,9 +29,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.FindQueryRootsVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;

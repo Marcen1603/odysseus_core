@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 /**
  * This visitor finds all roots of a physical plan

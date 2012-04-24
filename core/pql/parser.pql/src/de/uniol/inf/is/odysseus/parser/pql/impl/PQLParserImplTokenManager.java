@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SetOwnerGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 
 /** Token Manager. */
 @SuppressWarnings("all")

@@ -18,6 +18,7 @@ import java.util.List;
 
 import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 public class RemoveOwnersGraphVisitor<T extends IOwnedOperator> implements
 		IGraphNodeVisitor<T, T> {

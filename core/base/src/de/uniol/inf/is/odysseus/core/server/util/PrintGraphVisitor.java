@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.CloneableIdPair;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 public class PrintGraphVisitor<T extends IClone> implements IGraphNodeVisitor<T,String>{
 

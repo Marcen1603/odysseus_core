@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
 
 /**
