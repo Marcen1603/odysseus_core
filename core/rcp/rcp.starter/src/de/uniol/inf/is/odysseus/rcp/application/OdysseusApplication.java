@@ -53,9 +53,9 @@ public class OdysseusApplication implements IApplication {
 		try {
 
 			waitForExecutor();
-			if (!chooseWorkspace(display)) {
-				return IApplication.EXIT_OK;
-			}
+//			if (!chooseWorkspace(display)) {
+//				return IApplication.EXIT_OK;
+//			}
 
 			if (executor instanceof IClientExecutor) {
 				setClientConnection(display);
