@@ -153,95 +153,41 @@ public class MEP implements IExpressionParser {
 
 	public static void registerFunction(IFunction<?> function) {
 		String symbol = function.getSymbol();
-		if (functions.containsKey(symbol)) {
+		if (functions.containsKey(symbol.toUpperCase())) {
 			throw new IllegalArgumentException(
 					"multiple definition of function " + symbol);
 		}
 		//getLogger().debug("Register Function: " + function.getSymbol());
-		functions.put(symbol, function);
+		functions.put(symbol.toUpperCase(), function);
 	}
 
 	public static void unregisterFunction(String symbol) {
-		functions.remove(symbol);
+		functions.remove(symbol.toUpperCase());
 	}
 
 	public static boolean containsFunction(String symbol) {
-		return functions.containsKey(symbol);
+		return functions.containsKey(symbol.toUpperCase());
 	}
 
 	public static IFunction<?> getFunction(String symbol) {
 		try {
-			return functions.get(symbol).getClass().newInstance();
+			return functions.get(symbol.toUpperCase()).getClass().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-//	@Override
-//	public List<IFunction<?>> getFunctions() {
-//		List<IFunction<?>> funcs = new ArrayList<IFunction<?>>();
-//		funcs.add(new AndOperator());
-//		funcs.add(new OrOperator());
-//
-//		funcs.add(new EqualsOperator());
-//		funcs.add(new NotEqualsOperator());
-//
-//		funcs.add(new GreaterThanOperator());
-//		funcs.add(new SmallerThanOperator());
-//		funcs.add(new GreaterEqualsOperator());
-//		funcs.add(new SmallerEqualsOperator());
-//
-//		funcs.add(new PlusOperator());
-//		funcs.add(new MinusOperator());
-//
-//		funcs.add(new MultiplicationOperator());
-//		funcs.add(new DivisionOperator());
-//		funcs.add(new ModuloOperator());
-//
-//		funcs.add(new PowerOperator());
-//
-//		funcs.add(new NotOperator());
-//		funcs.add(new UnaryMinusOperator());
-//
-//		funcs.add(new AbsoluteFunction());
-//		funcs.add(new CeilFunction());
-//		funcs.add(new DoubleToLongFunction());
-//		funcs.add(new FloorFunction());
-//		funcs.add(new IfFunction());
-//		funcs.add(new SinusFunction());
-//		funcs.add(new CosinusFunction());
-//		funcs.add(new ToNumberFunction());
-//		funcs.add(new ToStringFunction());
-//		funcs.add(new RandomFunction());
-//
-//		funcs.add(new MatrixInvert());
-//		funcs.add(new MatrixAdd());
-//		funcs.add(new MatrixSub());
-//		funcs.add(new MatrixMult());
-//		funcs.add(new MatrixTranspose());
-//		funcs.add(new MatrixGetEntry());
-//		funcs.add(new GetAbsoluteValue());
-//		funcs.add(new SquareValue());
-//		funcs.add(new SqrtValue());
-//		
-////		funcs.add(new DolToEur());
-////		funcs.add(new Now());
-////		funcs.add(new Distance());
-////		funcs.add(new Polygon());
-//		
-//		return funcs;
-//	}
-	
+
 	public void addFunctionProvider(IFunctionProvider provider){
 		for(IFunction<?> f: provider.getFunctions()){
 			String symbol = f.getSymbol();
-			if (MEP.functions.containsKey(symbol)) {
+			if (MEP.functions.containsKey(symbol.toUpperCase())) {
 				throw new IllegalArgumentException(
 						"multiple definition of function " + symbol);
 			}
 			//System.out.println("################# FUNCTION ADDED: " + f.getSymbol());
 //			getLogger().debug("Add Function Provider: " + f.getSymbol());
-			functions.put(symbol, f);
+			functions.put(symbol.toUpperCase(), f);
 		}
 	}
 	
@@ -250,7 +196,7 @@ public class MEP implements IExpressionParser {
 		// of the same function (see addFunctionProvider).
 		for(IFunction<?> f: provider.getFunctions()){
 			getLogger().debug("Remove Function Provider: " + f.getSymbol());
-			MEP.functions.remove(f.getSymbol());
+			MEP.functions.remove(f.getSymbol().toUpperCase());
 		}
 	}
 
