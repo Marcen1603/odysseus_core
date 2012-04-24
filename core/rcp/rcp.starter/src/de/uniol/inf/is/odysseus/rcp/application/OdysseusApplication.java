@@ -53,9 +53,7 @@ public class OdysseusApplication implements IApplication {
 		try {
 
 			waitForExecutor();
-//			if (!chooseWorkspace(display)) {
-//				return IApplication.EXIT_OK;
-//			}
+			chooseWorkspace(display);
 
 			if (executor instanceof IClientExecutor) {
 				setClientConnection(display);
@@ -125,7 +123,10 @@ public class OdysseusApplication implements IApplication {
 
 	private static boolean chooseWorkspace(Display display) {
 		try {
-			URL url = new File(System.getProperty("user.home"), "workspace").toURI().toURL();
+			File file = new File(System.getProperty("user.home"), "workspace");
+			String path = file.getAbsolutePath().replace(File.separatorChar, '/');
+			
+			URL url = new URL("file", null, path); 
 			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
 
 			ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(display.getActiveShell(), data, true, true);
@@ -134,7 +135,7 @@ public class OdysseusApplication implements IApplication {
 			String workspaceSelection = data.getSelection();
 			if (workspaceSelection != null) {
 				data.writePersistedData();
-				setLocation(workspaceSelection);
+				releaseAndSetLocation(workspaceSelection);
 				return true;
 			}
 		} catch (Exception e) {
@@ -143,15 +144,14 @@ public class OdysseusApplication implements IApplication {
 		return false;
 	}
 
-	private static void setLocation(String selection) throws MalformedURLException, IOException {
-		URL url = new File(selection).toURI().toURL();
+	private static void releaseAndSetLocation(String selection) throws MalformedURLException, IOException {
 
 		Location instanceLoc = Platform.getInstanceLocation();
 		if (instanceLoc.isSet()) {
 			instanceLoc.release();
 		}
 
-		instanceLoc.set(url, false);
+		instanceLoc.set(new File(selection).toURI().toURL(), false);
 	}
 
 	private static void waitForExecutor() {
