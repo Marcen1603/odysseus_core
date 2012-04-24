@@ -14,6 +14,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.rcp.status,
  de.uniol.inf.is.odysseus.rcp.util,
  org.eclipse.ui.ide,
+ org.eclipse.ui.internal.ide,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/executor.xml

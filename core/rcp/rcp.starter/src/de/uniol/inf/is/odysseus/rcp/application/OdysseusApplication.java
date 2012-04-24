@@ -14,11 +14,20 @@
  */
 package de.uniol.inf.is.odysseus.rcp.application;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
+import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,52 +40,25 @@ import de.uniol.inf.is.odysseus.rcp.util.ConnectPreferencesManager;
 /**
  * This class controls all aspects of the application's execution
  */
+@SuppressWarnings("restriction")
 public class OdysseusApplication implements IApplication {
 
 	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);
 	private static IExecutor executor;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
-	 * IApplicationContext)
-	 */
 	@Override
 	public synchronized Object start(IApplicationContext context) {
 
-		/* An IApplication has another lifecycle than bundles and services of OSGi,
-		 * so that the application is not (absolutely) started after all services are
-		 * bound. See also "Die OSGi Service Platform", pages 407ff.  
-		 * Therefore, we need not wait until the executor is bound.
-		 */
-
-		// Preconditions.checkNotNull(executor, "No executor bound!");
-		// ServiceTracker tracker = new
-		// ServiceTracker(context.getBrandingBundle().getBundleContext(),
-		// IExecutor.class, null);
-
-		// Nothing should happen before this!
 		Display display = PlatformUI.createDisplay();
-		
-		while (executor == null) {
-			try {
-				wait(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
 		try {
+
+			waitForExecutor();
+			if (!chooseWorkspace(display)) {
+				return IApplication.EXIT_OK;
+			}
+
 			if (executor instanceof IClientExecutor) {
-				String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
-				String service = "WebserviceServerService";
-				String serviceNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/";
-				// TODO: Wo woll das sonst passieren?
-				ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
-				ConnectPreferencesManager.getInstance().setService(service);
-				ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
-				Connect.connectWindow(display, false, false);
+				setClientConnection(display);
 			}
 
 			Login.loginWindow(display, false, false);
@@ -87,18 +69,13 @@ public class OdysseusApplication implements IApplication {
 			}
 			return IApplication.EXIT_OK;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			LOG.error("Exception during running application", t);
 			return null;
 		} finally {
 			display.dispose();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
 	public void stop() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -132,6 +109,58 @@ public class OdysseusApplication implements IApplication {
 		} else {
 			LOG.error("Tried to unbound executor " + exec + " which is not bound here.");
 			LOG.error("Executor " + executor + " is bound.");
+		}
+	}
+
+	private static void setClientConnection(Display display) {
+		String wsdlLocation = "http://localhost:9669/odysseus?wsdl";
+		String service = "WebserviceServerService";
+		String serviceNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/";
+
+		ConnectPreferencesManager.getInstance().setWdslLocation(wsdlLocation);
+		ConnectPreferencesManager.getInstance().setService(service);
+		ConnectPreferencesManager.getInstance().setServiceNamespace(serviceNamespace);
+		Connect.connectWindow(display, false, false);
+	}
+
+	private static boolean chooseWorkspace(Display display) {
+		try {
+			URL url = new File(System.getProperty("user.home"), "workspace").toURI().toURL();
+			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
+
+			ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(display.getActiveShell(), data, true, true);
+			dialog.prompt(true);
+
+			String workspaceSelection = data.getSelection();
+			if (workspaceSelection != null) {
+				data.writePersistedData();
+				setLocation(workspaceSelection);
+				return true;
+			}
+		} catch (Exception e) {
+			LOG.error("Exception during choosing workspace", e);
+		}
+		return false;
+	}
+
+	private static void setLocation(String selection) throws MalformedURLException, IOException {
+		URL url = new File(selection).toURI().toURL();
+
+		Location instanceLoc = Platform.getInstanceLocation();
+		if (instanceLoc.isSet()) {
+			instanceLoc.release();
+		}
+
+		instanceLoc.set(url, false);
+	}
+
+	private static void waitForExecutor() {
+		while (executor == null) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
