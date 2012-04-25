@@ -29,16 +29,18 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 public class ViewSchema<T> {
 
-	private SDFSchema outputSchema;
-	private SDFMetaAttributeList metadataSchema;
-
+	final private SDFSchema outputSchema;
+	final private SDFMetaAttributeList metadataSchema;
+	final private int port;
+	
 	private List<IViewableAttribute> viewableAttributes = new ArrayList<IViewableAttribute>();
 
 	private List<IViewableAttribute> choosenAttributes = new ArrayList<IViewableAttribute>();
 
-	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema) {
+	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema, int port) {
 		this.outputSchema = outputSchema;
 		this.metadataSchema = metaSchema;
+		this.port = port;
 
 		init();
 	}
@@ -46,7 +48,7 @@ public class ViewSchema<T> {
 	private void init() {
 		int index = 0;
 		for (SDFAttribute a : this.outputSchema) {
-			IViewableAttribute attribute = new ViewableSDFAttribute(a, index);
+			IViewableAttribute attribute = new ViewableSDFAttribute(a, outputSchema.getURI(), index, port);
 			if (isAllowedDataType(attribute.getSDFDatatype())) {
 				viewableAttributes.add(attribute);
 			}
@@ -57,9 +59,9 @@ public class ViewSchema<T> {
 		for (SDFMetaAttribute m : this.metadataSchema) {
 			for (Method method : m.getMetaAttributeClass().getMethods()) {
 				if (!method.getName().endsWith("hashCode")) {
-					IViewableAttribute attribute = new ViewableMetaAttribute(m, method);
+					IViewableAttribute attribute = new ViewableMetaAttribute(m, method, port);
 					if (method.getParameterTypes().length == 0 && isAllowedDataType(attribute.getSDFDatatype())) {
-						viewableAttributes.add(new ViewableMetaAttribute(m, method));
+						viewableAttributes.add(new ViewableMetaAttribute(m, method, port));
 					}
 				}
 			}

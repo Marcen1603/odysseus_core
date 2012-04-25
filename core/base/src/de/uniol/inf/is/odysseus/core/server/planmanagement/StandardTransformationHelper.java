@@ -25,10 +25,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformationHelper;
 
 @SuppressWarnings({"unchecked","rawtypes"})
 public class StandardTransformationHelper implements ITransformationHelper{

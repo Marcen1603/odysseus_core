@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.ChartFactory;
@@ -48,14 +50,14 @@ public class PieChart extends AbstractChart<Double, IMetaAttribute> {
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {		
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, final int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {					
-					for(int i=0;i<getChoosenAttributes().size();i++){
+					for(int i=0;i<getChoosenAttributes(port).size();i++){
 						double value = tuple.get(i);						
-						dataset.setValue(getChoosenAttributes().get(i).getName(), value);																
+						dataset.setValue(getChoosenAttributes(port).get(i).getName(), value);																
 					}										
 				} catch (SWTException e) {								
 					dispose();
@@ -75,12 +77,9 @@ public class PieChart extends AbstractChart<Double, IMetaAttribute> {
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
-		if(selectAttributes.size()>0){
-			return null;
-		}
-		return "The number of choosen attributes should be at least one!";
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
-
 
 }

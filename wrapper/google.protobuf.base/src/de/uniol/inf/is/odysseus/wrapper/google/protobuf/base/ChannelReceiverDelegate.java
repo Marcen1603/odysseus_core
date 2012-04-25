@@ -32,7 +32,6 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
 	private ServerBootstrap bootstrap;
 	private Channel openChannel;
-	private int counter=0;
 
 	public ChannelReceiverDelegate(
 			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {

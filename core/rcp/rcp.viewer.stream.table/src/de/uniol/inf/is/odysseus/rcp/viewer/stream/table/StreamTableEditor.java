@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -91,8 +92,9 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		ISource<?>[] sources = editorInput.getStreamConnection().getSources().toArray(new ISource<?>[0]);
-		setSchema(sources[0].getOutputSchema());
+		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
+		// TODO: Adapt to multiple sources
+		setSchema(subs.get(0).getSchema());
 	}
 
 	@Override

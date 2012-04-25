@@ -14,7 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 
 /**
  * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig

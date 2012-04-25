@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Stephan Jansen
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn
 Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.sdf.schema,

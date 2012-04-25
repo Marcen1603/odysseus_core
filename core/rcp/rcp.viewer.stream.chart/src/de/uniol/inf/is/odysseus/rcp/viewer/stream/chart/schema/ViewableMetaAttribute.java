@@ -22,19 +22,20 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class ViewableMetaAttribute implements IViewableAttribute {
+public class ViewableMetaAttribute extends AbstractViewableAttribute {
 
-	public SDFMetaAttribute metaAttribute;
-	public Method method;
+	final public SDFMetaAttribute metaAttribute;
+	final public Method method;
 
-	public ViewableMetaAttribute(SDFMetaAttribute attribute, Method m) {
+	public ViewableMetaAttribute(SDFMetaAttribute attribute, Method m, int port) {
+		super(port);
 		this.metaAttribute = attribute;
 		this.method = m;
 	}
 
 	@Override
 	public String getName() {
-		return metaAttribute.getAttributeName() + "." + method.getName();
+		return metaAttribute.getAttributeName() + "." + method.getName()+"("+getPort()+")";
 	}
 
 	@Override
@@ -67,11 +68,6 @@ public class ViewableMetaAttribute implements IViewableAttribute {
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	@Override
-	public String toString() {
-		return getName();
 	}
 
 }

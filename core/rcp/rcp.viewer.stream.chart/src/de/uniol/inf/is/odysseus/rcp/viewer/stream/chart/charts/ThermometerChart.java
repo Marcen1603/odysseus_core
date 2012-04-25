@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
@@ -77,13 +79,11 @@ public class ThermometerChart extends AbstractChart<Double, IMetaAttribute> {
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
-		if (selectAttributes.size() == 1) {
-			return null;
-		}
-		return "The number of choosen attributes should be at least one!";
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
-
+	
 	@Override
 	protected void decorateChart(JFreeChart thechart) {
 

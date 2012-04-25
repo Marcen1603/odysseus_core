@@ -19,19 +19,23 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
-public class ViewableSDFAttribute implements IViewableAttribute{
+public class ViewableSDFAttribute extends AbstractViewableAttribute{
 
-	private SDFAttribute attribute;
-	private int index;
+	final private SDFAttribute attribute;
+	final private String typeName;
+	final private int index;
 	
-	public ViewableSDFAttribute(SDFAttribute attribute, int index){
+	
+	public ViewableSDFAttribute(SDFAttribute attribute, String typeName, int index, int port){
+		super(port);
 		this.attribute = attribute;
 		this.index = index;
+		this.typeName = typeName;
 	}
 
 	@Override
 	public String getName() {
-		return attribute.getAttributeName();
+		return typeName+"."+attribute.getAttributeName()+"("+getPort()+")";
 	}
 
 	@Override
@@ -43,14 +47,5 @@ public class ViewableSDFAttribute implements IViewableAttribute{
 	public Object evaluate(Tuple<? extends IMetaAttribute> tuple) {
 		return tuple.getAttribute(this.index);		
 	}
-	
-	@Override
-	public String toString() {
-		return getName();
-	}
-	
-	
-	
-	
 	
 }

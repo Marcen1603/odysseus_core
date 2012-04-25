@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -48,9 +50,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ImageLayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
-
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
@@ -154,9 +155,9 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		ISource<?>[] sources = editorInput.getStreamConnection().getSources()
-				.toArray(new ISource<?>[0]);
-		setSchema(sources[0].getOutputSchema());
+		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
+		// TODO: Adapt to multiple sources
+		setSchema(subs.get(0).getSchema());
 	}
 
 	@Override

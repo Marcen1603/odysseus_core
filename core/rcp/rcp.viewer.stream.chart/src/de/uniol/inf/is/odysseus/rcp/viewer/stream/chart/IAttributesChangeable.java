@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
@@ -26,8 +28,9 @@ public interface IAttributesChangeable<T> {
 	 * @param selectAttributes
 	 * @return
 	 */
-	public String isValidSelection(List<IViewableAttribute> selectAttributes);
-	public List<IViewableAttribute> getViewableAttributes();
-	public List<IViewableAttribute> getChoosenAttributes();
-	public void setChoosenAttributes(List<IViewableAttribute> choosenAttributes);	
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes);
+	public List<IViewableAttribute> getViewableAttributes(int port);
+	public List<IViewableAttribute> getChoosenAttributes(int port);
+	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes);
+	Set<Integer> getPorts();	
 }

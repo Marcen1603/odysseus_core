@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
@@ -42,14 +44,14 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Doub
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, int port) {		
+	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, final int port) {		
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
 
 					int i = 0;
-					for (IViewableAttribute a : getChoosenAttributes()) {
+					for (IViewableAttribute a : getChoosenAttributes(port)) {
 						double value = tuple.get(i);
 						recalcAxis(value);
 						dcds.addValue(value, a.getName(), metadata.getStart());
@@ -93,11 +95,9 @@ public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Doub
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
-		if (selectAttributes.size() > 0) {
-			return null;
-		}
-		return "The number of choosen attributes should be at least one!";
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 }

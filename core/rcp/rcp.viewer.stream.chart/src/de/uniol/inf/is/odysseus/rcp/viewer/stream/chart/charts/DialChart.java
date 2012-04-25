@@ -20,6 +20,8 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Point;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
@@ -66,13 +68,11 @@ public class DialChart extends AbstractChart<Double, IMetaAttribute> {
 		scale.setMajorTickIncrement(majorTickIncrement);
 		scale.setMinorTickCount(minorTickCount);
 	}
-
+	
 	@Override
-	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
-		if (selectAttributes.size() == 1) {
-			return null;
-		}
-		return "The number of choosen attributes should be at least one!";
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 	@Override

@@ -14,12 +14,14 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -36,24 +38,33 @@ public class StreamEditorInput implements IStreamEditorInput {
 	private String editorLabel;
 	private IPhysicalOperator operator;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel ) {
 		this.editorType = type;
 		this.editorTypeID = editorTypeID;
 		this.editorLabel = editorLabel;
 		this.operator = operator;
 		
-		// Datenstromquellen identifizieren
-		final Collection<ISource<?>> sources = new ArrayList<ISource<?>>();
-		if( operator instanceof ISource<?> ) {
-			sources.add( (ISource<?>)operator );
-		} else if( operator instanceof ISink<?> ) {
-			Collection<?> list = ((ISink<?>)operator).getSubscribedToSource();
-			for( Object obj : list ) 
-				sources.add( (ISource<?>)((PhysicalSubscription<?>)obj).getTarget() );
-		} else 
-			throw new IllegalArgumentException("could not identify type of content of node " + operator );
-		
-		connection = new DefaultStreamConnection<Object>(sources);
+		final List<ISubscription<ISource<?>>> subs = new LinkedList<ISubscription<ISource<?>>>();
+
+		if (operator instanceof ISource<?>) {
+			subs.add(new PhysicalSubscription<ISource<?>>(
+					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
+		} else if (operator instanceof ISink<?>) {
+			Collection<?> list = ((ISink<?>) operator).getSubscribedToSource();
+
+			for (Object obj : list) {
+				PhysicalSubscription<ISource<?>> sub = (PhysicalSubscription<ISource<?>>) obj;
+				subs.add(new PhysicalSubscription<ISource<?>>(sub.getTarget(),
+						sub.getSinkInPort(), sub.getSourceOutPort(), sub
+								.getSchema()));
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"could not identify type of content of node " + operator);
+		}
+
+		connection = new DefaultStreamConnection(subs);
 	}
 	
 	public String getEditorTypeID() {

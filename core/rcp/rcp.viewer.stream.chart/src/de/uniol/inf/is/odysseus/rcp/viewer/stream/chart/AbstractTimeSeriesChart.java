@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWTException;
 import org.jfree.chart.JFreeChart;
@@ -35,9 +36,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribut
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITimeInterval> {
+public abstract class AbstractTimeSeriesChart extends
+		AbstractChart<Double, ITimeInterval> {
 
-	protected Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
+	private Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
 
@@ -65,23 +67,29 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
 
+	private Integer choosenXValuePort;
+
 	@Override
 	public void chartSettingsChanged() {
 		series.clear();
 		this.dataset.removeAllSeries();
-		for (int i = 0; i < getChoosenAttributes().size(); i++) {
-			String name = getChoosenAttributes().get(i).getName();
-			TimeSeries serie = new TimeSeries(name);
-			serie.setMaximumItemCount(this.maxItems);
-			series.put(name, serie);
-			this.dataset.addSeries(serie);
+		for (Integer port : getPorts()) {
+			for (int i = 0; i < getChoosenAttributes(port).size(); i++) {
+				String name = getChoosenAttributes(port).get(i).getName();
+				TimeSeries serie = new TimeSeries(name);
+				serie.setMaximumItemCount(this.maxItems);
+				series.put(name, serie);
+				this.dataset.addSeries(serie);
+			}
 		}
 		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
 		if (domainAxis instanceof NumberAxis) {
-			NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
-			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
+			NumberAxis axis = (NumberAxis) getChart().getXYPlot()
+					.getDomainAxis();
+			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(
+					this.dateformat));
 		}
-		if(domainAxis instanceof DateAxis){
+		if (domainAxis instanceof DateAxis) {
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
 		}
@@ -98,15 +106,14 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 	}
 
 	@Override
-	public String isValidSelection(List<IViewableAttribute> selectAttributes) {
-		if (selectAttributes.size() > 0) {
-			return null;
-		}
-		return "The number of choosen attributes should be at least one!";
+	public String isValidSelection(
+			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple, final ITimeInterval metadata, int port) {
+	protected void processElement(final List<Double> tuple,
+			final ITimeInterval metadata, final int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -118,7 +125,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 
 						for (int i = 0; i < tuple.size(); i++) {
 							double value = tuple.get(i);
-							series.get(getChoosenAttributes().get(i).getName()).add(ms, value);
+							series.get(
+									getChoosenAttributes(port).get(i).getName())
+									.add(ms, value);
 							adjust(value);
 						}
 					} else {
@@ -126,7 +135,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 							double value = tuple.get(i);
 							long x = tuple.get(choosenXValue).longValue();
 							FixedMillisecond ms = new FixedMillisecond(x);
-							series.get(getChoosenAttributes().get(i).getName()).add(ms, value);
+							series.get(
+									getChoosenAttributes(port).get(i).getName())
+									.add(ms, value);
 							adjust(value);
 						}
 					}
@@ -159,8 +170,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 			min = value;
 		}
 		if (autoadjust) {
-			getChart().getXYPlot().getRangeAxis().setLowerBound(min * (1.0 - margin));
-			getChart().getXYPlot().getRangeAxis().setUpperBound(max * (1.0 + margin));
+			getChart().getXYPlot().getRangeAxis()
+					.setLowerBound(min * (1.0 - margin));
+			getChart().getXYPlot().getRangeAxis()
+					.setUpperBound(max * (1.0 + margin));
 		}
 
 	}
@@ -219,8 +232,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 	private List<String> getValues() {
 		List<String> values = new ArrayList<String>();
 		values.add(CURRENT_TIME);
-		for (IViewableAttribute a : getViewableAttributes()) {
-			values.add(a.getName());
+		for (Integer port : getPorts()) {
+			for (IViewableAttribute a : getViewableAttributes(port)) {
+				values.add(a.getName());
+			}
 		}
 
 		return values;
@@ -231,7 +246,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 		if (this.choosenXValue == -1) {
 			return CURRENT_TIME;
 		}
-		return getViewableAttributes().get(this.choosenXValue).getName();
+		return getViewableAttributes(choosenXValuePort).get(this.choosenXValue).getName();
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.SET)
@@ -240,31 +255,34 @@ public abstract class AbstractTimeSeriesChart extends AbstractChart<Double, ITim
 			this.choosenXValue = -1;
 			return;
 		}
-		for (int i = 0; i < getViewableAttributes().size(); i++) {
-			if (getViewableAttributes().get(i).getName().equals(value)) {
-				this.choosenXValue = i;
-				return;
+		for (Integer port : getPorts()) {
+			for (int i = 0; i < getViewableAttributes(port).size(); i++) {
+				if (getViewableAttributes(port).get(i).getName().equals(value)) {
+					this.choosenXValue = i;
+					this.choosenXValuePort = port;
+					return;
+				}
 			}
 		}
 	}
-	
+
 	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.SET)
-	public void setMin(Double min){
+	public void setMin(Double min) {
 		this.min = min;
 	}
+
 	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.GET)
-	public Double getMin(){
+	public Double getMin() {
 		return this.min;
 	}
-	
 
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.SET)
-	public void setMax(Double max){
+	public void setMax(Double max) {
 		this.max = max;
 	}
-	
+
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.GET)
-	public Double getMax(){
+	public Double getMax() {
 		return this.max;
 	}
 

@@ -23,4 +23,5 @@ public interface IViewableAttribute{
 	public String getName();
 	public SDFDatatype getSDFDatatype();
 	public Object evaluate(Tuple<? extends IMetaAttribute> tuple);
+	public int getPort();
 }

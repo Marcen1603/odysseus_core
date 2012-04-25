@@ -14,8 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.model.stream;
 
-import java.util.Collection;
+import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
 
@@ -33,6 +34,6 @@ public interface IStreamConnection<In> {
 	public void removeStreamElementListener( IStreamElementListener<In> listener );
 	public void notifyListeners( In element, int port );
 	
-	public Collection<ISource<? extends In>> getSources();
+	public List<ISubscription<? extends ISource<In>>> getSubscriptions();
 	
 }
