@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Java Topological Suite
-Bundle-SymbolicName: com.vividsolutions
+Bundle-SymbolicName: com.vividsolutions.jts
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,

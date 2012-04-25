@@ -30,9 +30,9 @@ Export-Package: de.uniol.inf.is.odysseus.spatial.grid,
  de.uniol.inf.is.odysseus.spatial.grid.common,
  de.uniol.inf.is.odysseus.spatial.grid.functions,
  de.uniol.inf.is.odysseus.spatial.grid.model
-Require-Bundle: java.topological.suite;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ com.vividsolutions.jts;bundle-version="1.0.0"
 Bundle-ClassPath: .,
  lib/javacpp.jar,
  lib/javacv.jar,

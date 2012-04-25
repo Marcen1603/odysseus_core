@@ -112,12 +112,6 @@
          unpack="false"/>
 
    <plugin
-         id="java.topological.suite"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="Commons.Math"
          download-size="0"
          install-size="0"
@@ -163,5 +157,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="com.vividsolutions.jts"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

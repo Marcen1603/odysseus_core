@@ -11,4 +11,4 @@ Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Service-Component: OSGI-INF/SickSourceAdapter.xml
-Require-Bundle: com.vividsolutions;bundle-version="1.0.0"
+Require-Bundle: com.vividsolutions.jts;bundle-version="1.0.0"

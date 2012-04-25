@@ -21,7 +21,6 @@
       <import plugin="de.uniol.inf.is.odysseus.core"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="org.junit"/>
-      <import plugin="java.topological.suite"/>
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
@@ -29,7 +28,7 @@
       <import plugin="Commons.Math"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="java.topological.suite" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.vividsolutions.jts"/>
    </requires>
 
    <plugin
