@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Spatial Test
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial.test;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Service-Component: OSGI-INF/component.xml
