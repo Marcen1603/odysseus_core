@@ -1,9 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Java Topological Suite
-Bundle-SymbolicName: java.topological.suite
+Bundle-SymbolicName: com.vividsolutions
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/jts-1.8.jar,
+ lib/jtsio-1.8.jar 
 Export-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.algorithm,
  com.vividsolutions.jts.geom,
@@ -18,6 +21,8 @@ Export-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.index.strtree,
  com.vividsolutions.jts.index.sweepline,
  com.vividsolutions.jts.io,
+ com.vividsolutions.jts.io.gml2,
+ com.vividsolutions.jts.io.oracle,
  com.vividsolutions.jts.linearref,
  com.vividsolutions.jts.noding,
  com.vividsolutions.jts.noding.snapround,
@@ -36,11 +41,4 @@ Export-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.planargraph.algorithm,
  com.vividsolutions.jts.precision,
  com.vividsolutions.jts.simplify,
- com.vividsolutions.jts.util,
- com.vividsolutions.jtsexample.geom,
- com.vividsolutions.jtsexample.linearref,
- com.vividsolutions.jtsexample.operation.distance,
- com.vividsolutions.jtsexample.operation.linemerge,
- com.vividsolutions.jtsexample.operation.polygonize,
- com.vividsolutions.jtsexample.precision,
- com.vividsolutions.jtsexample.technique
+ com.vividsolutions.jts.util
