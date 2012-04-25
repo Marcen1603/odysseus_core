@@ -22,8 +22,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider {
 	public Collection<? extends IQueryViewData> getData() {
 		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getClientExecutor();
 		
-		// TOOD: Getting logical queries here from executor
-		List<ILogicalQuery> logicalQueries = Lists.newArrayList();
+		List<ILogicalQuery> logicalQueries = getLogicalQueries(executor);
 		
 		return Lists.transform(logicalQueries, new Function<ILogicalQuery, IQueryViewData>() {
 			@Override
@@ -37,4 +36,14 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider {
 	public void dispose() {
 	}
 
+	private static List<ILogicalQuery> getLogicalQueries( IExecutor executor ) {
+		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds();
+		
+		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
+		for( Integer id : logicalQueryIds ) {
+			logicalQueries.add( executor.getLogicalQuery(id));
+		}
+		
+		return logicalQueries;
+	}
 }
