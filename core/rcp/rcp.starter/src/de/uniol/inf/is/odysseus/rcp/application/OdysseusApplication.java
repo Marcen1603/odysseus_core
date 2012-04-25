@@ -61,11 +61,8 @@ public class OdysseusApplication implements IApplication {
 
 			Login.loginWindow(display, false, false);
 
-			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-			if (returnCode == PlatformUI.RETURN_RESTART) {
-				return IApplication.EXIT_RESTART;
-			}
-			return IApplication.EXIT_OK;
+			return PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor()) 
+					== PlatformUI.RETURN_RESTART ? IApplication.EXIT_RESTART : IApplication.EXIT_OK; 
 		} catch (Throwable t) {
 			LOG.error("Exception during running application", t);
 			return null;
@@ -121,7 +118,7 @@ public class OdysseusApplication implements IApplication {
 		Connect.connectWindow(display, false, false);
 	}
 
-	private static boolean chooseWorkspace(Display display) {
+	private static void chooseWorkspace(Display display) {
 		try {
 			File file = new File(System.getProperty("user.home"), "workspace");
 			String path = file.getAbsolutePath().replace(File.separatorChar, '/');
@@ -136,12 +133,10 @@ public class OdysseusApplication implements IApplication {
 			if (workspaceSelection != null) {
 				data.writePersistedData();
 				releaseAndSetLocation(workspaceSelection);
-				return true;
 			}
 		} catch (Exception e) {
 			LOG.error("Exception during choosing workspace", e);
 		}
-		return false;
 	}
 
 	private static void releaseAndSetLocation(String selection) throws MalformedURLException, IOException {
