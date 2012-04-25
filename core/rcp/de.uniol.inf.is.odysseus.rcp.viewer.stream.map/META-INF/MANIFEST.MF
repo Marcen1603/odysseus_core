@@ -21,7 +21,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.uniol.inf.is.odysseus.rcp.viewer;bundle-version="1.0.0",
  java.topological.suite;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

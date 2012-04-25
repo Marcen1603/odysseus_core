@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
+
 import org.eclipse.swt.graphics.Image;
 
 
@@ -12,10 +11,6 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ImageStyle extends Style {
 
-	@Override
-	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
-	
-	}
 
 	@Override
 	public Image getImage() {

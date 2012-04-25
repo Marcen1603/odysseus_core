@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ImageLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
@@ -67,8 +68,9 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class StreamMapEditor implements IStreamEditorType {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(StreamMapEditor.class);
+
 	private static final Color WHITE = Display.getCurrent().getSystemColor(
 			SWT.COLOR_WHITE);
 	private static final Color BLACK = Display.getCurrent().getSystemColor(
@@ -78,12 +80,12 @@ public class StreamMapEditor implements IStreamEditorType {
 	private SDFSchema schema;
 
 	private LinkedList<Layer> layerOrder = new LinkedList<Layer>();
-	
+
 	private MapTransformation transformation = null;
 	private Rectangle rect = null;
-	
+
 	private int maxTuplesCount = 0;
-	
+
 	protected ImageLayer imageLayer = new ImageLayer("Background");
 	protected Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
@@ -98,20 +100,24 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	/**
 	 * 
-	 * Receives the stream elements. 
+	 * Receives the stream elements.
 	 * 
-	 * @param element - incoming streaming element
-	 * @param port - incoming port of the streaming element
+	 * @param element
+	 *            - incoming streaming element
+	 * @param port
+	 *            - incoming port of the streaming element
 	 * 
 	 * 
 	 * 
 	 */
 	/*
 	 * (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener#streamElementRecieved(java.lang.Object, int)
 	 * 
-	 * Start reading here! 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener
+	 * #streamElementRecieved(java.lang.Object, int)
 	 * 
+	 * Start reading here!
 	 */
 	@Override
 	public void streamElementRecieved(Object element, int port) {
@@ -123,7 +129,7 @@ public class StreamMapEditor implements IStreamEditorType {
 			spatialDataIndex.get(key).addGeometry(
 					(Geometry) ((Tuple<?>) element).getAttribute(key));
 		}
-		
+
 		tuples.add(0, (Tuple<?>) element);
 		if (tuples.size() > getMaxTuplesCount()) {
 			tuples.remove(tuples.size() - 1);
@@ -131,7 +137,7 @@ public class StreamMapEditor implements IStreamEditorType {
 				layer.removeLast();
 			}
 		}
-		
+
 		if (update == null && hasCanvasViewer()
 				&& !getCanvasViewer().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay()
@@ -176,9 +182,9 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
-		
+
 	}
-	
+
 	public final SDFSchema getSchema() {
 		return schema;
 	}
@@ -297,53 +303,73 @@ public class StreamMapEditor implements IStreamEditorType {
 	}
 
 	private void setCanvasViewer(Canvas viewer) {
-		if(viewer != null){
-			this.viewer = viewer; 	
-		}
-		else{
+		if (viewer != null) {
+			this.viewer = viewer;
+		} else {
 			LOG.error("Canvas Viewer is null.");
 		}
 	}
 
 	/**
 	 * 
-	 * The setSchema method 
+	 * The setSchema method
 	 * 
-	 * @param schema - the streaming schema
+	 * @param schema
+	 *            - the streaming schema
 	 */
 	private void setSchema(SDFSchema schema) {
-			this.schema = schema;	
-			for (int i = 0; i < schema.size(); i++) {
-				if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
-					SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema
-							.getAttribute(i).getDatatype();
+		this.schema = schema;
+		for (int i = 0; i < schema.size(); i++) {
+			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
+				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema
+						.getAttribute(i).getDatatype();
 
-					Style style = null;
-					if (spatialDatatype.isPoint()) {
-						style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, ColorManager.getInstance().randomColor());
-					} else if (spatialDatatype.isLineString()) {
-						style = new LineStyle(1, ColorManager.getInstance().randomColor());
-					} else if (spatialDatatype.isPolygon()) {
-						style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
-					}
-					
-					if (style != null) {
-						VectorLayer layer = new VectorLayer(transformation, schema.getAttribute(i), style);
-						spatialDataIndex.put(i,layer);
-						layerOrder.add(layer);
-					} else {
-						throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
-					}
-
+				Style style = null;
+				if (spatialDatatype.isPoint()) {
+					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,
+							BLACK, ColorManager.getInstance().randomColor());
+				} else if (spatialDatatype.isLineString()) {
+					style = new LineStyle(1, ColorManager.getInstance()
+							.randomColor());
+				} else if (spatialDatatype.isPolygon()) {
+					style = new PolygonStyle(1, ColorManager.getInstance()
+							.randomColor(), null);
+				} else if (spatialDatatype.isMultiPoint()) {
+					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, BLACK, ColorManager.getInstance().randomColor()));
+				} else if (spatialDatatype.isMultiLineString()) {
+					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
+				} else if (spatialDatatype.isMultiPolygon()) {
+					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
+				} else if (spatialDatatype.isGeometryCollection()) {
+					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, BLACK, ColorManager.getInstance().randomColor()));
+					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
+					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
 				}
+				
+				if (style != null) {
+					VectorLayer layer = new VectorLayer(transformation,
+							schema.getAttribute(i), style);
+					spatialDataIndex.put(i, layer);
+					layerOrder.add(layer);
+				} else {
+					throw new RuntimeException(
+							"Style for Spatialtype is not available or not implemented!");
+				}
+
 			}
+		}
 	}
 
 	/*
 	 * Maybe it is better to return a SDFSchema
 	 */
 	@Deprecated
-	public Map<Integer, VectorLayer> computeSpatialOutputSchema(SDFSchema inputSchema){
+	public Map<Integer, VectorLayer> computeSpatialOutputSchema(
+			SDFSchema inputSchema) {
 		Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 		for (int i = 0; i < schema.size(); i++) {
 			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
@@ -352,24 +378,29 @@ public class StreamMapEditor implements IStreamEditorType {
 
 				Style style = null;
 				if (spatialDatatype.isPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,BLACK, ColorManager.getInstance().randomColor());
+					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,
+							BLACK, ColorManager.getInstance().randomColor());
 				} else if (spatialDatatype.isLineString()) {
-					style = new LineStyle(1, ColorManager.getInstance().randomColor());
+					style = new LineStyle(1, ColorManager.getInstance()
+							.randomColor());
 				} else if (spatialDatatype.isPolygon()) {
-					style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
+					style = new PolygonStyle(1, ColorManager.getInstance()
+							.randomColor(), null);
 				}
-				
+
 				if (style != null) {
-					spatialDataIndex.put(i,new VectorLayer(transformation, schema.getAttribute(i), style));
+					spatialDataIndex.put(i, new VectorLayer(transformation,
+							schema.getAttribute(i), style));
 				} else {
-					throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
+					throw new RuntimeException(
+							"Style for Spatialtype is not available or not implemented!");
 				}
 
 			}
 		}
 		return spatialDataIndex;
 	}
-	
+
 	private void setMaxTuplesCount(int maxTuples) {
 		if (maxTuples > 0)
 			this.maxTuplesCount = maxTuples;
@@ -379,7 +410,7 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void initToolbar(ToolBar toolbar) {
-		
+
 	}
 
 	public Rectangle getRect() {
@@ -398,5 +429,4 @@ public class StreamMapEditor implements IStreamEditorType {
 		this.layerOrder = layerOrder;
 	}
 
-	
 }

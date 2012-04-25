@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -23,40 +22,18 @@ import org.eclipse.swt.graphics.Image;
  * @author Kai Pancratz
  * 
  */
-public class LineStyle extends Style {
+public class CollectionStyle extends Style{
 
-	public LineStyle(int linewidth, Color lineColor) {
-		super();
-		this.setLineWidth(linewidth);
+	public CollectionStyle(int lineWidth, Color lineColor, Color fillColor) {
+		super(); 
+		this.setLineWidth(lineWidth);
 		this.setLineColor(lineColor);
-		this.setFillColor(null);
+		this.setFillColor(fillColor);
 	}
-
-	@Override
-	public void draw(GC gc, int[] list) {
-		draw(gc, list,  getLineColor(), getFillColor());
-	}
-
-	//@Override
-	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
-		gc.setLineWidth(this.getLineWidth());
-		Color tmp = gc.getForeground();
-		gc.setForeground(fcolor);
-		gc.drawPolyline(list);
-		gc.setForeground(tmp);
-		super.draw(gc, list);
-	}
-
+	
 	@Override
 	public Image getImage() {
-		int width = getLineWidth();
-		int[] list = {
-				width, DEFAULT_HEIGHT/2, 
-				DEFAULT_WIDTH/2, width, 
-				DEFAULT_WIDTH/2, DEFAULT_HEIGHT-width, 
-				DEFAULT_WIDTH-width, DEFAULT_HEIGHT/2
-				};
-		return getImage(list);
+		return null;
 	}
 
 }

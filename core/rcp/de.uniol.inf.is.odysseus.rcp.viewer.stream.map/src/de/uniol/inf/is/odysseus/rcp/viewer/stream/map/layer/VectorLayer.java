@@ -100,7 +100,7 @@ public class VectorLayer implements Layer{
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
-		this.style.draw(gc, path);
+			this.style.draw(gc, path);	
 	}
 
 	private int[] drawLinearRing(LineString lineString, GC gc) {

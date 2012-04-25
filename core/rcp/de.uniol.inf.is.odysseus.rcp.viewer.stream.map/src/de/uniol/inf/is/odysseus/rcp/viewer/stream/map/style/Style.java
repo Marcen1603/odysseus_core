@@ -101,16 +101,19 @@ public abstract class Style{
 		}
 	}
 	
-	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
+	//abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
+	
 	abstract public Image getImage();
+	
 	protected final static int DEFAULT_WIDTH = 20;
-    protected final static int DEFAULT_HEIGHT = 20;
+    
+	protected final static int DEFAULT_HEIGHT = 20;
     
 	public Image getImage(int[] list){
 		if (!changed)
 			return ColorManager.getInstance().getImage(this);
 		Display display = Display.getCurrent();
-	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
+//	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
 	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
 //		ImageData ideaData = new ImageData(size, size, 32, new PaletteData(0,0,0));
 //		ideaData.alpha = 0;
@@ -128,7 +131,8 @@ public abstract class Style{
 	    gc = new GC(mask);
 	    gc.setBackground(black);
 	    gc.fillRectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	    draw(gc, list, white, white);
+	   // draw(gc, list, white, white);
+	    draw(gc, list);
 	    gc.dispose();
 	    maskData = mask.getImageData();
 

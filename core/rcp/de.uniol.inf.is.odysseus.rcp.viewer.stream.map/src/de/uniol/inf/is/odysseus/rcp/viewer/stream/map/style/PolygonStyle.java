@@ -57,7 +57,8 @@ public class PolygonStyle extends Style{
 	public void draw(GC gc, int[] list) {
 		draw(gc, list, getLineColor(), getFillColor());
 	}
-	@Override
+	
+	//@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
 		Color tmp = gc.getForeground();
 		gc.setForeground(fcolor);

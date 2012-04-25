@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
@@ -65,9 +64,9 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 				
 				if(this.metadata.getEnd().after(metadata.getStart())){
 					tuples.clear();
-					for (Layer layer : spatialDataIndex.values()) {
-						//layer.clean();
-					}
+//					for (Layer layer : spatialDataIndex.values()) {
+//						//layer.clean();
+//					}
 					this.metadata = metadata;
 				}
 			}
