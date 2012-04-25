@@ -37,12 +37,14 @@ s1_windowed = WINDOW({SIZE=${SixtySeconds}, SLIDE=${SixtySeconds}, type='time'},
 
 /// Operator 5
 s1_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf01','avgmf01'],['LAST','ts','ts','long']]},s1_windowed)
-s5 = RENAME({aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf01^(1/3))']}, s1_windowed_last))
+s5 = RENAME({type='s5',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf01^(1/3))']}, s1_windowed_last))
 
 /// Operator 6
 s2_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf02','avgmf02'],['LAST','ts','ts','long']]},s1_windowed)
-s6 = RENAME({aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf02^(1/3))']}, s2_windowed_last))
+s6 = RENAME({type='s6',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf02^(1/3))']}, s2_windowed_last))
 
 /// Operator 7
 s3_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf03','avgmf03'],['LAST','ts','ts','long']]},s1_windowed)
-s7 = RENAME({aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf03^(1/3))']}, s3_windowed_last))
+s7 = RENAME({type='s7',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf03^(1/3))']}, s3_windowed_last))
+
+sink = SINK(s5,s6,s7)
