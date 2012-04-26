@@ -14,20 +14,23 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -47,7 +50,8 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
     
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		Display.findDisplay(Thread.currentThread()).asyncExec(new Runnable() {
+		
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
             public void run() {
 				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
@@ -61,10 +65,13 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 					    IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
 					    if( executor instanceof IServerExecutor ) {
 					        IServerExecutor serverExecutor = (IServerExecutor)executor;
-					        openGraphEditor(page, serverExecutor.getExecutionPlan().getQuery(queryID));
+					        IPhysicalQuery query = serverExecutor.getExecutionPlan().getQuery(queryID);
+					        openGraphEditor(page, query);
 					    } else {
 					        LOG.error("Could not show physical graphs outside server.");
 					    }
+					} else {
+						LOG.error("Selection of type " + selection.getClass() + " is not supported for graph presentation.");
 					}
 				}
 			}
@@ -75,13 +82,17 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 	}
 	
 	private static void openGraphEditor(IWorkbenchPage page, IPhysicalQuery query) {
-        List<IPhysicalOperator> graph = query.getRoots();
+        List<IPhysicalOperator> sinkOps = query.getRoots();
+        Preconditions.checkNotNull(sinkOps, "Query provides null as roots!");
+        Preconditions.checkArgument(!sinkOps.isEmpty(), "Query to show graph has no roots!");
 
-        List<ISink<?>> sinks = new ArrayList<ISink<?>>();
-        for( IPhysicalOperator op : graph ) {
-        	sinks.add((ISink<?>)op);
-        }
-        
+        List<ISink<?>> sinks = Lists.transform(sinkOps, new Function<IPhysicalOperator, ISink<?>>() {
+			@Override
+			public ISink<?> apply(IPhysicalOperator operator) {
+				return (ISink<?>)operator;
+			}
+        });
+
         IModelProvider<IPhysicalOperator> provider = null;
         if( sinks.size() == 1 ) {
         	provider = new OdysseusModelProviderSinkOneWay(sinks.get(0), query);
@@ -95,7 +106,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
             page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
 
         } catch (PartInitException ex) {
-            System.out.println(ex.getStackTrace());
+        	LOG.error("Exception during opening graph editor for query " + query.getID(), ex);
         }
 	}
 
