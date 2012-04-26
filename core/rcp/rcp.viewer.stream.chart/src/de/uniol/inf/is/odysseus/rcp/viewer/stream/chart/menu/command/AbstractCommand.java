@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
@@ -37,12 +37,12 @@ public abstract class AbstractCommand extends AbstractHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 	
-	public AbstractChart<?,?> openView(AbstractChart<?,?> createView, IPhysicalOperator observingOperator) {
+	public AbstractJFreeChart<?,?> openView(AbstractJFreeChart<?,?> createView, IPhysicalOperator observingOperator) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
 			String secondaryIdentifierPrefix = observingOperator.getClass().getCanonicalName()+observingOperator.getClass().hashCode();
-			String secondaryIdentifier = AbstractChart.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
-			AbstractChart<?,?> view = (AbstractChart<?,?>)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
+			String secondaryIdentifier = AbstractJFreeChart.getUniqueSecondIdentifier(secondaryIdentifierPrefix);
+			AbstractJFreeChart<?,?> view = (AbstractJFreeChart<?,?>)activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);			
 			view.initWithOperator(observingOperator);
 			return view;
 		} catch (Exception e) {

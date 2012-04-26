@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
 public abstract class AbstractXYChart extends
-		AbstractChart<Double, IMetaAttribute> {
+		AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	private int choosenXValue;

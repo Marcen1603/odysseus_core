@@ -26,12 +26,12 @@ import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.data.general.DefaultValueDataset;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public class ThermometerChart extends AbstractChart<Double, IMetaAttribute> {
+public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	DefaultValueDataset dataset = new DefaultValueDataset(new Double(0));
 	private int selectedValue;

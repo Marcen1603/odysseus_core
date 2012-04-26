@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart;
@@ -169,7 +169,7 @@ public class CreateChartPage extends AbstractWizardPage<OutputWizard> {
 		}
 	}
 	
-	private void setView(AbstractChart<?,?> chart){
+	private void setView(AbstractJFreeChart<?,?> chart){
 		getWizard().getOutputModel().setViewPart(chart);
 	}	
 

@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.ScriptExecutor;
 import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizard;
 import de.uniol.inf.is.odysseus.rcp.wizard.AbstractWizardPage;
@@ -119,8 +119,8 @@ public class OutputWizard extends AbstractWizard {
 	
 	@Override
 	public boolean performFinish() {
-		if (outputModel.getViewPart() instanceof AbstractChart<?, ?>) {
-			AbstractChart<?, ?> chart = (AbstractChart<?, ?>) outputModel.getViewPart();			
+		if (outputModel.getViewPart() instanceof AbstractJFreeChart<?, ?>) {
+			AbstractJFreeChart<?, ?> chart = (AbstractJFreeChart<?, ?>) outputModel.getViewPart();			
 //			List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(outputModel.getQueryFile());
 //			if(sources.size()<1){
 //				MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR);
@@ -137,11 +137,11 @@ public class OutputWizard extends AbstractWizard {
 		return false;
 	}
 
-	public AbstractChart<?, ?> openView(AbstractChart<?, ?> createView) {
+	public AbstractJFreeChart<?, ?> openView(AbstractJFreeChart<?, ?> createView) {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {			
-			String secondaryIdentifier = AbstractChart.getUniqueSecondIdentifier(createView.getViewID());
-			AbstractChart<?, ?> view = (AbstractChart<?, ?>) activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);
+			String secondaryIdentifier = AbstractJFreeChart.getUniqueSecondIdentifier(createView.getViewID());
+			AbstractJFreeChart<?, ?> view = (AbstractJFreeChart<?, ?>) activePage.showView(createView.getViewID(), secondaryIdentifier, IWorkbenchPage.VIEW_ACTIVATE);
 			List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.outputModel.getQueryFile());
 			view.setFileName(this.outputModel.getQueryFile());
 			view.initWithOperator(sources.get(0));

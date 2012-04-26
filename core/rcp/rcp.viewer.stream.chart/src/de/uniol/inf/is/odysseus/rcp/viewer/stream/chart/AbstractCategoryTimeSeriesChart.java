@@ -29,7 +29,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public abstract class AbstractCategoryTimeSeriesChart extends AbstractChart<Double, ITimeInterval> {
+public abstract class AbstractCategoryTimeSeriesChart extends AbstractJFreeChart<Double, ITimeInterval> {
 
 	private DefaultCategoryDataset dcds = new DefaultCategoryDataset();
 

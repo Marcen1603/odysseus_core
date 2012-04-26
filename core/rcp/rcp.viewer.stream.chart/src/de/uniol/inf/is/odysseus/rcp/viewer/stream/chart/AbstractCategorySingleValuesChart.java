@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
 public abstract class AbstractCategorySingleValuesChart extends
-		AbstractChart<Double, IMetaAttribute> {
+		AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private DefaultCategoryDataset dcds = new DefaultCategoryDataset();
 

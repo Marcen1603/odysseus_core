@@ -25,10 +25,10 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
-public class PieChart extends AbstractChart<Double, IMetaAttribute> {
+public class PieChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	DefaultPieDataset dataset = new DefaultPieDataset();
 

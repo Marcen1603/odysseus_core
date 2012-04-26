@@ -36,7 +36,7 @@ import org.jfree.ui.GradientPaintTransformType;
 import org.jfree.ui.StandardGradientPaintTransformer;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
  * 
  * @author Dennis Geesen Created at: 24.04.2012
  */
-public class DialChart extends AbstractChart<Double, IMetaAttribute> {
+public class DialChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private DefaultValueDataset dataset = new DefaultValueDataset();
 	private int selectedValue = 0;

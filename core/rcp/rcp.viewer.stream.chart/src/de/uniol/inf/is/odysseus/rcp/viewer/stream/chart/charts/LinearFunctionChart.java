@@ -27,14 +27,14 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 
 /**
  * 
  * @author Dennis Geesen Created at: 18.04.2012
  */
-public class LinearFunctionChart extends AbstractChart<Double, IMetaAttribute> {
+public class LinearFunctionChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	private int choosenXValue = 0;

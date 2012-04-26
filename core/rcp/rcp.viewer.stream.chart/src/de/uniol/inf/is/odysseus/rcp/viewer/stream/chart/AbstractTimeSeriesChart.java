@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
 public abstract class AbstractTimeSeriesChart extends
-		AbstractChart<Double, ITimeInterval> {
+		AbstractJFreeChart<Double, ITimeInterval> {
 
 	private Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
 
