@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.test.t">
+   <implementation class="de.uniol.inf.is.odysseus.test.TupleTestComponent"/>
+   <reference bind="bindScriptParser" cardinality="1..1" interface="de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser" name="IOdysseusScriptParser" policy="static" unbind="unbindScriptParser"/>
+</scr:component>
