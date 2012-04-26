@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -23,11 +24,13 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -9042464546094886480L;
 	private SDFSchema attributes;
 	private int rate;
+	private boolean deliverFirstElement = false;
 
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
 		attributes = po.attributes;
 		this.rate = po.rate;
+		this.deliverFirstElement = po.deliverFirstElement;
 	}
 
 	public ChangeDetectAO() {
@@ -41,7 +44,8 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public SDFSchema getAttributes() {
 		return attributes;
 	}
-
+	
+	
 	@Parameter(type = IntegerParameter.class, name = "heartbeatrate")
 	public void setHeartbeatRate(int rate){
 		this.rate = rate;
@@ -51,6 +55,14 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return rate;
 	}
 
+	public boolean isDeliverFirstElement() {
+		return deliverFirstElement;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "deliverFirstElement", optional = true)
+	public void setDeliverFirstElement(boolean deliverFirstElement) {
+		this.deliverFirstElement = deliverFirstElement;
+	}
 
 	@Override
 	public AbstractLogicalOperator clone() {

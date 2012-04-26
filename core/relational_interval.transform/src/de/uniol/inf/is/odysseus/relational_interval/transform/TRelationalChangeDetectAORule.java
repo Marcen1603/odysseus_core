@@ -27,6 +27,7 @@ public class TRelationalChangeDetectAORule extends
 			po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					operator.getHeartbeatRate()));
 		}
+		po.setDeliverFirstElement(operator.isDeliverFirstElement());
 		replace(operator, po, config);
 		retract(operator);
 	}

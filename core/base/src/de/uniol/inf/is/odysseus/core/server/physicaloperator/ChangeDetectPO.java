@@ -16,7 +16,8 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 
 	R lastElement;
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
-
+	private boolean deliverFirstElement = false;
+	
 	public ChangeDetectPO() {
 	}
 
@@ -33,6 +34,9 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	protected synchronized void process_next(R object, int port) {
 		if (lastElement == null) {
 			lastElement = object;
+			if (deliverFirstElement){
+				transfer(object);
+			}
 		} else {
 			if (object != null && areDifferent(object, lastElement)) {
 				lastElement = object;
@@ -70,6 +74,10 @@ public class ChangeDetectPO<R> extends AbstractPipe<R, R> {
 	public void setHeartbeatGenerationStrategy(
 			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
+	}
+	
+	public void setDeliverFirstElement(boolean deliverFirstElement) {
+		this.deliverFirstElement = deliverFirstElement;
 	}
 
 }
