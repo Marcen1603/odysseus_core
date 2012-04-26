@@ -5,8 +5,8 @@ Bundle-SymbolicName: com.vividsolutions.jts
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
- lib/jts-1.8.jar,
- lib/jtsio-1.8.jar 
+ lib/jts-1.12.jar,
+ lib/jtsio-1.12.jar
 Export-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.algorithm,
  com.vividsolutions.jts.geom,
