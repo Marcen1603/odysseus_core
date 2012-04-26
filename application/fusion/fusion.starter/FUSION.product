@@ -18,12 +18,14 @@ http://odysseus.offis.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl}-clean</programArgs>
+      <programArgs>-console -debug -nl ${target.nl} -clean -data @noDefault</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
 
+   <splash
+      location="de.uniol.inf.is.odysseus.fusion.starter" />
    <launcher name="Fusion">
       <solaris/>
       <win useIco="false">
