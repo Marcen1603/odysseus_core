@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializable;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -134,7 +134,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * Add a new physical subscription to an ISource
 	 * @param sub the subscription to add
 	 */
-	public void setPhysSubscriptionTo(Subscription<ISource<?>> sub);
+	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> sub);
 	/**
 	 * Creates a new physical subscription
 	 * @param op The operator that should be registered as source
@@ -142,7 +142,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * @param sourceOutPort The output port of the op to connect
 	 * @param schema The data schema of the data that is transfered over this subscription
 	 */
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	
 	/**
 	 * Removes all subscriptions
@@ -154,16 +154,16 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * @param inputPort the input port  
 	 * @return the physical subscription of the inputPort
 	 */
-	public Subscription<ISource<?>> getPhysSubscriptionTo(int inputPort);
+	public Subscription<IPhysicalOperator> getPhysSubscriptionTo(int inputPort);
 	
 	/**
 	 * Get the collection of all physical subscriptions
 	 * @return
 	 */
-	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo();
+	public Collection<Subscription<IPhysicalOperator>> getPhysSubscriptionsTo();
 	
 	// Currently needed for Transformation --> we should get rid of this!
-	public Collection<ISource<?>> getPhysInputPOs();
+	public Collection<IPhysicalOperator> getPhysInputPOs();
 		
 	/**
 	 * Create a copy of this logical operator.
@@ -172,4 +172,3 @@ public interface ILogicalOperator extends IOwnedOperator,
 	public ILogicalOperator clone();
 
 }
-

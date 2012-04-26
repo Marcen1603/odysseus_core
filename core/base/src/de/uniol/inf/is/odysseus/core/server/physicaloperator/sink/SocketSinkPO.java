@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -38,13 +39,16 @@ public class SocketSinkPO extends AbstractSink<Object> {
 			throw new IllegalArgumentException("ObjectHandler cannot be null!");
 		}
 		this.objectHandler = objectHandler;
-		listener.start();
 	}
 	
 	public SocketSinkPO(SocketSinkPO socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
 	}
 
+	@Override
+	protected void process_open() throws OpenFailedException {
+		listener.start();
+	}
 	
 	@Override
 	protected void process_next(Object object, int port, boolean isReadOnly) {

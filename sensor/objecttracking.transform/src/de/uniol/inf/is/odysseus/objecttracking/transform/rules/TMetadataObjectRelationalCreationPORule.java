@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -86,7 +87,7 @@ public class TMetadataObjectRelationalCreationPORule extends AbstractTransformat
 		}
 		
 		for(ILogicalOperator op : (List<ILogicalOperator>)logicalOps) {
-			for (Subscription<ISource<?>> psub : op.getPhysSubscriptionsTo()) {
+			for (Subscription<IPhysicalOperator> psub : op.getPhysSubscriptionsTo()) {
 					if (psub.getTarget() == operator){
 						op.setPhysSubscriptionTo(po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
 						update(op);

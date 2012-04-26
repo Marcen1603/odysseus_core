@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializePropert
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyItem;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializePropertyList;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -57,13 +57,13 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	protected boolean recalcOutputSchemata = false;
 
-	private Map<Integer, Subscription<ISource<?>>> physSubscriptionTo = new HashMap<Integer, Subscription<ISource<?>>>();
+	private Map<Integer, Subscription<IPhysicalOperator>> physSubscriptionTo = new HashMap<Integer, Subscription<IPhysicalOperator>>();
 	// cache access to bounded physOperators
-	private Map<Integer, ISource<?>> physInputOperators = new HashMap<Integer, ISource<?>>();
+	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();
 
 	transient private List<Exception> errors = new ArrayList<Exception>();
 
-	public Map<Integer, ISource<?>> getPhysInputOperators() {
+	public Map<Integer, IPhysicalOperator> getPhysInputOperators() {
 		return physInputOperators;
 	}
 
@@ -223,26 +223,26 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void setPhysSubscriptionTo(Subscription<ISource<?>> subscription) {
+	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
 		this.physInputOperators.put(subscription.getSinkInPort(),
 				subscription.getTarget());
 	}
 
 	@Override
-	public void setPhysSubscriptionTo(ISource<?> op, int sinkInPort,
+	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		setPhysSubscriptionTo(new Subscription<ISource<?>>(op, sinkInPort,
+		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op, sinkInPort,
 				sourceOutPort, schema));
 	}
 
 	@Override
-	public Collection<Subscription<ISource<?>>> getPhysSubscriptionsTo() {
+	public Collection<Subscription<IPhysicalOperator>> getPhysSubscriptionsTo() {
 		return physSubscriptionTo.values();
 	}
 
 	@Override
-	public Collection<ISource<?>> getPhysInputPOs() {
+	public Collection<IPhysicalOperator> getPhysInputPOs() {
 		return physInputOperators.values();
 	}
 
@@ -254,7 +254,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * #getPhysInputPO (int)
 	 */
 	@Override
-	public Subscription<ISource<?>> getPhysSubscriptionTo(int port) {
+	public Subscription<IPhysicalOperator> getPhysSubscriptionTo(int port) {
 		return this.physSubscriptionTo.get(port);
 	}
 

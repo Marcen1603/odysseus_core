@@ -89,8 +89,8 @@ public class TransformationExecutor implements ITransformation {
 		LoggerSystem.printlog(LOGGER_NAME, Accuracy.TRACE,
 				"Processing rules done.");
 
-		Map<Integer, ISource<?>> roots = top.getPhysInputOperators();
-		if (roots == null) {
+		Map<Integer, IPhysicalOperator> roots = top.getPhysInputOperators();
+		if (roots == null || roots.size() == 0) {
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,
 					"PhysicalInput of TopAO is null!");
 			LoggerSystem.printlog(LOGGER_NAME, Accuracy.WARN,

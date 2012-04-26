@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -48,7 +48,7 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getTarget();
 	}
 	
-	public Subscription<ISource<?>> getPhysSubscriptionTo() {
+	public Subscription<IPhysicalOperator> getPhysSubscriptionTo() {
 		return getPhysSubscriptionTo(PORTNUMBER);
 	}
 	

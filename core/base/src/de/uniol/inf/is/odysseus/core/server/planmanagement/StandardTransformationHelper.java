@@ -21,10 +21,12 @@ import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
@@ -49,16 +51,16 @@ public class StandardTransformationHelper implements ITransformationHelper{
 			ILogicalOperator logical, ISink physical, boolean ignoreSocketSinkPort) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
-		for (Subscription<ISource<?>> psub : logical.getPhysSubscriptionsTo()) {
+		for (Subscription<IPhysicalOperator> psub : logical.getPhysSubscriptionsTo()) {
 			physical.subscribeToSource(psub.getTarget(),
 					(ignoreSocketSinkPort?-1:psub.getSinkInPort()), psub.getSourceOutPort(),psub.getSchema());
 		}
-//		for (LogicalSubscription l : logical.getSubscriptions()) {
-//			ILogicalOperator target = l.getTarget();
-//			if (target instanceof TopAO) {
-//				((TopAO) target).setPhysicalInputPO(physical);
-//			}
-//		}
+		for (LogicalSubscription l : logical.getSubscriptions()) {
+			ILogicalOperator target = l.getTarget();
+			if (target instanceof TopAO) {
+				((TopAO) target).setPhysSubscriptionTo(physical, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
+			}
+		}
 		ret.add(logical);
 		return ret;
 	}
@@ -97,7 +99,7 @@ public class StandardTransformationHelper implements ITransformationHelper{
 		// for every child, remove the connection between
 		// its old father and add it to its new father.
 		for(ILogicalOperator child : children){
-			for(Subscription<ISource<?>> subscription : child.getPhysSubscriptionsTo()){
+			for(Subscription<IPhysicalOperator> subscription : child.getPhysSubscriptionsTo()){
 				// if the following is true, we found the correct subscription
 				if(subscription.getTarget() == oldFather){
 					child.setPhysSubscriptionTo(newFather, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());

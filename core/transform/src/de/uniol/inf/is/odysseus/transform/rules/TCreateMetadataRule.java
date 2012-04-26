@@ -16,8 +16,10 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
@@ -63,7 +65,7 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource<?>> 
 		}
 		
 		for(ILogicalOperator op : logicalOps) {
-			for (Subscription<ISource<?>> psub : op.getPhysSubscriptionsTo()) {
+			for (Subscription<IPhysicalOperator> psub : op.getPhysSubscriptionsTo()) {
 					if (psub.getTarget() == source){
 						op.setPhysSubscriptionTo(po ,psub.getSinkInPort(), psub.getSourceOutPort(), psub.getSchema());
 						update(op);
