@@ -20,7 +20,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -37,7 +36,7 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 
 	private static final long serialVersionUID = 8083562782642549093L;
 	private static Logger LOG = LoggerFactory.getLogger(ContextStoreFunction.class);
-	
+
 	@Override
 	public int getArity() {
 		return 1;
@@ -62,33 +61,25 @@ public class ContextStoreFunction extends AbstractFunction<Object> {
 	@Override
 	public Object getValue() {
 		String storeName = resolveStoreName();
-		try {
-			List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getInstance().getLastValues(storeName);
-			if (values == null) {
-				return "<empty>";
-			}
-			if(values.size()>1){
-				LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
-			}
-            return values.get(0);
-		} catch (ContextManagementException e) {			
-			e.printStackTrace();
+
+		List<Tuple<? extends ITimeInterval>> values = ContextStoreManager.getStore(storeName).getLastValues();
+		if (values == null) {
+			return "<empty>";
 		}
-		return null;
+		if (values.size() > 1) {
+			LOG.warn("The context store delivered more than one context state, but a function can only handle one! Use enrich instead!");
+		}
+		return values.get(0);
+
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		try {
-			SDFSchema schema = ContextStoreManager.getInstance().getStoreSchema(resolveStoreName());
-			AttributeResolver resolver = new AttributeResolver();
-			resolver.addAttributes(schema);
-			SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());
-			return attribute.getDatatype();
-		} catch (ContextManagementException e) {
-			e.printStackTrace();
-		}
-		return SDFDatatype.OBJECT;
+		SDFSchema schema = ContextStoreManager.getStore(resolveStoreName()).getSchema();
+		AttributeResolver resolver = new AttributeResolver();
+		resolver.addAttributes(schema);
+		SDFAttribute attribute = resolver.getAttribute(resolveAttributeName());
+		return attribute.getDatatype();
 	}
 
 	private String resolveStoreName() {

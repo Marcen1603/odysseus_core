@@ -13,25 +13,27 @@
   * limitations under the License.
   */
 
-package de.uniol.inf.is.odysseus.context.store;
+package de.uniol.inf.is.odysseus.context.transform;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
+import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
  * 
  * @author Dennis Geesen
- * Created at: 22.03.2012
+ * Created at: 27.04.2012
  */
-public interface IContextStore<T>{
+public class RuleProvider implements ITransformRuleProvider{
 
-	public String getName();
-	public SDFSchema getSchema();
-	public void insertValue(T value);	
-	public List<T> getValues(ITimeInterval timeinterval);
-	public List<T> getLastValues();	
-	public List<T> getAllValues();
-	
+	@Override
+	public List<IRule<?, ?>> getRules() {
+		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
+		rules.add(new TEnrichAORule());
+		rules.add(new TStoreAORule());
+		return rules;
+	}
+
 }

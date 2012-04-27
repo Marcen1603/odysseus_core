@@ -23,12 +23,10 @@ import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.context.store.types.ContextStoreFactory;
 import de.uniol.inf.is.odysseus.context.store.types.ContextStoreType;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -58,10 +56,18 @@ public class ContextVisitor implements IVisitor {
 		csv.visit(definitions, null);
 		SDFSchema schema = new SDFSchema("ContextStore:" + name, csv.getAttributes());
 		// default type
-		IContextStore<Tuple<? extends ITimeInterval>> contextStore = visit(typeNode, schema);
+		ContextStoreType storeType = visit(typeNode, schema);
+		
+		
+		
+		IContextStore<Tuple<? extends ITimeInterval>> store = ContextStoreFactory.createStore(name, storeType, schema);
+		
+		// get Type
+		
+		
 		
 		try {
-			ContextStoreManager.getInstance().createStore(name, contextStore);
+			ContextStoreManager.addStore(name, store);
 		} catch (ContextManagementException e) {
 			e.printStackTrace();
 		}
@@ -78,7 +84,7 @@ public class ContextVisitor implements IVisitor {
 		this.datadictionary = dd;
 	}
 
-	public IContextStore<Tuple<? extends ITimeInterval>> visit(ASTContextStoreType node, Object data) throws QueryParseException {
+	public ContextStoreType visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		SDFSchema schema = (SDFSchema)data;
 		String typeName = node.jjtGetValue().toString();
 		ContextStoreType type = null;
@@ -91,18 +97,19 @@ public class ContextVisitor implements IVisitor {
 		if (type == null) {
 			throw new QueryParseException("Type for context store does not exist!");
 		}
-		List<SDFAttribute> keys = new ArrayList<SDFAttribute>();
-		if((node.jjtGetNumChildren()==1) && node.jjtGetChild(0) instanceof ASTIdentifierList){
-			ASTIdentifierList definitions = (ASTIdentifierList) node.jjtGetChild(0);
-			List<String> keyNames = visit(definitions, null);
-			DirectAttributeResolver ar = new DirectAttributeResolver(schema);
-			for(String keyName : keyNames){
-				SDFAttribute a = ar.getAttribute(keyName);
-				keys.add(a);
-			}
-		}		
-		IContextStore<Tuple<? extends ITimeInterval>> store = ContextStoreFactory.createStore(type, schema, keys);
-		return store;
+//		
+//		List<SDFAttribute> keys = new ArrayList<SDFAttribute>();
+//		if((node.jjtGetNumChildren()==1) && node.jjtGetChild(0) instanceof ASTIdentifierList){
+//			ASTIdentifierList definitions = (ASTIdentifierList) node.jjtGetChild(0);
+//			List<String> keyNames = visit(definitions, null);
+//			DirectAttributeResolver ar = new DirectAttributeResolver(schema);
+//			for(String keyName : keyNames){
+//				SDFAttribute a = ar.getAttribute(keyName);
+//				keys.add(a);
+//			}
+//		}		
+		
+		return type;				
 	}
 
 	private List<String> visit(ASTIdentifierList definitions, Object data) {

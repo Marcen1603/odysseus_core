@@ -13,14 +13,20 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.ruleengine.system,
+ de.uniol.inf.is.odysseus.transform.engine,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.logicaloperator,
  de.uniol.inf.is.odysseus.context.store,
- de.uniol.inf.is.odysseus.context.store.types,
- de.uniol.inf.is.odysseus.context.udf
+ de.uniol.inf.is.odysseus.context.store.types
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/StoreService.xml
+Service-Component: OSGI-INF/StoreService.xml, OSGI-INF/RuleService.xml

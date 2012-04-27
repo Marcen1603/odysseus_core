@@ -15,6 +15,9 @@
 
 package de.uniol.inf.is.odysseus.context.store.types;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -27,10 +30,13 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
  */
 public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterval>> implements IContextStore<T> {
 
+	protected Logger logger = LoggerFactory.getLogger(AbstractContextStore.class);
 	private SDFSchema schema;
+	private String name;
 	
-	public AbstractContextStore(SDFSchema schema){
+	public AbstractContextStore(String name, SDFSchema schema){
 		this.schema = schema;
+		this.name = name;
 	}
 
 	@Override
@@ -41,6 +47,24 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 	public void setSchema(SDFSchema schema) {
 		this.schema = schema;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+	protected boolean validateSchemaSizeOfValue(T value){
+		if(value.size()==schema.size()){
+			return true;
+		}
+		return false;
+	}
+	
+	
 	
 	
 }

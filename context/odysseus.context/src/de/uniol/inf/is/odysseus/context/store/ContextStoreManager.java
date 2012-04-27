@@ -15,13 +15,13 @@
 
 package de.uniol.inf.is.odysseus.context.store;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.context.IContextManagementListener;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
@@ -31,71 +31,60 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
  * @param <Key>
  * @param <Value>
  */
-public class ContextStoreManager {
-
-	public static final String CONTEXT_STORE_NAME = "Contextstore";	
-
-	private static ContextStoreManager instance;
-
+public class ContextStoreManager<T extends Tuple<? extends ITimeInterval>> {
+	
 	private ContextStoreManager() {
 		
 	}
 	
-	public static synchronized  ContextStoreManager getInstance() {
-		if (instance == null) {
-			instance = new ContextStoreManager();
+	private static List<IContextManagementListener> listeners = new ArrayList<IContextManagementListener>();
+
+	private static HashMap<String, IContextStore<? extends Tuple<? extends ITimeInterval>>> stores = new HashMap<String, IContextStore<? extends Tuple<? extends ITimeInterval>>>();
+
+	
+	public static void addListener(IContextManagementListener listener){
+		listeners.add(listener);
+	}
+	
+	public static void removeListener(IContextManagementListener listener){
+		listeners.remove(listener);
+	}
+	
+	public static void notifyListeners(){
+		for(IContextManagementListener listener : listeners){
+			listener.contextManagementChanged();
 		}
-		return  instance;
-	} 
-
-	private HashMap<String, IContextStore<Tuple<? extends ITimeInterval>>> stores = new HashMap<String, IContextStore<Tuple<? extends ITimeInterval>>>();
-
-	public void createStore(String name, IContextStore<Tuple<? extends ITimeInterval>> store) throws ContextManagementException {
+	}
+	
+	public static <T extends Tuple<? extends ITimeInterval>> void addStore(String name, IContextStore<T> store) throws ContextManagementException {
 		if (storeExists(name)) {
 			throw new ContextManagementException("Store already exists");
 		}		
-		this.stores.put(name, store);				
-	}
-
-	public SDFSchema getStoreSchema(String storeName) throws ContextManagementException {
-		if (storeExists(storeName)) {
-			return this.stores.get(storeName).getSchema();
-		}
-		
-		throw new ContextManagementException("Context store does not exists");
-	}
-
-	public void insertValue(String storeName, Tuple<? extends ITimeInterval> value) {
-		stores.get(storeName).insertValue(value);
-	}
-
-	public void removeStore(String storeName) {
-		if (storeExists(storeName)) {
-			stores.remove(storeName);
-		}
-	}
-
-	public List<Tuple<? extends ITimeInterval>> getValues(String storeName, ITimeInterval ti) throws ContextManagementException {
-		if (storeExists(storeName)) {
-			return this.stores.get(storeName).getValues(ti);
-		} 		
-		throw new ContextManagementException("Context store does not exists");
+		stores.put(name, store);
+		notifyListeners();
 	}
 	
-	public List<Tuple<? extends ITimeInterval>> getLastValues(String storeName) throws ContextManagementException {
+	public static Collection<IContextStore<? extends Tuple<? extends ITimeInterval>>> getStores(){
+		return stores.values();
+	}
+	
+	public static void removeStore(String storeName) {
 		if (storeExists(storeName)) {
-			return this.stores.get(storeName).getLastValues();
-		} 		
-		throw new ContextManagementException("Context store does not exists");
+			stores.remove(storeName);
+			notifyListeners();
+		}
 	}
-
-	public SDFAttribute getSDFAttribute(String name) {
-		SDFAttribute attribute = new SDFAttribute("ContextStore", name, SDFDatatype.INTEGER);
-		return attribute;
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Tuple<? extends ITimeInterval>> IContextStore<T> getStore(String name){
+		if(storeExists(name)){
+			return (IContextStore<T>) stores.get(name);
+		}
+		return null;
 	}
-
-	public boolean storeExists(String name) {
-		return this.stores.containsKey(name);
+	
+	public static boolean storeExists(String name) {
+		return stores.containsKey(name);
 	}
 
 }

@@ -29,15 +29,15 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
  */
 public class ContextStoreFactory {
 
-	public static <T extends Tuple<? extends ITimeInterval>> IContextStore<T> createStore(ContextStoreType type, SDFSchema schema, List<SDFAttribute> keys) {
+	public static <T extends Tuple<? extends ITimeInterval>> IContextStore<T> createStore(String name, ContextStoreType type, SDFSchema schema) {
 
 		switch (type) {
 		case MULTI_ELEMENT_STORE:
-			return new MultiElementStore<T>(schema, keys);
+			return new MultiElementStore<T>(name, schema);
 		case MULTI_HISTORY_STORE:
 			break;
 		case SINGLE_ELEMENT_STORE:
-			return new SingleElementStore<T>(schema);
+			return new SingleElementStore<T>(name, schema);
 		case SINGLE_HISTORY_STORE:
 			break;
 		default:

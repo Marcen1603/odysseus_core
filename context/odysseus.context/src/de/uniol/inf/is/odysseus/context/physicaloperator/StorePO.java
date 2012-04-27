@@ -1,0 +1,61 @@
+/** Copyright 2012 The Odysseus Team
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+
+package de.uniol.inf.is.odysseus.context.physicaloperator;
+
+import de.uniol.inf.is.odysseus.context.store.IContextStore;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 27.04.2012
+ */
+public class StorePO<T extends Tuple<? extends ITimeInterval>> extends AbstractSink<T>{
+
+	
+	private IContextStore<T> store;	
+
+	public StorePO(StorePO<T> storePO){
+		super();
+		this.store = storePO.store;
+	}
+	
+	
+	public StorePO(IContextStore<T> store) {
+		super();
+		this.store = store;
+	}	
+	
+	@Override
+	protected void process_next(T object, int port, boolean isReadOnly) {
+		// TODO: was passiert, wenn object nicht dem schema vom store entspricht?
+		this.store.insertValue(object);
+	}
+
+	@Override
+	public void processPunctuation(PointInTime timestamp, int port) {
+		//TODO: vorher etwas zum lesen freigeben?!
+	}
+
+	@Override
+	public AbstractSink<T> clone() {
+		return new StorePO<T>(this);
+	}
+
+}
