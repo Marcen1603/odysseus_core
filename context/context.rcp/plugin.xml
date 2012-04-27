@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.context.rcp.view.ContextStoreView"
+            icon="icons/note.png"
+            id="de.uniol.inf.is.odysseus.context.rcp.contextstoreview"
+            name="Context Store"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
