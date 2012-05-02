@@ -4,28 +4,28 @@
 #DOQUERYSHARING false
 #QUERY
 /// Operator 1
-pp04 = PROJECT({attributes=['ts','pp04']},gchSource)
-s05 = RENAME({type='s05', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp04'], heartbeatrate=100},pp04))
+bm05 = PROJECT({attributes=['ts','pp04']},gchSource)
+s05 = RENAME({type='s05', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp04'], heartbeatrate=100},bm05))
 
 /// Operator 2
-pp05 = PROJECT({attributes=['ts','pp05']},gchSource)
-s06 = RENAME({type='s06', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp05'], heartbeatrate=100},pp05))
+bm06 = PROJECT({attributes=['ts','pp05']},gchSource)
+s06 = RENAME({type='s06', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp05'], heartbeatrate=100},bm06))
 
 /// Operator 3
-pp04 = PROJECT({attributes=['ts','pp04']},gchSource)
-s07 = RENAME({type='s07', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp04'], heartbeatrate=100},pp04))
+bm07 = PROJECT({attributes=['ts','pp04']},gchSource)
+s07 = RENAME({type='s07', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp04'], heartbeatrate=100},bm07))
 
 /// Operator 4
-pp05 = PROJECT({attributes=['ts','pp05']},gchSource)
-s08 = RENAME({type='s08', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp05'], heartbeatrate=100},pp05))
+bm08 = PROJECT({attributes=['ts','pp05']},gchSource)
+s08 = RENAME({type='s08', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp05'], heartbeatrate=100},bm08))
 
 /// Operator 5
-pp06 = PROJECT({attributes=['ts','pp06']},gchSource)
-s09 = RENAME({type='s09', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp06'], heartbeatrate=100},pp06))
+bm09 = PROJECT({attributes=['ts','pp06']},gchSource)
+s09 = RENAME({type='s09', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp06'], heartbeatrate=100},bm09))
 
 /// Operator 6
-pp06 = PROJECT({attributes=['ts','pp06']},gchSource)
-s10 = RENAME({type='s10', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp06'], heartbeatrate=100},pp06))
+bm10 = PROJECT({attributes=['ts','pp06']},gchSource)
+s10 = RENAME({type='s10', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp06'], heartbeatrate=100},bm10))
 
 /// Operator 7
 s58_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s05, s08))
