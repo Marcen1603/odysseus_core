@@ -15,22 +15,36 @@ public class ProtobufTypeRegistry {
 
 	private HashMap<String, GeneratedMessage> typeRegistry = new HashMap<String, GeneratedMessage>();
 	
-	private ProtobufTypeRegistry() {
+	public ProtobufTypeRegistry() {
 	}	
 	
-	public static ProtobufTypeRegistry getInstance(){
+	private static ProtobufTypeRegistry getInstance(){
 		return instance;
 	}
 	
+	public void bindProtobufDataProvider(IProtobufDatatypeProvider provider){
+		getInstance().registerMessageType(provider.getName(),provider.getMessageType());
+	}
+	
+	public void unbindProtobufDataProvider(IProtobufDatatypeProvider provider){
+		getInstance().deregisterMessageType(provider.getName(),provider.getMessageType());
+	}
 
-	public void registerMessageType(String name, GeneratedMessage message) {
+	
+	private void registerMessageType(String name, GeneratedMessage message) {
 			logger.debug("Register Messagetype " + message
 					+ " for Datatypes with name " + name);
 			typeRegistry.put(name.toLowerCase(), message);
 	}
 
-	public GeneratedMessage getMessageType(String name) {
-		return typeRegistry.get(name.toLowerCase());
+	private void deregisterMessageType(String name, GeneratedMessage message) {
+		logger.debug("Deregister Messagetype " + message
+				+ " for Datatypes with name " + name);
+		typeRegistry.remove(name.toLowerCase());
+}
+
+	public static GeneratedMessage getMessageType(String name) {
+		return getInstance().typeRegistry.get(name.toLowerCase());
 	}
 
 }
