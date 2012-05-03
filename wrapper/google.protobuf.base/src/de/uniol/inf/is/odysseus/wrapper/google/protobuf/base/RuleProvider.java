@@ -4,10 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
-import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
+import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 import de.uniol.inf.is.odysseus.wrapper.google.protobuf.base.rules.TProtobufAccessAORule;
 
-public class RuleProvider implements IRuleProvider{
+public class RuleProvider implements ITransformRuleProvider{
 
 	@Override
 	public List<IRule<?, ?>> getRules() {

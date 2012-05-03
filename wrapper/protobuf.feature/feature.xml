@@ -19,12 +19,13 @@
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.transform" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.ruleengine" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.protobuf" version="2.4.1" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.protobuf" version="2.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi.services"/>
    </requires>
 
    <plugin
