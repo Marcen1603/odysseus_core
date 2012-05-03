@@ -7,11 +7,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler,
- org.junit;version="4.8.2",
+ org.junit,
  org.osgi.service.component,
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core,
- org.junit
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
 Service-Component: OSGI-INF/SLAScheduler.xml
 Export-Package: de.uniol.inf.is.odysseus.scheduler.slascheduler,
  de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance,
