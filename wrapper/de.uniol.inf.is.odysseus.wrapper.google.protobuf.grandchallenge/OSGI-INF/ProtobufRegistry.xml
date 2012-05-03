@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wrapper.google.protobuf.debs2012.grandchallenge">
-   <implementation class="de.uniol.inf.is.odysseus.wrapper.google.protobuf.grandchallenge.CManufacturingMessageProvider"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.wrapper.google.protobuf.base.IProtobufDatatypeProvider"/>
-   </service>
-</scr:component>

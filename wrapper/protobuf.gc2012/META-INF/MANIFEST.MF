@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Grand Challenge Wrapper 2012
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012.Activator
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: com.google.protobuf;bundle-version="2.4.1",
+ de.uniol.inf.is.odysseus.wrapper.protobuf;bundle-version="1.0.0"
+Service-Component: OSGI-INF/DatatypeProvider.xml

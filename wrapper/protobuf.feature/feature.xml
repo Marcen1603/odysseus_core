@@ -29,13 +29,6 @@
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.google.protobuf.base"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.jboss.netty"
          download-size="0"
          install-size="0"
@@ -54,7 +47,14 @@
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.google.protobuf.debs2012.grandchallenge"
+         id="de.uniol.inf.is.odysseus.wrapper.protobuf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012"
          download-size="0"
          install-size="0"
          version="0.0.0"
