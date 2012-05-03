@@ -111,7 +111,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 			throw new QueryParseException(e);
 		}
 		CommonTree tree = (CommonTree) ret.getTree();
-		printTree(tree, 2);
+		//printTree(tree, 2);
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(tree);
 		SaseAST walker = new SaseAST(nodes);
 		walker.setUser(user);

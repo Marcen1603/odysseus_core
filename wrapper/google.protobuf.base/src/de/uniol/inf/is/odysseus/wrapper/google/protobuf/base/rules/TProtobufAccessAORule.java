@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.google.protobuf.base.ChannelHandlerReceiverPO;
 import de.uniol.inf.is.odysseus.wrapper.google.protobuf.base.GeneratedMessageToTuple;
-import de.uniol.inf.is.odysseus.wrapper.google.protobuf.base.ProtobufTypeRegistry;
 
 public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> {
 
@@ -34,7 +33,8 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 
 		SocketAddress socketAddress = new InetSocketAddress("localhost",
 				operator.getPort());
-		GeneratedMessage msg = ProtobufTypeRegistry.getMessageType(operator.getOptionsMap().get("type"));
+		//GeneratedMessage msg = ProtobufTypeRegistry.getMessageType(operator.getOptionsMap().get("type"));
+		GeneratedMessage msg = null;
 		if (msg == null){
 			throw new RuntimeException( new TransformationException("No valid type given: " +operator.getOptionsMap().get("type")));
 		}
