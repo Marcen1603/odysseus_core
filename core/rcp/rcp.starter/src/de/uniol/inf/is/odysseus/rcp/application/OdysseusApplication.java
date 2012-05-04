@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.rcp.application;
 import java.io.File;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -121,14 +123,37 @@ public class OdysseusApplication implements IApplication {
 			URL url = new URL("file", null, path); 
 			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
 
-			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, true, true);
-			dialog.prompt(true);
+			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
+			dialog.prompt(false);
+			
+			// in case that the workspace was automatically selected
+			if( data.getSelection() != null && !Platform.getInstanceLocation().isSet() ) {
+				if( !releaseAndSetLocation(data.getSelection()) ) {
+					
+					// force showing dialog
+					dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
+					dialog.setErrorMessage("Could not set workspace " + data.getSelection() + ".\nPlease choose a different one.");
+					dialog.prompt(true);
+				}
+			}
 			
 		} catch (Exception e) {
 			LOG.error("Exception during choosing workspace", e);
 		}
 	}
-
+	
+	private static boolean releaseAndSetLocation(String selection) {
+		try {
+			Location instanceLoc = Platform.getInstanceLocation();
+			if (instanceLoc.isSet()) {
+				instanceLoc.release();
+			}
+	
+			return instanceLoc.set(new URL("file", null, selection), true);
+		} catch( Exception ex ) {
+			return false;
+		}
+	}
 	private static void waitForExecutor() {
 		while (executor == null) {
 			try {
