@@ -49,12 +49,18 @@ public class ViewSchema<T> {
 		int index = 0;
 		for (SDFAttribute a : this.outputSchema) {
 			IViewableAttribute attribute = new ViewableSDFAttribute(a, outputSchema.getURI(), index, port);
-			if (isAllowedDataType(attribute.getSDFDatatype())) {
-				viewableAttributes.add(attribute);
+			if (isAllowedDataType(attribute.getSDFDatatype())) {				
+					viewableAttributes.add(attribute);		
 			}
 			index++;
 		}
-		this.choosenAttributes = new ArrayList<IViewableAttribute>(viewableAttributes);
+		// add all (except of currently timestamps) to the list of pre-chosen attributes
+		this.choosenAttributes = new ArrayList<IViewableAttribute>();
+		for(IViewableAttribute a : this.viewableAttributes){
+			if(chooseAsInitialAttribute(a.getSDFDatatype())){
+				this.choosenAttributes.add(a);
+			}
+		}
 
 		for (SDFMetaAttribute m : this.metadataSchema) {
 			for (Method method : m.getMetaAttributeClass().getMethods()) {
@@ -69,6 +75,19 @@ public class ViewSchema<T> {
 		
 		
 
+	}
+
+	private boolean chooseAsInitialAttribute(SDFDatatype sdfDatatype) {
+		if(sdfDatatype.equals(SDFDatatype.TIMESTAMP)){
+			return false;
+		}
+		if(sdfDatatype.equals(SDFDatatype.START_TIMESTAMP)){
+			return false;
+		}
+		if(sdfDatatype.equals(SDFDatatype.END_TIMESTAMP)){
+			return false;
+		}
+		return true;
 	}
 
 	private static boolean isAllowedDataType(SDFDatatype sdfDatatype) {
