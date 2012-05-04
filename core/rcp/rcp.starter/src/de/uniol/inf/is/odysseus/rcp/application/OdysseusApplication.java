@@ -129,6 +129,7 @@ public class OdysseusApplication implements IApplication {
 			ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(display.getActiveShell(), data, true, true);
 			dialog.prompt(true);
 
+			System.out.println(data.getSelection());
 			String workspaceSelection = data.getSelection();
 			if (workspaceSelection != null) {
 				data.writePersistedData();
@@ -146,7 +147,7 @@ public class OdysseusApplication implements IApplication {
 			instanceLoc.release();
 		}
 
-		instanceLoc.set(new File(selection).toURI().toURL(), false);
+		instanceLoc.set(new URL("file", null, selection), false);
 	}
 
 	private static void waitForExecutor() {
