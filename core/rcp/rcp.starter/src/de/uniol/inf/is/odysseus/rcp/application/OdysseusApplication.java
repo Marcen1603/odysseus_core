@@ -151,6 +151,7 @@ public class OdysseusApplication implements IApplication {
 	
 			return instanceLoc.set(new URL("file", null, selection), true);
 		} catch( Exception ex ) {
+			LOG.error("Could not release and set location", ex);
 			return false;
 		}
 	}

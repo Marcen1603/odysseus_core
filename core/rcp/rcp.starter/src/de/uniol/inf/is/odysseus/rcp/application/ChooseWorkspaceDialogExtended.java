@@ -8,10 +8,13 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("restriction")
 public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 
+	private static Logger LOG = LoggerFactory.getLogger(ChooseWorkspaceDialogExtended.class);
 	private final ChooseWorkspaceData launchData;
 	
 	public ChooseWorkspaceDialogExtended(Shell parentShell, ChooseWorkspaceData launchData, boolean suppressAskAgain, boolean centerOnMonitor) {
@@ -48,6 +51,7 @@ public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 	
 			return instanceLoc.set(new URL("file", null, selection), true);
 		} catch( Exception ex ) {
+			LOG.error("Could not release and set location", ex);
 			return false;
 		}
 	}
