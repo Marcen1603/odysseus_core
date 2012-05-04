@@ -52,6 +52,7 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 		CombinedMergeFunction<ITimeInterval> metadataMerge = new CombinedMergeFunction<ITimeInterval>();		
 		metadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 		EnrichPO<Tuple<ITimeInterval>, ITimeInterval> enrich = new EnrichPO<Tuple<ITimeInterval>, ITimeInterval>(store, dataMerge, metadataMerge, transferFunction);
+		enrich.setOutputSchema(operator.getOutputSchema());
 		replace(operator, enrich, config);
 		retract(operator);
 	}
