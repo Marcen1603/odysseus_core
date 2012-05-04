@@ -15,19 +15,14 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
-import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,28 +121,12 @@ public class OdysseusApplication implements IApplication {
 			URL url = new URL("file", null, path); 
 			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
 
-			ChooseWorkspaceDialog dialog = new ChooseWorkspaceDialog(display.getActiveShell(), data, true, true);
+			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, true, true);
 			dialog.prompt(true);
-
-			System.out.println(data.getSelection());
-			String workspaceSelection = data.getSelection();
-			if (workspaceSelection != null) {
-				data.writePersistedData();
-				releaseAndSetLocation(workspaceSelection);
-			}
+			
 		} catch (Exception e) {
 			LOG.error("Exception during choosing workspace", e);
 		}
-	}
-
-	private static void releaseAndSetLocation(String selection) throws MalformedURLException, IOException {
-
-		Location instanceLoc = Platform.getInstanceLocation();
-		if (instanceLoc.isSet()) {
-			instanceLoc.release();
-		}
-
-		instanceLoc.set(new URL("file", null, selection), false);
 	}
 
 	private static void waitForExecutor() {
