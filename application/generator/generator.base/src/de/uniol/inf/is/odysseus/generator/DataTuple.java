@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
+
 /**
  * A lightweight adaption of Tuple from Odysseus with no direct dependencies!
  * 
@@ -28,11 +30,18 @@ public class DataTuple {
 
 	protected List<Object> attributes;
 	protected int memSize = -1;
-
+	
 	public DataTuple() {
 		this.attributes = new ArrayList<Object>();
 	}
-
+	
+	public DataTuple(IValueGenerator... generators){
+		this.attributes = new ArrayList<Object>();
+		for(IValueGenerator v : generators){
+			this.addAttribute(v.nextValue());
+		}
+	}
+	
 	public DataTuple(int size) {
 		this.attributes = new ArrayList<Object>(size);
 	}
@@ -170,4 +179,12 @@ public class DataTuple {
 		}
 		return out;
 	}
+	
+	public List<DataTuple> asList(){
+		ArrayList<DataTuple> liste = new ArrayList<DataTuple>();
+		liste.add(this);
+		return liste;
+	}
+	
+	
 }

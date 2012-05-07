@@ -18,13 +18,17 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 
 public abstract class StreamClientHandler extends Thread {
 
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 	private ByteBuffer bytebuffer = ByteBuffer.allocate(1024);
 	private Socket connection;
+	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
 
 	public abstract void init();
 
@@ -32,9 +36,16 @@ public abstract class StreamClientHandler extends Thread {
 
 	public abstract List<DataTuple> next();
 
+	private void internalInit(){
+		for(IValueGenerator gen : this.generators){
+			gen.init();
+		}
+		init();
+	}
+	
 	@Override
 	public void run() {
-		init();
+		internalInit();
 		List<DataTuple> next = next();
 		while (next != null) {
 			try {
@@ -112,4 +123,34 @@ public abstract class StreamClientHandler extends Thread {
 
 	@Override
 	public abstract StreamClientHandler clone();
+	
+	public List<DataTuple> buildDataTuple(IValueGenerator... generators){
+		DataTuple tuple = new DataTuple(generators);
+		return tuple.asList();
+	}
+		
+	public List<DataTuple> buildDataTuple(){
+		IValueGenerator[] gens = new IValueGenerator[generators.size()];
+		for(int i=0; i<this.generators.size();i++){
+			gens[i] = this.generators.get(i);
+		}		
+		return buildDataTuple(gens);
+		
+	}
+	
+	protected void addGenerator(IValueGenerator generator){
+		this.generators.add(generator);
+	}
+	
+	protected void removeGenerator(IValueGenerator generator){
+		this.generators.remove(generator);
+	}
+	
+	public void pause(long millis){
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }
