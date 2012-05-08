@@ -145,7 +145,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 				} catch (OdysseusScriptException ex) {
 					LOG.error("Exception during executing script", ex);
 					
-					status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: " + ex.getMessage(), ex);
+					status = new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: " + ex.getRootMessage(), ex);
 				}
 				monitor.done();
 
