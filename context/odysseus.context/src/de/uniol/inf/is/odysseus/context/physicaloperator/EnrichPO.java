@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -67,7 +68,8 @@ public class EnrichPO<T extends Tuple<M>, M extends ITimeInterval> extends Abstr
 		List<T> values = this.store.getValues(ti);
 		for(T value : values){
 			T newElement = merge(object, value, Order.LeftRight);
-			transferFunction.transfer(newElement);
+			//transferFunction.newElement(newElement, port);
+			transfer(newElement);
 		}
 	}
 	
@@ -82,8 +84,9 @@ public class EnrichPO<T extends Tuple<M>, M extends ITimeInterval> extends Abstr
 		M mergedMetadata;
 		if (order == Order.LeftRight) {
 			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-					right.getMetadata());
+//			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
+//					right.getMetadata());
+			mergedMetadata = left.getMetadata();
 		} else {
 			mergedData = dataMerge.merge(right, left);
 			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(),
@@ -103,6 +106,20 @@ public class EnrichPO<T extends Tuple<M>, M extends ITimeInterval> extends Abstr
 		this.store.getValues(ti);
 	}
 
+	@Override
+	protected void process_open() throws OpenFailedException {	
+		super.process_open();
+		this.transferFunction.init(this);
+		this.metadataMerge.init();
+		this.dataMerge.init();
+	}
+	
+	@Override
+	protected void process_done() {	
+		super.process_done();
+		transferFunction.done();		
+	}
+	
 	@Override
 	public EnrichPO<T, M> clone() {
 		return new EnrichPO<T, M>(this);

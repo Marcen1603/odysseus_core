@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
+import de.uniol.inf.is.odysseus.context.store.types.ContextStoreType;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.ImageManager;
  * 
  * @author Dennis Geesen Created at: 27.04.2012
  */
-public class ContextViewLabelProvider implements ILabelProvider {
+public class ContextViewTreeLabelProvider implements ILabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -74,10 +75,10 @@ public class ContextViewLabelProvider implements ILabelProvider {
 			name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
-		if(element instanceof List){
-			return "Values";
+		if(element instanceof ContextStoreType){
+			return ((ContextStoreType)element).toString();
 		}
-		return null;
+		return element.toString();
 	}
 
 }

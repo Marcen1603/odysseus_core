@@ -15,10 +15,14 @@
 
 package de.uniol.inf.is.odysseus.context.logicaloperator;
 
+import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
+import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
@@ -62,4 +66,16 @@ public class StoreAO extends AbstractLogicalOperator {
 		return new StoreAO(this);
 	}
 
+	
+	@Override
+	public void initialize() {	
+		super.initialize();
+		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(storeName);
+		if(!this.getOutputSchema().compatibleTo(store.getSchema())){
+			throw new IllegalArgumentException("Schemas of the store-operator and the store itself are not compatible. They have to be at least union-compatible");
+		}
+		if(store.hasWriter()){
+			throw new IllegalArgumentException("There is already a store-operator for \""+storeName+"\". Use the existing one instead, because otherwise there all writes into the store will not be chronologically ordered");
+		}
+	}
 }

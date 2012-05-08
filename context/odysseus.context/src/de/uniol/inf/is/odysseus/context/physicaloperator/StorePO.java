@@ -44,18 +44,28 @@ public class StorePO<T extends Tuple<? extends ITimeInterval>> extends AbstractS
 	
 	@Override
 	protected void process_next(T object, int port, boolean isReadOnly) {
-		// TODO: was passiert, wenn object nicht dem schema vom store entspricht?
 		this.store.insertValue(object);
+		this.store.processTime(object.getMetadata().getStart());
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		//TODO: vorher etwas zum lesen freigeben?!
+		this.store.processTime(timestamp);
 	}
 
 	@Override
 	public AbstractSink<T> clone() {
 		return new StorePO<T>(this);
+	}
+	
+	@Override
+	protected void process_close() {	
+		super.process_close();
+		if(this.store.getWriter().equals(this)){
+			this.store.removeWriter();
+		}
+		// wirklich machen, weil eigentlich nur zum debuggen sinnvoll, wenn die zeit wieder von vorne beginnt...
+		this.store.close();
 	}
 
 }

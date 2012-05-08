@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.context.rcp.view;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Dennis Geesen
  * Created at: 27.04.2012
  */
-public class ContextViewContentProvider implements ITreeContentProvider {
+public class ContextViewTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void dispose() {				
@@ -53,11 +52,8 @@ public class ContextViewContentProvider implements ITreeContentProvider {
 			IContextStore<?> store = (IContextStore<?>)parentElement;
 			Object[] childs = new Object[2];
 			childs[0] = store.getSchema();
-			childs[1] = store.getAllValues();
+			childs[1] = store.getType();
 			return childs;
-		}
-		if(parentElement instanceof List){
-			return ((List<?>)parentElement).toArray();
 		}
 		if(parentElement instanceof SDFSchema){
 			return ((SDFSchema)parentElement).getAttributes().toArray();
@@ -77,10 +73,7 @@ public class ContextViewContentProvider implements ITreeContentProvider {
 		}
 		if(element instanceof IContextStore){
 			return true;
-		}
-		if(element instanceof List){
-			return ((List<?>)element).size()>0;
-		}
+		}		
 		if(element instanceof SDFSchema){
 			return ((SDFSchema)element).getAttributes().size()>0;
 		}

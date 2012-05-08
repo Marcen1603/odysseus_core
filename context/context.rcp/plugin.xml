@@ -13,5 +13,26 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.context.rcp.contextstoreview">
+         <command
+               commandId="de.uniol.inf.is.odysseus.context.rcp.RefreshCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.context.rcp.commands.RefreshCommand"
+            id="de.uniol.inf.is.odysseus.context.rcp.RefreshCommand"
+            name="Refresh Command">
+      </command>
+   </extension>
 
 </plugin>

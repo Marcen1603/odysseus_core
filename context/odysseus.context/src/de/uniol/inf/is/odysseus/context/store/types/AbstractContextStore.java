@@ -15,9 +15,14 @@
 
 package de.uniol.inf.is.odysseus.context.store.types;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.context.IContextStoreListener;
+import de.uniol.inf.is.odysseus.context.physicaloperator.StorePO;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -33,6 +38,8 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 	protected Logger logger = LoggerFactory.getLogger(AbstractContextStore.class);
 	private SDFSchema schema;
 	private String name;
+	private List<IContextStoreListener> listeners = new ArrayList<IContextStoreListener>();
+	private StorePO<T> writer;
 	
 	public AbstractContextStore(String name, SDFSchema schema){
 		this.schema = schema;
@@ -64,7 +71,45 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		return false;
 	}
 	
+	public void addListener(IContextStoreListener listener){
+		this.listeners.add(listener);
+	}
 	
+	public void removeListener(IContextStoreListener listener){
+		this.listeners.remove(listener);
+	}
+	
+	public void notifyListener(){
+		for(IContextStoreListener l : this.listeners){
+			l.contextStoreChanged(this);
+		}
+	}
+	
+	public void setWriter(StorePO<T> storePO){
+		this.writer = storePO;
+		logger.debug("set "+this.writer+" as writer for context store "+this);
+	}
+	
+	public boolean hasWriter(){
+		return this.writer!=null;
+	}
+	public void removeWriter(){
+		logger.debug("remove "+this.writer+" as writer for context store "+this);
+		this.writer=null;		
+	}
+	public StorePO<T> getWriter(){
+		return this.writer;
+	}
+	
+	public void open(){
+		notifyListener();
+	}
+	
+	public void close(){
+		internalClear();
+	}
+
+	abstract protected void internalClear();
 	
 	
 }

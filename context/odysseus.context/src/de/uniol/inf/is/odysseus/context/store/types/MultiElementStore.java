@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
@@ -36,17 +36,28 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends AbstractContextStore<T> {
 
 	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();
+	private int maxitems;
 
-	public MultiElementStore(String name, SDFSchema schema) {
+	public MultiElementStore(String name, SDFSchema schema, int maxitems) {
 		super(name, schema);
+		this.maxitems = maxitems;
 
 	}
 
 	@Override
 	public void insertValue(T value) {
 		if (validateSchemaSizeOfValue(value)) {
-			sweepArea.purgeElements(value, Order.LeftRight);
+			//sweepArea.purgeElements(value, Order.LeftRight);			
+			T tail = sweepArea.peekLast();
+			if(tail!=null){
+				tail.getMetadata().setEnd(value.getMetadata().getStart());
+			}
 			sweepArea.insert(value);
+			if(sweepArea.size()>maxitems){
+				sweepArea.poll();				
+			}
+			notifyListener();
+			System.err.println(sweepArea.getSweepAreaAsString(value.getMetadata().getStart()));
 		} else {
 			logger.warn("Context store failure: size of value and schema do not match");
 		}
@@ -76,6 +87,22 @@ public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends
 			list.add(iter.next());
 		}
 		return list;
+	}
+
+	@Override
+	public ContextStoreType getType() {
+		return ContextStoreType.MULTI_ELEMENT_STORE;
+	}
+
+	@Override
+	public void processTime(PointInTime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void internalClear() {
+		this.sweepArea.clear();		
 	}
 
 }

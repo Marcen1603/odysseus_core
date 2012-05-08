@@ -33,7 +33,7 @@ public class ContextStoreFactory {
 
 		switch (type) {
 		case MULTI_ELEMENT_STORE:
-			return new MultiElementStore<T>(name, schema);
+			return new MultiElementStore<T>(name, schema, 10);
 		case MULTI_HISTORY_STORE:
 			break;
 		case SINGLE_ELEMENT_STORE:

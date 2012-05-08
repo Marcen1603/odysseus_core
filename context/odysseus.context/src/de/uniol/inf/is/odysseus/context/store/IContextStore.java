@@ -17,15 +17,20 @@ package de.uniol.inf.is.odysseus.context.store;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.context.IContextStoreListener;
+import de.uniol.inf.is.odysseus.context.physicaloperator.StorePO;
+import de.uniol.inf.is.odysseus.context.store.types.ContextStoreType;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 22.03.2012
  */
-public interface IContextStore<T>{
+public interface IContextStore<T extends Tuple<? extends ITimeInterval>>{
 
 	public String getName();
 	public SDFSchema getSchema();
@@ -33,5 +38,18 @@ public interface IContextStore<T>{
 	public List<T> getValues(ITimeInterval timeinterval);
 	public List<T> getLastValues();	
 	public List<T> getAllValues();
+	public ContextStoreType getType();
+	public void processTime(PointInTime time);
+	
+	public void addListener(IContextStoreListener listener);	
+	public void removeListener(IContextStoreListener listener);	
+	
+	public void setWriter(StorePO<T> storePO);
+	public boolean hasWriter();
+	public void removeWriter();
+	public StorePO<T> getWriter();
+	public void close();
+	public void open();
+	
 	
 }

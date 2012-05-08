@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.context.store.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
@@ -38,6 +39,7 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
 	public void insertValue(T value) {
 		if (validateSchemaSizeOfValue(value)) {
 			this.value = value;
+			notifyListener();
 		} else {
 			logger.warn("Context store failure: size of value and schema do not match");
 		}
@@ -58,6 +60,22 @@ public class SingleElementStore<T extends Tuple<? extends ITimeInterval>> extend
 	@Override
 	public List<T> getAllValues() {
 		return getLastValues();
+	}
+
+	@Override
+	public ContextStoreType getType() {
+		return ContextStoreType.SINGLE_ELEMENT_STORE;
+	}
+
+	@Override
+	public void processTime(PointInTime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void internalClear() {
+		this.value = null;		
 	}
 
 }
