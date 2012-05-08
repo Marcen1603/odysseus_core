@@ -218,8 +218,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
-		for (int linenr = 0; linenr < textToParse.length; linenr++) {
+		for (int linenr = 0; linenr < textToParse.length; linenr++) {			
 			String line = textToParse[linenr].trim();
+			if(line.startsWith(SINGLE_LINE_COMMENT_KEY)){
+				continue;
+			}
 			if (line.indexOf(LOOP_START_KEY) != -1) {
 				if (from != -1) {
 					throw new OdysseusScriptException("Nested loops are not allowed!");
