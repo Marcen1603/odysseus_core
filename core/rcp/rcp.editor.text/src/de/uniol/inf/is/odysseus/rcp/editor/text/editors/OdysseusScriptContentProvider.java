@@ -42,7 +42,9 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 			try {
 				replaceLeaf = new ReplacementLeaf(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(input.getString()));
 			} catch (OdysseusScriptException e) {
-				e.printStackTrace();
+				// we don't want to have stacktraces here, because it is normal that
+				// the parsing is not successful during editing
+				//e.printStackTrace();
 				replaceLeaf = null;
 			}
 		} else {
@@ -68,11 +70,9 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 					list.add( replaceLeaf );
 					list.addAll(statements);
 					return list.toArray();
-				}
-                throw new OdysseusScriptException();
-			} catch (OdysseusScriptException e) {
-				e.printStackTrace();
-				return new Object[] { new StringError("Error in Query") };
+				}               
+			} catch (OdysseusScriptException e) {				
+				return new Object[] {};
 			}
 		}
 		if( parentElement instanceof ReplacementLeaf ) {
