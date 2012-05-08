@@ -34,4 +34,14 @@ public class OdysseusScriptException extends Exception {
 	public OdysseusScriptException( Throwable ex) {
 		this(exceptionMessage, ex);
 	}
+	
+	public String getRootMessage(){
+		Throwable current = this;
+		while(current.getCause()!=null){
+			current = current.getCause();
+		}
+		return current.getMessage();				
+	}
+	
+	
 }
