@@ -19,8 +19,11 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import de.uniol.inf.is.odysseus.generator.valuegenerator.DataType;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 
 public abstract class StreamClientHandler extends Thread {
@@ -29,6 +32,7 @@ public abstract class StreamClientHandler extends Thread {
 	private ByteBuffer bytebuffer = ByteBuffer.allocate(1024);
 	private Socket connection;
 	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
+	private Map<IValueGenerator, DataType> datatypes = new HashMap<IValueGenerator, DataType>();
 
 	public abstract void init();
 
@@ -36,13 +40,13 @@ public abstract class StreamClientHandler extends Thread {
 
 	public abstract List<DataTuple> next();
 
-	private void internalInit(){
-		for(IValueGenerator gen : this.generators){
+	private void internalInit() {
+		for (IValueGenerator gen : this.generators) {
 			gen.init();
 		}
 		init();
 	}
-	
+
 	@Override
 	public void run() {
 		internalInit();
@@ -90,10 +94,10 @@ public abstract class StreamClientHandler extends Thread {
 			if (data instanceof Integer) {
 				bytebuffer.putInt((Integer) data);
 			} else if (data instanceof Boolean) {
-				boolean b = (Boolean)data;
-				if(b){
+				boolean b = (Boolean) data;
+				if (b) {
 					bytebuffer.putInt(1);
-				}else{
+				} else {
 					bytebuffer.putInt(0);
 				}
 			} else if (data instanceof Double) {
@@ -123,30 +127,50 @@ public abstract class StreamClientHandler extends Thread {
 
 	@Override
 	public abstract StreamClientHandler clone();
-	
-	public List<DataTuple> buildDataTuple(IValueGenerator... generators){
-		DataTuple tuple = new DataTuple(generators);
+
+	public List<DataTuple> buildDataTuple() {
+		DataTuple tuple = new DataTuple();
+		for (IValueGenerator v : this.generators) {
+			DataType datatype = datatypes.get(v);
+			switch (datatype) {
+			case BOOLEAN:
+				tuple.addBoolean(v.nextValue());
+				break;
+			case DOUBLE:
+				tuple.addDouble(v.nextValue());
+				break;
+			case INTEGER:
+				tuple.addInteger(v.nextValue());
+				break;
+			case LONG:
+				tuple.addLong(v.nextValue());
+				break;
+			case OBJECT:
+				tuple.addAttribute(v.nextValue());
+				break;
+			case STRING:
+				tuple.addString(v.nextValue());
+				break;
+			}
+		}
 		return tuple.asList();
 	}
-		
-	public List<DataTuple> buildDataTuple(){
-		IValueGenerator[] gens = new IValueGenerator[generators.size()];
-		for(int i=0; i<this.generators.size();i++){
-			gens[i] = this.generators.get(i);
-		}		
-		return buildDataTuple(gens);
-		
-	}
-	
-	protected void addGenerator(IValueGenerator generator){
+
+	protected void addGenerator(IValueGenerator generator, DataType datatype) {
 		this.generators.add(generator);
+		this.datatypes.put(generator, datatype);
 	}
-	
-	protected void removeGenerator(IValueGenerator generator){
+
+	protected void addGenerator(IValueGenerator generator) {
+		addGenerator(generator, DataType.DOUBLE);
+	}
+
+	protected void removeGenerator(IValueGenerator generator) {
 		this.generators.remove(generator);
+		this.datatypes.remove(generator);
 	}
-	
-	public void pause(long millis){
+
+	public void pause(long millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
