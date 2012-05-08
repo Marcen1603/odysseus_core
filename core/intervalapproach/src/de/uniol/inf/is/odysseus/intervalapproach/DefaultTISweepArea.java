@@ -296,4 +296,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
+	
+	
+	public T peekLast(){
+		return getElements().peekLast();
+	}
 }
