@@ -316,6 +316,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		int posStart = line.indexOf(REPLACEMENT_START_KEY);
 		while (posStart != -1) {
 			int posEnd = posStart + 1 + line.substring(posStart + 1).indexOf(REPLACEMENT_END_KEY);
+			if(posEnd==posStart){
+				// end not found
+				break;
+			}
 			if (posEnd != -1 && posStart < posEnd) {
 				String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
 				if (replacements.containsKey(key)) {
