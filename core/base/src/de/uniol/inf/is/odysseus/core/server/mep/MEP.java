@@ -21,6 +21,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
@@ -200,4 +202,7 @@ public class MEP implements IExpressionParser {
 		}
 	}
 
+	public static ImmutableSet<String> getFunctions() {
+		return ImmutableSet.copyOf(functions.keySet());
+	}
 }
