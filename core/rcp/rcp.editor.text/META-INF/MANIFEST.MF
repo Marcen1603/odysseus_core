@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn
 Bundle-Vendor: Timo Michelsen
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.google.guava;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.datadictionary,
@@ -31,6 +32,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.eclipse.jface.text.reconciler,
  org.eclipse.jface.text.rules,
  org.eclipse.jface.text.source,
+ org.eclipse.ui.dialogs,
  org.eclipse.ui.editors.text,
  org.eclipse.ui.part,
  org.eclipse.ui.texteditor,
