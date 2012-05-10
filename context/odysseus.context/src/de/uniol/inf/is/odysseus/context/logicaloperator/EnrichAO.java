@@ -9,9 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
 
@@ -32,14 +30,14 @@ public class EnrichAO extends AbstractLogicalOperator {
 		super();
 	}
 
-	@Parameter(type = StringParameter.class, name = "ATTRIBUTES", isList = true)
+	@Parameter(type = StringParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setAttributes(List<String> readingSchema) {
 		this.attributes = readingSchema;
 	}
 
 	@Parameter(name = "storeName", type = StringParameter.class)
 	public void setStoreName(String storeName) {
-		this.storeName = storeName;		
+		this.storeName = storeName;
 	}
 
 	private void calcOutputSchema() {
@@ -51,9 +49,9 @@ public class EnrichAO extends AbstractLogicalOperator {
 				// SDFSchema s =
 				// ContextStoreManager.getStore(storeName).getSchema();
 				SDFSchema storeSchema = ContextStoreManager.getStore(storeName).getSchema();
-				IAttributeResolver ar =  new DirectAttributeResolver(storeSchema);
+				IAttributeResolver ar = new DirectAttributeResolver(storeSchema);
 				SDFAttribute attribute = ar.getAttribute(attributeName);
-				if (attribute==null) {
+				if (attribute == null) {
 					throw new IllegalArgumentException("Attribute \"" + attributeName + "\" does not exist in store \"" + storeName + "\"");
 				}
 				outattribs.add(attribute);
@@ -79,11 +77,21 @@ public class EnrichAO extends AbstractLogicalOperator {
 	public String getStoreName() {
 		return this.storeName;
 	}
-	
+
 	@Override
-	public void initialize() {	
+	public void initialize() {
 		super.initialize();
+		if (this.attributes == null) {
+			this.attributes = new ArrayList<String>();
+			for (SDFAttribute a : ContextStoreManager.getStore(storeName).getSchema()) {
+				this.attributes.add(a.getAttributeName());
+			}
+		}
 		calcOutputSchema();
+	}
+
+	public List<String> getAttributes() {
+		return this.attributes;
 	}
 
 }

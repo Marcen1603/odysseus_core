@@ -65,9 +65,9 @@ public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends
 
 	@Override
 	public List<T> getValues(ITimeInterval timeinterval) {
-		List<T> list = new ArrayList<T>();
-		Iterator<T> iter = sweepArea.iterator();
-		while (iter.hasNext()) {
+		List<T> list = new ArrayList<T>();		
+		Iterator<T> iter = sweepArea.queryOverlaps(timeinterval);
+		while (iter.hasNext()) {					
 			list.add(iter.next());
 		}
 		return list;

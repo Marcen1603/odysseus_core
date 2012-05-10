@@ -22,9 +22,7 @@ import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
@@ -46,12 +44,11 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 
 	@Override
 	public void execute(EnrichAO operator, TransformationConfiguration config) {
-		ITransferArea<Tuple<ITimeInterval>,Tuple<ITimeInterval>> transferFunction = new TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>>();
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
 		IDataMergeFunction<Tuple<ITimeInterval>> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
 		CombinedMergeFunction<ITimeInterval> metadataMerge = new CombinedMergeFunction<ITimeInterval>();		
 		metadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-		EnrichPO<Tuple<ITimeInterval>, ITimeInterval> enrich = new EnrichPO<Tuple<ITimeInterval>, ITimeInterval>(store, dataMerge, metadataMerge, transferFunction);
+		EnrichPO<ITimeInterval> enrich = new EnrichPO<ITimeInterval>(store, dataMerge, metadataMerge, operator.getAttributes());		
 		enrich.setOutputSchema(operator.getOutputSchema());
 		replace(operator, enrich, config);
 		retract(operator);
