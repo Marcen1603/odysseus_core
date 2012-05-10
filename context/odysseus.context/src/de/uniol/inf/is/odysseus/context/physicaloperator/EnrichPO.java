@@ -65,8 +65,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 	protected void process_next(Tuple<M> object, int port) {
 		ITimeInterval ti = object.getMetadata();
 		List<Tuple<M>> values = this.store.getValues(ti);
-		for (Tuple<M> value : values) {
-			System.out.println("      with: "+value);
+		for (Tuple<M> value : values) {			
 			Tuple<M> res = value.restrict(this.restrictList, true);
 			Tuple<M> newElement = merge(object, res, Order.LeftRight);		
 			transfer(newElement);

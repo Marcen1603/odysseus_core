@@ -36,12 +36,9 @@ import de.uniol.inf.is.odysseus.relational.base.Tuple;
 public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends AbstractContextStore<T> {
 
 	private DefaultTISweepArea<T> sweepArea = new DefaultTISweepArea<T>();
-	private int maxitems;
 
-	public MultiElementStore(String name, SDFSchema schema, int maxitems) {
-		super(name, schema);
-		this.maxitems = maxitems;
-
+	public MultiElementStore(String name, SDFSchema schema, int size) {
+		super(name, schema, size);		
 	}
 
 	@Override
@@ -53,7 +50,7 @@ public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends
 				tail.getMetadata().setEnd(value.getMetadata().getStart());
 			}
 			sweepArea.insert(value);
-			if(sweepArea.size()>maxitems){
+			if(sweepArea.size()>this.getSize()){
 				sweepArea.poll();				
 			}
 			notifyListener();
@@ -88,12 +85,7 @@ public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends
 		}
 		return list;
 	}
-
-	@Override
-	public ContextStoreType getType() {
-		return ContextStoreType.MULTI_ELEMENT_STORE;
-	}
-
+	
 	@Override
 	public void processTime(PointInTime time) {
 		// TODO Auto-generated method stub

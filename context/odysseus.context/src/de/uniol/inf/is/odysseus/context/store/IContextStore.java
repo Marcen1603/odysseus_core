@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.IContextStoreListener;
 import de.uniol.inf.is.odysseus.context.physicaloperator.StorePO;
-import de.uniol.inf.is.odysseus.context.store.types.ContextStoreType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -37,8 +36,7 @@ public interface IContextStore<T extends Tuple<? extends ITimeInterval>>{
 	public void insertValue(T value);	
 	public List<T> getValues(ITimeInterval timeinterval);
 	public List<T> getLastValues();	
-	public List<T> getAllValues();
-	public ContextStoreType getType();
+	public List<T> getAllValues();	
 	public void processTime(PointInTime time);
 	
 	public void addListener(IContextStoreListener listener);	
@@ -50,6 +48,7 @@ public interface IContextStore<T extends Tuple<? extends ITimeInterval>>{
 	public StorePO<T> getWriter();
 	public void close();
 	public void open();
+	public int getSize();	
 	
 	
 }

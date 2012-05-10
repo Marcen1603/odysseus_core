@@ -40,10 +40,12 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 	private String name;
 	private List<IContextStoreListener> listeners = new ArrayList<IContextStoreListener>();
 	private StorePO<T> writer;
+	private int size;
 	
-	public AbstractContextStore(String name, SDFSchema schema){
+	public AbstractContextStore(String name, SDFSchema schema, int size){
 		this.schema = schema;
 		this.name = name;
+		this.size = size;
 	}
 
 	@Override
@@ -63,6 +65,9 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 		this.name = name;
 	}
 	
+	public int getSize(){
+		return this.size;
+	}
 	
 	protected boolean validateSchemaSizeOfValue(T value){
 		if(value.size()==schema.size()){

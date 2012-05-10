@@ -15,14 +15,11 @@
 
 package de.uniol.inf.is.odysseus.context.rcp.view;
 
-import java.util.List;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
-import de.uniol.inf.is.odysseus.context.store.types.ContextStoreType;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
@@ -75,9 +72,9 @@ public class ContextViewTreeLabelProvider implements ILabelProvider {
 			name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
-		if(element instanceof ContextStoreType){
-			return ((ContextStoreType)element).toString();
-		}
+		if(element instanceof Integer){
+			return "Size: "+element;
+		}		
 		return element.toString();
 	}
 

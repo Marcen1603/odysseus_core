@@ -52,7 +52,7 @@ public class ContextViewTreeContentProvider implements ITreeContentProvider {
 			IContextStore<?> store = (IContextStore<?>)parentElement;
 			Object[] childs = new Object[2];
 			childs[0] = store.getSchema();
-			childs[1] = store.getType();
+			childs[1] = store.getSize();
 			return childs;
 		}
 		if(parentElement instanceof SDFSchema){
