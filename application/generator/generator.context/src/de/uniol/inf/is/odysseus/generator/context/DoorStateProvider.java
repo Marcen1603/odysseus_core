@@ -37,7 +37,7 @@ public class DoorStateProvider extends StreamClientHandler {
 	@Override
 	public void init() {
 		// Time
-		addGenerator(new IncreaseGenerator(new NoError(), 0, 1), DataType.LONG);
+		addGenerator(new IncreaseGenerator(new NoError(), 0, 20), DataType.LONG);
 		//change
 		addGenerator(new SwitchGenerator(new NoError(), 0, 1, 1, 1, 10));
 	}

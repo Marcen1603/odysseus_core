@@ -33,7 +33,7 @@ public class SensorProvider extends StreamClientHandler {
 	@Override
 	public void init() {
 		// Time
-		addGenerator(new IncreaseGenerator(new NoError(), 0, 1), DataType.LONG);
+		addGenerator(new IncreaseGenerator(new NoError(), 0, 2), DataType.LONG);
 		// temp
 		addGenerator(new PredifinedValueGenerator(23.1, 23.2, 23.3, 23.1, 23.4));
 
@@ -46,7 +46,7 @@ public class SensorProvider extends StreamClientHandler {
 
 	@Override
 	public List<DataTuple> next() {
-		pause(250);
+		pause(200);
 		return buildDataTuple();
 	}
 
