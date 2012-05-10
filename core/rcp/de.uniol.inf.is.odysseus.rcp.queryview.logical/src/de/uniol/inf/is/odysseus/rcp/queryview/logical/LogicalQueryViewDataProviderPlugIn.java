@@ -36,7 +36,7 @@ public class LogicalQueryViewDataProviderPlugIn implements BundleActivator {
 		}
 	}
 	
-	public static IExecutor getClientExecutor() {
+	public static IExecutor getExecutor() {
 		return executor;
 	}
 }

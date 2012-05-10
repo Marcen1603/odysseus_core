@@ -20,7 +20,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider {
 
 	@Override
 	public Collection<? extends IQueryViewData> getData() {
-		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getClientExecutor();
+		IExecutor executor = LogicalQueryViewDataProviderPlugIn.getExecutor();
 		
 		List<ILogicalQuery> logicalQueries = getLogicalQueries(executor);
 		
