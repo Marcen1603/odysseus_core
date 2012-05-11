@@ -329,6 +329,18 @@
          </keyword>
          <keyword
                name="ATTACH">
+         </keyword>
+         <keyword
+               name="SINGLE">
+         </keyword>
+         <keyword
+               name="MULTI">
+         </keyword>
+         <keyword
+               name="CONTEXT">
+         </keyword>
+         <keyword
+               name="STORE">
          </keyword>         
       </group>
    </extension>
