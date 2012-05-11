@@ -34,6 +34,15 @@
             name="Sources"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.server.views.mepfunctions.MEPFunctionsView"
+            icon="icons/variable_view.gif"
+            id="de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView"
+            name="MEP Functions View"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -84,6 +93,24 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.RefreshSinksViewCommand"
             name="Refresh Sinks View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.RefreshMEPFunctionsViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshMEPFunctionsViewCommand"
+            name="Refresh MEP Functions View">
+      </command>
     </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshMEPFunctionsViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
 
 </plugin>
