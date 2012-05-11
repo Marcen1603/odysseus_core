@@ -60,8 +60,8 @@ public class IfFunction extends AbstractFunction<Object> {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > 0){
-			throw new IllegalArgumentException("abs has only 1 argument.");
+		if(argPos > 2){
+			throw new IllegalArgumentException("iffunction has 3 arguments.");
 		}
         return accTypes[argPos];
 	}
