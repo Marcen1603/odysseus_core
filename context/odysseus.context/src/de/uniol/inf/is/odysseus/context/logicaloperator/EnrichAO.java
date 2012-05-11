@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
@@ -19,11 +20,13 @@ public class EnrichAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = -6701002329614782111L;
 	private String storeName;
 	private List<String> attributes;
+	private boolean outer = false;
 
 	public EnrichAO(EnrichAO op) {
 		super(op);
 		this.storeName = op.storeName;
 		this.attributes = op.attributes;
+		this.outer = op.outer;
 	}
 
 	public EnrichAO() {
@@ -35,9 +38,14 @@ public class EnrichAO extends AbstractLogicalOperator {
 		this.attributes = readingSchema;
 	}
 
-	@Parameter(name = "storeName", type = StringParameter.class)
+	@Parameter(name = "STORE", type = StringParameter.class)
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
+	}
+
+	@Parameter(name = "OUTER", type = StringParameter.class, optional = true)
+	public void setOuterEnrich(String outer) {
+		this.outer = Boolean.parseBoolean(outer);
 	}
 
 	private void calcOutputSchema() {
@@ -58,7 +66,6 @@ public class EnrichAO extends AbstractLogicalOperator {
 			}
 			setOutputSchema(new SDFSchema(getInputSchema(0).getURI() + "_ENRICH", outattribs));
 		}
-
 	}
 
 	@Override
@@ -92,6 +99,10 @@ public class EnrichAO extends AbstractLogicalOperator {
 
 	public List<String> getAttributes() {
 		return this.attributes;
+	}
+
+	public boolean isOuter() {
+		return this.outer;
 	}
 
 }

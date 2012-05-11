@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -60,15 +61,17 @@ public class ContextStoreView extends ViewPart implements IContextManagementList
 	@Override
 	public void createPartControl(Composite parent) {
 		FillLayout layout = new FillLayout();
-		layout.type = SWT.VERTICAL;
+		layout.type = SWT.VERTICAL;		
 		parent.setLayout(layout);
 
-		treeViewer = new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI);
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		
+		treeViewer = new TreeViewer(sashForm, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI);
 		treeViewer.setContentProvider(new ContextViewTreeContentProvider());
 		treeViewer.setLabelProvider(new ContextViewTreeLabelProvider());
 		treeViewer.addSelectionChangedListener(this);
 
-		Composite tableComposite = new Composite(parent, SWT.NONE);
+		Composite tableComposite = new Composite(sashForm, SWT.NONE);
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);				
 		tableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);

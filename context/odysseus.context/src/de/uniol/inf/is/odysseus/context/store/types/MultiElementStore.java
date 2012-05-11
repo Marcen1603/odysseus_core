@@ -54,7 +54,7 @@ public class MultiElementStore<T extends Tuple<? extends ITimeInterval>> extends
 				sweepArea.poll();				
 			}
 			notifyListener();
-			System.err.println(sweepArea.getSweepAreaAsString(value.getMetadata().getStart()));
+		//	System.err.println(sweepArea.getSweepAreaAsString(value.getMetadata().getStart()));
 		} else {
 			logger.warn("Context store failure: size of value and schema do not match");
 		}

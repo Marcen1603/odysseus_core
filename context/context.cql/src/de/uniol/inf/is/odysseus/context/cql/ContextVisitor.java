@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTContextStoreType;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateContextStore;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTDropContextStore;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
@@ -51,8 +53,8 @@ public class ContextVisitor implements IVisitor {
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary);
 		csv.visit(definitions, null);
 		SDFSchema schema = new SDFSchema("ContextStore:" + name, csv.getAttributes());
-		
-		int size = visit(typeNode, schema);		
+
+		int size = visit(typeNode, schema);
 		IContextStore<Tuple<? extends ITimeInterval>> store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
 
 		try {
@@ -73,22 +75,38 @@ public class ContextVisitor implements IVisitor {
 		this.datadictionary = dd;
 	}
 
-	public int visit(ASTContextStoreType node, Object data) throws QueryParseException {		
+	public int visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		String typeName = node.jjtGetValue().toString().trim();
 		if (typeName.equalsIgnoreCase("SINGLE")) {
 			return 1;
-		} 
-		if(typeName.equalsIgnoreCase("MULTI")){
-			return ((ASTInteger)node.jjtGetChild(0)).getValue().intValue();
+		}
+		if (typeName.equalsIgnoreCase("MULTI")) {
+			return ((ASTInteger) node.jjtGetChild(0)).getValue().intValue();
 		}
 		throw new QueryParseException("Type for context store does not exist!");
-	}	
+	}
 
 	@Override
 	public Object visit(SimpleNode node, Object data, Object baseObject) {
 		if (node instanceof ASTCreateContextStore) {
 			return this.visit((ASTCreateContextStore) node, data);
 		}
+		if (node instanceof ASTDropContextStore) {
+			return this.visit((ASTDropContextStore) node, data);
+		}
+		return null;
+	}
+
+	public Object visit(ASTDropContextStore node, Object data) throws QueryParseException {
+		ASTIdentifier identifier = (ASTIdentifier) node.jjtGetChild(0);
+		String name = identifier.getName();
+		if(ContextStoreManager.storeExists(name)){
+			ContextStoreManager.removeStore(name);
+		}else{
+			if(!((node.jjtGetNumChildren()>=2) && (node.jjtGetChild(1) instanceof ASTIfExists))){			
+				throw new QueryParseException("There is no store named \""+name+"\"");
+			}
+		}		
 		return null;
 	}
 

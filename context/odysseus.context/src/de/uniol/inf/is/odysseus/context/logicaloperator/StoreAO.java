@@ -56,7 +56,7 @@ public class StoreAO extends AbstractLogicalOperator {
 		return storeName;
 	}
 
-	@Parameter(name = "storeName", type = StringParameter.class)
+	@Parameter(name = "STORE", type = StringParameter.class)
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
 	}
@@ -75,7 +75,7 @@ public class StoreAO extends AbstractLogicalOperator {
 			throw new IllegalArgumentException("Schemas of the store-operator and the store itself are not compatible. They have to be at least union-compatible");
 		}
 		if(store.hasWriter()){
-			throw new IllegalArgumentException("There is already a store-operator for \""+storeName+"\". Use the existing one instead, because otherwise there all writes into the store will not be chronologically ordered");
+			throw new IllegalArgumentException("There is already a store-operator for \""+storeName+"\". Use the existing one instead, because otherwise all writes into the store will not be chronologically ordered");
 		}
 	}
 }

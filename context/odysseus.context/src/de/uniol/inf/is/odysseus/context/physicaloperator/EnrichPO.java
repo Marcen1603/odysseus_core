@@ -44,13 +44,15 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 	protected IMetadataMergeFunction<M> metadataMerge;
 	private List<String> attribtues;
 	private int[] restrictList;
+	private boolean outer;
 
-	public EnrichPO(IContextStore<Tuple<M>> store, IDataMergeFunction<Tuple<M>> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
+	public EnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
 		super();
 		this.store = store;
 		this.metadataMerge = metadataMerge;
 		this.dataMerge = dataMerge;
 		this.attribtues = attributes;
+		this.outer = outer;
 	}
 
 	public EnrichPO(EnrichPO<M> enrichPO) {
@@ -59,6 +61,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		this.metadataMerge = enrichPO.metadataMerge.clone();
 		this.dataMerge = enrichPO.dataMerge.clone();
 		this.attribtues = new ArrayList<String>(enrichPO.attribtues);
+		this.outer = enrichPO.outer;
 	}
 
 	@Override
@@ -68,6 +71,12 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		for (Tuple<M> value : values) {			
 			Tuple<M> res = value.restrict(this.restrictList, true);
 			Tuple<M> newElement = merge(object, res, Order.LeftRight);		
+			transfer(newElement);
+		}
+		if(values.size()==0 && outer){
+			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length);
+			nullTuple.setMetadata((M) object.getMetadata());
+			Tuple<M> newElement = merge(object, nullTuple, Order.LeftRight);		
 			transfer(newElement);
 		}
 	}
