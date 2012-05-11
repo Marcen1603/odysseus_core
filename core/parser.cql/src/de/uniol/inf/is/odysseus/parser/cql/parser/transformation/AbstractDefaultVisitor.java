@@ -817,4 +817,9 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		return null;
 	}
+
+	@Override
+	public Object visit(ASTDropContextStore node, Object data) throws QueryParseException {
+		return null;
+	}
 }

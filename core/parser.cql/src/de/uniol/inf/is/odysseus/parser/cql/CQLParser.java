@@ -1497,8 +1497,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTContextStoreType node, Object data)
-			throws QueryParseException {
-		// TODO Auto-generated method stub
+			throws QueryParseException {		
+		return null;
+	}
+
+	@Override
+	public Object visit(ASTDropContextStore node, Object data) throws QueryParseException {
+		IVisitor visitor = VisitorFactory.getInstance().getVisitor(
+				"de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
+		visitor.setDataDictionary(dataDictionary);
+		visitor.setUser(caller);
+		visitor.visit(node, data, this);
 		return null;
 	}
 

@@ -8,7 +8,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) Statement */
   try {
-/*@egen*/  (    (      LOOKAHEAD(PriorizedStatement())      PriorizedStatement()    | LOOKAHEAD(2)      CreateStatement()    | LOOKAHEAD(2)      CreateSinkStatement()    | LOOKAHEAD(2)      CreateType()    | LOOKAHEAD(2)      DropStreamStatement()    | LOOKAHEAD(2)      DropViewStatement()    | LOOKAHEAD(2)      CreateViewStatement()    | LOOKAHEAD(2)      StreamToStatement()    | LOOKAHEAD(2)      CreateUserStatement()    | LOOKAHEAD(2)      CreateSLAStatement()    | LOOKAHEAD(2)      CreateRoleStatement()    | LOOKAHEAD(2)      DropRoleStatement()    | LOOKAHEAD(2)      CreateDatabaseConnection()    | LOOKAHEAD(2)      AlterUserStatement()    | LOOKAHEAD(2)      DropUserStatement()    | LOOKAHEAD(2)      CreateSensor()    | LOOKAHEAD(2)      CreateBroker()    | LOOKAHEAD(BrokerSelectInto())      BrokerSelectInto()    | LOOKAHEAD(2)      CreateContextStore()    | LOOKAHEAD(2)      GrantRoleStatement()          | LOOKAHEAD(2)      GrantStatement()          | RevokeStatement()    )    [ ";" ]  )+  < EOF >/*@bgen(jjtree)*/
+/*@egen*/  (    (      LOOKAHEAD(PriorizedStatement())      PriorizedStatement()    | LOOKAHEAD(2)      CreateStatement()    | LOOKAHEAD(2)      CreateSinkStatement()    | LOOKAHEAD(2)      CreateType()    | LOOKAHEAD(2)      DropStreamStatement()    | LOOKAHEAD(2)      DropViewStatement()    | LOOKAHEAD(2)      CreateViewStatement()    | LOOKAHEAD(2)      StreamToStatement()    | LOOKAHEAD(2)      CreateUserStatement()    | LOOKAHEAD(2)      CreateSLAStatement()    | LOOKAHEAD(2)      CreateRoleStatement()    | LOOKAHEAD(2)      DropRoleStatement()    | LOOKAHEAD(2)      CreateDatabaseConnection()    | LOOKAHEAD(2)      AlterUserStatement()    | LOOKAHEAD(2)      DropUserStatement()    | LOOKAHEAD(2)      CreateSensor()    | LOOKAHEAD(2)      CreateBroker()    | LOOKAHEAD(BrokerSelectInto())      BrokerSelectInto()    | LOOKAHEAD(2)      CreateContextStore()    | LOOKAHEAD(2)      DropContextStore()    | LOOKAHEAD(2)      GrantRoleStatement()          | LOOKAHEAD(2)      GrantStatement()          | RevokeStatement()    )    [ ";" ]  )+  < EOF >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -170,6 +170,32 @@
 /*@egen*/}{/*@bgen(jjtree) CreateContextStore */
   try {
 /*@egen*/  < K_CREATE >  < K_CONTEXT >  < K_STORE >  Identifier()  "(" AttributeDefinitions() ")"  < K_AS >  ContextStoreType()/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}void DropContextStore():{/*@bgen(jjtree) DropContextStore */
+  ASTDropContextStore jjtn000 = new ASTDropContextStore(JJTDROPCONTEXTSTORE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) DropContextStore */
+  try {
+/*@egen*/  < K_DROP >  < K_CONTEXT >  < K_STORE >  Identifier()  [ IfExists() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

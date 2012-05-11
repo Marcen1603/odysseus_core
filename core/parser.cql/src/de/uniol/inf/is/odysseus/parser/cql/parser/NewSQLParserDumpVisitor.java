@@ -676,4 +676,9 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
+
+	@Override
+	public Object visit(ASTDropContextStore node, Object data) throws QueryParseException {
+		return pvisit(node);
+	}
 }
