@@ -283,7 +283,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		for (int i = 1; i < this.attributes.length; ++i) {
 			Object curAttribute = this.attributes[i];
 			retBuff.append("|");
-			retBuff.append(curAttribute == null ? "" : curAttribute.toString());
+			retBuff.append(curAttribute == null ? "<NULL>" : curAttribute.toString());
 		}
 		retBuff.append(" | sz=" + (memSize == -1 ? "(-)" : memSize));
 		retBuff.append(" | META | " + getMetadata());
