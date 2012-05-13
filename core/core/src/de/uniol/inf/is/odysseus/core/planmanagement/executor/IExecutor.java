@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -111,6 +112,14 @@ public interface IExecutor extends IClientPlanManager{
 	 * @return IDs aller Anfragen
 	 */
 	public Collection<Integer> getLogicalQueryIds();
+	
+	/**
+	 * Returns the Information about the Connection for the requested ID
+	 * 
+	 * @param queryId
+	 * @return Map<String, String> information
+	 */
+	public Map<String, String> getConnectionInformation(int queryId);
 	
 	/**
 	 * Start all queries that are currently not running

@@ -328,6 +328,11 @@ public class WsClient implements IExecutor, IClientExecutor{
 		}
 		return null;
 	}
+	
+	public Map<String, String> getConnectionInformation(int queryId) {
+		// TODO implement me on the server
+		return null;
+	}
 
 	
 /********************************************************************

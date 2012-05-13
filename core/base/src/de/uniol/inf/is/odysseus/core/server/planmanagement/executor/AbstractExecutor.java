@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -117,6 +118,15 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	protected IUserManagement usrMgmt;
 	protected ISessionManagement sessMgmt;
 
+	/**
+	 * Socket Management
+	 */
+	// Map<queryID, Port>
+	@SuppressWarnings("unused")
+	private Map<Integer, Integer> socketMap;
+	// Map<queryID, SocketSinkPO>
+	@SuppressWarnings("unused")
+	private Map<Integer, SocketSinkPO> socketSinkMap;
 	/**
 	 * Data Dictionary
 	 */
@@ -635,6 +645,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 
+	public void addSocketSink(int queryId, int port) {
+		// TODO implement me
+		// TODO muss von getConnectionInformation angestoßen werden, falls es keine SocketSink gibt
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
