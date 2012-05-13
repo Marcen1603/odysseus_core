@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -118,13 +119,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	protected IUserManagement usrMgmt;
 	protected ISessionManagement sessMgmt;
 
-	/**
-	 * Socket Management
-	 */
-	// Map<queryID, Port>
-	protected Map<Integer, Integer> socketMap;
-	// Map<queryID, SocketSinkPO>
-	protected Map<Integer, ILogicalOperator> socketSinkMap;
 	/**
 	 * Data Dictionary
 	 */
@@ -641,19 +635,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		synchronized (this.planExecutionListener) {
 			this.planExecutionListener.remove(listener);
 		}
-	}
-
-	public void addSocketSink(int queryId, int port) {
-		ILogicalQuery query = getLogicalQuery(queryId);
-		ILogicalOperator op = query.getLogicalPlan();;
-		String sinkType = "bytebuffer";
-		String sinkName = "socketSink" + queryId + port;
-		ILogicalOperator socketSink = new SocketSinkAO(port, sinkType, false, sinkName);
-		int sinkInPort = 0;
-		int sourceOutPort = 0;
-		socketSink.subscribeToSource(op, sinkInPort, sourceOutPort, op.getOutputSchema());
-		socketMap.put(queryId, port);
-		socketSinkMap.put(queryId, socketSink);
 	}
 	
 	/*

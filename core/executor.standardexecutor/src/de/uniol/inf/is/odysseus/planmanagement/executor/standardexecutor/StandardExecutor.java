@@ -890,31 +890,4 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
     	return result;
     }
 
-	@Override
-	public Map<String, String> getConnectionInformation(int queryId) {
-		// TODO check for correctness
-		Map<String, String> connectInfo = new HashMap<String, String>();
-		if(!socketSinkMap.containsKey(queryId)) {
-			// no socketsink available so create one
-			int minPort = Integer.valueOf(OdysseusConfiguration.get("minSinkPort"));
-			int maxPort = Integer.valueOf(OdysseusConfiguration.get("maxSinkPort"));
-			int port = getNextFreePort(minPort, maxPort);
-			addSocketSink(queryId, port);
-			connectInfo.put("port", "" + port);
-		} else {
-			connectInfo.put("port", "" + socketMap.get(queryId));
-		}
-
-		connectInfo.put("addr", OdysseusConfiguration.get("socketAdress"));
-		return connectInfo;
-	}
-	
-	private int getNextFreePort(int min, int max) {
-		int port;
-		do {
-			port =  min + (int)(Math.random() * ((max - min) + 1));
-		} while(!socketSinkMap.containsKey(port));
-		return port;
-	}
-
 }

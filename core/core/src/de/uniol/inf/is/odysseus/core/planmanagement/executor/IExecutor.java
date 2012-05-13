@@ -114,14 +114,6 @@ public interface IExecutor extends IClientPlanManager{
 	public Collection<Integer> getLogicalQueryIds();
 	
 	/**
-	 * Returns the Information about the Connection for the requested ID
-	 * 
-	 * @param queryId
-	 * @return Map<String, String> information
-	 */
-	public Map<String, String> getConnectionInformation(int queryId);
-	
-	/**
 	 * Start all queries that are currently not running
 	 * 
 	 * @param user
