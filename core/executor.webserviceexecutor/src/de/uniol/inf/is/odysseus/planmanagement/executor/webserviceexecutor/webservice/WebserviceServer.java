@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -31,11 +32,19 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.ws.Endpoint;
 
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
@@ -52,6 +61,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringMapResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
+import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 
 /**
  * 
@@ -68,6 +79,17 @@ public class WebserviceServer {
 	// identified by securitytoken
 	@XmlTransient
 	private Map<String, ISession> sessions = new HashMap<String, ISession>();
+
+	@XmlTransient
+	private Map<Integer, Integer> socketPortMap = new HashMap<Integer, Integer>();
+
+	/**
+	 * Socket Management
+	 */
+	// Map<queryID, Port>
+	protected Map<Integer, Integer> socketMap;
+	// Map<queryID, SocketSinkPO>
+	protected Map<Integer, ILogicalOperator> socketSinkMap;
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
@@ -431,22 +453,74 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().getLogicalQueryIds(), true);
+			return new IntegerCollectionResponse(ExecutorServiceBinding
+					.getExecutor().getLogicalQueryIds(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new IntegerCollectionResponse(null, false);
 		}
 	}
-	
+
 	public StringMapResponse getConnectionInformation(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId) {
 		try {
 			loginWithSecurityToken(securityToken);
-			return new StringMapResponse(ExecutorServiceBinding.getExecutor().getConnectionInformation(queryId), true);
+
+			// TODO check for correctness
+			Map<String, String> connectInfo = new HashMap<String, String>();
+			if (!socketPortMap.containsKey(queryId)) {
+				// no socketsink available so create one
+				int minPort = Integer.valueOf(OdysseusConfiguration
+						.get("minSinkPort"));
+				int maxPort = Integer.valueOf(OdysseusConfiguration
+						.get("maxSinkPort"));
+				int port = getNextFreePort(minPort, maxPort);
+				addSocketSink(queryId, port);
+				connectInfo.put("port", "" + port);
+			} else {
+				connectInfo.put("port", "" + socketPortMap.get(queryId));
+			}
+			connectInfo.put("addr", OdysseusConfiguration.get("socketAdress"));
+			return new StringMapResponse(connectInfo, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StringMapResponse(null, false);
 		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void addSocketSink(int queryId, int port) {
+		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
+				.getExecutionPlan();
+		IPhysicalQuery query = plan.getQuery(queryId);
+		List<IPhysicalOperator> roots = query.getRoots();
+		if (roots.size() == 1) {
+			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder = new ByteBufferSinkStreamHandlerBuilder();
+			boolean useNio = false;
+			boolean loginNeeded = false;
+			int sourceInPort = 0;
+			int sourceOutPort = 0;
+			// copied from TRelationSocketSinkAORule
+			IDataHandler<?> handler = new TupleDataHandler(roots.get(0)
+					.getOutputSchema());
+			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
+					handler);
+			ISink sink = new SocketSinkPO(port, sinkStreamHandlerBuilder,
+					useNio, loginNeeded, objectHandler);
+			sink.subscribeToSource(roots.get(0), sourceInPort, sourceOutPort,
+					roots.get(0).getOutputSchema());
+			sink.open();
+		} else {
+			// TODO solution for a plan with more roots
+		}
+	}
+
+	private int getNextFreePort(int min, int max) {
+		int port = 0;
+		do {
+			port = min + (int) (Math.random() * ((max - min) + 1));
+		} while (!socketPortMap.containsKey(port));
+		return port;
 	}
 }
