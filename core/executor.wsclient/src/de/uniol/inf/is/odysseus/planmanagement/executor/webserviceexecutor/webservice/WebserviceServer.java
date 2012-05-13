@@ -18,11 +18,25 @@ import javax.xml.ws.ResponseWrapper;
  */
 @WebService(name = "WebserviceServer", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/")
 @XmlSeeAlso({
-    net.java.dev.jaxb.array.ObjectFactory.class,
-    de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ObjectFactory.class
+    de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ObjectFactory.class,
+    net.java.dev.jaxb.array.ObjectFactory.class
 })
 public interface WebserviceServer {
 
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.StringResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getName", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetName")
+    @ResponseWrapper(localName = "getNameResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetNameResponse")
+    public StringResponse getName(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
 
     /**
      * 
@@ -392,20 +406,6 @@ public interface WebserviceServer {
         String securitytoken,
         @WebParam(name = "queryId", targetNamespace = "")
         int queryId);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.StringResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getName", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetName")
-    @ResponseWrapper(localName = "getNameResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetNameResponse")
-    public StringResponse getName(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
 
     /**
      * 
