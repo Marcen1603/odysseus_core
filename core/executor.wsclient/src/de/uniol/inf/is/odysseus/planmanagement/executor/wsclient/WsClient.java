@@ -15,8 +15,12 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.SocketAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ConnectionInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LogicalQueryInfo;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
@@ -330,16 +335,19 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 	
 	/**
-	 * Returns a map of connection information mainly containing "addr" -> address and "port"
+	 * Returns a SocketAddress object
 	 * 
 	 * @param queryId
-	 * @return Map<String, String>
+	 * @return SocketAddress
 	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, String> getConnectionInformation(int queryId) {
+	public SocketAddress getConnectionInformation(int queryId) {
 		if(getWebserviceServer() != null) {
-			// TODO ob das so klappt
-			return (Map<String, String>) getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
+			ConnectionInformation info = getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
+			try {
+				return new InetSocketAddress(InetAddress.getByName(info.getAddress()), info.getPort());
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
