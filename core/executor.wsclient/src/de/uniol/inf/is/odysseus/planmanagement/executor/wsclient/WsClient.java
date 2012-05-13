@@ -330,7 +330,9 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 	
 	public Map<String, String> getConnectionInformation(int queryId) {
-		// TODO implement me on the server
+		if(getWebserviceServer() != null) {
+			return getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
+		}
 		return null;
 	}
 
