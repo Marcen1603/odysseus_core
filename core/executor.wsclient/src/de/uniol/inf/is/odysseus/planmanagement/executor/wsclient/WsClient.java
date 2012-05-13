@@ -329,9 +329,11 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Map<String, String> getConnectionInformation(int queryId) {
 		if(getWebserviceServer() != null) {
-			return getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
+			// TODO ob das so klappt
+			return (Map<String, String>) getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
 		}
 		return null;
 	}
