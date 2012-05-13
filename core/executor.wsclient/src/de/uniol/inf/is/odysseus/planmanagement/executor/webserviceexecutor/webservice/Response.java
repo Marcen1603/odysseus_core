@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
     StringListResponse.class,
     StringResponse.class,
     QueryResponse.class,
+    StringMapResponse.class,
     IntegerCollectionResponse.class
 })
 public class Response {

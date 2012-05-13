@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringMapResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 
 /**
@@ -434,6 +435,18 @@ public class WebserviceServer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new IntegerCollectionResponse(null, false);
+		}
+	}
+	
+	public StringMapResponse getConnectionInformation(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryId") int queryId) {
+		try {
+			loginWithSecurityToken(securityToken);
+			return new StringMapResponse(ExecutorServiceBinding.getExecutor().getConnectionInformation(queryId), true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StringMapResponse(null, false);
 		}
 	}
 }
