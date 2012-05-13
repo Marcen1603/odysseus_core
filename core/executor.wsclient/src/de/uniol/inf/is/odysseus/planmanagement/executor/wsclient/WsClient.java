@@ -329,6 +329,12 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 	
+	/**
+	 * Returns a map of connection information mainly containing "addr" -> address and "port"
+	 * 
+	 * @param queryId
+	 * @return Map<String, String>
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getConnectionInformation(int queryId) {
 		if(getWebserviceServer() != null) {

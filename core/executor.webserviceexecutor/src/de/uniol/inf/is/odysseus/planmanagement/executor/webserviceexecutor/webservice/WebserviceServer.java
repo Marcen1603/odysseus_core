@@ -481,7 +481,7 @@ public class WebserviceServer {
 			} else {
 				connectInfo.put("port", "" + socketPortMap.get(queryId));
 			}
-			connectInfo.put("addr", OdysseusConfiguration.get("socketAdress"));
+			connectInfo.put("addr", OdysseusConfiguration.get("socketAddress"));
 			return new StringMapResponse(connectInfo, true);
 		} catch (Exception e) {
 			e.printStackTrace();
