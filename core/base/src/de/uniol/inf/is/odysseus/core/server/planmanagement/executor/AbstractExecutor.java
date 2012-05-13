@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -40,9 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -129,7 +124,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	// Map<queryID, Port>
 	protected Map<Integer, Integer> socketMap;
 	// Map<queryID, SocketSinkPO>
-	protected Map<Integer, SocketSinkPO> socketSinkMap;
+	protected Map<Integer, ILogicalOperator> socketSinkMap;
 	/**
 	 * Data Dictionary
 	 */
@@ -648,39 +643,17 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unused" })
 	public void addSocketSink(int queryId, int port) {
-		IExecutionPlan plan = getExecutionPlan();
-		IPhysicalQuery query = plan.getQuery(queryId);
-		List<IPhysicalOperator> roots = query.getRoots();
-		//List<IPhysicalOperator> roots = getExecutionPlan().getQuery(queryId).getRoots();
-		if(roots.size() == 1) {
-			IPhysicalOperator root = roots.get(0);
-			
-			// TODO is this the way?
-			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder = new ByteBufferSinkStreamHandlerBuilder();
-			
-			boolean useNIO = false;
-			boolean loginNeeded = false;
-			
-			// TODO da weiss ich nicht wie ich da rankomme
-			IObjectHandler objectHandler = null;
-
-			// Create a SocketSink
-			SocketSinkPO po = new SocketSinkPO(port, sinkStreamHandlerBuilder, useNIO, loginNeeded, objectHandler);
-			
-			// add po to root
-			int sinkInPort = 0;
-			int sourceOutPort = 0;
-
-			// TODO ka wie man das jetzt subscriben soll
-			
-			// add sink to map
-			socketMap.put(queryId, port);
-			socketSinkMap.put(queryId, po);
-		} else {
-			// TODO implement addSocketSink for more than one root
-		}
+		ILogicalQuery query = getLogicalQuery(queryId);
+		ILogicalOperator op = query.getLogicalPlan();;
+		String sinkType = "bytebuffer";
+		String sinkName = "socketSink" + queryId + port;
+		ILogicalOperator socketSink = new SocketSinkAO(port, sinkType, false, sinkName);
+		int sinkInPort = 0;
+		int sourceOutPort = 0;
+		socketSink.subscribeToSource(op, sinkInPort, sourceOutPort, op.getOutputSchema());
+		socketMap.put(queryId, port);
+		socketSinkMap.put(queryId, socketSink);
 	}
 	
 	/*
