@@ -33,9 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     BooleanResponse.class,
     StringListResponse.class,
+    ConnectionInformationResponse.class,
     StringResponse.class,
     QueryResponse.class,
-    StringMapResponse.class,
     IntegerCollectionResponse.class
 })
 public class Response {

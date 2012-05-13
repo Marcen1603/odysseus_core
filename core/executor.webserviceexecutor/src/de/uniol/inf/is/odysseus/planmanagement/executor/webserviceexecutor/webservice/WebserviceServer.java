@@ -15,6 +15,7 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,13 +54,14 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.exception.WebserviceException;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.BooleanResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.ConnectionInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.ConnectionInformationResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringMapResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
 import de.uniol.inf.is.odysseus.relational.base.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
@@ -72,7 +74,7 @@ import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
 @XmlSeeAlso({ SimpleGraph.class, String[].class, GraphNode.class,
-		LogicalQuery.class })
+		LogicalQuery.class, ConnectionInformation.class })
 public class WebserviceServer {
 
 	// Session management needed for logout.
@@ -461,31 +463,29 @@ public class WebserviceServer {
 		}
 	}
 
-	public StringMapResponse getConnectionInformation(
+	public ConnectionInformationResponse getConnectionInformation(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId) {
 		try {
 			loginWithSecurityToken(securityToken);
-
-			// TODO check for correctness
-			Map<String, String> connectInfo = new HashMap<String, String>();
+			int port = 0;
 			if (!socketPortMap.containsKey(queryId)) {
 				// no socketsink available so create one
 				int minPort = Integer.valueOf(OdysseusConfiguration
 						.get("minSinkPort"));
 				int maxPort = Integer.valueOf(OdysseusConfiguration
 						.get("maxSinkPort"));
-				int port = getNextFreePort(minPort, maxPort);
+				port = getNextFreePort(minPort, maxPort);
 				addSocketSink(queryId, port);
-				connectInfo.put("port", "" + port);
 			} else {
-				connectInfo.put("port", "" + socketPortMap.get(queryId));
+				// there is already a socketsink so we can use the port
+				port = socketPortMap.get(queryId);
 			}
-			connectInfo.put("addr", OdysseusConfiguration.get("socketAddress"));
-			return new StringMapResponse(connectInfo, true);
+			ConnectionInformation connectInfo = new ConnectionInformation(port, InetAddress.getLocalHost().getHostAddress());
+			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new StringMapResponse(null, false);
+			return new ConnectionInformationResponse(null, false);
 		}
 	}
 

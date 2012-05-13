@@ -14,29 +14,27 @@
  */
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response;
 
-import java.util.Map;
-
 /**
  * @author Merlin Wasmann
  *
  */
-public class StringMapResponse extends Response {
-	private Map<String, String> responseValue;
+public class ConnectionInformationResponse extends Response {
+	private ConnectionInformation responseValue;
 
-	public StringMapResponse() {
+	public ConnectionInformationResponse() {
 		super();
 	}
 	
-	public StringMapResponse(Map<String, String> responseValue, boolean success) {
+	public ConnectionInformationResponse(ConnectionInformation responseValue, boolean success) {
 		super(success);
 		this.responseValue = responseValue;
 	}
 	
-	public Map<String, String> getResponseValue() {
+	public ConnectionInformation getResponseValue() {
 		return this.responseValue;
 	}
 	
-	public void setResponseValue(Map<String, String> value) {
+	public void setResponseValue(ConnectionInformation value) {
 		this.responseValue = value;
 	}
 }

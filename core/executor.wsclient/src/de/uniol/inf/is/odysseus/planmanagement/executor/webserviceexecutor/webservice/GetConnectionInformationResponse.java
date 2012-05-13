@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}stringMapResponse" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/}connectionInformationResponse" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetConnectionInformationResponse {
 
     @XmlElement(name = "return")
-    protected StringMapResponse _return;
+    protected ConnectionInformationResponse _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link StringMapResponse }
+     *     {@link ConnectionInformationResponse }
      *     
      */
-    public StringMapResponse getReturn() {
+    public ConnectionInformationResponse getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetConnectionInformationResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link StringMapResponse }
+     *     {@link ConnectionInformationResponse }
      *     
      */
-    public void setReturn(StringMapResponse value) {
+    public void setReturn(ConnectionInformationResponse value) {
         this._return = value;
     }
 
