@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mining.clustering.model;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.mining.distance.IMetricFunctionValues;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This interface represents objects that can be clustered by the different

@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Observation;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.State;
 import de.uniol.inf.is.odysseus.markov.model.statemachine.Transition;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class ViterbiAggregationFunction extends AbstractAggregateFunction<Tuple<?>, Tuple<?>>{
 

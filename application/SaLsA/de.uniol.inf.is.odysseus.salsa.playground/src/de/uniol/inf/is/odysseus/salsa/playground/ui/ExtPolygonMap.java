@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

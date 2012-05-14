@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 

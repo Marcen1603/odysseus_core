@@ -7,6 +7,7 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Service-Component: OSGI-INF/Executor.xml
 Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.event,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,

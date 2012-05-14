@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.detection.stateful;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;

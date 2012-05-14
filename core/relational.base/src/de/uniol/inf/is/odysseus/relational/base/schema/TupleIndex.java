@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational.base.schema;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * Repräsentiert einen Indexeintrag in einem Tupelpfad. Der Indexeintrag

@@ -4,6 +4,7 @@ Bundle-Name: Sparql
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.sparql
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datadictionary,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.mep,

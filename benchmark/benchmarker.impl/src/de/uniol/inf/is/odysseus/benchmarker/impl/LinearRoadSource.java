@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class LinearRoadSource extends
 		AbstractIterableSource<Tuple<? extends IClone>> {

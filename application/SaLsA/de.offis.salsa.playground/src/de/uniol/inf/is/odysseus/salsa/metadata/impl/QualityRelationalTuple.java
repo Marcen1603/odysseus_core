@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.salsa.metadata.impl;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.salsa.metadata.Quality;
 
 public class QualityRelationalTuple<T extends Quality> extends Tuple<T> implements

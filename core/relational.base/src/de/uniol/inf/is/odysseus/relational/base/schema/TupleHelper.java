@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational.base.schema;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SchemaIndexPath;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * Temporäre Klasse. Unterstützt die Auswertung von Tupel

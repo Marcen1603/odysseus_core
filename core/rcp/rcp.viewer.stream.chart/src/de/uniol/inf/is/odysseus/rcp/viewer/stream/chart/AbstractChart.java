@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPart implements IAttributesChangeable<T>, IStreamElementListener<Object>{
 

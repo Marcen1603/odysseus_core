@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleToken;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 

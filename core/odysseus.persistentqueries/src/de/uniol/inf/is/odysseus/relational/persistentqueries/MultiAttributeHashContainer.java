@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.relational.persistentqueries;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({"rawtypes"})
 public class MultiAttributeHashContainer {

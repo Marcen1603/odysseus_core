@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.ViewableDatatypeRegistry;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class ViewSchema<T> {
 

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.clustering.feature;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 

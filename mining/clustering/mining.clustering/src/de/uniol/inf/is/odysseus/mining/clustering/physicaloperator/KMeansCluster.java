@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.mining.clustering.model.AbstractCluster;
 import de.uniol.inf.is.odysseus.mining.clustering.model.IClusteringObject;
 import de.uniol.inf.is.odysseus.mining.clustering.model.RelationalClusteringObject;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This class represents a cluster for the simple single pass k-means algorithm

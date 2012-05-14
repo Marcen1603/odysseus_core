@@ -6,7 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Nth;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.NthPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

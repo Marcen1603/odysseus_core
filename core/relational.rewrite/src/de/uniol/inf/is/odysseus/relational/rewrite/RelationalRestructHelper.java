@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 
 /**

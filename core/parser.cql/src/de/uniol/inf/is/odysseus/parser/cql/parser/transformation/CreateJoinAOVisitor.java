@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWhereClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.IExistencePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //creates join operators

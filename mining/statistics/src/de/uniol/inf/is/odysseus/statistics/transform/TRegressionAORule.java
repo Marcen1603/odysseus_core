@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.statistics.transform;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.statistics.logicaloperator.RegressionAO;
 import de.uniol.inf.is.odysseus.statistics.physicaloperator.RegressionPO;

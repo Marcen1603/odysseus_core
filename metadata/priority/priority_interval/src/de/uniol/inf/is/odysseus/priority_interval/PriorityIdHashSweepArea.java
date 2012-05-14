@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends Tuple<K>>
 		implements ITimeIntervalSweepArea<T> {

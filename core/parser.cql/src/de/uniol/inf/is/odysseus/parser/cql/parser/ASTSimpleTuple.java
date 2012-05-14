@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 @SuppressWarnings("all")
 public class ASTSimpleTuple extends SimpleNode {
 	public ASTSimpleTuple(int id) {

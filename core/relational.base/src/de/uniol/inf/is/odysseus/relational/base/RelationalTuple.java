@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.relational.base;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**

@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.nexmark.generator.SimpleCalendar;
 import de.uniol.inf.is.odysseus.nexmark.generator.TupleContainer;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * Der NexmarkStreamClientHandler bearbeitet eingehende Streamverbindungen

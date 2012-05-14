@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectI
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
-import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

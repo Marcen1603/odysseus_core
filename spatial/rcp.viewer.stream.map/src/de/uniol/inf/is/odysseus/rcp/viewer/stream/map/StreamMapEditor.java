@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 

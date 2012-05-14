@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational_interval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder

@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IProbability;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		IObjectHandler<Tuple<M>> {

@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.mining.smql.parser.ASTPercent;
 import de.uniol.inf.is.odysseus.mining.smql.parser.ASTProcessPhases;
 import de.uniol.inf.is.odysseus.mining.smql.parser.SMQLParserVisitor;
 import de.uniol.inf.is.odysseus.mining.smql.visitor.AbstractSMQLParserVisitor;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class SMQLCleaningVisitor extends AbstractSMQLParserVisitor implements ISMQLFeature {
 

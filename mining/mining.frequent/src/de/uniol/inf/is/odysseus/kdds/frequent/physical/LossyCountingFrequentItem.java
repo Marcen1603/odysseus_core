@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class LossyCountingFrequentItem<T extends Tuple<?>> extends AbstractFrequentPO<T> {
 

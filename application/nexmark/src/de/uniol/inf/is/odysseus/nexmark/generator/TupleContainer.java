@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * Wrappt ein Tupel damit die Information um was fuer ein Tupel sich handelt mit

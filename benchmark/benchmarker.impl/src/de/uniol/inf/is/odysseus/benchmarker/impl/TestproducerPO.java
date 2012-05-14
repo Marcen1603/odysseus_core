@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.interval_latency_priority.IntervalLatencyPriority;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class TestproducerPO extends
 		AbstractSource<Tuple<IntervalLatencyPriority>>{

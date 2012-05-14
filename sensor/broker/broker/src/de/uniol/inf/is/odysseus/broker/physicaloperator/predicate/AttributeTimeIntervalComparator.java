@@ -18,7 +18,7 @@ import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class AttributeTimeIntervalComparator<T extends IClone> implements Comparator<Tuple<ITimeInterval>>{
 	private int attributePos = 1;

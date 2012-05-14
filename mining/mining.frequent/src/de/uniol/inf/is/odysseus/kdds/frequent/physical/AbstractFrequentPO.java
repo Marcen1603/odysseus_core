@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public abstract class AbstractFrequentPO<T extends Tuple<?>> extends AbstractPipe<T,T>{
 

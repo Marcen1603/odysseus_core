@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.memory.ISnapshotMergeFunction;
 import de.uniol.inf.is.odysseus.mining.memory.tiltedtimeframe.TiltedTimeWindow;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 

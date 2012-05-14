@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This is a dummy class for the conversion of the AST to real predicates. In a

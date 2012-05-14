@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Rate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.RatePartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalRate extends
 		Rate<Tuple<?>, Tuple<?>> {

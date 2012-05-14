@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.AbstractDefault
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreatePredicateVisitor;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class CreatePriorityAOVisitor extends AbstractDefaultVisitor {
 

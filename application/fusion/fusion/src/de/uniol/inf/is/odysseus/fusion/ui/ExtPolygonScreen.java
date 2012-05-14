@@ -7,7 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 public class ExtPolygonScreen extends JFrame{

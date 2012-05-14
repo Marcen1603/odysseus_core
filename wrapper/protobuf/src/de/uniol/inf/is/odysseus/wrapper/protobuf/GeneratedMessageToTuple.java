@@ -10,7 +10,7 @@ import com.google.protobuf.GeneratedMessage;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractTransformer;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class GeneratedMessageToTuple extends
 		AbstractTransformer<GeneratedMessage, Tuple<? extends IMetaAttribute>> {

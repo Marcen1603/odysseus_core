@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * Implements a merge function for RelationalTuples. A full outer join is

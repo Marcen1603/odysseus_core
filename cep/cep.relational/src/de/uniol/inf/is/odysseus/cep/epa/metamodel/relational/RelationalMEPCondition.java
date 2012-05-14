@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.cep.epa.metamodel.relational;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.MEPCondition;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalMEPCondition extends MEPCondition {
 

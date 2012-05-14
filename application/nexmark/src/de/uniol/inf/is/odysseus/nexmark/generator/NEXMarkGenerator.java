@@ -21,7 +21,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * The NEXMarkGenerator creates a simulation of the streams person, auction

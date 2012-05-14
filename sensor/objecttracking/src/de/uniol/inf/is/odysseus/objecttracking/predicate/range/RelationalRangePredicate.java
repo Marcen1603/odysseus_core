@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.objecttracking.metadata.ApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.metadata.IApplicationTime;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPair;
 import de.uniol.inf.is.odysseus.objecttracking.util.ObjectTrackingPredicateInitializer;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 

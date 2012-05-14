@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTS
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.ASTString;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.MapleResultParserVisitor;
 import de.uniol.inf.is.odysseus.objecttracking.predicate.range.parser.nodes.SimpleNode;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**

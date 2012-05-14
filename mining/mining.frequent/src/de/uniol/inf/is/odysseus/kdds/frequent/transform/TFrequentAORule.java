@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.kdds.frequent.physical.LossyCountingFrequentItem
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SimpleFrequentItemPO;
 import de.uniol.inf.is.odysseus.kdds.frequent.physical.SpaceSavingFrequentItem;
 import de.uniol.inf.is.odysseus.logicaloperator.kdds.frequent.FrequentItemAO;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

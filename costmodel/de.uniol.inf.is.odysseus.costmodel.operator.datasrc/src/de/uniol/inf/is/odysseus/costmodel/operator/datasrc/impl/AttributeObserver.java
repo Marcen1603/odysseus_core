@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.Combin
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.EqualWidthHistogramFactory;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.FreedmanDiaconisRule;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.impl.histogram.IHistogramFactory;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings("rawtypes")
 public class AttributeObserver implements IDataSourceObserverListener {

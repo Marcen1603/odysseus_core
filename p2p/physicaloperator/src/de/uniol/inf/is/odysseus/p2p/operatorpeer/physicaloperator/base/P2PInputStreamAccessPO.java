@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.p2p.jxta.utils.MessageTool;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class P2PInputStreamAccessPO<In, Out extends IMetaAttributeContainer<?>>
 		extends AbstractInputStreamAccessPO<In, Out> {

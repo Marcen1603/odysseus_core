@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProbabilityPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTQuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimplePredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.AbstractQuantificationPredicate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 @SuppressWarnings("unchecked")

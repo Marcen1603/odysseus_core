@@ -7,7 +7,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class TrackingAggregation<T, R> extends AbstractAggregateFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 

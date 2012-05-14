@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.markov.operator.aggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.markov.model.HiddenMarkovModel;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class ForwardAggregationFunction extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 

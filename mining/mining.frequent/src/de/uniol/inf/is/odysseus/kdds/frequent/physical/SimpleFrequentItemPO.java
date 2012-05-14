@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class SimpleFrequentItemPO<T extends Tuple<?>> extends AbstractFrequentPO<T> {
 

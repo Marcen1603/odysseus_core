@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.salsa.metadata.Quality;
 
 public class QualityMetadataCreation<M extends Quality> extends

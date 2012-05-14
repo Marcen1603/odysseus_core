@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.relational.base;
 
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**

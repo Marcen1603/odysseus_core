@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Count;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.CountPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 @SuppressWarnings({"rawtypes"})
 public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {

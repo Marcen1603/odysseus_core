@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
 

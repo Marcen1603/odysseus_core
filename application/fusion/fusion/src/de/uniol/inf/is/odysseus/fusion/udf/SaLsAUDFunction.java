@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefi
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 import com.vividsolutions.jts.geom.Dimension;

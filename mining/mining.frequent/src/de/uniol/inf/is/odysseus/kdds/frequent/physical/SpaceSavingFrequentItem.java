@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class SpaceSavingFrequentItem<T extends Tuple<?>> extends AbstractFrequentPO<T> {
 

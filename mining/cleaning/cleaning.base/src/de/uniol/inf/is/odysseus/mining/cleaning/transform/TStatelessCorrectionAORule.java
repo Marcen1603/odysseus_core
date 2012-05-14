@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.mining.cleaning.logicaloperator.StatelessCorrectionAO;
 import de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator.StatelessCorrctionPO;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

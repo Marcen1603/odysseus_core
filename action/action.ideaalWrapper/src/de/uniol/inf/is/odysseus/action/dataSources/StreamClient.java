@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
-import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 
 /**
  * Client writing tuples to client connected to

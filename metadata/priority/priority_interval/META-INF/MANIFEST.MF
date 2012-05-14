@@ -4,6 +4,7 @@ Bundle-Name: Priority_interval
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.priority_interval
 Bundle-Version: 1.0.0.qualifier
 Import-Package: com.google.common.collect,
+ de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.predicate,

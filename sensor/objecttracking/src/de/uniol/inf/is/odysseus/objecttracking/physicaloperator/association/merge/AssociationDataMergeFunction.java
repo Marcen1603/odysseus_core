@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.objecttracking.IProbabilityPredictionFunctionTimeInterval;
 import de.uniol.inf.is.odysseus.objecttracking.MVTuple;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 public class AssociationDataMergeFunction<M extends IProbabilityPredictionFunctionTimeInterval<Tuple<M>, M>>

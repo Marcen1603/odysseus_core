@@ -63,8 +63,8 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
-import de.uniol.inf.is.odysseus.relational.base.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 
 /**
  * 

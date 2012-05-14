@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class RelationalSlidingElementWindowTIPO extends
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> {

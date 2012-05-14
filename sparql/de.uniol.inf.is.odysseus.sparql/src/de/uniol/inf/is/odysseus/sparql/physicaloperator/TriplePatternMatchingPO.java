@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatching;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Triple;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Variable;

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.mining.classification.model.IClassifier;
 import de.uniol.inf.is.odysseus.mining.classification.model.RelationalClassificationObject;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This class represents a physical operator used to classify the relational

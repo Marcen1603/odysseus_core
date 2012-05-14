@@ -12,7 +12,7 @@ import com.vividsolutions.jts.geom.TopologyException;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 public class GeometryPartialAggregate<T> implements IPartialAggregate<Tuple<? extends IMetaAttribute>>, Iterable<Tuple<? extends IMetaAttribute>>{

@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless;
 
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 
 /**

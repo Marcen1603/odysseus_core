@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.table.activator.ViewerStreamTablePlugIn;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class StreamTableEditor implements IStreamEditorType {
 

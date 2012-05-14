@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREME
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.priority.PriorityAO;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class PriorityAOBuilder extends AbstractOperatorBuilder {
 

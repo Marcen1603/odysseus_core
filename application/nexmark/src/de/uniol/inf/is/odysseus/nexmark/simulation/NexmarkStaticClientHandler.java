@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 import de.uniol.inf.is.odysseus.nexmark.xml.DOMHelp;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 class TagMap {
 	String xpathExpression;

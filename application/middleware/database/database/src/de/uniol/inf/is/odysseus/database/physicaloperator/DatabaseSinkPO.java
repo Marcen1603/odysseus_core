@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.DataTypeMappingHandlerRegistry;
 import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappingHandler;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 

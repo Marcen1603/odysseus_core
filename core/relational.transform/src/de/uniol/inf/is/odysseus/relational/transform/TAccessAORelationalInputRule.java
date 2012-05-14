@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessP
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
