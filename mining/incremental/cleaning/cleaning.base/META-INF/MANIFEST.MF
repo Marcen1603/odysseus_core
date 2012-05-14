@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Base
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.cleaning
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.cleaning
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.cleaning.Activator
 Bundle-ActivationPolicy: lazy
