@@ -38,12 +38,6 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 
 	// The shared instance
 	private static ViewerStreamMapPlugIn plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public ViewerStreamMapPlugIn() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -52,8 +46,7 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		Platform.getAdapterManager().registerAdapters(
-				new StreamMapEditorAdapterFactory(), StreamEditor.class);
+		Platform.getAdapterManager().registerAdapters(new StreamMapEditorAdapterFactory(), StreamEditor.class);
 		plugin = this;
 	}
 
@@ -78,8 +71,7 @@ public class ViewerStreamMapPlugIn extends AbstractUIPlugin {
 	}
 
 	public void log(Throwable e) {
-		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, -1, "Exception",
-				e);
+		IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, -1, "Exception", e);
 		getLog().log(status);
 	}
 

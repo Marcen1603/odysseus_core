@@ -18,6 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
 
@@ -28,6 +30,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
  */
 final class GeometryPaintListener implements PaintListener {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(GeometryPaintListener.class);
+	
 	/**
 	 * 
 	 */
@@ -40,10 +45,17 @@ final class GeometryPaintListener implements PaintListener {
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
 		for (Layer layer : this.streamMapEditor.getLayerOrder()) {
-			layer.draw(e.gc);
+			if(layer != null){
+				layer.draw(e.gc);
+			}
+			else{
+				LOG.error("Layer in Orderlist is Null");
+				throw new RuntimeException("Layer Nullpointer");
+			}
 		}
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
-		if (this.streamMapEditor.getRect() != null)
-			e.gc.drawRectangle(this.streamMapEditor.getRect());
+		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){
+			e.gc.drawRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
+		}
 	}
 }

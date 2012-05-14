@@ -89,6 +89,7 @@ public class ST_Transform extends AbstractFunction<Geometry> {
 	public Geometry getValue() {
 		Geometry sourceGeom = ((Geometry)this.getInputValue(0));
 		Geometry targetGeom = (Geometry) sourceGeom.clone();
+		
 		if (this.getInputValue(1) instanceof Double)
 			targetGeom.setSRID(((Double)this.getInputValue(1)).intValue());
 		else
@@ -100,7 +101,7 @@ public class ST_Transform extends AbstractFunction<Geometry> {
 	     * Create {@link CoordinateReferenceSystem} & CoordinateTransformation.
 	     * Normally this would be carried out once and reused for all transformations
 	     */ 
-	    CoordinateReferenceSystem crs1 = csFactory.createFromName("EPSG:"+sourceGeom.getSRID());
+	    CoordinateReferenceSystem crs1 = csFactory.createFromName("EPSG:" + sourceGeom.getSRID());
 	    CoordinateReferenceSystem crs2 = csFactory.createFromName("EPSG:" + targetGeom.getSRID());
 
 	    CoordinateTransform trans = ctFactory.createTransform(crs1, crs2);
@@ -109,6 +110,7 @@ public class ST_Transform extends AbstractFunction<Geometry> {
 	     * Create input and output points.
 	     * These can be constructed once per thread and reused.
 	     */ 
+	    
 	    ProjCoordinate source = new ProjCoordinate();
 	    ProjCoordinate target = new ProjCoordinate();
 	    for (Coordinate sourceCoordinate: targetGeom.getCoordinates()) {

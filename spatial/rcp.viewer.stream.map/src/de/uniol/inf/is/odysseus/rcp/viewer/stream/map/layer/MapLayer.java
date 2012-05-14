@@ -18,27 +18,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.osgeo.proj4j.CRSFactory;
-import org.osgeo.proj4j.CoordinateReferenceSystem;
-import org.osgeo.proj4j.CoordinateTransform;
-import org.osgeo.proj4j.CoordinateTransformFactory;
-import org.osgeo.proj4j.ProjCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
@@ -46,43 +32,48 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public class ImageLayer implements Layer {
+public class MapLayer implements Layer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ImageLayer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MapLayer.class);
 
 	protected ScreenTransformation transformation = null;
 	protected Style style = null;
 	protected Image image = null;
 	protected String name = null;
+	
+	private String mapType = "bing";
+	//private String mapType = "osm";
+	private String mapFormat = "image/png";
 
-	private Point point = null;
-
-	private boolean redraw = true;
-
-	public ImageLayer(ScreenTransformation transformation, Style style, String name) {
+	private double currentMin_X 	= 	-179.9;
+	private double currentMin_Y 	= 	-79.9;
+	private double currentMax_X 	= 	179.9;
+	private double currentMax_Y 	= 	79.9;
+	
+	public MapLayer(ScreenTransformation transformation, Style style) {
+		this.name = "Map";
 		LOG.debug("Create new ImageLayer: " + name);
 		this.transformation = transformation;
 		this.style = style;
-		this.name = name;
 	}
 
-	public void drawImage(Image image, Point point, GC gc) {
-		this.point = point;
-		int[] uv = transformation.transformCoord(point.getCoordinate());
-		gc.drawImage(image, uv[0], uv[1]);
-	}
+//	public void drawImage(Image image, Point point, GC gc) {
+//		int[] uv = transformation.transformCoord(point.getCoordinate());
+//		gc.drawImage(image, uv[0], uv[1]);
+//	}
 
 	@Override
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
-			int height = transformation.getCurrentScreen().height;
-			int width = transformation.getCurrentScreen().width;
-			//int scale = transformation.getScale();
-
-			image = updateImage(gc, width ,-170.0, -70.0, 170.0, 70.0, 0);
+			currentMin_X 	= 	transformation.computeRelativeX(transformation.getCurrentScreen().x,	currentMin_X);  
+			currentMin_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().y,	currentMin_Y);
+			currentMax_X 	= 	transformation.computeRelativeX(transformation.getCurrentScreen().width,		currentMax_X);   
+			currentMax_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().height,		currentMax_Y);   
+			LOG.debug("Map: " + " x="+ currentMin_X + "," + currentMin_Y + " y=" + currentMax_X + "," + currentMax_Y);
+			image = updateImage(gc, transformation.getOriginScreen().width , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);
 			transformation.update(false);
 		}
-		gc.drawImage(image, 0, 0);
+		gc.drawImage(image, transformation.getOriginScreen().x, transformation.getOriginScreen().y);
 	}
 
 	@Override
@@ -90,25 +81,25 @@ public class ImageLayer implements Layer {
 		return name;
 	}
 
-
-	private Image updateImage(GC gc, int width, double xx,double yy, double x, double y,
-			double scale) {
-		LOG.debug("Update Image: " + width + " " + " " + x + " " + y + " " + scale + " ");
+	private Image updateImage(GC gc, int width, double min_x,double min_y, double max_x, double max_y) {
+		LOG.debug("Update Image: " + width + " " + "BBox[ " + min_x + "," + min_y + "," + max_x + "," + max_y +"]");
 		Image image = null;
-// http://wms.latlon.org/?format=image/png&layers=bing&width=1000&bbox=-180.9999,-70.9999,176.9999,70.9999
 		try {
-			String url = "http://wms.latlon.org/?format=image/png&layers=bing&width="
+			String url = "http://wms.latlon.org/?"
+					+ "&format=" 
+					+ mapFormat
+					+ "&layers="
+					+ mapType
+					+ "&width="
 					+ width
-//					+ "&height="
-//					+ height
 					+ "&bbox="
-					+ xx
+					+ min_x
 					+ ","
-					+ yy
+					+ min_y
 					+ ","
-					+ x	
+					+ max_x	
 					+ ","
-					+ y;
+					+ max_y;
 			LOG.debug("Image URL: " + url);
 
 			// URL imageUrl = new
@@ -126,8 +117,5 @@ public class ImageLayer implements Layer {
 		}
 		return image;
 	}
-	
-	
-	
 
 }

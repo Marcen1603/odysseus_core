@@ -51,8 +51,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ImageLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.ImageStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
@@ -69,57 +71,31 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  */
 public class StreamMapEditor implements IStreamEditorType {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(StreamMapEditor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
 
-	private static final Color WHITE = Display.getCurrent().getSystemColor(
-			SWT.COLOR_WHITE);
-	private static final Color BLACK = Display.getCurrent().getSystemColor(
-			SWT.COLOR_BLACK);
-
-	private Canvas viewer;
 	private SDFSchema schema;
 
 	private LinkedList<Layer> layerOrder = new LinkedList<Layer>();
 
-	private MapTransformation transformation = null;
-	private Rectangle rect = null;
+	private ScreenTransformation transformation;
+	private ScreenManager screenManager;
 
 	private int maxTuplesCount = 0;
 
-	protected ImageLayer imageLayer = new ImageLayer("Background");
 	protected Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
 	protected Runnable update;
 
 	public StreamMapEditor(int maxTuples) {
-		transformation = new MapTransformation();
-		setRect(null);
+		LOG.debug("Create Stream Map Editor");
+		transformation = new ScreenTransformation();
+		screenManager = new ScreenManager(transformation, this);
 		setMaxTuplesCount(maxTuples);
-		layerOrder.add(imageLayer);
+		
+		//Create Map Background 
+		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
-	/**
-	 * 
-	 * Receives the stream elements.
-	 * 
-	 * @param element
-	 *            - incoming streaming element
-	 * @param port
-	 *            - incoming port of the streaming element
-	 * 
-	 * 
-	 * 
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener
-	 * #streamElementRecieved(java.lang.Object, int)
-	 * 
-	 * Start reading here!
-	 */
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
@@ -139,14 +115,14 @@ public class StreamMapEditor implements IStreamEditorType {
 			}
 		}
 
-		if (update == null && hasCanvasViewer()
-				&& !getCanvasViewer().isDisposed()) {
+		if (update == null && screenManager.hasCanvasViewer()
+				&& !screenManager.getCanvasViewer().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay()
 					.asyncExec(update = new Runnable() {
 						@Override
 						public void run() {
-							if (!getCanvasViewer().isDisposed())
-								getCanvasViewer().redraw();
+							if (!screenManager.getCanvasViewer().isDisposed())
+								screenManager.getCanvasViewer().redraw();
 							update = null;
 						}
 					});
@@ -163,7 +139,7 @@ public class StreamMapEditor implements IStreamEditorType {
 	@Override
 	public void createPartControl(Composite parent) {
 		if (hasSchema() && getSchema().size() > 0) {
-			setCanvasViewer(createCanvas(parent));
+			screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		} else {
 			LOG.debug("Operator provides no schema.");
 			Label label = new Label(parent, SWT.NONE);
@@ -173,8 +149,8 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void setFocus() {
-		if (hasCanvasViewer())
-			getCanvasViewer().setFocus();
+		if (screenManager.hasCanvasViewer())
+			screenManager.getCanvasViewer().setFocus();
 	}
 
 	@Override
@@ -202,114 +178,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		return ArrayContentProvider.getInstance();
 	}
 
-	protected Canvas createCanvas(Composite parent) {
-		Canvas canvasViewer = new Canvas(parent, SWT.NONE);
-		canvasViewer.setBackground(WHITE);
-		canvasViewer.addPaintListener(new GeometryPaintListener(this));
-		transformation.updateMapSize(canvasViewer.getClientArea());
-		canvasViewer.addControlListener(new ControlListener() {
 
-			@Override
-			public void controlResized(ControlEvent e) {
-				transformation.updateMapSize(viewer.getClientArea());
-			}
-
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-		});
-
-		canvasViewer.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseUp(MouseEvent e) {
-				transformation.update(getRect());
-				setRect(null);
-
-				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
-					PlatformUI.getWorkbench().getDisplay()
-							.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									if (!getCanvasViewer().isDisposed())
-										getCanvasViewer().redraw();
-								}
-							});
-				}
-			}
-
-			@Override
-			public void mouseDown(MouseEvent e) {
-				setRect(new Rectangle(e.x, e.y, 0, 0));
-			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				LOG.error("Mouse Double Click is not implemented");
-			}
-		});
-
-		canvasViewer.addMouseMoveListener(new MouseMoveListener() {
-
-			@Override
-			public void mouseMove(MouseEvent e) {
-				// TODO Auto-generated method stub
-				if (getRect() != null) {
-					getRect().width = e.x - getRect().x;
-					getRect().height = e.y - getRect().y;
-					if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
-						PlatformUI.getWorkbench().getDisplay()
-								.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										if (!getCanvasViewer().isDisposed())
-											getCanvasViewer().redraw();
-									}
-								});
-					}
-				}
-			}
-		});
-		canvasViewer.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.character == '+')
-					transformation.zoomin();
-				if (e.character == '-')
-					transformation.zoomout();
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_UP)
-					transformation.panNorth();
-				if (e.keyCode == SWT.ARROW_DOWN)
-					transformation.panSouth();
-				if (e.keyCode == SWT.ARROW_LEFT)
-					transformation.panWest();
-				if (e.keyCode == SWT.ARROW_RIGHT)
-					transformation.panEast();
-			}
-		});
-		return canvasViewer;
-	}
-
-	protected final Canvas getCanvasViewer() {
-		return viewer;
-	}
-
-	protected final boolean hasCanvasViewer() {
-		return getCanvasViewer() != null;
-	}
-
-	private void setCanvasViewer(Canvas viewer) {
-		if (viewer != null) {
-			this.viewer = viewer;
-		} else {
-			LOG.error("Canvas Viewer is null.");
-		}
-	}
 
 	/**
 	 * 
@@ -327,17 +196,15 @@ public class StreamMapEditor implements IStreamEditorType {
 
 				Style style = null;
 				if (spatialDatatype.isPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,
-							BLACK, ColorManager.getInstance().randomColor());
+					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
 				} else if (spatialDatatype.isLineString()) {
 					style = new LineStyle(1, ColorManager.getInstance()
 							.randomColor());
 				} else if (spatialDatatype.isPolygon()) {
-					style = new PolygonStyle(1, ColorManager.getInstance()
-							.randomColor(), null);
+					style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
 				} else if (spatialDatatype.isMultiPoint()) {
 					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, BLACK, ColorManager.getInstance().randomColor()));
+					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 				} else if (spatialDatatype.isMultiLineString()) {
 					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
 					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
@@ -346,7 +213,7 @@ public class StreamMapEditor implements IStreamEditorType {
 					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
 				} else if (spatialDatatype.isGeometryCollection()) {
 					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, BLACK, ColorManager.getInstance().randomColor()));
+					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
 					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
 				}
@@ -365,43 +232,6 @@ public class StreamMapEditor implements IStreamEditorType {
 		}
 	}
 
-	/*
-	 * Maybe it is better to return a SDFSchema
-	 */
-	@Deprecated
-	public Map<Integer, VectorLayer> computeSpatialOutputSchema(
-			SDFSchema inputSchema) {
-		Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
-		for (int i = 0; i < schema.size(); i++) {
-			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
-				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema
-						.getAttribute(i).getDatatype();
-
-				Style style = null;
-				if (spatialDatatype.isPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,
-							BLACK, ColorManager.getInstance().randomColor());
-				} else if (spatialDatatype.isLineString()) {
-					style = new LineStyle(1, ColorManager.getInstance()
-							.randomColor());
-				} else if (spatialDatatype.isPolygon()) {
-					style = new PolygonStyle(1, ColorManager.getInstance()
-							.randomColor(), null);
-				}
-
-				if (style != null) {
-					spatialDataIndex.put(i, new VectorLayer(transformation,
-							schema.getAttribute(i), style));
-				} else {
-					throw new RuntimeException(
-							"Style for Spatialtype is not available or not implemented!");
-				}
-
-			}
-		}
-		return spatialDataIndex;
-	}
-
 	private void setMaxTuplesCount(int maxTuples) {
 		if (maxTuples > 0)
 			this.maxTuplesCount = maxTuples;
@@ -414,20 +244,17 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	}
 
-	public Rectangle getRect() {
-		return rect;
-	}
-
-	public void setRect(Rectangle rect) {
-		this.rect = rect;
-	}
-
 	public LinkedList<Layer> getLayerOrder() {
 		return layerOrder;
 	}
 
 	public void setLayerOrder(LinkedList<Layer> layerOrder) {
 		this.layerOrder = layerOrder;
+	}
+	
+	public ScreenManager getScreenManager(){
+		return screenManager;
+		
 	}
 
 }

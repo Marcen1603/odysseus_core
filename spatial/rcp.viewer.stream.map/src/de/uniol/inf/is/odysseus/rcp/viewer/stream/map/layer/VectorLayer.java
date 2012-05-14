@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.MapTransformation;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
@@ -38,11 +38,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 public class VectorLayer implements Layer{
 
 	private LinkedList<Geometry> geometries = null;
-	private MapTransformation transformation = null;
+	private ScreenTransformation transformation = null;
 	private SDFAttribute sdfAttribute = null;
 	private Style style = null;
 
-	public VectorLayer(MapTransformation transformation, SDFAttribute sdfAttribute,
+	public VectorLayer(ScreenTransformation transformation, SDFAttribute sdfAttribute,
 			Style style) {
 		this.geometries = new LinkedList<Geometry>();
 		this.transformation = transformation;

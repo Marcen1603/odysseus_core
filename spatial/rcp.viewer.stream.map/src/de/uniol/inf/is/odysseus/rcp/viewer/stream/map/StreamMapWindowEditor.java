@@ -56,38 +56,38 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 		 * 
 		 */		
 		//if(((Tuple<?>)element).getMetadata() instanceof ITimeInterval){
-			ITimeInterval metadata = (ITimeInterval)((Tuple<?>)element).getMetadata();
-
-			tuples.add(0, (Tuple<?>) element);
-			if(this.metadata != null){
-				LOG.error(this.metadata.getEnd().minus(metadata.getStart()).toString());
-				
-				if(this.metadata.getEnd().after(metadata.getStart())){
-					tuples.clear();
-//					for (Layer layer : spatialDataIndex.values()) {
-//						//layer.clean();
-//					}
-					this.metadata = metadata;
-				}
-			}
-			else{
-				this.metadata = metadata;
-			}
-			
-			if (update == null && hasCanvasViewer()
-					&& !getCanvasViewer().isDisposed()) {
-				PlatformUI.getWorkbench().getDisplay()
-						.asyncExec(update = new Runnable() {
-							@Override
-							public void run() {
-								if (!getCanvasViewer().isDisposed())
-									getCanvasViewer().redraw();
-								update = null;
-							}
-						});
-			}
-			
-//		}
+//			ITimeInterval metadata = (ITimeInterval)((Tuple<?>)element).getMetadata();
+//
+//			tuples.add(0, (Tuple<?>) element);
+//			if(this.metadata != null){
+//				LOG.error(this.metadata.getEnd().minus(metadata.getStart()).toString());
+//				
+//				if(this.metadata.getEnd().after(metadata.getStart())){
+//					tuples.clear();
+////					for (Layer layer : spatialDataIndex.values()) {
+////						//layer.clean();
+////					}
+//					this.metadata = metadata;
+//				}
+//			}
+//			else{
+//				this.metadata = metadata;
+//			}
+//			
+//			if (update == null && hasCanvasViewer()
+//					&& !getCanvasViewer().isDisposed()) {
+//				PlatformUI.getWorkbench().getDisplay()
+//						.asyncExec(update = new Runnable() {
+//							@Override
+//							public void run() {
+//								if (!getCanvasViewer().isDisposed())
+//									getCanvasViewer().redraw();
+//								update = null;
+//							}
+//						});
+//			}
+//			
+////		}
 //		else{
 //			throw new RuntimeException("Windowed Map visualisations must be from type: ITimeInterval");
 //		}

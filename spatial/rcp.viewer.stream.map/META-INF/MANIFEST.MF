@@ -16,6 +16,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
  de.uniol.inf.is.odysseus.relational.base,
  org.eclipse.ui.views.contentoutline,
+ org.osgeo.proj4j,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
