@@ -84,6 +84,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
 					.getDataStreamElementArray();
 
 			final Map<String, Object> event = new HashMap<String, Object>();
+			// TODO: is this correct?
+			event.put("STARTTIMESTAMP", timestamp.getTimeInMillis());
 			for (int j = 0; j < dataStreamElements.length; ++j) {
 				final String value = dataStreamElements[j].getData();
 				final String path = dataStreamElements[j].getPath();
