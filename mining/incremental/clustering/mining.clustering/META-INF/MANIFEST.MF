@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Clustering
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.clustering
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.clustering
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.clustering.Activator
 Import-Package: de.uniol.inf.is.odysseus.core.server,

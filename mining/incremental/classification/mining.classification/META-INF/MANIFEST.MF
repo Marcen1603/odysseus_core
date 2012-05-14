@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Classification
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.classification.incremental
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.classification
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.classification.Activator
 Import-Package: de.uniol.inf.is.odysseus.core.server,
