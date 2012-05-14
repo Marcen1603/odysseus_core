@@ -36,8 +36,8 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 	private int xAttribute;
 	private int yAttribute;
 	private DefaultTISweepArea<R> sweepArea = new DefaultTISweepArea<R>();
-	private double lastSlope = Double.NaN;
-	private double lastIntercept = Double.NaN;
+//	private double lastSlope = Double.NaN;
+//	private double lastIntercept = Double.NaN;
 
 	public RegressionPO() {
 		super();
@@ -94,8 +94,8 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		// only transfer, if one of the parameters change
 		// if (lastSlope != slope || lastIntercept != intercept) {
 		if (!Double.isNaN(slope) && !Double.isNaN(intercept)) {
-			lastSlope = slope;
-			lastIntercept = intercept;
+//			lastSlope = slope;
+//			lastIntercept = intercept;
 			Tuple<M> ne = new Tuple<M>(2);
 			ne.setAttribute(0, slope);
 			ne.setAttribute(1, intercept);
