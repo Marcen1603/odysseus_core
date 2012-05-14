@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * IDummyDataCreationFunction is used to create data with special properties (e.g. set a priority

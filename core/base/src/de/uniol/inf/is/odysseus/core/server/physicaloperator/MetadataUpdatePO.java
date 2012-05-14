@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 
 /**

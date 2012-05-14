@@ -14,7 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.benchmarker.impl;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
 /**

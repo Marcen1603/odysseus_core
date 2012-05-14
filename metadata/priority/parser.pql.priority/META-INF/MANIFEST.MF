@@ -19,3 +19,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  org.osgi.framework;version="1.3.0"
 Export-Package: de.uniol.inf.is.odysseus.parser.pql.priority
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.core

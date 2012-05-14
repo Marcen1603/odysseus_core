@@ -23,7 +23,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * @author Jonas Jacobi

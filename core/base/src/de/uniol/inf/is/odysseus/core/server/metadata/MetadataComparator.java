@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * @author Jonas Jacobi

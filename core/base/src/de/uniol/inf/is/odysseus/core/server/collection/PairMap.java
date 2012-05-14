@@ -22,7 +22,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 
 public class PairMap<K1 extends IClone,K2 extends IClone,V extends IClone,M extends IMetaAttribute> extends MetaAttributeContainer<M>{
 	/**

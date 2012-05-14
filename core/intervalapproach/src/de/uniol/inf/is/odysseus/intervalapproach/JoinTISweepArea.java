@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 public class JoinTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>

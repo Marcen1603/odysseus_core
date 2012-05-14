@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mining.cleaning.physicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.mining.cleaning.correction.stateless.IUnaryCorrection;
 import de.uniol.inf.is.odysseus.mining.metadata.IMiningMetadata;
 

@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**

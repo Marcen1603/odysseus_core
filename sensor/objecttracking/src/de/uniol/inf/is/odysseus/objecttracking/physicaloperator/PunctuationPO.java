@@ -15,7 +15,7 @@
 package de.uniol.inf.is.odysseus.objecttracking.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.objecttracking.ILatencyProbabilityTimeInterval;
 

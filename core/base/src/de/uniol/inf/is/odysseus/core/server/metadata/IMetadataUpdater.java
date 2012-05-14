@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * @author Jonas Jacobi

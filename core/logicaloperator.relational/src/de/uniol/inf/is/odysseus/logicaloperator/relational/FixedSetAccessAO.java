@@ -16,7 +16,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 public class FixedSetAccessAO<T extends IMetaAttributeContainer<? extends IClone>> extends AccessAO {
 

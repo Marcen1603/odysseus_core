@@ -16,7 +16,6 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
