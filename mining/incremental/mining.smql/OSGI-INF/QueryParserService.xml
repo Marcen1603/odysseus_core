@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.mining.smql">
+   <implementation class="de.uniol.inf.is.odysseus.mining.smql.SMQLParserService"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser"/>
+   </service>
+   <reference bind="bindLanguageFeature" cardinality="0..n" interface="de.uniol.inf.is.odysseus.mining.smql.ISMQLFeature" name="ISMQLFeature" policy="dynamic" unbind="unbindLanguageFeature"/>
+</scr:component>

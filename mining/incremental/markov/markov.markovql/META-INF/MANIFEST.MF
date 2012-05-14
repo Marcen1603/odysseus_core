@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hidden Markov
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.markov.markovql
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.markov.markovql.MarkovQLBuilder
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.core.usermanagement,
+ de.uniol.inf.is.odysseus.markov.model,
+ de.uniol.inf.is.odysseus.markov.model.algorithm,
+ de.uniol.inf.is.odysseus.markov.model.statemachine,
+ de.uniol.inf.is.odysseus.markov.operator.logical,
+ de.uniol.inf.is.odysseus.parser.cql,
+ de.uniol.inf.is.odysseus.parser.cql.parser,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Service-Component: OSGI-INF/QueryParserService.xml
+Export-Package: de.uniol.inf.is.odysseus.markov.markovql
