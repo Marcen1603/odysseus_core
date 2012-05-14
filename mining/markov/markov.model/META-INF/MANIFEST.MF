@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Model
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.markov.model
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.markov.model
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.markov.model.Activator
 Bundle-ActivationPolicy: lazy

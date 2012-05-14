@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Hidden Markov
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.markov.markovql
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining.incremental.markov.markovql
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.markov.markovql.MarkovQLBuilder
 Bundle-ActivationPolicy: lazy
