@@ -20,8 +20,26 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 
 public interface ITemporalSweepArea<T> extends ISweepArea<T> {
+	/**
+	 * Removes all elements that have an end-timestamp which is before the given time
+	 * @param time a given time
+	 */
 	public void purgeElementsBefore(PointInTime time);
+	/**
+	 * This method returns and removes all elements from the sweep area that
+	 * have a time interval that lies totally before the passed interval.
+	 * 
+	 * @param validity All elements with a time interval that lies totally before
+	 *            this interval will be returned and removed from this
+	 *            sweeparea.
+	 * 
+	 * @return an iterator of all extracted elements
+	 */
 	public Iterator<T> extractElementsBefore(PointInTime time);
+	
+	/**
+	 * Clones this sweepArea
+	 */
 	@Override
 	public ITemporalSweepArea<T> clone();
 }

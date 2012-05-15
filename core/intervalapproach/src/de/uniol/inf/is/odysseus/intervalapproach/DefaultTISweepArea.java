@@ -19,8 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea;
@@ -123,15 +123,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	}
 
 	/**
-	 * This method returns and removes all elements from the sweep area that
-	 * have a time interval that lies totally before the passed interval.
-	 * 
-	 * @param validity
-	 *            All elements with a time interval that lies totally before
-	 *            this interval will be returned and removed from this
-	 *            sweeparea.
-	 * 
-	 * @return
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea#extractElementsBefore(PointInTime)
 	 */
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
@@ -255,6 +247,9 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return new DefaultTISweepArea<T>(this);
 	}
 
+	/**
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea#purgeElementsBefore(PointInTime)
+	 */
 	@Override
 	public void purgeElementsBefore(PointInTime time) {
 		synchronized (getElements()) {
