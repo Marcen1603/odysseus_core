@@ -1,0 +1,84 @@
+package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
+
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+/**
+ * SocketInput implementation for XML documents
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
+public class XMLSocketInput extends SocketInput<Document> {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(XMLSocketInput.class);
+	private DocumentBuilder documentBuilder;
+
+	public XMLSocketInput(String hostname, int port, String user,
+			String password) {
+		super(hostname, port, user, password);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.SocketInput
+	 * #init()
+	 */
+	@Override
+	public void init() {
+		super.init();
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+				.newInstance();
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			LOG.error(e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.IInput
+	 * #hasNext()
+	 */
+	@Override
+	public boolean hasNext() {
+		try {
+			return getInputStream().available() > 0;
+		} catch (IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.IInput
+	 * #getNext()
+	 */
+	@Override
+	public Document getNext() {
+		try {
+			// The parse call should block until the complete document is parsed
+			Document document = documentBuilder.parse(getInputStream());
+			return document;
+		} catch (SAXException | IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+}
