@@ -3,7 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Spatial.Grid
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial.grid
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.uniol.inf.is.odysseus.core.server,
+Import-Package: de.uniol.inf.is.odysseus.context,
+ de.uniol.inf.is.odysseus.context.store,
+ de.uniol.inf.is.odysseus.context.store.types,
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.mep,
@@ -19,6 +22,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.spatial.geom,
  de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,

@@ -17,9 +17,13 @@ package de.uniol.inf.is.odysseus.spatial.grid;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.InverseGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.functions.MergeOccupancyGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.MoveViewPoint;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.RotateGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.functions.RotateViewPoint;
@@ -30,6 +34,8 @@ import de.uniol.inf.is.odysseus.spatial.grid.functions.ToGrid;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class GridFunctionProvider implements IFunctionProvider {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(GridFunctionProvider.class);
 
 	public GridFunctionProvider() {
 	}
@@ -46,7 +52,8 @@ public class GridFunctionProvider implements IFunctionProvider {
 		functions.add(new RotateViewPoint());
 		functions.add(new SubGrid());
 		functions.add(new ToGrid());
-
+		functions.add(new MergeOccupancyGrid());
+		LOG.info(String.format("Register functions: %s", functions));
 		return functions;
 	}
 

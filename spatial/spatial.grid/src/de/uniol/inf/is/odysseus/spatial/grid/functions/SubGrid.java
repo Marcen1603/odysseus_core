@@ -26,14 +26,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SubGrid extends AbstractFunction<Grid> {
+public class SubGrid extends AbstractFunction<CartesianGrid> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFGridDatatype.GRID },
 			{ SDFSpatialDatatype.SPATIAL_GEOMETRY,
@@ -65,7 +65,7 @@ public class SubGrid extends AbstractFunction<Grid> {
 							+ this.getArity()
 							+ " argument(s): The grid, the center point, the length and width in cm, and the rotation angle in degrees.");
 		}
-        return SubGrid.accTypes[argPos];
+		return SubGrid.accTypes[argPos];
 	}
 
 	@Override
@@ -84,12 +84,12 @@ public class SubGrid extends AbstractFunction<Grid> {
 	}
 
 	@Override
-	public Grid getValue() {
-		final Grid grid = (Grid) this.getInputValue(0);
+	public CartesianGrid getValue() {
+		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
 		final Coordinate point = (Coordinate) this.getInputValue(1);
-		final Double width = (Double) this.getInputValue(2);
-		final Double depth = (Double) this.getInputValue(3);
-		final Double angle = (Double) this.getInputValue(4);
+		final Integer width = this.getNumericalInputValue(2).intValue();
+		final Integer depth = this.getNumericalInputValue(3).intValue();
+		final Double angle = this.getNumericalInputValue(4);
 
 		// Double angle = -45.0;
 		final double sin = Math.sin(Math.toRadians(angle));
@@ -105,18 +105,18 @@ public class SubGrid extends AbstractFunction<Grid> {
 				+ ((point.x - (width / 2) - point.x) * sin)
 				+ ((point.y - (depth / 2) - point.y) * cos);
 
-		final Grid subgrid = new Grid(new Coordinate(originX, originY), width,
-				depth, grid.cellsize);
+		final CartesianGrid subgrid = new CartesianGrid(new Coordinate(originX,
+				originY), width, depth, grid.cellsize);
 
 		IplImage subimage = IplImage.create(
 				opencv_core.cvSize(subgrid.width, subgrid.depth),
-				opencv_core.IPL_DEPTH_8U, 1);
+				opencv_core.IPL_DEPTH_64F, 1);
 		opencv_core.cvSet(subimage, OpenCVUtil.UNKNOWN);
 
 		// Create global grid view
 		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
-				opencv_core.IPL_DEPTH_8U, 1);
+				opencv_core.IPL_DEPTH_64F, 1);
 		OpenCVUtil.gridToImage(grid, image);
 
 		// Position in the global grid (in grid cells)
@@ -173,7 +173,7 @@ public class SubGrid extends AbstractFunction<Grid> {
 
 			IplImage roi = IplImage.create(
 					opencv_core.cvSize(roiRect.width(), roiRect.height()),
-					opencv_core.IPL_DEPTH_8U, 1);
+					opencv_core.IPL_DEPTH_64F, 1);
 			opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
 
 			opencv_core.cvSetImageROI(image, roiRect);
@@ -181,7 +181,7 @@ public class SubGrid extends AbstractFunction<Grid> {
 			opencv_core.cvResetImageROI(image);
 
 			opencv_core.cvSetImageROI(subimage, subRect);
-			final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_32F);
+			final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_64F);
 			opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 			opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix,
 					SubGrid.flags, OpenCVUtil.UNKNOWN);

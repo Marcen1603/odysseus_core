@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -24,13 +24,13 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class InverseGrid extends AbstractFunction<Grid> {
+public class InverseGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 
      */
@@ -52,7 +52,7 @@ public class InverseGrid extends AbstractFunction<Grid> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument: A grid.");
 		}
-        return accTypes[argPos];
+		return accTypes[argPos];
 	}
 
 	@Override
@@ -61,12 +61,12 @@ public class InverseGrid extends AbstractFunction<Grid> {
 	}
 
 	@Override
-	public Grid getValue() {
-		final Grid grid = this.getInputValue(0);
-		final Grid inverseGrid = new Grid(grid.origin, grid.width
-				* grid.cellsize, grid.depth * grid.cellsize, grid.cellsize);
+	public CartesianGrid getValue() {
+		final CartesianGrid grid = this.getInputValue(0);
+		final CartesianGrid inverseGrid = new CartesianGrid(grid.origin,
+				grid.width, grid.depth, grid.cellsize);
 		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
-				IPL_DEPTH_8U, 1);
+				IPL_DEPTH_64F, 1);
 
 		OpenCVUtil.gridToImage(grid, image);
 		opencv_core.cvNot(image, image);

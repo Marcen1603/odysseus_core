@@ -15,7 +15,7 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -25,13 +25,13 @@ import com.googlecode.javacv.cpp.opencv_imgproc;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ClearGrid extends AbstractFunction<Grid> {
+public class ClearGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 
      */
@@ -54,7 +54,7 @@ public class ClearGrid extends AbstractFunction<Grid> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s): Two grids.");
 		}
-        return accTypes[argPos];
+		return accTypes[argPos];
 	}
 
 	@Override
@@ -63,16 +63,16 @@ public class ClearGrid extends AbstractFunction<Grid> {
 	}
 
 	@Override
-	public Grid getValue() {
-		final Grid base = this.getInputValue(0);
-		final Grid grid = this.getInputValue(1);
-		final Grid result = new Grid(base.origin, base.width * base.cellsize,
-				base.depth * base.cellsize, base.cellsize);
+	public CartesianGrid getValue() {
+		final CartesianGrid base = this.getInputValue(0);
+		final CartesianGrid grid = this.getInputValue(1);
+		final CartesianGrid result = new CartesianGrid(base.origin, base.width,
+				base.depth, base.cellsize);
 
 		IplImage baseImage = IplImage.create(cvSize(base.width, base.depth),
-				IPL_DEPTH_8U, 1);
+				IPL_DEPTH_64F, 1);
 		IplImage gridImage = IplImage.create(cvSize(grid.width, grid.depth),
-				IPL_DEPTH_8U, 1);
+				IPL_DEPTH_64F, 1);
 		OpenCVUtil.gridToImage(base, baseImage);
 		OpenCVUtil.gridToImage(grid, gridImage);
 

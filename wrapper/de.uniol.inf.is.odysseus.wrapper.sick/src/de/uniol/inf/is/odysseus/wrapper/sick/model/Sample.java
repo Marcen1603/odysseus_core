@@ -14,12 +14,20 @@ public class Sample {
 	private float rssi2;
 	private double angle;
 
+	/**
+	 * 
+	 * @return The angle in degree
+	 */
 	public double getAngle() {
 		return this.angle;
 	}
 
+	/**
+	 * 
+	 * @return The distance in cm
+	 */
 	public float getDist1() {
-		return this.dist1;
+		return this.dist1 / 10;
 	}
 
 	/**
@@ -29,20 +37,23 @@ public class Sample {
 	public Coordinate getDist1Vector() {
 		final Coordinate vector = new Coordinate();
 		final double angle = Math.toRadians(this.getAngle());
-		vector.x = this.getDist1() * Math.cos(angle) / 10;
-		vector.y = this.getDist1() * Math.sin(angle) / 10;
+		vector.x = this.getDist1() * Math.cos(angle);
+		vector.y = this.getDist1() * Math.sin(angle);
 		return vector;
 	}
-
+	/**
+	 * 
+	 * @return The distance in cm
+	 */
 	public float getDist2() {
-		return this.dist2;
+		return this.dist2 / 10;
 	}
 
 	public Coordinate getDist2Vector() {
 		final Coordinate vector = new Coordinate();
 		final double angle = Math.toRadians(this.getAngle());
-		vector.x = this.getDist2() * Math.cos(angle) / 10;
-		vector.y = this.getDist2() * Math.sin(angle) / 10;
+		vector.x = this.getDist2() * Math.cos(angle);
+		vector.y = this.getDist2() * Math.sin(angle);
 		return vector;
 	}
 
@@ -59,11 +70,11 @@ public class Sample {
 	}
 
 	public double getX() {
-		return this.getDist1() * Math.cos(Math.toRadians(this.getAngle())) / 10;
+		return this.getDist1() * Math.cos(Math.toRadians(this.getAngle()));
 	}
 
 	public double getY() {
-		return this.getDist1() * Math.sin(Math.toRadians(this.getAngle())) / 10;
+		return this.getDist1() * Math.sin(Math.toRadians(this.getAngle()));
 	}
 
 	public void setAngle(final double angle) {

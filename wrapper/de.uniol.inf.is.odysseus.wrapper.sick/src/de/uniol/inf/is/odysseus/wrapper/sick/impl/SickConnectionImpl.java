@@ -17,6 +17,8 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
 import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
@@ -30,6 +32,8 @@ import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 public class SickConnectionImpl implements SickConnection {
 	class SickConnectionHandler extends Thread {
 
+		private final Coordinate origin;
+		private final double angle;
 		private final String host;
 		private final int port;
 		private SocketChannel channel;
@@ -42,9 +46,12 @@ public class SickConnectionImpl implements SickConnection {
 		private final SickConnectionImpl connection;
 
 		public SickConnectionHandler(final String host, final int port,
+				final Coordinate origin, final double angle,
 				final long recordInterval, final SickConnectionImpl connection) {
 			this.host = host;
 			this.port = port;
+			this.origin = origin;
+			this.angle = angle;
 			this.connection = connection;
 			this.recordInterval = recordInterval;
 			this.recordEnd = System.currentTimeMillis() + recordInterval;
@@ -82,7 +89,7 @@ public class SickConnectionImpl implements SickConnection {
 			if (this.channel != null) {
 				return this.channel.isConnected();
 			}
-            return false;
+			return false;
 		}
 
 		private void onClose() {
@@ -198,7 +205,7 @@ public class SickConnectionImpl implements SickConnection {
 														.setDist1(this
 																.substractBackground(
 																		j,
-																		value <= 3 ? 5000f
+																		value <= 3 ? Float.MAX_VALUE
 																				: value));
 
 											} else if (name
@@ -207,7 +214,7 @@ public class SickConnectionImpl implements SickConnection {
 														.setDist2(this
 																.substractBackground(
 																		j,
-																		value <= 3 ? 5000f
+																		value <= 3 ? Float.MAX_VALUE
 																				: value));
 											} else if (name
 													.equalsIgnoreCase(SickConnectionImpl.RSSI1)) {
@@ -263,8 +270,8 @@ public class SickConnectionImpl implements SickConnection {
 							// .getPowerUpDuration() - this.clock) / 1000;
 							// this.clock = measurement.getPowerUpDuration();
 							// }
-							this.connection.onMeasurement(measurement,
-									this.timestamp);
+							this.connection.onMeasurement(this.origin,
+									this.angle, measurement, this.timestamp);
 
 						}
 					}
@@ -379,10 +386,10 @@ public class SickConnectionImpl implements SickConnection {
 				if (value > 5999f || value > this.background.getDistance(index)) {
 					return 0f;
 				}
-                return value;
+				return value;
 
 			}
-            return value;
+			return value;
 		}
 	}
 
@@ -408,8 +415,9 @@ public class SickConnectionImpl implements SickConnection {
 	private SourceSpec source;
 
 	public SickConnectionImpl(final String host, final int port,
-			final long record) {
-		this.handler = new SickConnectionHandler(host, port, record, this);
+			final Coordinate origin, final double angle, final long record) {
+		this.handler = new SickConnectionHandler(host, port, origin, angle,
+				record, this);
 	}
 
 	public SickConnectionImpl(SickConnectionImpl connection) {
@@ -436,9 +444,10 @@ public class SickConnectionImpl implements SickConnection {
 		return this.handler.isConnected();
 	}
 
-	public void onMeasurement(final Measurement measurement,
-			final long timestamp) {
-		this.listener.onMeasurement(source, measurement, timestamp);
+	public void onMeasurement(final Coordinate origin, final double angle,
+			final Measurement measurement, final long timestamp) {
+		this.listener.onMeasurement(source, origin, angle, measurement,
+				timestamp);
 	}
 
 	@Override

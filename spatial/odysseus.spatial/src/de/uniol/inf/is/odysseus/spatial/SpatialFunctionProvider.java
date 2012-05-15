@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
+import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinates;
+import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinates;
 
 public class SpatialFunctionProvider implements IFunctionProvider {
 
@@ -54,7 +56,7 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new SpatialIsWithinDistance());
 		functions.add(new SpatialTouches());
 		functions.add(new SpatialWithin());
-		
+
 		functions.add(new SpatialConvexHull());
 		functions.add(new SpatialUnion());
 		functions.add(new SpatialUnionBuffer());
@@ -67,15 +69,17 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new AsLineString());
 		functions.add(new AsMultiLineString());
 		functions.add(new AsPolygon());
-		functions.add(new AsMultiPolygon());	
+		functions.add(new AsMultiPolygon());
 		functions.add(new GetCentroid());
-		
+
 		functions.add(new SpatialIsPolygon());
 		functions.add(new SpatialIsLine());
 		functions.add(new FromWKT());
 		functions.add(new ST_Transform());
 		functions.add(new ST_SetSRID());
 
+		functions.add(new ToPolarCoordinates());
+		functions.add(new ToCartesianCoordinates());
 		return functions;
 	}
 

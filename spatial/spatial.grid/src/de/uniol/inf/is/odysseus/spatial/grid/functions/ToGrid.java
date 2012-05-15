@@ -29,14 +29,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToGrid extends AbstractFunction<Grid> {
+public class ToGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 
      */
@@ -66,7 +66,7 @@ public class ToGrid extends AbstractFunction<Grid> {
 							+ this.getArity()
 							+ " argument(s): A geometry, the x and y coordinates, the width and height, and the cellsize.");
 		}
-        return accTypes[argPos];
+		return accTypes[argPos];
 	}
 
 	@Override
@@ -75,19 +75,20 @@ public class ToGrid extends AbstractFunction<Grid> {
 	}
 
 	@Override
-	public Grid getValue() {
+	public CartesianGrid getValue() {
 		final Geometry geometry = (Geometry) this.getInputValue(0);
-		final Double x = (Double) this.getInputValue(1);
-		final Double y = (Double) this.getInputValue(2);
-		Double width = (Double) this.getInputValue(3);
-		Double depth = (Double) this.getInputValue(4);
-		final Double cellsize = ((Double) this.getInputValue(5));
+		final Double x = this.getNumericalInputValue(1);
+		final Double y = this.getNumericalInputValue(2);
+		Integer width = this.getNumericalInputValue(3).intValue();
+		Integer depth = this.getNumericalInputValue(4).intValue();
+		final Double cellsize = this.getNumericalInputValue(5);
 		final Coordinate[] coordinates = geometry.getCoordinates();
 
-		final Grid grid = new Grid(new Coordinate(x, y), width, depth, cellsize);
+		final CartesianGrid grid = new CartesianGrid(new Coordinate(x, y),
+				width, depth, cellsize);
 		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
-				opencv_core.IPL_DEPTH_8U, 1);
+				opencv_core.IPL_DEPTH_64F, 1);
 
 		cvZero(image);
 		opencv_core.cvSet(image, OpenCVUtil.UNKNOWN);
@@ -104,7 +105,7 @@ public class ToGrid extends AbstractFunction<Grid> {
 		}
 		cvFillPoly(image, convexHullPoints, new int[] { coordinates.length },
 				1, OpenCVUtil.FREE, 4, 0);
-
+		convexHullPoints.deallocate();
 		CvPoint point = new CvPoint(0, 0);
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
@@ -117,6 +118,7 @@ public class ToGrid extends AbstractFunction<Grid> {
 
 			}
 		}
+		point.deallocate();
 		OpenCVUtil.imageToGrid(image, grid);
 
 		image.release();

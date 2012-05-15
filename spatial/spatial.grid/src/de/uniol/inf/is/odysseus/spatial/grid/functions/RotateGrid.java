@@ -15,8 +15,8 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_32F;
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static com.googlecode.javacv.cpp.opencv_core.CV_64F;
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
 import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_INTER_LINEAR;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_WARP_FILL_OUTLIERS;
@@ -32,13 +32,13 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RotateGrid extends AbstractFunction<Grid> {
+public class RotateGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 
      */
@@ -64,7 +64,7 @@ public class RotateGrid extends AbstractFunction<Grid> {
 					+ this.getArity()
 					+ " argument(s): A grid and an angle in degree.");
 		}
-        return RotateViewPoint.accTypes[argPos];
+		return RotateViewPoint.accTypes[argPos];
 	}
 
 	@Override
@@ -73,13 +73,13 @@ public class RotateGrid extends AbstractFunction<Grid> {
 	}
 
 	@Override
-	public Grid getValue() {
-		final Grid grid = (Grid) this.getInputValue(0);
+	public CartesianGrid getValue() {
+		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
 		Double angle = (Double) this.getInputValue(1);
 		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
-				IPL_DEPTH_8U, 1);
+				IPL_DEPTH_64F, 1);
 		IplImage rotatedImage = IplImage.create(cvSize(grid.width, grid.depth),
-				IPL_DEPTH_8U, image.nChannels());
+				IPL_DEPTH_64F, image.nChannels());
 
 		Coordinate origin = grid.origin;
 		double cellsize = grid.cellsize;
@@ -98,13 +98,13 @@ public class RotateGrid extends AbstractFunction<Grid> {
 		Coordinate rotatedOrigin = new Coordinate(rotatedOriginX,
 				rotatedOriginY);
 
-		Grid rotatedGrid = new Grid(rotatedOrigin, grid.width * grid.cellsize,
-				grid.depth * grid.cellsize, grid.cellsize);
+		CartesianGrid rotatedGrid = new CartesianGrid(rotatedOrigin,
+				grid.width, grid.depth, grid.cellsize);
 		opencv_core.cvSet(rotatedImage, OpenCVUtil.UNKNOWN);
 
 		OpenCVUtil.gridToImage(grid, image);
 
-		CvMat mapMatrix = CvMat.create(2, 3, CV_32F);
+		CvMat mapMatrix = CvMat.create(2, 3, CV_64F);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 		cvWarpAffine(image, rotatedImage, mapMatrix, flags, OpenCVUtil.UNKNOWN);
 		mapMatrix.release();

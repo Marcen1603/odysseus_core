@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
 import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
+import de.uniol.inf.is.odysseus.spatial.geom.*;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -44,16 +45,23 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 					.toString();
 			final int port = Integer.parseInt(source.getConfiguration()
 					.get("port").toString());
+			final double x = Double.parseDouble(source.getConfiguration()
+					.get("x").toString());
+			final double y = Double.parseDouble(source.getConfiguration()
+					.get("y").toString());
+			final double angle = Double.parseDouble(source.getConfiguration()
+					.get("angle").toString());
 			final SickConnection connection;
 			String record = "false";
 			if (source.getConfiguration().get("record") != null) {
 				record = source.getConfiguration().get("record").toString();
 			}
 			if (record.equalsIgnoreCase("false")) {
-				connection = new SickConnectionImpl(host, port, 0l);
+				connection = new SickConnectionImpl(host, port, new Coordinate(
+						x, y), angle, 0l);
 			} else {
-				connection = new SickConnectionImpl(host, port,
-						Long.parseLong(record));
+				connection = new SickConnectionImpl(host, port, new Coordinate(
+						x, y), angle, Long.parseLong(record));
 			}
 
 			SickSourceAdapter.LOG
@@ -74,38 +82,34 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 	}
 
 	@Override
-	public void onMeasurement(final SourceSpec source, final Measurement measurement, final long timestamp) {
-		
+	public void onMeasurement(final SourceSpec source, final Coordinate origin,
+			final double angle, final Measurement measurement,
+			final long timestamp) {
+
 		if ((measurement != null) && (measurement.getSamples() != null)) {
-			final List<Point> coordinates = new ArrayList<Point>(measurement.getSamples().length);
-			
-			
+			final List<PolarCoordinate> coordinates = new ArrayList<PolarCoordinate>(
+					measurement.getSamples().length);
+
 			for (int i = 0; i < measurement.getSamples().length; i++) {
 				final Sample sample = measurement.getSamples()[i];
-				
-				//Set sample.getDist1() != 0f in background Extraction to 0!
-				if (sample.getDist1() < Float.MAX_VALUE && sample.getDist1() != 0f) {
-					coordinates.add(this.geometryFactory.createPoint(sample.getDist1Vector()));
-				}
+				coordinates.add(new PolarCoordinate((double) sample.getDist1(),
+						sample.getAngle()));
 			}
-
-			coordinates.add(this.geometryFactory.createPoint(new Coordinate(0,
-					0)));
 			SickSourceAdapter.this.transfer(
 					source,
 					timestamp,
-					new Object[] {
-							this.geometryFactory.createMultiPoint(coordinates
-									.toArray(new Point[] {})), timestamp });
-
-
+					new Object[] { origin, angle,
+							coordinates.toArray(new PolarCoordinate[] {}),
+							timestamp });
 			/*
-			>>>>>>> Optimized the Sick-Background Extraction.
-			if(this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {})).getCoordinates().length > 0){
-				SickSourceAdapter.this.transfer(source, timestamp,new Object[] { this.geometryFactory.createMultiPoint(coordinates.toArray(new Point[] {})) });	
-			}
-			*/
-			
+			 * >>>>>>> Optimized the Sick-Background Extraction.
+			 * if(this.geometryFactory.createMultiPoint(coordinates.toArray(new
+			 * Point[] {})).getCoordinates().length > 0){
+			 * SickSourceAdapter.this.transfer(source, timestamp,new Object[] {
+			 * this.geometryFactory.createMultiPoint(coordinates.toArray(new
+			 * Point[] {})) }); }
+			 */
+
 		}
 
 	}

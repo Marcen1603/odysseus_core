@@ -49,6 +49,11 @@ public class SDFSpatialDatatype extends SDFDatatype{
 					new SDFAttribute(null,"x", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"y", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"z", SDFDatatype.DOUBLE)));
+	
+	public static final SDFDatatype SPATIAL_POLAR_COORDINATE = new SDFSpatialDatatype("SpatialPolarCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
+			new SDFSchema("",
+					new SDFAttribute(null,"r", SDFDatatype.DOUBLE),
+					new SDFAttribute(null,"a", SDFDatatype.DOUBLE)));
 
 	public static final SDFDatatype SPATIAL_COORDINATE_SEQUENCE = new SDFSpatialDatatype("SpatialCoordinateSequence", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_COORDINATE);
 

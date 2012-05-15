@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -94,11 +94,11 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	protected void process_next(final Object object, final int port,
 			final boolean isReadOnly) {
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			Grid grid = (Grid) ((Tuple<TimeInterval>) object)
+			CartesianGrid grid = (CartesianGrid) ((Tuple<TimeInterval>) object)
 					.getAttribute(0);
 			IplImage image = IplImage.create(
 					opencv_core.cvSize(grid.width, grid.depth),
-					opencv_core.IPL_DEPTH_8U, 1);
+					opencv_core.IPL_DEPTH_64F, 1);
 			OpenCVUtil.gridToImage(grid, image);
 			this.canvas.showImage(image);
 			image.release();

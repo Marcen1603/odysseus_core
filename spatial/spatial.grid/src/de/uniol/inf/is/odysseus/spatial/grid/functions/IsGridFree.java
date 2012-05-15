@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -68,7 +68,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 							+ this.getArity()
 							+ " argument(s): A grid, the x and y coordinates, the width and height.");
 		}
-        return accTypes[argPos];
+		return accTypes[argPos];
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		final Grid grid = (Grid) this.getInputValue(0);
+		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
 		final Coordinate point = (Coordinate) this.getInputValue(1);
 		Double width = (Double) this.getInputValue(2);
 		Double depth = (Double) this.getInputValue(3);
@@ -86,7 +86,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 
 		IplImage image = IplImage.create(
 				opencv_core.cvSize(grid.width, grid.depth),
-				opencv_core.IPL_DEPTH_8U, 1);
+				opencv_core.IPL_DEPTH_64F, 1);
 		OpenCVUtil.gridToImage(grid, image);
 
 		final int globalGridCenterX = (int) (Math.abs(point.x - grid.origin.x) / grid.cellsize);
@@ -114,7 +114,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 
 			IplImage roi = IplImage.create(
 					opencv_core.cvSize(roiRect.width(), roiRect.height()),
-					opencv_core.IPL_DEPTH_8U, 1);
+					opencv_core.IPL_DEPTH_64F, 1);
 
 			opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
 
