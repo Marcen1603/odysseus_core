@@ -75,7 +75,9 @@ public class XMLSocketInput extends SocketInput<Document> {
 			// The parse call should block until the complete document is parsed
 			Document document = documentBuilder.parse(getInputStream());
 			return document;
-		} catch (SAXException | IOException e) {
+		} catch (SAXException e) {
+			LOG.error(e.getMessage(), e);
+		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
 		}
 		return null;
