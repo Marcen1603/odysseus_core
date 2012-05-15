@@ -50,6 +50,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
+	
+	final public int ERRORPORT = Integer.MAX_VALUE;
 
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
@@ -267,8 +269,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
+				try{
 				sink.getTarget().process(object, sink.getSinkInPort(),
 						isTransferExclusive());
+				}catch(Exception e){
+					// Send object that could not be processed to the error port
+					e.printStackTrace();
+					transfer(object, ERRORPORT);
+				}
 			}
 		}
 		fire(this.pushDoneEvent);
