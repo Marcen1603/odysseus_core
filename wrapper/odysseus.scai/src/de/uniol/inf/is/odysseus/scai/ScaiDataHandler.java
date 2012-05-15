@@ -28,6 +28,7 @@ import de.offis.xml.schema.scai20.SensorDataDescription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
@@ -38,7 +39,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
  * 
  */
 public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
-
+	private static final String DOMAIN_ATTRIBUTE = "DOMAIN";
+	private static final String NAME_ATTRIBUTE = "NAME";
 	Logger LOG = LoggerFactory.getLogger(ScaiDataHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -137,10 +139,20 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 		final SensorDataDescription sensorData = scai.getSCAI().getPayload()
 				.addNewMeasurements().addNewDataStream();
-
-		// TODO How to get Domain and Name from Query? (CKu)
-		sensorData.setSensorDomainName("TODO");
-		sensorData.setSensorName("TODO");
+		SDFAttribute domainAttribute = schema.findAttribute(DOMAIN_ATTRIBUTE);
+		SDFAttribute nameAttribute = schema.findAttribute(NAME_ATTRIBUTE);
+		if (domainAttribute != null) {
+			String domain = r.getAttribute(schema.indexOf(domainAttribute));
+			sensorData.setSensorDomainName(domain);
+		} else {
+			sensorData.setSensorDomainName("UNKNOWN");
+		}
+		if (nameAttribute != null) {
+			String name = r.getAttribute(schema.indexOf(nameAttribute));
+			sensorData.setSensorName(name);
+		} else {
+			sensorData.setSensorName("UNKNOWN");
+		}
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 		calendar.setTimeInMillis(metadata.getStart().getMainPoint());
@@ -148,7 +160,9 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		// Insert each attribute
 		for (int i = 0; i < schema.size(); i++) {
 			final String key = schema.get(i).getAttributeName();
-			if (!key.endsWith("_quality")) {
+			if ((!key.endsWith("_quality"))
+					&& (!key.equalsIgnoreCase(DOMAIN_ATTRIBUTE))
+					&& (!key.equalsIgnoreCase(NAME_ATTRIBUTE))) {
 				final DataElementValueDescription nameData = sensorData
 						.addNewDataStreamElement();
 				nameData.setPath(key);
@@ -162,6 +176,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 				}
 			}
 		}
+
 		buffer.asCharBuffer().put(scai.xmlText());
 	}
 
@@ -216,6 +231,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 			final Map<String, Object> event = new HashMap<String, Object>();
 			// TODO: is this correct? - yes (CKu)
 			event.put("STARTTIMESTAMP", timestamp.getTimeInMillis());
+			event.put(DOMAIN_ATTRIBUTE, domain);
+			event.put(NAME_ATTRIBUTE, name);
 			for (int j = 0; j < dataStreamElements.length; ++j) {
 				final String value = dataStreamElements[j].getData();
 				final String path = dataStreamElements[j].getPath();
