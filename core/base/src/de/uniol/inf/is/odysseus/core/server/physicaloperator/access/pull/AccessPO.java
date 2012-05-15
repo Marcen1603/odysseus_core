@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IObjectInputStreamTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IStringArrayTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToStringArrayTransformer;
 
 /**
  * This class represents all sources that need to be scheduled to deliver 
@@ -33,8 +33,8 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	
 	// Use different kinds of transformer to transform to
 	// the format the IDataHandler can read
-	final private IStringArrayTransformer<R> stringTransformer;
-	final private IObjectInputStreamTransformer<R> oisTransformer;
+	final private IToStringArrayTransformer<R> stringTransformer;
+	final private IToObjectInputStreamTransformer<R> oisTransformer;
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	 * @param transformer
 	 * @param dataHandler
 	 */
-	public AccessPO(IInput<R> input, IStringArrayTransformer<R> transformer,
+	public AccessPO(IInput<R> input, IToStringArrayTransformer<R> transformer,
 			IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = transformer;
@@ -50,7 +50,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		this.oisTransformer = null;
 	}
 
-	public AccessPO(IInput<R> input,IObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
+	public AccessPO(IInput<R> input,IToObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = null;
 		this.dataHandler = dataHandler;

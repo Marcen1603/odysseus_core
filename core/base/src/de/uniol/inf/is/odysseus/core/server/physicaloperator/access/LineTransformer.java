@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access;
 
 
-public class LineTransformer extends AbstractTransformer<String, String[]> implements IStringArrayTransformer<String> {
+public class LineTransformer extends AbstractTransformer<String, String[]> implements IToStringArrayTransformer<String> {
 
 	@Override
 	public String[] transform(String input) {
