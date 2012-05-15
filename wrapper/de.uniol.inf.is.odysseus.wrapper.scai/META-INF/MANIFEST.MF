@@ -6,7 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.scai.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.core.datahandler,
+Import-Package: de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  javax.servlet;version="2.5.0",
@@ -16,6 +20,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.datahandler,
  org.slf4j
 Service-Component: OSGI-INF/ScaiSourceAdapter.xml, OSGI-INF/HTTPService.xml, OSGI-INF/ScaiSinkAdapter.xml
 Bundle-ClassPath: .,
- lib/scampi-scai-1.1.jar,
+ lib/scai-stack-1.0.jar,
  lib/xmlbeans-2.4.0.jar,
  lib/com.springsource.org.apache.commons.httpclient-3.1.0.jar
