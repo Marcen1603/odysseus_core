@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
 import java.util.ArrayList;
@@ -129,10 +129,10 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	protected void process_next(T object, int port) {
-		synchronized (this.buffer) {
-			this.buffer.add(object);
-			this.heartbeat.set(null);
-		}
+		transferLock.lock();
+		this.buffer.add(object);
+		this.heartbeat.set(null);
+		transferLock.unlock();
 	}
 
 	@Override
@@ -147,26 +147,26 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	@Override
 	public void transferNextBatch(int count) {
 		List<T> out;
-		// FIXME fehler, weil ueber falsches objekt synchronisiert wird
-		synchronized (this.buffer) {
-			if (count == this.buffer.size()) {
-				out = this.buffer;
-				this.buffer = new LinkedList<T>();
-			} else {
-				out = new ArrayList<T>(count);
-				if (count > size()) {
-					throw new IllegalArgumentException(
-							"cannot transfer more elements than size()");
-				}
-				for (int i = 0; i < count; ++i) {
-					out.add(this.buffer.remove());
-				}
+		transferLock.lock();
+		if (count == this.buffer.size()) {
+			out = this.buffer;
+			this.buffer = new LinkedList<T>();
+		} else {
+			out = new ArrayList<T>(count);
+			if (count > size()) {
+				throw new IllegalArgumentException(
+						"cannot transfer more elements than size()");
+			}
+			for (int i = 0; i < count; ++i) {
+				out.add(this.buffer.remove());
 			}
 		}
+
 		transfer(out);
 		if (isDone()) {
 			propagateDone();
 		}
+		transferLock.unlock();
 	}
 
 	@Override
@@ -194,9 +194,10 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 
 	@Override
 	public T peek() {
-		synchronized (this.buffer) {
-			return this.buffer.peek();
-		}
+		transferLock.lock();
+		T p = this.buffer.peek();
+		transferLock.unlock();
+		return p;
 	}
-	
+
 }
