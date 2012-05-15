@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.scai.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: de.uniol.inf.is.odysseus.wrapper.base,
+Import-Package: de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  javax.servlet;version="2.5.0",
  javax.servlet.http;version="2.5.0",
