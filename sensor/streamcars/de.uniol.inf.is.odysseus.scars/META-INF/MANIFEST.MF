@@ -29,8 +29,7 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.jdom,
  org.jdom.output,
  org.osgi.framework;version="1.3.0",
- org.slf4j,
- weka.core
+ org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.scars,
  de.uniol.inf.is.odysseus.scars.metadata,
  de.uniol.inf.is.odysseus.scars.operator.association.ao,
