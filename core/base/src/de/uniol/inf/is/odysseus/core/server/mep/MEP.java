@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.GetAbsoluteValue;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IfFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.LikeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.MinusOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ModuloOperator;
@@ -150,6 +151,8 @@ public class MEP implements IExpressionParser {
 		
 		registerFunction(new LikeFunction());
 		registerFunction(new ContainsFunction());
+		
+		registerFunction(new IsNullFunction());
 		
 	}
 
