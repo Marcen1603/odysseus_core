@@ -1,73 +1,199 @@
 package de.uniol.inf.is.odysseus.scai;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.offis.scampi.stack.Analyser;
+import de.offis.scampi.stack.ProtocolObject;
 import de.offis.xml.schema.scai20.DataElementValueDescription;
 import de.offis.xml.schema.scai20.SCAIDocument;
 import de.offis.xml.schema.scai20.SensorDataDescription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
+/**
+ * SCAI Data Handler
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ */
+public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	Logger LOG = LoggerFactory.getLogger(ScaiDataHandler.class);
-	
+	static protected List<String> types = new ArrayList<String>();
+	static {
+		types.add("Tuple");
+	}
+
+	IDataHandler<?>[] dataHandlers = null;
+	private final Charset charset = Charset.forName("UTF-8");
 	private SDFSchema schema;
 
+	/**
+	 * Create a new SCAI Data Handler
+	 * 
+	 * @param schema
+	 */
 	public ScaiDataHandler(SDFSchema schema) {
-		 this.schema= schema;
+		this.schema = schema;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+	 * nio.ByteBuffer)
+	 */
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		throw new IllegalArgumentException("Currently not implemented");
+		final CharsetDecoder decoder = this.charset.newDecoder();
+		try {
+			final CharBuffer charBuffer = decoder.decode(buffer);
+			return readData(charBuffer.toString());
+		} catch (CharacterCodingException e) {
+			LOG.warn(e.getMessage(), e);
+			throw new IllegalArgumentException(e);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+	 * io.ObjectInputStream)
+	 */
 	@Override
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
-		throw new IllegalArgumentException("Currently not implemented");	}
+		StringBuilder inputBuffer = new StringBuilder();
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				inputStream));
+		String buffer = "";
+		while ((buffer = in.readLine()) != null) {
+			inputBuffer.append(buffer);
+		}
+		return readData(inputBuffer.toString());
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+	 * lang.String)
+	 */
 	@Override
 	public Tuple<?> readData(String string) {
-		SCAIDocument scai = null;
+		ProtocolObject stackObject = null;
+		Analyser analyser = new Analyser();
 		try {
-			scai = SCAIDocument.Factory.parse(string);
-		} catch (XmlException e) {
-			e.printStackTrace();
+			stackObject = analyser.buildSCAIStackObject(string);
+		} catch (Exception e) {
+			LOG.warn(e.getMessage(), e);
 		}
-		
-		return process(scai);
+		return process((SCAIDocument) stackObject.getContent());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java
+	 * .nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		throw new IllegalArgumentException("Currently not implemented");		
+		Tuple<?> r = (Tuple<?>) data;
+		TimeInterval metadata = (TimeInterval) r.getMetadata();
+		final SCAIDocument scai = SCAIDocument.Factory.newInstance();
+
+		if (scai.getSCAI() == null) {
+			scai.addNewSCAI();
+		}
+		if (scai.getSCAI().getPayload() == null) {
+			scai.getSCAI().addNewPayload();
+		}
+
+		final SensorDataDescription sensorData = scai.getSCAI().getPayload()
+				.addNewMeasurements().addNewDataStream();
+
+		// TODO How to get Domain and Name from Query? (CKu)
+		sensorData.setSensorDomainName("TODO");
+		sensorData.setSensorName("TODO");
+		Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.setTimeInMillis(metadata.getStart().getMainPoint());
+		sensorData.setTimeStamp(calendar);
+		// Insert each attribute
+		for (int i = 0; i < schema.size(); i++) {
+			final String key = schema.get(i).getAttributeName();
+			if (!key.endsWith("_quality")) {
+				final DataElementValueDescription nameData = sensorData
+						.addNewDataStreamElement();
+				nameData.setPath(key);
+				nameData.setData(r.getAttribute(i).toString());
+				int qualityIndex = schema.indexOf(key + "_quality");
+				if ((qualityIndex >= 0) && (qualityIndex < schema.size())) {
+					nameData.setQuality(new BigDecimal(r.getAttribute(
+							qualityIndex).toString()));
+				} else {
+					nameData.setQuality(new BigDecimal(0));
+				}
+			}
+		}
+		buffer.asCharBuffer().put(scai.xmlText());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang
+	 * .Object)
+	 */
 	@Override
 	public int memSize(Object attribute) {
 		throw new IllegalArgumentException("Currently not implemented");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#
+	 * getSupportedDataTypes()
+	 */
 	@Override
 	public List<String> getSupportedDataTypes() {
-		return null;
+		return Collections.unmodifiableList(types);
 	}
 
-	
+	/**
+	 * Process the given SCAI Document to create a relational tuple
+	 * 
+	 * @param data
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	private Tuple<?> process(final SCAIDocument data) {
 		Tuple<?> ret = null;
@@ -75,7 +201,11 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
 				.getPayload().getMeasurements().getDataStreamArray();
 		for (int i = 0; i < sensorDataDescriptions.length; ++i) {
 
-			// TODO: Put these elements to the tuple or are they part of the tuple?
+			// TODO: Put these elements to the tuple or are they part of the
+			// tuple? - that's the problem, multiple sensors can communicate
+			// over the same connection. If only one sensor communicates over
+			// one connection it's ok if multiple we have to select the source
+			// based on the domain and sensor name (CKu)
 			final Calendar timestamp = sensorDataDescriptions[i].getTimeStamp();
 			final String name = sensorDataDescriptions[i].getSensorName();
 			final String domain = sensorDataDescriptions[i]
@@ -84,7 +214,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
 					.getDataStreamElementArray();
 
 			final Map<String, Object> event = new HashMap<String, Object>();
-			// TODO: is this correct?
+			// TODO: is this correct? - yes (CKu)
 			event.put("STARTTIMESTAMP", timestamp.getTimeInMillis());
 			for (int j = 0; j < dataStreamElements.length; ++j) {
 				final String value = dataStreamElements[j].getData();
@@ -97,16 +227,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
 				event.put(path + "_quality", quality.doubleValue());
 			}
 			try {
-				LOG.debug(">" + event);
 				Object[] retObj = new Object[schema.size()];
 				for (int ii = 0; i < retObj.length; ii++) {
-					if (LOG.isDebugEnabled()) {
-						if (!event.containsKey(schema.get(ii))) {
-							LOG.debug(String.format(
-									"Attribute '%s' is missing in event %s.",
-									schema.get(ii), event));
-						}
-					}
 					retObj[ii] = event.get(schema.get(ii));
 				}
 				ret = new Tuple(retObj);
@@ -117,5 +239,5 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>>{
 		}
 		return ret;
 	}
-	
+
 }

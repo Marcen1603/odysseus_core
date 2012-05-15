@@ -4,11 +4,15 @@ Bundle-Name: Scai
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scai
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.scai.Activator
-Import-Package: de.offis.xml.schema.scai20,
+Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.sdf.schema,
- org.apache.xmlbeans,
+ de.uniol.inf.is.odysseus.intervalapproach,
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.6.1"
+ org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: .,
+ lib/scai-stack-1.0.jar,
+ lib/xmlbeans-2.4.0.jar
