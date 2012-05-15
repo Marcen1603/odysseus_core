@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInput2ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
@@ -45,7 +45,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 		
 		ObjectStreamInput input = new ObjectStreamInput(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
 		
-		ISource accessPO = new AccessPO<ObjectInputStream, Tuple<?>>(input, new ObjectInputStreamTransformer(), 
+		ISource accessPO = new AccessPO<ObjectInputStream, Tuple<?>>(input, new ObjectInput2ObjectInputStreamTransformer(), 
 				new TupleDataHandler(accessAO.getOutputSchema()));
 		
 		accessPO.setOutputSchema(accessAO.getOutputSchema());

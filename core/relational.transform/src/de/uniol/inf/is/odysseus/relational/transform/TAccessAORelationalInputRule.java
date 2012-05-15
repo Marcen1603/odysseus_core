@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInput2ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -44,7 +44,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 		LoggerSystem.printlog(Accuracy.DEBUG, "Standard InputStream");
 		String accessPOName = accessAO.getSourcename();
 		ObjectStreamInput input = new ObjectStreamInput(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
-		ISource<?> accessPO = new AccessPO<ObjectInputStream,Tuple<?>>(input, new ObjectInputStreamTransformer(),  new ObjectDataHandler<Tuple<?>>());	
+		ISource<?> accessPO = new AccessPO<ObjectInputStream,Tuple<?>>(input, new ObjectInput2ObjectInputStreamTransformer(),  new ObjectDataHandler<Tuple<?>>());	
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(accessAO, accessPO);

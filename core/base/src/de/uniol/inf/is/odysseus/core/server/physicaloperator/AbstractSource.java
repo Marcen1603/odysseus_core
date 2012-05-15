@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.event.POEventType;
  */
 public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
-	
+
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -182,7 +182,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public SDFSchema getOutputSchema(int port) {
-		
+
 		return outputSchema.get(port);
 	}
 
@@ -269,10 +269,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
-				try{
-				sink.getTarget().process(object, sink.getSinkInPort(),
-						isTransferExclusive());
-				}catch(Exception e){
+				try {
+					sink.getTarget().process(object, sink.getSinkInPort(),
+							isTransferExclusive());
+				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();
 					transfer(object, ERRORPORT);
