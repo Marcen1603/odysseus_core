@@ -94,10 +94,12 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		StringBuilder builder = new StringBuilder(getSymbol());
 		builder.append('(');
 		if (getArity() > 0) {
-			builder.append(getArguments()[0].toString());
-			for (int i = 1; i < getArity(); ++i) {
-				builder.append(", ");
-				builder.append(getArguments()[i].toString());
+			if ((getArguments() != null) && (getArguments().length > 0)) {
+				builder.append(getArguments()[0].toString());
+				for (int i = 1; i < getArity(); ++i) {
+					builder.append(", ");
+					builder.append(getArguments()[i].toString());
+				}
 			}
 		}
 		builder.append(')');
