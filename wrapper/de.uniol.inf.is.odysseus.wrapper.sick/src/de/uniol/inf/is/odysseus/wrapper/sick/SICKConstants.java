@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.wrapper.sick;
 
+/**
+ * Constants for the SICK protocol
+ * 
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public final class SICKConstants {
 	public static final String START_SCAN = "sEN LMDscandata 1";
 	public static final String STOP_SCAN = "sEN LMDscandata 0";
