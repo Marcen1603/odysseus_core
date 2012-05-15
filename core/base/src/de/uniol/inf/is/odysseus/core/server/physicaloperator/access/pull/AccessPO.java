@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IStringArray
  * @author Marco Grawunder
  *
  * @param <R> The immediate values that are send to 
- * @param <W> Die Output that is written by this operator.
+ * @param <W> The Output that is written by this operator.
  */
 public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
@@ -30,7 +30,9 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	private IInput<R> input;
 
 	final private IDataHandler<W> dataHandler;
-
+	
+	// Use different kinds of transformer to transform to
+	// the format the IDataHandler can read
 	final private IStringArrayTransformer<R> stringTransformer;
 	final private IObjectInputStreamTransformer<R> oisTransformer;
 
