@@ -4,9 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class StringSocketLineInput extends SocketInput<String> {
-
+	private static final Logger LOG = LoggerFactory
+			.getLogger(StringSocketLineInput.class);
 	private BufferedReader reader;
 
 	public StringSocketLineInput(String hostname, int port, String user,
@@ -26,7 +30,7 @@ public class StringSocketLineInput extends SocketInput<String> {
 		try {
 			return reader.ready();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return false;
 	}
@@ -36,7 +40,7 @@ public class StringSocketLineInput extends SocketInput<String> {
 		try {
 			return reader.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return null;
 	}
