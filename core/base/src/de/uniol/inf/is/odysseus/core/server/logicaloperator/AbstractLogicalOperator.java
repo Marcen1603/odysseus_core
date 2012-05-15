@@ -350,7 +350,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				sinkInPort = port;
 			}
 		}
-		// und erhöhe um eins
+		// und erhï¿½he um eins
 		sinkInPort++;
 		return sinkInPort;
 	}
@@ -445,7 +445,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	final public Collection<LogicalSubscription> getSubscriptions() {
-		// TODO: Unterscheiden, ob mit der Liste Änderungen durchgeführt werden
+		// TODO: Unterscheiden, ob mit der Liste ï¿½nderungen durchgefï¿½hrt werden
 		// sollen, oder ob nur
 		// gelesen werden soll.
 		return new Vector<LogicalSubscription>(this.subscriptions);
@@ -641,5 +641,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		// }
 		// }
 		// }
+	}
+	
+	@Override
+	public String getDoc() {
+		return String.format("No documentation available for the logical operator %s",
+				getClass().getCanonicalName());
 	}
 }

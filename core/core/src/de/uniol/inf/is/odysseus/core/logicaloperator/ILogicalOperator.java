@@ -170,5 +170,11 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 */
 	@Override
 	public ILogicalOperator clone();
+	
+	/**
+	 * Human readable description of the logical operator.
+	 * @return The description of the logical operator
+	 */
+	public String getDoc();
 
 }
