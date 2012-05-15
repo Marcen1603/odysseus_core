@@ -50,9 +50,20 @@ public class SDFGridDatatype extends SDFDatatype {
 							SDFSpatialDatatype.SPATIAL_POINT),
 					new SDFAttribute(null, "cellsize", SDFDatatype.DOUBLE),
 					new SDFAttribute(null, "grid", SDFDatatype.MATRIX_BYTE)));
+	public static final SDFDatatype POLARGRID = new SDFDatatype("PolarGrid",
+			SDFDatatype.KindOfDatatype.BEAN, new SDFSchema("",
+					new SDFAttribute(null, "origin",
+							SDFSpatialDatatype.SPATIAL_POINT),
+					new SDFAttribute(null, "cellangle", SDFDatatype.DOUBLE),
+					new SDFAttribute(null, "cellradius", SDFDatatype.DOUBLE),
+					new SDFAttribute(null, "grid", SDFDatatype.MATRIX_BYTE)));
 
 	public boolean isGrid() {
 		return this.getURI().equals(GRID.getURI());
+	}
+
+	public boolean isPolarGrid() {
+		return this.getURI().equals(POLARGRID.getURI());
 	}
 
 	/**
@@ -67,6 +78,9 @@ public class SDFGridDatatype extends SDFDatatype {
 		if (other instanceof SDFGridDatatype) {
 			SDFGridDatatype otherSpatial = (SDFGridDatatype) other;
 			if (this.isGrid() && otherSpatial.isGrid()) {
+				return true;
+			}
+			if (this.isPolarGrid() && otherSpatial.isPolarGrid()) {
 				return true;
 			}
 		}

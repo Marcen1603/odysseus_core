@@ -97,29 +97,23 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									short id = buffer.getShort();
 									int x = buffer.getInt();
 									int y = buffer.getInt();
-									short length = buffer.getShort();
 									short width = buffer.getShort();
+									short depth = buffer.getShort();
 									short height = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
 									buffer.compact();
-									while (buffer.position() < length * width
+									while (buffer.position() < width * depth
 											* height) {
 										channel.receive(buffer);
 									}
 									pos = buffer.position();
 									buffer.flip();
-									Grid grid = new Grid(new Coordinate(x,
-											y), length * cell, width * cell,
-											cell);
+									Grid grid = new Grid(new Coordinate(x, y),
+											width * cell, depth * cell, cell);
 									// FIXME Use 3D Grid when height>1
-									for (int l = 0; l < length; l++) {
-										for (int w = 0; w < width; w++) {
-											for (int h = 0; h < height; h++) {
-												grid.set(l, w, buffer.get());
-											}
-										}
-									}
+									buffer.get(grid.get(), 0, width * depth
+											* height);
 									if (calendar.getTimeInMillis() >= timestamp) {
 										this.listener.transfer(source,
 												calendar.getTimeInMillis(),

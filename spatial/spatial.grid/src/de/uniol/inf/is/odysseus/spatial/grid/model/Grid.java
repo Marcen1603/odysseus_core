@@ -48,7 +48,7 @@ public class Grid implements Cloneable {
 	}
 
 	public byte get(int x, int y) {
-		return this.buffer.get(y * this.width + x);
+		return this.buffer.get((depth - 1 - y) * this.width + x);
 	}
 
 	public byte get(double x, double y) {
@@ -67,7 +67,7 @@ public class Grid implements Cloneable {
 	}
 
 	public void set(int x, int y, byte value) {
-		this.buffer.put(y * this.width + x, value);
+		this.buffer.put((this.depth - 1 - y) * this.width + x, value);
 	}
 
 	public void set(double x, double y, byte value) {

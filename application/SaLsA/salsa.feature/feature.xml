@@ -21,6 +21,7 @@
       <import plugin="de.uniol.inf.is.odysseus.core"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="org.junit"/>
+      <import plugin="java.topological.suite"/>
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
