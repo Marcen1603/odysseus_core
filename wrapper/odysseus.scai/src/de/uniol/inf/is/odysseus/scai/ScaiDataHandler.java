@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	private static final String DOMAIN_ATTRIBUTE = "DOMAIN";
 	private static final String NAME_ATTRIBUTE = "NAME";
+	private static final String TIMESTAMP_ATTRIBUTE = "TIMESTAMP";
 	Logger LOG = LoggerFactory.getLogger(ScaiDataHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -216,11 +217,6 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 				.getPayload().getMeasurements().getDataStreamArray();
 		for (int i = 0; i < sensorDataDescriptions.length; ++i) {
 
-			// TODO: Put these elements to the tuple or are they part of the
-			// tuple? - that's the problem, multiple sensors can communicate
-			// over the same connection. If only one sensor communicates over
-			// one connection it's ok if multiple we have to select the source
-			// based on the domain and sensor name (CKu)
 			final Calendar timestamp = sensorDataDescriptions[i].getTimeStamp();
 			final String name = sensorDataDescriptions[i].getSensorName();
 			final String domain = sensorDataDescriptions[i]
@@ -229,8 +225,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 					.getDataStreamElementArray();
 
 			final Map<String, Object> event = new HashMap<String, Object>();
-			// TODO: is this correct? - yes (CKu)
-			event.put("STARTTIMESTAMP", timestamp.getTimeInMillis());
+			event.put(TIMESTAMP_ATTRIBUTE, timestamp.getTimeInMillis());
 			event.put(DOMAIN_ATTRIBUTE, domain);
 			event.put(NAME_ATTRIBUTE, name);
 			for (int j = 0; j < dataStreamElements.length; ++j) {
