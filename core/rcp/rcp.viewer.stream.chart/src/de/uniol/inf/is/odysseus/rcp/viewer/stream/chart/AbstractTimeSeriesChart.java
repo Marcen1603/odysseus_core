@@ -67,7 +67,7 @@ public abstract class AbstractTimeSeriesChart extends
 
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
 
-	private Integer choosenXValuePort;
+	private Integer choosenXValuePort = 0;
 
 	@Override
 	public void chartSettingsChanged() {

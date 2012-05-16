@@ -31,23 +31,21 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribut
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
-public abstract class AbstractXYChart extends
-		AbstractJFreeChart<Double, IMetaAttribute> {
+public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	private int choosenXValue;
 	private int choosenYValue;
 	private int choosenSerie = -1;
-	private Integer choosenXValuePort;
-	private Integer choosenYValuePort;
-	private Integer choosenSeriePort;
+	private Integer choosenXValuePort = 0;
+	private Integer choosenYValuePort = 0;
+	private Integer choosenSeriePort = 0;
+	private boolean considerTimeValidity = false;
 
 	@Override
-	public String isValidSelection(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		int sel = 0;
-		for (Entry<Integer, Set<IViewableAttribute>> e : selectAttributes
-				.entrySet()) {
+		for (Entry<Integer, Set<IViewableAttribute>> e : selectAttributes.entrySet()) {
 			sel += e.getValue().size();
 		}
 		if (sel == 2) {
@@ -67,12 +65,14 @@ public abstract class AbstractXYChart extends
 	}
 
 	@Override
-	protected void processElement(final List<Double> tuple,
-			IMetaAttribute metadata, int port) {
+	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
 		getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					if (considerTimeValidity) {
+						purgeSeries();
+					}
 					String key = "-";
 					XYSeries currentserie;
 					if (choosenSerie == -1) {
@@ -88,8 +88,7 @@ public abstract class AbstractXYChart extends
 						currentserie = dataset.getSeries(key);
 					}
 
-					currentserie.add(tuple.get(choosenXValue),
-							tuple.get(choosenYValue));
+					currentserie.add(tuple.get(choosenXValue), tuple.get(choosenYValue));
 				} catch (SWTException e) {
 					dispose();
 					return;
@@ -99,6 +98,10 @@ public abstract class AbstractXYChart extends
 			}
 		});
 
+	}
+
+	private void purgeSeries() {
+		
 	}
 
 	private boolean containsSeriesWithKey(Comparable<?> key) {
@@ -129,8 +132,7 @@ public abstract class AbstractXYChart extends
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.GET)
 	public String getXValue() {
-		return getViewableAttributes(this.choosenXValuePort).get(
-				this.choosenXValue).getName();
+		return getViewableAttributes(this.choosenXValuePort).get(this.choosenXValue).getName();
 	}
 
 	@ChartSetting(name = "Value for X-Axis", type = Type.SET)
@@ -153,8 +155,7 @@ public abstract class AbstractXYChart extends
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.GET)
 	public String getYValue() {
-		return getViewableAttributes(choosenYValuePort).get(this.choosenYValue)
-				.getName();
+		return getViewableAttributes(choosenYValuePort).get(this.choosenYValue).getName();
 	}
 
 	@ChartSetting(name = "Value for Y-Axis", type = Type.SET)
@@ -180,8 +181,7 @@ public abstract class AbstractXYChart extends
 	@ChartSetting(name = "Value for Series", type = Type.GET)
 	public String getSeriesValue() {
 		if (this.choosenSerie > -1) {
-			return getViewableAttributes(choosenSeriePort).get(
-					this.choosenSerie).getName();
+			return getViewableAttributes(choosenSeriePort).get(this.choosenSerie).getName();
 		}
 
 		return "";
@@ -194,8 +194,7 @@ public abstract class AbstractXYChart extends
 		} else {
 			for (Integer port : getPorts()) {
 				for (int i = 0; i < getViewableAttributes(port).size(); i++) {
-					if (getViewableAttributes(port).get(i).getName()
-							.equals(value)) {
+					if (getViewableAttributes(port).get(i).getName().equals(value)) {
 						this.choosenSerie = i;
 						this.choosenSeriePort = port;
 						return;
@@ -203,6 +202,16 @@ public abstract class AbstractXYChart extends
 				}
 			}
 		}
+	}
+
+	@ChartSetting(name = "Consider Time Validity", type = Type.SET)
+	public void setTimeValidity(Boolean value) {
+		this.considerTimeValidity = value;
+	}
+
+	@ChartSetting(name = "Consider Time Validity", type = Type.GET)
+	public Boolean setTimeValidity() {
+		return this.considerTimeValidity;
 	}
 
 	private List<String> getValues() {
