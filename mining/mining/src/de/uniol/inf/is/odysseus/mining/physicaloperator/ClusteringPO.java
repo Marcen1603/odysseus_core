@@ -40,6 +40,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private List<SDFAttribute> attributes;
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>(1);
+	private int run = 0;
 
 	public ClusteringPO(IClusterer<M> clusterer, List<SDFAttribute> attributes) {
 		this.clusterer = clusterer;
@@ -60,20 +61,22 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 	protected synchronized void process_next(Tuple<M> object, int port) {
 		sweepArea.insert(object);
 		sweepArea.purgeElementsBefore(object.getMetadata().getStart());
-		System.out.println("---------------------------");
-		System.out.println(object);
-		System.out.println("---SA: ---");
-		System.out.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
-		System.out.println("----------");
+//		System.out.println("---------------------------");
+//		System.out.println(object);
+//		System.out.println("---SA: ---");
+//		System.out.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
+//		System.out.println("----------");
 		Iterator<Tuple<M>> qualifies = sweepArea.queryOverlaps(object.getMetadata());
 		Map<Integer, List<Tuple<M>>> clustered = this.clusterer.processClustering(qualifies);
-
+		
 		for (Entry<Integer, List<Tuple<M>>> cluster : clustered.entrySet()) {
 			for (Tuple<M> tuple : cluster.getValue()) {
 				tuple = tuple.append(cluster.getKey());
+				tuple = tuple.append(run);
 				this.transferFunction.transfer(tuple);
 			}
 		}
+		run++;
 		transferFunction.newElement(object, port);
 
 	}
