@@ -109,13 +109,13 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 				originY), width, depth, grid.cellsize);
 
 		IplImage subimage = IplImage.create(
-				opencv_core.cvSize(subgrid.width, subgrid.depth),
+				opencv_core.cvSize(subgrid.width, subgrid.height),
 				opencv_core.IPL_DEPTH_64F, 1);
 		opencv_core.cvSet(subimage, OpenCVUtil.UNKNOWN);
 
 		// Create global grid view
 		IplImage image = IplImage.create(
-				opencv_core.cvSize(grid.width, grid.depth),
+				opencv_core.cvSize(grid.width, grid.height),
 				opencv_core.IPL_DEPTH_64F, 1);
 		OpenCVUtil.gridToImage(grid, image);
 
@@ -129,8 +129,8 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 		int roiDepth;
 		double widthCos = subgrid.width * cos;
 		double widthSin = subgrid.width * sin;
-		double depthCos = subgrid.depth * cos;
-		double depthSin = subgrid.depth * sin;
+		double depthCos = subgrid.height * cos;
+		double depthSin = subgrid.height * sin;
 		roiWidth = (int) (Math.abs(widthCos) + Math.abs(depthSin) + 0.5);
 		roiDepth = (int) (Math.abs(widthSin) + Math.abs(depthCos) + 0.5);
 
@@ -159,7 +159,7 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 		// Width and length of the ROI (in grid cells)
 		roiWidth = (roiX + roiWidth) > grid.width ? grid.width - roiX
 				: roiWidth;
-		roiDepth = (roiY + roiDepth) < grid.depth ? grid.depth - roiY
+		roiDepth = (roiY + roiDepth) < grid.height ? grid.height - roiY
 				: roiDepth;
 
 		if ((roiWidth > 0) && (roiDepth > 0)) {

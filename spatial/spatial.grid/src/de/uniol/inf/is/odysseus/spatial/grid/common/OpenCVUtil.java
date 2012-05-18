@@ -44,15 +44,15 @@ public final class OpenCVUtil {
 	}
 
 	public static void imageToGrid(IplImage image, CartesianGrid grid) {
-		int widthStep = image.widthStep() / 8;
-		if (widthStep > image.width()) {
-			for (int h = 0; h < image.height(); h++) {
-				image.getDoubleBuffer(h * widthStep).get(grid.get(),
-						h * grid.width, grid.width);
-			}
-		} else {
-			grid.getBuffer().put(image.getDoubleBuffer());
-		}
+//		int widthStep = image.widthStep() / 8;
+//		if (widthStep > image.width()) {
+//			for (int h = 0; h < image.height(); h++) {
+//				image.getDoubleBuffer(h * widthStep).get(grid.get(),
+//						h * grid.width, grid.width);
+//			}
+//		} else {
+//			grid.getBuffer().put(image.getDoubleBuffer());
+//		}
 	}
 
 	public static void imageToGrid(IplImage image, PolarGrid grid) {
@@ -81,17 +81,17 @@ public final class OpenCVUtil {
 	}
 
 	public static void gridToImage(CartesianGrid grid, IplImage image) {
-		int widthStep = image.widthStep() / 8;
-		if (widthStep > image.width()) {
-			for (int h = 0; h < image.height(); h++) {
-				System.out.println("Cap: " + image.getDoubleBuffer().capacity()
-						+ " " + h + " " + widthStep);
-				image.getDoubleBuffer(h * widthStep).put(grid.get(),
-						h * grid.width, grid.width);
-			}
-		} else {
-			image.getDoubleBuffer().put(grid.getBuffer().duplicate());
-		}
+//		int widthStep = image.widthStep() / 8;
+//		if (widthStep > image.width()) {
+//			for (int h = 0; h < image.height(); h++) {
+//				System.out.println("Cap: " + image.getDoubleBuffer().capacity()
+//						+ " " + h + " " + widthStep);
+//				image.getDoubleBuffer(h * widthStep).put(grid.get(),
+//						h * grid.width, grid.width);
+//			}
+//		} else {
+//			image.getDoubleBuffer().put(grid.getBuffer().duplicate());
+//		}
 	}
 
 	public static void gridToImage(PolarGrid grid, IplImage image) {

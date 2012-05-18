@@ -87,7 +87,7 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 		final CartesianGrid grid = new CartesianGrid(new Coordinate(x, y),
 				width, depth, cellsize);
 		IplImage image = IplImage.create(
-				opencv_core.cvSize(grid.width, grid.depth),
+				opencv_core.cvSize(grid.width, grid.height),
 				opencv_core.IPL_DEPTH_64F, 1);
 
 		cvZero(image);

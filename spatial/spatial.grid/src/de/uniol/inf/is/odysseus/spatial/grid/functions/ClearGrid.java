@@ -67,11 +67,11 @@ public class ClearGrid extends AbstractFunction<CartesianGrid> {
 		final CartesianGrid base = this.getInputValue(0);
 		final CartesianGrid grid = this.getInputValue(1);
 		final CartesianGrid result = new CartesianGrid(base.origin, base.width,
-				base.depth, base.cellsize);
+				base.height, base.cellsize);
 
-		IplImage baseImage = IplImage.create(cvSize(base.width, base.depth),
+		IplImage baseImage = IplImage.create(cvSize(base.width, base.height),
 				IPL_DEPTH_64F, 1);
-		IplImage gridImage = IplImage.create(cvSize(grid.width, grid.depth),
+		IplImage gridImage = IplImage.create(cvSize(grid.width, grid.height),
 				IPL_DEPTH_64F, 1);
 		OpenCVUtil.gridToImage(base, baseImage);
 		OpenCVUtil.gridToImage(grid, gridImage);

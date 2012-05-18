@@ -64,8 +64,8 @@ public class InverseGrid extends AbstractFunction<CartesianGrid> {
 	public CartesianGrid getValue() {
 		final CartesianGrid grid = this.getInputValue(0);
 		final CartesianGrid inverseGrid = new CartesianGrid(grid.origin,
-				grid.width, grid.depth, grid.cellsize);
-		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
+				grid.width, grid.height, grid.cellsize);
+		IplImage image = IplImage.create(cvSize(grid.width, grid.height),
 				IPL_DEPTH_64F, 1);
 
 		OpenCVUtil.gridToImage(grid, image);

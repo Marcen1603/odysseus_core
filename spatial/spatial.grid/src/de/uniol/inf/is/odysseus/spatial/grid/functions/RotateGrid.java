@@ -76,15 +76,15 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 	public CartesianGrid getValue() {
 		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
 		Double angle = (Double) this.getInputValue(1);
-		IplImage image = IplImage.create(cvSize(grid.width, grid.depth),
+		IplImage image = IplImage.create(cvSize(grid.width, grid.height),
 				IPL_DEPTH_64F, 1);
-		IplImage rotatedImage = IplImage.create(cvSize(grid.width, grid.depth),
+		IplImage rotatedImage = IplImage.create(cvSize(grid.width, grid.height),
 				IPL_DEPTH_64F, image.nChannels());
 
 		Coordinate origin = grid.origin;
 		double cellsize = grid.cellsize;
 
-		CvPoint2D32f center = new CvPoint2D32f(grid.width / 2, grid.depth / 2);
+		CvPoint2D32f center = new CvPoint2D32f(grid.width / 2, grid.height / 2);
 		double sin = Math.sin(Math.toRadians(angle));
 		double cos = Math.cos(Math.toRadians(angle));
 
@@ -99,7 +99,7 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 				rotatedOriginY);
 
 		CartesianGrid rotatedGrid = new CartesianGrid(rotatedOrigin,
-				grid.width, grid.depth, grid.cellsize);
+				grid.width, grid.height, grid.cellsize);
 		opencv_core.cvSet(rotatedImage, OpenCVUtil.UNKNOWN);
 
 		OpenCVUtil.gridToImage(grid, image);
