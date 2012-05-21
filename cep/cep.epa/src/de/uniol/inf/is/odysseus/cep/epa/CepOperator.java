@@ -76,7 +76,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 * Transferfunktion for reading and writing Elements
 	 */
 	protected IInputStreamSyncArea<R> inputStreamSyncArea;
-	protected ITransferArea<R, W> outputTransferFunction;
+	protected ITransferArea<R, W> outputTransferArea;
 
 	/**
 	 * Liste aller Automaten-Instanzen, die gerade verarbeitet werden
@@ -146,7 +146,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 			smInstances.put(m, new LinkedList<StateMachineInstance<R>>());
 		}
 		this.inputStreamSyncArea = inputStreamSyncArea;
-		this.outputTransferFunction = outputTransferFunction;
+		this.outputTransferArea = outputTransferFunction;
 		this.onlyOneMatchPerInstance = onlyOneMatchPerInstance;
 	}
 
@@ -164,7 +164,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		inputStreamSyncArea.init(this);
-		outputTransferFunction.init(this);
+		outputTransferArea.init(this);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		// logger.debug("read "+ event + " "+port);
 		// insertIntoInputBuffer(event, port);
 		inputStreamSyncArea.newElement(event, port);
-		outputTransferFunction.newElement(event, port);
+		outputTransferArea.newElement(event, port);
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 			}
 			LinkedList<W> complexEvents = null;
-			complexEvents = validateFinalStates(outdatedInstances,
+			complexEvents = validateFinalStates(event, outdatedInstances,
 					outofWindowInstances, port);
 
 			for (StateMachine<R> sm : stateMachines) {
@@ -235,7 +235,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 					if (logger.isDebugEnabled()) {
 						logger.debug("Created Event: " + e);
 					}
-					outputTransferFunction.transfer(e);
+					outputTransferArea.transfer(e);
 				}
 			}else{
 				heartbeatGenerationStrategy.generateHeartbeat(event, this);
@@ -429,7 +429,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return true;
 	}
 
-	private LinkedList<W> validateFinalStates(
+	private LinkedList<W> validateFinalStates(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances,
 			LinkedList<StateMachineInstance<R>> outofWindowInstances, int port) {
 		LinkedList<W> complexEvents = new LinkedList<W>();
@@ -446,7 +446,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				for (StateMachineInstance<R> instance : outofWindowInstances) {
 					if (instance.getCurrentState().equals(negBeforeFinal)) {
 						logger.debug("Instance terminated with negative last state --> fire");
-						createEvent(outdatedInstances, port, complexEvents,
+						createEvent(event, outdatedInstances, port, complexEvents,
 								instance);
 						// Hint: The corresponding automata is already outdated,
 						// because it does not have this negative state
@@ -489,7 +489,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 							break;
 						}
 						// No accepting instance found --> fire event
-						createEvent(outdatedInstances, port, complexEvents,
+						createEvent(event, outdatedInstances, port, complexEvents,
 								negativeInstance);
 						outdatedInstances.add(instance);
 					}
@@ -510,7 +510,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 				if (logger.isDebugEnabled()) {
 					logger.debug("Reached final state in " + instance);
 				}
-				createEvent(outdatedInstances, port, complexEvents, instance);
+				createEvent(event, outdatedInstances, port, complexEvents, instance);
 				// depending on matching strategy add all instances to outdated
 				// else further events would be created
 				if (onlyOneMatchPerInstance) {
@@ -523,7 +523,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		return complexEvents;
 	}
 
-	private void createEvent(
+	private void createEvent(R event,
 			LinkedList<StateMachineInstance<R>> outdatedInstances, int port,
 			LinkedList<W> complexEvents, StateMachineInstance<R> instance) {
 		// Werte in den Symboltabellen der MEP-Ausdruecke im
@@ -545,9 +545,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 						this.stateMachines.get(0).getOutputScheme(),
 						instance.getMatchingTrace(),
 						instance.getSymTab(),
-						new PointInTime(getEventReader().get(port).getTime(
-								instance.getMatchingTrace().getLastEvent()
-										.getEvent()))));
+						event));
 		/*
 		 * An dieser Stelle muss die Instanz, die zum Complex Event gefuehrt
 		 * hat, als veraltet markiert werden.
@@ -665,7 +663,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 	@Override
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		outputTransferFunction.newHeartbeat(timestamp, port);
+		outputTransferArea.newHeartbeat(timestamp, port);
 	}
 
 }

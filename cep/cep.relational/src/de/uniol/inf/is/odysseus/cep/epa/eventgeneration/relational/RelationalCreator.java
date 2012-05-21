@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.cep.epa.MatchingTrace;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
-public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
+public class RelationalCreator<R extends IMetaAttributeContainer<?>> extends AbstractComplexEventFactory<R,Tuple<? extends ITimeInterval>> {
 
 	/**
 	 * Erzeugt einen neuen Creator für relationale Tupel vom Typ
@@ -34,9 +34,9 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Tuple<? 
 	}
 
 	@Override
-	@SuppressWarnings({"rawtypes"})
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public Tuple<? extends ITimeInterval> createComplexEvent(OutputScheme outputscheme,
-			MatchingTrace<R> matchingTrace, SymbolTable symTab, PointInTime timestamp) {
+			MatchingTrace<R> matchingTrace, SymbolTable symTab, R event) {
 //		MatchedEvent<R> lastEvent = matchingTrace.getLastEvent();
 //		System.out.println("--------------------------------------------------------------------------");
 //		System.out.println("RelationalCreator ");
@@ -60,8 +60,8 @@ public class RelationalCreator<R> extends AbstractComplexEventFactory<R,Tuple<? 
 			attributes[i] = outputscheme.getEntries().get(i).getValue();
 		}
 
-		Tuple<TimeInterval> ret = new Tuple<TimeInterval>(attributes);
-		ret.setMetadata(new TimeInterval(timestamp));
+		Tuple ret = new Tuple(attributes);
+		ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
 		//System.out.println("EVENT "+ret);
 		return ret;
 	}
