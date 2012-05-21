@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -75,6 +76,12 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	public void setCacheSize(long value) {
 		this.writeAfterElements = value;
 	}
+
+	@Parameter(name="DumpMetaData", type = BooleanParameter.class, optional = true)
+	public void setPrintMetadata(boolean printMetadata) {
+		this.printMetadata = printMetadata;
+	}
+	
 
 	@Override
 	public AbstractLogicalOperator clone() {
