@@ -23,17 +23,15 @@
 
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
-import java.util.LinkedList;
-
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
- * This is the physical sliding delta window po. It returns elements after a
- * period of time (delta) and is blocking all the other time.
+ * This is the physical sliding delta window po. This window is used to change
+ * the granularity of the time stamps. THIS IS THE LATENCY OPTIMIZED NON BLOCKING VERSION
+ * 
  * 
  * @author Andre Bolles <andre.bolles@informatik.uni-oldenburg.de>, Marco
  *         Grawunder
@@ -42,19 +40,9 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 		extends AbstractWindowTIPO<R> {
 
 	/**
-	 * This is the number of slides that have been processed.
-	 */
-	private long lastSlide = 1;
-
-	/**
 	 * What are the slides in which elements are processed
 	 */
 	final private long windowSlide;
-
-	/**
-	 * list with buffered elements
-	 */
-	private LinkedList<R> inputBuffer = new LinkedList<R>();
 
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicWindowTIPO(WindowAO logical) {
@@ -79,66 +67,24 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
-		lastSlide = -1;
-		inputBuffer.clear();
-	}
-
-	@Override
 	public void process_next(R object, int port) {
-		synchronized (inputBuffer) {
-			process(object.getMetadata().getStart());
-			// Do not add before processing old slide!
-			this.inputBuffer.add(object);
-		}
-	}
+		long pointInTime = object.getMetadata().getStart().getMainPoint();
 
-	private void process(PointInTime point) {
-		synchronized (inputBuffer) {
-			long delta = this.windowSlide;
-			long winSize = this.windowSize;
-			long pointInTime = point.getMainPoint();
-			// first check if elements have to be removed and/or delivered
-			long slide = pointInTime / delta;
-			if (slide > this.lastSlide) {
+		long slide = (pointInTime / this.windowSlide)+1;
+		PointInTime p_start = new PointInTime(slide * this.windowSlide - this.windowSize);
+		PointInTime p_end = new PointInTime(slide * this.windowSlide);
 
-				// Calc the start and end point of the window for all elements
-				// that will be transfered
-				// They are all in the last slide!
-				
-				long comp_t_start = lastSlide * delta - winSize;
-				PointInTime p_start = new PointInTime(Math.max(comp_t_start, 0));
-				PointInTime p_end = new PointInTime(lastSlide * delta);
-
-				// 1. Remove all Elements that are not within the window size!
-				while (!inputBuffer.isEmpty()
-						&& inputBuffer.getFirst().getMetadata().getStart()
-								.before(p_start)) {
-					inputBuffer.removeFirst();
-				}
-
-				// 2. all elements before p_end need to be processed
-				while (!inputBuffer.isEmpty()){
-					// This is not needed because elements with the next condition
-					// cannot be added before this processing is done!
-					//						&& inputBuffer.getFirst().getMetadata().getStart()
-					//								.before(p_end)) {
-					R elem = inputBuffer.removeFirst();
-					elem.getMetadata().setStart(p_start);
-					elem.getMetadata().setEnd(p_end);
-					transfer(elem);
-				}
-				// Send punctuation. New start is known!
-				sendPunctuation(p_end);
-				
-				this.lastSlide = slide;
-
-			}
+		// Check if elements outside any window
+		if (object.getMetadata().getStart().before(p_start)) {
+			sendPunctuation(object.getMetadata().getStart());
+		} else {
+			object.getMetadata().setStartAndEnd(p_start, p_end);
+			transfer(object);
 		}
 	}
 
 	@Override
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
-		process(timestamp);
+		sendPunctuation(timestamp);
 	}
 }

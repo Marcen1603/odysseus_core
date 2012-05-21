@@ -113,7 +113,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public boolean beforeOrEquals(PointInTime time) {
-		return before(this, time) || equals(this, time);
+		return beforeOrEquals(this, time);
 	}
 
 	public boolean equals(PointInTime time) {
@@ -125,7 +125,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	}
 
 	public boolean afterOrEquals(PointInTime time) {
-		return before(time, this) || equals(this, time);
+		return beforeOrEquals(this, this);
 	}
 
 	public static PointInTime currentPointInTime() {

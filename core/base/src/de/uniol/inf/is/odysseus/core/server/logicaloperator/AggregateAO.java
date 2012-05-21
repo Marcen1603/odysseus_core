@@ -41,7 +41,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	final private List<SDFAttribute> groupingAttributes;
 	final private List<SDFAttribute> outputAttributList;
 	private int dumpAtValueCount = -1;
-
+	
 	public AggregateAO() {
 		super();
 		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>();
@@ -154,7 +154,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 		return outputSchema;
 	}
-
+	
 	@Parameter(type = IntegerParameter.class, optional = true)
 	public void setDumpAtValueCount(int dumpAtValueCount) {
 		this.dumpAtValueCount = dumpAtValueCount;

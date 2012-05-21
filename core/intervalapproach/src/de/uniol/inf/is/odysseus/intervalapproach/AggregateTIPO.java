@@ -14,18 +14,18 @@
  */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -61,6 +61,13 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 					c = 1;
 				} else if (!this.isStartPoint && p2.isStartPoint) {
 					c = -1;
+				}
+			}
+			if (c == 0){
+				if (p2.newElement()){
+					c = -1;
+				}else{
+					c = 1;
 				}
 			}
 			return c;
@@ -148,7 +155,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
 		assert(elemToAdd != null);
-		R e_probe = elemToAdd;
+		R newElement = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
 
 		// Extract elements in this sweep area that overlaps the time interval
@@ -157,10 +164,11 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				.extractOverlaps(t_probe);
 		// No overlapping --> INIT: new Partial Aggregate
 		if (!qualifies.hasNext()) {
-			saInsert(sa, calcInit(e_probe), t_probe);
+			saInsert(sa, calcInit(newElement), t_probe);
 		} else {
 			// Overlapping --> Partial Aggregates need to be touched
-			SortedSet<_Point> pl = new TreeSet<_Point>();
+			// List of points. Do not use a set, because elements can have same start/end point!
+			List<_Point> pl = new ArrayList<_Point>();
 
 			// Determine the list of all points of the overlapped elements in
 			// the sweep area
@@ -178,24 +186,27 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			pl.add(new _Point(t_probe.getStart(), true, null));
 			pl.add(new _Point(t_probe.getEnd(), false, null));
 
+			// Sort the List
+			Collections.sort(pl);
+			
 			// Sort the list of points ascending
-			Iterator<_Point> iter = pl.iterator();
+			Iterator<_Point> pointIter = pl.iterator();
 			_Point p1 = null;
 			_Point p2 = null;
 			// get the first point
-			if (iter.hasNext()) {
-				p1 = iter.next();
+			if (pointIter.hasNext()) {
+				p1 = pointIter.next();
 			}
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1.element_agg;
-			while (iter.hasNext()) {
-				p2 = iter.next();
+			while (pointIter.hasNext()) {
+				p2 = pointIter.next();
 
 				// Test all possible cases
 				// Because the list is sorted, p2 cannot be before p1 and the
 				// case p1 == p2 would
 				// lead to an interval with length 0 which is not allowed
 				// ATTENTION: Handle only the interval between p1 and p2
-				// the next interval is treted in the next iteration!
+				// the next interval is treated in the next iteration!
 				if (p1.point.before(p2.point)) {
 
 					// both point are start-elements, overlapping as follows
@@ -268,7 +279,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 							saInsert(sa, lastPartialAggregate, newTI);
 						}
 					}
-				}
+				} // if (p1.point.before(p2.point))
 
 				// Remember the last seen partial aggregate (not the new
 				// element)
