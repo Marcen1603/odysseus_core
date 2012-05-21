@@ -128,6 +128,8 @@ public class SlidingPeriodicWindowTIPO<R extends IMetaAttributeContainer<? exten
 					elem.getMetadata().setEnd(p_end);
 					transfer(elem);
 				}
+				// Send punctuation. New start is known!
+				sendPunctuation(p_end);
 				
 				this.lastSlide = slide;
 
