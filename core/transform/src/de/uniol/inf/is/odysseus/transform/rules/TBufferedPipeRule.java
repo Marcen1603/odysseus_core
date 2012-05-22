@@ -46,7 +46,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 	@Override
 	public boolean isExecutable(BufferAO operator, TransformationConfiguration transformConfig) {
 		if(operator.isAllPhysicalInputSet()){
-			if(operator.getType().equals("Normal")){
+			if(operator.getType().equalsIgnoreCase("Normal")){
 				return true;
 			}
 		}
