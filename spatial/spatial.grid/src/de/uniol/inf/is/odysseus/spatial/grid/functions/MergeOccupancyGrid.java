@@ -18,15 +18,16 @@ import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
 import static com.googlecode.javacv.cpp.opencv_core.cvFillConvexPoly;
 import static com.googlecode.javacv.cpp.opencv_core.cvCircle;
+import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.CvPoint;
-import com.googlecode.javacv.cpp.opencv_core.CvRect;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_imgproc;
+import com.googlecode.javacv.cpp.opencv_core.*;
+import com.googlecode.javacv.cpp.opencv_imgproc.*;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
@@ -63,6 +64,10 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			{ SDFDatatype.INTEGER }, { SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.STRING } };
+	private static final double FREE = Math.log(1.0 - 0.0);
+	private static final double UNKNOWN = Math.log(1.0 - 0.5);
+	private static final double MAX_VALUE = 0.999999;
+	private static final double MAX_RANGE = Math.log(1.0 - MAX_VALUE) * 12.0;
 
 	@Override
 	public int getArity() {
@@ -173,30 +178,24 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		Map<Long, long[]> polarToCartesianMapping = new HashMap<Long, long[]>();
 
 		for (PolarCoordinate coordinate : coordinates) {
-			double theta = coordinate.a - transformAngle;
-			if (theta < 0.0) {
-				theta += 360.0;
-			}
-			if (theta >= 360.0) {
-				theta -= ((int) (theta / 360.0)) * 360.0;
-			}
+			double theta = getTheta(coordinate.a, transformAngle);
 
-			double cosAngle = Math.cos(Math.toRadians(theta - cellAngle / 2));
-			double sinAngle = Math.sin(Math.toRadians(theta - cellAngle / 2));
+			double cosAngle = Math.cos(Math.toRadians(theta - (cellAngle / 2)));
+			double sinAngle = Math.sin(Math.toRadians(theta - (cellAngle / 2)));
 
-			double cosNextAngle = Math.cos(Math
-					.toRadians(theta + cellAngle / 2));
-			double sinNextAngle = Math.sin(Math
-					.toRadians(theta + cellAngle / 2));
+			double cosNextAngle = Math.cos(Math.toRadians(theta
+					+ (cellAngle / 2)));
+			double sinNextAngle = Math.sin(Math.toRadians(theta
+					+ (cellAngle / 2)));
 
 			int t = (int) (theta / cellAngle);
 			for (int r = 0; r < radialCells; r++) {
 				double radius = r * cellRadius;
 
-				int gridX1 = (int) ((offsetX + radius * cosAngle) / cartesianGrid.cellsize);
-				int gridY1 = (int) ((offsetY + radius * sinAngle) / cartesianGrid.cellsize);
-				int gridX2 = (int) ((offsetX + radius * cosNextAngle) / cartesianGrid.cellsize);
-				int gridY2 = (int) ((offsetY + radius * sinNextAngle) / cartesianGrid.cellsize);
+				int gridX1 = (int) ((offsetX + (radius * cosAngle)) / cartesianGrid.cellsize);
+				int gridY1 = (int) ((offsetY + (radius * sinAngle)) / cartesianGrid.cellsize);
+				int gridX2 = (int) ((offsetX + (radius * cosNextAngle)) / cartesianGrid.cellsize);
+				int gridY2 = (int) ((offsetY + (radius * sinNextAngle)) / cartesianGrid.cellsize);
 
 				int gridX3 = (int) ((offsetX + (radius + cellRadius)
 						* cosNextAngle) / cartesianGrid.cellsize);
@@ -217,15 +216,11 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				minY = minY < 0 ? 0 : minY;
 
 				long key = (((long) t) << 32) | r;
-				polarToCartesianMapping.put(key, new long[6]);
+				polarToCartesianMapping.put(key, new long[2]);
 				long[] gridCoordinates = polarToCartesianMapping.get(key);
-				gridCoordinates[0] = ((long) gridX1 << 32) | gridY1;
-				gridCoordinates[1] = ((long) gridX2 << 32) | gridY2;
-				gridCoordinates[2] = ((long) gridX3 << 32) | gridY3;
-				gridCoordinates[3] = ((long) gridX4 << 32) | gridY4;
 
-				gridCoordinates[4] = ((long) minX << 32) | minY;
-				gridCoordinates[5] = ((long) maxX << 32) | maxY;
+				gridCoordinates[0] = ((long) minX << 32) | minY;
+				gridCoordinates[1] = ((long) maxX << 32) | maxY;
 			}
 		}
 		return polarToCartesianMapping;
@@ -237,6 +232,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			Map<Long, long[]> polarMapping) {
 
 		CartesianGrid mergedGrid = cartesianGrid.clone();
+
 		final CvRect roiRect = new CvRect();
 		final CvRect maskRect = new CvRect();
 
@@ -258,21 +254,15 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 		for (int i = 0; i < coordinates.length; i++) {
 			PolarCoordinate coordinate = coordinates[i];
-			double theta = coordinate.a - transformAngle;
-			if (theta < 0.0) {
-				theta += 360.0;
-			}
-			if (theta >= 360.0) {
-				theta -= ((int) (theta / 360.0)) * 360.0;
-			}
+			double theta = getTheta(coordinate.a, transformAngle);
 
 			int t = (int) (theta / cellAngle);
 			long polarKey = (((long) t) << 32)
 					| ((coordinate.r / cartesianGrid.cellsize) < radialCells ? (int) (coordinate.r / cartesianGrid.cellsize)
 							: radialCells - 1);
 			resetPolar.position(i + 1)
-					.x((int) (polarMapping.get(polarKey)[3] >> 32))
-					.y((int) (polarMapping.get(polarKey)[3]));
+					.x((int) (polarMapping.get(polarKey)[1] >> 32))
+					.y((int) (polarMapping.get(polarKey)[1]));
 		}
 		resetPolar.position(coordinates.length + 1)
 				.x((int) (offsetX / cartesianGrid.cellsize))
@@ -280,7 +270,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 		cvFillPoly(mergedGrid.getImage(), resetPolar,
 				new int[] { coordinates.length + 2 }, 1,
-				opencv_core.cvScalarAll(0.5), 4, 0);
+				opencv_core.cvScalarAll(FREE / MAX_RANGE), 4, 0);
 		resetPolar.deallocate();
 
 		for (PolarCoordinate coordinate : coordinates) {
@@ -289,13 +279,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				double probability = 1.0;
 				double probabilitySum = 0.0;
 
-				double theta = coordinate.a - transformAngle;
-				if (theta < 0.0) {
-					theta += 360.0;
-				}
-				if (theta >= 360.0) {
-					theta -= ((int) (theta / 360.0)) * 360.0;
-				}
+				double theta = getTheta(coordinate.a, transformAngle);
 
 				int t = (int) (theta / cellAngle);
 				for (int r = 0; r < radialCells; r++) {
@@ -305,169 +289,65 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 					long key = (((long) t) << 32) | r;
 					long[] gridCoordinates = polarMapping.get(key);
-					int gridX1 = (int) (gridCoordinates[0] >> 32);
-					int gridY1 = (int) (gridCoordinates[0]);
-					int gridX2 = (int) (gridCoordinates[1] >> 32);
-					int gridY2 = (int) (gridCoordinates[1]);
-					int gridX3 = (int) (gridCoordinates[2] >> 32);
-					int gridY3 = (int) (gridCoordinates[2]);
-					int gridX4 = (int) (gridCoordinates[3] >> 32);
-					int gridY4 = (int) (gridCoordinates[3]);
 
-					int minX = (int) (gridCoordinates[4] >> 32);
-					int minY = (int) (gridCoordinates[4]);
-					int maxX = (int) (gridCoordinates[5] >> 32);
-					int maxY = (int) (gridCoordinates[5]);
+					int minX = (int) (gridCoordinates[0] >> 32);
+					int minY = (int) (gridCoordinates[0]);
+					int maxX = (int) (gridCoordinates[1] >> 32);
+					int maxY = (int) (gridCoordinates[1]);
 
-					if ((minX == maxX) && (minY == maxY)) {
-						value = cartesianGrid.get(minX, minY);
-					} else {
-						roiRect.x(minX);
-						roiRect.y(minY);
-						int roiWidth = maxX - minX + 1;
-						int roiHeight = maxY - minY + 1;
-
-						roiWidth = (roiRect.x() + roiWidth) > cartesianGrid.width ? cartesianGrid.width
-								- roiRect.x()
-								: roiWidth;
-						roiHeight = (roiRect.y() + roiHeight) > cartesianGrid.height ? cartesianGrid.height
-								- roiRect.y()
-								: roiHeight;
-						roiRect.width(roiWidth);
-						roiRect.height(roiHeight);
-						maskRect.x(0);
-						maskRect.y(0);
-						maskRect.width(roiRect.width());
-						maskRect.height(roiRect.height());
-						if ((roiRect.width() > 0) && (roiRect.height() > 0)) {
-							IplImage mask = IplImage.create(opencv_core.cvSize(
-									maskRect.width(), maskRect.height()),
-									opencv_core.IPL_DEPTH_8U, 1);
-							mask.origin(cartesianGrid.getImage().origin());
-							opencv_core.cvZero(mask);
-							opencv_core.cvSetImageROI(mask, maskRect);
-							opencv_core.cvSetImageROI(cartesianGrid.getImage(),
-									roiRect);
-							cell.position(0).x(gridX1 - minX).y(gridY1 - minY);
-							cell.position(1).x(gridX2 - minX).y(gridY2 - minY);
-							cell.position(2).x(gridX3 - minX).y(gridY3 - minY);
-							cell.position(3).x(gridX4 - minX).y(gridY4 - minY);
-							double[] minVal = new double[1];
-							double[] maxVal = new double[1];
-
-							cvFillPoly(mask, cell, new int[] { 4 }, 1,
-									opencv_core.cvScalarAll(255), 4, 0);
-
-							opencv_core.cvMinMaxLoc(cartesianGrid.getImage(),
-									minVal, maxVal, minLoc, maxLoc, mask);
-
-							opencv_core.cvResetImageROI(cartesianGrid
-									.getImage());
-							opencv_core.cvResetImageROI(mask);
-							value = Math.max(maxVal[0], value);
-
-							mask.release();
-							mask = null;
+					for (int x = minX; x <= maxX; x++) {
+						for (int y = minY; y <= maxY; y++) {
+							value = Math.max(
+									value,
+									1.0 - Math.exp(cartesianGrid.get(x, y)
+											* MAX_RANGE));
 						}
 					}
 					beam[r] = value;
-					if (radius <= coordinate.r) {
-						jointDistribution[r] = probability * value
-								* getProbability(coordinate.r, radius);
-						probability *= (1.0 - value);
-						probabilitySum += jointDistribution[r];
-					} else {
-						jointDistribution[r] = probability * value
-								* getProbability(coordinate.r, radius);
-						probability *= (1.0 - value);
-						probabilitySum += jointDistribution[r];
-					}
+					jointDistribution[r] = probability * value
+							* getProbability(coordinate.r, radius);
+					probability *= (1.0 - value);
+					probabilitySum += jointDistribution[r];
 				}
-
 				double totalProbability = 0.0;
 				for (int r = 0; r < radialCells; r++) {
 					double radius = r * cellRadius;
 					if (radius <= coordinate.r) {
-						double normalized = jointDistribution[r]
-								/ probabilitySum;
+						double normalized;
+						if (probabilitySum == 0.0) {
+							normalized = 0.0;
+						} else {
+							normalized = jointDistribution[r] / probabilitySum;
+						}
 						double newValue = normalized + beam[r]
 								* totalProbability;
-						if (newValue > 1.0) {
-							newValue = 0.999999;
+						if (newValue > MAX_VALUE) {
+							newValue = MAX_VALUE;
 						}
 
 						long key = (((long) t) << 32) | r;
 						long[] gridCoordinates = polarMapping.get(key);
-						int gridX1 = (int) (gridCoordinates[0] >> 32);
-						int gridY1 = (int) (gridCoordinates[0]);
-						int gridX2 = (int) (gridCoordinates[1] >> 32);
-						int gridY2 = (int) (gridCoordinates[1]);
-						int gridX3 = (int) (gridCoordinates[2] >> 32);
-						int gridY3 = (int) (gridCoordinates[2]);
-						int gridX4 = (int) (gridCoordinates[3] >> 32);
-						int gridY4 = (int) (gridCoordinates[3]);
 
-						int minX = (int) (gridCoordinates[4] >> 32);
-						int minY = (int) (gridCoordinates[4]);
-						int maxX = (int) (gridCoordinates[5] >> 32);
-						int maxY = (int) (gridCoordinates[5]);
+						int minX = (int) (gridCoordinates[0] >> 32);
+						int minY = (int) (gridCoordinates[0]);
+						int maxX = (int) (gridCoordinates[1] >> 32);
+						int maxY = (int) (gridCoordinates[1]);
+						for (int x = minX; x <= maxX; x++) {
+							for (int y = minY; y <= maxY; y++) {
+								double value = 1.0 - Math.exp(mergedGrid.get(x,
+										y) * MAX_RANGE);
 
-						roiRect.x(minX);
-						roiRect.y(minY);
-						int roiWidth = maxX - minX + 1;
-						int roiHeight = maxY - minY + 1;
-
-						roiWidth = (roiRect.x() + roiWidth) > mergedGrid.width ? mergedGrid.width
-								- roiRect.x()
-								: roiWidth;
-						roiHeight = (roiRect.y() + roiHeight) > mergedGrid.height ? mergedGrid.height
-								- roiRect.y()
-								: roiHeight;
-						roiRect.width(roiWidth);
-						roiRect.height(roiHeight);
-						opencv_core.cvSetImageROI(mergedGrid.getImage(),
-								roiRect);
-						cell.position(0).x(gridX1 - minX).y(gridY1 - minY);
-						cell.position(1).x(gridX2 - minX).y(gridY2 - minY);
-						cell.position(2).x(gridX3 - minX).y(gridY3 - minY);
-						cell.position(3).x(gridX4 - minX).y(gridY4 - minY);
-						opencv_core.cvSetImageROI(mergedGrid.getImage(),
-								roiRect);
-						if ((minX == maxX) && (minY == maxY)) {
-							// 0,0 is the minX/minY pixel because the ROI is
-							// already set
-							newValue = Math.max(newValue, mergedGrid.get(0, 0));
-						} else {
-							maskRect.x(0);
-							maskRect.y(0);
-							maskRect.width(roiRect.width());
-							maskRect.height(roiRect.height());
-							if ((roiRect.width() > 0) && (roiRect.height() > 0)) {
-								IplImage mask = IplImage.create(opencv_core
-										.cvSize(maskRect.width(),
-												maskRect.height()),
-										opencv_core.IPL_DEPTH_8U, 1);
-								mask.origin(mergedGrid.getImage().origin());
-								opencv_core.cvZero(mask);
-
-								double[] minVal = new double[1];
-								double[] maxVal = new double[1];
-
-								cvFillPoly(mask, cell, new int[] { 4 }, 1,
-										opencv_core.cvScalarAll(255), 4, 0);
-								opencv_core.cvSetImageROI(mask, maskRect);
-								opencv_core.cvMinMaxLoc(mergedGrid.getImage(),
-										minVal, maxVal, minLoc, maxLoc, mask);
-								opencv_core.cvResetImageROI(mask);
-								newValue = Math.max(maxVal[0], newValue);
-								mask.release();
-								mask = null;
+								if (value > MAX_VALUE) {
+									value = MAX_VALUE;
+								}
+								mergedGrid.set(
+										x,
+										y,
+										Math.log(1.0 - Math
+												.max(newValue, value))
+												/ MAX_RANGE);
 							}
 						}
-						cvFillPoly(mergedGrid.getImage(), cell,
-								new int[] { 4 }, 1,
-								opencv_core.cvScalarAll(newValue), 4, 0);
-						opencv_core.cvResetImageROI(mergedGrid.getImage());
 						totalProbability += normalized;
 					} else {
 						break;
@@ -481,7 +361,35 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		roiRect.deallocate();
 		maskRect.deallocate();
 		mergedGrid.set(polarGridOrigin.x - cartesianGrid.origin.x,
-				polarGridOrigin.y - cartesianGrid.origin.y, 0.001);
+				polarGridOrigin.y - cartesianGrid.origin.y, Math.log(1 - 0.001)
+						/ MAX_RANGE);
+
+		CvMat kernel = CvMat.create(3, 3, opencv_core.IPL_DEPTH_64F, 1);
+
+		kernel.put(0, 0, 1.0);
+		kernel.put(0, 1, 1.0);
+		kernel.put(0, 2, 1.0);
+		kernel.put(1, 0, 1.0);
+		kernel.put(1, 1, 0.0);
+		kernel.put(1, 2, 1.0);
+		kernel.put(2, 0, 1.0);
+		kernel.put(2, 1, 1.0);
+		kernel.put(2, 2, 1.0);
+
+		cvFilter2D(mergedGrid.getImage(), mergedGrid.getImage(), kernel,
+				new CvPoint(-1, -1));
+		kernel.deallocate();
+
+		for (int x = 0; x < mergedGrid.width; x++) {
+			for (int y = 0; y < mergedGrid.height; y++) {
+				double value = mergedGrid.get(x, y);
+				//mergedGrid.set(x, y, value/12.0);
+				if (value > MAX_VALUE) {
+					
+					mergedGrid.set(x, y, MAX_VALUE);
+				}
+			}
+		}
 		return mergedGrid;
 	}
 
@@ -489,7 +397,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			Integer height, Double cellsize) {
 		CartesianGrid grid = new CartesianGrid(coordinate, width, height,
 				cellsize);
-		grid.fill(0.5);
+		grid.fill(UNKNOWN / MAX_RANGE);
 		return grid;
 	}
 
@@ -502,6 +410,17 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		} else {
 			return 0.0;
 		}
+	}
+
+	private double getTheta(double angle, double transformAngle) {
+		double theta = angle - transformAngle;
+		if (theta < 0.0) {
+			theta += 360.0;
+		}
+		if (theta >= 360.0) {
+			theta -= ((int) (theta / 360.0)) * 360.0;
+		}
+		return theta;
 	}
 
 	private class UpdateGrid extends Thread {

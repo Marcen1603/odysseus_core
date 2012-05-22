@@ -63,8 +63,8 @@ public class CartesianGrid implements Cloneable {
 	}
 
 	public double get(int x, int y) {
-		CvScalar value = cvGet2D(this.image, x, y);
-		return value.val(0);
+		CvScalar value = cvGet2D(this.image, y, x);
+		return value.getVal(0);
 	}
 
 	public double get(double x, double y) {
@@ -78,7 +78,7 @@ public class CartesianGrid implements Cloneable {
 	}
 
 	public void set(int x, int y, double value) {
-		cvSet2D(image, x, y, opencv_core.cvScalarAll(value));
+		cvSet2D(image, y, x, opencv_core.cvScalarAll(value));
 	}
 
 	public void set(double x, double y, double value) {
