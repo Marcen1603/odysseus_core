@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.exception.CEPListViewNotFoundExcep
 import de.uniol.inf.is.odysseus.cep.cepviewer.exception.CEPViewerNotShownException;
 import de.uniol.inf.is.odysseus.cep.cepviewer.exception.NoCepOperatorSelectedException;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.impl.OdysseusNodeView;
@@ -57,7 +57,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 		// get the CepOperator
-		CepOperator<?, ?> operator = AddCommand.getCepOperator(window);
+		PatternDetectPO<?, ?> operator = AddCommand.getCepOperator(window);
 		if (operator == null) {
 			throw new NoCepOperatorSelectedException();
 		}
@@ -115,7 +115,7 @@ public class AddCommand extends AbstractHandler implements IHandler {
 	 * @return a CepOperator or null
 	 */
 	@SuppressWarnings("rawtypes")
-	private static CepOperator getCepOperator(IWorkbenchWindow window) {
+	private static PatternDetectPO getCepOperator(IWorkbenchWindow window) {
 		// get the selection of the current view
 		ISelection selection = window.getActivePage().getSelection();
 		// if (selection instanceof IStructuredSelection) {
@@ -124,9 +124,9 @@ public class AddCommand extends AbstractHandler implements IHandler {
 			// if the selected item is a node within the view
 			OdysseusNodeView node = (OdysseusNodeView) structSelection
 					.getFirstElement();
-			if (node.getModelNode().getContent() instanceof CepOperator) {
+			if (node.getModelNode().getContent() instanceof PatternDetectPO) {
 				// if the seletcted item holds an instance of CepOperator
-				return (CepOperator) node.getModelNode().getContent();
+				return (PatternDetectPO) node.getModelNode().getContent();
 			}
 		}
 		System.out.println("BF");

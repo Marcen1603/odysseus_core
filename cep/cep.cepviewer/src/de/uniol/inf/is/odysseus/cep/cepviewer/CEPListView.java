@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.CEPInstance;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.IntConst;
 import de.uniol.inf.is.odysseus.cep.cepviewer.util.StringConst;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.epa.StateMachineInstance;
 
 /**
@@ -52,7 +52,7 @@ public class CEPListView extends ViewPart {
 	// the event listener
 	private CEPEventListener listener;
 	// the list of CepOperators handled by the CEPViewer
-	private List<CepOperator<?, ?>> operators;
+	private List<PatternDetectPO<?, ?>> operators;
 	// the widgets for the list view.
 	private Label infoLabel;
 	private NormalTreeList normalList;
@@ -69,7 +69,7 @@ public class CEPListView extends ViewPart {
 	 */
 	public CEPListView() {
 		super();
-		this.operators = new ArrayList<CepOperator<?, ?>>();
+		this.operators = new ArrayList<PatternDetectPO<?, ?>>();
 		this.listener = new CEPEventListener(this);
 	}
 
@@ -215,7 +215,7 @@ public class CEPListView extends ViewPart {
 	 * 
 	 * @return the list of handled CepOperators
 	 */
-	public List<CepOperator<?, ?>> getOperators() {
+	public List<PatternDetectPO<?, ?>> getOperators() {
 		return Collections.unmodifiableList(operators);
 	}
 
@@ -237,7 +237,7 @@ public class CEPListView extends ViewPart {
 		return statusList;
 	}
 
-	public void add(CepOperator<?, ?> operator) {
+	public void add(PatternDetectPO<?, ?> operator) {
 		this.operators.add(operator);
 	}
 

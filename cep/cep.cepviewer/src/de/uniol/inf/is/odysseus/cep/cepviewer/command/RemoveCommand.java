@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.InstanceTreeItem;
 import de.uniol.inf.is.odysseus.cep.cepviewer.listmodel.MachineTreeItem;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 
 /**
@@ -70,7 +70,7 @@ public class RemoveCommand extends AbstractHandler implements IHandler {
 					// if the selection is a machine, remove the Listener from
 					// the corresponding CepOperator
 					MachineTreeItem item = (MachineTreeItem) selectedObject;
-					for (CepOperator<?, ?> operator : view.getOperators()) {
+					for (PatternDetectPO<?, ?> operator : view.getOperators()) {
 						for (@SuppressWarnings("rawtypes") StateMachine sm : operator.getStateMachines()) {
 							if (sm.equals(item.getContent())) {
 								operator.getCEPEventAgent()

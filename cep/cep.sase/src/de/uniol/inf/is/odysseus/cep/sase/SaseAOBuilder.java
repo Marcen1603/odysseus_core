@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.cep.sase;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.cep.CepAO;
+import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
@@ -49,11 +49,11 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 		// I know there is only one operator
 		ret = op.get(0).getLogicalPlan();
 		if (oneMatchPerInstance.hasValue()){
-			((CepAO<?>)ret).setOneMatchPerInstance(oneMatchPerInstance.getValue());
+			((PatternDetectAO<?>)ret).setOneMatchPerInstance(oneMatchPerInstance.getValue());
 		}
 		
 		if (heartbeatrate.hasValue()){
-			((CepAO<?>)ret).setHeartbeatRate(heartbeatrate.getValue());
+			((PatternDetectAO<?>)ret).setHeartbeatRate(heartbeatrate.getValue());
 		}
 
 		return ret;

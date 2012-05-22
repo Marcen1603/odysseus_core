@@ -29,7 +29,7 @@ options {
 	
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 	import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-	import de.uniol.inf.is.odysseus.cep.CepAO;
+	import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -208,7 +208,7 @@ this.attachSources = attachSources;
 
 query returns [ILogicalOperator op]
 @init {
-CepAO cepAo = new CepAO();
+PatternDetectAO patternDetectAO = new PatternDetectAO();
 simpleState = new ArrayList<String>();
 kleeneState = new ArrayList<String>();
 simpleAttributeState = new HashMap<String, String>();
@@ -216,38 +216,38 @@ kleeneAttributeState = new HashMap<String, String>();
 List<String> sourceNames = new ArrayList<String>();
 }
   :
-  ^(QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo])
+  ^(QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO])
   
    {
     // Initialize Schema
-    cepAo.getStateMachine().getSymTabScheme(true);
-    getLogger().debug("Created State Machine " + cepAo.getStateMachine());
+    patternDetectAO.getStateMachine().getSymTabScheme(true);
+    getLogger().debug("Created State Machine " + patternDetectAO.getStateMachine());
     if (attachSources) {
-    	// Set Inputs for cepAO;
+    	// Set Inputs for patternDetectAO;
     	int port = 0;
     	for (String sn : sourceNames) {
     		getLogger().debug("Bind " + sn + " to Port " + port);
     		try {
     			ILogicalOperator ao = dd.getViewOrStream(sn, user);
-    			cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
-    			cepAo.setInputTypeName(port, sn);
+    			patternDetectAO.subscribeToSource(ao, port, 0, ao.getOutputSchema());
+    			patternDetectAO.setInputTypeName(port, sn);
     			port++;
     		} catch (Exception e) {
     			throw new QueryParseException("Source/View " + sn + " not found");
     		}
     	}
     }
-    cepAo.prepareNegation();
-    $op = cepAo;
+    patternDetectAO.prepareNegation();
+    $op = patternDetectAO;
    }
   ;
 
-patternPart[CepAO cepAo, List<String> sourceNames]
+patternPart[PatternDetectAO patternDetectAO, List<String> sourceNames]
   :
-  ^(PATTERN seqPatternPart[cepAo, sourceNames])
+  ^(PATTERN seqPatternPart[patternDetectAO, sourceNames])
   ;
 
-seqPatternPart[CepAO cepAo, List<String> sourceNames]
+seqPatternPart[PatternDetectAO patternDetectAO, List<String> sourceNames]
 @init {
 List<State> states = new LinkedList<State>();
 }
@@ -257,7 +257,7 @@ List<State> states = new LinkedList<State>();
    {
     if (states.size() > 0) {
     	states.add(new State("<ACCEPTING>", "", null, true, false));
-    	StateMachine sm = cepAo.getStateMachine();
+    	StateMachine sm = patternDetectAO.getStateMachine();
     	sm.setStates(states);
     	sm.setInitialState(states.get(0).getId());
     	// Calculate transistions
@@ -341,9 +341,9 @@ state[List<State> states, List<String> sourceNames]
    }
   ;
 
-wherePart[CepAO cepAo]
+wherePart[PatternDetectAO patternDetectAO]
   :
-  ^(WHERE str=whereStrat[cepAo.getStateMachine()] we=whereExpression[cepAo.getStateMachine()])
+  ^(WHERE str=whereStrat[patternDetectAO.getStateMachine()] we=whereExpression[patternDetectAO.getStateMachine()])
   |
   ;
 
@@ -666,7 +666,7 @@ idexpression[List<State> states, List<AttributeExpression> compareExpressions]
    }
   ;
 
-withinPart[CepAO cepAo]
+withinPart[PatternDetectAO patternDetectAO]
   :
   ^(
     WITHIN value=NUMBER
@@ -686,12 +686,12 @@ withinPart[CepAO cepAo]
    {
     Long time = getTime(value.getText(), unit);
     getLogger().debug("Setting Windowsize to " + time + " milliseconds");
-    cepAo.getStateMachine().setWindowSize(time);
+    patternDetectAO.getStateMachine().setWindowSize(time);
    }
   |
   ;
 
-returnPart[CepAO cepAo]
+returnPart[PatternDetectAO patternDetectAO]
 @init {
 List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
 }
@@ -724,8 +724,8 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     SDFSchema outputSchema = new SDFSchema(
     		name, attrList);
     ;
-    cepAo.getStateMachine().setOutputScheme(scheme);
-    cepAo.setOutputSchemaIntern(outputSchema);
+    patternDetectAO.getStateMachine().setOutputScheme(scheme);
+    patternDetectAO.setOutputSchemaIntern(outputSchema);
    }
   |
   ;

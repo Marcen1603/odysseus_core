@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-05-21 09:29:48
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g 2012-05-22 14:44:31
 
 /** Copyright [2011] [The Odysseus Team]
   *
@@ -22,7 +22,7 @@
 	
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 	import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-	import de.uniol.inf.is.odysseus.cep.CepAO;
+	import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -382,13 +382,13 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "query"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:209:1: query returns [ILogicalOperator op] : ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:209:1: query returns [ILogicalOperator op] : ^( QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO] ) ;
     public final ILogicalOperator query() throws RecognitionException {
         ILogicalOperator op = null;
 
 
 
-        CepAO cepAo = new CepAO();
+        PatternDetectAO patternDetectAO = new PatternDetectAO();
         simpleState = new ArrayList<String>();
         kleeneState = new ArrayList<String>();
         simpleAttributeState = new HashMap<String, String>();
@@ -396,32 +396,32 @@ public class SaseAST extends TreeParser {
         List<String> sourceNames = new ArrayList<String>();
 
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:218:3: ( ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] ) )
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:219:3: ^( QUERY patternPart[cepAo, sourceNames] wherePart[cepAo] withinPart[cepAo] returnPart[cepAo] )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:218:3: ( ^( QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO] ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:219:3: ^( QUERY patternPart[patternDetectAO, sourceNames] wherePart[patternDetectAO] withinPart[patternDetectAO] returnPart[patternDetectAO] )
             {
             match(input,QUERY,FOLLOW_QUERY_in_query150); 
 
             match(input, Token.DOWN, null); 
             pushFollow(FOLLOW_patternPart_in_query152);
-            patternPart(cepAo, sourceNames);
+            patternPart(patternDetectAO, sourceNames);
 
             state._fsp--;
 
 
             pushFollow(FOLLOW_wherePart_in_query155);
-            wherePart(cepAo);
+            wherePart(patternDetectAO);
 
             state._fsp--;
 
 
             pushFollow(FOLLOW_withinPart_in_query158);
-            withinPart(cepAo);
+            withinPart(patternDetectAO);
 
             state._fsp--;
 
 
             pushFollow(FOLLOW_returnPart_in_query161);
-            returnPart(cepAo);
+            returnPart(patternDetectAO);
 
             state._fsp--;
 
@@ -431,25 +431,25 @@ public class SaseAST extends TreeParser {
 
 
                 // Initialize Schema
-                cepAo.getStateMachine().getSymTabScheme(true);
-                getLogger().debug("Created State Machine " + cepAo.getStateMachine());
+                patternDetectAO.getStateMachine().getSymTabScheme(true);
+                getLogger().debug("Created State Machine " + patternDetectAO.getStateMachine());
                 if (attachSources) {
-                	// Set Inputs for cepAO;
+                	// Set Inputs for patternDetectAO;
                 	int port = 0;
                 	for (String sn : sourceNames) {
                 		getLogger().debug("Bind " + sn + " to Port " + port);
                 		try {
                 			ILogicalOperator ao = dd.getViewOrStream(sn, user);
-                			cepAo.subscribeToSource(ao, port, 0, ao.getOutputSchema());
-                			cepAo.setInputTypeName(port, sn);
+                			patternDetectAO.subscribeToSource(ao, port, 0, ao.getOutputSchema());
+                			patternDetectAO.setInputTypeName(port, sn);
                 			port++;
                 		} catch (Exception e) {
                 			throw new QueryParseException("Source/View " + sn + " not found");
                 		}
                 	}
                 }
-                cepAo.prepareNegation();
-                op = cepAo;
+                patternDetectAO.prepareNegation();
+                op = patternDetectAO;
                
 
             }
@@ -470,17 +470,17 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "patternPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:245:1: patternPart[CepAO cepAo, List<String> sourceNames] : ^( PATTERN seqPatternPart[cepAo, sourceNames] ) ;
-    public final void patternPart(CepAO cepAo, List<String> sourceNames) throws RecognitionException {
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:245:1: patternPart[PatternDetectAO patternDetectAO, List<String> sourceNames] : ^( PATTERN seqPatternPart[patternDetectAO, sourceNames] ) ;
+    public final void patternPart(PatternDetectAO patternDetectAO, List<String> sourceNames) throws RecognitionException {
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:246:3: ( ^( PATTERN seqPatternPart[cepAo, sourceNames] ) )
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:247:3: ^( PATTERN seqPatternPart[cepAo, sourceNames] )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:246:3: ( ^( PATTERN seqPatternPart[patternDetectAO, sourceNames] ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:247:3: ^( PATTERN seqPatternPart[patternDetectAO, sourceNames] )
             {
             match(input,PATTERN,FOLLOW_PATTERN_in_patternPart188); 
 
             match(input, Token.DOWN, null); 
             pushFollow(FOLLOW_seqPatternPart_in_patternPart190);
-            seqPatternPart(cepAo, sourceNames);
+            seqPatternPart(patternDetectAO, sourceNames);
 
             state._fsp--;
 
@@ -506,8 +506,8 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "seqPatternPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:250:1: seqPatternPart[CepAO cepAo, List<String> sourceNames] : ^( SEQ ( state[states, sourceNames] )* ) ;
-    public final void seqPatternPart(CepAO cepAo, List<String> sourceNames) throws RecognitionException {
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:250:1: seqPatternPart[PatternDetectAO patternDetectAO, List<String> sourceNames] : ^( SEQ ( state[states, sourceNames] )* ) ;
+    public final void seqPatternPart(PatternDetectAO patternDetectAO, List<String> sourceNames) throws RecognitionException {
 
         List<State> states = new LinkedList<State>();
 
@@ -556,7 +556,7 @@ public class SaseAST extends TreeParser {
 
                 if (states.size() > 0) {
                 	states.add(new State("<ACCEPTING>", "", null, true, false));
-                	StateMachine sm = cepAo.getStateMachine();
+                	StateMachine sm = patternDetectAO.getStateMachine();
                 	sm.setStates(states);
                 	sm.setInitialState(states.get(0).getId());
                 	// Calculate transistions
@@ -761,10 +761,10 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "wherePart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:344:1: wherePart[CepAO cepAo] : ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) |);
-    public final void wherePart(CepAO cepAo) throws RecognitionException {
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:344:1: wherePart[PatternDetectAO patternDetectAO] : ( ^( WHERE str= whereStrat[patternDetectAO.getStateMachine()] we= whereExpression[patternDetectAO.getStateMachine()] ) |);
+    public final void wherePart(PatternDetectAO patternDetectAO) throws RecognitionException {
         try {
-            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:345:3: ( ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] ) |)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:345:3: ( ^( WHERE str= whereStrat[patternDetectAO.getStateMachine()] we= whereExpression[patternDetectAO.getStateMachine()] ) |)
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -783,19 +783,19 @@ public class SaseAST extends TreeParser {
             }
             switch (alt6) {
                 case 1 :
-                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:346:3: ^( WHERE str= whereStrat[cepAo.getStateMachine()] we= whereExpression[cepAo.getStateMachine()] )
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:346:3: ^( WHERE str= whereStrat[patternDetectAO.getStateMachine()] we= whereExpression[patternDetectAO.getStateMachine()] )
                     {
                     match(input,WHERE,FOLLOW_WHERE_in_wherePart314); 
 
                     match(input, Token.DOWN, null); 
                     pushFollow(FOLLOW_whereStrat_in_wherePart318);
-                    whereStrat(cepAo.getStateMachine());
+                    whereStrat(patternDetectAO.getStateMachine());
 
                     state._fsp--;
 
 
                     pushFollow(FOLLOW_whereExpression_in_wherePart323);
-                    whereExpression(cepAo.getStateMachine());
+                    whereExpression(patternDetectAO.getStateMachine());
 
                     state._fsp--;
 
@@ -1968,8 +1968,8 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "withinPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:669:1: withinPart[CepAO cepAo] : ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) |);
-    public final void withinPart(CepAO cepAo) throws RecognitionException {
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:669:1: withinPart[PatternDetectAO patternDetectAO] : ( ^( WITHIN value= NUMBER (unit= ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND ) )? ) |);
+    public final void withinPart(PatternDetectAO patternDetectAO) throws RecognitionException {
         CommonTree value=null;
         CommonTree unit=null;
 
@@ -2035,7 +2035,7 @@ public class SaseAST extends TreeParser {
 
                         Long time = getTime(value.getText(), unit);
                         getLogger().debug("Setting Windowsize to " + time + " milliseconds");
-                        cepAo.getStateMachine().setWindowSize(time);
+                        patternDetectAO.getStateMachine().setWindowSize(time);
                        
 
                     }
@@ -2063,8 +2063,8 @@ public class SaseAST extends TreeParser {
 
 
     // $ANTLR start "returnPart"
-    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:694:1: returnPart[CepAO cepAo] : ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |);
-    public final void returnPart(CepAO cepAo) throws RecognitionException {
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseAST.g:694:1: returnPart[PatternDetectAO patternDetectAO] : ( ^( RETURN ( attributeTerm[retAttr] )* (value= NAME )? ) |);
+    public final void returnPart(PatternDetectAO patternDetectAO) throws RecognitionException {
         CommonTree value=null;
 
 
@@ -2175,8 +2175,8 @@ public class SaseAST extends TreeParser {
                         SDFSchema outputSchema = new SDFSchema(
                         		name, attrList);
                         ;
-                        cepAo.getStateMachine().setOutputScheme(scheme);
-                        cepAo.setOutputSchemaIntern(outputSchema);
+                        patternDetectAO.getStateMachine().setOutputScheme(scheme);
+                        patternDetectAO.setOutputSchemaIntern(outputSchema);
                        
 
                     }

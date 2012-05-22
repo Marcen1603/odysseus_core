@@ -22,7 +22,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.cep.cepviewer.CEPListView;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 
 /**
  * This class defines the handler which is called if the entries of all lists
@@ -48,7 +48,7 @@ public class RemoveAllCommand extends AbstractHandler implements IHandler {
 			if (a.getId().equals(CEPListView.ID)) {
 				CEPListView view = (CEPListView) a.getView(false);
 				// remove the CEPEventListener from every CepOperator
-				for (CepOperator<?, ?> operator : view.getOperators()) {
+				for (PatternDetectPO<?, ?> operator : view.getOperators()) {
 					operator.getCEPEventAgent().removeCEPEventListener(
 							view.getListener());
 				}

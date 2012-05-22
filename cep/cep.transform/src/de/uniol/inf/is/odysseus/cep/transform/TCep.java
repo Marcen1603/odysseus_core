@@ -18,8 +18,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.cep.CepAO;
-import de.uniol.inf.is.odysseus.cep.epa.CepOperator;
+import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
+import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCreator;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TCep extends AbstractTransformationRule<CepAO> {
+public class TCep extends AbstractTransformationRule<PatternDetectAO> {
 
 	@Override
 	public int getPriority() {
@@ -43,7 +43,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	}
 
 	@Override
-	public void execute(CepAO cepAO, TransformationConfiguration transformConfig) {
+	public void execute(PatternDetectAO cepAO, TransformationConfiguration transformConfig) {
 		Map<Integer, RelationalReader> rMap = new HashMap<Integer, RelationalReader>();
 
 		StateMachine m = cepAO.getStateMachine();
@@ -54,10 +54,10 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 					name));
 		}
 		IComplexEventFactory complexEventFactory = new RelationalCreator();
-		CepOperator cepPO = null;
+		PatternDetectPO cepPO = null;
 		boolean onlyOneMatchPerInstance = cepAO.isOneMatchPerInstance();
 		try {
-			cepPO = new CepOperator(m, cepAO.getSecondStateMachine(), rMap,
+			cepPO = new PatternDetectPO(m, cepAO.getSecondStateMachine(), rMap,
 					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
 							.getSubscribedToSource().size()),
 					new TITransferArea(cepAO.getSubscribedToSource().size()),
@@ -82,7 +82,7 @@ public class TCep extends AbstractTransformationRule<CepAO> {
 	}
 
 	@Override
-	public boolean isExecutable(CepAO operator,
+	public boolean isExecutable(PatternDetectAO operator,
 			TransformationConfiguration transformConfig) {
 		if (transformConfig.getDataType().equals("relational")) {
 			if (operator.isAllPhysicalInputSet()) {

@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
-public class CepAO<T> extends AbstractLogicalOperator{
+public class PatternDetectAO<T> extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,17 +45,17 @@ public class CepAO<T> extends AbstractLogicalOperator{
 	
 	
 
-	public CepAO(CepAO<T> cepAO) {
-		super(cepAO);
-		this.firstStateMachine = cepAO.firstStateMachine;
-		this.secondStateMachine = cepAO.secondStateMachine;
-		this.portNames = new HashMap<Integer, String>(cepAO.portNames);
-		this.oneMatchPerInstance = cepAO.oneMatchPerInstance;
-		this.rate =  cepAO.rate;
-		this.outputSchemaIntern = cepAO.outputSchemaIntern;
+	public PatternDetectAO(PatternDetectAO<T> patternDetectAO) {
+		super(patternDetectAO);
+		this.firstStateMachine = patternDetectAO.firstStateMachine;
+		this.secondStateMachine = patternDetectAO.secondStateMachine;
+		this.portNames = new HashMap<Integer, String>(patternDetectAO.portNames);
+		this.oneMatchPerInstance = patternDetectAO.oneMatchPerInstance;
+		this.rate =  patternDetectAO.rate;
+		this.outputSchemaIntern = patternDetectAO.outputSchemaIntern;
 	}
 
-	public CepAO() {
+	public PatternDetectAO() {
 	}
 
 	public void setOutputSchemaIntern(SDFSchema outputSchemaIntern) {
@@ -246,7 +246,7 @@ public class CepAO<T> extends AbstractLogicalOperator{
 	}
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new CepAO<T>(this);
+		return new PatternDetectAO<T>(this);
 	}
 
 }

@@ -55,10 +55,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerati
  * @author Thomas Vogelgesang, Marco Grawunder
  * 
  */
-public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<?>>
+public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<?>>
 		extends AbstractPipe<R, W> implements IProcessInternal<R> {
 
-	Logger logger = LoggerFactory.getLogger(CepOperator.class);
+	Logger logger = LoggerFactory.getLogger(PatternDetectPO.class);
 
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	
@@ -125,7 +125,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 	 *             Falls der übergebene Automat nicht die erforderlichen
 	 *             Invarianten einhält.
 	 */
-	public CepOperator(StateMachine<R> stateMachine,
+	public PatternDetectPO(StateMachine<R> stateMachine,
 			StateMachine<R> secondStateMachine,
 			Map<Integer, IEventReader<R, R>> eventReader,
 			IComplexEventFactory<R, W> complexEventFactory, boolean validate,
@@ -150,7 +150,7 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 		this.onlyOneMatchPerInstance = onlyOneMatchPerInstance;
 	}
 
-	public CepOperator(CepOperator<R, W> cepOperator) {
+	public PatternDetectPO(PatternDetectPO<R, W> cepOperator) {
 		throw new RuntimeException(this.getClass()
 				+ " Copy Constructor not yet implemented");
 	}
@@ -657,8 +657,8 @@ public class CepOperator<R extends IMetaAttributeContainer<? extends ITimeInterv
 
 
 	@Override
-	public CepOperator<R, W> clone() {
-		return new CepOperator<R, W>(this);
+	public PatternDetectPO<R, W> clone() {
+		return new PatternDetectPO<R, W>(this);
 	}
 
 	@Override
