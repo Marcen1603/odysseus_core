@@ -25,7 +25,7 @@ public class RuleProvider implements ITransformRuleProvider{
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		ArrayList<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-		rules.add(new TCep());
+		rules.add(new TPatternDetect());
 		return rules;
 	}
 
