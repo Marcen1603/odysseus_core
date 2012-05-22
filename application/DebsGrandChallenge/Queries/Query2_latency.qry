@@ -1,0 +1,65 @@
+///OdysseusScript
+/// zeit is laut definition in nanoseconds (Faktor 1.000.000.000) aber 
+/// im moment (da java time) nur in milliseconds (Faktor 1.000)...
+/// TODO: CHECK TIME!
+#DEFINE OneSecond    1000000000
+#DEFINE SixtySeconds 60000000000
+#DEFINE TwentySeconds 20000000000
+#DEFINE SeventySeconds 70000000000
+#PARSER PQL
+#TRANSCFG StandardLatency
+#DOQUERYSHARING true
+#QUERY
+projected =  PROJECT({attributes=['ts','mf01','mf02', 'mf03']}, gchSource)
+mf01prj = WINDOW({SIZE=${OneSecond}, SLIDE=${OneSecond}, type='time'}, projected )
+
+/// Operator 1-3
+mf01avg = AGGREGATE({aggregations=[
+		['AVG', 'mf01', 'mf01avg'], 
+		['MIN', 'mf01', 'mf01min'],
+		['MAX', 'mf01', 'mf01max'],
+		['AVG', 'mf02', 'mf02avg'], 
+		['MIN', 'mf02', 'mf02min'],
+		['MAX', 'mf02', 'mf02max'],
+		['AVG', 'mf03', 'mf03avg'], 
+		['MIN', 'mf03', 'mf03min'],
+		['MAX', 'mf03', 'mf03max'],
+		['MAX', 'ts', 'ts']]}, mf01prj)
+
+mf01rng = MAP({expressions=['mf01avg', 'round(((mf01max-mf01min)/mf01max),4)',
+                            'mf02avg', 'round(((mf02max-mf02min)/mf02max),4)',
+                            'mf03avg', 'round(((mf03max-mf03min)/mf03max),4)', 'ts']}, mf01avg)
+s1 = RENAME({      aliases=['avgmf01', 'rngmf01',
+                            'avgmf02', 'rngmf02',                  
+                            'avgmf03', 'rngmf03',                   
+                            'ts']}, 
+            Timestamp({start='ts', clearEnd='true'}, mf01rng))	
+
+
+/// Operator 4
+op4 = BufferedFilter({predicate = RelationalPredicate('rngmf01 > 0.3 || rngmf02 > 0.3 || rngmf03 > 0.3'), 
+					  bufferTime = ${TwentySeconds}, 
+					  deliverTime = ${SeventySeconds}},
+					  projected, 
+					  s1)
+
+
+s1_windowed = WINDOW({SIZE=${SixtySeconds}, SLIDE=${SixtySeconds}, type='time'}, s1)
+
+/// Operator 5
+s1_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf01','avgmf01'],['LAST','ts','ts','long']]},s1_windowed)
+s5 = RENAME({type='s5',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf01^(1/3))']}, s1_windowed_last))
+
+/// Operator 6
+s2_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf02','avgmf02'],['LAST','ts','ts','long']]},s1_windowed)
+s6 = RENAME({type='s6',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf02^(1/3))']}, s2_windowed_last))
+
+/// Operator 7
+s3_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf03','avgmf03'],['LAST','ts','ts','long']]},s1_windowed)
+s7 = RENAME({type='s7',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf03^(1/3))']}, s3_windowed_last))
+
+filesink1 = FILESINK({file='F:/Grand Challenge/results/q2_s5.csv',  filetype='csv', dumpMetaData='true', cachesize = 100}, CALCLATENCY(s5))
+filesink2 = FILESINK({file='F:/Grand Challenge/results/q2_s6.csv',  filetype='csv', dumpMetaData='true', cachesize = 100}, CALCLATENCY(s6))
+filesink3 = FILESINK({file='F:/Grand Challenge/results/q2_s7.csv',  filetype='csv', dumpMetaData='true', cachesize = 100}, CALCLATENCY(s7))
+filesink4 = FILESINK({file='F:/Grand Challenge/results/q2_op4.csv',  filetype='csv', dumpMetaData='true', cachesize = 100}, CALCLATENCY(op4))
+
