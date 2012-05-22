@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -80,6 +81,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                     if( executor instanceof IServerExecutor ) {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
                         optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
+                    } else if (executor instanceof IClientExecutor){
+                    	
                     } else {
                         LOG.error("Could not show stream outside server.");
                     }
