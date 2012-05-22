@@ -12,7 +12,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.benchmarker.transform;
+package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.Collection;
 
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"rawtypes"})
-public class TBenchmarkBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
+public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 
 	@Override
 	public int getPriority() {
