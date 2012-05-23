@@ -187,8 +187,8 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			LinkedList<StateMachineInstance<R>> branchedInstances = new LinkedList<StateMachineInstance<R>>();
 			for (StateMachine<R> sm : stateMachines) {
 
-				if (logger.isDebugEnabled())
-					logger.debug("-------------------> NEXT EVENT from "
+				if (logger.isTraceEnabled())
+					logger.trace("-------------------> NEXT EVENT from "
 							+ eventReader.get(port).getType() + ": " + event
 							+ " " + port);
 				// if (logger.isDebugEnabled())
@@ -207,7 +207,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 					}
 				}
 				if (createNewInstance) {
-					logger.debug("Created New Initial Instance");
+					logger.trace("Created New Initial Instance");
 					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
 							sm, getEventReader().get(port).getTime(event));
 					addInstance(sm, newInstance);
@@ -279,7 +279,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 	private void removeInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
-		logger.debug("Remove Instance " + stateMachineInstance);
+		logger.trace("Remove Instance " + stateMachineInstance);
 		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
@@ -290,8 +290,8 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			LinkedList<StateMachineInstance<R>> branchedInstances, int port) {
 
 		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
-			if (logger.isDebugEnabled())
-				logger.debug("Validating " + instance);
+			if (logger.isTraceEnabled())
+				logger.trace("Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
 			boolean outOfTime = false;
 
@@ -346,8 +346,8 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			} // for (Transition transition...)
 			if (!outOfTime) {
 				if (transitionsToTake.isEmpty()) {
-					if (logger.isDebugEnabled())
-						logger.debug("No transition on " + instance);
+					if (logger.isTraceEnabled())
+						logger.trace("No transition on " + instance);
 
 					// no transition on this instance, mark for removal
 					outdatedInstances.add(instance);
@@ -381,8 +381,8 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 					}
 				}
 			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("After Taking Transitions " + instance);
+			if (logger.isTraceEnabled()) {
+				logger.trace("After Taking Transitions " + instance);
 				for (StateMachineInstance<R> s : branchedInstances) {
 					logger.debug("Branched Instances " + s);
 				}
