@@ -49,6 +49,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 	protected LinkedList<T> buffer = new LinkedList<T>();
 	protected Lock transferLock = new ReentrantLock();
 	protected AtomicReference<PointInTime> heartbeat = new AtomicReference<PointInTime>();
+	private String buffername;
 
 	public BufferedPipe() {
 		super();
@@ -63,7 +64,11 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		final BufferedPipe<T> t = this;
 		this.addMonitoringData("selectivity",
 				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
-
+		
+	}
+	
+	public void setBufferName(String buffername) {
+		this.buffername = buffername;
 	}
 
 	@Override
@@ -186,7 +191,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 			return false;
 		}
 		BufferedPipe bp = (BufferedPipe) ipo;
-		if (this.hasSameSources(bp)) {
+		if (this.hasSameSources(bp) && this.buffername.equals(bp.buffername)) {
 			return true;
 		}
 		return false;
@@ -199,5 +204,7 @@ public class BufferedPipe<T extends IClone> extends AbstractIterablePipe<T, T>
 		transferLock.unlock();
 		return p;
 	}
+
+
 
 }

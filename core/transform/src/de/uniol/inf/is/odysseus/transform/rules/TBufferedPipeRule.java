@@ -35,6 +35,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 	@Override
 	public void execute(BufferAO algebraOp, TransformationConfiguration trafo) {
 		BufferedPipe po = new BufferedPipe();
+		po.setBufferName(algebraOp.getBuffername());
 		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper().replace(algebraOp, po);
 		for (ILogicalOperator o:toUpdate){
 			update(o);
@@ -46,7 +47,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 	@Override
 	public boolean isExecutable(BufferAO operator, TransformationConfiguration transformConfig) {
 		if(operator.isAllPhysicalInputSet()){
-			if(operator.getType().equalsIgnoreCase("Normal")){
+			if(operator.getType() == null || operator.getType().equalsIgnoreCase("Normal")) {
 				return true;
 			}
 		}

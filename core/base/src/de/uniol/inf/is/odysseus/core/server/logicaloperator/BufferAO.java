@@ -23,7 +23,16 @@ public class BufferAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 9204364375031967542L;
 
+	/**
+	 * Different types of buffers can be represented with this string
+	 */
 	private String type;
+	
+	/**
+	 * This name can be used to control query sharing. Only buffer with the same
+	 * sources AND the same name should be shared
+	 */
+	private String buffername="";
 
 	public BufferAO(BufferAO ao) {
 		super(ao);
@@ -42,9 +51,19 @@ public class BufferAO extends UnaryLogicalOp {
 		return type;
 	}
 
-	@Parameter(type = StringParameter.class)
+	@Parameter(type = StringParameter.class, optional = true)
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	@Parameter(type = StringParameter.class, optional = true)
+	public void setBuffername(String buffername) {
+		this.buffername = buffername;
+	}
+	
+	public String getBuffername() {
+		return buffername;
+	}
+	
 
 }
