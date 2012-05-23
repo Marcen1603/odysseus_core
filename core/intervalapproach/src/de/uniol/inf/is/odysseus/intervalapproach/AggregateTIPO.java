@@ -55,20 +55,23 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		public int compareTo(_Point p2) {
 			int c = this.point.compareTo(p2.point);
 			if (c == 0) {
-				if (this.isStartPoint && !p2.isStartPoint) { // Endpunkte liegen
-																// immer vor
-					// Startpunkten
+				if (this.isStartPoint && !p2.isStartPoint) { 
+					// Endpunkte liegen immer vor Startpunkten
 					c = 1;
 				} else if (!this.isStartPoint && p2.isStartPoint) {
 					c = -1;
 				}
 			}
+			// start points of Partial aggregates are always before new elements
+			// end points of Partial aggregates are always behind new elements
 			if (c == 0){
-				if (p2.newElement()){
-					c = -1;
-				}else{
-					c = 1;
-				}
+				if (this.newElement()){
+					if (this.isStartPoint){
+						c = 1;
+					}else{
+						c = -1;
+					}
+				}				
 			}
 			return c;
 		}
@@ -225,10 +228,12 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						if (p1.newElement()) {
 							// Insert new Element with interval from start to
 							// start
+							Q meta = elemToAdd.getMetadata();
 							@SuppressWarnings("unchecked")
-							Q newMeta = (Q) p1.element_agg.getMetadata().clone();
+							Q newMeta = (Q) meta.clone();
 							newMeta.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, calcInit(elemToAdd), newMeta);
+							lastPartialAggregate = p2.element_agg;
 						} else {// p2.newElement()
 								// Insert element again with shorter interval
 								// (start to start)
@@ -250,6 +255,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						// Add new element as a combination from current value
 						// and new
 						// element for new time interval
+						if (lastPartialAggregate == null){
+							System.err.println("ONLY FOR DEBUGGER!!");
+						}
 						Q newMeta = metadataMerge.mergeMetadata(
 								lastPartialAggregate.getMetadata(),
 								elemToAdd.getMetadata());
