@@ -14,20 +14,18 @@
  */
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
-import static com.googlecode.javacv.cpp.opencv_core.cvFillConvexPoly;
-import static com.googlecode.javacv.cpp.opencv_core.cvCircle;
-import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+import static com.googlecode.javacv.cpp.opencv_imgproc.cvFilter2D;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_imgproc;
-import com.googlecode.javacv.cpp.opencv_core.*;
-import com.googlecode.javacv.cpp.opencv_imgproc.*;
+import com.googlecode.javacv.cpp.opencv_core.CvMat;
+import com.googlecode.javacv.cpp.opencv_core.CvPoint;
+import com.googlecode.javacv.cpp.opencv_core.CvRect;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
@@ -64,9 +62,11 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			{ SDFDatatype.INTEGER }, { SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE }, { SDFDatatype.STRING } };
-	private static final double FREE = Math.log(1.0 - 0.0);
-	private static final double UNKNOWN = Math.log(1.0 - 0.5);
+
 	private static final double MAX_VALUE = 0.999999;
+	private static final double MIN_VALUE = 1.0 - MAX_VALUE;
+	private static final double FREE = Math.log(1.0 - MIN_VALUE);
+	private static final double UNKNOWN = Math.log(1.0 - 0.5);
 	private static final double MAX_RANGE = Math.log(1.0 - MAX_VALUE) * 12.0;
 
 	@Override
@@ -231,14 +231,23 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			PolarCoordinate[] coordinates, int radialCells, double cellRadius,
 			Map<Long, long[]> polarMapping) {
 
+		CvMat kernel = CvMat.create(3, 3, opencv_core.IPL_DEPTH_64F, 1);
+
+		kernel.put(0, 0, 1.0);
+		kernel.put(0, 1, 1.0);
+		kernel.put(0, 2, 1.0);
+		kernel.put(1, 0, 1.0);
+		kernel.put(1, 1, 0.0);
+		kernel.put(1, 2, 1.0);
+		kernel.put(2, 0, 1.0);
+		kernel.put(2, 1, 1.0);
+		kernel.put(2, 2, 1.0);
+
+		cvFilter2D(cartesianGrid.getImage(), cartesianGrid.getImage(), kernel,
+				new CvPoint(-1, -1));
+		kernel.deallocate();
+
 		CartesianGrid mergedGrid = cartesianGrid.clone();
-
-		final CvRect roiRect = new CvRect();
-		final CvRect maskRect = new CvRect();
-
-		CvPoint cell = new CvPoint(4);
-		CvPoint minLoc = new CvPoint();
-		CvPoint maxLoc = new CvPoint();
 
 		double cellAngle = Math.abs(coordinates[0].a - coordinates[1].a);
 		double[] jointDistribution = new double[radialCells];
@@ -324,7 +333,9 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 						if (newValue > MAX_VALUE) {
 							newValue = MAX_VALUE;
 						}
-
+						if (newValue < MIN_VALUE) {
+							newValue = MIN_VALUE;
+						}
 						long key = (((long) t) << 32) | r;
 						long[] gridCoordinates = polarMapping.get(key);
 
@@ -337,9 +348,6 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 								double value = 1.0 - Math.exp(mergedGrid.get(x,
 										y) * MAX_RANGE);
 
-								if (value > MAX_VALUE) {
-									value = MAX_VALUE;
-								}
 								mergedGrid.set(
 										x,
 										y,
@@ -355,37 +363,15 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				}
 			}
 		}
-		minLoc.deallocate();
-		maxLoc.deallocate();
-		cell.deallocate();
-		roiRect.deallocate();
-		maskRect.deallocate();
+
 		mergedGrid.set(polarGridOrigin.x - cartesianGrid.origin.x,
 				polarGridOrigin.y - cartesianGrid.origin.y, Math.log(1 - 0.001)
 						/ MAX_RANGE);
 
-		CvMat kernel = CvMat.create(3, 3, opencv_core.IPL_DEPTH_64F, 1);
-
-		kernel.put(0, 0, 1.0);
-		kernel.put(0, 1, 1.0);
-		kernel.put(0, 2, 1.0);
-		kernel.put(1, 0, 1.0);
-		kernel.put(1, 1, 0.0);
-		kernel.put(1, 2, 1.0);
-		kernel.put(2, 0, 1.0);
-		kernel.put(2, 1, 1.0);
-		kernel.put(2, 2, 1.0);
-
-		cvFilter2D(mergedGrid.getImage(), mergedGrid.getImage(), kernel,
-				new CvPoint(-1, -1));
-		kernel.deallocate();
-
 		for (int x = 0; x < mergedGrid.width; x++) {
 			for (int y = 0; y < mergedGrid.height; y++) {
 				double value = mergedGrid.get(x, y);
-				//mergedGrid.set(x, y, value/12.0);
 				if (value > MAX_VALUE) {
-					
 					mergedGrid.set(x, y, MAX_VALUE);
 				}
 			}
