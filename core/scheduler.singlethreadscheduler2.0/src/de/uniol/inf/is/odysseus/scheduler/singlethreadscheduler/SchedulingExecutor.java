@@ -10,9 +10,9 @@ class SchedulingExecutor extends Thread {
 
 	static Logger logger = LoggerFactory.getLogger(SchedulingExecutor.class);
 
-	private IPartialPlanScheduling planScheduling;
+	final private IPartialPlanScheduling planScheduling;
 	private long timeSlicePerStrategy;
-	private SingleThreadSchedulerWithStrategy caller;
+	private SimpleThreadScheduler caller;
 	private int trainsize;
 
 	private boolean pause;
@@ -21,7 +21,7 @@ class SchedulingExecutor extends Thread {
 
 	public SchedulingExecutor(IPartialPlanScheduling planScheduling,
 			long timeSlicePerStrategy,
-			SingleThreadSchedulerWithStrategy caller, int trainsize) {
+			SimpleThreadScheduler caller, int trainsize) {
 		this.planScheduling = planScheduling;
 		if (planScheduling == null) {
 			throw new IllegalArgumentException("PlanScheduling cannot be null!");
@@ -31,7 +31,7 @@ class SchedulingExecutor extends Thread {
 		this.trainsize = trainsize;
 	}
 
-	protected SingleThreadSchedulerWithStrategy getCaller() {
+	protected SimpleThreadScheduler getCaller() {
 		return caller;
 	}
 

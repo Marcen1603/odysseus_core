@@ -14,12 +14,12 @@ class SingleSourceExecutor extends Thread implements IEventListener {
 
 	private IIterableSource<?> s;
 
-	private SingleThreadSchedulerWithStrategy caller;
+	private SimpleThreadScheduler caller;
 
 	private boolean interrupt;
 
 	public SingleSourceExecutor(IIterableSource<?> s,
-			SingleThreadSchedulerWithStrategy singleThreadScheduler) {
+			SimpleThreadScheduler singleThreadScheduler) {
 		this.setName(s.getName());
 		this.s = s;
 		this.caller = singleThreadScheduler;

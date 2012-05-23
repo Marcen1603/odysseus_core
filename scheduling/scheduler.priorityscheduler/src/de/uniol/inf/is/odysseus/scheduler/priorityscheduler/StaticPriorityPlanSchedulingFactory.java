@@ -18,13 +18,13 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy.StaticPriorityPlanScheduling;
-import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SingleThreadSchedulerWithStrategy;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
 
 public class StaticPriorityPlanSchedulingFactory extends AbstractSchedulerFactory {
 
 	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		return new SingleThreadSchedulerWithStrategy(schedulingFactoring, new StaticPriorityPlanScheduling());
+		return new SimpleThreadScheduler(schedulingFactoring, new StaticPriorityPlanScheduling());
 	}
 
 }

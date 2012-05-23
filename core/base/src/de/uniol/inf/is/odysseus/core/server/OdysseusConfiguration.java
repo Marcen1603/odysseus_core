@@ -141,6 +141,7 @@ public class OdysseusConfiguration {
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
+		props.setProperty("scheduler_simpleThreadScheduler_executorThreadsCount",1+"");
 		props.setProperty("scheduler_DebugFileName", "SchedulerLog");
 		props.setProperty("scheduler_trainSize", 1 + "");
 

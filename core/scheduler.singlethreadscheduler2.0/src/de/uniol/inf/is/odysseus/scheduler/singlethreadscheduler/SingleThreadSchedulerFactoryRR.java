@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy.RoundRobinPlanScheduling;
 
 /**
- * Factory for creating {@link SingleThreadSchedulerWithStrategy} instances.
+ * Factory for creating {@link SimpleThreadScheduler} instances.
  * 
  * @author Wolf Bauer
  * 
@@ -49,7 +49,7 @@ public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 	@Override
 	public IScheduler createScheduler(
 			ISchedulingFactory schedulingStrategy) {
-		return new SingleThreadSchedulerWithStrategy(schedulingStrategy, new RoundRobinPlanScheduling());
+		return new SimpleThreadScheduler(schedulingStrategy, new RoundRobinPlanScheduling());
 	}
 
 }

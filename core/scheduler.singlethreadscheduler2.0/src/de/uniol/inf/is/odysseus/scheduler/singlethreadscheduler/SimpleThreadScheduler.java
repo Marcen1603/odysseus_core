@@ -35,24 +35,27 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
 /**
- * SingleThreadScheduler is a scheduler which uses two threads for execution the
+ * SimpleThreadScheduler is a scheduler which uses threads for execution the
  * physical execution plan.
  * 
- * One Thread for global sources and one for the registered partial plans.
+ * For each source there is a thread that retrieves values A configurable number
+ * of threads is used the schedule the registered partial plans
  * 
  * The Selection which plans to schedule is based on a selection strategy
  * 
  * @author Wolf Bauer, Marco Grawunder, Thomas Vogelgesang
  * 
  */
-public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
+public class SimpleThreadScheduler extends AbstractScheduler
 		implements UncaughtExceptionHandler, IPlanModificationListener {
 
 	private volatile int trainSize = (int) OdysseusConfiguration.getLong(
 			"scheduler_trainSize", 1);
+	private volatile int executorThreadsCount = (int) OdysseusConfiguration
+			.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
 
 	Logger logger = LoggerFactory
-			.getLogger(SingleThreadSchedulerWithStrategy.class);
+			.getLogger(SimpleThreadScheduler.class);
 	final IPartialPlanScheduling planScheduling;
 
 	/**
@@ -63,21 +66,24 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 *            partial plan which should be scheduled.
 	 * @throws IOException
 	 */
-	public SingleThreadSchedulerWithStrategy(
+	public SimpleThreadScheduler(
 			ISchedulingFactory schedulingStrategieFactory,
 			IPartialPlanScheduling planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
-		schedulingExecutor = new SchedulingExecutor(planScheduling, timeSlicePerStrategy, this,
-				trainSize);
-		schedulingExecutor.setUncaughtExceptionHandler(this);
-		schedulingExecutor.setPriority(Thread.NORM_PRIORITY);
+		schedulingExecutor = new SchedulingExecutor[executorThreadsCount];
+		for (int i = 0; i < executorThreadsCount; i++) {
+			schedulingExecutor[i] = new SchedulingExecutor(planScheduling,
+					timeSlicePerStrategy, this, trainSize);
+			schedulingExecutor[i].setUncaughtExceptionHandler(this);
+			schedulingExecutor[i].setPriority(Thread.NORM_PRIORITY);
+		}
 	}
 
 	/**
 	 * Thread for execution the registered partial plans.
 	 */
-	protected SchedulingExecutor schedulingExecutor;
+	protected SchedulingExecutor[] schedulingExecutor;
 
 	/**
 	 * Thread for execution the global sources.
@@ -92,19 +98,23 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 
 		super.startScheduling();
 		// Start Source Threads
-		// TODO: Wenn die Threads vorher beendet wurden, kann man die nicht einfach neu starten
+		// TODO: Wenn die Threads vorher beendet wurden, kann man die nicht
+		// einfach neu starten
 		for (SingleSourceExecutor source : sourceThreads) {
 			source.start();
 		}
 		// Start Executor Thread to execute plans
-		schedulingExecutor.start();
+		for (int i = 0; i < executorThreadsCount; i++) {
+			schedulingExecutor[i].start();
+		}
+		logger.debug("Starting Scheduler with "+executorThreadsCount+" thread(s).");
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.AbstractScheduler#stopScheduling()
+	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.AbstractScheduler#
+	 * stopScheduling()
 	 */
 	@Override
 	public synchronized void stopScheduling() {
@@ -115,7 +125,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 		for (Thread sourceThread : sourceThreads) {
 			sourceThread.interrupt();
 		}
-		schedulingExecutor.interrupt();
+		for (int i = 0; i < executorThreadsCount; i++) {
+			schedulingExecutor[i].interrupt();
+		}
 		super.stopScheduling();
 	}
 
@@ -123,16 +135,18 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setPartialPlans(java.util
-	 * .List)
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setPartialPlans
+	 * (java.util .List)
 	 */
 	@Override
 	protected synchronized void process_setPartialPlans(
 			List<IPartialPlan> partialPlans) {
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
-		
-		schedulingExecutor.pause();
-		
+
+		for (int i=0;i<executorThreadsCount;i++){
+			schedulingExecutor[i].pause();
+		}
+
 		this.planScheduling.clear();
 
 		if (partialPlans != null) {
@@ -147,7 +161,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 			}
 		}
 
-		schedulingExecutor.endPause();
+		for (int i=0;i<executorThreadsCount;i++){
+			schedulingExecutor[i].endPause();
+		}
 
 		logger.debug("setPartialPlans done");
 	}
@@ -156,15 +172,16 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setSources(java.util.List)
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#setSources(
+	 * java.util.List)
 	 */
 	@Override
 	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> sourcesToSchedule) {
 		if (sourcesToSchedule != null) {
-			
+
 			for (SingleSourceExecutor source : sourceThreads) {
-				logger.debug("Interrupting running source thread "+source);
+				logger.debug("Interrupting running source thread " + source);
 				source.interrupt();
 			}
 			sourceThreads.clear();
@@ -198,7 +215,9 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (!this.schedulingExecutor.equals(t)) {
-			this.schedulingExecutor.interrupt();
+			for (int i=0;i<executorThreadsCount;i++){
+				this.schedulingExecutor[i].interrupt();
+			}
 		}
 		if (!this.sourceThreads.contains(t)) {
 			super.stopScheduling();
@@ -220,7 +239,8 @@ public class SingleThreadSchedulerWithStrategy extends AbstractScheduler
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		if (this.planScheduling instanceof IPlanModificationListener) {
-			((IPlanModificationListener) this.planScheduling).planModificationEvent(eventArgs);
+			((IPlanModificationListener) this.planScheduling)
+					.planModificationEvent(eventArgs);
 		}
 	}
 
