@@ -115,10 +115,12 @@ public class RepairTool {
 					System.err.println(printTuple(tuple));
 				}
 				// System.out.println(printTuple(tuple));
-				//out.write(printTuple(tuple)+System.getProperty("line.separator"));
+				out.write(printTuple(tuple)+System.getProperty("line.separator"));
 			}
 			tuples = next();
 		}
+		// and an empty line at the end
+		out.write(System.getProperty("line.separator"));
 
 	}
 
@@ -142,7 +144,7 @@ public class RepairTool {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
 			in = new BufferedReader(new InputStreamReader(inputStream));
 			// open writer			
-			FileWriter fwriter = new FileWriter("gcrepaired.txt");
+			FileWriter fwriter = new FileWriter("gcrepaired.txt");			
 			out = new BufferedWriter(fwriter);
 		} catch (IOException e) {
 			e.printStackTrace();
