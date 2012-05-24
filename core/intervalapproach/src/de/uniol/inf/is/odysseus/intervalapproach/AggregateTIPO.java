@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -36,6 +39,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		extends AggregatePO<Q, R, W> {
 
 	protected IMetadataMergeFunction<Q> metadataMerge;
+
+	Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
 	class _Point implements Comparable<_Point> {
 		public PointInTime point;
@@ -55,7 +60,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		public int compareTo(_Point p2) {
 			int c = this.point.compareTo(p2.point);
 			if (c == 0) {
-				if (this.isStartPoint && !p2.isStartPoint) { 
+				if (this.isStartPoint && !p2.isStartPoint) {
 					// Endpunkte liegen immer vor Startpunkten
 					c = 1;
 				} else if (!this.isStartPoint && p2.isStartPoint) {
@@ -64,14 +69,14 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			}
 			// start points of Partial aggregates are always before new elements
 			// end points of Partial aggregates are always behind new elements
-			if (c == 0){
-				if (this.newElement()){
-					if (this.isStartPoint){
+			if (c == 0) {
+				if (this.newElement()) {
+					if (this.isStartPoint) {
 						c = 1;
-					}else{
+					} else {
 						c = -1;
 					}
-				}				
+				}
 			}
 			return c;
 		}
@@ -131,9 +136,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 		metadataMerge.init();
 	}
 
-	public AggregateTIPO(
-			SDFSchema inputSchema,
-			SDFSchema outputSchema,
+	public AggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations);
@@ -157,7 +160,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 	protected synchronized void updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
-		assert(elemToAdd != null);
+		assert (elemToAdd != null);
 		R newElement = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
 
@@ -170,7 +173,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 			saInsert(sa, calcInit(newElement), t_probe);
 		} else {
 			// Overlapping --> Partial Aggregates need to be touched
-			// List of points. Do not use a set, because elements can have same start/end point!
+			// List of points. Do not use a set, because elements can have same
+			// start/end point!
 			List<_Point> pl = new ArrayList<_Point>();
 
 			// Determine the list of all points of the overlapped elements in
@@ -191,7 +195,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 
 			// Sort the List
 			Collections.sort(pl);
-			
+
 			// Sort the list of points ascending
 			Iterator<_Point> pointIter = pl.iterator();
 			_Point p1 = null;
@@ -238,7 +242,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 								// Insert element again with shorter interval
 								// (start to start)
 							@SuppressWarnings("unchecked")
-							Q newMeta = (Q) p1.element_agg.getMetadata().clone();
+							Q newMeta = (Q) p1.element_agg.getMetadata()
+									.clone();
 							newMeta.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, p1.element_agg, newMeta);
 						}
@@ -255,7 +260,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						// Add new element as a combination from current value
 						// and new
 						// element for new time interval
-						if (lastPartialAggregate == null){
+						if (lastPartialAggregate == null) {
 							System.err.println("ONLY FOR DEBUGGER!!");
 						}
 						Q newMeta = metadataMerge.mergeMetadata(
@@ -282,7 +287,8 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 							saInsert(sa, calcInit(elemToAdd), newTI);
 						} else { // New End && Old End
 							@SuppressWarnings("unchecked")
-							Q newTI = (Q)lastPartialAggregate.getMetadata().clone();
+							Q newTI = (Q) lastPartialAggregate.getMetadata()
+									.clone();
 							newTI.setStartAndEnd(p1.point, p2.point);
 							saInsert(sa, lastPartialAggregate, newTI);
 						}
@@ -296,7 +302,9 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 				p1 = p2;
 			}
 		}
-		// System.err.println(sa.toString());
+		if (logger.isTraceEnabled()) {
+			logger.trace(sa.toString());
+		}
 	}
 
 	// Updates SA by splitting all partial aggregates before split point

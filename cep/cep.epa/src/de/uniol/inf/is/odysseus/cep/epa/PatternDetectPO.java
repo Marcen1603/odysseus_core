@@ -188,7 +188,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			for (StateMachine<R> sm : stateMachines) {
 
 				if (logger.isTraceEnabled())
-					logger.trace("-------------------> NEXT EVENT from "
+					logger.trace(this+"-------------------> NEXT EVENT from "
 							+ eventReader.get(port).getType() + ": " + event
 							+ " " + port);
 				// if (logger.isDebugEnabled())
@@ -207,7 +207,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 					}
 				}
 				if (createNewInstance) {
-					logger.trace("Created New Initial Instance");
+					logger.trace(this+":Created New Initial Instance");
 					StateMachineInstance<R> newInstance = new StateMachineInstance<R>(
 							sm, getEventReader().get(port).getTime(event));
 					addInstance(sm, newInstance);
@@ -233,7 +233,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			if (complexEvents.size() > 0) {
 				for (W e : complexEvents) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Created Event: " + e);
+						logger.debug(this+":Created Event: " + e);
 					}
 					outputTransferArea.transfer(e);
 				}
@@ -279,7 +279,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 	private void removeInstance(StateMachine<R> sm,
 			StateMachineInstance<R> stateMachineInstance) {
-		logger.trace("Remove Instance " + stateMachineInstance);
+		logger.trace(this+":Remove Instance " + stateMachineInstance);
 		this.agent.fireCEPEvent(CEPEvent.MACHINE_ABORTED, stateMachineInstance);
 		smInstances.get(sm).remove(stateMachineInstance);
 	}
@@ -291,7 +291,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 		for (StateMachineInstance<R> instance : this.getInstances(sm)) {
 			if (logger.isTraceEnabled())
-				logger.trace("Validating " + instance);
+				logger.trace(this+":Validating " + instance);
 			List<Transition> transitionsToTake = new ArrayList<Transition>();
 			boolean outOfTime = false;
 
@@ -347,7 +347,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			if (!outOfTime) {
 				if (transitionsToTake.isEmpty()) {
 					if (logger.isTraceEnabled())
-						logger.trace("No transition on " + instance);
+						logger.trace(this+":No transition on " + instance);
 
 					// no transition on this instance, mark for removal
 					outdatedInstances.add(instance);
@@ -382,9 +382,9 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 				}
 			}
 			if (logger.isTraceEnabled()) {
-				logger.trace("After Taking Transitions " + instance);
+				logger.trace(this+":After Taking Transitions " + instance);
 				for (StateMachineInstance<R> s : branchedInstances) {
-					logger.debug("Branched Instances " + s);
+					logger.debug(this+":Branched Instances " + s);
 				}
 			}
 		}
@@ -445,7 +445,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 			for (State negBeforeFinal : negState) {
 				for (StateMachineInstance<R> instance : outofWindowInstances) {
 					if (instance.getCurrentState().equals(negBeforeFinal)) {
-						logger.debug("Instance terminated with negative last state --> fire");
+						logger.debug(this+":Instance terminated with negative last state --> fire");
 						createEvent(event, outdatedInstances, port, complexEvents,
 								instance);
 						// Hint: The corresponding automata is already outdated,
@@ -473,7 +473,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 				if (instance.getCurrentState().isAccepting()) {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Reached final state in negative instance "
+						logger.debug(this+":Reached final state in negative instance "
 								+ instance);
 					}
 					// if there is an accepting instance in the first list, DO
@@ -508,7 +508,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 			if (instance.getCurrentState().isAccepting()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Reached final state in " + instance);
+					logger.debug(this+":Reached final state in " + instance);
 				}
 				createEvent(event, outdatedInstances, port, complexEvents, instance);
 				// depending on matching strategy add all instances to outdated
@@ -536,7 +536,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 				if (value != null) {
 					entry.setValue(varName, value);
 				} else {
-					logger.warn("Variable " + varName + " has no value!");
+					logger.warn(this+":Variable " + varName + " has no value!");
 				}
 			}
 		}

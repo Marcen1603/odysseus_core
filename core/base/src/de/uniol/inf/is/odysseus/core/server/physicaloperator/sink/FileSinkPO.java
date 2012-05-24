@@ -114,7 +114,6 @@ public class FileSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_close() {
 		if (isOpen()) {
-			super.process_close();
 			try {
 				synchronized (out) {
 					process_done(0);

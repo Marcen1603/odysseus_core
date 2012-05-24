@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Date;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.Channel;
@@ -32,6 +33,8 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
 	private ServerBootstrap bootstrap;
 	private Channel openChannel;
+	private long printMessageEach = 10000;
+	private long counter = 0;
 
 	public ChannelReceiverDelegate(
 			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {
@@ -94,6 +97,11 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		Object m = e.getMessage();
+		if (logger.isDebugEnabled()) {
+			if (++counter % printMessageEach == 0) {
+				logger.debug(new Date() + ":Received message No." + counter);
+			}
+		}
 		channelHandlerReceiverPO.newMessage((R) m);
 	}
 
