@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Scai
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.scai
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.scai.Activator
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
