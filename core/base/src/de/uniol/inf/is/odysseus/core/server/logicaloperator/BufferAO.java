@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1)
@@ -34,6 +35,11 @@ public class BufferAO extends UnaryLogicalOp {
 	 */
 	private String buffername="";
 
+	/**
+	 * Limit the number of elements for a buffer.
+	 */
+	private long maxBufferSize = -1;
+	
 	public BufferAO(BufferAO ao) {
 		super(ao);
 		this.type = ao.type;
@@ -63,6 +69,15 @@ public class BufferAO extends UnaryLogicalOp {
 	
 	public String getBuffername() {
 		return buffername;
+	}
+	
+	@Parameter(type = LongParameter.class, optional = true)
+	public void setMaxBufferSize(long maxBufferSize) {
+		this.maxBufferSize = maxBufferSize;
+	}
+	
+	public long getMaxBufferSize() {
+		return maxBufferSize;
 	}
 	
 
