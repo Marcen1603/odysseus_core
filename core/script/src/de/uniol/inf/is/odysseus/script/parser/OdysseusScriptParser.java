@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser {
 
-	private static PreParserKeywordRegistry registry = new PreParserKeywordRegistry();
+	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 
 	private static final String PARAMETER_KEY = "#";
 
@@ -44,6 +44,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	private static final String LOOP_UPTO	= "UPTO";
 	
 	private static final String SINGLE_LINE_COMMENT_KEY = "///";
+	
+	private static final String IFDEF_KEY = PARAMETER_KEY + "IFDEF";
+	private static final String IFNDEF_KEY = PARAMETER_KEY + "IFNDEF";
+	private static final String ELSE_KEY = PARAMETER_KEY+ "ELSE";
+	private static final String ENDIF_KEY = PARAMETER_KEY + "ENDIF";
 
 	private int currentLine;
 
@@ -86,7 +91,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	
 	@Override
 	public Set<String> getKeywordNames() {
-		return registry.getKeywordNames();
+		return KEYWORD_REGISTRY.getKeywordNames();
 	}
 	
 	/* (non-Javadoc)
@@ -174,14 +179,14 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 					// Neue Parameterzuweisung?
 					boolean foundParam = false;
-					for (String param : registry.getKeywordNames()) {
+					for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
 						String toFind = PARAMETER_KEY + param;
 						final int pos = line.indexOf(toFind);
 						if (pos != -1) {
 
 							// alten parameter ausführen
 							if (sb != null && currentKey != null) {
-								IPreParserKeyword keyword = registry.createKeywordExecutor(currentKey);
+								IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
 								statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
 							}
 
@@ -204,7 +209,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 			// Last query
 			if (sb != null && currentKey != null) {
-				IPreParserKeyword keyword = registry.createKeywordExecutor(currentKey);
+				IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
 				statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
 			}
 
@@ -378,7 +383,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	public void addKeywordProvider(IPreParserKeywordProvider provider){
 		Map<String, Class<? extends IPreParserKeyword>> keywords = provider.getKeywords();
 		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()){
-			registry.addKeyword(entry.getKey(), entry.getValue());
+			KEYWORD_REGISTRY.addKeyword(entry.getKey(), entry.getValue());
 			//System.out.println("Added Preparser-Keyword "+entry.getKey());
 		}
 	}
@@ -386,7 +391,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	public void removeKeywordProvider(IPreParserKeywordProvider provider){
 		Map<String, Class<? extends IPreParserKeyword>> keywords = provider.getKeywords();
 		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()){
-			registry.removeKeyword(entry.getKey());
+			KEYWORD_REGISTRY.removeKeyword(entry.getKey());
 		}
 	}
 
