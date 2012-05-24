@@ -27,10 +27,6 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * <code>IPreParserKeyword</code> hier hinzugefügt wurde, wird sie im PreParser
  * angewendet.
  * <p>
- * Diese Klasse ist ein Singleton. Es kann nur eine Instanz davon existieren.
- * Diese lässt sich mit <code>PreParserKeywordRegistry.getInstance()</code>
- * liefern. Wird diese das erste Mal aufgerufen, so wird eine Registry aus
- * ExtensionPoints aufgebaut.
  * 
  * @author Timo Michelsen
  * 
@@ -38,24 +34,8 @@ import org.eclipse.core.runtime.AssertionFailedException;
 class PreParserKeywordRegistry {
 	
 	public static final String PREPARSER_KEYWORD_EXTENSION_ID = "de.uniol.inf.is.odysseus.script.parser.PreParserKeyword";
-//	private static PreParserKeywordRegistry instance = null;
 
 	private Map<String, Class<? extends IPreParserKeyword>> keywords = null;
-
-//	private PreParserKeywordRegistry() {
-//		loadRegister();
-//	}
-
-//	/**
-//	 * Liefert die einzige Instanz dieser Klasse.
-//	 * 
-//	 * @return Einzige Instanz
-//	 */
-//	public synchronized static PreParserKeywordRegistry getInstance() {
-//		if (instance == null)
-//			instance = new PreParserKeywordRegistry();
-//		return instance;
-//	}
 
 	/**
 	 * Fügt ein neues Schlüsselwort in die Registry ein. Ist das Schlüsselwort
@@ -150,25 +130,6 @@ class PreParserKeywordRegistry {
 			throw new IllegalArgumentException("keyword is null");
 		getKeywords().remove(keyword);
 	}
-
-//	/**
-//	 * Läd die Registry über Extensionpoints.
-//	 * <p>
-//	 * Eigene Implementierungen können damit eine alternative Startregistry
-//	 * aufbauen. Z.B. eine Registry aus Dateien o. ä. laden.
-//	 */
-//	protected void loadRegister() {
-//		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(PREPARSER_KEYWORD_EXTENSION_ID);
-//		for (IConfigurationElement e : config) {
-//			try {
-//				String name = e.getAttribute("name");
-//				IPreParserKeyword keyword = (IPreParserKeyword) e.createExecutableExtension("class");
-//				addKeyword(name, keyword.getClass());
-//			} catch (CoreException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
-//	}
 
 	/**
 	 * Liefert die Map mit den Keywords. Falls dieser (noch) <code>null</code>
