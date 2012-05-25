@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Sets;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -33,23 +35,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 
-	private static final String PARAMETER_KEY = "#";
+	public static final String PARAMETER_KEY = "#";
 
-	private static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
-	private static final String REPLACEMENT_START_KEY = "${";
-	private static final String REPLACEMENT_END_KEY = "}";
+	public static final String REPLACEMENT_DEFINITION_KEY = "DEFINE";
+	public static final String REPLACEMENT_START_KEY = "${";
+	public static final String REPLACEMENT_END_KEY = "}";
 
-	private static final String LOOP_START_KEY = PARAMETER_KEY + "LOOP";
-	private static final String LOOP_END_KEY = PARAMETER_KEY + "ENDLOOP";	
-	private static final String LOOP_UPTO	= "UPTO";
+	public static final String LOOP_START_KEY = "LOOP";
+	public static final String LOOP_END_KEY = "ENDLOOP";	
+	public static final String LOOP_UPTO	= "UPTO";
 	
-	private static final String SINGLE_LINE_COMMENT_KEY = "///";
+	public static final String SINGLE_LINE_COMMENT_KEY = "///";
 	
-	private static final String IFDEF_KEY = PARAMETER_KEY + "IFDEF";
-	private static final String IFNDEF_KEY = PARAMETER_KEY + "IFNDEF";
-	private static final String ELSE_KEY = PARAMETER_KEY+ "ELSE";
-	private static final String ENDIF_KEY = PARAMETER_KEY + "ENDIF";
-
 	private int currentLine;
 
 	@Override
@@ -72,26 +69,27 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		return SINGLE_LINE_COMMENT_KEY;
 	}
 
-
-//	public synchronized static QueryTextParser getInstance() {
-//		if (instance == null)
-//			instance = new QueryTextParser();
-//		return instance;
-//	}
-
-	
-	public static List<String> getStaticWords(){
-		List<String> strings = new ArrayList<String>();
-		strings.add(PARAMETER_KEY+REPLACEMENT_DEFINITION_KEY);
+	@Override
+	public Set<String> getStaticWords(){
+		Set<String> strings = Sets.newHashSet();
+		strings.add(REPLACEMENT_DEFINITION_KEY);
 		strings.add(LOOP_END_KEY);
 		strings.add(LOOP_START_KEY);		
 		strings.add(LOOP_UPTO);
+		strings.add(IfController.IFDEF_KEY);
+		strings.add(IfController.ELSE_KEY);
+		strings.add(IfController.ENDIF_KEY);
+		strings.add(IfController.IFNDEF_KEY);
+		strings.add(IfController.UNDEF_KEY);
 		return strings;
 	}
 	
 	@Override
 	public Set<String> getKeywordNames() {
-		return KEYWORD_REGISTRY.getKeywordNames();
+		Set<String> keywordNames = Sets.newHashSet();
+		keywordNames.addAll(KEYWORD_REGISTRY.getKeywordNames());
+		keywordNames.addAll(getStaticWords());
+		return keywordNames;
 	}
 	
 	/* (non-Javadoc)
@@ -152,6 +150,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		try {
 			String[] text = rewriteLoop(textToParse);
 			Map<String, String> replacements = getReplacements(text);
+			IfController ifController = new IfController(text);
 			StringBuffer sb = null;
 
 			String currentKey = null;
@@ -163,16 +162,20 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				if ((line == null) || (line.equals("null")))
 					continue;
 
+				if( !ifController.canExecuteNextLine()) {
+					continue;
+				}
+				
 				line = line.trim();
 				// Ersetzungen einsetzen
 				line = useReplacements(line, replacements).trim();
-				if (line.indexOf(REPLACEMENT_DEFINITION_KEY) != -1)
+				if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1)
 					continue;
 
-				if (line.indexOf(LOOP_END_KEY) != -1)
+				if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1)
 					continue;
 
-				if (line.indexOf(LOOP_START_KEY) != -1)
+				if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
 					continue;
 
 				if (line.length() > 0) {
@@ -228,14 +231,14 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 			if(line.startsWith(SINGLE_LINE_COMMENT_KEY)){
 				continue;
 			}
-			if (line.indexOf(LOOP_START_KEY) != -1) {
+			if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
 				if (from != -1) {
 					throw new OdysseusScriptException("Nested loops are not allowed!");
 				}
 				from = linenr;
 				continue;
 			}
-			if (line.indexOf(LOOP_END_KEY) != -1) {
+			if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1) {
 				if (from == -1) {
 					throw new OdysseusScriptException("Missing start loop statement");
 				}
@@ -245,7 +248,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				to = linenr;
 			}
 			if (from != -1 && to != -1) {
-				String loopDef = textToParse[from].replaceFirst(LOOP_START_KEY, "").trim();
+				String loopDef = textToParse[from].replaceFirst(PARAMETER_KEY + LOOP_START_KEY, "").trim();
 				try {
 					String[] parts = loopDef.split(" ");
 					if(parts.length!=4){
@@ -309,9 +312,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 			if (pos != -1) {
 				String[] parts = replacedLine.split(" |\t", 3);
 				// parts[0] is #DEFINE
-				repl.put(parts[1].trim(), parts[2].trim());
+				// parts[1] is replacement name
+				// parts[2] is replacement value (optional!)
+				if( parts.length >= 3 ) {
+					repl.put(parts[1].trim(), parts[2].trim());
+				}
 			}
-			final int posLoop = replacedLine.indexOf(LOOP_START_KEY);
+			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
 			if(posLoop!= -1){
 				String[] parts = replacedLine.split(" |\t", 3);
 				repl.put(parts[1].trim(), parts[1].trim());
@@ -333,7 +340,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				if (replacements.containsKey(key)) {
 					line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
 				} else {								
-					throw new OdysseusScriptException("Replacer " + key + " not defined ");
+					throw new OdysseusScriptException("Replacement key " + key + " not defined or has no value!");
 				}
 			}
 
