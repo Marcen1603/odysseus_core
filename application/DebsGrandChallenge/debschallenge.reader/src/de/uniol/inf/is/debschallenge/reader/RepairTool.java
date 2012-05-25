@@ -17,6 +17,9 @@ package de.uniol.inf.is.debschallenge.reader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +28,11 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,7 +44,69 @@ public class RepairTool {
 	private BufferedReader in;
 	private BufferedWriter out;
 	private long counter = 0;
-	NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMAN);
+	private static NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMAN);
+	private static Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+
+	public static void main(String[] args) throws Exception {
+		long nanos = 1330086739644209700L;
+
+		long millis = nanos / 1000000;
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(millis);
+		System.out.println(cal.getTime());
+		FileReader reader = new FileReader("E:" + File.separator + "Workspace" + File.separator + "Odysseus" + File.separator + "trunk" + File.separator + "application" + File.separator
+				+ "DebsGrandChallenge" + File.separator + "gcrepaired.txt");
+		BufferedReader br = new BufferedReader(reader);
+		String line = br.readLine();
+		int count = 1;
+		long millisLast = 0;
+		String lastLine = "";
+		while (line != null) {
+			try{
+			if (!line.isEmpty()) {
+				line = line.trim();
+				String parts[] = line.split("\\.");
+				long millisCurrent = parseTime(parts[0]);
+
+				if ((millisCurrent - millisLast) > 1000) {
+					System.out.println("found lines at " + count);
+					System.out.println(lastLine);
+					System.out.println(line);
+					System.out.println("--------------------------------------------------------");
+				}
+				millisLast = millisCurrent;
+				if (count % 100000 == 0) {
+					System.out.println("Processed: " + nf.format(count) + " still: " + nf.format(32390518 - count));
+				}
+			}
+			count++;
+			lastLine = line;
+			line = br.readLine();
+			}catch (Exception e) {				
+				System.err.println("Error at line "+count);
+				System.err.println("Line: "+line);
+				System.err.println("Last: "+lastLine);
+				e.printStackTrace();
+				break;
+			}
+		}
+		System.out.println("Done");
+	}
+
+	private static long parseTime(String timeString) {
+		String splits[] = timeString.split("T");
+		String date[] = splits[0].split("-");
+		String time[] = splits[1].split(":");
+		
+		int year = Integer.parseInt(date[0]);
+		int month = Integer.parseInt(date[1]);
+		int day = Integer.parseInt(date[2]);
+		int hour = Integer.parseInt(time[0]);
+		int minute = Integer.parseInt(time[1]);
+		int second = Integer.parseInt(time[2]);
+		cal.set(year, month, day, hour, minute, second);		
+		return cal.getTimeInMillis();
+	}
 
 	private List<String[]> repair(String[] raw) throws ParseException {
 		String middle = raw[55];
@@ -89,8 +157,8 @@ public class RepairTool {
 			}
 			counter++;
 			if (counter % 1000000 == 0) {
-				
-				System.out.println("Processed: " + nf.format(counter)+" still: "+nf.format(32390518-counter));
+
+				System.out.println("Processed: " + nf.format(counter) + " still: " + nf.format(32390518 - counter));
 			}
 			return list;
 		} catch (IOException e) {
@@ -104,18 +172,13 @@ public class RepairTool {
 	public void dump() throws IOException {
 		List<String[]> tuples = next();
 		while (tuples != null) {
-			for (String[] tuple : tuples) {				
-				if(tuple[12].equalsIgnoreCase("1") ||
-						tuple[13].equalsIgnoreCase("1") ||
-						tuple[14].equalsIgnoreCase("1") ||
-						tuple[15].equalsIgnoreCase("1") ||
-						tuple[16].equalsIgnoreCase("1") ||
-						tuple[17].equalsIgnoreCase("1")
-						){
+			for (String[] tuple : tuples) {
+				if (tuple[12].equalsIgnoreCase("1") || tuple[13].equalsIgnoreCase("1") || tuple[14].equalsIgnoreCase("1") || tuple[15].equalsIgnoreCase("1") || tuple[16].equalsIgnoreCase("1")
+						|| tuple[17].equalsIgnoreCase("1")) {
 					System.err.println(printTuple(tuple));
 				}
 				// System.out.println(printTuple(tuple));
-				out.write(printTuple(tuple)+System.getProperty("line.separator"));
+				out.write(printTuple(tuple) + System.getProperty("line.separator"));
 			}
 			tuples = next();
 		}
@@ -143,8 +206,8 @@ public class RepairTool {
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
 			in = new BufferedReader(new InputStreamReader(inputStream));
-			// open writer			
-			FileWriter fwriter = new FileWriter("gcrepaired.txt");			
+			// open writer
+			FileWriter fwriter = new FileWriter("gcrepaired.txt");
 			out = new BufferedWriter(fwriter);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -166,17 +229,14 @@ public class RepairTool {
 		init();
 		try {
 			dump();
-		} catch (IOException e) {		
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		close();
-		long millis = System.currentTimeMillis()-starttime;
-		String needed = String.format("%d min, %d sec", 
-			    TimeUnit.MILLISECONDS.toMinutes(millis),
-			    TimeUnit.MILLISECONDS.toSeconds(millis) - 
-			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
-			);
-		System.out.println("Needed: "+needed);
+		long millis = System.currentTimeMillis() - starttime;
+		String needed = String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
+				TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+		System.out.println("Needed: " + needed);
 
 	}
 

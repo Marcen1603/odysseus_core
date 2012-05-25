@@ -20,9 +20,9 @@ public class Activator implements BundleActivator  {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		Activator.context = context;
-//		StreamServer server = new StreamServer(54321, new DataProvider());
-//		server.start();
-		(new RepairTool()).go();
+		StreamServer server = new StreamServer(54321, new DataProvider());
+		server.start();
+//		(new RepairTool()).go();
 		
 	}
 
