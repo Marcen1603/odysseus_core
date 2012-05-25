@@ -177,6 +177,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 				if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
 					continue;
+				
+				// Undefine
+				if( line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1 ) {
+					String[] parts = line.trim().split(" |\t", 3);
+					replacements.remove(parts[1]);
+				}
 
 				if (line.length() > 0) {
 

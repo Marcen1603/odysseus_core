@@ -100,7 +100,7 @@ public class IfController {
 		return hasPreParserKeyword(PARAMETER_KEY + ELSE_KEY, trim);
 	}
 
-	private static Optional<String> determineIfNDef(String trim) {
+	private static Optional<String> determineIfNDef(String trim) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + IFNDEF_KEY, trim);
 	}
 
@@ -108,15 +108,15 @@ public class IfController {
 		return hasPreParserKeyword(PARAMETER_KEY + ENDIF_KEY, textline);
 	}
 
-	private static Optional<String> determineIfDef(String textline) {
+	private static Optional<String> determineIfDef(String textline) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + IFDEF_KEY, textline);
 	}
 
-	private static Optional<String> determineDefined( String textLine ) {
+	private static Optional<String> determineDefined( String textLine ) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + DEFINE_KEY, textLine);
 	}
 	
-	private static Optional<String> determineUndefined(String textLine) {
+	private static Optional<String> determineUndefined(String textLine) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + UNDEF_KEY, textLine);
 	}
 	
@@ -124,10 +124,13 @@ public class IfController {
 		return textLine.indexOf(keyword) != -1;
 	}
 
-	private static Optional<String> determineReplacement(String keyword, String textLine) {
+	private static Optional<String> determineReplacement(String keyword, String textLine) throws OdysseusScriptException {
 		int definePos = textLine.indexOf(keyword);
 		if( definePos != -1 ) {
 			String[] parts = textLine.split(" |\t", 3);
+			if( parts.length < 2) {
+				throw new OdysseusScriptException("Name for " + keyword + " expected.");
+			}
 			return Optional.of(parts[1]);
 		}
 		
