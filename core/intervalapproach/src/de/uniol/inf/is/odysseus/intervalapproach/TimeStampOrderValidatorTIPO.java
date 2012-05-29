@@ -24,13 +24,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>> extends AbstractPipe<T, T> {
+public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IMetaAttributeContainer<K>>
+		extends AbstractPipe<T, T> {
 
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);
 
 	PointInTime lastTimestamp = null;
 
-	public TimeStampOrderValidatorTIPO(TimeStampOrderValidatorTIPO<K, T> timeStampOrderValidator) {
+	public TimeStampOrderValidatorTIPO(
+			TimeStampOrderValidatorTIPO<K, T> timeStampOrderValidator) {
 		super(timeStampOrderValidator);
 		this.lastTimestamp = timeStampOrderValidator.lastTimestamp;
 	}
@@ -55,22 +57,26 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IMet
 
 	@Override
 	protected void process_next(T object, int port) {
-		validate(object.getMetadata(), port);
-		transfer(object);
+		if (validate(object.getMetadata(), port)) {
+			transfer(object);
+		}
 	}
 
-	private void validate(K metadata, int port) {
-		validate(metadata.getStart(), port);
+	private boolean validate(K metadata, int port) {
+		return validate(metadata.getStart(), port);
 	}
 
-	private void validate(PointInTime timestamp, int port) {
+	private boolean validate(PointInTime timestamp, int port) {
 		if (lastTimestamp != null) {
 			if (timestamp.before(lastTimestamp)) {
-				logger.error("Wrong timestamp order " + timestamp + " after " + lastTimestamp + " from previous operator: "+this.getSubscribedToSource(port).toString());
-				// TODO:Exception
+				logger.error("Wrong timestamp order " + timestamp + " after "
+						+ lastTimestamp + " from previous operator: "
+						+ this.getSubscribedToSource(port).toString());
+				return false;
 			}
 		}
 		lastTimestamp = timestamp.clone();
+		return true;
 	}
 
 	@Override
@@ -90,5 +96,5 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IMet
 		}
 		return false;
 	}
-	
+
 }
