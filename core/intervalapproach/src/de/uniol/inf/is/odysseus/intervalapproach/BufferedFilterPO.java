@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.intervalapproach;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -140,6 +140,10 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 	@Override
 	public BufferedFilterPO<K, R> clone() {
 		return new BufferedFilterPO<K, R>(this);
+	}
+
+	public IMetadataMergeFunction<K> getMetadataMerge() {
+		return metadataMerge;
 	}
 
 }
