@@ -31,13 +31,7 @@ public class Activator implements BundleActivator {
 				server = new StreamServer(port, new DataProvider());
 			}
 			server.start();
-
-			if (server != null) {
-				// Warte auf Terminierung von server
-				while (server.isAlive()) {
-
-				}
-			}
+			server.join();			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
