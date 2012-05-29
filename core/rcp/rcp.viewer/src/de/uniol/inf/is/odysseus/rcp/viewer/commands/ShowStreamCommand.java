@@ -82,7 +82,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
                         optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
                     } else if (executor instanceof IClientExecutor){
-                    	
+                    	// TODO ClientReceiver an DefaultStreamConnection uebergeben
                     } else {
                         LOG.error("Could not show stream outside server.");
                     }
