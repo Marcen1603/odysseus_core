@@ -29,6 +29,7 @@ public class CurveChart extends AbstractTimeSeriesChart{
 		chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);	
 		chart.getLegend().setBackgroundPaint(DEFAULT_BACKGROUND_GRID);
 		chart.getXYPlot().setRenderer(new XYSplineRenderer());
+		//chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.ORANGE);
 		return chart;
 	}
 
