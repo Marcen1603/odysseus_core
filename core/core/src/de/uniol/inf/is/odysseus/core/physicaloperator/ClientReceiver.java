@@ -57,6 +57,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		}
 		return _logger;
 	}
+	
+	final public int ERRORPORT = Integer.MAX_VALUE;
 
 	protected IObjectHandler<W> objectHandler;
 	private boolean opened;
@@ -73,9 +75,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
-	@SuppressWarnings("rawtypes")
-	private Map<String, IMonitoringData> metaDataItem;
-
 	final private List<PhysicalSubscription<ISink<? super W>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super W>>>();
@@ -89,7 +88,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		this.accessHandler = accessHandler;
 		this.name = "ClientReceiver " + accessHandler;
 		this.opened = false;
-		this.metaDataItem = new HashMap<String, IMonitoringData>();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -98,7 +96,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		inputDataHandler = other.inputDataHandler.clone();
 		accessHandler = (IAccessConnectionHandler<R>) other.clone();
 		opened = other.opened;
-		this.metaDataItem = new HashMap<String, IMonitoringData>();
 	}
 
 	@Override
@@ -114,6 +111,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public boolean isPipe() {
 		return isSink() && isSource();
+	}
+	
+	protected boolean hasSingleConsumer() {
+		return this.sinkSubscriptions.size() == 1;
 	}
 
 	@Override
@@ -223,43 +224,33 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public Collection<String> getProvidedMonitoringData() {
-		return this.metaDataItem.keySet();
+		return null;
 	}
 
 	@Override
 	public boolean providesMonitoringData(String type) {
-		return this.metaDataItem.containsKey(type);
+		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> IMonitoringData<T> getMonitoringData(String type) {
-		return this.metaDataItem.get(type);
+		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void createAndAddMonitoringData(IPeriodicalMonitoringData item,
 			long period) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {
-		getLogger().debug(
-				"Add Monitoring Data " + type + " " + item + " to " + this);
-		if (this.metaDataItem.containsKey(type)) {
-			throw new IllegalArgumentException(type + " is already registered");
-			// return;
-		}
-
-		this.metaDataItem.put(type, item);
+		
 	}
 
 	@Override
 	public void removeMonitoringData(String type) {
-		getLogger().debug("Remove Monitoring Data " + type + " from " + this);
-		this.metaDataItem.remove(type);
+		
 	}
 
 	@Override
@@ -311,8 +302,18 @@ public class ClientReceiver<R, W> implements ISource<W>,
 
 	@Override
 	public void transfer(W object, int sourceOutPort) {
-		// TODO This should point to DefaultStreamConnection
-
+		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				try {
+					sink.getTarget().process(object, sink.getSinkInPort(),
+							hasSingleConsumer());
+				} catch (Exception e) {
+					// Send object that could not be processed to the error port
+					e.printStackTrace();
+					transfer(object, ERRORPORT);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -365,7 +366,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void unblock() {
 		this.blocked.set(false);
 		getLogger().debug("Operator " + this.toString() + " unblocked");
-		// TODO check if necessary
 		// fire(unblockedEvent);
 	}
 
@@ -373,7 +373,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void block() {
 		this.blocked.set(true);
 		getLogger().debug("Operator " + this.toString() + " blocked");
-		// TODO check if necessary
 		// fire(blockedEvent);
 	}
 
@@ -453,7 +452,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		// event
 		// does not of any interest any more
 		if (isOpen()) {
-			// TODO event fire
 			// fire(this.doneEvent);
 			this.process_done();
 			for (PhysicalSubscription<ISink<? super W>> sub : sinkSubscriptions) {
@@ -534,7 +532,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			sub.incOpenCalls();
 		}
 		if (!isOpen()) {
-			// TODO check for fired events
 			// fire(openInitEvent);
 			process_open();
 			// fire(openDoneEvent);
@@ -556,11 +553,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			this.activeSinkSubscriptions.remove(sub);
 			if (activeSinkSubscriptions.size() == 0) {
 				getLogger().debug("Closing " + toString());
-				// TODO check for firing events
 				// fire(this.closeInitEvent);
 				this.process_close();
 				open.set(false);
-				stopMonitoring();
+				//stopMonitoring();
 				// fire(this.closeDoneEvent);
 			}
 		}
@@ -588,11 +584,4 @@ public class ClientReceiver<R, W> implements ISource<W>,
 				+ (blocked.get() ? "b" : "");
 	}
 
-	protected void stopMonitoring() {
-		getLogger().debug("Stop Monitoring " + this);
-		for (IMonitoringData<?> m : metaDataItem.values()) {
-			m.cancelMonitoring();
-		}
-		metaDataItem.clear();
-	}
 }
