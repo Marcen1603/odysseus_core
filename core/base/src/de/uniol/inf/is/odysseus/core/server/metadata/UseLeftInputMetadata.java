@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
-public class UserLeftInputMetadata<T> implements IMetadataMergeFunction<T> {
+public class UseLeftInputMetadata<T> implements IMetadataMergeFunction<T> {
 
 	
 	@Override

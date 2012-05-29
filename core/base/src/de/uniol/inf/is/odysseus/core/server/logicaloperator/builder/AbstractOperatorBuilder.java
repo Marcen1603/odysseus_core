@@ -134,6 +134,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
 			SDFSchema schema = null;
+			// TODO: this is not suitable for JOINs, because it is not an union 
 			for (InputOperatorItem opItem : inputOperators.values()) {
 				schema = SDFSchema.union(schema,
 						opItem.operator.getOutputSchema());

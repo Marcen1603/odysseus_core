@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 
 /**
  * This class represents an operator that buffers elements on port 0 for
