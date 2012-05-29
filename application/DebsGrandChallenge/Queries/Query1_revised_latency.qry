@@ -2,7 +2,7 @@
 #TRANSCFG StandardLatency
 #DEFINE TwentyFourHours 86400000000000
 #DOQUERYSHARING true
-#QUERY
+#RUNQUERY
 /// Operator 1
 bm05 = PROJECT({attributes=['ts','pp04']},gchSource)
 s05 = RENAME({type='s05', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp04'], heartbeatrate=100},bm05))
@@ -28,21 +28,24 @@ bm10 = PROJECT({attributes=['ts','pp06']},gchSource)
 s10 = RENAME({type='s10', aliases = ['ts', 'edge']},CHANGEDETECT({attr=['pp06'], heartbeatrate=100},bm10))
 
 /// Operator 7
-s58_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s05, s08))
-s58_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s05, s08))
-s58_t = UNION(s58_t1, s58_t2)
-s58 = RENAME({type='s58',aliases = ['ts', 'dt']}, MAP({expressions = ['toLoNG(ts2)','toLong(ts2-ts1)']}, s58_t))
+///s58_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s05, s08))
+///s58_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s05, s08))
+///s58_t = UNION(s58_t1, s58_t2)
+s58_t = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s05 s1, s08 s2) where skip_till_any_match(s1,s2){s1.edge = s2.edge} return s1.ts,s2.ts'}, s05, s08))
+s58 = RENAME({type='s58',aliases = ['ts', 'dt']}, MAP({expressions = ['toLong(ts2)','toLong(ts2-ts1)']}, s58_t))
 
 /// Operator 8
-s69_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s06, s09))
-s69_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s06, s09))
-s69_t = UNION(s69_t1, s69_t2)
+///s69_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s06, s09))
+///s69_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s06, s09))
+///s69_t = UNION(s69_t1, s69_t2)
+s69_t =  RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s06 s1, s09 s2) where skip_till_any_match(s1,s2){s1.edge=s2.edge} return s1.ts,s2.ts'}, s06, s09))
 s69 = RENAME({type='s69',aliases = ['ts', 'dt']}, MAP({expressions = ['toLong(ts2)','toLong(ts2-ts1)']}, s69_t))
 
 /// Operator 9
-s710_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s07 s1, s10 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s07, s10))
-s710_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,query='PATTERN SEQ(s07 s1, s10 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s07, s10))
-s710_t = UNION(s710_t1, s710_t2)
+///s710_t1 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s07 s1, s10 s2) where skip_till_any_match(s1,s2){s1.edge=true AND s2.edge=true   } return s1.ts,s2.ts'}, s07, s10))
+///s710_t2 = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s07 s1, s10 s2) where skip_till_any_match(s1,s2){s1.edge=false AND s2.edge=false   } return s1.ts,s2.ts'}, s07, s10))
+///s710_t = UNION(s710_t1, s710_t2)
+s710_t = RENAME({aliases = ['ts1', 'ts2']} ,SASE({heartbeatrate=1,oneMatchPerInstance='true',query='PATTERN SEQ(s07 s1, s10 s2) where skip_till_any_match(s1,s2){s1.edge=s2.edge} return s1.ts,s2.ts'}, s07, s10))
 s710 = RENAME({type='s710',aliases = ['ts', 'dt']}, MAP({expressions = ['toLong(ts2)','toLong(ts2-ts1)']}, s710_t))
 
 /// 24 hour sliding window
@@ -83,9 +86,9 @@ sout14 = RENAME({aliases = ['alarm', 'ts']}, MAP({expressions=['1', 'ts']}, SELE
 /// Operator 15
 reg15 = REGRESSION({X='ts', Y='dt'}, s710_windowed)
 
-filesink1 = FILESINK({file='F:/Grand Challenge/results/q1_sout10.csv',  filetype='csv', dumpMetaData='true',cachesize = 10}, CALCLATENCY(sout10))
-filesink2 = FILESINK({file='F:/Grand Challenge/results/q1_reg11.csv',  filetype='csv', dumpMetaData='true',cachesize = 10}, CALCLATENCY(reg11))
-filesink3 = FILESINK({file='F:/Grand Challenge/results/q1_sout12.csv',  filetype='csv', dumpMetaData='true',cachesize = 10}, CALCLATENCY(sout12))
-filesink4 = FILESINK({file='F:/Grand Challenge/results/q1_reg13.csv',  filetype='csv', dumpMetaData='true', cachesize = 10}, CALCLATENCY(reg13))
-filesink5 = FILESINK({file='F:/Grand Challenge/results/q1_sout14.csv',  filetype='csv', dumpMetaData='true', cachesize = 10}, CALCLATENCY(sout14))
-filesink6 = FILESINK({file='F:/Grand Challenge/results/q1_reg15.csv',  filetype='csv', dumpMetaData='true', cachesize = 10}, CALCLATENCY(reg15))
+filesink1 = FILESINK({file='F:/Grand Challenge/results/q1_sout10.csv',  filetype='csv', dumpMetaData='true',cachesize = 1}, CALCLATENCY(sout10))
+filesink2 = FILESINK({file='F:/Grand Challenge/results/q1_reg11.csv',  filetype='csv', dumpMetaData='true',cachesize = 1}, CALCLATENCY(reg11))
+filesink3 = FILESINK({file='F:/Grand Challenge/results/q1_sout12.csv',  filetype='csv', dumpMetaData='true',cachesize = 1}, CALCLATENCY(sout12))
+filesink4 = FILESINK({file='F:/Grand Challenge/results/q1_reg13.csv',  filetype='csv', dumpMetaData='true', cachesize = 1}, CALCLATENCY(reg13))
+filesink5 = FILESINK({file='F:/Grand Challenge/results/q1_sout14.csv',  filetype='csv', dumpMetaData='true', cachesize = 1}, CALCLATENCY(sout14))
+filesink6 = FILESINK({file='F:/Grand Challenge/results/q1_reg15.csv',  filetype='csv', dumpMetaData='true', cachesize = 1}, CALCLATENCY(reg15))

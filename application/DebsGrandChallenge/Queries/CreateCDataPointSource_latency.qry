@@ -2,7 +2,7 @@
 #PARSER PQL
 #TRANSCFG Standard
 #QUERY
-gchSource := TimeStampOrderValidate(BUFFER({type='normal'}, ACCESS({SOURCE = 'GrandChallengeDataPoint',
+gchSource := TimeStampOrderValidate(ACCESS({SOURCE = 'GrandChallengeDataPoint',
 PORT=9999,
 ADAPTER='GoogleProtoBuf',
 OPTIONS=['type:debs.challenge.msg.CDataPoint'],
@@ -71,4 +71,4 @@ SCHEMA=[['ts','StartTimeStamp'],
 	['pc21','Boolean'],
 	['pc22','Boolean'],
 	['pc23','Boolean'],
-	['pc24','Boolean']]})))
+	['pc24','Boolean']]}))

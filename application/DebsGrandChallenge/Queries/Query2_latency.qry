@@ -1,7 +1,3 @@
-///OdysseusScript
-/// zeit is laut definition in nanoseconds (Faktor 1.000.000.000) aber 
-/// im moment (da java time) nur in milliseconds (Faktor 1.000)...
-/// TODO: CHECK TIME!
 #DEFINE OneSecond    1000000000
 #DEFINE SixtySeconds 60000000000
 #DEFINE TwentySeconds 20000000000
@@ -9,7 +5,7 @@
 #PARSER PQL
 #TRANSCFG StandardLatency
 #DOQUERYSHARING true
-#QUERY
+#RUNQUERY
 projected =  PROJECT({attributes=['ts','mf01','mf02', 'mf03']}, gchSource)
 mf01prj = WINDOW({SIZE=${OneSecond}, SLIDE=${OneSecond}, type='time'}, projected )
 
