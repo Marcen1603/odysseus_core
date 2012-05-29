@@ -34,6 +34,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TLeftJoinAOSetSARule());
 		rules.add(new TJoinAOSetSARule());
 		rules.add(new TBufferedFilterAORule());
+		rules.add(new TChangeCorrelateInsertDataMergeFunctionRule());
 		return rules;
 	}
 

@@ -1,4 +1,4 @@
-/** Copyright [2011] [The Odysseus Team]
+/** Copyright 2012 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -12,18 +12,24 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
+
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
+/**
+ * 
+ * @author Dennis Geesen
+ * Created at: 29.05.2012
+ */
+public class TChangeCorrelateInsertDataMergeFunctionRule extends AbstractTransformationRule<ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>>> {
 
 	@Override
 	public int getPriority() {	
@@ -31,13 +37,13 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	}
 
 	@Override
-	public void execute(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) {
-		joinPO.setDataMerge(new RelationalMergeFunction<ITimeInterval>(joinPO.getOutputSchema().size()));
-		update(joinPO);		
+	public void execute(ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>> cc, TransformationConfiguration transformConfig) {
+		cc.setDataMerge(new RelationalMergeFunction<ITimeInterval>(cc.getOutputSchema().size()));
+		update(cc);		
 	}
 
 	@Override
-	public boolean isExecutable(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(ChangeCorrelatePO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
 		if(transformConfig.getDataType().equals("relational")){
 			if(operator.getDataMerge()==null){
 				return true;
@@ -48,7 +54,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 
 	@Override
 	public String getName() {
-		return"Insert DataMergeFunction JoinTIPO (Relational)";
+		return"Insert DataMergeFunction ChangeCorrelate (Relational)";
 	}
 	
 	@Override
@@ -58,7 +64,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	
 	@Override
 	public Class<?> getConditionClass() {	
-		return JoinTIPO.class;
+		return ChangeCorrelatePO.class;
 	}
 
 }

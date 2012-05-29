@@ -1,4 +1,4 @@
-/** Copyright [2011] [The Odysseus Team]
+/** Copyright 2012 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,62 +12,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.interval.transform.join;
+
+package de.uniol.inf.is.odysseus.interval.transform;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.ChangeCorrelatePO;
 import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<JoinTIPO<?, ?>> {
+/**
+ * 
+ * @author Dennis Geesen Created at: 29.05.2012
+ */
+public class TChangeCorrelateAddMetadataMergeRule extends AbstractTransformationRule<ChangeCorrelatePO<?, ?>> {
 
 	@Override
 	public int getPriority() {
 		return 0;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
+	public void execute(ChangeCorrelatePO changePO, TransformationConfiguration transformConfig) {
 		if(transformConfig.getMetaTypes().size()>1){
-			((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
+			((CombinedMergeFunction) changePO.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
 		}else{
-			joinPO.setMetadataMerge(TIMergeFunction.getInstance());
+			changePO.setMetadataMerge(TIMergeFunction.getInstance());
 		}
-		/*
-		 * # no update, because otherwise # other rules may overwrite this rule
-		 * # example: rule with priority 5 setting the areas has been #
-		 * processed, update causes rule engine to search for other # rules
-		 * applicable for the updated object. The rule with # priority 5 cannot
-		 * be processed because of no-loop term, however # other rules with
-		 * lower priority could be used of the updated # objects fulfills the
-		 * when clause. However, these lower priority # rules should not be used
-		 * because of the high priority rule # # do not use retract also,
-		 * because # other fields of the object should still be modified
-		 */
 	}
 
 	@Override
-	public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(ChangeCorrelatePO<?, ?> operator, TransformationConfiguration transformConfig) {
 		if (transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.getMetadataMerge() != null) {
 				if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
 					return true;
 				}
 			}
-
 		}
 		return false;
 	}
 
 	@Override
 	public String getName() {
-		return "JoinTIPO add MetadataMerge (ITimeInterval)";
+		return "ChangeCorrelatePO add MetadataMerge (ITimeInterval)";
 	}
 
 	@Override
@@ -77,7 +70,7 @@ public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<Jo
 
 	@Override
 	public Class<?> getConditionClass() {
-		return JoinTIPO.class;
+		return ChangeCorrelatePO.class;
 	}
 
 }

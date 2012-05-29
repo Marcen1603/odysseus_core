@@ -19,7 +19,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.interval.transform.join.TJoinAORule;
 import de.uniol.inf.is.odysseus.interval.transform.join.TJoinTIPOAddMetadataMergeRule;
-import de.uniol.inf.is.odysseus.interval.transform.join.TJoinTIPOSetMetadataMerge;
 import de.uniol.inf.is.odysseus.interval.transform.join.TLeftJoinAORule;
 import de.uniol.inf.is.odysseus.interval.transform.join.TLeftJoinTIPOAddMetadataMergeRule;
 import de.uniol.inf.is.odysseus.interval.transform.window.TSlidingAdvanceTimeWindowTIPORule;
@@ -43,8 +42,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSelectAORule());
 		
 		rules.add(new TJoinAORule());
-		rules.add(new TJoinTIPOAddMetadataMergeRule());
-		rules.add(new TJoinTIPOSetMetadataMerge());
+		rules.add(new TJoinTIPOAddMetadataMergeRule());		
 		
 		rules.add(new TSlidingAdvanceTimeWindowTIPORule());
 		rules.add(new TSlidingElementWindowTIPORule());
@@ -58,6 +56,9 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TLeftJoinTIPOAddMetadataMergeRule());
 		
 		rules.add(new TPunctuationAORule());
+		
+		rules.add(new TChangeCorrelateAORule());
+		rules.add(new TChangeCorrelateAddMetadataMergeRule());
 			
 		return rules;
 	}

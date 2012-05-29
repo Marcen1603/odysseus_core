@@ -12,34 +12,34 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.relational_interval.transform;
+package de.uniol.inf.is.odysseus.latency.transform;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.intervalapproach.ChangeCorrelatePO;
+import de.uniol.inf.is.odysseus.latency.LatencyMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
+public class TChangeCorrelateLatencyRule extends AbstractTransformationRule<ChangeCorrelatePO<?,?>> {
 
 	@Override
-	public int getPriority() {	
+	public int getPriority() {
 		return 0;
 	}
-
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) {
-		joinPO.setDataMerge(new RelationalMergeFunction<ITimeInterval>(joinPO.getOutputSchema().size()));
-		update(joinPO);		
+	public void execute(ChangeCorrelatePO<?, ?> ccPO, TransformationConfiguration config) {
+		((CombinedMergeFunction)ccPO.getMetadataMerge()).add(new LatencyMergeFunction());		
 	}
 
 	@Override
-	public boolean isExecutable(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataType().equals("relational")){
-			if(operator.getDataMerge()==null){
+	public boolean isExecutable(ChangeCorrelatePO<?, ?> ccPO, TransformationConfiguration config) {
+		if(ccPO.getMetadataMerge() instanceof CombinedMergeFunction){
+			if(config.getMetaTypes().contains(ILatency.class.getCanonicalName())){
 				return true;
 			}
 		}
@@ -48,8 +48,9 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 
 	@Override
 	public String getName() {
-		return"Insert DataMergeFunction JoinTIPO (Relational)";
+		return  "ChangeCorrelatePO add MetadataMerge (ILatency)";
 	}
+	
 	
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
@@ -58,7 +59,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	
 	@Override
 	public Class<?> getConditionClass() {	
-		return JoinTIPO.class;
+		return ChangeCorrelatePO.class;
 	}
-
+	
 }
