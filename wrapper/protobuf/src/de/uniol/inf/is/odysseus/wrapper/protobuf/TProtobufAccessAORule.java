@@ -29,7 +29,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 		String accessPOName = operator.getSourcename();
 		ChannelHandlerReceiverPO<?, ?> accessPO = null;
 
-		SocketAddress socketAddress = new InetSocketAddress("localhost",
+		SocketAddress socketAddress = new InetSocketAddress("0.0.0.0",
 				operator.getPort());
 		GeneratedMessage msg = ProtobufTypeRegistry.getMessageType(operator.getOptionsMap().get("type"));
 		if (msg == null){
