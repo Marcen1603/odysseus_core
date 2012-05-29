@@ -48,10 +48,10 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	public ChangeCorrelatePO(IPredicate<R> leftHighPredicate, IPredicate<R> leftLowPredicate, IPredicate<R> rightHighPredicate, IPredicate<R> rightLowPredicate,
 			IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R, R> outputTransferFunction) {
 		super();
-		this.leftHighPredicate = leftHighPredicate;
-		this.leftLowPredicate = leftLowPredicate;
-		this.rightHighPredicate = rightHighPredicate;
-		this.rightLowPredicate = rightLowPredicate;
+		this.leftHighPredicate = leftHighPredicate.clone();
+		this.leftLowPredicate = leftLowPredicate.clone();
+		this.rightHighPredicate = rightHighPredicate.clone();
+		this.rightLowPredicate = rightLowPredicate.clone();
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferArea = outputTransferFunction;
 	}

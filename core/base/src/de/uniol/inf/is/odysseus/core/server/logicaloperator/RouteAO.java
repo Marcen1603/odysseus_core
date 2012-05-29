@@ -14,8 +14,6 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -27,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 public class RouteAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L;
-	List<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
 	
 	public RouteAO(){
 		super();
@@ -35,51 +32,17 @@ public class RouteAO extends UnaryLogicalOp {
 	
 	public RouteAO(RouteAO routeAO){
 		super(routeAO);
-		predicates = new ArrayList<IPredicate<?>>(routeAO.predicates);
 	}
 
-	public List<IPredicate<?>> getPredicates() {
-		return Collections.unmodifiableList(predicates);
-	}
 
 	@Parameter(type=PredicateParameter.class, isList=true)
 	public void setPredicates(List<IPredicate<?>> predicates) {
-		this.predicates = new ArrayList<IPredicate<?>>(predicates);
+		super.setPredicates(predicates);
 	}
 	
-	public void addPredicate(IPredicate<?> predicate) {
-		this.predicates.add(predicate);
-	}
-
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RouteAO(this);
 	}
-
-//	@Override
-//	public int hashCode() {
-//		final int prime = 31;
-//		int result = super.hashCode();
-//		result = prime * result
-//				+ ((predicates == null) ? 0 : predicates.hashCode());
-//		return result;
-//	}
-
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (!super.equals(obj))
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		routeAO other = (routeAO) obj;
-//		if (predicates == null) {
-//			if (other.predicates != null)
-//				return false;
-//		} else if (!predicates.equals(other.predicates))
-//			return false;
-//		return true;
-//	}
 	
 }

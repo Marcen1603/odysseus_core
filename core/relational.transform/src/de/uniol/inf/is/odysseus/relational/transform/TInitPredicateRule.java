@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -31,14 +32,16 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	@Override
 	public void execute(ILogicalOperator operator,
 			TransformationConfiguration config) {
-		operator.getPredicate().init();
-		ComplexPredicateHelper.visitPredicates(operator.getPredicate(), new InitPredicateFunctor(operator));
+		for(IPredicate<?> pred: operator.getPredicates()){
+			pred.init();
+			ComplexPredicateHelper.visitPredicates(pred, new InitPredicateFunctor(operator));
+		}
 	}
 
 	@Override
 	public boolean isExecutable(ILogicalOperator operator,
 			TransformationConfiguration config) {
-		return (operator.getPredicate()!=null);
+		return (operator.providesPredicates());
 	}
 
 	@Override

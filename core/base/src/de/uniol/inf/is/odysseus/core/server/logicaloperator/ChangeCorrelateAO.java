@@ -24,16 +24,20 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 
 /**
  * 
- * @author Dennis Geesen
+ * @author Dennis Geesen, Marco Grawunder
  * Created at: 29.05.2012
  */
 @LogicalOperator(maxInputPorts=2, minInputPorts=2, name="CHANGECORRELATE")
 public class ChangeCorrelateAO extends BinaryLogicalOp{
 
-	private IPredicate<?> leftHighPredicate;	
-	private IPredicate<?> leftLowPredicate;
-	private IPredicate<?> rightHighPredicate;
-	private IPredicate<?> rightLowPredicate;
+	// Predicates need to be stored in AbstractLogical Operator
+	// remember positions
+	int counter = 0;
+	private int leftHighPredicate;	
+	private int leftLowPredicate;
+	private int rightHighPredicate;
+	private int rightLowPredicate;
+
 	
 	private static final long serialVersionUID = 2341933392781838294L;
 
@@ -44,16 +48,16 @@ public class ChangeCorrelateAO extends BinaryLogicalOp{
 	
 	public ChangeCorrelateAO(ChangeCorrelateAO changeCorrelateAO) {
 		super(changeCorrelateAO);
-		this.leftHighPredicate = changeCorrelateAO.leftHighPredicate.clone();
-		this.leftLowPredicate = changeCorrelateAO.leftLowPredicate.clone();
-		this.rightHighPredicate = changeCorrelateAO.rightHighPredicate.clone();
-		this.rightLowPredicate = changeCorrelateAO.rightLowPredicate.clone();
+		this.leftHighPredicate = changeCorrelateAO.leftHighPredicate;
+		this.leftLowPredicate = changeCorrelateAO.leftLowPredicate;
+		this.rightHighPredicate = changeCorrelateAO.rightHighPredicate;
+		this.rightLowPredicate = changeCorrelateAO.rightLowPredicate;
 	}
 
 
 
 	public IPredicate<?> getLeftHighPredicate() {
-		return leftHighPredicate;
+		return getPredicates().get(leftHighPredicate);
 	}
 
 
@@ -70,47 +74,51 @@ public class ChangeCorrelateAO extends BinaryLogicalOp{
 
 	@Parameter(type=PredicateParameter.class, name="lefthighpredicate")
 	public void setLeftHighPredicate(IPredicate<?> leftHighPredicate) {
-		this.leftHighPredicate = leftHighPredicate;
+		this.leftHighPredicate = counter++;
+		this.addPredicate(leftHighPredicate);
 	}
 
 
 	public IPredicate<?> getLeftLowPredicate() {
-		return leftLowPredicate;
+		return getPredicates().get(leftLowPredicate);
 	}
 
 
 
 	@Parameter(type=PredicateParameter.class, name="leftlowpredicate")
 	public void setLeftLowPredicate(IPredicate<?> leftLowPredicate) {
-		this.leftLowPredicate = leftLowPredicate;
+		this.leftLowPredicate = counter++;
+		this.addPredicate(leftLowPredicate);
 	}
 
 
 
 
 	public IPredicate<?> getRightHighPredicate() {
-		return rightHighPredicate;
+		return getPredicates().get(rightHighPredicate);
 	}
 
 
 
 	@Parameter(type=PredicateParameter.class, name="righthighpredicate")
 	public void setRightHighPredicate(IPredicate<?> rightHighPredicate) {
-		this.rightHighPredicate = rightHighPredicate;
+		this.rightHighPredicate = counter++;
+		this.addPredicate(rightHighPredicate);
 	}
 
 
 
 
 	public IPredicate<?> getRightLowPredicate() {
-		return rightLowPredicate;
+		return getPredicates().get(rightLowPredicate);
 	}
 
 
 
 	@Parameter(type=PredicateParameter.class, name="rightlowpredicate")
 	public void setRightLowPredicate(IPredicate<?> rightLowPredicate) {
-		this.rightLowPredicate = rightLowPredicate;
+		this.rightLowPredicate = counter++;
+		this.addPredicate(rightLowPredicate);
 	}
 
 

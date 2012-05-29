@@ -16,6 +16,7 @@ package de.uniol.inf.is.odysseus.core.logicaloperator;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
@@ -102,6 +103,31 @@ public interface ILogicalOperator extends IOwnedOperator,
 	public void setPredicate(IPredicate<?> predicate);
 
 	/**
+	 * Set predicates if operator has more than one predicate
+	 * 
+	 * @param predicates
+	 */
+	void setPredicates(List<IPredicate<?>> predicates);
+	
+	/**
+	 * Adds a new predicate to the list of existing predicates
+	 * @param predicate
+	 */
+	void addPredicate(IPredicate<?> predicate);
+
+	/**
+	 * Get list of all predicates
+	 * @return
+	 */
+	List<IPredicate<?>> getPredicates();
+	
+	/**
+	 * Return true if this operator provides predicates
+	 * @return
+	 */
+	boolean providesPredicates();
+	
+	/**
 	 * Find the subscription where the logical operator is the source
 	 * @param logicalOperator The operator that should be found
 	 * @return a collection of subscriptions
@@ -176,5 +202,7 @@ public interface ILogicalOperator extends IOwnedOperator,
 	 * @return The description of the logical operator
 	 */
 	public String getDoc();
+
+
 
 }

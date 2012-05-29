@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,12 +70,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private String name = null;
 
-	private IPredicate<?> predicate = null;
+	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
-		predicate = (op.predicate == null) ? null : op.predicate.clone();
+		for (IPredicate<?> pred : op.predicates) {
+			this.predicates.add(pred.clone());
+		}
 		setName(op.getName());
 		initOwner();
 		owners.addAll(op.owners);
@@ -104,7 +107,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public IPredicate<?> getPredicate() {
-		return predicate;
+		if (predicates.size() > 0) {
+			return predicates.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	/*
@@ -116,9 +123,34 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
-		this.predicate = predicate;
+		if (predicates.size() > 0){
+			predicates.set(0, predicate);
+		}else{
+			predicates.add(predicate);
+		}
 	}
 
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates){
+		predicates.clear();
+		predicates.addAll(predicates);
+	}
+	
+	@Override
+	public void addPredicate(IPredicate<?> predicate) {
+		predicates.add(predicate);
+	}
+	
+	@Override
+	public List<IPredicate<?>> getPredicates() {
+		return predicates;
+	}
+	
+	@Override
+	public boolean providesPredicates() {
+		return !predicates.isEmpty();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -166,10 +198,9 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return getInputSchema(0);
 	}
 
-
 	@Override
 	final public void setOutputSchema(int pos, SDFSchema outputSchema) {
-		if (outputSchema == null){
+		if (outputSchema == null) {
 			this.outputSchema.remove(pos);
 		}
 		this.outputSchema.put(pos, outputSchema);
@@ -223,7 +254,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
+	public void setPhysSubscriptionTo(
+			Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
 		this.physInputOperators.put(subscription.getSinkInPort(),
 				subscription.getTarget());
@@ -232,8 +264,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Override
 	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op, sinkInPort,
-				sourceOutPort, schema));
+		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op,
+				sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
@@ -445,7 +477,8 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	@Override
 	final public Collection<LogicalSubscription> getSubscriptions() {
-		// TODO: Unterscheiden, ob mit der Liste �nderungen durchgef�hrt werden
+		// TODO: Unterscheiden, ob mit der Liste �nderungen durchgef�hrt
+		// werden
 		// sollen, oder ob nur
 		// gelesen werden soll.
 		return new Vector<LogicalSubscription>(this.subscriptions);
@@ -642,10 +675,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		// }
 		// }
 	}
-	
+
 	@Override
 	public String getDoc() {
-		return String.format("No documentation available for the logical operator %s",
+		return String.format(
+				"No documentation available for the logical operator %s",
 				getClass().getCanonicalName());
 	}
 }
