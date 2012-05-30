@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 public class RelationalPredicate extends AbstractPredicate<Tuple<?>>
 		implements IRelationalPredicate {
 
-	Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
+//	Logger logger = LoggerFactory.getLogger(RelationalPredicate.class);
 	
 	private static final long serialVersionUID = 1222104352250883947L;
 
@@ -70,7 +70,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>>
 
 	@Override
 	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
-		logger.debug("Init ("+this+"): Left "+leftSchema+" Right "+rightSchema);
+//		logger.debug("Init ("+this+"): Left "+leftSchema+" Right "+rightSchema);
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 
@@ -133,7 +133,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>>
 				: predicate.expression.clone();
 		this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(
 				predicate.replacementMap);
-		logger.debug("Cloned "+this+ " "+attributePositions);
+//		logger.debug("Cloned "+this+ " "+attributePositions);
 	}
 
 	@Override

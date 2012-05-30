@@ -14,17 +14,28 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 import de.uniol.inf.is.odysseus.scheduler.priorityscheduler.prioritystrategy.SimpleDynamicPriorityPlanScheduling;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
 
 public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
 
 	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		return new SimpleThreadScheduler(schedulingFactoring, new SimpleDynamicPriorityPlanScheduling(0));
+		
+		int executorThreadsCount = (int) OdysseusConfiguration
+				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
+		IPartialPlanScheduling[] scheduling = new SimpleDynamicPriorityPlanScheduling[executorThreadsCount];
+		for(int i=0;i<scheduling.length;i++){
+			scheduling[i] = new SimpleDynamicPriorityPlanScheduling(0);
+		}
+
+		
+		return new SimpleThreadScheduler(schedulingFactoring, scheduling);
 	}
 
 }

@@ -46,17 +46,14 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
  * @author Wolf Bauer, Marco Grawunder, Thomas Vogelgesang
  * 
  */
-public class SimpleThreadScheduler extends AbstractScheduler
-		implements UncaughtExceptionHandler, IPlanModificationListener {
+public class SimpleThreadScheduler extends AbstractScheduler implements
+		UncaughtExceptionHandler, IPlanModificationListener {
 
 	private volatile int trainSize = (int) OdysseusConfiguration.getLong(
 			"scheduler_trainSize", 1);
-	private volatile int executorThreadsCount = (int) OdysseusConfiguration
-			.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
 
-	Logger logger = LoggerFactory
-			.getLogger(SimpleThreadScheduler.class);
-	final IPartialPlanScheduling planScheduling;
+	Logger logger = LoggerFactory.getLogger(SimpleThreadScheduler.class);
+	final IPartialPlanScheduling[] planScheduling;
 
 	/**
 	 * Creates a new SingleThreadScheduler.
@@ -66,14 +63,13 @@ public class SimpleThreadScheduler extends AbstractScheduler
 	 *            partial plan which should be scheduled.
 	 * @throws IOException
 	 */
-	public SimpleThreadScheduler(
-			ISchedulingFactory schedulingStrategieFactory,
-			IPartialPlanScheduling planScheduling) {
+	public SimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory,
+			IPartialPlanScheduling[] planScheduling) {
 		super(schedulingStrategieFactory);
 		this.planScheduling = planScheduling;
-		schedulingExecutor = new SchedulingExecutor[executorThreadsCount];
-		for (int i = 0; i < executorThreadsCount; i++) {
-			schedulingExecutor[i] = new SchedulingExecutor(planScheduling,
+		schedulingExecutor = new SchedulingExecutor[planScheduling.length];
+		for (int i = 0; i < planScheduling.length; i++) {
+			schedulingExecutor[i] = new SchedulingExecutor(planScheduling[i],
 					timeSlicePerStrategy, this, trainSize);
 			schedulingExecutor[i].setUncaughtExceptionHandler(this);
 			schedulingExecutor[i].setPriority(Thread.NORM_PRIORITY);
@@ -104,10 +100,11 @@ public class SimpleThreadScheduler extends AbstractScheduler
 			source.start();
 		}
 		// Start Executor Thread to execute plans
-		for (int i = 0; i < executorThreadsCount; i++) {
+		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].start();
 		}
-		logger.debug("Starting Scheduler with "+executorThreadsCount+" thread(s).");
+		logger.debug("Starting Scheduler with " + schedulingExecutor.length
+				+ " thread(s).");
 	}
 
 	/*
@@ -125,7 +122,7 @@ public class SimpleThreadScheduler extends AbstractScheduler
 		for (Thread sourceThread : sourceThreads) {
 			sourceThread.interrupt();
 		}
-		for (int i = 0; i < executorThreadsCount; i++) {
+		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].interrupt();
 		}
 		super.stopScheduling();
@@ -143,25 +140,29 @@ public class SimpleThreadScheduler extends AbstractScheduler
 			List<IPartialPlan> partialPlans) {
 		logger.debug("Setting new Plans to schedule :" + partialPlans);
 
-		for (int i=0;i<executorThreadsCount;i++){
+		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].pause();
+			this.planScheduling[i].clear();
 		}
-
-		this.planScheduling.clear();
 
 		if (partialPlans != null) {
 			// Create for each partial plan an own scheduling strategy.
 			// These strategies are used for scheduling partial plans.
+			// Round Robin assigment to scheduler
+			int counter = 0;
 			for (IPartialPlan partialPlan : partialPlans) {
 				logger.debug("setPartialPlans create new Parts with Scheduling "
-						+ schedulingFactory.getName());
+						+ schedulingFactory.getName()+" assigned to thread "+counter);
 				final IScheduling scheduling = schedulingFactory.create(
 						partialPlan, partialPlan.getCurrentPriority());
-				planScheduling.addPlan(scheduling);
+				planScheduling[counter++].addPlan(scheduling);
+				if (counter == schedulingExecutor.length){
+					counter = 0;
+				}
 			}
 		}
 
-		for (int i=0;i<executorThreadsCount;i++){
+		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].endPause();
 		}
 
@@ -215,7 +216,7 @@ public class SimpleThreadScheduler extends AbstractScheduler
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (!this.schedulingExecutor.equals(t)) {
-			for (int i=0;i<executorThreadsCount;i++){
+			for (int i = 0; i < schedulingExecutor.length; i++) {
 				this.schedulingExecutor[i].interrupt();
 			}
 		}
@@ -238,10 +239,10 @@ public class SimpleThreadScheduler extends AbstractScheduler
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if (this.planScheduling instanceof IPlanModificationListener) {
-			((IPlanModificationListener) this.planScheduling)
-					.planModificationEvent(eventArgs);
-		}
+		// if (this.planScheduling instanceof IPlanModificationListener) {
+		// ((IPlanModificationListener) this.planScheduling)
+		// .planModificationEvent(eventArgs);
+		// }
 	}
 
 }

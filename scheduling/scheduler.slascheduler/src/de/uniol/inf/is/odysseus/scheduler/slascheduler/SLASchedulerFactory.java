@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
+import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPartialPlanScheduling;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadScheduler;
 
 /**
@@ -75,10 +76,16 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 */
 	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring) {
-		return new SimpleThreadScheduler(schedulingFactoring,
-				new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
-						decaySF, querySharing, querySharingCostModelName, 
-						costFunctionName));
+		int executorThreadsCount = (int) OdysseusConfiguration
+				.getLong("scheduler_simpleThreadScheduler_executorThreadsCount", 1);
+		IPartialPlanScheduling[] scheduling = new SLAPartialPlanScheduling[executorThreadsCount];
+		for(int i=0;i<scheduling.length;i++){
+			scheduling[i] = new SLAPartialPlanScheduling(starvationFreedomFuncName, prio,
+					decaySF, querySharing, querySharingCostModelName, 
+					costFunctionName);
+		}
+		
+		return new SimpleThreadScheduler(schedulingFactoring,scheduling);
 	}
 
 }
