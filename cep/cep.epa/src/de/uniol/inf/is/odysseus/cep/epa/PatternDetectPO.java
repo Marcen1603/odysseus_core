@@ -663,6 +663,7 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 
 	@Override
 	public synchronized void processPunctuation(PointInTime timestamp, int port) {
+		inputStreamSyncArea.newHeartbeat(timestamp, port);
 		outputTransferArea.newHeartbeat(timestamp, port);
 	}
 

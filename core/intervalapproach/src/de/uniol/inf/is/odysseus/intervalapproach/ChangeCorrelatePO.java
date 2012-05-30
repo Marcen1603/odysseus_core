@@ -124,6 +124,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
+		inputStreamSyncArea.newHeartbeat(timestamp, port);
 		outputTransferArea.newHeartbeat(timestamp, port);
 	}
 
