@@ -173,12 +173,12 @@ public class RepairTool {
 		List<String[]> tuples = next();
 		while (tuples != null) {
 			for (String[] tuple : tuples) {
-				if (tuple[12].equalsIgnoreCase("1") || tuple[13].equalsIgnoreCase("1") || tuple[14].equalsIgnoreCase("1") || tuple[15].equalsIgnoreCase("1") || tuple[16].equalsIgnoreCase("1")
-						|| tuple[17].equalsIgnoreCase("1")) {
+				if (tuple[21].equalsIgnoreCase("1") || tuple[22].equalsIgnoreCase("1") || tuple[23].equalsIgnoreCase("1")) {
+					System.out.println("Counter: "+counter);
 					System.err.println(printTuple(tuple));
 				}
 				// System.out.println(printTuple(tuple));
-				out.write(printTuple(tuple) + System.getProperty("line.separator"));
+				//out.write(printTuple(tuple) + System.getProperty("line.separator"));
 			}
 			tuples = next();
 		}
@@ -196,7 +196,7 @@ public class RepairTool {
 			sep = "\t";
 		}
 		// System.getProperty("line.separator");
-		return sb.toString();
+		return sb.toString().trim();
 	}
 
 	public void init() {

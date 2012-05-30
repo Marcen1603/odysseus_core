@@ -41,7 +41,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		Activator.context = context;
 		// run();
-		// (new RepairTool()).go();
+		//(new RepairTool()).go();
 
 	}
 
