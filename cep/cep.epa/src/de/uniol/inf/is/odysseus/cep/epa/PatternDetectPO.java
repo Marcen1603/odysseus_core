@@ -243,6 +243,11 @@ public class PatternDetectPO<R extends IMetaAttributeContainer<? extends ITimeIn
 		}
 	}
 
+	@Override
+	public void process_newHeartbeat(PointInTime pointInTime) {
+		sendPunctuation(pointInTime);
+	}
+	
 	public void setHeartbeatGenerationStrategy(
 			IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy) {
 		this.heartbeatGenerationStrategy = heartbeatGenerationStrategy;
