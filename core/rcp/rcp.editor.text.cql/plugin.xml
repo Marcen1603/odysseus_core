@@ -341,6 +341,9 @@
          </keyword>
          <keyword
                name="STORE">
+         </keyword>
+         <keyword
+               name="BOOLEAN">
          </keyword>         
       </group>
    </extension>
