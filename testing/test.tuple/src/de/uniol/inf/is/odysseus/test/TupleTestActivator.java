@@ -7,6 +7,8 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Activator 
@@ -16,12 +18,18 @@ import org.osgi.framework.BundleContext;
  */
 public class TupleTestActivator implements BundleActivator {
 
-	public static BundleContext context;
+	private static final Logger LOG = LoggerFactory.getLogger(TupleTestActivator.class);
 
+	
+	public static BundleContext context;
+	public static String bundlePath;
+	
 	@Override
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
-		new TupleTestComponent().startTesting(new String[]{});
+		LOG.info("Start Tuple Test, Testfile path: " + getBundlePath());
+		this.bundlePath = getBundlePath().getAbsolutePath();
+//		new TupleTestComponent().startTesting(new String[]{});
 	}
 
 	@Override
@@ -30,6 +38,7 @@ public class TupleTestActivator implements BundleActivator {
 	}
 
 	public static File getBundlePath() {
+		
 		URL fileUrl = TupleTestActivator.context.getBundle().getResource("tests");
 		try {
 			return new File(FileLocator.toFileURL(fileUrl).getPath());

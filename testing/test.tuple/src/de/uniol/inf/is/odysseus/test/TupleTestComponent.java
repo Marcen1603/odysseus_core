@@ -23,11 +23,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
+import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 /**
  * Test Component for Query-Tests with arbitrary Tuples
@@ -35,20 +34,24 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
  * @author Kai Pancratz, Alexander Funk
  *
  */
-public class TupleTestComponent implements ITestComponent {
+public class TupleTestComponent {
 
 	private static Logger LOG = LoggerFactory.getLogger(TupleTestComponent.class);
-//
+
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
-//
+	private ISessionManagement sessionManagement;	
+	
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private String errorText;
-//
+
 	private BufferedWriter out;
 	private long startTime;
 
 	public void activate(ComponentContext context) {
+//		String bla ="";
+		startTesting();
+		
 		
 	}
 
@@ -58,16 +61,27 @@ public class TupleTestComponent implements ITestComponent {
 	}
 
 	public void bindScriptParser(IOdysseusScriptParser scriptParser) {
-		parser = scriptParser;
+		this.parser = scriptParser;
+	}
+	
+	public void bindSessionManagement(ISessionManagement sessionManagement){
+		this.sessionManagement = sessionManagement;
+	}
+	
+	public void unbindExecutor(IExecutor executor){
+		
 	}
 
-	@Override
-	public Object startTesting(String[] args) {
-		System.out.println("----------------------------------------------------------------------------> Start Testing");
-		LOG.debug("----------------------------------------------------------------------------> Start Testing");
+	public void unbindScriptParser(IOdysseusScriptParser scriptParser){
 		
-		ISessionManagement bla = UserManagement.getSessionmanagement();
-		ISession session = bla.login("System", "manager".getBytes());
+	}
+	
+	public void unbindSessionManagement(ISessionManagement sessionManagement){
+		
+	}
+	
+	public void startTesting() {
+		ISession session = sessionManagement.login("System", "manager".getBytes());
 
 		Map<String, List<File>> querys = readQueries();
 		
@@ -83,8 +97,7 @@ public class TupleTestComponent implements ITestComponent {
 			for(File qry : groupQuery.getValue()){
 				try {
 					test(qry, parser, session);
-					
-					executor.removeAllQueries(session);
+					//executor.removeAllQueries(session);
 					
 					checkForErrors(errorText);
 					LOG.debug("Query {} successfull", qry.getName());
@@ -101,47 +114,9 @@ public class TupleTestComponent implements ITestComponent {
 			System.out.println("Finished tests from group: " + groupQuery.getKey());
 		}
 		
-		
-		
-//		out = createWriter(args[2]);
-
-//		Map<String, File> queries = Maps.newHashMap();
-//		Map<String, File> results = Maps.newHashMap();
-//		ImmutableList<File> fileArray = determineQueryFiles(args[2]);
-
-//		determineQueriesAndResults( fileArray, queries, results );
-      
-		
-
-		
-//		for (Entry<String, File> query : queries.entrySet()) {
-//			
-//			final String queryKey = query.getKey();
-//			final File queryFile = query.getValue();
-//			processingDone = false;
-//			
-//			try {
-//				test(queryKey, queryFile, results.get(queryKey), parser, session);
-//				waitProcessing();
-//				
-//				executor.removeAllQueries(session);
-//				
-//				checkForErrors(errorText);
-//				LOG.debug("Query {} successfull", queryKey);
-//
-//			} catch (OdysseusScriptException e) {
-//				LOG.error("Query {} failed! ", queryKey, e);
-//				tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
-//			} catch( IOException e ) {
-//                LOG.error("Query {} failed! ", queryKey, e);
-//                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
-//			}
-//		}
 		tryClose(out);
 		tryStopExecutor(executor);
 		LOG.error("Testing finished");
-		
-		return "Success";
 	}
 
 	/**
@@ -245,12 +220,18 @@ public class TupleTestComponent implements ITestComponent {
 		String text = "Testing Query " + query.getName() + " from file " + query;
 		LOG.debug(text);
 		tryWrite(out, text);
+				
+		List<PreParserStatement> statements = parser.parseScript(getQueryString(query), user);
 		
 		startTime = System.nanoTime();
-//		parser.execute(getQueryString(query), user, null);
-//		parser.parseScript(getQueryString(query), user);
+		parser.execute(statements, user, null);
 		
-		parser.parseAndExecute(getQueryString(query), user, null);
+		
+		// TODO
+		executor.startQuery(0, user);
+		executor.removeQuery(0, user);
+		
+		//parser.parseAndExecute(getQueryString(query), user, null);
 	}
 
 	private static String getQueryString(File query) throws IOException {
@@ -262,34 +243,4 @@ public class TupleTestComponent implements ITestComponent {
 		}
 		return queryString.toString();
 	}
-
-//	@Override
-//	public synchronized void processingDone() {
-//	    long elapsedTimeMillis = ( System.nanoTime() - startTime ) / 1000000;
-//	    
-//		LOG.debug("Query processing done. Duration = " + elapsedTimeMillis + " ms");
-//		tryWrite(out, " ok duration=" + elapsedTimeMillis + NEWLINE);
-//
-//		processingDone = true;
-//		errorText = null;
-//		
-//		notifyAll();
-//	}
-//
-//	@Override
-//	public synchronized void processingError(String line, String input) {
-//		String text = "Query processing created error " + line + " " + input;
-//		LOG.error(text);
-//		tryWrite(out, text);
-//
-//		processingDone = true;
-//		errorText = "Wrong Result input '" + input + "'. Expected: '" + line + "'";
-//		notifyAll();
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return NEXMARK_TESTS_NAME;
-//	}
-
 }

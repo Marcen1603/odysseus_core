@@ -50,8 +50,9 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 			try {
 				LOG.debug("Reading Compare File " + compareFile);
 				
-				URL fileUrl = TupleTestActivator.context.getBundle().getResource(compareFile);
-				File f = new File(FileLocator.toFileURL(fileUrl).getPath());
+//				URL fileUrl = TupleTestActivator.context.getBundle().getResource(compareFile);
+//				File f = new File(FileLocator.toFileURL(fileUrl).getPath());
+				File f = new File(TupleTestActivator.bundlePath + File.separator + compareFile);
 				this.qry = f.getName();
 				BufferedReader reader = new BufferedReader(new FileReader(f));
 				String line = null;

@@ -9,8 +9,10 @@
 ///# Aendert also alle x,y-Paare aus Geometrie um dies zu erreichen.
 
 ///# 1. fest definiertes Geometry-Objekt und angle
+
 GRANT READ ON test:stream TO Public;
-ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, angle DOUBLE) FILE 'salsa/data/RotateViewPoint_Geometry.csv'
+DROP STREAM test:stream;
+ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, angle DOUBLE) FILE 'tests/salsa/data/RotateViewPoint_Geometry.csv'
 
 ///# 2. fest definierte Werte als Parameter fuer RotateViewPoint benutzen und diese ausfuehren
 ///map({expressions = ['RotateViewPoint(scan, 43.0)']}, globalLms1Punctuation)
@@ -23,6 +25,9 @@ ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, a
  
 #PARSER PQL
 #TRANSCFG Standard
-#RUNQUERY
+#ADDQUERY
 RotateViewPoint = MAP({expressions = ['RotateViewPoint(points, angle)']}, test:stream)
-TESTSINK{fileName = 'salsa/RotateViewPoint.csv', RotateViewPoint} 
+test = TUPLECOMPARESINK({fileName= 'salsa/RotateViewPoint.csv'}, RotateViewPoint )
+
+///Spatial = project({attributes = ['points']}, test:stream) 
+///sink = SOCKETSINK({SINKNAME='TEST', SINKPORT=9999, SINKTYPE='bytebuffer'}, Spatial)

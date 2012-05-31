@@ -19,7 +19,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.script.parser,
- de.uniol.inf.is.odysseus.test.runner,
+ de.uniol.inf.is.odysseus.test.runner;resolution:=optional,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
  org.eclipse.core.runtime;version="3.4.0",
@@ -27,7 +27,7 @@ Import-Package: com.google.common.base,
  org.osgi.service.component;version="1.1.0",
  org.slf4j
 Bundle-Activator: de.uniol.inf.is.odysseus.test.TupleTestActivator
-Service-Component: OSGI-INF/TestComponent.xml, OSGI-INF/TransformRuleProviderService.xml, OSGI-INF/ScriptParser.xml, OSGI-INF/Executor.xml
+Service-Component: OSGI-INF/TupleTestComponent.xml, OSGI-INF/TransformRuleProviderService.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.google.guava;bundle-version="1.0.0"
