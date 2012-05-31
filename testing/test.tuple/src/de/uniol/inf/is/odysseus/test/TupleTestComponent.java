@@ -49,10 +49,7 @@ public class TupleTestComponent {
 	private long startTime;
 
 	public void activate(ComponentContext context) {
-//		String bla ="";
-		startTesting();
-		
-		
+		startTesting();		
 	}
 
 	public void bindExecutor(IExecutor executor) {
@@ -92,7 +89,7 @@ public class TupleTestComponent {
 		LOG.debug("Processing queries ...");
 		
 		for(Entry<String, List<File>> groupQuery : querys.entrySet()){
-			System.out.println("Starting tests from group: " + groupQuery.getKey());
+			LOG.debug("Starting tests from group: {}", groupQuery.getKey());
 			
 			for(File qry : groupQuery.getValue()){
 				try {
@@ -100,7 +97,7 @@ public class TupleTestComponent {
 					//executor.removeAllQueries(session);
 					
 					checkForErrors(errorText);
-					LOG.debug("Query {} successfull", qry.getName());
+					LOG.debug("Query {} finished", qry.getName());
 
 				} catch (OdysseusScriptException e) {
 					LOG.error("Query {} failed! ", qry.getName(), e);
@@ -111,7 +108,7 @@ public class TupleTestComponent {
 				}
 			}
 			
-			System.out.println("Finished tests from group: " + groupQuery.getKey());
+			LOG.debug("Finished tests from group: {}", groupQuery.getKey());
 		}
 		
 		tryClose(out);
@@ -183,7 +180,7 @@ public class TupleTestComponent {
 
 	private static void tryStartExecutor(IServerExecutor executor) {
 		try {
-			LOG.debug("Starting executor");
+			//LOG.debug("Starting executor");
 			executor.startExecution();
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
@@ -192,7 +189,7 @@ public class TupleTestComponent {
 
 	private static void tryStopExecutor(IServerExecutor executor) {
 		try {
-			LOG.debug("Stopping executor");
+//			LOG.debug("Stopping executor");
 			executor.stopExecution();
 		} catch (PlanManagementException e) {
 			LOG.error("Exception during stopping executor", e);
@@ -221,17 +218,23 @@ public class TupleTestComponent {
 		LOG.debug(text);
 		tryWrite(out, text);
 				
-		List<PreParserStatement> statements = parser.parseScript(getQueryString(query), user);
+		String path = "#DEFINE PATH " + TupleTestActivator.bundlePath + " \n";
+		
+		List<PreParserStatement> statements = parser.parseScript(path + getQueryString(query), user);
 		
 		startTime = System.nanoTime();
 		parser.execute(statements, user, null);
 		
 		
-		// TODO
-		executor.startQuery(0, user);
-		executor.removeQuery(0, user);
+		// TODO		
+//		executor.startQuery(0, user);
+//		executor.removeQuery(0, user);
 		
-		//parser.parseAndExecute(getQueryString(query), user, null);
+//		parser.parseAndExecute(path + getQueryString(query), user, null);
+		LOG.debug("Start Query");
+		executor.startQuery(0, user);
+		LOG.debug("Stop Query");
+		executor.removeQuery(0, user);
 	}
 
 	private static String getQueryString(File query) throws IOException {

@@ -28,7 +28,7 @@ public class TupleTestActivator implements BundleActivator {
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
 		LOG.info("Start Tuple Test, Testfile path: " + getBundlePath());
-		this.bundlePath = getBundlePath().getAbsolutePath();
+		TupleTestActivator.bundlePath = getBundlePath().getAbsolutePath();
 //		new TupleTestComponent().startTesting(new String[]{});
 	}
 
@@ -43,7 +43,6 @@ public class TupleTestActivator implements BundleActivator {
 		try {
 			return new File(FileLocator.toFileURL(fileUrl).getPath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
