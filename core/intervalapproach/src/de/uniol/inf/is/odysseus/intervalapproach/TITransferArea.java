@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.PriorityQueue;
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
  * @author Jonas Jacobi, Marco Grawunder
  */
 public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInterval>, W extends IMetaAttributeContainer<? extends ITimeInterval>>
-		implements ITransferArea<R,W> {
+		implements ITransferArea<R, W> {
 
 	final protected PointInTime[] minTs;
 	protected AbstractSource<W> po;
@@ -42,7 +42,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		minTs = new PointInTime[inputPortCount];
 	}
 
-	public TITransferArea(TITransferArea<R,W> tiTransferFunction) {
+	public TITransferArea(TITransferArea<R, W> tiTransferFunction) {
 		minTs = new PointInTime[tiTransferFunction.minTs.length];
 		for (int i = 0; i < minTs.length; i++) {
 			minTs[i] = tiTransferFunction.minTs[i] != null ? tiTransferFunction.minTs[i]
@@ -79,7 +79,7 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 
 	@Override
 	public void done() {
-		while(!this.outputQueue.isEmpty()){
+		while (!this.outputQueue.isEmpty()) {
 			po.transfer(this.outputQueue.poll());
 		}
 	}
@@ -90,8 +90,8 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 	}
 
 	@Override
-	public TITransferArea<R,W> clone() {
-		return new TITransferArea<R,W>(this);
+	public TITransferArea<R, W> clone() {
+		return new TITransferArea<R, W>(this);
 	}
 
 	@Override
@@ -103,7 +103,6 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 		}
 		if (minimum != null) {
 			synchronized (this.outputQueue) {
-				boolean wasElementSent = false;
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
 				W elem = this.outputQueue.peek();
@@ -111,13 +110,10 @@ public class TITransferArea<R extends IMetaAttributeContainer<? extends ITimeInt
 						&& elem.getMetadata().getStart()
 								.beforeOrEquals(minimum)) {
 					this.outputQueue.poll();
-					wasElementSent = true;
 					po.transfer(elem);
 					elem = this.outputQueue.peek();
 				}
-				if (wasElementSent) {
-					po.sendPunctuation(minimum);
-				}
+				po.sendPunctuation(minimum);
 			}
 		}
 	}

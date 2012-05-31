@@ -14,6 +14,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+
 public interface IProcessInternal<R> {
 	public void process_internal(R event, int port);
+	public void process_newHeartbeat(PointInTime pointInTime);
 }

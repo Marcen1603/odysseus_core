@@ -1,17 +1,17 @@
 /** Copyright [2011] [The Odysseus Team]
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
@@ -35,20 +35,21 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 		implements IInputStreamSyncArea<T> {
 
 	static Logger _logger;
-	
-	static public Logger getLogger(){
-		if (_logger == null){
+
+	static public Logger getLogger() {
+		if (_logger == null) {
 			_logger = LoggerFactory.getLogger(TIInputStreamSyncArea.class);
 		}
 		return _logger;
 	}
-	
+
 	final protected PointInTime[] minTs;
 	protected IProcessInternal<T> po;
 	private PriorityQueue<IPair<T, Integer>> inputQueue = new PriorityQueue<IPair<T, Integer>>(
 			10, new Comparator<IPair<T, Integer>>() {
 				@Override
-				public int compare(IPair<T, Integer> left, IPair<T, Integer> right) {
+				public int compare(IPair<T, Integer> left,
+						IPair<T, Integer> right) {
 					return left.getE1().getMetadata()
 							.compareTo(right.getE1().getMetadata());
 				}
@@ -87,7 +88,7 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 	@Override
 	public void newElement(T object, int inPort) {
-	//	getLogger().debug("New Element "+object+" "+inPort);
+		// getLogger().debug("New Element "+object+" "+inPort);
 		inputQueue.add(new Pair<T, Integer>(object, inPort));
 		newHeartbeat(object.getMetadata().getStart(), inPort);
 	}
@@ -112,12 +113,13 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
-		if (po == null) return;
+		if (po == null)
+			return;
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minTs[inPort] = heartbeat;
 			minimum = getMinTs();
-		//	getLogger().debug("Current minimum "+minimum);
+			// getLogger().debug("Current minimum "+minimum);
 		}
 		if (minimum != null) {
 			synchronized (this.inputQueue) {
@@ -130,9 +132,10 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 					this.inputQueue.poll();
 
 					po.process_internal(elem.getE1(), elem.getE2());
-				//	getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
+					// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
 					elem = this.inputQueue.peek();
 				}
+				po.process_newHeartbeat(minimum);
 			}
 		}
 	}

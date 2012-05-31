@@ -43,7 +43,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	private IDataMergeFunction<R> dataMerge;
 	private IMetadataMergeFunction<K> metadataMerge;
 	protected IInputStreamSyncArea<R> inputStreamSyncArea;
-	protected ITransferArea<R, R> outputTransferArea;
 
 	public ChangeCorrelatePO(IPredicate<R> leftHighPredicate, IPredicate<R> leftLowPredicate, IPredicate<R> rightHighPredicate, IPredicate<R> rightLowPredicate,
 			IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R, R> outputTransferFunction) {
@@ -53,7 +52,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 		this.rightHighPredicate = rightHighPredicate.clone();
 		this.rightLowPredicate = rightLowPredicate.clone();
 		this.inputStreamSyncArea = inputStreamSyncArea;
-		this.outputTransferArea = outputTransferFunction;
 	}
 
 	public ChangeCorrelatePO(ChangeCorrelatePO<K, R> changeCorrelatePO) {
@@ -64,7 +62,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 		this.dataMerge = changeCorrelatePO.dataMerge.clone();
 		this.metadataMerge = changeCorrelatePO.metadataMerge.clone();
 		this.inputStreamSyncArea = changeCorrelatePO.inputStreamSyncArea.clone();
-		this.outputTransferArea = changeCorrelatePO.outputTransferArea.clone();
 	}
 
 	@Override
@@ -75,7 +72,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	@Override
 	protected void process_next(R object, int port) {
 		inputStreamSyncArea.newElement(object, port);
-		outputTransferArea.newElement(object, port);
 	}
 
 	@Override
@@ -89,10 +85,10 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 		} else {
 			if (this.lasthigh != null && this.rightHighPredicate.evaluate(object)) {
 				R newElement = merge(lasthigh, object, Order.LeftRight);
-				outputTransferArea.transfer(newElement);
+				transfer(newElement);
 			} else if (this.lastlow != null && this.rightLowPredicate.evaluate(object)) {
 				R newElement = merge(lastlow, object, Order.LeftRight);
-				outputTransferArea.transfer(newElement);
+				transfer(newElement);
 			}
 		}
 	}
@@ -101,7 +97,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		inputStreamSyncArea.init(this);
-		outputTransferArea.init(this);
 	}
 
 	protected R merge(R left, R right, Order order) {
@@ -125,9 +120,14 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		inputStreamSyncArea.newHeartbeat(timestamp, port);
-		outputTransferArea.newHeartbeat(timestamp, port);
 	}
 
+	@Override
+	public void process_newHeartbeat(PointInTime pointInTime) {
+		sendPunctuation(pointInTime);
+	}
+
+	
 	@Override
 	public AbstractPipe<R, R> clone() {
 		return new ChangeCorrelatePO<K, R>(this);
@@ -148,5 +148,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IMetaAttribut
 	public void setMetadataMerge(IMetadataMergeFunction<K> metadataMerge) {
 		this.metadataMerge = metadataMerge;
 	}
+
 
 }
