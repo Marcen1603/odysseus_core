@@ -15,10 +15,15 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.prototyping.aggregation.example;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.prototyping.aggregation.Evaluate;
+import de.uniol.inf.is.odysseus.prototyping.aggregation.Init;
+import de.uniol.inf.is.odysseus.prototyping.aggregation.Merge;
+
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>

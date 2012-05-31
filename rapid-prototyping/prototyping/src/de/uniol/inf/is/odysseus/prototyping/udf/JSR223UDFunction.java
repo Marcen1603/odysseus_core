@@ -17,9 +17,7 @@ package de.uniol.inf.is.odysseus.prototyping.udf;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.script.Bindings;

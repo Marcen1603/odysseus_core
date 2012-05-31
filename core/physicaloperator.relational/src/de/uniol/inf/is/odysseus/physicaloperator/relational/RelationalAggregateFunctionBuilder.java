@@ -40,8 +40,6 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add("MAX");
 		names.add("NEST");
 		names.add("STDDEV");
-		names.add("BEAN");
-		names.add("SCRIPT");
         names.add(LAST);
         names.add(FIRST);
         names.add(NTH);
@@ -66,10 +64,6 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = new RelationalStdDev(pos);
 		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
 			aggFunc = new RelationalNest(pos);
-		} else if (key.getName().equalsIgnoreCase("BEAN")) {
-			aggFunc = new AggregationBean(pos, key.getProperty("resource"));
-		} else if (key.getName().equalsIgnoreCase("SCRIPT")) {
-			aggFunc = new AggregationJSR223(pos, key.getProperty("resource"));
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
 			aggFunc = RelationalLast.getInstance(pos[0]);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
