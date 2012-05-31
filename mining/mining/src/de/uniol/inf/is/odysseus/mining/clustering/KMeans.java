@@ -49,18 +49,18 @@ public class KMeans<M extends ITimeInterval> implements IClusterer<M> {
 	}
 	
 	@Override
-	public Map<Integer, List<Tuple<M>>> processClustering(Iterator<Tuple<M>> tuples) {
+	public Map<Integer, List<Tuple<M>>> processClustering(Iterator<Tuple<M>> tuples, int[] attributes) {
 		init();
 		while (tuples.hasNext()) {
-			Tuple<M> tuple = tuples.next();
+			Tuple<M> tuple = tuples.next();			
 			if (means.size() < numberOfClusters) {
 				int clusterid = means.size() + 1;
 				this.means.put(clusterid, tuple);
-				ClusterDescription<M> cd = new ClusterDescription<M>();
+				ClusterDescription<M> cd = new ClusterDescription<M>(attributes);
 				cd.addTuple(tuple);
 				this.clusters.put(clusterid, cd);
 			} else {
-				int assignment = findNearestCluster(tuple);
+				int assignment = findNearestCluster(tuple, attributes);
 				this.clusters.get(assignment).addTuple(tuple);
 			}
 		}
@@ -79,7 +79,7 @@ public class KMeans<M extends ITimeInterval> implements IClusterer<M> {
 				int currentCluster = cluster.getKey();
 				List<Tuple<M>> current = new ArrayList<Tuple<M>>(cluster.getValue().getTuples());
 				for (Tuple<M> tuple : current) {
-					int assign = findNearestCluster(tuple);
+					int assign = findNearestCluster(tuple, attributes);
 					// new and old cluster are not the same, so reassign
 					if (assign != currentCluster) {
 						reassignTuple(tuple, currentCluster, assign);
@@ -101,11 +101,11 @@ public class KMeans<M extends ITimeInterval> implements IClusterer<M> {
 		this.clusters.get(to).addTuple(tuple);
 	}
 
-	private int findNearestCluster(Tuple<M> tuple) {
+	private int findNearestCluster(Tuple<M> tuple, int[] attributePositions) {
 		int id = -1;
 		double currentMin = Double.MAX_VALUE;
 		for (Entry<Integer, Tuple<M>> cluster : means.entrySet()) {
-			double currentDistance = this.distance.getDistance(tuple, cluster.getValue());
+			double currentDistance = this.distance.getDistance(tuple.restrict(attributePositions, true), cluster.getValue().restrict(attributePositions, true));
 			if (currentDistance < currentMin) {
 				id = cluster.getKey();
 				currentMin = currentDistance;

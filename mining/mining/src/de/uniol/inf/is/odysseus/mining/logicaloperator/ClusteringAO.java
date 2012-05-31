@@ -56,8 +56,9 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		this.clusterer = clusteringAO.clusterer;
 		this.options = clusteringAO.options;
 		this.clustererName = clusteringAO.clustererName;
+		this.attributes = clusteringAO.attributes;
 	}
-	
+
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setAttributes(List<SDFAttribute> readingSchema) {
 		this.attributes = readingSchema;
@@ -71,13 +72,14 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	@Override
 	public void initialize() {
 		super.initialize();
-//		if (this.attributes == null) {
-//			this.attributes = new ArrayList<String>();
-//			for (SDFAttribute a : ContextStoreManager.getStore(storeName).getSchema()) {
-//				this.attributes.add(a.getAttributeName());
-//			}
-//		}
-//		calcOutputSchema();
+		// if (this.attributes == null) {
+		// this.attributes = new ArrayList<String>();
+		// for (SDFAttribute a :
+		// ContextStoreManager.getStore(storeName).getSchema()) {
+		// this.attributes.add(a.getAttributeName());
+		// }
+		// }
+		// calcOutputSchema();
 		try {
 			KMeans<ITimeInterval> algo = new KMeans<ITimeInterval>();
 			Map<String, String> options = new HashMap<String, String>();
@@ -118,9 +120,28 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
 		return outSchema;
 	}
-	
+
 	public List<SDFAttribute> getAttributes() {
 		return this.attributes;
+	}
+
+	public int[] getAttributePositions() {
+		int[] ret = new int[attributes.size()];
+		int i = 0;
+		for (SDFAttribute a : attributes) {
+			int j = 0;
+			int k = i;
+			for (SDFAttribute b : getInputSchema(0)) {
+				if (b.equals(a)) {
+					ret[i++] = j;
+				}
+				++j;
+			}
+			if (k == i) {
+				throw new IllegalArgumentException("no such attribute: " + a);
+			}
+		}
+		return ret;
 	}
 
 }

@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -37,19 +36,19 @@ import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private IClusterer<M> clusterer;
-	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
-	private List<SDFAttribute> attributes;
+	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();	
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>(1);
 	private int run = 0;
+	private int[] attributePositions;
 
-	public ClusteringPO(IClusterer<M> clusterer, List<SDFAttribute> attributes) {
+	public ClusteringPO(IClusterer<M> clusterer, int[] attributePositions) {
 		this.clusterer = clusterer;
-		this.attributes = attributes;
+		this.attributePositions = attributePositions;
 	}
 
 	public ClusteringPO(ClusteringPO<M> clusteringPO) {
 		this.clusterer = clusteringPO.clusterer;
-		this.attributes = clusteringPO.attributes;
+		this.attributePositions = clusteringPO.attributePositions;
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 //		System.out.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
 //		System.out.println("----------");
 		Iterator<Tuple<M>> qualifies = sweepArea.queryOverlaps(object.getMetadata());
-		Map<Integer, List<Tuple<M>>> clustered = this.clusterer.processClustering(qualifies);
+		Map<Integer, List<Tuple<M>>> clustered = this.clusterer.processClustering(qualifies, attributePositions);
 		
 		for (Entry<Integer, List<Tuple<M>>> cluster : clustered.entrySet()) {
 			for (Tuple<M> tuple : cluster.getValue()) {
@@ -85,7 +84,8 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		transferFunction.init(this);
-	}
+		sweepArea.clear();		
+	}	
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {

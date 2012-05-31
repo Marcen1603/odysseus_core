@@ -37,7 +37,7 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO>{
 
 	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) {
-		ClusteringPO<ITimeInterval> po = new ClusteringPO<ITimeInterval>(operator.getClusterer(), operator.getAttributes());
+		ClusteringPO<ITimeInterval> po = new ClusteringPO<ITimeInterval>(operator.getClusterer(), operator.getAttributePositions());
 		po.setOutputSchema(operator.getOutputSchema());
 		replace(operator, po, config);
 		retract(operator);
