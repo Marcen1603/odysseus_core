@@ -67,7 +67,7 @@ public class RelationalAggregateFunctionBuilder implements
 		} else if (key.getName().equalsIgnoreCase(LAST)) {
 			aggFunc = RelationalLast.getInstance(pos[0]);
 		} else if (key.getName().equalsIgnoreCase(FIRST)) {
-			aggFunc = RelationalFirst.getInstance();
+			aggFunc = RelationalFirst.getInstance(pos[0]);
 		} else if (key.getName().equalsIgnoreCase(RATE)) {
 			aggFunc = RelationalRate.getInstance();
 		} else if (key.getName().equalsIgnoreCase(NTH)) {
