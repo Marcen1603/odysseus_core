@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.ideaal.starter;
+package de.uniol.inf.is.odysseus.smarthome.starter;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

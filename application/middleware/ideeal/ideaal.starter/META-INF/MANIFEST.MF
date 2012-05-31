@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Starter
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.ideaal.starter
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.smarthome.starter
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.ideaal.starter.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.smarthome.starter.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework;version="1.3.0"
