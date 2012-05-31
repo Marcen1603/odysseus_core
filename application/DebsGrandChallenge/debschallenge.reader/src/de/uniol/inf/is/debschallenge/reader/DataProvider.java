@@ -16,12 +16,10 @@ package de.uniol.inf.is.debschallenge.reader;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -174,7 +172,7 @@ public class DataProvider extends StreamClientHandler {
 		return tuple;
 	}
 
-	private List<DataTuple> repair(String[] raw) throws ParseException {
+	public List<DataTuple> repair(String[] raw) throws ParseException {
 		String middle = raw[55];
 		String last = middle.substring(0, 1);
 		String rest = middle.substring(1);

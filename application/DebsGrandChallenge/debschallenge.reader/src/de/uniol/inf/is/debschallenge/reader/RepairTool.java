@@ -18,7 +18,6 @@ package de.uniol.inf.is.debschallenge.reader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -55,7 +53,7 @@ public class RepairTool {
 		cal.setTimeInMillis(millis);
 		System.out.println(cal.getTime());
 		FileReader reader = new FileReader("E:" + File.separator + "Workspace" + File.separator + "Odysseus" + File.separator + "trunk" + File.separator + "application" + File.separator
-				+ "DebsGrandChallenge" + File.separator + "gcrepaired.txt");
+				+ "DebsGrandChallenge" + File.separator + "allData.txt");
 		BufferedReader br = new BufferedReader(reader);
 		String line = br.readLine();
 		int count = 1;
@@ -68,7 +66,8 @@ public class RepairTool {
 				String parts[] = line.split("\\.");
 				long millisCurrent = parseTime(parts[0]);
 
-				if ((millisCurrent - millisLast) > 1000) {
+				//if ((millisCurrent - millisLast) > 1000) {
+				if ((millisCurrent<millisLast)) {
 					System.out.println("found lines at " + count);
 					System.out.println(lastLine);
 					System.out.println(line);
@@ -177,6 +176,7 @@ public class RepairTool {
 					System.out.println("Counter: "+counter);
 					System.err.println(printTuple(tuple));
 				}
+				
 				// System.out.println(printTuple(tuple));
 				//out.write(printTuple(tuple) + System.getProperty("line.separator"));
 			}
