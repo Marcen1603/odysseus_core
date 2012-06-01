@@ -1,0 +1,1196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.offis.de/schema/SCAI-2.0" xmlns:tns="http://xml.offis.de/schema/SCAI-2.0" elementFormDefault="qualified">
+    <xsd:element name="SCAI">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Identification" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element name="SecurityToken" type="xsd:string"></xsd:element>
+                            <xsd:element name="LoginIdentification">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Username" type="xsd:string"/>
+                                        <xsd:element name="Password" type="xsd:base64Binary"></xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Payload">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <!--<xsd:element name="SensorData" maxOccurs="unbounded" type="tns:SensorData" minOccurs="1"/>-->
+                            <xsd:element name="Measurements" >
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="DataStream" type="tns:SensorDataDescription" maxOccurs="unbounded"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="ControlData" minOccurs="1">
+                                <xsd:complexType>
+                                    <xsd:choice>
+                                        <xsd:element name="AccessControl" minOccurs="1" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:choice>
+                                                    <xsd:element name="authenticateUser" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="username" type="xsd:string"/>
+                                                                <xsd:element name="password" type="xsd:base64Binary"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createUser" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="User" type="tns:UserDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="destroySession" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="sessionID" minOccurs="0" type="xsd:string"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeUser" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="User" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getUserData" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="User" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="grantSensorAccess">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference" form="qualified"/>
+                                                                <xsd:element name="Accessor" maxOccurs="unbounded" type="tns:AccessorDescription"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="optional"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorAccessors">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateUser" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="User" type="tns:Reference"/>
+                                                                <xsd:element name="NewUser" type="tns:UserDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="withdrawSensorAccess">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                                <xsd:element name="Accessor" maxOccurs="unbounded" type="tns:AccessorDescription"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                 </xsd:choice>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="SensorControl" minOccurs="1" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:choice>
+                                                    <xsd:element name="configureSensor" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                                <xsd:element name="ConfigurationValue" type="tns:ConfigurationValueDescription"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getConfiguration" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getSupportedModules" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getValue" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="unsubscribeDatastream" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="startSensor" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="stopSensor" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="subscribeDatastream" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:choice>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="SensorRegistryControl" maxOccurs="unbounded" minOccurs="1">
+                                            <xsd:complexType>
+                                                <xsd:choice>
+                                                    <xsd:element name="addChildCategoryToSensorCategory">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="ParentSensorCategory" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="addDataElementToDataStreamType">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataElement" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="DataStreamType" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="addSensorCategoryToSensorDomain">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="addSensorTypeToSensorCategory">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorType" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="addSensorTypeToSensorDomain">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorType" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createConfigurationParameter" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="ConfigurationParameter" type="tns:ConfigurationParameterDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createDataElement" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataElement" type="tns:DataElementDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createDataStreamType" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataStreamType" type="tns:DataStreamTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createDataType" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataType" type="tns:DataTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createOperator" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                                <xsd:element name="Operator" type="tns:OperatorDescription" maxOccurs="1"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createOperatorGroup" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:OperatorGroupDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createOperatorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorType" type="tns:OperatorTypeDescription" maxOccurs="1"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createSensor" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="Sensor" type="tns:SensorDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createSensorCategory" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:SensorCategoryDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createSensorDomain" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorDomain" type="tns:SensorDomainDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="createSensorType" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorType" type="tns:SensorTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="deployOperatorGroup">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                                <xsd:element name="ProcessingUnit" minOccurs="0" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getConfigurationParameter" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="ConfigurationParameter" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getDataElement" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataElement" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getDataStreamType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataStreamType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getDataType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getOperator" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="Operator" type="tns:Reference"/>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getOperatorGroup" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getOperatorGroupStatus" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getOperatorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="OperatorType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getProcessingUnit">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getSensor" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="Sensor" type="tns:SensorReference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getSensorCategory" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getSensorDomain" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="getSensorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="linkOperators">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                                <xsd:element name="OperatorLink" type="tns:OperatorLinkDescription"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllConfigurationParameters" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllDataElements" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllDataStreamTypes" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllDataTypes" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllLinks">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference" minOccurs="1"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required" form="unqualified"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllOperators" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference" minOccurs="1"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllOperatorGroups" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllOperatorTypes" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllProcessingUnits" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensors" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorCategories" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorCategoriesBySensorDomain" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorDomains" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorTypes" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorTypesBySensorCategory" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="listAllSensorTypesBySensorDomain" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string" use="required"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="registerProcessingUnit" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="ProcessingUnit" type="tns:ProcessingUnitDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeChildCategoryFromSensorCategory">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="ParentSensorCategory" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeConfigurationParameter" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="ConfigurationParameter" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeDataElement" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataElement" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeDataElementFromDataStreamType">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataElement" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="DataStreamType" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeDataStreamType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataStreamType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeDataType" maxOccurs="1" minOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeOperator" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Operator" type="tns:Reference" maxOccurs="1"/>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeOperatorGroup" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeOperatorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorType" type="tns:Reference" maxOccurs="1"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensor" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Sensor" type="tns:SensorReference" form="qualified"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorCategory" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorCategoryFromSensorDomain">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorDomain" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorType" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorTypeFromSensorCategory">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorType" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="removeSensorTypeFromSensorDomain">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorType" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="undeployOperatorGroup">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="unlinkOperators">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                                <xsd:element name="OperatorLink" type="tns:OperatorLinkDescription"></xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="unregisterProcessingUnit">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="ProcessingUnit" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateConfigurationParameter" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="ConfigurationParameter" type="tns:Reference"/>
+                                                                <xsd:element name="NewConfigurationParameter" type="tns:ConfigurationParameterDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateDataElement" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="DataElement" type="tns:Reference"/>
+                                                                <xsd:element name="NewDataElement" type="tns:DataElementDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateDataStreamType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataStreamType" type="tns:Reference"/>
+                                                                <xsd:element name="NewDataStreamType" type="tns:DataStreamTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateDataType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="DataType" type="tns:Reference"/>
+                                                                <xsd:element name="NewDataType" type="tns:DataTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateOperator" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Operator" maxOccurs="1">
+                                                                    <xsd:complexType>
+                                                                        <xsd:sequence>
+                                                                            <xsd:element name="oldOperator" type="tns:Reference"/>
+                                                                            <xsd:element name="newOperator" type="tns:OperatorDescription"/>
+                                                                        </xsd:sequence>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                                <xsd:element name="OperatrorGroup" type="tns:Reference"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateOperatorGroup" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorGroup" type="tns:Reference"/>
+                                                                <xsd:element name="NewOperatorGroup" type="tns:OperatorGroupDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateOperatorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="OperatorType" maxOccurs="1" type="tns:Reference"></xsd:element>
+                                                                <xsd:element name="NewOperatorType" type="tns:OperatorTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateSensor" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="Sensor" type="tns:SensorReference" form="qualified"/>
+                                                                <xsd:element name="NewSensor" type="tns:SensorDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateSensorCategory" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="SensorCategory" type="tns:Reference"/>
+                                                                <xsd:element name="NewSensorCategory" type="tns:SensorCategoryDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateSensorDomain" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorDomain" type="tns:Reference"/>
+                                                                <xsd:element name="NewSensorDomain" type="tns:SensorDomainDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="updateSensorType" minOccurs="1" maxOccurs="1">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence minOccurs="1">
+                                                                <xsd:element name="SensorType" type="tns:Reference"/>
+                                                                <xsd:element name="NewSensorType" type="tns:SensorTypeDescription"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="OperationID" type="xsd:string"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:choice>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:choice>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Acknowledgment">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Exception" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Text" type="xsd:string"/>
+                                                    <xsd:element name="ErrorCode" minOccurs="0" type="xsd:int"/>
+                                                    <xsd:element name="OperationID" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Reply" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Data" type="xsd:anyType" minOccurs="1" maxOccurs="unbounded"/>
+                                                    <xsd:element name="OperationID" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Success" maxOccurs="unbounded" minOccurs="0">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Text" minOccurs="0" type="xsd:string"/>
+                                                    <xsd:element name="OperationID" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>                                        
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="AccessorDescription">
+        <xsd:choice>
+            <xsd:element name="User" type="tns:Reference"/>
+            <xsd:element name="SensorDomain" type="tns:Reference"/>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="ConfigurationParameterDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="optional" type="xsd:boolean"/>
+            <xsd:choice>
+                <xsd:element name="AtomicParameter">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="uom" type="xsd:string"/>
+                            <xsd:element name="identifier" type="xsd:boolean"/>
+                            <xsd:element name="DataType" type="tns:Reference"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ComplexParameter">
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs="1">
+                            <xsd:element name="ConfigurationParameter" maxOccurs="unbounded" type="tns:Reference"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="SequenceParameter">
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs="1">
+                            <xsd:element name="minlength" type="xsd:int"/>
+                            <xsd:element name="maxlength" type="xsd:int"/>
+                            <xsd:element name="ConfigurationParameter" type="tns:Reference"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ConfigurationValueDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="index" type="xsd:int" minOccurs="0"/>
+            <xsd:choice>
+                <xsd:element name="value" type="xsd:string"/>
+                <xsd:element name="ConfigurationValue" type="tns:ConfigurationValueDescription" maxOccurs="unbounded"></xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="DataElementDescription">
+        <xsd:choice>
+            <xsd:element name="AtomicElement">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="DataType" type="tns:Reference"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ComplexElement">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="DataElement" maxOccurs="unbounded" type="tns:Reference"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="DataElementValueDescription">
+        <xsd:sequence>
+            <xsd:element name="Error" type="tns:ErrorDescription" minOccurs="0"/>
+            <xsd:element name="Data" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+        <xsd:attribute name="quality" type="xsd:decimal"/>
+    </xsd:complexType>
+    <xsd:complexType name="DataStreamTypeDescription">
+        <xsd:sequence maxOccurs="1">
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="DataElement" maxOccurs="unbounded" type="tns:Reference"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="DataTypeDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:choice minOccurs="1">
+                <xsd:element name="StringType">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="min" type="xsd:unsignedInt" minOccurs="0"/>
+                            <xsd:element name="max" type="xsd:unsignedInt" minOccurs="0"/>
+                            <xsd:element name="regex" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="defaultvalue" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="DecimalType">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="min" type="xsd:float" minOccurs="0"/>
+                            <xsd:element name="max" type="xsd:float" minOccurs="0"/>
+                            <xsd:element name="scale" type="xsd:float" minOccurs="0"/>
+                            <xsd:element name="defaultvalue" type="xsd:float"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="BinaryType">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="min" type="xsd:unsignedInt" minOccurs="0"></xsd:element>
+                            <xsd:element name="max" type="xsd:unsignedInt" minOccurs="0"></xsd:element>
+                            <xsd:element name="defaultvalue" type="xsd:base64Binary"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ListType">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="min" type="xsd:unsignedInt" minOccurs="0"></xsd:element>
+                            <xsd:element name="max" type="xsd:unsignedInt" minOccurs="0"></xsd:element>
+                            <xsd:element name="allowedvalue" maxOccurs="unbounded" type="xsd:string"/>
+                            <xsd:element name="defaultvalue" maxOccurs="unbounded" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="EnumType">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="defaultvalue" maxOccurs="1" type="xsd:string"/>
+                            <xsd:element name="allowedvalue" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="ordinal" type="xsd:unsignedInt"></xsd:element>
+                                        <xsd:element name="name" type="xsd:string"></xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ErrorDescription">
+        <xsd:choice>
+            <xsd:element name="SensorDead" type="xsd:string"/>
+            <xsd:element name="NAN" type="xsd:string"/>
+            <xsd:element name="BatteryDead" type="xsd:string"/>
+            <xsd:element name="Unknown" type="xsd:string"></xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="ModulesDescription">
+        <xsd:sequence>
+            <xsd:element name="AccessControl" minOccurs="0" type="xsd:boolean"/>
+            <xsd:element name="Identification" minOccurs="0" type="xsd:boolean"/>
+            <xsd:element name="Measurements" minOccurs="0" type="xsd:boolean"/>
+            <xsd:element name="SensorControl" minOccurs="0" type="xsd:boolean"/>
+            <xsd:element name="SensorRegistryControl" minOccurs="0" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OperatorDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="Property" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="key" type="xsd:string"/>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:choice>
+                <xsd:element name="InputOperator">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Sensor" type="tns:SensorReference" maxOccurs="1"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="OutputOperator">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Sensor" type="tns:SensorReference"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ServiceOperator">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="OperatorType" type="tns:Reference"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OperatorGroupDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OperatorGroupStatus">
+        <xsd:sequence>
+            <xsd:element name="deployed" type="xsd:boolean"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OperatorLinkDescription">
+        <xsd:sequence>
+            <xsd:element name="Source">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="InputOperator" type="tns:Reference"/>
+                        <xsd:element name="ServiceOperator" type="tns:Reference"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Destination">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="ServiceOperator" type="tns:Reference"/>
+                        <xsd:element name="OutputOperator" type="tns:Reference"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OperatorTypeDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="metaType" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="Property" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="key" type="xsd:string"/>
+                        <xsd:element name="value" type="xsd:string"/>
+                        <xsd:element name="readOnly" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PermissionDescription">
+        <xsd:sequence>
+            <xsd:element name="Permission">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="grant" type="xsd:string"/>
+                        <xsd:element name="withdraw" type="xsd:string"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Property" maxOccurs="unbounded" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="key" type="xsd:string"></xsd:element>
+                        <xsd:element name="value" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="inheritable" minOccurs="0" maxOccurs="1" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ProcessingUnitDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string" maxOccurs="1" minOccurs="1"/>
+            <xsd:element name="address" type="xsd:anyURI"/>
+            <xsd:element name="version" type="xsd:double"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Reference">
+        <xsd:choice>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="id" type="xsd:string"/>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="SensorCategoryDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="ParentSensorCategory" type="tns:Reference" minOccurs="0"/>
+            <xsd:element name="SensorDomain" type="tns:Reference" maxOccurs="unbounded" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SensorDataDescription">
+        <xsd:sequence>
+            <xsd:element name="timeStamp" type="xsd:dateTime"/>
+            <xsd:element name="SensorName" type="xsd:string"/>
+            <xsd:element name="SensorDomainName" type="xsd:string"/>
+            <xsd:element name="olderValues" type="xsd:int" minOccurs="0"/>
+            <xsd:element name="DataStreamElement" type="tns:DataElementValueDescription" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SensorDescription">
+        <xsd:sequence minOccurs="1">
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="virtual" type="xsd:boolean"/>
+            <xsd:element name="SensorDomain" type="tns:Reference" minOccurs="1"/>
+            <xsd:element name="SensorType" type="tns:Reference" minOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SensorDomainDescription">
+        <xsd:sequence minOccurs="1">
+            <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="SensorReference">
+        <xsd:choice>
+            <xsd:element name="SensorID" type="xsd:string"/>
+            <xsd:element name="NameReference">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="SensorName" type="xsd:string"/>
+                        <xsd:element name="SensorDomainName" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="SensorTypeDescription">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="adapter" type="xsd:string"/>
+            <xsd:element name="DataStreamType" type="tns:Reference"/>
+            <xsd:element name="ConfigurationParameter" maxOccurs="unbounded" type="tns:Reference" minOccurs="0"></xsd:element>
+            <xsd:element name="SensorCategory" maxOccurs="unbounded" type="tns:Reference" minOccurs="0"/>
+            <xsd:element name="SensorDomain" maxOccurs="unbounded" type="tns:Reference" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="UserDescription">
+        <xsd:sequence>
+            <xsd:element name="username" type="xsd:string"/>
+            <xsd:element name="password" type="xsd:base64Binary"/>
+            <xsd:element name="Permission" maxOccurs="unbounded" minOccurs="0" type="tns:PermissionDescription"></xsd:element>
+            <xsd:element name="role"  minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
