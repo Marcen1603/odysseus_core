@@ -13,5 +13,6 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  org.slf4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
- lib/xmlbeans-2.5.0.jar
+ lib/scai-stack-1.0.jar,
+ lib/xmlbeans-2.4.0.jar
 Service-Component: OSGI-INF/ScaiDataHandler.xml
