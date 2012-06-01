@@ -74,6 +74,21 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
+	
+	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> iter = getElements().iterator();
+			while (iter.hasNext()) {
+				T elem = iter.next();
+				if (elem.getMetadata().getStart().before(validity)) {
+					retval.add(elem);
+					iter.remove();
+				}
+			}
+		}
+		return retval.iterator();
+	}
 
 	/**
 	 * Removes all elements from this sweep area that are totally before
