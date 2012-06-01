@@ -82,8 +82,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 			while (iter.hasNext()) {
 				T elem = iter.next();
 				if (elem.getMetadata().getStart().before(validity)) {
-					retval.add(elem);
-					iter.remove();
+					retval.add(elem);					
 				}
 			}
 		}
