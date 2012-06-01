@@ -40,6 +40,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>(1);
 	private int run = 0;
 	private int[] attributePositions;
+	private PointInTime lastWritten;
 
 	public ClusteringPO(IClusterer<M> clusterer, int[] attributePositions) {
 		this.clusterer = clusterer;
@@ -58,26 +59,30 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 
 	@Override
 	protected synchronized void process_next(Tuple<M> object, int port) {
-		sweepArea.insert(object);
-		sweepArea.purgeElementsBefore(object.getMetadata().getStart());
-//		System.out.println("---------------------------");
-//		System.out.println(object);
-//		System.out.println("---SA: ---");
-//		System.out.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
-//		System.out.println("----------");
-		Iterator<Tuple<M>> qualifies = sweepArea.queryOverlaps(object.getMetadata());
+		sweepArea.insert(object);		
+
+		System.err.println("---------------------------");
+		System.err.println("in: "+object);
+		System.err.println("---SA: ---");
+		System.err.println(sweepArea.getSweepAreaAsString(object.getMetadata().getStart()));
+		System.err.println("----------");
+		Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(object.getMetadata().getStart());		 
 		Map<Integer, List<Tuple<M>>> clustered = this.clusterer.processClustering(qualifies, attributePositions);
 		
 		for (Entry<Integer, List<Tuple<M>>> cluster : clustered.entrySet()) {
 			for (Tuple<M> tuple : cluster.getValue()) {
-				tuple = tuple.append(cluster.getKey());
+				tuple = tuple.append(cluster.getKey());				
 				tuple = tuple.append(run);
+				tuple.getMetadata().setStart(lastWritten);
+				tuple.getMetadata().setEnd(object.getMetadata().getStart());
+				System.err.println("transfer: "+tuple);
 				this.transferFunction.transfer(tuple);
 			}
 		}
 		run++;
 		transferFunction.newElement(object, port);
-
+		sweepArea.purgeElementsBefore(object.getMetadata().getStart());
+		lastWritten = object.getMetadata().getStart();
 	}
 	
 	@Override

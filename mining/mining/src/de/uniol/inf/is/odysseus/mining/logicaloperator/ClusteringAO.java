@@ -72,19 +72,16 @@ public class ClusteringAO extends AbstractLogicalOperator {
 	@Override
 	public void initialize() {
 		super.initialize();
-		// if (this.attributes == null) {
-		// this.attributes = new ArrayList<String>();
-		// for (SDFAttribute a :
-		// ContextStoreManager.getStore(storeName).getSchema()) {
-		// this.attributes.add(a.getAttributeName());
-		// }
-		// }
-		// calcOutputSchema();
 		try {
+			// TODO: Clusterer dynamisch
 			KMeans<ITimeInterval> algo = new KMeans<ITimeInterval>();
-			Map<String, String> options = new HashMap<String, String>();
-			options.put("K", "2");
-			algo.setOptions(options);
+			
+			Map<String, String> optionMap = new HashMap<String, String>();
+			for(String option : this.options){
+				String[] parts = option.split("=");
+				optionMap.put(parts[0].trim(), parts[1].trim());
+			}			
+			algo.setOptions(optionMap);
 			this.clusterer = algo;
 		} catch (Exception e) {
 			e.printStackTrace();

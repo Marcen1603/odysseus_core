@@ -60,9 +60,17 @@ public class DataTuple {
 	public void addInteger(Integer value) {
 		this.attributes.add(value);
 	}
+	
+	public void addInteger(String string) {
+		this.attributes.add(Integer.parseInt(string));		
+	}
 
 	public void addDouble(Double value) {
 		this.attributes.add(value);
+	}
+	
+	public void addDouble(String string) {
+		this.attributes.add(Double.parseDouble(string));		
 	}
 
 	public void addLong(Long value) {
@@ -87,9 +95,17 @@ public class DataTuple {
 		Long val = new Long(d.longValue());
 		this.attributes.add(val);
 	}
+	
+	public void addLong(String string) {
+		this.attributes.add(Long.parseLong(string));		
+	}
 
 	public void addBoolean(boolean value) {
 		this.attributes.add(Boolean.valueOf(value));
+	}
+	
+	public void addBoolean(String value){
+		this.attributes.add(Boolean.parseBoolean(value));
 	}
 
 	public void addBoolean(double value) {
@@ -179,5 +195,7 @@ public class DataTuple {
 		liste.add(this);
 		return liste;
 	}
+
+	
 
 }

@@ -40,15 +40,26 @@ public class ClusterDescription<M extends ITimeInterval> {
 		this.tuples.add(tuple);
 	}
 	
-	public void removeTuple(Tuple<M> tuple){
-		this.tuples.remove(tuple);
+	public boolean removeTuple(Tuple<M> tuple){
+		return this.tuples.remove(tuple);
+	}
+	
+	public Tuple<M> removeTuple(int tuple){
+		return this.tuples.remove(tuple);
 	}
 	
 	public List<Tuple<M>> getTuples(){
 		return Collections.unmodifiableList(this.tuples);
 	}
 	
+	public int size(){
+		return this.tuples.size();
+	}
+	
 	public Tuple<M> getMean(){
+		if(tuples.size()==0){
+			System.err.println("KEINE TUPLES UM MEAN ZU BERECHNEN!!");
+		}
 		Tuple<M> mean = tuples.get(0).clone();
 		for(int i=0;i<attributes.length;i++){
 			Number val = tuples.get(0).getAttribute(attributes[i]);
@@ -63,6 +74,10 @@ public class ClusterDescription<M extends ITimeInterval> {
 			mean.setAttribute(attributes[i], currentMean);
 		}		
 		return mean;
+	}
+	
+	public boolean isEmpty(){
+		return (this.tuples.size()==0);
 	}
 	
 }
