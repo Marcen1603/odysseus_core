@@ -14,7 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +38,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String dataHandler = "Tuple";
 	private String transformer;
 	
-	/**
-	 * This variable will be used to generate an ID for every new input tuple
-	 */
-	private static long ID = 1;
+	private String objectHandler;
+	private String inputDataHandler;
+	private String accessConnectionHandler = "nio";
+
+//	/**
+//	 * This variable will be used to generate an ID for every new input tuple
+//	 */
+//	private static long ID = 1;
 
 	/**
 	 * this variable will be used, if a wildcard is necessary for an id
@@ -116,15 +119,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		return this.getClass().getSimpleName();
 	}
 
-	private static long genID() {
-		return ++ID;
-	}
-
-	public static List<Long> nextID() {
-		ArrayList<Long> idList = new ArrayList<Long>();
-		idList.add(Long.valueOf(genID()));
-		return idList;
-	}
+//	private static long genID() {
+//		return ++ID;
+//	}
+//
+//	public static List<Long> nextID() {
+//		ArrayList<Long> idList = new ArrayList<Long>();
+//		idList.add(Long.valueOf(genID()));
+//		return idList;
+//	}
 
 	public static Long getWildcard() {
 		return wildcard;
@@ -217,6 +220,30 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	public void setDataHandler(String dataHandler) {
 		this.dataHandler = dataHandler;
+	}
+	
+	public String getObjectHandler() {
+		return objectHandler;
+	}
+
+	public void setObjectHandler(String objectHandler) {
+		this.objectHandler = objectHandler;
+	}
+
+	public String getInputDataHandler() {
+		return inputDataHandler;
+	}
+
+	public void setInputDataHandler(String inputDataHandler) {
+		this.inputDataHandler = inputDataHandler;
+	}
+
+	public String getAccessConnectionHandler() {
+		return accessConnectionHandler;
+	}
+
+	public void setAccessConnectionHandler(String accessConnectionHandler) {
+		this.accessConnectionHandler = accessConnectionHandler;
 	}
 }
 

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.objecthandler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -9,8 +10,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 
 public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuffer,T> {
 
-	final private byte start;
-	final private byte end;
+	private byte start;
+	private byte end;
+	
+	public MarkerByteBufferHandler() {
+	}
 
 	public MarkerByteBufferHandler(byte start, byte end){
 		this.start = start;
@@ -67,5 +71,16 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 	public IInputDataHandler<ByteBuffer,T> clone() {
 		return new MarkerByteBufferHandler<T>(this);
 	}
+	
+	
+	@Override
+	public IInputDataHandler<ByteBuffer, T> getInstance(
+			Map<String, String> option) {
+		return new MarkerByteBufferHandler<T>(Byte.parseByte(option.get("start")), Byte.parseByte(option.get("end")));
+	}
 
+	@Override
+	public String getName() {
+		return "MarkerByteBufferHandler";
+	}
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.XMLSocketInputHandler">
+   <implementation class="de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.XMLSocketInputHandler"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.IInputHandler"/>
+   </service>
+</scr:component>

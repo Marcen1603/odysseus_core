@@ -184,6 +184,18 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 	public MVRelationalTupleObjectHandler<M> clone() {
 		return new MVRelationalTupleObjectHandler<M>(this);
 	}
+	
+	@Override
+	public String getName() {
+		return "MVRelationalTupleHandler";
+	}
+	
+	@Override
+	public IObjectHandler<Tuple<M>> getInstance(
+			IDataHandler<Tuple<M>> dataHandler) {
+		throw new IllegalArgumentException("Not implemented Exception");
+	}
+	
 //	@SuppressWarnings("unchecked")
 //	public static void main(String[] args) throws IOException, ClassNotFoundException {
 //		SDFSchema schema = new SDFSchema();

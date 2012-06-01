@@ -25,7 +25,15 @@ public class ByteBufferHandler<T> implements
 
 	ByteBuffer byteBuffer = null;
 	private IDataHandler<?> dataHandler;
-		
+	
+	public ByteBufferHandler() {
+	}
+	
+	@Override
+	public IObjectHandler<T> getInstance(IDataHandler<T> dataHandler) {
+		return new ByteBufferHandler<T>(dataHandler);
+	}
+	
 	public ByteBufferHandler(IDataHandler<?> dataHandler) {
 		byteBuffer = ByteBuffer.allocate(1024);
 		this.dataHandler = dataHandler;		
@@ -116,6 +124,11 @@ public class ByteBufferHandler<T> implements
 	@Override
 	public ByteBufferHandler<T> clone() {
 		return new ByteBufferHandler<T>(this);
+	}
+	
+	@Override
+	public String getName() {
+		return "ByteBufferHandler";
 	}
 
 

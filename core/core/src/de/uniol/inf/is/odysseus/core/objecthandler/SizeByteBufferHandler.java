@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.objecthandler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -14,7 +15,6 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 	private int currentSize = 0;
 
 	public SizeByteBufferHandler(){
-		
 	}
 	
 	public SizeByteBufferHandler(SizeByteBufferHandler<T> sizeByteBufferHandler) {
@@ -88,4 +88,14 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 		return new SizeByteBufferHandler<T>(this);
 	}
 
+	@Override
+	public IInputDataHandler<ByteBuffer, T> getInstance(
+			Map<String, String> option) {
+		return new SizeByteBufferHandler<T>();
+	}
+	
+	@Override
+	public String getName() {
+		return "SizeByteBufferHandler";
+	}
 }

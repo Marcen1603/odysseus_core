@@ -16,20 +16,20 @@ public class InputHandlerRegistry {
 	
 	public static void registerHandler(IInputHandler<?> handler){
 		logger.debug("Register Input Handler "+handler.getName());
-		if (inputHandler.containsKey(handler)){
+		if (inputHandler.containsKey(handler.getName().toLowerCase())){
 			logger.error("Input Handler with name "+handler.getName()+" is already registered!");
 			return;
 		}
-		inputHandler.put(handler.getName(),handler);
+		inputHandler.put(handler.getName().toLowerCase(),handler);
 	}
 	
 	public static void removeHandler(IInputHandler<?> handler){
 		logger.debug("Remove Input Handler "+handler.getName());
-		inputHandler.remove(handler.getName());
+		inputHandler.remove(handler.getName().toLowerCase());
 	}
 	
 	public static IInputHandler<?> getInputHandler(String name){
-		return inputHandler.get(name);
+		return inputHandler.get(name.toLowerCase());
 	}
 	
 }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 
 public interface IObjectHandler<T> extends IClone {
 	public void put(ByteBuffer buffer) throws IOException;
@@ -26,4 +27,6 @@ public interface IObjectHandler<T> extends IClone {
 	public void clear();
 	public ByteBuffer getByteBuffer();
 	public T create() throws IOException, ClassNotFoundException;
+	public String getName();
+	public IObjectHandler<T> getInstance(IDataHandler<T> dataHandler);
 }
