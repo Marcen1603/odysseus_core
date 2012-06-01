@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class TransformationException extends Exception {
+public class TransformationException extends RuntimeException {
 
 	private static final long serialVersionUID = -8930049065359776237L;
 	private List<ILogicalOperator> untranslatedOperators;

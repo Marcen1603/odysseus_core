@@ -42,7 +42,7 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 	@Override
 	protected void process_open() throws OpenFailedException {
 		SDFSchema s = getOutputSchema();
-		this.tupleDataHandler = new TupleDataHandler(s);
+		this.tupleDataHandler = (TupleDataHandler) new TupleDataHandler().getInstance(s);
 		
 		synchronized (expectedResults) {
 			try {

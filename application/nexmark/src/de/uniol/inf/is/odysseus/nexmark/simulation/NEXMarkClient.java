@@ -89,7 +89,7 @@ public class NEXMarkClient {
 			this.objectOutputStream = new ObjectOutputStream(
 					connection.getOutputStream());
 		}
-		IDataHandler<?> handler = new TupleDataHandler(
+		IDataHandler<?> handler = new TupleDataHandler().getInstance(
 				NEXMarkStreamType.getSchema(streamType));
 		objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);

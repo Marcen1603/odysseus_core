@@ -64,6 +64,11 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public SICKDataHandler(SDFSchema schema) {
 		this.schema = schema;
 	}
+	
+	@Override
+	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+		return new SICKDataHandler(schema);
+	}
 
 	/*
 	 * (non-Javadoc)

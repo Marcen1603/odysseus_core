@@ -21,6 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 /**
  * 
  * @author Dennis Geesen
@@ -32,6 +34,11 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 		types.add("Boolean");
 	}
 
+	@Override
+	public IDataHandler<Boolean> getInstance(SDFSchema schema) {
+		return new BooleanHandler();
+	}
+	
 	@Override
 	public Boolean readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readBoolean();
@@ -72,5 +79,5 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 	public int memSize(Object attribute) {
 		return Integer.SIZE / 8;
 	}
-
+	
 }

@@ -3,12 +3,23 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.store.OsgiObjectInputStream;
 
-public class ObjectStreamInput extends SocketInput<ObjectInputStream> {
+public class ObjectStreamInputHandler extends AbstractSocketInputHandler<ObjectInputStream> {
 	
-	public ObjectStreamInput(String hostname, int port, String user,
+	public ObjectStreamInputHandler(){
+		//default constructor needed for Service
+	}
+	
+	@Override
+	public IInputHandler<ObjectInputStream> getInstance(
+			Map<String, String> options) {
+		return new ObjectStreamInputHandler(options.get("host"), Integer.parseInt(options.get("port")), options.get("user"),options.get("password"));
+	}
+	
+	public ObjectStreamInputHandler(String hostname, int port, String user,
 			String password) {
 		super(hostname, port, user, password);
 	}
@@ -50,6 +61,11 @@ public class ObjectStreamInput extends SocketInput<ObjectInputStream> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public String getName() {
+		return "ObjectStream";
 	}
 
 }

@@ -5,14 +5,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
-public class LineFileInput extends AbstractInput<String> {
+public class LineFileInputHandler extends AbstractInputHandler<String> {
 
 	private String path;
 	private BufferedReader bf;
 
-	public LineFileInput(String filename) {
+	public LineFileInputHandler() {
+		// needed for declarative service
+	}
+	
+	public LineFileInputHandler(String filename) {
 		this.path = filename;
+	}
+	
+	@Override
+	public IInputHandler<String> getInstance(Map<String, String> options) {
+		return new LineFileInputHandler(options.get("filename"));
 	}
 
 	@Override
@@ -59,4 +69,9 @@ public class LineFileInput extends AbstractInput<String> {
 
 	}
 
+	@Override
+	public String getName() {
+		return "LineFile";
+	}
+	
 }

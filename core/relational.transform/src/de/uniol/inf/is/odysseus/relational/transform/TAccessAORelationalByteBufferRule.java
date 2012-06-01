@@ -18,13 +18,14 @@ import java.io.IOException;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -43,14 +44,15 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
 		ReceiverPO accessPO = null;
-		TupleDataHandler tupleDataHandler = null;
+		IDataHandler tupleDataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
+		IDataHandler concreteHandler = null;
 		if (accessAO.getInputSchema() != null &&  accessAO.getInputSchema().size() > 0){
-			tupleDataHandler = new TupleDataHandler(accessAO.getInputSchema());
+			concreteHandler = tupleDataHandlerPrototype.getInstance(accessAO.getInputSchema());
 		}else{
-			tupleDataHandler = new TupleDataHandler(accessAO.getOutputSchema());
+			concreteHandler = tupleDataHandlerPrototype.getInstance(accessAO.getOutputSchema());
 		}
 		try {
-			accessPO = new ReceiverPO(new ByteBufferHandler(tupleDataHandler), 
+			accessPO = new ReceiverPO(new ByteBufferHandler(concreteHandler), 
 					new SizeByteBufferHandler(),
 					new NioConnectionHandler(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword()));
 		} catch (IOException e) {			

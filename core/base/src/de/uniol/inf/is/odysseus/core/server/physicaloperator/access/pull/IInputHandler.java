@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 
-public interface IInput<T> {
+import java.util.Map;
+
+public interface IInputHandler<T> {
 
 	/**
 	 * Is called to initialize an input (e.g. to open a file or a connection)
@@ -25,5 +27,13 @@ public interface IInput<T> {
 	 */
 	void terminate();
 
+	/**
+	 * Get the unique name for this handler. Needed von registration and retrieval 
+	 * @return
+	 */
+	String getName();
 
+
+	IInputHandler<T> getInstance(Map<String, String> options);
+	
 }

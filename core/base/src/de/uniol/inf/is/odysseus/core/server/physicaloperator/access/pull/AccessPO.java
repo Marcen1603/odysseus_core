@@ -27,7 +27,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	private boolean isDone = false;
 	
-	private IInput<R> input;
+	private IInputHandler<R> input;
 
 	final private IDataHandler<W> dataHandler;
 	
@@ -42,7 +42,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	 * @param transformer
 	 * @param dataHandler
 	 */
-	public AccessPO(IInput<R> input, IToStringArrayTransformer<R> transformer,
+	public AccessPO(IInputHandler<R> input, IToStringArrayTransformer<R> transformer,
 			IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = transformer;
@@ -50,7 +50,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		this.oisTransformer = null;
 	}
 
-	public AccessPO(IInput<R> input,IToObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
+	public AccessPO(IInputHandler<R> input,IToObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = null;
 		this.dataHandler = dataHandler;
@@ -87,7 +87,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			try {
 				object = input.getNext();				
 				if (object != null) {
-					if (stringTransformer != null){
+					if (stringTransformer != null){						
 						transfer(dataHandler.readData(stringTransformer.transform(object)));
 					}else if (oisTransformer != null){
 						transfer(dataHandler.readData(oisTransformer.transform(object)));
@@ -97,9 +97,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 					propagateDone();
 				}
 			} catch (Exception e) {
-				LOG.error("Exception during transfering next object", e);
-				isDone = true;
-				propagateDone();
+				LOG.error("Cannot not transform object " +object, e);
 			}
 		}
 	}

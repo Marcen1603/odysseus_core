@@ -19,6 +19,8 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.broker.physicaloperator.BrokerByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -26,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -49,7 +50,8 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 		try {
 			NioConnectionHandler accessHandler = new NioConnectionHandler(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword());
-			accessPO = new ReceiverPO(new ByteBufferHandler(new TupleDataHandler(accessAO.getOutputSchema())), new BrokerByteBufferHandler(), accessHandler);
+			IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
+			accessPO = new ReceiverPO(new ByteBufferHandler(dataHandlerPrototype.getInstance(accessAO.getOutputSchema())), new BrokerByteBufferHandler(), accessHandler);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

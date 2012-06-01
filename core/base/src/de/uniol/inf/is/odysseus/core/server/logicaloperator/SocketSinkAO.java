@@ -13,6 +13,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 
 	private Integer sinkPort;
 	private String sinkType;
+	private String dataHandler;
 
 	private Boolean loginNeeded = false;
 	private String sinkName;
@@ -74,5 +75,14 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 	@Parameter(name="LOGINNEEDED", type = BooleanParameter.class, optional = true)
 	public void setLoginNeeded(boolean loginNeeded) {
 		this.loginNeeded = loginNeeded;
+	}
+	
+	public String getDataHandler() {
+		return dataHandler;
+	}
+	
+	@Parameter(type = StringParameter.class)
+	public void setDataHandler(String dataHandler) {
+		this.dataHandler = dataHandler;
 	}
 }

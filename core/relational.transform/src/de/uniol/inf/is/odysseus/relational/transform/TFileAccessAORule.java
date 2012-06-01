@@ -16,16 +16,17 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.CSVTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.LineTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.LineFileInput;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.LineFileInputHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +42,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	public void execute(FileAccessAO fileAccessAO,
 			TransformationConfiguration transformConfig) {
 		String fileAccessPOName = fileAccessAO.getSourcename();
-		LineFileInput input = new LineFileInput(fileAccessAO.getPath());
+		LineFileInputHandler input = new LineFileInputHandler(fileAccessAO.getPath());
 		LineTransformer transform = null;
 		// TODO: auslagern !
 		if ("csv".equalsIgnoreCase(fileAccessAO.getFileType())){
@@ -50,8 +51,10 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 			transform = new LineTransformer();
 		}
 		
-		ISource<?> fileAccessPO = new AccessPO<String,Tuple<?>>(input, transform, new TupleDataHandler(
-						fileAccessAO.getOutputSchema()));
+		IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(fileAccessAO.getDataHandler());
+		
+		ISource<?> fileAccessPO = new AccessPO<String,Tuple<?>>(input, transform, 
+				dataHandlerPrototype.getInstance(fileAccessAO.getOutputSchema()));
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(fileAccessPOName, fileAccessPO);

@@ -13,8 +13,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
@@ -1267,7 +1269,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		SDFSchema outputSchema = new SDFSchema("", subject, predicate, object);
 
 		
-		AccessAO accAO = null;
+		AbstractAccessAO accAO = null;
 		if(child instanceof ASTSocket){
 			ASTSocket socket = (ASTSocket)child;
 //			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_Access_Socket"));
@@ -1288,8 +1290,8 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor{
 		else if(child instanceof ASTCSVSource){
 			ASTCSVSource csv = (ASTCSVSource)child;
 //			accAO = new AccessAO(new SDFSource(streamName, "SPARQL_ACCESS_CSV"));
-			accAO = new AccessAO(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
-			accAO.setFileURL(csv.getURL());
+			accAO = new FileAccessAO(streamName, RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
+			((FileAccessAO)accAO).setPath(csv.getURL());
 			
 		}
 		else{

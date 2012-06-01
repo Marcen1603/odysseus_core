@@ -6,15 +6,19 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-abstract public class SocketInput<T> extends AbstractInput<T> {
+abstract public class AbstractSocketInputHandler<T> extends AbstractInputHandler<T> {
 
-	final private String hostname;
-	final private int port;
-	final private String user;
-	final private String password;
+	private String hostname;
+	private int port;
+	private String user;
+	private String password;
 	private Socket socket;
 	
-	public SocketInput(String hostname, int port, String user, String password){
+	public AbstractSocketInputHandler(){
+		// Default constructor needed for service
+	}
+	
+	public AbstractSocketInputHandler(String hostname, int port, String user, String password){
 		this.hostname = hostname;
 		this.port = port;
 		this.user = user;

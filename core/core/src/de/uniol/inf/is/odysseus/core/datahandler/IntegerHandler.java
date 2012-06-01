@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 public class IntegerHandler extends AbstractDataHandler<Integer> {
 	static protected List<String> types = new ArrayList<String>();
@@ -29,6 +31,11 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 		types.add("Short");		
 	}
 
+	@Override
+	public IDataHandler<Integer> getInstance(SDFSchema schema) {
+		return new IntegerHandler();
+	}
+	
 	@Override
 	public Integer readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readInt();

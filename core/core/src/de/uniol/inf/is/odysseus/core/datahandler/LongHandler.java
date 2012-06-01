@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 public class LongHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
@@ -28,6 +30,11 @@ public class LongHandler extends AbstractDataHandler<Long> {
 		types.add("Timestamp");
 		types.add("StartTimestamp");
 		types.add("EndTimestamp");
+	}
+	
+	@Override
+	public IDataHandler<Long> getInstance(SDFSchema schema) {
+		return new LongHandler();
 	}
 	
 	@Override

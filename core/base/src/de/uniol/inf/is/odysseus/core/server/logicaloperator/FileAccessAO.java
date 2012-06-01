@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+@Deprecated
 public class FileAccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = 3955519214402695311L;

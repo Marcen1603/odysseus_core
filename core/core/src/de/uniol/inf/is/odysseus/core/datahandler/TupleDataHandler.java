@@ -44,11 +44,19 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public TupleDataHandler() {
 	}
 
-	public TupleDataHandler(SDFSchema schema) {
-		this.createDataHandler(schema);
+	@Override
+	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+		return new TupleDataHandler(schema);
 	}
-
-	public TupleDataHandler(List<String> schema) {
+	
+	@Override
+	public IDataHandler<Tuple<?>> getInstance(List<String> schema) {
+		TupleDataHandler handler = new TupleDataHandler();
+		handler.init(schema);
+		return handler;
+	}
+	
+	private TupleDataHandler(SDFSchema schema) {
 		this.createDataHandler(schema);
 	}
 

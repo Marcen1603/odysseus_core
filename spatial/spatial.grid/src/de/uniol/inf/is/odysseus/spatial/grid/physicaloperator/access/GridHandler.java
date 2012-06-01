@@ -24,6 +24,8 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
@@ -33,6 +35,11 @@ public class GridHandler extends AbstractDataHandler<Grid> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Grid");
+	}
+	
+	@Override
+	public IDataHandler<Grid> getInstance(SDFSchema schema) {
+		return new GridHandler();
 	}
 
 	@Override

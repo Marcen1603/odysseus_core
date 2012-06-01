@@ -14,22 +14,30 @@
  */
 package de.uniol.inf.is.odysseus.generator.txt;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
-import de.uniol.inf.is.odysseus.generator.StreamServer;
+public class TxtDataProvider extends Thread {
 
-public class TxtDataProvider extends StreamClientHandler {
+	ServerSocket server;
+
+	public TxtDataProvider(int i) {
+		try {
+			server = new ServerSocket(i);
+			System.out.println("Starting server on port "+i);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
-		StreamServer server = new StreamServer(54321, new TxtDataProvider());
-		server.start();
+		new TxtDataProvider(54321).start();
 	}
 
 	private String charset = "UTF-8";
@@ -38,12 +46,37 @@ public class TxtDataProvider extends StreamClientHandler {
 	private boolean keepDelimiter = true;
 
 	@Override
+	public void run() {
+		while (true) {
+			init();
+			Socket socket = null;
+			BufferedWriter out = null;
+			try {
+				socket = server.accept();
+				System.out.println("Client connected ... Sending data");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				out = new BufferedWriter(new OutputStreamWriter(
+						socket.getOutputStream()));
+				String elem;
+				while ((elem = next()) != null) {
+					out.write(elem);
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
 	public void init() {
-		System.out.println("startng stream...");
+		System.out.println("Waiting for Connection ...");
 		initFileStream();
 	}
 
-	@Override
 	public void close() {
 		scanner.close();
 	}
@@ -60,23 +93,18 @@ public class TxtDataProvider extends StreamClientHandler {
 		}
 	}
 
-	@Override
-	public List<DataTuple> next() {
-		DataTuple tuple = new DataTuple();
-		String elem;
+	public String next() {
+
+		String elem = null;
 		if (scanner.hasNext()) {
 			elem = scanner.next();
-		} else {
-			System.out.println("restarting stream...");
-			// restart data
-			scanner.close();
-			initFileStream();
-			elem = scanner.next();
 		}
-		if (keepDelimiter ){
+		if (elem == null) {
+			return null;
+		}
+		if (keepDelimiter) {
 			elem = elem + scanner.delimiter();
 		}
-		tuple.addAttribute(elem);
 		System.out.println(elem);
 
 		try {
@@ -84,14 +112,7 @@ public class TxtDataProvider extends StreamClientHandler {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		List<DataTuple> list = new ArrayList<DataTuple>();
-		list.add(tuple);
-		return list;
-	}
-
-	@Override
-	public StreamClientHandler clone() {
-		return new TxtDataProvider();
+		return elem;
 	}
 
 }

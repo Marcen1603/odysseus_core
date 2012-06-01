@@ -32,6 +32,8 @@ import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Andr� Bolles, Alexander Funk
@@ -62,6 +64,11 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		this.wkbWriter = new WKBWriter();
 		
 		this.wktReader = new WKTReader();
+	}
+	
+	@Override
+	public IDataHandler<Object> getInstance(SDFSchema schema) {
+		return new SpatialByteHandler();
 	}
 	
 	@Override

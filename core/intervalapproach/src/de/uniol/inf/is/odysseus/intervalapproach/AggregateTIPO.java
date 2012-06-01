@@ -232,6 +232,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IMetaAttr
 						if (p1.newElement()) {
 							// Insert new Element with interval from start to
 							// start
+							// 
 							Q meta = elemToAdd.getMetadata();
 							@SuppressWarnings("unchecked")
 							Q newMeta = (Q) meta.clone();

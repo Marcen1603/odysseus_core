@@ -45,20 +45,28 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	Logger LOG = LoggerFactory.getLogger(ScaiDataHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("Tuple");
+		types.add("ScaiTuple");
 	}
 
-	IDataHandler<?>[] dataHandlers = null;
 	private final Charset charset = Charset.forName("UTF-8");
 	private SDFSchema schema;
 
+	public ScaiDataHandler(){
+		// Needed for declarative service
+	}
+	
 	/**
 	 * Create a new SCAI Data Handler
 	 * 
 	 * @param schema
 	 */
-	public ScaiDataHandler(SDFSchema schema) {
+	private ScaiDataHandler(SDFSchema schema) {
 		this.schema = schema;
+	}
+	
+	@Override
+	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+		return new ScaiDataHandler(schema);
 	}
 
 	/*

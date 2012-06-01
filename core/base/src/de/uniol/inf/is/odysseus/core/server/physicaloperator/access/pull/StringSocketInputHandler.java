@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -7,16 +8,33 @@ import java.util.Scanner;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class StringSocketInput extends SocketInput<String> {
-	private final String charset;
-	final private String objectDelimiter;
+public class StringSocketInputHandler extends
+		AbstractSocketInputHandler<String> {
+	private String charset;
+	private String objectDelimiter;
 	private Scanner scanner;
+	private boolean keepDelimiter;
 
-	public StringSocketInput(String hostname, int port, String user,
-			String password, String charset, String objectDelimiter) {
+	public StringSocketInputHandler() {
+		// needed for declarative service
+	}
+
+	public StringSocketInputHandler(String hostname, int port, String user,
+			String password, String charset, String objectDelimiter,
+			boolean keepDelimiter) {
 		super(hostname, port, user, password);
 		this.objectDelimiter = objectDelimiter;
 		this.charset = charset;
+		this.keepDelimiter = keepDelimiter;
+	}
+
+	@Override
+	public IInputHandler<String> getInstance(Map<String, String> options) {
+		return new StringSocketInputHandler(options.get("host"),
+				Integer.parseInt(options.get("port")), options.get("user"),
+				options.get("password"), options.get("charset"),
+				options.get("delimiter"), Boolean.parseBoolean(options
+						.get("keepdelimiter")));
 	}
 
 	/*
@@ -54,7 +72,11 @@ public class StringSocketInput extends SocketInput<String> {
 	 */
 	@Override
 	public String getNext() {
-		return scanner.next();
+		if (keepDelimiter) {
+			return scanner.next()+objectDelimiter;
+		} else {
+			return scanner.next();
+		}
 	}
 
 	/*
@@ -68,5 +90,10 @@ public class StringSocketInput extends SocketInput<String> {
 	public void terminate() {
 		this.scanner.close();
 		super.terminate();
+	}
+
+	@Override
+	public String getName() {
+		return "StringSocket";
 	}
 }

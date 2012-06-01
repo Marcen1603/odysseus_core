@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.generator.txt;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.generator.StreamServer;
-
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -34,7 +32,7 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, new TxtDataProvider());
+		TxtDataProvider server = new TxtDataProvider(54321);
 		server.start();
 	}
 

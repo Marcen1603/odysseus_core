@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 /**
  * Used for getting DATE attributes out of a streams.
@@ -33,6 +35,11 @@ public class DateHandler extends AbstractDataHandler<Long> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("Date");
+	}
+
+	@Override
+	public IDataHandler<Long> getInstance(SDFSchema schema) {
+		return new DateHandler();
 	}
 	
 	@Override

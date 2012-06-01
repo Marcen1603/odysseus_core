@@ -502,7 +502,7 @@ public class WebserviceServer {
 			int sourceInPort = 0;
 			int sourceOutPort = 0;
 			// copied from TRelationSocketSinkAORule
-			IDataHandler<?> handler = new TupleDataHandler(roots.get(0)
+			IDataHandler<?> handler = new TupleDataHandler().getInstance(roots.get(0)
 					.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);

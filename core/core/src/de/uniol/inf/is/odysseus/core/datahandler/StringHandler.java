@@ -20,13 +20,20 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 public class StringHandler extends AbstractDataHandler<String> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("String");
 	}
-		
+	
+	@Override
+	public IDataHandler<String> getInstance(SDFSchema schema) {
+		return new StringHandler();
+	}
+	
 	@Override
 	public String readData(ObjectInputStream inputStream) throws IOException {
 		return inputStream.readUTF();

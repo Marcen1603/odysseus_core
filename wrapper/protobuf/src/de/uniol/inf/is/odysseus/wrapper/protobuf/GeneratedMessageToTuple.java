@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.GeneratedMessage;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.AbstractTransformer;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class GeneratedMessageToTuple extends
 		AbstractTransformer<GeneratedMessage, Tuple<? extends IMetaAttribute>> {
@@ -18,6 +18,9 @@ public class GeneratedMessageToTuple extends
 	static Map<SDFSchema,GeneratedMessageToTuple> instanceMap = new HashMap<SDFSchema, GeneratedMessageToTuple>();
 	private SDFSchema schema;
 
+	public GeneratedMessageToTuple() {
+	}
+	
 	private GeneratedMessageToTuple(SDFSchema schema) {
 		if (schema == null){
 			throw new IllegalArgumentException("Schema cannot be null!");
@@ -25,7 +28,7 @@ public class GeneratedMessageToTuple extends
 		this.schema = schema;
 	}
 
-	public static GeneratedMessageToTuple getInstance(SDFSchema schema) {
+	public GeneratedMessageToTuple getInstance(Map<String, String> options, SDFSchema schema) {
 		GeneratedMessageToTuple ret = instanceMap.get(schema);
 		if (ret == null){
 			ret = new GeneratedMessageToTuple(schema);
@@ -49,6 +52,11 @@ public class GeneratedMessageToTuple extends
 		}
 
 		return ret;
+	}
+	
+	@Override
+	public String getName() {
+		return "GeneratedMessageToTuple";
 	}
 
 }

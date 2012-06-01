@@ -50,10 +50,19 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			"OPTIONS", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final StringParameter adapter = new StringParameter("ADAPTER",
 			REQUIREMENT.OPTIONAL);
+	private final StringParameter input = new StringParameter("INPUT",
+			REQUIREMENT.OPTIONAL);
+	private final StringParameter transformer = new StringParameter(
+			"transformer", REQUIREMENT.OPTIONAL);
+
+	// TODO: Make mandatory
+	private final StringParameter dataHandler = new StringParameter(
+			"DATAHANDLER", REQUIREMENT.OPTIONAL);
 
 	public AccessAOBuilder() {
 		super(0, 0);
-		addParameters(sourceName, host, port, attributes, type, options, inputSchema, adapter);
+		addParameters(sourceName, host, port, attributes, type, options,
+				inputSchema, adapter, input, transformer, dataHandler);
 	}
 
 	@Override
@@ -73,19 +82,20 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	}
 
 	private ILogicalOperator createNewAccessAO(String sourceName) {
-		
-		String adapterName = adapter.hasValue()?adapter.getValue():type.getValue(); 
+
+		String adapterName = adapter.hasValue() ? adapter.getValue() : type
+				.getValue();
 		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
-		
-		if(options.hasValue()){
+
+		if (options.hasValue()) {
 			for (final String item : options.getValue()) {
 				final String[] option = item.split(":");
 				if (option.length == 2) {
-					optionsMap.put(option[0],
+					optionsMap.put(option[0].toLowerCase(),
 							item.substring(option[0].length() + 1));
 				} else {
-					optionsMap.put(option[0], "");
+					optionsMap.put(option[0].toLowerCase(), "");
 				}
 			}
 		}
@@ -93,13 +103,26 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
 		AccessAO ao = new AccessAO(sourceName, adapterName, optionsMap);
-		ao.setHost(host.getValue());
-		ao.setPort(port.getValue());
 		ao.setOutputSchema(schema);
-		ao.setInputSchema(inputSchema.getValue());
-
-		ao.setOptions(optionsMap);
-		ao.setAdapter(adapterName);
+		
+		if (host.hasValue()) {
+			ao.setHost(host.getValue());
+		}
+		if (port.hasValue()) {
+			ao.setPort(port.getValue());
+		}
+		if (inputSchema.hasValue()) {
+			ao.setInputSchema(inputSchema.getValue());
+		}
+		if (input.hasValue()) {
+			ao.setInput(input.getValue());
+		}
+		if (transformer.hasValue()) {
+			ao.setTransformer(transformer.getValue());
+		}
+		if (dataHandler.hasValue()) {
+			ao.setDataHandler(dataHandler.getValue());
+		}
 		ILogicalOperator op = addTimestampAO(ao);
 		return op;
 	}
@@ -134,25 +157,25 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		} else {
-			if(type.hasValue() && adapter.hasValue()){
-					addError(new IllegalArgumentException(
-							"to much information for the creation of source "
-									+ sourceName
-									+ ". expecting type OR adapter."));
-					return false;
-			}
-			if(!type.hasValue() && !adapter.hasValue()){
+			if (type.hasValue() && adapter.hasValue()) {
 				addError(new IllegalArgumentException(
 						"to much information for the creation of source "
-								+ sourceName
-								+ ". expecting type OR adapter."));
+								+ sourceName + ". expecting type OR adapter."));
+				return false;
+			}
+			if (!type.hasValue() && !adapter.hasValue()) {
+				addError(new IllegalArgumentException(
+						"to much information for the creation of source "
+								+ sourceName + ". expecting type OR adapter."));
 				return false;
 			}
 		}
-		
-		if (this.attributes.hasValue() && this.inputSchema.hasValue()){
-			if (this.attributes.getValue().size() != this.inputSchema.getValue().size()){
-				addError(new IllegalArgumentException("For each attribute there must be at least one reader in the input schema"));
+
+		if (this.attributes.hasValue() && this.inputSchema.hasValue()) {
+			if (this.attributes.getValue().size() != this.inputSchema
+					.getValue().size()) {
+				addError(new IllegalArgumentException(
+						"For each attribute there must be at least one reader in the input schema"));
 			}
 		}
 		return true;

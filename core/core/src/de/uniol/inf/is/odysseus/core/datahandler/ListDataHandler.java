@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author André Bolles
@@ -39,6 +40,11 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	public ListDataHandler(SDFDatatype subType){
 		this.subType = subType;
 		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getURI());
+	}
+	
+	@Override
+	public IDataHandler<List<?>> getInstance(SDFSchema schema) {
+		return new ListDataHandler(schema.getAttribute(0).getDatatype());
 	}
 	
 	@Override

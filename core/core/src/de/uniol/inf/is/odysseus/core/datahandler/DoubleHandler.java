@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 public class DoubleHandler extends AbstractDataHandler<Double> {
 	static protected List<String> types = new ArrayList<String>();
@@ -27,6 +29,11 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 		types.add("Double");
 		types.add("Float");
 		types.add("MV");
+	}
+	
+	@Override
+	public IDataHandler<Double> getInstance(SDFSchema schema) {
+		return new DoubleHandler();
 	}
 	
 	public DoubleHandler() {

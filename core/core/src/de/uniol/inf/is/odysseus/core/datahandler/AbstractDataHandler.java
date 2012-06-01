@@ -22,6 +22,13 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	
 	protected AbstractDataHandler(){
 	}
+	
+	@Override
+	public IDataHandler<T> getInstance(List<String> schema) {
+		// Hint: Currently only needed for TupleDataHandler
+		return null;
+	}
+
 		
 	@Override
 	public T readData(String[] input) {

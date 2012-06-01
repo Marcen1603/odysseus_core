@@ -27,6 +27,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		//loading default rules		
 		rules.add(new TAccessAOExistsRule());
+		rules.add(new TAccessAOGenericRule());
 		rules.add(new TFileSinkAORule());
 		rules.add(new TSocketSinkAORule());
 		rules.add(new TCreateMetadataRule());

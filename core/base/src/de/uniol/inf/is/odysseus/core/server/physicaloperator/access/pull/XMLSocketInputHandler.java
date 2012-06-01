@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,16 +17,27 @@ import org.xml.sax.SAXException;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class XMLSocketInput extends SocketInput<Document> {
+public class XMLSocketInputHandler extends AbstractSocketInputHandler<Document> {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(XMLSocketInput.class);
+			.getLogger(XMLSocketInputHandler.class);
 	private DocumentBuilder documentBuilder;
 
-	public XMLSocketInput(String hostname, int port, String user,
+	public XMLSocketInputHandler() {
+		// needed for declarative service
+	}
+	
+	public XMLSocketInputHandler(String hostname, int port, String user,
 			String password) {
 		super(hostname, port, user, password);
 	}
 
+
+	@Override
+	public IInputHandler<Document> getInstance(Map<String, String> options) {
+		return new XMLSocketInputHandler(options.get("host"), Integer.parseInt(options.get("port")), 
+				options.get("user"), options.get("password"));
+	}
+		
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -83,4 +95,8 @@ public class XMLSocketInput extends SocketInput<Document> {
 		return null;
 	}
 
+	@Override
+	public String getName() {
+		return "XMLDocSocket";
+	}
 }

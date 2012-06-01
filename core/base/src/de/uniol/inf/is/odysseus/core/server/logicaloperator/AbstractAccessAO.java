@@ -28,21 +28,17 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	private int port;
 	private String host;
-	private String fileURL;
 	private String login;
 	private String password;
 	private boolean autoreconnect = false;
 	private Map<String, String> optionsMap;
 	private String adapter;
-
-	public String getFileURL() {
-		return fileURL;
-	}
-
-	public void setFileURL(String fileURL) {
-		this.fileURL = fileURL;
-	}
-
+	
+	private String input;
+	// Default handler is tuple
+	private String dataHandler = "Tuple";
+	private String transformer;
+	
 	/**
 	 * This variable will be used to generate an ID for every new input tuple
 	 */
@@ -63,15 +59,18 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	public AbstractAccessAO(AbstractAccessAO po) {
 		super(po);
-		this.source = po.source;
-		this.port = po.port;
-		this.host = po.host;
-		this.login = po.login;
-		this.password = po.password;
-		this.autoreconnect = po.autoreconnect;
-		this.adapter = po.adapter;
-		this.optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
-		this.inputSchema = po.inputSchema;
+		source = po.source;
+		port = po.port;
+		host = po.host;
+		login = po.login;
+		password = po.password;
+		autoreconnect = po.autoreconnect;
+		adapter = po.adapter;
+		optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
+		inputSchema = po.inputSchema;		
+		input = po.input;
+		dataHandler = po.dataHandler;
+		transformer = po.transformer;
 	}
 
 	public AbstractAccessAO(String source, String adapter, Map<String, String> optionsMap) {
@@ -80,6 +79,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		this.optionsMap = optionsMap;
 	}
 
+	public AbstractAccessAO(String source, String adapter, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
+		this.source = source;
+		this.adapter = adapter;
+		this.input = input;
+		this.transformer = transformer;
+		this.dataHandler = dataHandler;
+		this.optionsMap = optionsMap;
+	}
+	
 	/**
 	 * @return the source
 	 */
@@ -187,11 +195,28 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		return adapter;
 	}
 	
-	@Deprecated
-	public String getSourceType() {
-		return getAdapter();
+	public String getInput() {
+		return input;
 	}
 	
+	public void setInput(String input) {
+		this.input = input;
+	}
 	
+	public String getTransformer() {
+		return transformer;
+	}
 	
+	public void setTransformer(String transformer) {
+		this.transformer = transformer;
+	}
+	
+	public String getDataHandler() {
+		return dataHandler;
+	}
+	
+	public void setDataHandler(String dataHandler) {
+		this.dataHandler = dataHandler;
+	}
 }
+

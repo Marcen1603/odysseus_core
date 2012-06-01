@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.TransformerRegistry">
+   <implementation class="de.uniol.inf.is.odysseus.core.server.physicaloperator.access.TransformerRegistry"/>
+   <reference bind="register" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer" name="ITransformer" policy="static" unbind="remove"/>
+</scr:component>

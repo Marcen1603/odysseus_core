@@ -14,19 +14,18 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.io.ObjectInputStream;
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInput2ObjectInputStreamTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInput;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInputHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational.base.RelationalAccessSourceTypes;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -43,10 +42,12 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
 		
-		ObjectStreamInput input = new ObjectStreamInput(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
+		ObjectStreamInputHandler input = new ObjectStreamInputHandler(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
 		
-		ISource accessPO = new AccessPO<ObjectInputStream, Tuple<?>>(input, new ObjectInput2ObjectInputStreamTransformer(), 
-				new TupleDataHandler(accessAO.getOutputSchema()));
+		IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
+		
+		ISource accessPO = new AccessPO(input, new ObjectInputStream2ObjectInputStreamTransformer(), 
+				dataHandlerPrototype.getInstance(accessAO.getOutputSchema()));
 		
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);

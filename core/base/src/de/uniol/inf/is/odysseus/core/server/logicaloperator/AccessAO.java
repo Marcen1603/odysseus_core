@@ -35,6 +35,10 @@ public class AccessAO extends AbstractAccessAO {
 	public AccessAO(String source, String adapter, Map<String, String> optionsMap) {
 		super(source, adapter, optionsMap);
 	}
+	
+	public AccessAO(String source, String adapter, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
+		super(source, adapter, input, transformer, dataHandler, optionsMap);
+	}
 
 	@Override
 	public AccessAO clone() {
