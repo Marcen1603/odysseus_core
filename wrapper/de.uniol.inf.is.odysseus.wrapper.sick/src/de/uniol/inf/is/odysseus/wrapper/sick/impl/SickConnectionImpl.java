@@ -113,52 +113,56 @@ public class SickConnectionImpl implements SickConnection {
 				if (SickConnectionImpl.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
 					if (data.length >= 19) {
 						final Measurement measurement = new Measurement();
+						Calendar calendar = Calendar.getInstance(TimeZone
+								.getTimeZone("UTC"));
 						try {
-							int pos = 0;
-							measurement.setVersion(data[pos + 2]);
-							measurement.setDevice(data[pos + 3]);
-							measurement.setSerial(data[pos + 4]);
+							int pos = 2;
+							measurement.setVersion(data[pos++]);
+							measurement.setDevice(data[pos++]);
+							measurement.setSerial(data[pos++]);
 							measurement.setStatus(
-									Integer.parseInt(data[pos + 5], 16),
-									Integer.parseInt(data[pos + 5], 16));
-
+									Integer.parseInt(data[pos], 16),
+									Integer.parseInt(data[pos + 1], 16));
+							pos += 2;
 							measurement.setMessageCount(Integer.parseInt(
-									data[pos + 7], 16));
+									data[pos++], 16));
 							measurement.setScanCount(Integer.parseInt(
-									data[pos + 8], 16));
+									data[pos++], 16));
 
 							measurement.setPowerUpDuration(Long.parseLong(
-									data[pos + 9], 16));
+									data[pos++], 16));
 							measurement.setTransmissionDuration(Long.parseLong(
-									data[pos + 10], 16));
+									data[pos++], 16));
 
-							measurement.setInputStatus("3"
-									.equals(data[pos + 11])
-									|| "3".equals(data[pos + 11]));
-							measurement.setOutputStatus("7"
-									.equals(data[pos + 13])
-									|| "7".equals(data[pos + 14]));
-
+							measurement.setInputStatus("3".equals(data[pos])
+									|| "3".equals(data[pos + 1]));
+							pos += 2;
+							measurement.setOutputStatus("7".equals(data[pos])
+									|| "7".equals(data[pos + 1]));
+							pos += 2;
+							// ReservedByteA
+							pos += 1;
 							measurement.setScanningFrequency(Long.parseLong(
-									data[pos + 16], 16) * 10);
+									data[pos++], 16) * 10);
 							measurement.setMeasurementFrequency(Long.parseLong(
-									data[pos + 17], 16) * 10);
+									data[pos++], 16) * 10);
 
 							measurement.setEncoders(Integer.parseInt(
-									data[pos + 18], 16));
-							if (measurement.getEncoders() > 0) {
-								measurement.setEncoderPosition(Long.parseLong(
-										data[pos + 19], 16));
-								measurement.setEncoderSpeed(Integer.parseInt(
-										data[pos + 20], 16));
+									data[pos++], 16));
+							for (int i = 0; i < measurement.getEncoders(); i++) {
+								// TODO Support encoders
+								// measurement.setEncoderPosition(Long.parseLong(
+								// data[pos++], 16));
+								// measurement.setEncoderSpeed(Integer.parseInt(
+								// data[pos++], 16));
+
 								pos += 2;
 							}
 
-							final int channels = Integer.parseInt(
-									data[pos + 19], 16);
-							int index = pos + 20;
-							for (int i = 0; i < channels; i++) {
-								final String name = data[index];
+							final int channels16Bit = Integer.parseInt(
+									data[pos++], 16);
+							for (int i = 0; i < channels16Bit; i++) {
+								final String name = data[pos++];
 								if ((name
 										.equalsIgnoreCase(SickConnectionImpl.DIST1))
 										|| (name.equalsIgnoreCase(SickConnectionImpl.DIST2))
@@ -167,20 +171,20 @@ public class SickConnectionImpl implements SickConnection {
 
 									final float scalingFactor = Float
 											.intBitsToFloat(((Long) Long
-													.parseLong(data[index + 1],
-															16)).intValue());
+													.parseLong(data[pos++], 16))
+													.intValue());
 									final float scalingOffset = Float
 											.intBitsToFloat(((Long) Long
-													.parseLong(data[index + 2],
-															16)).intValue());
+													.parseLong(data[pos++], 16))
+													.intValue());
 									final double startingAngle = Double
 											.longBitsToDouble(Long.parseLong(
-													data[index + 3], 16)) / 10000;
+													data[pos++], 16)) / 10000;
 									final double angularStepWidth = ((double) Integer
-											.parseInt(data[index + 4], 16)) / 10000;
+											.parseInt(data[pos++], 16)) / 10000;
 
 									final int samples = Integer.parseInt(
-											data[index + 5], 16);
+											data[pos++], 16);
 									if (measurement.getSamples() == null) {
 										measurement
 												.setSamples(new Sample[samples]);
@@ -196,8 +200,7 @@ public class SickConnectionImpl implements SickConnection {
 										}
 										try {
 											final float value = Integer
-													.parseInt(data[index + 6
-															+ j], 16)
+													.parseInt(data[pos++], 16)
 													* scalingFactor
 													+ scalingOffset;
 											if (name.equalsIgnoreCase(SickConnectionImpl.DIST1)) {
@@ -228,14 +231,114 @@ public class SickConnectionImpl implements SickConnection {
 													message);
 										}
 									}
-
-									index += samples + 6;
 								} else {
 									throw new SickReadErrorException(message);
 								}
 							}
+							final int channels8Bit = Integer.parseInt(
+									data[pos++], 16);
+							for (int i = 0; i < channels8Bit; i++) {
+								final String name = data[pos++];
+								if ((name
+										.equalsIgnoreCase(SickConnectionImpl.DIST1))
+										|| (name.equalsIgnoreCase(SickConnectionImpl.DIST2))
+										|| (name.equalsIgnoreCase(SickConnectionImpl.RSSI1))
+										|| (name.equalsIgnoreCase(SickConnectionImpl.RSSI2))) {
+
+									final float scalingFactor = Float
+											.intBitsToFloat(((Long) Long
+													.parseLong(data[pos++], 16))
+													.intValue());
+									final float scalingOffset = Float
+											.intBitsToFloat(((Long) Long
+													.parseLong(data[pos++], 16))
+													.intValue());
+									final double startingAngle = Double
+											.longBitsToDouble(Long.parseLong(
+													data[pos++], 16)) / 10000;
+									final double angularStepWidth = ((double) Integer
+											.parseInt(data[pos++], 16)) / 10000;
+
+									final int samples = Integer.parseInt(
+											data[pos++], 16);
+									if (measurement.getSamples() == null) {
+										measurement
+												.setSamples(new Sample[samples]);
+									}
+									for (int j = 0; j < samples; j++) {
+										final float value = Integer.parseInt(
+												data[pos++], 16)
+												* scalingFactor + scalingOffset;
+									}
+
+								} else {
+									throw new SickReadErrorException(message);
+								}
+							}
+
+							int hasPosition = Integer.parseInt(data[pos++], 16);
+							if (hasPosition == 1) {
+								float xPosition = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								float yPosition = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								float zPosition = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								float xRotation = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								float yRotation = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								float zRotation = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								int rotationType = Integer
+										.parseInt(data[pos++]);
+							}
+							int hasName = Integer.parseInt(data[pos++], 16);
+							if (hasName == 1) {
+								measurement.setName(data[pos++]);
+							}
+							int hasComment = Integer.parseInt(data[pos++], 16);
+							if (hasComment == 1) {
+								measurement.setComment(data[pos++]);
+							}
+							int hasTimeInfo = Integer.parseInt(data[pos++], 16);
+							if (hasTimeInfo == 1) {
+								int year = Integer.parseInt(data[pos++], 16);
+								int month = Integer.parseInt(data[pos++], 16);
+								int day = Integer.parseInt(data[pos++], 16);
+								int hour = Integer.parseInt(data[pos++], 16);
+								int minute = Integer.parseInt(data[pos++], 16);
+								int second = Integer.parseInt(data[pos++], 16);
+								int microseconds = Integer.parseInt(
+										data[pos++], 16);
+								calendar.clear();
+								calendar.set(Calendar.YEAR, year);
+								calendar.set(Calendar.MONTH, month);
+								calendar.set(Calendar.DATE, day);
+								calendar.set(Calendar.HOUR_OF_DAY, hour);
+								calendar.set(Calendar.MINUTE, minute);
+								calendar.set(Calendar.SECOND, second);
+								calendar.set(Calendar.MILLISECOND, microseconds);
+							}
+							int hasEventInfo = Integer
+									.parseInt(data[pos++], 16);
+							if (hasEventInfo == 1) {
+								String eventType = data[pos++];
+								int encoderPosition = Integer.parseInt(
+										data[pos++], 16);
+								int eventTime = Integer.parseInt(data[pos++],
+										16);
+								int angularPosition = Integer.parseInt(
+										data[pos++], 16);
+							}
 						} catch (final Exception e) {
-							throw new SickReadErrorException(message);
+							throw new SickReadErrorException(message, e);
 						}
 						if (this.record) {
 
@@ -250,24 +353,7 @@ public class SickConnectionImpl implements SickConnection {
 							this.background = Background.merge(this.background,
 									measurement);
 						} else {
-
-							// FIXME
-							Calendar calendar = Calendar.getInstance(TimeZone
-									.getTimeZone("UTC"));
 							this.timestamp = calendar.getTimeInMillis();
-							// if ((this.clock == 0)
-							// || (this.clock > measurement
-							// .getPowerUpDuration())) {
-							// Calendar calendar = Calendar
-							// .getInstance(TimeZone
-							// .getTimeZone("UTC"));
-							// this.timestamp = calendar.getTimeInMillis();
-							// this.clock = measurement.getPowerUpDuration();
-							// } else {
-							// this.timestamp += (measurement
-							// .getPowerUpDuration() - this.clock) / 1000;
-							// this.clock = measurement.getPowerUpDuration();
-							// }
 							this.connection.onMeasurement(this.origin,
 									this.angle, measurement, this.timestamp);
 

@@ -10,10 +10,12 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
+import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickConnectionImpl;
 import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickReadErrorException;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
@@ -64,7 +67,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public SICKDataHandler(SDFSchema schema) {
 		this.schema = schema;
 	}
-	
+
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
 		return new SICKDataHandler(schema);
@@ -188,50 +191,55 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 			if (SICKConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
 				if (data.length >= 19) {
 					final Measurement measurement = new Measurement();
+					Calendar calendar = Calendar.getInstance(TimeZone
+							.getTimeZone("UTC"));
 					try {
-						int pos = 0;
-						measurement.setVersion(data[pos + 2]);
-						measurement.setDevice(data[pos + 3]);
-						measurement.setSerial(data[pos + 4]);
-						measurement.setStatus(
-								Integer.parseInt(data[pos + 5], 16),
-								Integer.parseInt(data[pos + 5], 16));
-
+						int pos = 2;
+						measurement.setVersion(data[pos++]);
+						measurement.setDevice(data[pos++]);
+						measurement.setSerial(data[pos++]);
+						measurement.setStatus(Integer.parseInt(data[pos], 16),
+								Integer.parseInt(data[pos + 1], 16));
+						pos += 2;
 						measurement.setMessageCount(Integer.parseInt(
-								data[pos + 7], 16));
-						measurement.setScanCount(Integer.parseInt(
-								data[pos + 8], 16));
+								data[pos++], 16));
+						measurement.setScanCount(Integer.parseInt(data[pos++],
+								16));
 
 						measurement.setPowerUpDuration(Long.parseLong(
-								data[pos + 9], 16));
+								data[pos++], 16));
 						measurement.setTransmissionDuration(Long.parseLong(
-								data[pos + 10], 16));
+								data[pos++], 16));
 
-						measurement.setInputStatus("3".equals(data[pos + 11])
-								|| "3".equals(data[pos + 11]));
-						measurement.setOutputStatus("7".equals(data[pos + 13])
-								|| "7".equals(data[pos + 14]));
-
+						measurement.setInputStatus("3".equals(data[pos])
+								|| "3".equals(data[pos + 1]));
+						pos += 2;
+						measurement.setOutputStatus("7".equals(data[pos])
+								|| "7".equals(data[pos + 1]));
+						pos += 2;
+						// ReservedByteA
+						pos += 1;
 						measurement.setScanningFrequency(Long.parseLong(
-								data[pos + 16], 16) * 10);
+								data[pos++], 16) * 10);
 						measurement.setMeasurementFrequency(Long.parseLong(
-								data[pos + 17], 16) * 10);
+								data[pos++], 16) * 10);
 
-						measurement.setEncoders(Integer.parseInt(
-								data[pos + 18], 16));
-						if (measurement.getEncoders() > 0) {
-							measurement.setEncoderPosition(Long.parseLong(
-									data[pos + 19], 16));
-							measurement.setEncoderSpeed(Integer.parseInt(
-									data[pos + 20], 16));
+						measurement.setEncoders(Integer.parseInt(data[pos++],
+								16));
+						for (int i = 0; i < measurement.getEncoders(); i++) {
+							// TODO Support encoders
+							// measurement.setEncoderPosition(Long.parseLong(
+							// data[pos++], 16));
+							// measurement.setEncoderSpeed(Integer.parseInt(
+							// data[pos++], 16));
+
 							pos += 2;
 						}
 
-						final int channels = Integer.parseInt(data[pos + 19],
+						final int channels16Bit = Integer.parseInt(data[pos++],
 								16);
-						int index = pos + 20;
-						for (int i = 0; i < channels; i++) {
-							final String name = data[index];
+						for (int i = 0; i < channels16Bit; i++) {
+							final String name = data[pos++];
 							if ((name.equalsIgnoreCase(SICKConstants.DIST1))
 									|| (name.equalsIgnoreCase(SICKConstants.DIST2))
 									|| (name.equalsIgnoreCase(SICKConstants.RSSI1))
@@ -239,20 +247,18 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 								final float scalingFactor = Float
 										.intBitsToFloat(((Long) Long.parseLong(
-												data[index + 1], 16))
-												.intValue());
+												data[pos++], 16)).intValue());
 								final float scalingOffset = Float
 										.intBitsToFloat(((Long) Long.parseLong(
-												data[index + 2], 16))
-												.intValue());
+												data[pos++], 16)).intValue());
 								final double startingAngle = Double
 										.longBitsToDouble(Long.parseLong(
-												data[index + 3], 16)) / 10000;
+												data[pos++], 16)) / 10000;
 								final double angularStepWidth = ((double) Integer
-										.parseInt(data[index + 4], 16)) / 10000;
+										.parseInt(data[pos++], 16)) / 10000;
 
 								final int samples = Integer.parseInt(
-										data[index + 5], 16);
+										data[pos++], 16);
 								if (measurement.getSamples() == null) {
 									measurement.setSamples(new Sample[samples]);
 								}
@@ -266,17 +272,16 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 									}
 									try {
 										final float value = Integer.parseInt(
-												data[index + 6 + j], 16)
+												data[pos++], 16)
 												* scalingFactor + scalingOffset;
 										if (name.equalsIgnoreCase(SICKConstants.DIST1)) {
 											measurement.getSamples()[j]
-													.setDist1(value <= 3 ? Float.MAX_VALUE
-															: value);
+													.setDist1(value);
+
 										} else if (name
 												.equalsIgnoreCase(SICKConstants.DIST2)) {
 											measurement.getSamples()[j]
-													.setDist2(value <= 3 ? Float.MAX_VALUE
-															: value);
+													.setDist2(value);
 										} else if (name
 												.equalsIgnoreCase(SICKConstants.RSSI1)) {
 											measurement.getSamples()[j]
@@ -291,11 +296,102 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 												message);
 									}
 								}
-
-								index += samples + 6;
 							} else {
 								throw new SickReadErrorException(message);
 							}
+						}
+						final int channels8Bit = Integer.parseInt(data[pos++],
+								16);
+						for (int i = 0; i < channels8Bit; i++) {
+							// TODO Support 8Bit measurements
+							final String name = data[pos++];
+							if ((name.equalsIgnoreCase(SICKConstants.DIST1))
+									|| (name.equalsIgnoreCase(SICKConstants.DIST2))
+									|| (name.equalsIgnoreCase(SICKConstants.RSSI1))
+									|| (name.equalsIgnoreCase(SICKConstants.RSSI2))) {
+
+								final float scalingFactor = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								final float scalingOffset = Float
+										.intBitsToFloat(((Long) Long.parseLong(
+												data[pos++], 16)).intValue());
+								final double startingAngle = Double
+										.longBitsToDouble(Long.parseLong(
+												data[pos++], 16)) / 10000;
+								final double angularStepWidth = ((double) Integer
+										.parseInt(data[pos++], 16)) / 10000;
+
+								final int samples = Integer.parseInt(
+										data[pos++], 16);
+								if (measurement.getSamples() == null) {
+									measurement.setSamples(new Sample[samples]);
+								}
+								for (int j = 0; j < samples; j++) {
+									final float value = Integer.parseInt(
+											data[pos++], 16)
+											* scalingFactor
+											+ scalingOffset;
+								}
+
+							} else {
+								throw new SickReadErrorException(message);
+							}
+						}
+
+						int hasPosition = Integer.parseInt(data[pos++], 16);
+						if (hasPosition == 1) {
+							// TODO Support position information
+							float xPosition = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							float yPosition = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							float zPosition = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							float xRotation = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							float yRotation = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							float zRotation = Float.intBitsToFloat(((Long) Long
+									.parseLong(data[pos++], 16)).intValue());
+							int rotationType = Integer.parseInt(data[pos++]);
+						}
+						int hasName = Integer.parseInt(data[pos++], 16);
+						if (hasName == 1) {
+							measurement.setName(data[pos++]);
+						}
+						int hasComment = Integer.parseInt(data[pos++], 16);
+						if (hasComment == 1) {
+							measurement.setComment(data[pos++]);
+						}
+						int hasTimeInfo = Integer.parseInt(data[pos++], 16);
+						if (hasTimeInfo == 1) {
+							int year = Integer.parseInt(data[pos++], 16);
+							int month = Integer.parseInt(data[pos++], 16);
+							int day = Integer.parseInt(data[pos++], 16);
+							int hour = Integer.parseInt(data[pos++], 16);
+							int minute = Integer.parseInt(data[pos++], 16);
+							int second = Integer.parseInt(data[pos++], 16);
+							int microseconds = Integer
+									.parseInt(data[pos++], 16);
+							calendar.clear();
+							calendar.set(Calendar.YEAR, year);
+							calendar.set(Calendar.MONTH, month);
+							calendar.set(Calendar.DATE, day);
+							calendar.set(Calendar.HOUR_OF_DAY, hour);
+							calendar.set(Calendar.MINUTE, minute);
+							calendar.set(Calendar.SECOND, second);
+							calendar.set(Calendar.MILLISECOND, microseconds);
+						}
+						int hasEventInfo = Integer.parseInt(data[pos++], 16);
+						if (hasEventInfo == 1) {
+							// TODO Support event information
+							String eventType = data[pos++];
+							int encoderPosition = Integer.parseInt(data[pos++],
+									16);
+							int eventTime = Integer.parseInt(data[pos++], 16);
+							int angularPosition = Integer.parseInt(data[pos++],
+									16);
 						}
 					} catch (final Exception e) {
 						throw new SickReadErrorException(message);
