@@ -13,17 +13,18 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 
 	Logger logger = LoggerFactory.getLogger(NioConnectionHandler.class);
 	
-	final private NioConnection nioConnection;
-	final private String host;
-	final private int port;
-	final private boolean autoReconnect;
-	final private String user;
-	final private String password;
+	private NioConnection nioConnection;
+	private String host;
+	private int port;
+	private boolean autoReconnect;
+	private String user;
+	private String password;
 	private IAccessConnectionListener<ByteBuffer> caller;
 
 	private int tries = 0;
 	private int waitingForNextReconnect;
 
+	
 	public NioConnectionHandler(String host, int port, boolean autoconnect,
 			String user, String password) throws IOException {
 		this.host = host;
@@ -39,6 +40,9 @@ public class NioConnectionHandler implements IAccessConnectionHandler<ByteBuffer
 
 		nioConnection = NioConnection.getInstance();
 		nioConnection.addConnectionListener(this);
+	}
+	
+	public NioConnectionHandler() {
 	}
 	
 	public NioConnectionHandler(Map<String, String> options) throws NumberFormatException, IOException{
