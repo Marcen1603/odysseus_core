@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,10 @@ import de.offis.scampi.stack.Analyser;
 import de.offis.scampi.stack.ProtocolObject;
 import de.offis.xml.schema.scai20.DataElementValueDescription;
 import de.offis.xml.schema.scai20.SCAIDocument;
+import de.offis.xml.schema.scai20.SCAIDocument.SCAI;
+import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload;
+import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload.Acknowledgment.Reply;
+import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload.Measurements;
 import de.offis.xml.schema.scai20.SensorDataDescription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
@@ -116,7 +121,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public Tuple<?> readData(String string) {
-		String value = string.replace("\n", " ").replace("\r", " ").trim();
+		String value = string.replace("\n", "").replace("\r", "").trim();
 		LOG.debug(value);
 		ProtocolObject stackObject = null;
 		Analyser analyser = new Analyser();
@@ -227,42 +232,59 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	@SuppressWarnings("rawtypes")
 	private Tuple<?> process(final SCAIDocument data) {
 		Tuple<?> ret = null;
-		final SensorDataDescription[] sensorDataDescriptions = data.getSCAI()
-				.getPayload().getMeasurements().getDataStreamArray();
-		for (int i = 0; i < sensorDataDescriptions.length; ++i) {
+		SCAI scai = data.getSCAI();
+		Payload payload = scai.getPayload();
+		Measurements measurements = payload.getMeasurements();
+		
+	
+		if (measurements != null) {
+			final SensorDataDescription[] sensorDataDescriptions = measurements.getDataStreamArray();
+			for (int i = 0; i < sensorDataDescriptions.length; ++i) {
 
-			final Calendar timestamp = sensorDataDescriptions[i].getTimeStamp();
-			final String name = sensorDataDescriptions[i].getSensorName();
-			final String domain = sensorDataDescriptions[i]
-					.getSensorDomainName();
-			final DataElementValueDescription[] dataStreamElements = sensorDataDescriptions[i]
-					.getDataStreamElementArray();
+				final Calendar timestamp = sensorDataDescriptions[i].getTimeStamp();
+				final String name = sensorDataDescriptions[i].getSensorName();
+				final String domain = sensorDataDescriptions[i]
+						.getSensorDomainName();
+				final DataElementValueDescription[] dataStreamElements = sensorDataDescriptions[i]
+						.getDataStreamElementArray();
 
-			final Map<String, Object> event = new HashMap<String, Object>();
-			event.put(TIMESTAMP_ATTRIBUTE, timestamp.getTimeInMillis());
-			event.put(DOMAIN_ATTRIBUTE, domain);
-			event.put(NAME_ATTRIBUTE, name);
-			for (int j = 0; j < dataStreamElements.length; ++j) {
-				final String value = dataStreamElements[j].getData();
-				final String path = dataStreamElements[j].getPath();
-				BigDecimal quality = dataStreamElements[j].getQuality();
-				if (quality == null) {
-					quality = new BigDecimal(0);
+				final Map<String, Object> event = new HashMap<String, Object>();
+				event.put(TIMESTAMP_ATTRIBUTE, timestamp.getTimeInMillis());
+				event.put(DOMAIN_ATTRIBUTE, domain);
+				event.put(NAME_ATTRIBUTE, name);
+				for (int j = 0; j < dataStreamElements.length; ++j) {
+					final String value = dataStreamElements[j].getData();
+					final String path = dataStreamElements[j].getPath();
+					BigDecimal quality = dataStreamElements[j].getQuality();
+					if (quality == null) {
+						quality = new BigDecimal(0);
+					}
+					event.put(path, value);
+					event.put(path + "_quality", quality.doubleValue());
 				}
-				event.put(path, value);
-				event.put(path + "_quality", quality.doubleValue());
+				try {
+					Object[] retObj = new Object[schema.size()];
+					for (int ii = 0; i < retObj.length; ii++) {
+						retObj[ii] = event.get(schema.get(ii));
+					}
+					ret = new Tuple(retObj);
+
+				} catch (final Exception e) {
+					LOG.warn(e.getMessage(), e);
+				}
 			}
-			try {
-				Object[] retObj = new Object[schema.size()];
-				for (int ii = 0; i < retObj.length; ii++) {
-					retObj[ii] = event.get(schema.get(ii));
-				}
-				ret = new Tuple(retObj);
+		}else{
+			// TODO: What to do with this ??
+			Reply[] array = payload.getAcknowledgment().getReplyArray();
+			for (int i=0;i<array.length; i++){
+				XmlObject[] elem = array[i].getDataArray();
 
-			} catch (final Exception e) {
-				LOG.warn(e.getMessage(), e);
 			}
 		}
+		
+
+		
+
 		return ret;
 	}
 
