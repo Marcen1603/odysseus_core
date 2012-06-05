@@ -125,7 +125,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		} catch (Exception e) {
 			LOG.warn(e.getMessage(), e);
 		}
-		if (stackObject != null){
+		if (stackObject != null && stackObject.getContent() != null){
 			return process((SCAIDocument) stackObject.getContent());
 		}else{
 			return null;
