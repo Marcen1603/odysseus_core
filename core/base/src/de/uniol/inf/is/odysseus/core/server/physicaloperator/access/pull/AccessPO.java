@@ -84,13 +84,16 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	public synchronized void transferNext() {
 		if (isOpen() && !isDone()) {
 			R object = null;
+			W toTransfer = null;
 			try {
 				object = input.getNext();				
 				if (object != null) {
-					if (stringTransformer != null){						
-						transfer(dataHandler.readData(stringTransformer.transform(object)));
+					if (stringTransformer != null){		
+						String[] data = stringTransformer.transform(object);
+						toTransfer = dataHandler.readData(data);
+						
 					}else if (oisTransformer != null){
-						transfer(dataHandler.readData(oisTransformer.transform(object)));
+						toTransfer =  dataHandler.readData(oisTransformer.transform(object));
 					}
 				} else {
 					isDone = true;
@@ -98,6 +101,11 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 				}
 			} catch (Exception e) {
 				LOG.error("Cannot not transform object " +object, e);
+			}
+			if (toTransfer != null){
+				transfer(toTransfer);
+			}else{
+				LOG.warn("Got empty object to transfer");
 			}
 		}
 	}

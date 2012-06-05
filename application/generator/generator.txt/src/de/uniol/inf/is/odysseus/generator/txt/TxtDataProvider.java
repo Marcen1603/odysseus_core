@@ -26,18 +26,16 @@ import java.util.Scanner;
 public class TxtDataProvider extends Thread {
 
 	ServerSocket server;
+	String filename;
 
-	public TxtDataProvider(int i) {
+	public TxtDataProvider(int i, String filename) {
 		try {
 			server = new ServerSocket(i);
+			this.filename = filename;
 			System.out.println("Starting server on port "+i);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		new TxtDataProvider(54321).start();
 	}
 
 	private String charset = "UTF-8";
@@ -83,7 +81,7 @@ public class TxtDataProvider extends Thread {
 
 	private void initFileStream() {
 		URL fileURL = Activator.getContext().getBundle()
-				.getEntry("/data/data.txt");
+				.getEntry(filename);
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
 			this.scanner = new Scanner(inputStream, charset);

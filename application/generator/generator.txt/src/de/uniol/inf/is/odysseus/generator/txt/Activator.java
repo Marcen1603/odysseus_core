@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		TxtDataProvider server = new TxtDataProvider(54321);
+		TxtDataProvider server = new TxtDataProvider(54321, "/data/labtest2012mar22_modified_no_ts.log");
 		server.start();
 	}
 

@@ -116,14 +116,20 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public Tuple<?> readData(String string) {
+		String value = string.replace("\n", " ").replace("\r", " ").trim();
+		LOG.debug(value);
 		ProtocolObject stackObject = null;
 		Analyser analyser = new Analyser();
 		try {
-			stackObject = analyser.buildSCAIStackObject(string);
+			stackObject = analyser.buildSCAIStackObject(value);
 		} catch (Exception e) {
 			LOG.warn(e.getMessage(), e);
 		}
-		return process((SCAIDocument) stackObject.getContent());
+		if (stackObject != null){
+			return process((SCAIDocument) stackObject.getContent());
+		}else{
+			return null;
+		}
 	}
 
 	/*
