@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOBuil
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileAccessAOBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.CSVTransformer;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.TransformerRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.Distance;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.DolToEur;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.Now;
@@ -55,6 +58,8 @@ public class Activator implements BundleActivator {
 				new AccessAOBuilder());
 		OperatorBuilderFactory.putOperatorBuilderType("FILE",
 				new FileAccessAOBuilder());
+		TransformerRegistry.register(new CSVTransformer());
+		TransformerRegistry.register(new ObjectInputStream2ObjectInputStreamTransformer());
 		bundleContext = context;
 	}
 
