@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.NodeList;
 
 import de.offis.scampi.stack.Analyser;
 import de.offis.scampi.stack.ProtocolObject;
@@ -264,8 +265,9 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 				}
 				try {
 					Object[] retObj = new Object[schema.size()];
-					for (int ii = 0; i < retObj.length; ii++) {
-						retObj[ii] = event.get(schema.get(ii));
+					for (int ii = 0; ii < schema.size(); ii++) {
+						String attr = schema.get(ii).getAttributeName();
+						retObj[ii] = event.get(attr);
 					}
 					ret = new Tuple(retObj);
 
@@ -276,10 +278,21 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}else{
 			// TODO: What to do with this ??
 			Reply[] array = payload.getAcknowledgment().getReplyArray();
-			for (int i=0;i<array.length; i++){
-				XmlObject[] elem = array[i].getDataArray();
-
+			if (array.length != 1){
+				throw new IllegalArgumentException("Only one element scai documents are processable!");
 			}
+			XmlObject[] elem = array[0].getDataArray();
+			if (elem.length != 1){
+				throw new IllegalArgumentException("Only one element scai documents are processable!");
+			}
+			System.out.println(elem[0]);
+			System.out.println(
+					elem[0].getDomNode().getNodeName());
+			System.out.println(
+					elem[0].getDomNode().getAttributes());
+			
+			System.out.println(elem[0].getDomNode().getFirstChild());
+
 		}
 		
 
