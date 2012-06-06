@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
-import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickConnectionImpl;
 import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickReadErrorException;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
@@ -367,21 +366,20 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						int hasTimeInfo = Integer.parseInt(data[pos++], 16);
 						if (hasTimeInfo == 1) {
 							int year = Integer.parseInt(data[pos++], 16);
-							int month = Integer.parseInt(data[pos++], 16);
+							int month = Integer.parseInt(data[pos++], 16) - 1;
 							int day = Integer.parseInt(data[pos++], 16);
 							int hour = Integer.parseInt(data[pos++], 16);
 							int minute = Integer.parseInt(data[pos++], 16);
 							int second = Integer.parseInt(data[pos++], 16);
-							int microseconds = Integer
-									.parseInt(data[pos++], 16);
-							calendar.clear();
+							Long microseconds = Long.parseLong(data[pos++], 16);
 							calendar.set(Calendar.YEAR, year);
 							calendar.set(Calendar.MONTH, month);
 							calendar.set(Calendar.DATE, day);
 							calendar.set(Calendar.HOUR_OF_DAY, hour);
 							calendar.set(Calendar.MINUTE, minute);
 							calendar.set(Calendar.SECOND, second);
-							calendar.set(Calendar.MILLISECOND, microseconds);
+							calendar.set(Calendar.MILLISECOND,
+									microseconds.intValue());
 						}
 						int hasEventInfo = Integer.parseInt(data[pos++], 16);
 						if (hasEventInfo == 1) {

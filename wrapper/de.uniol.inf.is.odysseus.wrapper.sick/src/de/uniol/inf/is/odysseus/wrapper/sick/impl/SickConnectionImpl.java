@@ -11,6 +11,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -269,6 +270,27 @@ public class SickConnectionImpl implements SickConnection {
 										final float value = Integer.parseInt(
 												data[pos++], 16)
 												* scalingFactor + scalingOffset;
+										if (name.equalsIgnoreCase(SickConnectionImpl.DIST1)) {
+											measurement.getSamples()[j]
+													.setDist1(this
+															.substractBackground(
+																	j, value));
+
+										} else if (name
+												.equalsIgnoreCase(SickConnectionImpl.DIST2)) {
+											measurement.getSamples()[j]
+													.setDist2(this
+															.substractBackground(
+																	j, value));
+										} else if (name
+												.equalsIgnoreCase(SickConnectionImpl.RSSI1)) {
+											measurement.getSamples()[j]
+													.setRssi1(value);
+										} else if (name
+												.equalsIgnoreCase(SickConnectionImpl.RSSI2)) {
+											measurement.getSamples()[j]
+													.setRssi2(value);
+										}
 									}
 
 								} else {
@@ -301,30 +323,46 @@ public class SickConnectionImpl implements SickConnection {
 							}
 							int hasName = Integer.parseInt(data[pos++], 16);
 							if (hasName == 1) {
-								measurement.setName(data[pos++]);
+								StringBuffer buffer = new StringBuffer();
+								String name = data[pos++];
+								while ((!"0".equals(name))
+										&& (!"1".equals(name))) {
+									buffer.append(name);
+									name = data[pos++];
+								}
+								measurement.setName(buffer.toString());
+								pos--;
 							}
 							int hasComment = Integer.parseInt(data[pos++], 16);
 							if (hasComment == 1) {
-								measurement.setComment(data[pos++]);
+								StringBuffer buffer = new StringBuffer();
+								String comment = data[pos++];
+								while ((!"0".equals(comment))
+										&& (!"1".equals(comment))) {
+									buffer.append(comment);
+									comment = data[pos++];
+								}
+								measurement.setName(buffer.toString());
+								pos--;
 							}
 							int hasTimeInfo = Integer.parseInt(data[pos++], 16);
 							if (hasTimeInfo == 1) {
 								int year = Integer.parseInt(data[pos++], 16);
-								int month = Integer.parseInt(data[pos++], 16);
+								int month = Integer.parseInt(data[pos++], 16) - 1;
 								int day = Integer.parseInt(data[pos++], 16);
 								int hour = Integer.parseInt(data[pos++], 16);
 								int minute = Integer.parseInt(data[pos++], 16);
 								int second = Integer.parseInt(data[pos++], 16);
-								int microseconds = Integer.parseInt(
-										data[pos++], 16);
-								calendar.clear();
+								Long microseconds = Long.parseLong(data[pos++],
+										16);
 								calendar.set(Calendar.YEAR, year);
 								calendar.set(Calendar.MONTH, month);
 								calendar.set(Calendar.DATE, day);
 								calendar.set(Calendar.HOUR_OF_DAY, hour);
 								calendar.set(Calendar.MINUTE, minute);
 								calendar.set(Calendar.SECOND, second);
-								calendar.set(Calendar.MILLISECOND, microseconds);
+								calendar.set(Calendar.MILLISECOND,
+										microseconds.intValue());
 							}
 							int hasEventInfo = Integer
 									.parseInt(data[pos++], 16);
