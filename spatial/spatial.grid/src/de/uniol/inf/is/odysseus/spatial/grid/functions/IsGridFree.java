@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated
+// Not working
 public class IsGridFree extends AbstractFunction<Boolean> {
 	/**
      * 

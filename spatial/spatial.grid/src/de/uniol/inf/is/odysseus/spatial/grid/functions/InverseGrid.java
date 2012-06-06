@@ -15,15 +15,10 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
-import static com.googlecode.javacv.cpp.opencv_core.cvSize;
-
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
@@ -65,13 +60,7 @@ public class InverseGrid extends AbstractFunction<CartesianGrid> {
 		final CartesianGrid grid = this.getInputValue(0);
 		final CartesianGrid inverseGrid = new CartesianGrid(grid.origin,
 				grid.width, grid.height, grid.cellsize);
-		IplImage image = IplImage.create(cvSize(grid.width, grid.height),
-				IPL_DEPTH_64F, 1);
-
-		OpenCVUtil.gridToImage(grid, image);
-		opencv_core.cvNot(image, image);
-		OpenCVUtil.imageToGrid(image, inverseGrid);
-		image.release();
+		opencv_core.cvNot(grid.getImage(), inverseGrid.getImage());
 		return inverseGrid;
 	}
 

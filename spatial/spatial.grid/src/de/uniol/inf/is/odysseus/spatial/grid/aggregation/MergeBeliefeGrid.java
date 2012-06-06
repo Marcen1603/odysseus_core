@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated // Not working
 public class MergeBeliefeGrid extends
 		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 

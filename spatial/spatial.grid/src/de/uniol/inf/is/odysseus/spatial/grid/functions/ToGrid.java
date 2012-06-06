@@ -15,20 +15,16 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
-import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
-import static com.googlecode.javacv.cpp.opencv_core.cvZero;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -77,52 +73,42 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 	@Override
 	public CartesianGrid getValue() {
 		final Geometry geometry = (Geometry) this.getInputValue(0);
-		final Double x = this.getNumericalInputValue(1);
-		final Double y = this.getNumericalInputValue(2);
-		Integer width = this.getNumericalInputValue(3).intValue();
-		Integer depth = this.getNumericalInputValue(4).intValue();
-		final Double cellsize = this.getNumericalInputValue(5);
+		final Coordinate origin = (Coordinate) this.getInputValue(1);
+		Integer width = this.getNumericalInputValue(2).intValue();
+		Integer height = this.getNumericalInputValue(3).intValue();
+		final Double cellsize = this.getNumericalInputValue(4);
+
 		final Coordinate[] coordinates = geometry.getCoordinates();
 
-		final CartesianGrid grid = new CartesianGrid(new Coordinate(x, y),
-				width, depth, cellsize);
-		IplImage image = IplImage.create(
-				opencv_core.cvSize(grid.width, grid.height),
-				opencv_core.IPL_DEPTH_64F, 1);
+		final CartesianGrid grid = new CartesianGrid(origin, width, height,
+				cellsize);
 
-		cvZero(image);
-		opencv_core.cvSet(image, OpenCVUtil.UNKNOWN);
+		grid.fill(GridUtil.UNKNOWN);
 
 		CvPoint convexHullPoints = new CvPoint(coordinates.length);
 		Coordinate coordinate;
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
-			convexHullPoints
-					.position(i)
-					.x((int) ((coordinate.x - x) / cellsize + 0.5))
-					.y(image.height()
-							- (int) ((coordinate.y - y) / cellsize + 0.5));
+			convexHullPoints.position(i)
+					.x((int) ((coordinate.x - origin.x) / cellsize + 0.5))
+					.y((int) ((coordinate.y - origin.y) / cellsize + 0.5));
 		}
-		cvFillPoly(image, convexHullPoints, new int[] { coordinates.length },
-				1, OpenCVUtil.FREE, 4, 0);
+		cvFillPoly(grid.getImage(), convexHullPoints,
+				new int[] { coordinates.length }, 1,
+				opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
 		convexHullPoints.deallocate();
-		CvPoint point = new CvPoint(0, 0);
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
-			if ((coordinate.x >= x) && (coordinate.x < x + width)
-					&& (coordinate.y >= y) && (coordinate.y < y + depth)) {
-				point.put((int) ((coordinate.x - x) / cellsize), image.height()
-						- (int) ((coordinate.y - y) / cellsize));
-				cvRectangle(image, point, point, OpenCVUtil.OBSTACLE,
-						CV_FILLED, 8, 0);
+			if ((coordinate.x >= origin.x)
+					&& (coordinate.x < origin.x + width * grid.cellsize)
+					&& (coordinate.y >= origin.y)
+					&& (coordinate.y < origin.y + height * grid.cellsize)) {
+				grid.set((int) ((coordinate.x - origin.x) / cellsize),
+						(int) ((coordinate.y - origin.y) / cellsize),
+						GridUtil.OBSTACLE);
 
 			}
 		}
-		point.deallocate();
-		OpenCVUtil.imageToGrid(image, grid);
-
-		image.release();
-		image = null;
 		return grid;
 	}
 

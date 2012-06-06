@@ -15,34 +15,20 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
-import static com.googlecode.javacv.cpp.opencv_imgproc.cvFilter2D;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.context.ContextManagementException;
-import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
-import de.uniol.inf.is.odysseus.context.store.IContextStore;
-import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
+import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -58,38 +44,16 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 	 */
 	private static final long serialVersionUID = 2107668987337394612L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFSpatialDatatype.SPATIAL_POINT }, { SDFDatatype.DOUBLE },
+			{ SDFGridDatatype.GRID },
 			{ SDFSpatialDatatype.SPATIAL_POLAR_COORDINATE },
-			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE },
-			{ SDFDatatype.INTEGER }, { SDFDatatype.INTEGER },
-			{ SDFDatatype.DOUBLE }, { SDFDatatype.INTEGER },
-			{ SDFDatatype.DOUBLE }, { SDFDatatype.STRING } };
+			{ SDFSpatialDatatype.SPATIAL_COORDINATE }, { SDFDatatype.DOUBLE },
+			{ SDFDatatype.INTEGER }, { SDFDatatype.DOUBLE } };
 	private static final int THREADS = Runtime.getRuntime()
 			.availableProcessors() * 2 + 1;
-	private static final double MAX_VALUE = 0.999999;
-	private static final double MIN_VALUE = 1.0 - MAX_VALUE;
-
-	private static final double FREE = -Math.log(1.0 - MIN_VALUE);
-	private static final double UNKNOWN = -Math.log(1.0 - 0.5);
-
-	private final CvMat kernel;
-
-	public MergeOccupancyGrid() {
-		kernel = CvMat.create(3, 3, opencv_core.IPL_DEPTH_64F, 1);
-		kernel.put(0, 0, 1.0);
-		kernel.put(0, 1, 1.0);
-		kernel.put(0, 2, 1.0);
-		kernel.put(1, 0, 1.0);
-		kernel.put(1, 1, 0.0);
-		kernel.put(1, 2, 1.0);
-		kernel.put(2, 0, 1.0);
-		kernel.put(2, 1, 1.0);
-		kernel.put(2, 2, 1.0);
-	}
 
 	@Override
 	public int getArity() {
-		return 11;
+		return 6;
 	}
 
 	@Override
@@ -103,7 +67,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 					this.getSymbol()
 							+ " has only "
 							+ this.getArity()
-							+ " argument(s): A geometry, the x and y coordinates, the width and height, and the cellsize.");
+							+ " argument(s): A cartesian grid, the polar coordinates, the origin, the transform angle, the polar radius, and the polar cellsize.");
 		}
 		return accTypes[argPos];
 	}
@@ -115,68 +79,16 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 	@Override
 	public CartesianGrid getValue() {
-		final Coordinate polarGridOrigin = (Coordinate) this.getInputValue(0);
-		final Double angle = this.getNumericalInputValue(1);
+		CartesianGrid cartesianGrid = (CartesianGrid) this.getInputValue(0);
 		final PolarCoordinate[] coordinates = (PolarCoordinate[]) this
-				.getInputValue(2);
-		final Double x = this.getNumericalInputValue(3);
-		final Double y = this.getNumericalInputValue(4);
-		Integer width = this.getNumericalInputValue(5).intValue();
-		Integer depth = this.getNumericalInputValue(6).intValue();
-		final Double cartesianGridCellsize = this.getNumericalInputValue(7);
-		final Integer polarGridRadius = this.getNumericalInputValue(8)
-				.intValue();
-		final Double polarGridCellradius = this.getNumericalInputValue(9);
-		String contextStoreName = this.getInputValue(10);
+				.getInputValue(1);
+		final Coordinate origin = (Coordinate) this.getInputValue(2);
+		final Double angle = this.getNumericalInputValue(3);
+		final Integer radius = this.getNumericalInputValue(4).intValue();
+		final Double cellradius = this.getNumericalInputValue(5);
 
-		CartesianGrid cartesianGrid = null;
-		Map<Long, int[]> polarMapping = null;
-		IContextStore<Tuple<? extends ITimeInterval>> contextStore;
-		if (!ContextStoreManager.storeExists(contextStoreName)) {
-			SDFSchema schema = new SDFSchema(
-					"ContextStore:" + contextStoreName, new SDFAttribute(
-							"contextStore", "grid", SDFGridDatatype.GRID),
-					new SDFAttribute("contextStore", "map", SDFDatatype.OBJECT));
-			IContextStore<Tuple<? extends ITimeInterval>> store = new MultiElementStore<Tuple<? extends ITimeInterval>>(
-					contextStoreName, schema, 1);
-			try {
-				ContextStoreManager.addStore(contextStoreName, store);
-			} catch (ContextManagementException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		contextStore = ContextStoreManager.getStore(contextStoreName);
-
-		List<? extends Tuple<? extends ITimeInterval>> values = contextStore
-				.getAllValues();
-
-		if ((!values.isEmpty()) && (values.size() > 0)
-				&& (values.get(0) != null)) {
-			Tuple<? extends ITimeInterval> value = values.get(0);
-			cartesianGrid = value.getAttribute(0);
-			polarMapping = value.getAttribute(1);
-
-		} else {
-			cartesianGrid = createEmptyGrid(new Coordinate(x, y), width, depth,
-					cartesianGridCellsize);
-			polarMapping = preCalcPolarToCartesianCoordinates(cartesianGrid,
-					polarGridOrigin, angle, coordinates, polarGridRadius,
-					polarGridCellradius);
-
-		}
-
-		CartesianGrid mergedGrid = mergePolarGrid(cartesianGrid,
-				polarGridOrigin, angle, coordinates, polarGridRadius,
-				polarGridCellradius, polarMapping);
-
-		Object[] retObj = new Object[] { mergedGrid, polarMapping };
-		Tuple<ITimeInterval> ret = new Tuple<ITimeInterval>(retObj);
-		final TimeInterval metadata = new TimeInterval(new PointInTime(
-				System.currentTimeMillis()));
-		ret.setMetadata(metadata);
-		contextStore.insertValue(ret);
-
+		CartesianGrid mergedGrid = mergePolarGrid(cartesianGrid, origin, angle,
+				coordinates, radius, cellradius);
 		return mergedGrid;
 	}
 
@@ -185,85 +97,9 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		return SDFGridDatatype.GRID;
 	}
 
-	/**
-	 * Precalc the min and max points in the global cartesian grid for the polar
-	 * grid
-	 * 
-	 * @param cartesianGrid
-	 * @param polarGridOrigin
-	 * @param transformAngle
-	 * @param coordinates
-	 * @param radialCells
-	 * @param cellRadius
-	 * @return
-	 */
-	private Map<Long, int[]> preCalcPolarToCartesianCoordinates(
-			CartesianGrid cartesianGrid, Coordinate polarGridOrigin,
-			double transformAngle, PolarCoordinate[] coordinates,
-			int radialCells, double cellRadius) {
-		double offsetX = polarGridOrigin.x - cartesianGrid.origin.x;
-		double offsetY = polarGridOrigin.y - cartesianGrid.origin.y;
-		double cellAngle = Math.abs(coordinates[0].a - coordinates[1].a);
-		Map<Long, int[]> polarToCartesianMapping = new HashMap<Long, int[]>();
-
-		for (PolarCoordinate coordinate : coordinates) {
-			double theta = getTheta(coordinate.a, transformAngle);
-
-			double cosAngle = Math.cos(Math.toRadians(theta - (cellAngle / 2)));
-			double sinAngle = Math.sin(Math.toRadians(theta - (cellAngle / 2)));
-
-			double cosNextAngle = Math.cos(Math.toRadians(theta
-					+ (cellAngle / 2)));
-			double sinNextAngle = Math.sin(Math.toRadians(theta
-					+ (cellAngle / 2)));
-
-			int t = (int) (theta / cellAngle);
-			for (int r = 0; r < radialCells; r++) {
-				double radius = r * cellRadius;
-
-				int gridX1 = (int) ((offsetX + (radius * cosAngle)) / cartesianGrid.cellsize);
-				int gridY1 = (int) ((offsetY + (radius * sinAngle)) / cartesianGrid.cellsize);
-				int gridX2 = (int) ((offsetX + (radius * cosNextAngle)) / cartesianGrid.cellsize);
-				int gridY2 = (int) ((offsetY + (radius * sinNextAngle)) / cartesianGrid.cellsize);
-
-				int gridX3 = (int) ((offsetX + (radius + cellRadius)
-						* cosNextAngle) / cartesianGrid.cellsize);
-				int gridY3 = (int) ((offsetY + (radius + cellRadius)
-						* sinNextAngle) / cartesianGrid.cellsize);
-				int gridX4 = (int) ((offsetX + (radius + cellRadius) * cosAngle) / cartesianGrid.cellsize);
-				int gridY4 = (int) ((offsetY + (radius + cellRadius) * sinAngle) / cartesianGrid.cellsize);
-
-				int minX = Math.min(Math.min(gridX1, gridX2),
-						Math.min(gridX3, gridX4));
-				int maxX = Math.max(Math.max(gridX1, gridX2),
-						Math.max(gridX3, gridX4));
-				int minY = Math.min(Math.min(gridY1, gridY2),
-						Math.min(gridY3, gridY4));
-				int maxY = Math.max(Math.max(gridY1, gridY2),
-						Math.max(gridY3, gridY4));
-				minX = minX < 0 ? 0 : minX;
-				minY = minY < 0 ? 0 : minY;
-
-				long key = (((long) t) << 32) | r;
-				polarToCartesianMapping.put(key, new int[4]);
-				int[] gridCoordinates = polarToCartesianMapping.get(key);
-
-				gridCoordinates[0] = minX;
-				gridCoordinates[1] = minY;
-				gridCoordinates[2] = maxX;
-				gridCoordinates[3] = maxY;
-			}
-		}
-		return polarToCartesianMapping;
-	}
-
 	private CartesianGrid mergePolarGrid(CartesianGrid grid,
 			Coordinate polarGridOrigin, double transformAngle,
-			PolarCoordinate[] coordinates, int radialCells, double cellRadius,
-			Map<Long, int[]> polarMapping) {
-		// Spread the probability of the object existence
-		cvFilter2D(grid.getImage(), grid.getImage(), kernel,
-				new CvPoint(-1, -1));
+			PolarCoordinate[] coordinates, int radialCells, double cellRadius) {
 
 		CartesianGrid mergedGrid = grid.clone();
 
@@ -280,12 +116,12 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 			PolarCoordinate coordinate = coordinates[i];
 			double theta = getTheta(coordinate.a, transformAngle);
 
-			int t = (int) (theta / cellAngle);
-			int cells = (int) (coordinate.r / grid.cellsize);
-			long polarKey = (((long) t) << 32)
-					| (cells < radialCells ? cells : radialCells - 1);
-			resetPolar.position(i + 1).x(polarMapping.get(polarKey)[2])
-					.y(polarMapping.get(polarKey)[3]);
+			int x = (int) ((offsetX + (coordinate.r * Math.cos(Math
+					.toRadians(theta)))) / grid.cellsize);
+			int y = (int) ((offsetY + (coordinate.r * Math.sin(Math
+					.toRadians(theta)))) / grid.cellsize);
+
+			resetPolar.position(i + 1).x(x).y(y);
 		}
 		resetPolar.position(coordinates.length + 1)
 				.x((int) (offsetX / grid.cellsize))
@@ -293,7 +129,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 		cvFillPoly(mergedGrid.getImage(), resetPolar,
 				new int[] { coordinates.length + 2 }, 1,
-				opencv_core.cvScalarAll(FREE), 4, 0);
+				opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
 		resetPolar.deallocate();
 
 		// Calculate the probability for each laser beam in parallel
@@ -301,9 +137,10 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		ExecutorService threadPool = Executors.newFixedThreadPool(THREADS);
 		for (int i = 0; i < coordinates.length; i += num) {
 			threadPool.execute(new UpdateGridTask(grid, mergedGrid,
-					transformAngle, Arrays.copyOfRange(coordinates, i,
+					polarGridOrigin, transformAngle, Arrays.copyOfRange(
+							coordinates, i,
 							Math.min(coordinates.length, i + num)),
-					radialCells, cellRadius, polarMapping, cellAngle));
+					radialCells, cellRadius, cellAngle));
 		}
 
 		threadPool.shutdown();
@@ -316,16 +153,8 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 		// Set the position of the laser scanner as free
 		mergedGrid.set((int) (offsetX / grid.cellsize),
-				(int) (offsetY / grid.cellsize), FREE);
+				(int) (offsetY / grid.cellsize), GridUtil.FREE);
 		return mergedGrid;
-	}
-
-	private CartesianGrid createEmptyGrid(Coordinate coordinate, Integer width,
-			Integer height, Double cellsize) {
-		CartesianGrid grid = new CartesianGrid(coordinate, width, height,
-				cellsize);
-		grid.fill(UNKNOWN);
-		return grid;
 	}
 
 	/**
@@ -395,23 +224,23 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		private final double cellRadius;
 		private final double transformAngle;
 		private final double cellAngle;
-		private final Map<Long, int[]> polarMapping;
+
 		private final CartesianGrid cartesianGrid;
 		private final CartesianGrid mergedGrid;
+		private final Coordinate origin;
 
 		public UpdateGridTask(CartesianGrid cartesianGrid,
-				CartesianGrid mergedGrid, double transformAngle,
-				PolarCoordinate[] coordinates, int radialCells,
-				double cellRadius, Map<Long, int[]> polarMapping,
-				double cellAngle) {
+				CartesianGrid mergedGrid, Coordinate origin,
+				double transformAngle, PolarCoordinate[] coordinates,
+				int radialCells, double cellRadius, double cellAngle) {
 			this.radialCells = radialCells;
 			this.cellRadius = cellRadius;
 			this.transformAngle = transformAngle;
-			this.polarMapping = polarMapping;
 			this.cartesianGrid = cartesianGrid;
 			this.mergedGrid = mergedGrid;
 			this.cellAngle = cellAngle;
 			this.coordinates = coordinates;
+			this.origin = origin;
 
 		}
 
@@ -419,6 +248,8 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		public void run() {
 			double[] jointDistribution = new double[this.radialCells];
 			double beam[] = new double[this.radialCells];
+			double offsetX = origin.x - cartesianGrid.origin.x;
+			double offsetY = origin.y - cartesianGrid.origin.y;
 			for (PolarCoordinate coordinate : this.coordinates) {
 				Arrays.fill(jointDistribution, 0.0);
 				double probability = 1.0;
@@ -426,19 +257,45 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 				double theta = getTheta(coordinate.a, this.transformAngle);
 
-				int t = (int) (theta / this.cellAngle);
+				double cosAngle = Math.cos(Math.toRadians(theta
+						- (cellAngle / 2)));
+				double sinAngle = Math.sin(Math.toRadians(theta
+						- (cellAngle / 2)));
+
+				double cosNextAngle = Math.cos(Math.toRadians(theta
+						+ (cellAngle / 2)));
+				double sinNextAngle = Math.sin(Math.toRadians(theta
+						+ (cellAngle / 2)));
+
+				int[][] polarMapping = new int[this.radialCells][4];
 				for (int r = 0; r < this.radialCells; r++) {
 					double radius = r * this.cellRadius;
-
 					double value = 0.0;
 
-					long key = (((long) t) << 32) | r;
-					int[] gridCoordinates = this.polarMapping.get(key);
+					int gridX1 = (int) ((offsetX + (radius * cosAngle)) / cartesianGrid.cellsize);
+					int gridY1 = (int) ((offsetY + (radius * sinAngle)) / cartesianGrid.cellsize);
+					int gridX2 = (int) ((offsetX + (radius * cosNextAngle)) / cartesianGrid.cellsize);
+					int gridY2 = (int) ((offsetY + (radius * sinNextAngle)) / cartesianGrid.cellsize);
 
-					int minX = gridCoordinates[0];
-					int minY = gridCoordinates[1];
-					int maxX = gridCoordinates[2];
-					int maxY = gridCoordinates[3];
+					int gridX3 = (int) ((offsetX + (radius + cellRadius)
+							* cosNextAngle) / cartesianGrid.cellsize);
+					int gridY3 = (int) ((offsetY + (radius + cellRadius)
+							* sinNextAngle) / cartesianGrid.cellsize);
+					int gridX4 = (int) ((offsetX + (radius + cellRadius)
+							* cosAngle) / cartesianGrid.cellsize);
+					int gridY4 = (int) ((offsetY + (radius + cellRadius)
+							* sinAngle) / cartesianGrid.cellsize);
+
+					int minX = Math.min(Math.min(gridX1, gridX2),
+							Math.min(gridX3, gridX4));
+					int maxX = Math.max(Math.max(gridX1, gridX2),
+							Math.max(gridX3, gridX4));
+					int minY = Math.min(Math.min(gridY1, gridY2),
+							Math.min(gridY3, gridY4));
+					int maxY = Math.max(Math.max(gridY1, gridY2),
+							Math.max(gridY3, gridY4));
+					minX = minX < 0 ? 0 : minX;
+					minY = minY < 0 ? 0 : minY;
 
 					for (int x = minX; x <= maxX; x++) {
 						for (int y = minY; y <= maxY; y++) {
@@ -451,6 +308,11 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 							* getProbability(coordinate.r, radius);
 					probability *= (1.0 - value);
 					probabilitySum += jointDistribution[r];
+
+					polarMapping[r][0] = minX;
+					polarMapping[r][1] = minY;
+					polarMapping[r][2] = maxX;
+					polarMapping[r][3] = maxY;
 				}
 				double totalProbability = 0.0;
 				for (int r = 0; r < this.radialCells; r++) {
@@ -464,13 +326,10 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 						}
 						double newValue = normalized + beam[r]
 								* totalProbability;
-						long key = (((long) t) << 32) | r;
-						int[] gridCoordinates = this.polarMapping.get(key);
-
-						int minX = gridCoordinates[0];
-						int minY = gridCoordinates[1];
-						int maxX = gridCoordinates[2];
-						int maxY = gridCoordinates[3];
+						int minX = polarMapping[r][0];
+						int minY = polarMapping[r][1];
+						int maxX = polarMapping[r][2];
+						int maxY = polarMapping[r][3];
 						for (int x = minX; x <= maxX; x++) {
 							for (int y = minY; y <= maxY; y++) {
 								updateCell(x, y, mergedGrid, newValue);

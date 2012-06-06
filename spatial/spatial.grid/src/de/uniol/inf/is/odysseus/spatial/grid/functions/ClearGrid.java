@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGri
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated // Not working
 public class ClearGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 

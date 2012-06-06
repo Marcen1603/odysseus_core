@@ -16,17 +16,13 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.CV_64F;
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
-import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_INTER_LINEAR;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_WARP_FILL_OUTLIERS;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cv2DRotationMatrix;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvWarpAffine;
 
-import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint2D32f;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -45,6 +41,7 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 	private static final long serialVersionUID = -6834872922674099184L;
 
 	private final int flags = CV_INTER_LINEAR + CV_WARP_FILL_OUTLIERS;
+	private static final double UNKNOWN = -Math.log(1.0 - 0.5);
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFGridDatatype.GRID }, { SDFDatatype.DOUBLE } };
 
@@ -76,10 +73,6 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 	public CartesianGrid getValue() {
 		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
 		Double angle = (Double) this.getInputValue(1);
-		IplImage image = IplImage.create(cvSize(grid.width, grid.height),
-				IPL_DEPTH_64F, 1);
-		IplImage rotatedImage = IplImage.create(cvSize(grid.width, grid.height),
-				IPL_DEPTH_64F, image.nChannels());
 
 		Coordinate origin = grid.origin;
 		double cellsize = grid.cellsize;
@@ -100,20 +93,13 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 
 		CartesianGrid rotatedGrid = new CartesianGrid(rotatedOrigin,
 				grid.width, grid.height, grid.cellsize);
-		opencv_core.cvSet(rotatedImage, OpenCVUtil.UNKNOWN);
-
-		OpenCVUtil.gridToImage(grid, image);
+		rotatedGrid.fill(UNKNOWN);
 
 		CvMat mapMatrix = CvMat.create(2, 3, CV_64F);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
-		cvWarpAffine(image, rotatedImage, mapMatrix, flags, OpenCVUtil.UNKNOWN);
+		cvWarpAffine(grid.getImage(), rotatedGrid.getImage(), mapMatrix, flags,
+				OpenCVUtil.UNKNOWN);
 		mapMatrix.release();
-		image.release();
-		image = null;
-		OpenCVUtil.imageToGrid(rotatedImage, rotatedGrid);
-
-		rotatedImage.release();
-		rotatedImage = null;
 
 		return rotatedGrid;
 	}
