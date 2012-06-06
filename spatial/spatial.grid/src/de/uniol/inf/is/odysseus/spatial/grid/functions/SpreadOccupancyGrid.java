@@ -19,6 +19,7 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvFilter2D;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
+import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -84,25 +85,22 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				.longValue();
 		final double velocity = this.getNumericalInputValue(3);
 
-		int cells = (int) ((currentTimestamp - startTimestamp) * velocity
-				/ grid.cellsize + 0.5);
-		if (cells > 0) {
-			CvMat kernel = CvMat.create(cells, cells,
-					opencv_core.IPL_DEPTH_64F, 1);
-			for (int x = 0; x < cells; x++) {
-				for (int y = 0; y < cells; y++) {
-					if (x == y) {
-						kernel.put(x, y, 0.0);
-					} else {
-						kernel.put(x, y, 1.0);
-					}
-				}
-			}
-			cvFilter2D(grid.getImage(), grid.getImage(), kernel, new CvPoint(
-					-1, -1));
-			kernel.deallocate();
+		CartesianGrid spreadGrid = grid.clone();
+		int cells = (int) (((((double) (currentTimestamp - startTimestamp)) / 1000.0)
+				* velocity / grid.cellsize) * 2.0 + 1.5);
+		if (cells < 3) {
+			cells = 3;
 		}
-		return grid;
+		CvMat kernel = CvMat.create(cells, cells, opencv_core.CV_64F, grid
+				.getImage().nChannels());
+
+		opencv_core.cvSet(kernel, CvScalar.ONE);
+
+		cvFilter2D(grid.getImage(), spreadGrid.getImage(), kernel, new CvPoint(
+				-1, -1));
+		kernel.deallocate();
+		// grid.release();
+		return spreadGrid;
 	}
 
 	@Override

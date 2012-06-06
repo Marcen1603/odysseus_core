@@ -59,7 +59,7 @@ public class CreateGridIfNull extends AbstractFunction<CartesianGrid> {
 		final Integer height = this.getNumericalInputValue(3).intValue();
 		final Double cellsize = this.getNumericalInputValue(4);
 		if (this.getInputValue(0) != null) {
-			grid = (CartesianGrid) this.getInputValue(0);
+			grid = ((CartesianGrid) this.getInputValue(0)).clone();
 		} else {
 			grid = new CartesianGrid(origin, width, height, cellsize);
 			grid.fill(UNKNOWN);

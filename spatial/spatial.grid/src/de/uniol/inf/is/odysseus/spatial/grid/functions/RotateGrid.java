@@ -100,7 +100,7 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 		cvWarpAffine(grid.getImage(), rotatedGrid.getImage(), mapMatrix, flags,
 				OpenCVUtil.UNKNOWN);
 		mapMatrix.release();
-
+		grid.release();
 		return rotatedGrid;
 	}
 

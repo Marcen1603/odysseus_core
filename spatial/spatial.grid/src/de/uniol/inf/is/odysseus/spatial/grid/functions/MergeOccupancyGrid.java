@@ -89,6 +89,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 
 		CartesianGrid mergedGrid = mergePolarGrid(cartesianGrid, origin, angle,
 				coordinates, radius, cellradius);
+		cartesianGrid.release();
 		return mergedGrid;
 	}
 
@@ -115,11 +116,12 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		for (int i = 0; i < coordinates.length; i++) {
 			PolarCoordinate coordinate = coordinates[i];
 			double theta = getTheta(coordinate.a, transformAngle);
-
-			int x = (int) ((offsetX + (coordinate.r * Math.cos(Math
-					.toRadians(theta)))) / grid.cellsize);
-			int y = (int) ((offsetY + (coordinate.r * Math.sin(Math
-					.toRadians(theta)))) / grid.cellsize);
+			double radius = radialCells * cellRadius;
+			if (radius > coordinate.r) {
+				radius = coordinate.r;
+			}
+			int x = (int) ((offsetX + (radius * Math.cos(Math.toRadians(theta)))) / grid.cellsize);
+			int y = (int) ((offsetY + (radius * Math.sin(Math.toRadians(theta)))) / grid.cellsize);
 
 			resetPolar.position(i + 1).x(x).y(y);
 		}

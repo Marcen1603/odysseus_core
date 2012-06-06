@@ -182,7 +182,7 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 			roi.release();
 			roi = null;
 		}
-
+		grid.release();
 		return subgrid;
 	}
 }

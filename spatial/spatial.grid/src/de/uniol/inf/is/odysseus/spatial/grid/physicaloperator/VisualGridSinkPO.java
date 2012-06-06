@@ -15,10 +15,6 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.physicaloperator;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
-import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -27,9 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvFont;
-import com.googlecode.javacv.cpp.opencv_core.CvPoint;
-import com.googlecode.javacv.cpp.opencv_core.CvScalar;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -37,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 
 /**
@@ -47,7 +39,6 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	private CanvasFrame canvas;
 	private final SDFSchema schema;
 	private final AtomicBoolean pause = new AtomicBoolean(false);
-	private long last;
 	private final CvFont font = new CvFont(
 			opencv_core.CV_FONT_HERSHEY_SCRIPT_SIMPLEX, 0.4, 1);
 
@@ -62,7 +53,6 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	@Override
 	public void open() throws OpenFailedException {
 		super.open();
-		last = 0l;
 		this.canvas = new CanvasFrame("Grid");
 		canvas.getCanvas().addKeyListener(new KeyListener() {
 
@@ -105,35 +95,30 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_next(final Object object, final int port,
 			final boolean isReadOnly) {
-		this.last = ((Tuple<TimeInterval>) object).getMetadata().getStart()
-				.getMainPoint();
+		CartesianGrid grid = (CartesianGrid) ((Tuple<TimeInterval>) object)
+				.getAttribute(0);
 
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			long time = System.currentTimeMillis() - last;
-			if (time < 200) {
-				CartesianGrid grid = (CartesianGrid) ((Tuple<TimeInterval>) object)
-						.getAttribute(0);
-				CartesianGrid normalizedGrid = grid.clone();
-				for (int x = 0; x < normalizedGrid.width; x++) {
-					for (int y = 0; y < normalizedGrid.height; y++) {
-						double value = 1.0 - Math
-								.exp(-normalizedGrid.get(x, y));
-						normalizedGrid.set(x, y, value);
-					}
-				}
-				IplImage image = normalizedGrid.getImage();
-				opencv_core.cvPutText(image, "" + time, new CvPoint(5, 15),
-						font, CvScalar.RED);
 
-				this.canvas.showImage(image);
+			CartesianGrid normalizedGrid = grid.clone();
+			for (int x = 0; x < normalizedGrid.width; x++) {
+				for (int y = 0; y < normalizedGrid.height; y++) {
+					double value = 1.0 - Math.exp(-normalizedGrid.get(x, y));
+					normalizedGrid.set(x, y, value);
+				}
 			}
+
+			this.canvas.showImage(normalizedGrid.getImage());
+			normalizedGrid.release();
+
 		}
+		// grid.release();
 	}
 
 	@Override
 	public void processPunctuation(final PointInTime timestamp, final int port) {
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			this.canvas.setBackground(new Color(255, 0, 0));
+			this.canvas.setBackground(new Color(255, 255, 255));
 		}
 	}
 

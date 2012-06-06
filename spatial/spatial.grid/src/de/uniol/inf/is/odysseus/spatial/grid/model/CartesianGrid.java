@@ -37,7 +37,7 @@ public class CartesianGrid implements Cloneable {
 	public final int width;
 	public final int height;
 	public final double cellsize;
-	private final IplImage image;
+	private IplImage image;
 
 	public CartesianGrid(Coordinate origin, int width, int height,
 			double cellsize) {
@@ -52,13 +52,17 @@ public class CartesianGrid implements Cloneable {
 
 	public CartesianGrid(Coordinate origin, int width, int height,
 			double cellsize, IplImage image) {
-		this(origin, width, height, cellsize);
+		this(new Coordinate(origin.x, origin.y), width, height, cellsize);
 		opencv_core.cvCopy(image, this.image);
+
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.image.release();
+		if (this.image != null) {
+			this.image.release();
+			this.image = null;
+		}
 		super.finalize();
 	}
 
@@ -103,9 +107,8 @@ public class CartesianGrid implements Cloneable {
 
 	@Override
 	public CartesianGrid clone() {
-		CartesianGrid grid = new CartesianGrid(new Coordinate(this.origin.x,
-				this.origin.y), this.width, this.height, this.cellsize,
-				this.image);
+		CartesianGrid grid = new CartesianGrid(this.origin, this.width,
+				this.height, this.cellsize, this.image);
 		return grid;
 	}
 
@@ -113,6 +116,13 @@ public class CartesianGrid implements Cloneable {
 	public String toString() {
 		return "{Origin: " + origin + ", Width: " + width + " Depth: " + height
 				+ " CellSize: " + this.cellsize + "}";
+	}
+
+	public void release() {
+		if (this.image != null) {
+			this.image.release();
+			this.image = null;
+		}
 	}
 
 }

@@ -133,7 +133,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 				free = true;
 			}
 		}
-
+		grid.release();
 		return free;
 	}
 
