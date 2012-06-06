@@ -123,7 +123,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
 	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
-		if (getOutputMode() == OutputMode.MODIFIED_INPUT) {
+		if (getOutputMode() == OutputMode.MODIFIED_INPUT || !exclusive) {
 			object = (R) ((IClone) object).clone();
 		}
 		return object;
