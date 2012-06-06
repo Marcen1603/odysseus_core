@@ -22,6 +22,8 @@ import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated
+// Not working
 public class MergePlausabilityGrid extends
 		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
@@ -37,8 +39,7 @@ public class MergePlausabilityGrid extends
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> init(
-			final Tuple<?> in) {
+	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
 		final IPartialAggregate<Tuple<?>> grid = new GridPartialPlausabilityAggregate<Tuple<?>>(
 				(Grid) in.getAttribute(attribPos));
 		return grid;
@@ -46,13 +47,12 @@ public class MergePlausabilityGrid extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p,
-			final Tuple<?> toMerge, final boolean createNew) {
+			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+			final boolean createNew) {
 		GridPartialPlausabilityAggregate<Tuple<?>> grid = null;
 		if (createNew) {
 			grid = new GridPartialPlausabilityAggregate<Tuple<?>>(
-					((GridPartialPlausabilityAggregate<Tuple<?>>) p)
-							.getGrid());
+					((GridPartialPlausabilityAggregate<Tuple<?>>) p).getGrid());
 		} else {
 			grid = (GridPartialPlausabilityAggregate<Tuple<?>>) p;
 		}
@@ -61,8 +61,7 @@ public class MergePlausabilityGrid extends
 	}
 
 	@Override
-	public Tuple<?> evaluate(
-			final IPartialAggregate<Tuple<?>> p) {
+	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
 		final GridPartialPlausabilityAggregate<Tuple<?>> grid = (GridPartialPlausabilityAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
