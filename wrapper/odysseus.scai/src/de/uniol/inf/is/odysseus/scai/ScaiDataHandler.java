@@ -17,10 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.NodeList;
 
 import de.offis.scampi.stack.Analyser;
 import de.offis.scampi.stack.ProtocolObject;
@@ -28,7 +26,6 @@ import de.offis.xml.schema.scai20.DataElementValueDescription;
 import de.offis.xml.schema.scai20.SCAIDocument;
 import de.offis.xml.schema.scai20.SCAIDocument.SCAI;
 import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload;
-import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload.Acknowledgment.Reply;
 import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload.Measurements;
 import de.offis.xml.schema.scai20.SensorDataDescription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -275,28 +272,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 					LOG.warn(e.getMessage(), e);
 				}
 			}
-		}else{
-			// TODO: What to do with this ??
-			Reply[] array = payload.getAcknowledgment().getReplyArray();
-			if (array.length != 1){
-				throw new IllegalArgumentException("Only one element scai documents are processable!");
-			}
-			XmlObject[] elem = array[0].getDataArray();
-			if (elem.length != 1){
-				throw new IllegalArgumentException("Only one element scai documents are processable!");
-			}
-			System.out.println(elem[0]);
-			System.out.println(
-					elem[0].getDomNode().getNodeName());
-			System.out.println(
-					elem[0].getDomNode().getAttributes());
-			
-			System.out.println(elem[0].getDomNode().getFirstChild());
-
 		}
-		
-
-		
 
 		return ret;
 	}
