@@ -19,7 +19,7 @@ public class CSVTransformer extends LineTransformer {
 	@Override
 	public ITransformer<String, String[]> getInstance(
 			Map<String, String> options, SDFSchema schema) {
-		return new CSVTransformer(options.get("delimitter"));
+		return new CSVTransformer(options.get("delimiter"));
 	}
 	
 
