@@ -371,7 +371,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 							int hour = Integer.parseInt(data[pos++], 16);
 							int minute = Integer.parseInt(data[pos++], 16);
 							int second = Integer.parseInt(data[pos++], 16);
-							Long microseconds = Long.parseLong(data[pos++], 16);
+							Long milliseconds = Long.parseLong(data[pos++], 16) / 1000;
 							calendar.set(Calendar.YEAR, year);
 							calendar.set(Calendar.MONTH, month);
 							calendar.set(Calendar.DATE, day);
@@ -379,7 +379,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 							calendar.set(Calendar.MINUTE, minute);
 							calendar.set(Calendar.SECOND, second);
 							calendar.set(Calendar.MILLISECOND,
-									microseconds.intValue());
+									milliseconds.intValue());
 						}
 						int hasEventInfo = Integer.parseInt(data[pos++], 16);
 						if (hasEventInfo == 1) {

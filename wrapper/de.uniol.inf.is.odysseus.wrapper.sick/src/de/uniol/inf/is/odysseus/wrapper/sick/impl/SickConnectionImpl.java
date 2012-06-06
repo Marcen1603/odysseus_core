@@ -353,16 +353,16 @@ public class SickConnectionImpl implements SickConnection {
 								int hour = Integer.parseInt(data[pos++], 16);
 								int minute = Integer.parseInt(data[pos++], 16);
 								int second = Integer.parseInt(data[pos++], 16);
-								Long microseconds = Long.parseLong(data[pos++],
-										16);
+								Long milliseconds = Long.parseLong(data[pos++],
+										16)/1000;
 								calendar.set(Calendar.YEAR, year);
 								calendar.set(Calendar.MONTH, month);
-								calendar.set(Calendar.DATE, day);
+								calendar.set(Calendar.DAY_OF_MONTH, day);
 								calendar.set(Calendar.HOUR_OF_DAY, hour);
 								calendar.set(Calendar.MINUTE, minute);
 								calendar.set(Calendar.SECOND, second);
 								calendar.set(Calendar.MILLISECOND,
-										microseconds.intValue());
+										milliseconds.intValue());
 							}
 							int hasEventInfo = Integer
 									.parseInt(data[pos++], 16);
