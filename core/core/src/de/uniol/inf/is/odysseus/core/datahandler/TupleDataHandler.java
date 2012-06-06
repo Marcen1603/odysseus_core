@@ -48,14 +48,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
 		return new TupleDataHandler(schema);
 	}
-	
+
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(List<String> schema) {
 		TupleDataHandler handler = new TupleDataHandler();
 		handler.init(schema);
 		return handler;
 	}
-	
+
 	private TupleDataHandler(SDFSchema schema) {
 		this.createDataHandler(schema);
 	}
@@ -63,19 +63,21 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public void init(SDFSchema schema) {
 		if (dataHandlers == null) {
 			createDataHandler(schema);
-		}else{
-			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+		} else {
+			throw new RuntimeException(
+					"TupleDataHandler is immutable. Values already set");
 		}
 	}
-	
+
 	public void init(List<String> schema) {
 		if (dataHandlers == null) {
 			createDataHandler(schema);
-		}else{
-			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+		} else {
+			throw new RuntimeException(
+					"TupleDataHandler is immutable. Values already set");
 		}
 	}
-	
+
 	@Override
 	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
@@ -167,26 +169,24 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		for (SDFAttribute attribute : schema) {
 
 			SDFDatatype type = attribute.getDatatype();
+			String uri = attribute.getDatatype().getURI(false);
+			;
 
+			// is this really needed??
 			if (type.isTuple()) {
-				TupleDataHandler handler = new TupleDataHandler(
-						type.getSchema());
-				this.dataHandlers[i++] = handler;
-			} else if (type.isListValue()) {
-				ListDataHandler handler = new ListDataHandler(type.getSubType());
-				this.dataHandlers[i++] = handler;
-			} else {
-				String uri = attribute.getDatatype().getURI(false);
-				IDataHandler<?> handler = DataHandlerRegistry
-						.getDataHandler(uri);
-
-				if (handler == null) {
-					throw new IllegalArgumentException("Unregistered datatype "
-							+ uri);
-				}
-
-				this.dataHandlers[i++] = handler;
+				uri = "TUPLE";
+			} else if (type.isMultiValue()) {
+				uri = "MULTI_VALUE";
 			}
+
+			if (DataHandlerRegistry.getDataHandler(uri) == null) {
+				throw new IllegalArgumentException("Unregistered datatype "
+						+ uri);
+			}
+
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri)
+					.getInstance(new SDFSchema("", attribute));
+
 		}
 	}
 

@@ -67,6 +67,10 @@ public class DataHandlerRegistry {
 	}
 	
 	public static IDataHandler<?> getDataHandler(String dataType){
-		return dataHandlers.get(dataType.toLowerCase());
+		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
+		if (ret != null){
+			ret.setPrototype(true);
+		}
+		return ret;
 	}
 }

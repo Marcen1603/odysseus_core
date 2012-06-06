@@ -17,4 +17,6 @@ public interface IDataHandler<T> {
 	public int memSize(Object attribute);
 	public IDataHandler<T> getInstance(SDFSchema schema);
 	public IDataHandler<T> getInstance(List<String> schema);
+	public void setPrototype(boolean b);
+	public boolean isPrototype();
 }

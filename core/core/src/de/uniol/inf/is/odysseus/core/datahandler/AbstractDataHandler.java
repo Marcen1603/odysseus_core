@@ -19,13 +19,14 @@ import java.util.List;
 
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
+	boolean prototype = false;
 	
 	protected AbstractDataHandler(){
 	}
 	
 	@Override
 	public IDataHandler<T> getInstance(List<String> schema) {
-		// Hint: Currently only needed for TupleDataHandler
+		// Hint: Currently only needed for TupleDataHandler and ListDataHandler
 		return null;
 	}
 
@@ -34,6 +35,16 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	public T readData(String[] input) {
 		if (input.length != 1) throw new IllegalArgumentException("Input-size must be one!");
 		return readData(input[0]);
+	}
+	
+	@Override
+	public void setPrototype(boolean b) {
+		this.prototype = b;
+	}
+	
+	@Override
+	public boolean isPrototype() {
+		return prototype;
 	}
 	
 	@Override
