@@ -85,8 +85,8 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		SDFSchema storeSchema = this.store.getSchema();
 		int[] ret = new int[this.attribtues.size()];
 		DirectAttributeResolver dar = new DirectAttributeResolver(storeSchema);
+		int i=0;
 		for(String attName : this.attribtues){
-			int i=0;
 			SDFAttribute a = dar.getAttribute(attName);
 			int j=0;
 			for(SDFAttribute b : storeSchema){
