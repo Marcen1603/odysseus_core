@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -324,9 +323,20 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (node.jjtGetNumChildren() > 0) {
 			type = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		}
-		FileAccessAO source = new FileAccessAO(name, type,null);
-		source.setPath(filename);
-		source.setFileType(type);
+
+		String adapter="GenericPull";
+		String input="LineFile";
+		String transformer = "LineToString";
+		if ("csv".equalsIgnoreCase(type)){
+			transformer = "CSV2String";
+		}
+		String dataHandler = "Tuple";
+		Map<String, String> options = new HashMap<String, String>();
+		options.put("filename", filename);
+		options.put("delimiter",";");
+		
+		AccessAO source = new AccessAO(name,adapter,input,transformer,dataHandler,options);
+		
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		ILogicalOperator op = addTimestampAO(source);
 		try {
