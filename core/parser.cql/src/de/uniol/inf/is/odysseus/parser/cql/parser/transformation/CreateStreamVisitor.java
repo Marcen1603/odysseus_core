@@ -333,6 +333,8 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String dataHandler = "Tuple";
 		Map<String, String> options = new HashMap<String, String>();
 		options.put("filename", filename);
+		
+		// TODO: read delimiter
 		options.put("delimiter",";");
 		
 		AccessAO source = new AccessAO(name,adapter,input,transformer,dataHandler,options);
