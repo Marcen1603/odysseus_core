@@ -50,8 +50,8 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 		try {
 			NioConnectionHandler accessHandler = new NioConnectionHandler(accessAO.getHost(), accessAO.getPort(),accessAO.isAutoReconnectEnabled(), accessAO.getLogin(), accessAO.getPassword());
-			IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
-			accessPO = new ReceiverPO(new ByteBufferHandler(dataHandlerPrototype.getInstance(accessAO.getOutputSchema())), new BrokerByteBufferHandler(), accessHandler);
+			IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler(), accessAO.getOutputSchema());
+			accessPO = new ReceiverPO(new ByteBufferHandler(dataHandler), new BrokerByteBufferHandler(), accessHandler);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

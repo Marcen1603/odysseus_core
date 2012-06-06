@@ -38,7 +38,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	
 	public ListDataHandler(SDFSchema subType){
 		this.subType = subType;
-		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName()).getInstance(this.subType);
+		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
 	}
 	
 	@Override

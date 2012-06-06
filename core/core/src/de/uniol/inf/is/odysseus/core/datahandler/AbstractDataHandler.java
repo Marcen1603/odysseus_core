@@ -16,19 +16,36 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
-	boolean prototype = false;
+	boolean prototype = true;
 	
 	protected AbstractDataHandler(){
 	}
 	
 	@Override
-	public IDataHandler<T> getInstance(List<String> schema) {
-		// Hint: Currently only needed for TupleDataHandler and ListDataHandler
-		return null;
+	public IDataHandler<T> createInstance(List<String> schema) {
+		return getInstance(schema);
 	}
+	
+	protected IDataHandler<T> getInstance(List<String> schema){
+		// Hint: Currently only needed for TupleDataHandler
+		return null;
+
+	}
+
+	
+	@Override
+	public IDataHandler<T> createInstance(SDFSchema schema) {
+		IDataHandler<T> i = getInstance(schema);
+		i.setPrototype(false);
+		return i;
+	}
+	
+	abstract protected IDataHandler<T> getInstance(SDFSchema schema); 
 
 		
 	@Override
@@ -37,14 +54,15 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return readData(input[0]);
 	}
 	
-	@Override
-	public void setPrototype(boolean b) {
-		this.prototype = b;
-	}
 	
 	@Override
 	public boolean isPrototype() {
 		return prototype;
+	}
+	
+	@Override
+	public void setPrototype(boolean p) {
+		this.prototype = p;
 	}
 	
 	@Override

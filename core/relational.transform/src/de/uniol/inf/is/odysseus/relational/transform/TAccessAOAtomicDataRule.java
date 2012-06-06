@@ -44,10 +44,11 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 		
 		ObjectStreamInputHandler input = new ObjectStreamInputHandler(accessAO.getHost(), accessAO.getPort(), accessAO.getLogin(), accessAO.getPassword());
 		
-		IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
+		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler(), accessAO.getOutputSchema());
 		
+		@SuppressWarnings("unchecked")
 		ISource accessPO = new AccessPO(input, new ObjectInputStream2ObjectInputStreamTransformer(), 
-				dataHandlerPrototype.getInstance(accessAO.getOutputSchema()));
+				dataHandler);
 		
 		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);

@@ -119,6 +119,9 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	protected synchronized void process_open() throws OpenFailedException {
 		if (!isOpen()) {
 			input.init();
+			if (dataHandler.isPrototype()){
+				throw new IllegalArgumentException("Data handler is not configured correctly!");
+			}
 		}
 	}
 

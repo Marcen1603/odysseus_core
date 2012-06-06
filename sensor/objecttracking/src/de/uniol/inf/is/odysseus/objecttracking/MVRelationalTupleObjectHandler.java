@@ -59,7 +59,7 @@ public class MVRelationalTupleObjectHandler<M extends IProbability> implements
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
 			
-			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(uri);
+			IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
 			if(handler == null){
 				throw new IllegalArgumentException("No handler for datatype "+ uri);
 			}

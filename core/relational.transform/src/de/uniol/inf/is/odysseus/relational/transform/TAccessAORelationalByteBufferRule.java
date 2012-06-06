@@ -44,12 +44,11 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	public void execute(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
 		ReceiverPO accessPO = null;
-		IDataHandler tupleDataHandlerPrototype = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler());
 		IDataHandler concreteHandler = null;
 		if (accessAO.getInputSchema() != null &&  accessAO.getInputSchema().size() > 0){
-			concreteHandler = tupleDataHandlerPrototype.getInstance(accessAO.getInputSchema());
+			concreteHandler = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler(),accessAO.getInputSchema());
 		}else{
-			concreteHandler = tupleDataHandlerPrototype.getInstance(accessAO.getOutputSchema());
+			concreteHandler = DataHandlerRegistry.getDataHandler(accessAO.getDataHandler(),accessAO.getOutputSchema());
 		}
 		try {
 			accessPO = new ReceiverPO(new ByteBufferHandler(concreteHandler), 

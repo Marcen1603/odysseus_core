@@ -15,8 +15,8 @@ public interface IDataHandler<T> {
 	public void writeData(ByteBuffer buffer, Object data);
 	public List<String> getSupportedDataTypes();
 	public int memSize(Object attribute);
-	public IDataHandler<T> getInstance(SDFSchema schema);
-	public IDataHandler<T> getInstance(List<String> schema);
-	public void setPrototype(boolean b);
+	public IDataHandler<T> createInstance(SDFSchema schema);
+	public IDataHandler<T> createInstance(List<String> schema);
 	public boolean isPrototype();
+	public void setPrototype(boolean p);
 }

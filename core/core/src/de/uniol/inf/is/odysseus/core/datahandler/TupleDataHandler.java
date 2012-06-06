@@ -179,13 +179,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				uri = "MULTI_VALUE";
 			}
 
-			if (DataHandlerRegistry.getDataHandler(uri) == null) {
+			if (!DataHandlerRegistry.containsDataHandler(uri)) {
 				throw new IllegalArgumentException("Unregistered datatype "
 						+ uri);
 			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri)
-					.getInstance(new SDFSchema("", attribute));
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
+
 
 		}
 	}
@@ -196,7 +196,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		for (String attribute : schema) {
 
 			IDataHandler<?> handler = DataHandlerRegistry
-					.getDataHandler(attribute);
+					.getDataHandler(attribute, (SDFSchema)null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype "

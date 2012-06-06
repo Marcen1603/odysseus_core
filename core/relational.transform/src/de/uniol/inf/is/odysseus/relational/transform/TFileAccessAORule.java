@@ -51,10 +51,10 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 			transform = new LineTransformer();
 		}
 		
-		IDataHandler dataHandlerPrototype = DataHandlerRegistry.getDataHandler(fileAccessAO.getDataHandler());
+		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(fileAccessAO.getDataHandler(), fileAccessAO.getOutputSchema());
 		
 		ISource<?> fileAccessPO = new AccessPO<String,Tuple<?>>(input, transform, 
-				dataHandlerPrototype.getInstance(fileAccessAO.getOutputSchema()));
+				dataHandler);
 
 		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(fileAccessPOName, fileAccessPO);

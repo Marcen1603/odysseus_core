@@ -56,14 +56,12 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			IInputHandler input = inputHandlerPrototype.getInstance(operator
 					.getOptionsMap());
 
-			IDataHandler dataHandlerPrototype = DataHandlerRegistry
-					.getDataHandler(operator.getDataHandler());
-			if (dataHandlerPrototype == null) {
+			IDataHandler dataHandler = DataHandlerRegistry
+					.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+			if (dataHandler == null) {
 				throw new TransformationException("No data handler "
 						+ operator.getDataHandler() + " found.");
 			}
-			IDataHandler dataHandler = dataHandlerPrototype
-					.getInstance(operator.getOutputSchema());
 
 			ITransformer transformerPrototype = TransformerRegistry
 					.getTransformer(operator.getTransformer());
@@ -98,18 +96,17 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 					// returned true
 
 			ReceiverPO accessPO = null;
-			IDataHandler tupleDataHandlerPrototype = DataHandlerRegistry
-					.getDataHandler(operator.getDataHandler());
+			final IDataHandler dataHandler;
 			IDataHandler concreteHandler = null;
 			if (operator.getInputSchema() != null
 					&& operator.getInputSchema().size() > 0) {
-				concreteHandler = tupleDataHandlerPrototype
-						.getInstance(operator.getInputSchema());
+				concreteHandler =  DataHandlerRegistry
+						.getDataHandler(operator.getDataHandler(),operator.getInputSchema());
 			} else {
-				concreteHandler = tupleDataHandlerPrototype
-						.getInstance(operator.getOutputSchema());
+				concreteHandler = DataHandlerRegistry
+						.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
 			}
-			// TODO: Make connection Handler adaptable
+			
 			IAccessConnectionHandler connectionPrototype = AccessConnectionHandlerRegistry.get(operator.getAccessConnectionHandler());
 			if (connectionPrototype == null){
 				throw new TransformationException("No access connection handler "+operator.getAccessConnectionHandler()+" found.");

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkGeneratorConfiguration;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 
@@ -201,7 +202,7 @@ public class NexmarkServer {
 
 	public static void main(String[] args) {
 		// Hack to load bundle??
-		DataHandlerRegistry.getDataHandler("");
+		DataHandlerRegistry.getDataHandler("",(SDFSchema)null);
 		int personPort = 0, auctionPort = 0, bidPort = 0, categoryPort = 0;
 		int startPort = 0;
 		int elementLimit = 0;

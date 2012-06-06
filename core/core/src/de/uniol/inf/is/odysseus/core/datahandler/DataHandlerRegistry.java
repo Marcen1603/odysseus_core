@@ -15,13 +15,16 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 /**
- * @author André Bolles
+ * @author André Bolles, Marco Grawunder
  *
  */
 public class DataHandlerRegistry {
@@ -53,11 +56,7 @@ public class DataHandlerRegistry {
 			throw new IllegalArgumentException(errMsg);
 		}
 	}
-	
-//	public static void removeDataHandler(String dataType){
-//		dataHandlers.remove(dataType);
-//	}
-	
+		
 	public static void removeDataHandler(IDataHandler<?> handler){
 		for(String type: handler.getSupportedDataTypes()){
 			if(dataHandlers.containsKey(type.toLowerCase())){
@@ -66,11 +65,19 @@ public class DataHandlerRegistry {
 		}
 	}
 	
-	public static IDataHandler<?> getDataHandler(String dataType){
-		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
-		if (ret != null){
-			ret.setPrototype(true);
-		}
+	public static IDataHandler<?> getDataHandler(String dataType, SDFSchema schema){
+		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase()).createInstance(schema);
 		return ret;
 	}
+
+	public static boolean containsDataHandler(String dataType) {
+		return dataHandlers.containsKey(dataType.toLowerCase());
+	}
+
+	public static IDataHandler<?> getDataHandler(String dataType,
+			List<String> schema) {
+		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase()).createInstance(schema);
+		return ret;
+	}
+	
 }
