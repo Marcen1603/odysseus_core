@@ -10,8 +10,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
-
-public class ToPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
+public class AsPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
 
 	/**
 	 * 
@@ -39,7 +41,7 @@ public class ToPolarCoordinates extends AbstractFunction<PolarCoordinate[]> {
 
 	@Override
 	public String getSymbol() {
-		return "ToPolarCoordinates";
+		return "AsPolarCoordinates";
 	}
 
 	@Override

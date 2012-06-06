@@ -33,8 +33,10 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnion;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
-import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinates;
-import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinates;
+import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinate;
+import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
+import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinate;
+import de.uniol.inf.is.odysseus.spatial.functions.AsPolarCoordinates;
 
 public class SpatialFunctionProvider implements IFunctionProvider {
 
@@ -78,8 +80,10 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new ST_Transform());
 		functions.add(new ST_SetSRID());
 
-		functions.add(new ToPolarCoordinates());
-		functions.add(new ToCartesianCoordinates());
+		functions.add(new AsPolarCoordinates());
+		functions.add(new AsCartesianCoordinates());
+		functions.add(new ToPolarCoordinate());
+		functions.add(new ToCartesianCoordinate());
 		return functions;
 	}
 

@@ -12,8 +12,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
-
-public class ToCartesianCoordinates extends AbstractFunction<Geometry> {
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
+public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 
 	/**
 	 * 
@@ -43,7 +45,7 @@ public class ToCartesianCoordinates extends AbstractFunction<Geometry> {
 
 	@Override
 	public String getSymbol() {
-		return "ToCartesianCoordinates";
+		return "AsCartesianCoordinates";
 	}
 
 	@Override
