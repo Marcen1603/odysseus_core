@@ -347,7 +347,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	 * @return SocketAddress
 	 */
 	@Override
-	public SocketAddress getConnectionInformation(int queryId) {
+	public SocketAddress getSocketConnectionInformation(int queryId) {
 		if(getWebserviceServer() != null) {
 			ConnectionInformation info = getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
 			try {
@@ -359,6 +359,10 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 
+	@Override
+	public ISession getUser() {
+		return this.user;
+	}
 	
 /********************************************************************
  *                      Methods not implemented by server           *
