@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Merlin Wasmann
  */
 public class ClientReceiver<R, W> implements ISource<W>,
-		IAccessConnectionListener<R>, ITransferHandler<W> {
+		IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
