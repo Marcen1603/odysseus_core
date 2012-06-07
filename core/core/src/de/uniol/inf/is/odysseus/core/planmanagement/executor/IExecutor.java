@@ -118,7 +118,7 @@ public interface IExecutor extends IClientPlanManager{
 	 * @param queryID
 	 * @return
 	 */
-	public List<IPhysicalOperator> getPhyiscalRoots(int queryID);
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID);
 	
 	/**
 	 * Start all queries that are currently not running

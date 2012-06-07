@@ -227,7 +227,7 @@ public class ThinPeerExecutor implements IExecutor, IThinPeerListener{
 	}
 
 	@Override
-	public List<IPhysicalOperator> getPhyiscalRoots(int queryID) {
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
 		// TODO Auto-generated method stub
 		return null;
 	}

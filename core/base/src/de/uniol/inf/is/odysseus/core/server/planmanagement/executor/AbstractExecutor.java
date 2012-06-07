@@ -555,7 +555,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public List<IPhysicalOperator> getPhyiscalRoots(int queryID) {
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
 		IPhysicalQuery pq = executionPlan.getQuery(queryID);
 		return pq.getRoots();
 	}

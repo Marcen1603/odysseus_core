@@ -335,7 +335,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	}
 	
 	@Override
-	public List<IPhysicalOperator> getPhyiscalRoots(int queryID) {
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
 		// TODO: Implement here the method from the Rcp command
 		return null;
 	}
