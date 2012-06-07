@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
+@Deprecated
 public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	private static final long serialVersionUID = 3631495716228164185L;
 
