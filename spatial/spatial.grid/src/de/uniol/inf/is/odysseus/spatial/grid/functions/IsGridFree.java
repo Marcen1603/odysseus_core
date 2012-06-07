@@ -16,15 +16,12 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 import com.googlecode.javacv.cpp.opencv_core.CvRect;
-import com.googlecode.javacv.cpp.opencv_core.CvScalar;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_imgproc;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -32,8 +29,6 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-@Deprecated
-// Not working
 public class IsGridFree extends AbstractFunction<Boolean> {
 	/**
      * 
@@ -86,11 +81,6 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 		Double depth = (Double) this.getInputValue(3);
 		Double threshold = (Double) this.getInputValue(4);
 
-		IplImage image = IplImage.create(
-				opencv_core.cvSize(grid.width, grid.height),
-				opencv_core.IPL_DEPTH_64F, 1);
-		OpenCVUtil.gridToImage(grid, image);
-
 		final int globalGridCenterX = (int) (Math.abs(point.x - grid.origin.x) / grid.cellsize);
 		final int globalGridCenterY = (int) (Math.abs(point.y - grid.origin.y) / grid.cellsize);
 
@@ -114,24 +104,20 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 			roiRect.width(roiWidth);
 			roiRect.height(roiDepth);
 
-			IplImage roi = IplImage.create(
-					opencv_core.cvSize(roiRect.width(), roiRect.height()),
-					opencv_core.IPL_DEPTH_64F, 1);
-
-			opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
-
-			opencv_core.cvSetImageROI(image, roiRect);
-			opencv_core.cvCopy(image, roi);
-			opencv_core.cvResetImageROI(image);
-			image.release();
-
-			opencv_imgproc.cvThreshold(roi, roi, threshold, 255,
-					opencv_imgproc.CV_THRESH_BINARY);
-			CvScalar avg = opencv_core.cvAvg(roi, null);
-			roi.release();
-			if (avg.getVal(0) == 0.0) {
+			opencv_core.cvSetImageROI(grid.getImage(), roiRect);
+			double[] minVal = new double[1];
+			double[] maxVal = new double[1];
+			CvPoint minLoc = new CvPoint();
+			CvPoint maxLoc = new CvPoint();
+			opencv_core.cvMinMaxLoc(grid.getImage(), minVal, maxVal, minLoc,
+					maxLoc, null);
+			if (maxVal[0] < threshold) {
 				free = true;
 			}
+			opencv_core.cvResetImageROI(grid.getImage());
+			roiRect.deallocate();
+			minLoc.deallocate();
+			maxLoc.deallocate();
 		}
 		grid.release();
 		return free;

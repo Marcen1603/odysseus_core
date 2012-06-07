@@ -156,6 +156,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		// Set the position of the laser scanner as free
 		mergedGrid.set((int) (offsetX / grid.cellsize),
 				(int) (offsetY / grid.cellsize), GridUtil.FREE);
+		grid.release();
 		return mergedGrid;
 	}
 

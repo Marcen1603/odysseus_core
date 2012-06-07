@@ -28,10 +28,12 @@ import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.core.IClone;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class CartesianGrid implements Cloneable {
+public class CartesianGrid implements IClone {
 	public final Coordinate origin;
 
 	public final int width;

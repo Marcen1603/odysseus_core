@@ -15,23 +15,18 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_64F;
-import static com.googlecode.javacv.cpp.opencv_core.cvSize;
-
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import com.googlecode.javacv.cpp.opencv_imgproc;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-@Deprecated // Not working
+@Deprecated
+// Not working
 public class ClearGrid extends AbstractFunction<CartesianGrid> {
 	/**
      * 
@@ -70,21 +65,8 @@ public class ClearGrid extends AbstractFunction<CartesianGrid> {
 		final CartesianGrid result = new CartesianGrid(base.origin, base.width,
 				base.height, base.cellsize);
 
-		IplImage baseImage = IplImage.create(cvSize(base.width, base.height),
-				IPL_DEPTH_64F, 1);
-		IplImage gridImage = IplImage.create(cvSize(grid.width, grid.height),
-				IPL_DEPTH_64F, 1);
-		OpenCVUtil.gridToImage(base, baseImage);
-		OpenCVUtil.gridToImage(grid, gridImage);
-
-		opencv_imgproc.cvThreshold(gridImage, gridImage, 100, 0,
-				opencv_imgproc.CV_THRESH_BINARY_INV);
-
-		opencv_core.cvAnd(baseImage, gridImage, baseImage, null);
-		OpenCVUtil.imageToGrid(baseImage, result);
-
-		baseImage.release();
-		gridImage.release();
+		opencv_core.cvAnd(base.getImage(), grid.getImage(), result.getImage(),
+				null);
 
 		return result;
 	}

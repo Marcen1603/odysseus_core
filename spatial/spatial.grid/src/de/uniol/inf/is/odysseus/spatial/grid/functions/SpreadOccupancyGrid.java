@@ -93,13 +93,12 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		}
 		CvMat kernel = CvMat.create(cells, cells, opencv_core.CV_64F, grid
 				.getImage().nChannels());
-
 		opencv_core.cvSet(kernel, CvScalar.ONE);
 
 		cvFilter2D(grid.getImage(), spreadGrid.getImage(), kernel, new CvPoint(
 				-1, -1));
 		kernel.deallocate();
-		// grid.release();
+		grid.release();
 		return spreadGrid;
 	}
 

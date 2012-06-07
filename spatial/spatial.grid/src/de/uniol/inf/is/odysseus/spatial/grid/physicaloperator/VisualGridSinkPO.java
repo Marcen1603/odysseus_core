@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_core.CvFont;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -33,14 +32,14 @@ import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 
 /**
+ * Visualisation for the existence probability of an occupancy grid
+ * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class VisualGridSinkPO extends AbstractSink<Object> {
 	private CanvasFrame canvas;
 	private final SDFSchema schema;
 	private final AtomicBoolean pause = new AtomicBoolean(false);
-	private final CvFont font = new CvFont(
-			opencv_core.CV_FONT_HERSHEY_SCRIPT_SIMPLEX, 0.4, 1);
 
 	public VisualGridSinkPO(final SDFSchema schema) {
 		this.schema = schema;
@@ -87,7 +86,6 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 
 	@Override
 	public VisualGridSinkPO clone() {
-		System.out.println("Create clone");
 		return new VisualGridSinkPO(this);
 	}
 
@@ -99,20 +97,21 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 				.getAttribute(0);
 
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-
 			CartesianGrid normalizedGrid = grid.clone();
-			for (int x = 0; x < normalizedGrid.width; x++) {
-				for (int y = 0; y < normalizedGrid.height; y++) {
-					double value = 1.0 - Math.exp(-normalizedGrid.get(x, y));
-					normalizedGrid.set(x, y, value);
-				}
-			}
-
+			opencv_core.cvConvertScale(normalizedGrid.getImage(),
+					normalizedGrid.getImage(), -1.0, 0);
+			opencv_core.cvExp(normalizedGrid.getImage(),
+					normalizedGrid.getImage());
+			opencv_core.cvConvertScale(normalizedGrid.getImage(),
+					normalizedGrid.getImage(), -1.0, 0);
+			opencv_core
+					.cvAddS(normalizedGrid.getImage(),
+							opencv_core.cvScalarAll(1),
+							normalizedGrid.getImage(), null);
 			this.canvas.showImage(normalizedGrid.getImage());
 			normalizedGrid.release();
 
 		}
-		// grid.release();
 	}
 
 	@Override
