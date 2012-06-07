@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractSinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.SinkAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SinkSpec;
@@ -81,7 +81,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 		}
 
 		@Override
-        public void run() {
+		public void run() {
 			try {
 				while ((!Thread.currentThread().isInterrupted())
 						&& (this.channel.isConnected())) {
@@ -106,7 +106,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 							// ID
 							buffer.putShort(((Double) data[0]).shortValue());
 							// Grid
-							Grid grid = (Grid) data[1];
+							CartesianGrid grid = (CartesianGrid) data[1];
 
 							// X Position
 							buffer.putInt((int) grid.origin.x);
@@ -115,14 +115,18 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 							// Grid Length
 							buffer.putShort((short) grid.width);
 							// Grid Width
-							buffer.putShort((short) grid.depth);
+							buffer.putShort((short) grid.height);
 							// Grid Height
 							buffer.putShort((short) 1);
 							// Cell Size
 							buffer.putInt((int) grid.cellsize * 10);
 
-							buffer.put(grid.get());
-
+							for (int x = 0; x < grid.width; x++) {
+								for (int y = 0; y < grid.height; y++) {
+									buffer.put((byte) ((1.0 - Math.exp(-grid
+											.get(x, y))) * 100));
+								}
+							}
 							buffer.flip();
 							this.channel.write(buffer);
 							if (buffer.hasRemaining()) {

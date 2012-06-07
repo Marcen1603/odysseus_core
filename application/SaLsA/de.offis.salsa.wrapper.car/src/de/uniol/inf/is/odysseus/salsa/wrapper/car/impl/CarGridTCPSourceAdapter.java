@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
@@ -98,21 +98,24 @@ public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 									calendar.add(Calendar.MILLISECOND,
 											millisecond * 10);
 									short id = buffer.getShort();
-									int x = buffer.getInt();
-									int y = buffer.getInt();
-									short length = buffer.getShort();
+									Coordinate origin = new Coordinate(
+											buffer.getInt(), buffer.getInt());
 									short width = buffer.getShort();
 									short height = buffer.getShort();
+									short future = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
-									Grid grid = new Grid(new Coordinate(x, y),
-											length * cell, width * cell, cell);
+									CartesianGrid grid = new CartesianGrid(
+											origin, width, height, cell);
 									// FIXME Use 3D Grid when height>1
-									for (int l = 0; l < length; l++) {
-										for (int w = 0; w < width; w++) {
-											for (int h = 0; h < height; h++) {
-												grid.set(l, w, buffer.get());
-											}
+									for (int x = 0; x < width; x++) {
+										for (int y = 0; y < height; y++) {
+											grid.set(
+													x,
+													y,
+													new Double(
+															-Math.log(1.0 - buffer
+																	.get() / 100)));
 										}
 									}
 									this.listener.transfer(source,

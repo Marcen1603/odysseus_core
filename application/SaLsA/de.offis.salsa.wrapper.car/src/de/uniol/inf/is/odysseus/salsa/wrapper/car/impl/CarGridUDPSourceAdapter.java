@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 
@@ -95,25 +95,33 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									calendar.add(Calendar.MILLISECOND,
 											millisecond * 10);
 									short id = buffer.getShort();
-									int x = buffer.getInt();
-									int y = buffer.getInt();
+									Coordinate origin = new Coordinate(
+											buffer.getInt(), buffer.getInt());
 									short width = buffer.getShort();
-									short depth = buffer.getShort();
 									short height = buffer.getShort();
+									short future = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
+									CartesianGrid grid = new CartesianGrid(
+											origin, width, height, cell);
 									buffer.compact();
-									while (buffer.position() < width * depth
-											* height) {
+									while (buffer.position() < width * height
+											* future) {
 										channel.receive(buffer);
 									}
 									pos = buffer.position();
 									buffer.flip();
-									Grid grid = new Grid(new Coordinate(x, y),
-											width * cell, depth * cell, cell);
 									// FIXME Use 3D Grid when height>1
-									buffer.get(grid.get(), 0, width * depth
-											* height);
+									for (int x = 0; x < width; x++) {
+										for (int y = 0; y < height; y++) {
+											grid.set(
+													x,
+													y,
+													new Double(
+															-Math.log(1.0 - buffer
+																	.get() / 100)));
+										}
+									}
 									if (calendar.getTimeInMillis() >= timestamp) {
 										this.listener.transfer(source,
 												calendar.getTimeInMillis(),
