@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 import java.util.Collection;
+import java.net.SocketAddress;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
@@ -31,5 +32,5 @@ public interface IClientExecutor {
 	public void addQueryListener(IQueryListener listener);
 	public void removeQueryListener(IQueryListener listener);
 	public Collection<ILogicalQuery> getLogicalQueryInfos();
-	
+	public SocketAddress getConnectionInformation(int queryId);
 }
