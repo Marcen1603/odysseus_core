@@ -106,14 +106,23 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 * a bean.
 	 */
 	private SDFDatatype subType;
+	/**
+	 * State whether this {@link SDFDatatype} requires a deep clone during transfer
+	 */
+	private final boolean requiresDeepClone;
 
-	public SDFDatatype(String URI) {
+	public SDFDatatype(String URI, boolean requiresDeepClone) {
 		super(URI);
 		this.type = SDFDatatype.KindOfDatatype.BASE;
+		this.requiresDeepClone = requiresDeepClone;
 	}
 
+	public SDFDatatype(String URI) {
+		this(URI, false);
+	}
+	
 	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFSchema schema) {
+			SDFSchema schema, boolean requiresDeepClone) {
 		super(datatypeName);
 		if (type == SDFDatatype.KindOfDatatype.BASE) {
 			throw new IllegalArgumentException(
@@ -126,10 +135,16 @@ public class SDFDatatype extends SDFElement implements Serializable {
 					"Complex types must have a schema.");
 		}
 		this.schema = schema;
+		this.requiresDeepClone = requiresDeepClone;
 	}
 
 	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFDatatype subType) {
+			SDFSchema schema) {
+		this(datatypeName, type, schema, false);
+	}
+	
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
+			SDFDatatype subType, boolean requiresDeepClone) {
 		super(datatypeName);
 
 		this.type = type;
@@ -140,8 +155,14 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		if (this.subType.type != SDFDatatype.KindOfDatatype.BASE) {
 			this.schema = this.subType.getSchema();
 		}
+		this.requiresDeepClone = requiresDeepClone;
 	}
 
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
+			SDFDatatype subType) {
+		this(datatypeName, type, subType, false);
+	}
+	
 	public SDFDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
 		if (sdfDatatype.schema != null) {
@@ -151,6 +172,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		if (sdfDatatype.subType != null) {
 			this.subType = sdfDatatype.subType.clone();
 		}
+		this.requiresDeepClone = sdfDatatype.requiresDeepClone;
 	}
 
 	public static void registerDefaultTypes(IAddDataType dd) {
@@ -291,6 +313,16 @@ public class SDFDatatype extends SDFElement implements Serializable {
         return this.schema.size();
 	}
 
+	/**
+	 * State if the function returns a complex object that requires a deep clone
+	 * during transfer. Default should be false.
+	 * 
+	 * @return true, if the output requires deep clone
+	 */
+	public boolean requiresDeepClone() {
+		return this.requiresDeepClone;
+	}
+	
 	public static SDFDatatype min(SDFDatatype left, SDFDatatype right) {
 
 		if (left.compatibleTo(right) && !right.compatibleTo(left)) {
