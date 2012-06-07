@@ -90,9 +90,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
                         optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
                     } else if (executor instanceof IClientExecutor){
-                    	@SuppressWarnings("rawtypes")
-						ClientReceiver receiver = createClientReceiver(executor, queryID);
-                    	// TODO ClientReceiver an DefaultStreamConnection uebergeben
+						IPhysicalOperator receiver = createClientReceiver(executor, queryID);
+                    	optionalOpForStream = Optional.of(receiver);
                     } else {
                         LOG.error("Could not show stream outside server.");
                     }
@@ -175,8 +174,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		ClientReceiver receiver = null;
 		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
 		TupleDataHandler tdh = new TupleDataHandler(outputSchema);
-		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getConnectionInformation(queryId);
-		// TODO username and password
+		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getSocketConnectionInformation(queryId);
+		// TODO username and password get from anywhere
 		String username = "";
 		String password = "";
 		try {
