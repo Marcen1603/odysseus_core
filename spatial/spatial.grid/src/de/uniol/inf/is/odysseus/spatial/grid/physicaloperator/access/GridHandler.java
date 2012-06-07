@@ -26,59 +26,60 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class GridHandler extends AbstractDataHandler<Grid> {
+public class GridHandler extends AbstractDataHandler<CartesianGrid> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("Grid");
 	}
-	
+
 	@Override
-	public IDataHandler<Grid> getInstance(SDFSchema schema) {
+	public IDataHandler<CartesianGrid> getInstance(SDFSchema schema) {
 		return new GridHandler();
 	}
 
 	@Override
-	public Grid readData(ObjectInputStream stream) throws IOException {
+	public CartesianGrid readData(ObjectInputStream stream) throws IOException {
 		int x = stream.readInt();
 		int y = stream.readInt();
 		short width = stream.readShort();
-		short depth = stream.readShort();
 		short height = stream.readShort();
+		short future = stream.readShort();
 		int cellsize = stream.readInt() / 10;
-		Grid grid = new Grid(new Coordinate(x, y), width * cellsize, depth
-				* cellsize, cellsize);
-		stream.readFully(grid.get(), 0, width * depth * height);
-		return null;
-	}
-	
-	@Override
-	public Grid readData(ByteBuffer buffer) {
-		int x = buffer.getInt();
-		int y = buffer.getInt();
-		short width = buffer.getShort();
-		short depth = buffer.getShort();
-		@SuppressWarnings("unused")
-		short height = buffer.getShort();
-		int cellsize = buffer.getInt() / 10;
-		Grid grid = new Grid(new Coordinate(x, y), width * cellsize, depth
-				* cellsize, cellsize);
-		grid.getBuffer().put(buffer);
+		CartesianGrid grid = new CartesianGrid(new Coordinate(x, y), width,
+				height, cellsize);
+
+		// stream.readFully(grid.get(), 0, width * height);
 		return grid;
 	}
 
 	@Override
-	public Grid readData(String string) {
+	public CartesianGrid readData(ByteBuffer buffer) {
+		int x = buffer.getInt();
+		int y = buffer.getInt();
+		short width = buffer.getShort();
+		short height = buffer.getShort();
+		@SuppressWarnings("unused")
+		short future = buffer.getShort();
+		int cellsize = buffer.getInt() / 10;
+		CartesianGrid grid = new CartesianGrid(new Coordinate(x, y), width,
+				height, cellsize);
+		// grid.getBuffer().put(buffer);
+		return grid;
+	}
+
+	@Override
+	public CartesianGrid readData(String string) {
 		return readData(ByteBuffer.wrap(string.getBytes()));
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		Grid grid = (Grid) data;
+		CartesianGrid grid = (CartesianGrid) data;
 		// X Position
 		buffer.putInt((int) grid.origin.x);
 		// Y Position
@@ -86,12 +87,12 @@ public class GridHandler extends AbstractDataHandler<Grid> {
 		// Grid Width
 		buffer.putShort((short) grid.width);
 		// Grid Depth
-		buffer.putShort((short) grid.depth);
+		buffer.putShort((short) grid.height);
 		// Grid Height (not supported yet)
 		buffer.putShort((short) 1);
 		// Cell Size (in mm)
 		buffer.putInt((int) grid.cellsize * 10);
-		buffer.put(grid.get());
+		// buffer.put(grid.get());
 	}
 
 	@Override
@@ -101,9 +102,9 @@ public class GridHandler extends AbstractDataHandler<Grid> {
 
 	@Override
 	public int memSize(Object attribute) {
-		Grid grid = (Grid) attribute;
-		return (Integer.SIZE / 8) * 3 + (Short.SIZE / 8) * 3 + grid.getBuffer().capacity();
+		CartesianGrid grid = (CartesianGrid) attribute;
+		return (Integer.SIZE / 8) * 3 + (Short.SIZE / 8) * 3
+				+ grid.getBuffer().capacity();
 	}
-
 
 }

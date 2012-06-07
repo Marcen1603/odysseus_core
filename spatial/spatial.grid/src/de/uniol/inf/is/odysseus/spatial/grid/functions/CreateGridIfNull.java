@@ -53,13 +53,13 @@ public class CreateGridIfNull extends AbstractFunction<CartesianGrid> {
 
 	@Override
 	public CartesianGrid getValue() {
-		CartesianGrid grid;
 		final Coordinate origin = (Coordinate) this.getInputValue(1);
 		final Integer width = this.getNumericalInputValue(2).intValue();
 		final Integer height = this.getNumericalInputValue(3).intValue();
 		final Double cellsize = this.getNumericalInputValue(4);
+		CartesianGrid grid;
 		if (this.getInputValue(0) != null) {
-			grid = ((CartesianGrid) this.getInputValue(0)).clone();
+			grid = (CartesianGrid) this.getInputValue(0);
 		} else {
 			grid = new CartesianGrid(origin, width, height, cellsize);
 			grid.fill(UNKNOWN);

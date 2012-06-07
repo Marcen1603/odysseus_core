@@ -21,13 +21,13 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.CV_WARP_FILL_OUTLIERS;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cv2DRotationMatrix;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvWarpAffine;
 
+import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint2D32f;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
@@ -98,7 +98,7 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 		CvMat mapMatrix = CvMat.create(2, 3, CV_64F);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 		cvWarpAffine(grid.getImage(), rotatedGrid.getImage(), mapMatrix, flags,
-				OpenCVUtil.UNKNOWN);
+				opencv_core.cvScalarAll(UNKNOWN));
 		mapMatrix.release();
 		grid.release();
 		return rotatedGrid;

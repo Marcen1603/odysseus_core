@@ -84,8 +84,7 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		final long currentTimestamp = this.getNumericalInputValue(2)
 				.longValue();
 		final double velocity = this.getNumericalInputValue(3);
-
-		CartesianGrid spreadGrid = grid.clone();
+		
 		int cells = (int) (((((double) (currentTimestamp - startTimestamp)) / 1000.0)
 				* velocity / grid.cellsize) * 2.0 + 1.5);
 		if (cells < 3) {
@@ -95,11 +94,10 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				.getImage().nChannels());
 		opencv_core.cvSet(kernel, CvScalar.ONE);
 
-		cvFilter2D(grid.getImage(), spreadGrid.getImage(), kernel, new CvPoint(
+		cvFilter2D(grid.getImage(), grid.getImage(), kernel, new CvPoint(
 				-1, -1));
 		kernel.deallocate();
-		grid.release();
-		return spreadGrid;
+		return grid;
 	}
 
 	@Override

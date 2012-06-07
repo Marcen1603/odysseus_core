@@ -97,21 +97,17 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 				.getAttribute(0);
 
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			CartesianGrid normalizedGrid = grid.clone();
-			opencv_core.cvConvertScale(normalizedGrid.getImage(),
-					normalizedGrid.getImage(), -1.0, 0);
-			opencv_core.cvExp(normalizedGrid.getImage(),
-					normalizedGrid.getImage());
-			opencv_core.cvConvertScale(normalizedGrid.getImage(),
-					normalizedGrid.getImage(), -1.0, 0);
-			opencv_core
-					.cvAddS(normalizedGrid.getImage(),
-							opencv_core.cvScalarAll(1),
-							normalizedGrid.getImage(), null);
-			this.canvas.showImage(normalizedGrid.getImage());
-			normalizedGrid.release();
-
+			opencv_core.cvConvertScale(grid.getImage(), grid.getImage(), -1.0,
+					0);
+			opencv_core.cvExp(grid.getImage(), grid.getImage());
+			opencv_core.cvConvertScale(grid.getImage(), grid.getImage(), -1.0,
+					0);
+			opencv_core.cvAddS(grid.getImage(), opencv_core.cvScalarAll(1),
+					grid.getImage(), null);
+			this.canvas.showImage(grid.getImage());
 		}
+		grid.release();
+		grid = null;
 	}
 
 	@Override

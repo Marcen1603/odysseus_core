@@ -62,13 +62,11 @@ public class ClearGrid extends AbstractFunction<CartesianGrid> {
 	public CartesianGrid getValue() {
 		final CartesianGrid base = this.getInputValue(0);
 		final CartesianGrid grid = this.getInputValue(1);
-		final CartesianGrid result = new CartesianGrid(base.origin, base.width,
-				base.height, base.cellsize);
 
-		opencv_core.cvAnd(base.getImage(), grid.getImage(), result.getImage(),
+		opencv_core.cvAnd(base.getImage(), grid.getImage(), base.getImage(),
 				null);
-
-		return result;
+		grid.release();
+		return base;
 	}
 
 	@Override

@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -166,7 +165,7 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 			IplImage roi = IplImage.create(
 					opencv_core.cvSize(roiRect.width(), roiRect.height()),
 					opencv_core.IPL_DEPTH_64F, 1);
-			opencv_core.cvSet(roi, OpenCVUtil.UNKNOWN);
+			opencv_core.cvSet(roi, opencv_core.cvScalarAll(GridUtil.UNKNOWN));
 
 			opencv_core.cvSetImageROI(grid.getImage(), roiRect);
 			opencv_core.cvCopy(grid.getImage(), roi);
@@ -176,7 +175,7 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 			final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_64F);
 			opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
 			opencv_imgproc.cvWarpAffine(roi, subgrid.getImage(), mapMatrix,
-					SubGrid.flags, OpenCVUtil.UNKNOWN);
+					SubGrid.flags, opencv_core.cvScalarAll(GridUtil.UNKNOWN));
 			mapMatrix.release();
 			opencv_core.cvResetImageROI(subgrid.getImage());
 			roi.release();

@@ -58,11 +58,8 @@ public class InverseGrid extends AbstractFunction<CartesianGrid> {
 	@Override
 	public CartesianGrid getValue() {
 		final CartesianGrid grid = this.getInputValue(0);
-		final CartesianGrid inverseGrid = new CartesianGrid(grid.origin,
-				grid.width, grid.height, grid.cellsize);
-		opencv_core.cvNot(grid.getImage(), inverseGrid.getImage());
-		grid.release();
-		return inverseGrid;
+		opencv_core.cvNot(grid.getImage(), grid.getImage());
+		return grid;
 	}
 
 	@Override

@@ -90,6 +90,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		CartesianGrid mergedGrid = mergePolarGrid(cartesianGrid, origin, angle,
 				coordinates, radius, cellradius);
 		cartesianGrid.release();
+		cartesianGrid = null;
 		return mergedGrid;
 	}
 

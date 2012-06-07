@@ -15,16 +15,15 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-@Deprecated // Not working
-public class MergeBeliefeGrid extends
+public class MergeGrid extends
 		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
@@ -33,39 +32,36 @@ public class MergeBeliefeGrid extends
 	private static final long serialVersionUID = 443315119696013306L;
 	private final int attribPos;
 
-	public MergeBeliefeGrid(int[] pos) {
+	public MergeGrid(int[] pos) {
 		super("MergeBeliefeGrid");
 		this.attribPos = pos[0];
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> init(
-			final Tuple<?> in) {
-		final IPartialAggregate<Tuple<?>> grid = new GridPartialBeliefeAggregate<Tuple<?>>(
-				(Grid) in.getAttribute(attribPos));
+	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
+		final IPartialAggregate<Tuple<?>> grid = new GridPartialAggregate<Tuple<?>>(
+				(CartesianGrid) in.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p,
-			final Tuple<?> toMerge, final boolean createNew) {
-		GridPartialBeliefeAggregate<Tuple<?>> grid = null;
+			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+			final boolean createNew) {
+		GridPartialAggregate<Tuple<?>> grid = null;
 		if (createNew) {
-			grid = new GridPartialBeliefeAggregate<Tuple<?>>(
-					((GridPartialBeliefeAggregate<Tuple<?>>) p)
-							.getGrid());
+			grid = new GridPartialAggregate<Tuple<?>>(
+					((GridPartialAggregate<Tuple<?>>) p).getGrid());
 		} else {
-			grid = (GridPartialBeliefeAggregate<Tuple<?>>) p;
+			grid = (GridPartialAggregate<Tuple<?>>) p;
 		}
-		grid.merge((Grid) toMerge.getAttribute(attribPos));
+		grid.merge((CartesianGrid) toMerge.getAttribute(attribPos));
 		return grid;
 	}
 
 	@Override
-	public Tuple<?> evaluate(
-			final IPartialAggregate<Tuple<?>> p) {
-		final GridPartialBeliefeAggregate<Tuple<?>> grid = (GridPartialBeliefeAggregate<Tuple<?>>) p;
+	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+		final GridPartialAggregate<Tuple<?>> grid = (GridPartialAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
 		final Tuple<?> tuple = new Tuple(1, false);
