@@ -113,6 +113,14 @@ public interface IExecutor extends IClientPlanManager{
 	public Collection<Integer> getLogicalQueryIds();
 	
 	/**
+	 * Returns for a query the physical root operators
+	 * 
+	 * @param queryID
+	 * @return
+	 */
+	public List<IPhysicalOperator> getPhyiscalRoots(int queryID);
+	
+	/**
 	 * Start all queries that are currently not running
 	 * 
 	 * @param user

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -553,6 +554,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return this.executionPlan;
 	}
 
+	@Override
+	public List<IPhysicalOperator> getPhyiscalRoots(int queryID) {
+		IPhysicalQuery pq = executionPlan.getQuery(queryID);
+		return pq.getRoots();
+	}
+	
 	@Override
 	public ILogicalQuery getLogicalQuery(int id) {
 		IPhysicalQuery pq = executionPlan.getQuery(id); 

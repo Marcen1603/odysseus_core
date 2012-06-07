@@ -334,6 +334,12 @@ public class WsClient implements IExecutor, IClientExecutor{
 		return null;
 	}
 	
+	@Override
+	public List<IPhysicalOperator> getPhyiscalRoots(int queryID) {
+		// TODO: Implement here the method from the Rcp command
+		return null;
+	}
+	
 	/**
 	 * Returns a SocketAddress object
 	 * 
