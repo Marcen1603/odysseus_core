@@ -44,7 +44,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 	private boolean containsNull = false;
 	private boolean valueChanged = true;
 
-	final private boolean requiresDeepClone;
+	private boolean requiresDeepClone;
 
 	// -----------------------------------------------------------------
 	// static Hilfsmethoden
@@ -420,5 +420,13 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 			}
 		}
 		return this.containsNull;
+	}
+	
+	public void setRequiresDeepClone(boolean requiresDeepClone) {
+		this.requiresDeepClone = requiresDeepClone;
+	}
+	
+	public boolean requiresDeepClone() {
+		return this.requiresDeepClone;
 	}
 }
