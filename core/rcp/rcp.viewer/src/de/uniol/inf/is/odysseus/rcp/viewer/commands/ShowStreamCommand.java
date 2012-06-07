@@ -183,7 +183,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		try {
 			receiver = new ClientReceiver(new ByteBufferHandler(tdh), 
 					new SizeByteBufferHandler(),
-					new NioConnectionHandler(adr.getHostString(), adr.getPort(), false, username, password));
+					new NioConnectionHandler(adr.getHostName(), adr.getPort(), false, username, password));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
