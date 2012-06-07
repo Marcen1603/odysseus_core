@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
@@ -173,7 +174,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 	private static ClientReceiver createClientReceiver(IExecutor exec, int queryId) {
 		ClientReceiver receiver = null;
 		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
-		TupleDataHandler tdh = new TupleDataHandler(outputSchema);
+		IDataHandler tdhPrototype = DataHandlerRegistry.getDataHandler("Tuple");
+		IDataHandler tdh = tdhPrototype.getInstance(outputSchema);
 		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getSocketConnectionInformation(queryId);
 		// TODO username and password get from anywhere
 		String username = "";
