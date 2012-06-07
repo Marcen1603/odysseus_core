@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.util.Primes;
@@ -351,8 +352,18 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		this.attributes = new Object[attributeLength];
 		this.valueChanged = copy.valueChanged;
 		this.containsNull = copy.containsNull;
-		System.arraycopy(copy.attributes, 0, this.attributes, 0,
-				attributeLength);
+		// System.arraycopy(copy.attributes, 0, this.attributes, 0,
+		// attributeLength);
+		// Perform Deep-Clone if the object is part of Odysseus or null (CKu)
+		for (int i = 0; i < attributeLength; i++) {
+			if ((copy.attributes[i] == null)
+					|| (!copy.attributes[i].getClass().getName()
+							.startsWith("de.uniol.inf.is.odysseus", 0))) {
+				this.attributes[i] = copy.attributes[i];
+			} else {
+				this.attributes[i] = ((IClone) copy.attributes[i]).clone();
+			}
+		}
 	}
 
 	/**
