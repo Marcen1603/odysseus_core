@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -95,12 +94,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	// ------------------------------------------------------------------------
 
-	public enum OutputMode {
-		NEW_ELEMENT, MODIFIED_INPUT, INPUT
-	}
-
-	abstract public OutputMode getOutputMode();
-
 	public AbstractPipe() {
 	}
 
@@ -116,17 +109,6 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	protected int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
-	}
-
-	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
-	// etc.)
-	// MUST override this method (else there will be a ClassCastException)
-	@SuppressWarnings("unchecked")
-	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
-		if (getOutputMode() == OutputMode.MODIFIED_INPUT || (!exclusive&&port>0)) {
-			object = (R) ((IClone) object).clone();
-		}
-		return object;
 	}
 
 	@Override
@@ -188,7 +170,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	private void delegatedProcess(R object, int port, boolean exclusive) {
-		process_next(cloneIfNessessary(object, exclusive, port), port);
+		process_next(object, port);
 	}
 
 	private void delegatedProcessPunctuation(PointInTime timestamp, int port) {

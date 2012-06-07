@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -52,7 +53,9 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
-
+	public enum OutputMode {
+		NEW_ELEMENT, MODIFIED_INPUT, INPUT
+	}
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -270,7 +273,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().process(object, sink.getSinkInPort(),
+					sink.getTarget().process(cloneIfNessessary(object,isTransferExclusive()), sink.getSinkInPort(),
 							isTransferExclusive());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
@@ -292,8 +295,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushListInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort(),
-						isTransferExclusive());
+				sink.getTarget().process(object, sink.getSinkInPort(), isTransferExclusive());
 			}
 		}
 		fire(this.pushListDoneEvent);
@@ -304,6 +306,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		transfer(object, 0);
 	}
 
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
+	
 	/**
 	 * states if the next Operator can change the transfer object oder has to
 	 * make a copy
@@ -313,7 +319,18 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected boolean isTransferExclusive() {
 		return hasSingleConsumer();
 	}
-
+	
+	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
+	// etc.)
+	// MUST override this method (else there will be a ClassCastException)
+	@SuppressWarnings("unchecked")
+	protected T cloneIfNessessary(T object, boolean exclusive) {
+		if (!exclusive) {
+			object = (T) ((IClone) object).clone();
+		}
+		return object;
+	}
+	
 	// ------------------------------------------------------------------------
 	// CLOSE
 	// ------------------------------------------------------------------------
