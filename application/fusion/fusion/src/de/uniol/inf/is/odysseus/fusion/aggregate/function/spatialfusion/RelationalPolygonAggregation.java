@@ -22,7 +22,7 @@ public class RelationalPolygonAggregation<T, R> extends AbstractAggregateFunctio
 	public Tuple<? extends IMetaAttribute> evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
 		List<Tuple<? extends IMetaAttribute>> elems = ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
 		
-		Tuple<? extends IMetaAttribute> ret = new Tuple<IMetaAttribute>(1);
+		Tuple<? extends IMetaAttribute> ret = new Tuple<IMetaAttribute>(1, false);
 		ret.setAttribute(0, elems);
 		return ret;
 	}

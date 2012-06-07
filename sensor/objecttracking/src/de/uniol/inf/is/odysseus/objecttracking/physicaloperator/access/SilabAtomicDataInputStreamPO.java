@@ -153,7 +153,7 @@ public class SilabAtomicDataInputStreamPO<M extends IMetaAttribute> extends Abst
 			return false;
 		}
 //		if(!this.attributeData[this.typeAttribute].equals("punctuation")){
-			this.buffer = new Tuple<M>(this.attributeData);
+			this.buffer = new Tuple<M>(this.attributeData, false);
 			// this.buffer.setMetadata(this.metadataFactory.createMetadata());
 //		}
 //		else{

@@ -139,7 +139,7 @@ public class JSR223UDFunction
 		for (int i = 0; i < attributes.length; ++i) {
 			retObj[i] = bindings.get(KEY_ATTRIBUTE + i);
 		}
-		ret = new Tuple(retObj);
+		ret = new Tuple(retObj, false);
 		return ret;
 	}
 

@@ -60,7 +60,7 @@ public class LinearRoadSource extends
 			return (Integer) buffer.getAttribute(1) * 1000 + time <= System
 					.currentTimeMillis();
 		}
-		buffer = new Tuple(9);
+		buffer = new Tuple(9, false);
 		try {
 			do {
 				for (int i = 0; i < 15; ++i) {

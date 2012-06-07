@@ -74,7 +74,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 			transfer(newElement);
 		}
 		if(values.size()==0 && outer){
-			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length);
+			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length, false);
 			nullTuple.setMetadata((M) object.getMetadata());
 			Tuple<M> newElement = merge(object, nullTuple, Order.LeftRight);		
 			transfer(newElement);

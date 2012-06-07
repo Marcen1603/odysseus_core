@@ -22,7 +22,7 @@ public class SimpleClassifyUDFunction implements IUserDefinedFunction<Tuple<? ex
 	public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
 		Polygon polygon = (Polygon)in.getAttribute(0); 
 		
-		Tuple<? extends IMetaAttribute> tuple = new Tuple<IMetaAttribute>(in.size()+1);
+		Tuple<? extends IMetaAttribute> tuple = new Tuple<IMetaAttribute>(in.size()+1, false);
 		
 		
 		

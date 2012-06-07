@@ -89,7 +89,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>>{
 	@Override
 	public Tuple evaluate(IPartialAggregate p) {
 		AvgSumPartialAggregate pa = (AvgSumPartialAggregate) p;
-		Tuple r = new Tuple(1);
+		Tuple r = new Tuple(1, false);
 		if (isAvg()){
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()/pa.getCount()));
 		}else{

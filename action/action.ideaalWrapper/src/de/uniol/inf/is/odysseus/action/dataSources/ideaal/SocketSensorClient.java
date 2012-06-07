@@ -64,7 +64,7 @@ public class SocketSensorClient extends ISourceClient {
 				this.socket = new Socket(sensor.getIp(), sensor.getPort());
 			}
 			
-			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());	
+			Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);	
 			tuple.setAttribute(0, System.currentTimeMillis());
 			
 			tuple.setAttribute(1, tupleID);

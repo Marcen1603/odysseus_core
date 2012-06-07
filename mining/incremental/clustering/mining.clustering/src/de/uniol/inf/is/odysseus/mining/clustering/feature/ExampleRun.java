@@ -47,7 +47,7 @@ public class ExampleRun {
 		TiltedTimeWindow<ClusteringFeature<Tuple<ITimeInterval>>> window = new TiltedTimeWindow<ClusteringFeature<Tuple<ITimeInterval>>>(datamergeFunction);
 
 		for (int i = 1; i <= 10; i++) {
-			Tuple<ITimeInterval> example = new Tuple<ITimeInterval>(schema.size());
+			Tuple<ITimeInterval> example = new Tuple<ITimeInterval>(schema.size(), false);
 			example.setAttribute(0, i);
 			example.setAttribute(1, "Item " + i);
 			RelationalTIClusteringFeature<ITimeInterval> cf = new RelationalTIClusteringFeature<ITimeInterval>(example); 			

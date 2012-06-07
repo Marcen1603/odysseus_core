@@ -113,7 +113,7 @@ public class ExtractSegments extends AbstractFunction<List<Tuple<TimeInterval>>>
                             segment.add(coordinates[j]);
                         }
                     }
-                    Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1);
+                    Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1, false);
                     tuple.setMetadata(time);
                     if (segment.size() > 1) {
                         tuple.setAttribute(0, this.geometryFactory.createLineString(segment
@@ -149,7 +149,7 @@ public class ExtractSegments extends AbstractFunction<List<Tuple<TimeInterval>>>
                 }
             }
 
-            Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1);
+            Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1, false);
             if (segment.size() > 1) {
                 tuple.setMetadata(time);
                 tuple.setAttribute(0,

@@ -43,7 +43,7 @@ public class RelationalMergeFunction<M extends IMetaAttribute> extends AbstractR
 			Tuple<M> right) {
 		Object[] newAttributes = super.mergeAttributes(left != null ? left.getAttributes(): null, 
 				right != null ? right.getAttributes() : null);
-		Tuple<M> r = new Tuple<M>(newAttributes);
+		Tuple<M> r = new Tuple<M>(newAttributes, false);
 		return r;
 	}
 	

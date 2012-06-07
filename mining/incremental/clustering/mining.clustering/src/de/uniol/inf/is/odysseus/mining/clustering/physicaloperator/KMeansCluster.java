@@ -52,7 +52,7 @@ public class KMeansCluster<T extends IMetaAttribute> extends AbstractCluster<T,O
 	@Override
 	public IClusteringObject<T,Object> getCenter() {
 		return new RelationalClusteringObject<T>(new Tuple<T>(
-				clusteringFeature.getMean()), getId());
+				clusteringFeature.getMean(), false), getId());
 	}
 
 	/**

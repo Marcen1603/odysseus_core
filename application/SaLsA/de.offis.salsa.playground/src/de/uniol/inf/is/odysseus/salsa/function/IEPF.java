@@ -87,7 +87,7 @@ public class IEPF extends AbstractFunction<List<Tuple<TimeInterval>>> {
         final List<Tuple<TimeInterval>> segmentTuples = new LinkedList<Tuple<TimeInterval>>();
         final List<Geometry> segments = this.segmentize(coordinates, threshold);
         for (final Geometry segment : segments) {
-            final Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1);
+            final Tuple<TimeInterval> tuple = new Tuple<TimeInterval>(1, false);
             tuple.setMetadata(time);
             tuple.setAttribute(0, segment);
             segmentTuples.add(tuple);

@@ -60,7 +60,7 @@ public class RelationalCreator<R extends IMetaAttributeContainer<?>> extends Abs
 			attributes[i] = outputscheme.getEntries().get(i).getValue();
 		}
 
-		Tuple ret = new Tuple(attributes);
+		Tuple ret = new Tuple(attributes, false);
 		ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
 		//System.out.println("EVENT "+ret);
 		return ret;

@@ -115,7 +115,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 					for (int i = 1; i <= count; i++) {
 						attributes.add(rs.getObject(i));
 					}
-					Tuple<?> t = new Tuple<IMetaAttribute>(attributes.toArray());
+					Tuple<?> t = new Tuple<IMetaAttribute>(attributes.toArray(), false);
 					transfer(t);
 					attributes.clear();
 					sleep(waitTimeMillis);

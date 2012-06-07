@@ -118,7 +118,7 @@ public abstract class AbstractClassificationPO<T extends IMetaAttribute>
 	 *            the classifier to transfer
 	 */
 	protected void transferClassifier(IClassifier<T> classifier) {
-		transfer(new Tuple<T>(new Object[] { classifier }));
+		transfer(new Tuple<T>(new Object[] { classifier }, false));
 	}
 
 	/**

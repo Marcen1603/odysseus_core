@@ -138,7 +138,7 @@ public class TupleGenerator {
 	}
 
 	private Tuple<IMetaAttribute> generateUsageTuple() throws GeneratorException {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());	
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);	
 		
 		//timestamp, machineID, rate
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -163,7 +163,7 @@ public class TupleGenerator {
 	}
 
 	private Tuple<IMetaAttribute> generateInstallPureTuple() throws GeneratorException {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());		
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);		
 		//timestamp, id, machineID, limit1, limit2
 		tuple.setAttribute(0, System.currentTimeMillis());
 		
@@ -193,7 +193,7 @@ public class TupleGenerator {
 			throw new GeneratorException("No more machines to generate");
 		}
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);
 
 		//timestamp, id, factoryID, name
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -215,7 +215,7 @@ public class TupleGenerator {
 	}
 
 	private Tuple<IMetaAttribute> generateInstallDBTuple() throws GeneratorException {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);
 		
 		//timestamp, id, machineID, limit1, limit2, pastUsageTime
 		tuple.setAttribute(0, System.currentTimeMillis());
@@ -246,7 +246,7 @@ public class TupleGenerator {
 			throw new GeneratorException("No more factories to generate");
 		}
 		
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.schema.size(), false);
 		
 		//timestamp, id, name
 		tuple.setAttribute(0, System.currentTimeMillis());

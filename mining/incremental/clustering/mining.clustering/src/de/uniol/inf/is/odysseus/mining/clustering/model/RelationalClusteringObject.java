@@ -147,7 +147,7 @@ public class RelationalClusteringObject<T extends IMetaAttribute> implements ICl
 
 		System.arraycopy(tuple.getAttributes(), 0, attributes, 1,
 				attributes.length - 1);
-		Tuple<T> labeledTuple = new Tuple<T>(attributes);
+		Tuple<T> labeledTuple = new Tuple<T>(attributes, false);
 		labeledTuple.setMetadata((T) getMetadata().clone());
 		return labeledTuple;
 	}

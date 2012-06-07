@@ -144,7 +144,7 @@ public class SourcePool<T extends IMetaAttribute> {
     private void _transfer(final SourceSpec sourceSpec, final long timestamp, final Object[] data) {
         if (this.sources.containsKey(sourceSpec)) {
             final Tuple<TimeInterval> event = new Tuple<TimeInterval>(
-                    data.length);
+                    data.length, false);
             for (int i = 0; i < data.length; i++) {
                 event.setAttribute(i, data[i]);
             }

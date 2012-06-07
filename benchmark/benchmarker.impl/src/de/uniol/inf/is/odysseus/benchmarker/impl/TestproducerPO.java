@@ -53,7 +53,7 @@ public class TestproducerPO extends
 					long offset = 1000000000 / frequency;
 					for (int i = 0; i < count; ++i) {
 						Tuple<IntervalLatencyPriority> r = new Tuple<IntervalLatencyPriority>(
-								1);
+								1, false);
 						r.setAttribute(0, i);
 						long expectedTime = lastTime + offset;
 						r

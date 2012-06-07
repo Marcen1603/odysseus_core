@@ -30,8 +30,8 @@ public class RelationalTIClusteringFeature<M extends ITimeInterval> extends Clus
 	}
 	
 	private void createRelationalTuple(Tuple<M> tuple){
-		Tuple<M> linearSum = new Tuple<M>(tuple.size());
-		Tuple<M> squareSum = new Tuple<M>(tuple.size());		
+		Tuple<M> linearSum = new Tuple<M>(tuple.size(), false);
+		Tuple<M> squareSum = new Tuple<M>(tuple.size(), false);		
 		for(int i=0;i<tuple.size();i++){
 			if(tuple.getAttribute(i) instanceof Number){
 				linearSum.setAttribute(i, 0);

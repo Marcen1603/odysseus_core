@@ -104,7 +104,7 @@ public class TupleStreamGenerator {
 	 */
 	public Tuple<ITimeInterval> generateFirstRawPersonTuple() {
 		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
-				personAttributeCount);
+				personAttributeCount, false);
 
 		// time to send
 		long timeToSend = 1;
@@ -122,7 +122,7 @@ public class TupleStreamGenerator {
 	 */
 	public Tuple<ITimeInterval> generateRawPersonTuple() {
 		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
-				personAttributeCount);
+				personAttributeCount, false);
 
 		// time to send
 		long timeToSend = getTimeToSend(lastPersonGenerated, configuration.minDistBetweenPersons,
@@ -173,7 +173,7 @@ public class TupleStreamGenerator {
 	 */
 	public Tuple<ITimeInterval> generateRawAuctionTuple() {
 		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
-				auctionAttributeCount);
+				auctionAttributeCount, false);
 
 		// time to send
 		long timeToSend = getTimeToSend(lastAuctionGenerated==-1?lastPersonGenerated:lastAuctionGenerated, configuration.minDistBetweenAuctions,
@@ -237,7 +237,7 @@ public class TupleStreamGenerator {
 	 * @return das generierte Tupel
 	 */
 	public Tuple<ITimeInterval> generateRawBidTuple() {
-		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(bidAttributeCount);
+		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(bidAttributeCount, false);
 
 		// time to send
 		long timeToSend = getTimeToSend(lastBidGenerated==-1?lastAuctionGenerated:lastBidGenerated, configuration.minDistBetweenBids,

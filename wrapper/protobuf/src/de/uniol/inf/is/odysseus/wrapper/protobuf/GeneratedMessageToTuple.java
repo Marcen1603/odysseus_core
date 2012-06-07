@@ -42,7 +42,7 @@ public class GeneratedMessageToTuple extends
 
 		Map<FieldDescriptor, Object> test = input.getAllFields();
 		@SuppressWarnings("rawtypes")
-		Tuple<?> ret = new Tuple(schema.size());
+		Tuple<?> ret = new Tuple(schema.size(), false);
 
 		for (Entry<FieldDescriptor, Object> ent : test.entrySet()) {
 			if (ent.getValue() != null && ent.getKey() != null) {

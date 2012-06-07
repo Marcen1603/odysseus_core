@@ -443,7 +443,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 					for (int i = 0; i < retObj.length; i++) {
 						retObj[i] = event.get(schema.get(i));
 					}
-					ret = new Tuple(retObj);
+					ret = new Tuple(retObj, false);
 
 				}
 			}

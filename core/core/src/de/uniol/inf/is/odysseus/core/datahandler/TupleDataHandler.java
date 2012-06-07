@@ -85,7 +85,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			attributes[i] = dataHandlers[i].readData(inputStream);
 		}
 
-		return new Tuple<IMetaAttribute>(attributes);
+		return new Tuple<IMetaAttribute>(attributes, false);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			attributes[i] = dataHandlers[i].readData(input[i]);
 		}
 
-		return new Tuple<IMetaAttribute>(attributes);
+		return new Tuple<IMetaAttribute>(attributes, false);
 	}
 
 	/*
@@ -116,7 +116,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				attributes[i] = dataHandlers[i].readData(buffer);
 			}
-			r = new Tuple<IMetaAttribute>(attributes);
+			r = new Tuple<IMetaAttribute>(attributes, false);
 			// buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
 		}

@@ -65,6 +65,6 @@ public class ASTSimpleTuple extends SimpleNode {
 						"type of attribute does not match schema");
 			}
 		}
-		return new Tuple(values);
+		return new Tuple(values, false);
 	}
 }

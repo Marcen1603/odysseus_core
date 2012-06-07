@@ -44,7 +44,7 @@ public class RelationalNest extends AbstractListAggregation<Tuple<? extends IMet
 		
 		
 		List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>)p).getElems();
-		Tuple ret = new Tuple<IMetaAttribute>(0);
+		Tuple ret = new Tuple<IMetaAttribute>(0, false);
 		
 		
 		

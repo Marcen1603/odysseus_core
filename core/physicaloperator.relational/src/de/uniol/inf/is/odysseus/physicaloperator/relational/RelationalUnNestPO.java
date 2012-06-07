@@ -82,7 +82,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends
         for (int d = 0; d < depth; d++) {
             try {
                 final Tuple<T> outputTuple = new Tuple<T>(this
-                        .getOutputSchema().size());
+                        .getOutputSchema().size(), false);
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 int pos = 0;
                 for (int i = 0; i < this.inputSchema.size(); i++) {

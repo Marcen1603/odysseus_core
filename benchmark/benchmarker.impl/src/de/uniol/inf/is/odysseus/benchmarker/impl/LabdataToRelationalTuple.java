@@ -90,7 +90,7 @@ public class LabdataToRelationalTuple {
 					values[5] = Double.parseDouble(fields[fieldPos++]);
 					values[6] = Double.parseDouble(fields[fieldPos]);
 					Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
-							values);
+							values, false);
 					l.add(tuple);
 				} catch (Exception e) {
 //					System.err.println("error in line: " + lineCount);

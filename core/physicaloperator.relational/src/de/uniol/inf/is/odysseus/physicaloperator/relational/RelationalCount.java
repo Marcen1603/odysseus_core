@@ -42,7 +42,7 @@ public class RelationalCount extends Count<Tuple<?>, Tuple<?>> {
 	@Override
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		CountPartialAggregate<Tuple<?>> pa = (CountPartialAggregate<Tuple<?>>) p;
-		Tuple<?> r = new Tuple(1);
+		Tuple<?> r = new Tuple(1, false);
 		r.setAttribute(0, new Integer(pa.getCount()));
 		return r;
 	}

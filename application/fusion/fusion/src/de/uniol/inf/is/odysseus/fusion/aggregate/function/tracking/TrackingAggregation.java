@@ -30,7 +30,7 @@ public class TrackingAggregation<T, R> extends AbstractAggregateFunction<Tuple<?
 		}
 		
 		
-		Tuple<? extends IMetaAttribute> ret = new Tuple<IMetaAttribute>(1);
+		Tuple<? extends IMetaAttribute> ret = new Tuple<IMetaAttribute>(1, false);
 		ret.setAttribute(0, elems_copy);
 		return ret;
 	}

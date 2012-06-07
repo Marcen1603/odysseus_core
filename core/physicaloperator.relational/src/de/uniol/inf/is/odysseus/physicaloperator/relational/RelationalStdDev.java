@@ -44,7 +44,7 @@ public class RelationalStdDev
 			stddev = (1.0 / (n-1.0)) * stddev;
 			stddev = Math.sqrt(stddev);
 			Tuple<IMetaAttribute> returnVal = new Tuple<IMetaAttribute>(
-					1);
+					1, false);
 			returnVal.setAttribute(0, stddev);
 			return returnVal;
 		}

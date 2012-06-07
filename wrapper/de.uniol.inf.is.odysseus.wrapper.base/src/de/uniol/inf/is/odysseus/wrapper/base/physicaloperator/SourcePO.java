@@ -74,7 +74,7 @@ public class SourcePO<T extends IMetaAttribute> extends
     public void transfer(final long timestamp, final Object[] data) {
         if (this.isOpen()) {
             final Tuple<TimeInterval> event = new Tuple<TimeInterval>(this
-                    .getOutputSchema().size());
+                    .getOutputSchema().size(), false);
             for (int i = 0; i < data.length; i++) {
                 event.setAttribute(i, data[i]);
             }

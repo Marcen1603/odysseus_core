@@ -38,7 +38,7 @@ public class RelationalLast extends Last<Tuple<?>, Tuple<?>> {
         ElementPartialAggregate<Tuple<?>> pa = (ElementPartialAggregate<Tuple<?>>) p;
         
 		@SuppressWarnings("rawtypes")
-		Tuple r = new Tuple(1);
+		Tuple r = new Tuple(1, false);
 		r.setAttribute(0, pa.getElem().getAttribute(pos));        
         return r;
     }

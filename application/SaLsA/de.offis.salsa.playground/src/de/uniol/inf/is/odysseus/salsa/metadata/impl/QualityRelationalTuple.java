@@ -18,7 +18,7 @@ public class QualityRelationalTuple<T extends Quality> extends Tuple<T> implemen
     }
 
     public QualityRelationalTuple(int attributeCount) {
-        super(attributeCount);
+        super(attributeCount, false);
     }
 
     public QualityRelationalTuple(QualityRelationalTuple<T> tuple) {

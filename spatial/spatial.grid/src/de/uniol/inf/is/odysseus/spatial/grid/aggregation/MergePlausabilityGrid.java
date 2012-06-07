@@ -65,7 +65,7 @@ public class MergePlausabilityGrid extends
 		final GridPartialPlausabilityAggregate<Tuple<?>> grid = (GridPartialPlausabilityAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
-		final Tuple<?> tuple = new Tuple(1);
+		final Tuple<?> tuple = new Tuple(1, false);
 		tuple.setAttribute(0, grid.getGrid());
 		return tuple;
 	}

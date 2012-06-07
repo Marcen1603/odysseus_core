@@ -117,7 +117,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
             Integer groupID,
             PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
         Tuple<T> returnTuple = new Tuple<T>(outputSchema
-                .size());
+                .size(), false);
 
         // in r stecken alle Aggregate drin
         // notwendig: Finde die Ziel-Position in dem returnTuple

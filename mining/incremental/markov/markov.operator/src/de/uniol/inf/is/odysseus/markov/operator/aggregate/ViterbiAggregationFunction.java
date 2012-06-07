@@ -68,7 +68,7 @@ public class ViterbiAggregationFunction extends AbstractAggregateFunction<Tuple<
 		System.out.println("------- evaluate -------");
 		MarkovPartialAggregate<Tuple<?>> mpa = (MarkovPartialAggregate<Tuple<?>>)p;
 		@SuppressWarnings("rawtypes")
-        Tuple<?> tuple = new Tuple(1);
+        Tuple<?> tuple = new Tuple(1, false);
 		State s = mpa.getCurrentState();
 		tuple.setAttribute(0, s.getName()+mpa.getValues().get(s));		
 		return tuple;

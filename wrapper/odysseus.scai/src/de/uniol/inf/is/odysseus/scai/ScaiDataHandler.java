@@ -266,7 +266,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 						String attr = schema.get(ii).getAttributeName();
 						retObj[ii] = event.get(attr);
 					}
-					ret = new Tuple(retObj);
+					ret = new Tuple(retObj, false);
 
 				} catch (final Exception e) {
 					LOG.warn(e.getMessage(), e);

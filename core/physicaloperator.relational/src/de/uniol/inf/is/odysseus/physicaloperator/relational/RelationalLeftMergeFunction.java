@@ -36,7 +36,7 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
 			Tuple<M> right) {
 		Object[] newAttributes = this.mergeAttributes(left != null ? left.getAttributes(): null, 
 				right != null ? right.getAttributes() : null);
-		Tuple<M> r = new Tuple<M>(newAttributes);
+		Tuple<M> r = new Tuple<M>(newAttributes, false);
 		return r;
 	}
 
@@ -63,7 +63,7 @@ public class RelationalLeftMergeFunction<M extends IMetaAttribute> implements IL
     public Tuple<M> createLeftFilledUp(Tuple<M> original){
 		// copy the original element, because otherwise the hashmap
 		// in the left join will not work any more
-		Tuple<M> retVal = new Tuple<M>(this.schemaSize);
+		Tuple<M> retVal = new Tuple<M>(this.schemaSize, false);
 		retVal.setMetadata(original.getMetadata());
 		
 		// add attribute values from left

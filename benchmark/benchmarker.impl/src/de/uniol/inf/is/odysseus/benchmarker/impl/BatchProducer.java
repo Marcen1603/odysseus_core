@@ -31,9 +31,9 @@ public class BatchProducer extends
 	private ArrayList<Long> frequencies = new ArrayList<Long>();
 	private int jedeswievielteelementprio;
 	private Tuple<IntervalLatencyPriority> nonprio = new Tuple<IntervalLatencyPriority>(
-			0);
+			0, false);
 	private Tuple<IntervalLatencyPriority> prio = new Tuple<IntervalLatencyPriority>(
-			0);
+			0, false);
 
 	public BatchProducer(int percentagePrios) {
 		this.jedeswievielteelementprio = percentagePrios;

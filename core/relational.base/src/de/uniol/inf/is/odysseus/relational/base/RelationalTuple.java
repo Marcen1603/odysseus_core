@@ -44,7 +44,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            Anzahl der Attribute des Tuples
 	 */
 	public RelationalTuple(int attributeCount) {
-		super(attributeCount);
+		super(attributeCount, false);
 	}
 	
 	public RelationalTuple(Tuple<T> copy) {
@@ -58,7 +58,7 @@ public class RelationalTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            Attributbelegung des neuen Tuples
 	 */
 	public RelationalTuple(Object[] attributes) {
-		super(attributes);
+		super(attributes, false);
 	}
 
 	}

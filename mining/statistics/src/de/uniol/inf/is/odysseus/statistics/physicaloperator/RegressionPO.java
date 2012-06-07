@@ -96,7 +96,7 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		if (!Double.isNaN(slope) && !Double.isNaN(intercept)) {
 //			lastSlope = slope;
 //			lastIntercept = intercept;
-			Tuple<M> ne = new Tuple<M>(2);
+			Tuple<M> ne = new Tuple<M>(2, false);
 			ne.setAttribute(0, slope);
 			ne.setAttribute(1, intercept);
 			@SuppressWarnings("unchecked")

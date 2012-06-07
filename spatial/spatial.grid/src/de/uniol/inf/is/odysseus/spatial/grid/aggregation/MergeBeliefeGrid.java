@@ -68,7 +68,7 @@ public class MergeBeliefeGrid extends
 		final GridPartialBeliefeAggregate<Tuple<?>> grid = (GridPartialBeliefeAggregate<Tuple<?>>) p;
 		grid.evaluate();
 		@SuppressWarnings("rawtypes")
-		final Tuple<?> tuple = new Tuple(1);
+		final Tuple<?> tuple = new Tuple(1, false);
 		tuple.setAttribute(0, grid.getGrid());
 		return tuple;
 	}

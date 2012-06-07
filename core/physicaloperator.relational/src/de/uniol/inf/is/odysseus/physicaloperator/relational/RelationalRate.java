@@ -31,7 +31,7 @@ public class RelationalRate extends
 
 		RatePartialAggregate<Tuple<?>> pa = (RatePartialAggregate<Tuple<?>>) p;
 		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(
-				1);
+				1, false);
 
 		ret.setAttribute(0,
 				((double) pa.getCount())

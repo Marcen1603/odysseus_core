@@ -156,7 +156,7 @@ public class NexmarkStaticClientHandler extends Thread {
 	 */
 	private Tuple<ITimeInterval> toRelationalTuple(
 			Container<Node, ITimeInterval> container) {
-		Tuple<ITimeInterval> r = new Tuple<ITimeInterval>(tagMap.map.size());
+		Tuple<ITimeInterval> r = new Tuple<ITimeInterval>(tagMap.map.size(), false);
 		r.setMetadata(container.getMetadata());
 		Node cargo = container.cargo;
 		NodeList nl = cargo.getFirstChild().getChildNodes();

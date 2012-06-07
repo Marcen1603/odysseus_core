@@ -72,7 +72,7 @@ public class ArtificialRelationalTupleDataGenerator {
 				values[5] = light;
 				values[6] = voltage;
 				Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>(
-						values);
+						values, false);
 				// Sortierung nach Zeitstempel nicht notwendig, da ohnehin aufsteigend erzeugt
 				o.writeObject(tuple);
 			}

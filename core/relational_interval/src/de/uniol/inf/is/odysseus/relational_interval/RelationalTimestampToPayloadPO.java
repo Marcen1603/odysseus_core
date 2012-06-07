@@ -20,7 +20,7 @@ public class RelationalTimestampToPayloadPO extends
 	protected void process_next(Tuple<ITimeInterval> object, int port) {
 		int inputSize = object.size();
 		Tuple<ITimeInterval> out = new Tuple<ITimeInterval>(
-				object.size()+2);
+				object.size()+2, false);
 		
 		for (int i=0;i<inputSize;i++){
 			out.setAttribute(i, object.getAttribute(i));

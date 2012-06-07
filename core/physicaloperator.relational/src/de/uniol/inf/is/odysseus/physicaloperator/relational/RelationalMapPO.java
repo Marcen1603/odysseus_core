@@ -71,7 +71,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@Override
 	final protected void process_next(Tuple<T> object, int port) {
 		Tuple<T> outputVal = new Tuple<T>(
-				this.expressions.length);
+				this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {

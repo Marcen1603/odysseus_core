@@ -89,7 +89,7 @@ public class MVTuple<T extends IProbability> extends Tuple<T> implements Seriali
      *            Anzahl der Attribute des Tuples
      */
     public MVTuple(int attributeCount) {
-        super(attributeCount);
+        super(attributeCount, false);
     }
 
     public MVTuple(MVTuple copy) {
@@ -175,7 +175,7 @@ public class MVTuple<T extends IProbability> extends Tuple<T> implements Seriali
      *            Attributbelegung des neuen Tuples
      */
     public MVTuple(Object[] attributes) {
-        super(attributes);
+        super(attributes, false);
         // if(this.getAttribute(3).equals(19.3906)){
         // try{
         // throw new Exception("Doppelt.");
@@ -195,7 +195,7 @@ public class MVTuple<T extends IProbability> extends Tuple<T> implements Seriali
      */
     @SuppressWarnings("deprecation")
     public MVTuple(Object[] attributes, SDFSchema schema) {
-        super(attributes);
+        super(attributes, false);
         // if(this.getAttribute(3).equals(19.3906)){
         // try{
         // throw new Exception("Doppelt.");

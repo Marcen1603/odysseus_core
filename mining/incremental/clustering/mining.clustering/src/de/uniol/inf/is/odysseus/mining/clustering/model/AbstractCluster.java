@@ -76,7 +76,7 @@ public abstract class AbstractCluster<T extends IMetaAttribute, O> implements IM
 		System.arraycopy(getCenter().getAttributes(), 0, attributes, 2,
 				attributes.length - 2);
 
-		return new Tuple<T>(attributes);
+		return new Tuple<T>(attributes, false);
 	}
 
 	/**
