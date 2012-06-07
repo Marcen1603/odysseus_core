@@ -14,6 +14,8 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -35,9 +37,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
@@ -82,6 +90,8 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
                         optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
                     } else if (executor instanceof IClientExecutor){
+                    	@SuppressWarnings("rawtypes")
+						ClientReceiver receiver = createClientReceiver(executor, queryID);
                     	// TODO ClientReceiver an DefaultStreamConnection uebergeben
                     } else {
                         LOG.error("Could not show stream outside server.");
@@ -158,5 +168,24 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		} else {
 			return Optional.of(wnd.getSelectedOperator());
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static ClientReceiver createClientReceiver(IExecutor exec, int queryId) {
+		ClientReceiver receiver = null;
+		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
+		TupleDataHandler tdh = new TupleDataHandler(outputSchema);
+		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getConnectionInformation(queryId);
+		// TODO username and password
+		String username = "";
+		String password = "";
+		try {
+			receiver = new ClientReceiver(new ByteBufferHandler(tdh), 
+					new SizeByteBufferHandler(),
+					new NioConnectionHandler(adr.getHostString(), adr.getPort(), false, username, password));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return receiver;
 	}
 }
