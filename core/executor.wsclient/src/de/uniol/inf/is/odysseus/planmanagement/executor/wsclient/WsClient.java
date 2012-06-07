@@ -15,6 +15,7 @@
 
 package de.uniol.inf.is.odysseus.planmanagement.executor.wsclient;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -35,7 +36,13 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -43,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ConnectionInformation;
@@ -336,8 +344,29 @@ public class WsClient implements IExecutor, IClientExecutor{
 	
 	@Override
 	public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
-		// TODO: Implement here the method from the Rcp command
-		return null;
+		List<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+		IPhysicalOperator receiver = createClientReceiver(this, queryID);
+		roots.add(receiver);
+		return roots;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private ClientReceiver createClientReceiver(IExecutor exec, int queryId) {
+		ClientReceiver receiver = null;
+		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
+		IDataHandler tdh = DataHandlerRegistry.getDataHandler("Tuple", outputSchema);
+		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getSocketConnectionInformation(queryId);
+		// TODO username and password get from anywhere
+		String username = "";
+		String password = "";
+		try {
+			receiver = new ClientReceiver(new ByteBufferHandler(tdh), 
+					new SizeByteBufferHandler(),
+					new NioConnectionHandler(adr.getHostName(), adr.getPort(), false, username, password));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return receiver;
 	}
 	
 	/**
