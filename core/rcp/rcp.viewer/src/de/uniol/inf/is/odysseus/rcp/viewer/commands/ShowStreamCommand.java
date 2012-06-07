@@ -90,9 +90,6 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
                     if( executor instanceof IServerExecutor ) {
                         IServerExecutor serverExecutor = (IServerExecutor)executor;
                         optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
-                    } else if (executor instanceof IClientExecutor){
-						IPhysicalOperator receiver = createClientReceiver(executor, queryID);
-                    	optionalOpForStream = Optional.of(receiver);
                     } else {
                         LOG.error("Could not show stream outside server.");
                     }
@@ -170,23 +167,4 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 		}
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static ClientReceiver createClientReceiver(IExecutor exec, int queryId) {
-		ClientReceiver receiver = null;
-		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
-		IDataHandler tdhPrototype = DataHandlerRegistry.getDataHandler("Tuple");
-		IDataHandler tdh = tdhPrototype.getInstance(outputSchema);
-		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getSocketConnectionInformation(queryId);
-		// TODO username and password get from anywhere
-		String username = "";
-		String password = "";
-		try {
-			receiver = new ClientReceiver(new ByteBufferHandler(tdh), 
-					new SizeByteBufferHandler(),
-					new NioConnectionHandler(adr.getHostName(), adr.getPort(), false, username, password));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return receiver;
-	}
 }
