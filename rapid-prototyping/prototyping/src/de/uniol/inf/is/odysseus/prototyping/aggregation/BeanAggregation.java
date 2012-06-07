@@ -103,12 +103,12 @@ public class BeanAggregation extends
 							// call the init method with meta attributes
 							ret = new Tuple(
 									new Object[] { this.initMethod.invoke(pojo,
-											in.getMetadata(), attributes) });
+											in.getMetadata(), attributes) }, false);
 						} else {
 							// call the init method without meta attributes
 							ret = new Tuple(
 									new Object[] { this.initMethod.invoke(pojo,
-											attributes) });
+											attributes) }, false);
 						}
 					} else {
 						// get all parameters of the init method if it has a fix
@@ -126,7 +126,7 @@ public class BeanAggregation extends
 									0, attributes, 1, params.length - 1);
 							ret = new Tuple(
 									new Object[] { this.initMethod.invoke(pojo,
-											attributes) });
+											attributes) }, false);
 						} else {
 							// call the init method with the possible number of
 							// attributes from the tuple
@@ -135,7 +135,7 @@ public class BeanAggregation extends
 											Arrays.copyOfRange(
 													getAttributes(in,
 															this.positions), 0,
-													params.length)) });
+													params.length)) }, false);
 						}
 					}
 				} catch (Exception e) {
@@ -193,13 +193,13 @@ public class BeanAggregation extends
 							ret = new Tuple(
 									new Object[] { this.mergeMethod.invoke(
 											pojo, pa.getElem().getAttribute(0),
-											toMerge.getMetadata(), attributes) });
+											toMerge.getMetadata(), attributes) }, false);
 						} else {
 							// call the merge method with meta attributes
 							ret = new Tuple(
 									new Object[] { this.mergeMethod.invoke(
 											pojo, pa.getElem().getAttribute(0),
-											attributes) });
+											attributes) }, false);
 						}
 					} else {
 						// get all parameters of the merge method if it has a
@@ -217,7 +217,7 @@ public class BeanAggregation extends
 									attributes, 2, params.length - 2);
 							ret = new Tuple(
 									new Object[] { this.mergeMethod.invoke(
-											pojo, attributes) });
+											pojo, attributes) }, false);
 						} else {
 							// call the merge method with the possible number of
 							// attributes from the tuple
@@ -228,7 +228,7 @@ public class BeanAggregation extends
 									attributes, 1, params.length - 1);
 							ret = new Tuple(
 									new Object[] { this.mergeMethod.invoke(
-											pojo, attributes) });
+											pojo, attributes) }, false);
 						}
 					}
 				} catch (Exception e) {
@@ -269,7 +269,7 @@ public class BeanAggregation extends
 				try {
 					// call the evaluate method with the partial object
 					ret = new Tuple(new Object[] { this.evaluateMethod.invoke(
-							pojo, pa.getElem().getAttribute(0)) });
+							pojo, pa.getElem().getAttribute(0)) }, false);
 				} catch (Exception e) {
 					LOG.error(e.getMessage(), e);
 				}

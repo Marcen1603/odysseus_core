@@ -29,7 +29,7 @@ public class RelationalPolygonAggregation
         ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>) p).compress();
         List<Tuple<?>> elems = ((GeometryPartialAggregate<Tuple<? extends IMetaAttribute>>) p)
                 .getElems();
-        Tuple<?> ret = new Tuple<IMetaAttribute>(1);
+        Tuple<?> ret = new Tuple<IMetaAttribute>(1, false);
         ret.setAttribute(0, elems);
         return ret;
     }

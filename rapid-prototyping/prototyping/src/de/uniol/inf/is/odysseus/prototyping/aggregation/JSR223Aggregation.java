@@ -170,7 +170,7 @@ public class JSR223Aggregation extends
 		for (int i = 0; i < attributes.length; ++i) {
 			retObj[i] = bindings.get(KEY_PARTIAL + i);
 		}
-		ret = new Tuple(retObj);
+		ret = new Tuple(retObj, false);
 		IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
 				ret);
 		return pa;
@@ -226,7 +226,7 @@ public class JSR223Aggregation extends
 		for (int i = 0; i < partials.length; ++i) {
 			retObj[i] = bindings.get(KEY_PARTIAL + i);
 		}
-		ret = new Tuple(retObj);
+		ret = new Tuple(retObj, false);
 
 		pa.setElem(ret);
 		return pa;
@@ -274,7 +274,7 @@ public class JSR223Aggregation extends
 		for (int i = 0; i < partials.length; ++i) {
 			retObj[i] = bindings.get(KEY_PARTIAL + i);
 		}
-		ret = new Tuple(retObj);
+		ret = new Tuple(retObj, false);
 		return ret;
 	}
 
