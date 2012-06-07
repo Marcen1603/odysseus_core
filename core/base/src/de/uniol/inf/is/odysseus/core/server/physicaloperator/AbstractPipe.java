@@ -123,7 +123,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
 	protected R cloneIfNessessary(R object, boolean exclusive, int port) {
-		if (getOutputMode() == OutputMode.MODIFIED_INPUT || !exclusive) {
+		if (getOutputMode() == OutputMode.MODIFIED_INPUT || (!exclusive&&port>0)) {
 			object = (R) ((IClone) object).clone();
 		}
 		return object;
@@ -131,7 +131,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	@Override
 	public boolean isTransferExclusive() {
-		// Zunächst Testen ob das Datum an mehrere Empfänger
+		// Zunï¿½chst Testen ob das Datum an mehrere Empfï¿½nger
 		// versendet wird --> dann niemals exclusiv
 		boolean ret = super.isTransferExclusive();
 		OutputMode out = getOutputMode();
@@ -139,7 +139,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		case NEW_ELEMENT:
 			return ret;
 		default: // MODIFIED_INPUT und INPUT
-			// Wenn einer der Eingänge nicht exclusive ist
+			// Wenn einer der Eingï¿½nge nicht exclusive ist
 			// das Ergebnis auch nicht exclusive
 			// for (int i = 0; i < inputExclusive.length && ret; i++) {
 			// ret = ret && inputExclusive[i];
@@ -349,10 +349,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	 * nutzen.
 	 * 
 	 * @param o
-	 *            zu überprüfendes Objekt (idealerweise eine AbstractPipe)
+	 *            zu ï¿½berprï¿½fendes Objekt (idealerweise eine AbstractPipe)
 	 */
 	public boolean hasSameSources(Object o) {
-		// Abbruch, falls das zu überprüfende Objekt keine AbstractPipe ist
+		// Abbruch, falls das zu ï¿½berprï¿½fende Objekt keine AbstractPipe ist
 		if (!(o instanceof AbstractPipe)) {
 			return false;
 		}
@@ -368,11 +368,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		if (thisSubs.size() != otherSubs.size()) {
 			return false;
 		}
-		// Iteration über die Subscriptions zu Quellen
+		// Iteration ï¿½ber die Subscriptions zu Quellen
 		for (PhysicalSubscription<?> s1 : thisSubs) {
 			boolean foundmatch = false;
 			for (PhysicalSubscription<?> s2 : otherSubs) {
-				// Subscription enthält gleiche Quelle und gleiche Ports
+				// Subscription enthï¿½lt gleiche Quelle und gleiche Ports
 				if (((ISource<?>) s1.getTarget()).getName().equals(
 						((ISource<?>) s2.getTarget()).getName())
 						&& s1.getSinkInPort() == s2.getSinkInPort()
