@@ -22,9 +22,8 @@ public class RelationalTimestampToPayloadPO extends
 		Tuple<ITimeInterval> out = new Tuple<ITimeInterval>(
 				object.size()+2, false);
 		
-		for (int i=0;i<inputSize;i++){
-			out.setAttribute(i, object.getAttribute(i));
-		}
+		System.arraycopy(object.getAttributes(), 0, out.getAttributes(), 0,
+				inputSize);
 		
 		if (object.getMetadata().getStart().isInfinite()) {
 			out.setAttribute(inputSize,-1L);
@@ -37,6 +36,7 @@ public class RelationalTimestampToPayloadPO extends
 			out.setAttribute(inputSize+1,object.getMetadata().getEnd().getMainPoint());
 		}
 		out.setMetadata(object.getMetadata());
+		out.setRequiresDeepClone(object.requiresDeepClone());
 		transfer(out);
 	}
 
