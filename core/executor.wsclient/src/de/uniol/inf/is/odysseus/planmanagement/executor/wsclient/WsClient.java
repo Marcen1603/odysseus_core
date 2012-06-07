@@ -346,6 +346,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	 * @param queryId
 	 * @return SocketAddress
 	 */
+	@Override
 	public SocketAddress getConnectionInformation(int queryId) {
 		if(getWebserviceServer() != null) {
 			ConnectionInformation info = getWebserviceServer().getConnectionInformation(getSecurityToken(), queryId).getResponseValue();
