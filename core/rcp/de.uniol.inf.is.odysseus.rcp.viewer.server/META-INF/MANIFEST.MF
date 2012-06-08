@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Viewer Server
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.server;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.server.RCPViewerServerPlugIn
+Bundle-Vendor: Timo Michelsen
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer,
+ de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
+ de.uniol.inf.is.odysseus.rcp.viewer.view,
+ org.slf4j
