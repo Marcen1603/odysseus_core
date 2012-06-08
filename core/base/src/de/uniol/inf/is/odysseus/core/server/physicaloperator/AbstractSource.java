@@ -53,9 +53,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		implements ISource<T> {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
-	public enum OutputMode {
-		NEW_ELEMENT, MODIFIED_INPUT, INPUT
-	}
+
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -305,10 +303,6 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void transfer(Collection<T> object) {
 		transfer(object, 0);
 	}
-
-	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
-	}
 	
 	/**
 	 * states if the next Operator can change the transfer object oder has to
@@ -320,12 +314,15 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return hasSingleConsumer();
 	}
 	
+	protected boolean needsClone() {
+		return !isTransferExclusive();
+	}
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
 	@SuppressWarnings("unchecked")
 	protected T cloneIfNessessary(T object, boolean exclusive) {
-		if (!exclusive) {
+		if (needsClone()) {
 			object = (T) ((IClone) object).clone();
 		}
 		return object;

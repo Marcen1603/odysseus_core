@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.udf;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource.OutputMode;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 
 @UserDefinedFunction(name="ELEMENT_SAMPLING")

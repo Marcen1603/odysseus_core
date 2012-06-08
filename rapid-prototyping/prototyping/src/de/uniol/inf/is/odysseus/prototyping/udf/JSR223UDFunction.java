@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource.OutputMode;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 
 /**

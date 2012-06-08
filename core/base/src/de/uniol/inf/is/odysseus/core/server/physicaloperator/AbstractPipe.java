@@ -88,6 +88,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 
 	}
 
+	public enum OutputMode {
+		NEW_ELEMENT, MODIFIED_INPUT, INPUT
+	}
+	
 	final protected DelegateSink delegateSink = new DelegateSink();
 	private SDFMetaAttributeList metadataAttributeSchema = new SDFMetaAttributeList();
 	private boolean metadataCalculated = false;
@@ -110,7 +114,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	protected int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
 	}
-
+	
+	abstract public OutputMode getOutputMode();
+	
 	@Override
 	public boolean isTransferExclusive() {
 		// Zun�chst Testen ob das Datum an mehrere Empf�nger
@@ -130,6 +136,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 	}
 
+	@Override
+	protected boolean needsClone() {
+		return getOutputMode() == OutputMode.MODIFIED_INPUT
+				|| super.needsClone();
+	}
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
@@ -159,7 +170,7 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	// ------------------------------------------------------------------------
 	// PROCESS
 	// ------------------------------------------------------------------------
-
+	
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}

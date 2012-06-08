@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource.OutputMode;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 
 public interface IUserDefinedFunction<R, W> {
 	void init(String initString);
