@@ -20,13 +20,16 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public final class GridUtil {
-	
+
 	public static final double MAX_VALUE = 0.999999;
 	public static final double MIN_VALUE = 1.0 - MAX_VALUE;
 
 	public static final double FREE = -Math.log(1.0 - MIN_VALUE);
 	public static final double UNKNOWN = -Math.log(1.0 - 0.5);
 	public static final double OBSTACLE = -Math.log(MAX_VALUE);
+
+	private GridUtil() {
+	}
 
 	/**
 	 * Checks weather the given {@link Coordinate} is in the given grid
@@ -287,17 +290,17 @@ public final class GridUtil {
 				|| (coordinate.y < boundingBox[1])) {
 			return false;
 		}
-        for (int i = 0; i < polygon.length; i++) {
-        	if (((polygon[i].y < coordinate.y) && (polygon[j].y >= coordinate.y))
-        			|| ((polygon[j].y < coordinate.y) && (polygon[i].y >= coordinate.y))) {
-        		if (polygon[i].x + (coordinate.y - polygon[i].y)
-        				/ (polygon[j].y - polygon[i].y)
-        				* (polygon[j].x - polygon[i].x) < coordinate.x) {
-        			isIn = !isIn;
-        		}
-        	}
-        	j = i;
-        }
-        return ((isIn) ? true : false);
+		for (int i = 0; i < polygon.length; i++) {
+			if (((polygon[i].y < coordinate.y) && (polygon[j].y >= coordinate.y))
+					|| ((polygon[j].y < coordinate.y) && (polygon[i].y >= coordinate.y))) {
+				if (polygon[i].x + (coordinate.y - polygon[i].y)
+						/ (polygon[j].y - polygon[i].y)
+						* (polygon[j].x - polygon[i].x) < coordinate.x) {
+					isIn = !isIn;
+				}
+			}
+			j = i;
+		}
+		return ((isIn) ? true : false);
 	}
 }

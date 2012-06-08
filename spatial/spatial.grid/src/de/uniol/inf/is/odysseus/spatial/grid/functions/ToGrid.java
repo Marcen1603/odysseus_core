@@ -16,23 +16,26 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
+import static com.googlecode.javacv.cpp.opencv_core.cvSet2D;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ToGrid extends AbstractFunction<CartesianGrid> {
+public class ToGrid extends AbstractFunction<Grid> {
 	/**
      * 
      */
@@ -71,7 +74,7 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
+	public Grid getValue() {
 		final Geometry geometry = (Geometry) this.getInputValue(0);
 		final Coordinate origin = (Coordinate) this.getInputValue(1);
 		Integer width = this.getNumericalInputValue(2).intValue();
@@ -80,11 +83,12 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 
 		final Coordinate[] coordinates = geometry.getCoordinates();
 
-		final CartesianGrid grid = new CartesianGrid(origin, width, height,
+		final Grid grid = new Grid(origin, width, height,
 				cellsize);
 
 		grid.fill(GridUtil.UNKNOWN);
 
+		IplImage image = OpenCVUtil.gridToImage(grid);
 		CvPoint convexHullPoints = new CvPoint(coordinates.length);
 		Coordinate coordinate;
 		for (int i = 0; i < coordinates.length; i++) {
@@ -93,9 +97,8 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 					.x((int) ((coordinate.x - origin.x) / cellsize + 0.5))
 					.y((int) ((coordinate.y - origin.y) / cellsize + 0.5));
 		}
-		cvFillPoly(grid.getImage(), convexHullPoints,
-				new int[] { coordinates.length }, 1,
-				opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
+		cvFillPoly(image, convexHullPoints, new int[] { coordinates.length },
+				1, opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
 		convexHullPoints.deallocate();
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
@@ -103,13 +106,13 @@ public class ToGrid extends AbstractFunction<CartesianGrid> {
 					&& (coordinate.x < origin.x + width * grid.cellsize)
 					&& (coordinate.y >= origin.y)
 					&& (coordinate.y < origin.y + height * grid.cellsize)) {
-				grid.set((int) ((coordinate.x - origin.x) / cellsize),
-						(int) ((coordinate.y - origin.y) / cellsize),
-						GridUtil.OBSTACLE);
 
+				cvSet2D(image, (int) ((coordinate.y - origin.y) / cellsize),
+						(int) ((coordinate.x - origin.x) / cellsize),
+						opencv_core.cvScalarAll(GridUtil.OBSTACLE));
 			}
 		}
-		return grid;
+		return OpenCVUtil.imageToGrid(image, grid);
 	}
 
 	@Override

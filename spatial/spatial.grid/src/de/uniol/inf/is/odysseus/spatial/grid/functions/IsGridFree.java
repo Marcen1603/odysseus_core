@@ -18,11 +18,13 @@ package de.uniol.inf.is.odysseus.spatial.grid.functions;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 import com.googlecode.javacv.cpp.opencv_core.CvRect;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -75,7 +77,7 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 
 	@Override
 	public Boolean getValue() {
-		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
+		final Grid grid = (Grid) this.getInputValue(0);
 		final Coordinate point = (Coordinate) this.getInputValue(1);
 		Double width = (Double) this.getInputValue(2);
 		Double depth = (Double) this.getInputValue(3);
@@ -103,23 +105,23 @@ public class IsGridFree extends AbstractFunction<Boolean> {
 			roiRect.y(roiY);
 			roiRect.width(roiWidth);
 			roiRect.height(roiDepth);
-
-			opencv_core.cvSetImageROI(grid.getImage(), roiRect);
+			IplImage image = OpenCVUtil.gridToImage(grid);
+			opencv_core.cvSetImageROI(image, roiRect);
 			double[] minVal = new double[1];
 			double[] maxVal = new double[1];
 			CvPoint minLoc = new CvPoint();
 			CvPoint maxLoc = new CvPoint();
-			opencv_core.cvMinMaxLoc(grid.getImage(), minVal, maxVal, minLoc,
-					maxLoc, null);
+			opencv_core
+					.cvMinMaxLoc(image, minVal, maxVal, minLoc, maxLoc, null);
 			if (maxVal[0] < threshold) {
 				free = true;
 			}
-			opencv_core.cvResetImageROI(grid.getImage());
+			opencv_core.cvResetImageROI(image);
 			roiRect.deallocate();
 			minLoc.deallocate();
 			maxLoc.deallocate();
+			image.release();
 		}
-		grid.release();
 		return free;
 	}
 

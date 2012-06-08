@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
+import static com.googlecode.javacv.cpp.opencv_core.cvGet2D;
+import static com.googlecode.javacv.cpp.opencv_core.cvSet2D;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
@@ -23,13 +25,15 @@ import java.util.concurrent.TimeUnit;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -38,7 +42,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
+public class MergeOccupancyGrid extends AbstractFunction<Grid> {
 	/**
 	 * 
 	 */
@@ -78,8 +82,8 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
-		CartesianGrid cartesianGrid = (CartesianGrid) this.getInputValue(0);
+	public Grid getValue() {
+		Grid cartesianGrid = (Grid) this.getInputValue(0);
 		final PolarCoordinate[] coordinates = (PolarCoordinate[]) this
 				.getInputValue(1);
 		final Coordinate origin = (Coordinate) this.getInputValue(2);
@@ -87,10 +91,9 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		final Integer radius = this.getNumericalInputValue(4).intValue();
 		final Double cellradius = this.getNumericalInputValue(5);
 
-		CartesianGrid mergedGrid = mergePolarGrid(cartesianGrid, origin, angle,
+		Grid mergedGrid = mergePolarGrid(cartesianGrid, origin, angle,
 				coordinates, radius, cellradius);
-		cartesianGrid.release();
-		cartesianGrid = null;
+
 		return mergedGrid;
 	}
 
@@ -99,11 +102,12 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		return SDFGridDatatype.GRID;
 	}
 
-	private CartesianGrid mergePolarGrid(CartesianGrid grid,
+	private Grid mergePolarGrid(Grid grid,
 			Coordinate polarGridOrigin, double transformAngle,
 			PolarCoordinate[] coordinates, int radialCells, double cellRadius) {
 
-		CartesianGrid mergedGrid = grid.clone();
+		Grid mergedGrid = grid.clone();
+		IplImage image = OpenCVUtil.gridToImage(mergedGrid);
 
 		double cellAngle = Math.abs(coordinates[0].a - coordinates[1].a);
 		double offsetX = polarGridOrigin.x - grid.origin.x;
@@ -130,8 +134,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 				.x((int) (offsetX / grid.cellsize))
 				.y((int) (offsetY / grid.cellsize));
 
-		cvFillPoly(mergedGrid.getImage(), resetPolar,
-				new int[] { coordinates.length + 2 }, 1,
+		cvFillPoly(image, resetPolar, new int[] { coordinates.length + 2 }, 1,
 				opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
 		resetPolar.deallocate();
 
@@ -139,9 +142,8 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		int num = coordinates.length / THREADS;
 		ExecutorService threadPool = Executors.newFixedThreadPool(THREADS);
 		for (int i = 0; i < coordinates.length; i += num) {
-			threadPool.execute(new UpdateGridTask(grid, mergedGrid,
-					polarGridOrigin, transformAngle, Arrays.copyOfRange(
-							coordinates, i,
+			threadPool.execute(new UpdateGridTask(grid, image, polarGridOrigin,
+					transformAngle, Arrays.copyOfRange(coordinates, i,
 							Math.min(coordinates.length, i + num)),
 					radialCells, cellRadius, cellAngle));
 		}
@@ -155,10 +157,11 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		}
 
 		// Set the position of the laser scanner as free
-		mergedGrid.set((int) (offsetX / grid.cellsize),
-				(int) (offsetY / grid.cellsize), GridUtil.FREE);
-		grid.release();
-		return mergedGrid;
+		cvSet2D(image, (int) (offsetY / grid.cellsize),
+				(int) (offsetX / grid.cellsize),
+				opencv_core.cvScalarAll(GridUtil.FREE));
+
+		return OpenCVUtil.imageToGrid(image, mergedGrid);
 	}
 
 	/**
@@ -207,12 +210,11 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 	 * @param grid
 	 * @param value
 	 */
-	private synchronized void updateCell(int x, int y, CartesianGrid grid,
+	private synchronized void updateCell(int x, int y, IplImage image,
 			double value) {
-		double oldValue = 1.0 - Math.exp(-grid.get(x, y));
+		double oldValue = 1.0 - Math.exp(-cvGet2D(image, y, x).getVal(0));
 		double logValue = Math.log(1.0 - Math.max(value, oldValue));
-		grid.set(x, y, -logValue);
-
+		cvSet2D(image, y, x, opencv_core.cvScalarAll(-logValue));
 	}
 
 	/**
@@ -229,19 +231,19 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		private final double transformAngle;
 		private final double cellAngle;
 
-		private final CartesianGrid cartesianGrid;
-		private final CartesianGrid mergedGrid;
+		private final Grid cartesianGrid;
+		private final IplImage image;
 		private final Coordinate origin;
 
-		public UpdateGridTask(CartesianGrid cartesianGrid,
-				CartesianGrid mergedGrid, Coordinate origin,
-				double transformAngle, PolarCoordinate[] coordinates,
-				int radialCells, double cellRadius, double cellAngle) {
+		public UpdateGridTask(Grid grid, IplImage image,
+				Coordinate origin, double transformAngle,
+				PolarCoordinate[] coordinates, int radialCells,
+				double cellRadius, double cellAngle) {
 			this.radialCells = radialCells;
 			this.cellRadius = cellRadius;
 			this.transformAngle = transformAngle;
-			this.cartesianGrid = cartesianGrid;
-			this.mergedGrid = mergedGrid;
+			this.cartesianGrid = grid;
+			this.image = image;
 			this.cellAngle = cellAngle;
 			this.coordinates = coordinates;
 			this.origin = origin;
@@ -336,7 +338,7 @@ public class MergeOccupancyGrid extends AbstractFunction<CartesianGrid> {
 						int maxY = polarMapping[r][3];
 						for (int x = minX; x <= maxX; x++) {
 							for (int y = minY; y <= maxY; y++) {
-								updateCell(x, y, mergedGrid, newValue);
+								updateCell(x, y, image, newValue);
 							}
 						}
 						totalProbability += normalized;

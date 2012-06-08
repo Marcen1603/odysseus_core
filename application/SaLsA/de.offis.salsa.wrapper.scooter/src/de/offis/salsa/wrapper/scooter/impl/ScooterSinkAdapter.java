@@ -137,12 +137,12 @@ public class ScooterSinkAdapter extends AbstractSinkAdapter implements
 						iceGrid.y = grid.origin.y * grid.cellsize;
 						iceGrid.cellsize = grid.cellsize;
 						iceGrid.width = grid.width;
-						iceGrid.height = grid.depth;
+						iceGrid.height = grid.height;
 						iceGrid.data = new byte[iceGrid.width * iceGrid.height];
-						for (int l = 0; l < grid.width; l++) {
-							for (int w = 0; w < grid.depth; w++) {
-								int index = l * grid.depth + w;
-								iceGrid.data[index] = grid.get(l, w);
+						for (int x = 0; x < grid.width; x++) {
+							for (int y = 0; y < grid.height; y++) {
+								int index = x * grid.height + y;
+								iceGrid.data[index] = (byte) (grid.get(x, y) * 100);
 							}
 						}
 						try {

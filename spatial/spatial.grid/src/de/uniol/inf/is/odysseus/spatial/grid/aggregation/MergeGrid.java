@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -40,7 +40,7 @@ public class MergeGrid extends
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
 		final IPartialAggregate<Tuple<?>> grid = new GridPartialAggregate<Tuple<?>>(
-				(CartesianGrid) in.getAttribute(attribPos));
+				(Grid) in.getAttribute(attribPos));
 		return grid;
 	}
 
@@ -55,7 +55,7 @@ public class MergeGrid extends
 		} else {
 			grid = (GridPartialAggregate<Tuple<?>>) p;
 		}
-		grid.merge((CartesianGrid) toMerge.getAttribute(attribPos));
+		grid.merge((Grid) toMerge.getAttribute(attribPos));
 		return grid;
 	}
 

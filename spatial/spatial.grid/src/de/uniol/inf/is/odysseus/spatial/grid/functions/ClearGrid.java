@@ -16,10 +16,12 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
@@ -27,7 +29,7 @@ import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGri
  */
 @Deprecated
 // Not working
-public class ClearGrid extends AbstractFunction<CartesianGrid> {
+public class ClearGrid extends AbstractFunction<Grid> {
 	/**
      * 
      */
@@ -59,14 +61,14 @@ public class ClearGrid extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
-		final CartesianGrid base = this.getInputValue(0);
-		final CartesianGrid grid = this.getInputValue(1);
-
-		opencv_core.cvAnd(base.getImage(), grid.getImage(), base.getImage(),
-				null);
-		grid.release();
-		return base;
+	public Grid getValue() {
+		final Grid base = this.getInputValue(0);
+		final Grid grid = this.getInputValue(1);
+		IplImage baseImage = OpenCVUtil.gridToImage(base);
+		IplImage image = OpenCVUtil.gridToImage(grid);
+		opencv_core.cvAnd(baseImage, image, baseImage, null);
+		image.release();
+		return OpenCVUtil.imageToGrid(baseImage, base);
 	}
 
 	@Override

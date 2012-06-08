@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -29,7 +30,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * Visualisation for the existence probability of an occupancy grid
@@ -93,21 +95,21 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	@Override
 	protected void process_next(final Object object, final int port,
 			final boolean isReadOnly) {
-		CartesianGrid grid = (CartesianGrid) ((Tuple<TimeInterval>) object)
+		Grid grid = (Grid) ((Tuple<TimeInterval>) object)
 				.getAttribute(0);
 
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
-			opencv_core.cvConvertScale(grid.getImage(), grid.getImage(), -1.0,
+			IplImage image = OpenCVUtil.gridToImage(grid);
+			opencv_core.cvConvertScale(image, image, -1.0,
 					0);
-			opencv_core.cvExp(grid.getImage(), grid.getImage());
-			opencv_core.cvConvertScale(grid.getImage(), grid.getImage(), -1.0,
+			opencv_core.cvExp(image, image);
+			opencv_core.cvConvertScale(image, image, -1.0,
 					0);
-			opencv_core.cvAddS(grid.getImage(), opencv_core.cvScalarAll(1),
-					grid.getImage(), null);
-			this.canvas.showImage(grid.getImage());
+			opencv_core.cvAddS(image, opencv_core.cvScalarAll(1),
+					image, null);
+			this.canvas.showImage(image);
+			image.release();
 		}
-		grid.release();
-		grid = null;
 	}
 
 	@Override

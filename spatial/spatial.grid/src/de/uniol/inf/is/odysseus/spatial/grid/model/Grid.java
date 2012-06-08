@@ -15,89 +15,85 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.model;
 
-import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.util.Arrays;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.core.IClone;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
- * @deprecated
  */
-public class Grid implements Cloneable {
+public class Grid implements IClone {
 	public final Coordinate origin;
 
 	public final int width;
-	public final int depth;
-	public final int size;
+	public final int height;
 	public final double cellsize;
-	private final ByteBuffer buffer;
+	private final DoubleBuffer buffer;
 
-	public Grid(Coordinate origin, double width, double depth, double cellsize) {
+	public Grid(Coordinate origin, int width, int height,
+			double cellsize) {
 		this.origin = origin;
 		this.cellsize = cellsize;
-		this.width = (int) ((width / cellsize) + 0.5);
-		this.depth = (int) ((depth / cellsize) + 0.5);
-		this.size = this.width * this.depth;
-		this.buffer = ByteBuffer.allocate(this.size);
+		this.width = width;
+		this.height = height;
+		this.buffer = DoubleBuffer.allocate(this.width * this.height);
 	}
 
-	public Grid(Coordinate origin, double width, double depth, double cellsize,
-			ByteBuffer buffer) {
-		this(origin, width, depth, cellsize);
+	public Grid(Coordinate origin, int width, int height,
+			double cellsize, DoubleBuffer buffer) {
+		this(new Coordinate(origin.x, origin.y), width, height, cellsize);
+		buffer.rewind();
 		this.buffer.put(buffer);
+
 	}
 
-	public byte get(int x, int y) {
-		return this.buffer.get((depth - 1 - y) * this.width + x);
+	public double get(int x, int y) {
+		return this.buffer.get(y * this.width + x);
 	}
 
-	public byte get(double x, double y) {
-		int gridX = (int) ((x / cellsize) + 0.5);
-		int gridY = (int) ((y / cellsize) + 0.5);
+	public double get(double x, double y) {
+		int gridX = (int) (x / cellsize);
+		int gridY = (int) (y / cellsize);
 		return get(gridX, gridY);
 	}
 
-	public byte[] get() {
-		return this.buffer.array();
-	}
-
-	public ByteBuffer getBuffer() {
+	public DoubleBuffer getBuffer() {
 		this.buffer.rewind();
 		return this.buffer;
 	}
 
-	public void set(int x, int y, byte value) {
-		this.buffer.put((this.depth - 1 - y) * this.width + x, value);
+	public void set(int x, int y, double value) {
+		this.buffer.put(y * this.width + x, value);
 	}
 
-	public void set(double x, double y, byte value) {
-		int gridX = (int) ((x / cellsize) + 0.5);
-		int gridY = (int) ((y / cellsize) + 0.5);
+	public void set(double x, double y, double value) {
+		int gridX = (int) (x / cellsize);
+		int gridY = (int) (y / cellsize);
 		set(gridX, gridY, value);
 	}
 
-	public void setBuffer(ByteBuffer value) {
+	public void setBuffer(DoubleBuffer value) {
 		this.buffer.clear();
 		this.buffer.put(value);
 	}
 
-	public void fill(byte value) {
+	public void fill(double value) {
 		Arrays.fill(this.buffer.array(), value);
 	}
 
 	@Override
 	public Grid clone() {
-		Grid grid = new Grid((Coordinate) origin.clone(), this.width
-				* this.cellsize, this.depth * this.cellsize, this.cellsize,
-				this.buffer);
+		Grid grid = new Grid(this.origin, this.width,
+				this.height, this.cellsize, this.buffer);
 		return grid;
 	}
 
 	@Override
 	public String toString() {
-		return "{Origin: " + origin + ", Width: " + width + " Depth: " + depth
-				+ " Size: " + cellsize * this.size + "}";
+		return "{Origin: " + origin + ", Width: " + width + " Depth: " + height
+				+ " CellSize: " + this.cellsize + "}";
 	}
-
 }

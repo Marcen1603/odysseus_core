@@ -20,10 +20,12 @@ import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 import com.googlecode.javacv.cpp.opencv_core.CvScalar;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
@@ -31,7 +33,7 @@ import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGri
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
+public class SpreadOccupancyGrid extends AbstractFunction<Grid> {
 	/**
 	 * 
 	 */
@@ -73,8 +75,8 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 	 * of the current value.
 	 */
 	@Override
-	public CartesianGrid getValue() {
-		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
+	public Grid getValue() {
+		final Grid grid = (Grid) this.getInputValue(0);
 		final long startTimestamp;
 		if (this.getInputValue(1) != null) {
 			startTimestamp = this.getNumericalInputValue(1).longValue();
@@ -84,20 +86,20 @@ public class SpreadOccupancyGrid extends AbstractFunction<CartesianGrid> {
 		final long currentTimestamp = this.getNumericalInputValue(2)
 				.longValue();
 		final double velocity = this.getNumericalInputValue(3);
-		
+
 		int cells = (int) (((((double) (currentTimestamp - startTimestamp)) / 1000.0)
 				* velocity / grid.cellsize) * 2.0 + 1.5);
 		if (cells < 3) {
 			cells = 3;
 		}
-		CvMat kernel = CvMat.create(cells, cells, opencv_core.CV_64F, grid
-				.getImage().nChannels());
+		IplImage image = OpenCVUtil.gridToImage(grid);
+		CvMat kernel = CvMat.create(cells, cells, opencv_core.CV_64F,
+				image.nChannels());
 		opencv_core.cvSet(kernel, CvScalar.ONE);
 
-		cvFilter2D(grid.getImage(), grid.getImage(), kernel, new CvPoint(
-				-1, -1));
+		cvFilter2D(image, image, kernel, new CvPoint(-1, -1));
 		kernel.deallocate();
-		return grid;
+		return OpenCVUtil.imageToGrid(image, grid);
 	}
 
 	@Override

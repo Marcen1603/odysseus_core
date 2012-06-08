@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class CreateGridIfNull extends AbstractFunction<CartesianGrid> {
+public class CreateGridIfNull extends AbstractFunction<Grid> {
 
 	/**
 	 * 
@@ -52,16 +52,16 @@ public class CreateGridIfNull extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
+	public Grid getValue() {
 		final Coordinate origin = (Coordinate) this.getInputValue(1);
 		final Integer width = this.getNumericalInputValue(2).intValue();
 		final Integer height = this.getNumericalInputValue(3).intValue();
 		final Double cellsize = this.getNumericalInputValue(4);
-		CartesianGrid grid;
+		Grid grid;
 		if (this.getInputValue(0) != null) {
-			grid = (CartesianGrid) this.getInputValue(0);
+			grid = (Grid) this.getInputValue(0);
 		} else {
-			grid = new CartesianGrid(origin, width, height, cellsize);
+			grid = new Grid(origin, width, height, cellsize);
 			grid.fill(UNKNOWN);
 		}
 		return grid;

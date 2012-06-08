@@ -15,9 +15,11 @@
 package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import com.googlecode.javacv.cpp.opencv_core;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -25,9 +27,9 @@ import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
 public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 
 	private double count;
-	private final CartesianGrid grid;
+	private final Grid grid;
 
-	public GridPartialAggregate(final CartesianGrid grid) {
+	public GridPartialAggregate(final Grid grid) {
 		this.count = 1.0;
 		this.grid = grid;
 	}
@@ -44,19 +46,22 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	public void evaluate() {
-		opencv_core.cvConvertScale(this.grid.getImage(), this.grid.getImage(),
-				1.0 / this.count, 0);
+		IplImage image = OpenCVUtil.gridToImage(this.grid);
+		opencv_core.cvConvertScale(image, image, 1.0 / this.count, 0);
+		OpenCVUtil.imageToGrid(image, grid);
 	}
 
-	public CartesianGrid getGrid() {
+	public Grid getGrid() {
 		return this.grid;
 	}
 
-	public void merge(final CartesianGrid grid) {
+	public void merge(final Grid grid) {
 		this.count++;
-		opencv_core.cvAdd(this.grid.getImage(), grid.getImage(),
-				this.grid.getImage(), null);
-		grid.release();
+		IplImage image = OpenCVUtil.gridToImage(this.grid);
+		IplImage mergeImage = OpenCVUtil.gridToImage(grid);
+		opencv_core.cvAdd(image, mergeImage, image, null);
+		mergeImage.release();
+		OpenCVUtil.imageToGrid(image, grid);
 	}
 
 	@Override

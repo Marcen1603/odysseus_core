@@ -24,17 +24,19 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvWarpAffine;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvMat;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint2D32f;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class RotateGrid extends AbstractFunction<CartesianGrid> {
+public class RotateGrid extends AbstractFunction<Grid> {
 	/**
      * 
      */
@@ -70,8 +72,8 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
-		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
+	public Grid getValue() {
+		final Grid grid = (Grid) this.getInputValue(0);
 		Double angle = (Double) this.getInputValue(1);
 
 		Coordinate origin = grid.origin;
@@ -88,20 +90,17 @@ public class RotateGrid extends AbstractFunction<CartesianGrid> {
 				+ (origin.y - center.y() * cellsize) * cos + center.y()
 				* cellsize;
 
-		Coordinate rotatedOrigin = new Coordinate(rotatedOriginX,
-				rotatedOriginY);
-
-		CartesianGrid rotatedGrid = new CartesianGrid(rotatedOrigin,
-				grid.width, grid.height, grid.cellsize);
-		rotatedGrid.fill(UNKNOWN);
+		grid.origin.x = rotatedOriginX;
+		grid.origin.y = rotatedOriginY;
 
 		CvMat mapMatrix = CvMat.create(2, 3, CV_64F);
 		cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
-		cvWarpAffine(grid.getImage(), rotatedGrid.getImage(), mapMatrix, flags,
+		IplImage image = OpenCVUtil.gridToImage(grid);
+		cvWarpAffine(image, image, mapMatrix, flags,
 				opencv_core.cvScalarAll(UNKNOWN));
 		mapMatrix.release();
-		grid.release();
-		return rotatedGrid;
+
+		return OpenCVUtil.imageToGrid(image, grid);
 	}
 
 	@Override

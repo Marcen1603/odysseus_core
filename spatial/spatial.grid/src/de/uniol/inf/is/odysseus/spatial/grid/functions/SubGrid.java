@@ -26,14 +26,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
-import de.uniol.inf.is.odysseus.spatial.grid.model.CartesianGrid;
+import de.uniol.inf.is.odysseus.spatial.grid.common.OpenCVUtil;
+import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class SubGrid extends AbstractFunction<CartesianGrid> {
+public class SubGrid extends AbstractFunction<Grid> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFGridDatatype.GRID },
 			{ SDFSpatialDatatype.SPATIAL_GEOMETRY,
@@ -84,8 +85,8 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 	}
 
 	@Override
-	public CartesianGrid getValue() {
-		final CartesianGrid grid = (CartesianGrid) this.getInputValue(0);
+	public Grid getValue() {
+		final Grid grid = (Grid) this.getInputValue(0);
 		final Coordinate point = (Coordinate) this.getInputValue(1);
 		final Integer width = this.getNumericalInputValue(2).intValue();
 		final Integer depth = this.getNumericalInputValue(3).intValue();
@@ -105,7 +106,7 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 				+ ((point.x - (width / 2) - point.x) * sin)
 				+ ((point.y - (depth / 2) - point.y) * cos);
 
-		final CartesianGrid subgrid = new CartesianGrid(new Coordinate(originX,
+		final Grid subgrid = new Grid(new Coordinate(originX,
 				originY), width, depth, grid.cellsize);
 
 		subgrid.fill(GridUtil.UNKNOWN);
@@ -167,21 +168,26 @@ public class SubGrid extends AbstractFunction<CartesianGrid> {
 					opencv_core.IPL_DEPTH_64F, 1);
 			opencv_core.cvSet(roi, opencv_core.cvScalarAll(GridUtil.UNKNOWN));
 
-			opencv_core.cvSetImageROI(grid.getImage(), roiRect);
-			opencv_core.cvCopy(grid.getImage(), roi);
-			opencv_core.cvResetImageROI(grid.getImage());
+			IplImage image = OpenCVUtil.gridToImage(grid);
+			IplImage subimage = OpenCVUtil.gridToImage(subgrid);
+			
+			opencv_core.cvSetImageROI(image, roiRect);
+			opencv_core.cvCopy(image, roi);
+			opencv_core.cvResetImageROI(image);
 
-			opencv_core.cvSetImageROI(subgrid.getImage(), subRect);
+			image.release();
+			
+			opencv_core.cvSetImageROI(subimage, subRect);
 			final CvMat mapMatrix = CvMat.create(2, 3, opencv_core.CV_64F);
 			opencv_imgproc.cv2DRotationMatrix(center, angle, 1.0, mapMatrix);
-			opencv_imgproc.cvWarpAffine(roi, subgrid.getImage(), mapMatrix,
+			opencv_imgproc.cvWarpAffine(roi, subimage, mapMatrix,
 					SubGrid.flags, opencv_core.cvScalarAll(GridUtil.UNKNOWN));
 			mapMatrix.release();
-			opencv_core.cvResetImageROI(subgrid.getImage());
+			opencv_core.cvResetImageROI(subimage);
 			roi.release();
 			roi = null;
+			OpenCVUtil.imageToGrid(subimage, subgrid);
 		}
-		grid.release();
 		return subgrid;
 	}
 }
