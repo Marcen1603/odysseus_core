@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.queryview.logical;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
@@ -12,10 +18,14 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class LogicalQueryViewDataProvider implements IQueryViewDataProvider {
+public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDoubleClickListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(LogicalQueryViewDataProvider.class);
+	private QueryView view;
+	
 	@Override
 	public void init(QueryView view) {
+		this.view = view;
 	}
 
 	@Override
@@ -34,6 +44,17 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider {
 
 	@Override
 	public void dispose() {
+		this.view = null;
+	}
+
+	@Override
+	public void doubleClick(DoubleClickEvent event) {
+        IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+        try {
+            handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
+        } catch (Exception ex) {
+        	LOG.error("Exception during calling graph editor", ex);
+        }
 	}
 
 	private static List<ILogicalQuery> getLogicalQueries( IExecutor executor ) {

@@ -69,37 +69,6 @@
             </iterate>
          </with>
       </definition>
-      <definition
-            id="isQuery">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false"
-                  operator="or">
-               <or>
-                  <instanceof
-                        value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
-                  </instanceof>
-                  <instanceof
-                        value="java.lang.Integer">
-                  </instanceof>
-               </or>
-            </iterate>
-         </with>
-      </definition>
-      <definition
-            id="isOperatorBreak">
-         <with
-               variable="selection">
-            <iterate
-                  ifEmpty="false"
-                  operator="or">
-               <instanceof
-                     value="de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak">
-               </instanceof>
-            </iterate>
-         </with>
-      </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -113,76 +82,6 @@
                </reference>
                <reference
                      definitionId="isQuery">
-               </reference>
-            </or>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.BreakOperatorCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand">
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isNodeView">
-               </reference>
-               <reference
-                     definitionId="isOperatorBreak">
-               </reference>
-            </or>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.StepOperatorCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand">
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isNodeView">
-               </reference>
-               <reference
-                     definitionId="isOperatorBreak">
-               </reference>
-            </or>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.ResumeOperatorCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand">
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isNodeView">
-               </reference>
-               <reference
-                     definitionId="isOperatorBreak">
-               </reference>
-            </or>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.RemoveOperatorBreakCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand">
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isOperatorBreak">
-               </reference>
-               <reference
-                     definitionId="isNodeView">
-               </reference>
-            </or>
-         </enabledWhen>
-      </handler>
-      <handler
-            class="de.uniol.inf.is.odysseus.rcp.viewer.commands.FlushOperatorBreakCommand"
-            commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand">
-         <enabledWhen>
-            <or>
-               <reference
-                     definitionId="isOperatorBreak">
-               </reference>
-               <reference
-                     definitionId="isNodeView">
                </reference>
             </or>
          </enabledWhen>
@@ -211,47 +110,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor">
-         <separator
-               name="additions"
-               visible="false">
-         </separator>
-         <menu
-               id="operator"
-               label="Break Operator">
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
-                  label="Break"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
-                  label="Step"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
-                  label="Flush"
-                  style="push">
-            </command>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
-                  label="Resume"
-                  style="push">
-            </command>
-            <separator
-                  name="additions"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
-                  label="Remove"
-                  style="push">
-            </command>
-         </menu>
-      </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
@@ -292,39 +150,6 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView">
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.BreakOperatorCommand"
-               label="Break"
-               style="push">
-         </command>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.StepOperatorCommand"
-               label="Step"
-               style="push">
-         </command>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
-               label="Flush"
-               style="push">
-         </command>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeOperatorCommand"
-               label="Resume"
-               style="push">
-         </command>
-         <separator
-               name="additions"
-               visible="true">
-         </separator>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveOperatorBreakCommand"
-               label="Remove"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline"
@@ -342,16 +167,5 @@
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
             label="List">
       </editor>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="Odysseus"
-            class="de.uniol.inf.is.odysseus.rcp.viewer.views.OperatorBreakView"
-            id="de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView"
-            name="Break Operator"
-            restorable="true">
-      </view>
    </extension>
 </plugin>

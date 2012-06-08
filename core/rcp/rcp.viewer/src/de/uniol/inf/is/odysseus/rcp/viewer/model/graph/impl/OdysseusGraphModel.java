@@ -15,31 +15,15 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
 
 public class OdysseusGraphModel extends DefaultGraphModel<IPhysicalOperator> implements IOdysseusGraphModel {
 
-	private final IPhysicalQuery query;
-	
 	public OdysseusGraphModel() {
-		this(null);
-	}
-	
-	public OdysseusGraphModel( IPhysicalQuery query ) {
-		super();
-		this.query = query;
-	}
-	
-	@Override
-	public IPhysicalQuery getQuery() {
-		return query;
 	}
 	
 	@Override
 	public String getName() {
-		if( query != null ) 
-			return "Query " + String.valueOf(query.getID());
 		return super.getName();
 	}
 

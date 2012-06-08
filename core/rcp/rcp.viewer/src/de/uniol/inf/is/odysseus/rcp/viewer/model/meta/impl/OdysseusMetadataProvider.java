@@ -17,8 +17,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.model.meta.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
-import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.meta.IMetadataProvider;
 
@@ -29,9 +30,10 @@ public class OdysseusMetadataProvider implements IMetadataProvider< IMonitoringD
 	private Collection<String> metadataTypes = new ArrayList<String>();
 	
 	public OdysseusMetadataProvider() {
-		for (MonitoringDataTypes t: MonitoringDataTypes.values()){
-			metadataTypes.add(t.name);
-		}
+//		for (MonitoringDataTypes t: MonitoringDataTypes.values()){
+//			metadataTypes.add(t.name);
+//		}
+		metadataTypes = Lists.newArrayList();
 	}
 
 	@Override

@@ -15,7 +15,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.render;
 
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -23,9 +22,6 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.IOperatorBreakManagerListener;
-import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak;
-import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreakManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.impl.RenderRange;
 import de.uniol.inf.is.odysseus.rcp.viewer.render.impl.SimpleSymbolRenderer;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
@@ -39,7 +35,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
-public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOperatorBreakManagerListener {
+//public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOperatorBreakManagerListener {
+public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C>  {
 	
 	private static final Logger logger = LoggerFactory.getLogger( SWTSymbolRenderer.class );
 
@@ -50,7 +47,7 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOp
 	private SymbolElementContainer<C> breakEndSymbol = new SymbolElementContainer<C>();
 
 	
-	private HashMap<C, OperatorBreak> breaks = new HashMap<C, OperatorBreak>();
+//	private HashMap<C, OperatorBreak> breaks = new HashMap<C, OperatorBreak>();
 	
 	public SWTSymbolRenderer() {
 		selectionSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_RED )) );
@@ -58,13 +55,13 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOp
 		breakSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GREEN )) );
 		breakEndSymbol.add( new SWTSelectionSymbolElement< C >( Display.getCurrent().getSystemColor( SWT.COLOR_GRAY )) );
 		
-		OperatorBreakManager.getInstance().addListener(this);
+//		OperatorBreakManager.getInstance().addListener(this);
 		
 		logger.info( "SWTSymbolRenderer created" );
 	}
 	
 	public void dispose() {
-		OperatorBreakManager.getInstance().removeListener(this);
+//		OperatorBreakManager.getInstance().removeListener(this);
 	}
 	
 	public void setGC( GC gc ) {
@@ -90,24 +87,24 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOp
 				renderSymbol( highlightSymbol,  pos, width, height, zoomFactor );
 			} else {
 				
-				C op = null;
-				if( node.getModelNode() != null &&  node.getModelNode().getContent() != null ) {
-					op = node.getModelNode().getContent();
-				}
-			
-				if( op != null ) {
-					OperatorBreak ob = breaks.get(op);
-					
-					if( ob != null ) {
-						final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
-						final int height = (int)(node.getHeight() * zoomFactor);
-						final int width = (int)(node.getWidth() * zoomFactor);
-						if( ob.isBreaked())
-							renderSymbol( breakSymbol,  pos, width, height, zoomFactor );
-						else
-							renderSymbol( breakEndSymbol,  pos, width, height, zoomFactor );
-					}
-				}
+//				C op = null;
+//				if( node.getModelNode() != null &&  node.getModelNode().getContent() != null ) {
+//					op = node.getModelNode().getContent();
+//				}
+//			
+//				if( op != null ) {
+//					OperatorBreak ob = breaks.get(op);
+//					
+//					if( ob != null ) {
+//						final Vector pos = node.getPosition().add( shift ).mul( zoomFactor );
+//						final int height = (int)(node.getHeight() * zoomFactor);
+//						final int width = (int)(node.getWidth() * zoomFactor);
+//						if( ob.isBreaked())
+//							renderSymbol( breakSymbol,  pos, width, height, zoomFactor );
+//						else
+//							renderSymbol( breakEndSymbol,  pos, width, height, zoomFactor );
+//					}
+//				}
 			}
 		}
 		
@@ -186,14 +183,14 @@ public class SWTSymbolRenderer<C> extends SimpleSymbolRenderer<C> implements IOp
 		element.draw( pos, width, height, zoomFactor );
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void operatorBreakAdded(OperatorBreakManager manager, OperatorBreak ob) {
-		breaks.put((C)ob.getOperator(), ob);
-	}
-
-	@Override
-	public void operatorBreakRemoved(OperatorBreakManager manager, OperatorBreak ob) {
-		breaks.remove(ob.getOperator());
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public void operatorBreakAdded(OperatorBreakManager manager, OperatorBreak ob) {
+//		breaks.put((C)ob.getOperator(), ob);
+//	}
+//
+//	@Override
+//	public void operatorBreakRemoved(OperatorBreakManager manager, OperatorBreak ob) {
+//		breaks.remove(ob.getOperator());
+//	}
 }

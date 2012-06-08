@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
@@ -64,9 +63,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			}else{
 				System.err.println("No output Schema for "+node.getModelNode().getContent());
 			}
-			if (node.getModelNode().getContent() instanceof IHasPredicate){
-				children.add(((IHasPredicate)node.getModelNode().getContent()).getPredicate());
-			}
+//			if (node.getModelNode().getContent() instanceof IHasPredicate){
+//				children.add(((IHasPredicate)node.getModelNode().getContent()).getPredicate());
+//			}
 			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
 				owner.append("#"+o.getID()).append(" ");

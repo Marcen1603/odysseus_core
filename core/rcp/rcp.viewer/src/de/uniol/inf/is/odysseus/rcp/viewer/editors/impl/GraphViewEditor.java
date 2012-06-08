@@ -39,10 +39,8 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.IGraphViewEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IOdysseusGraphModel;
-import de.uniol.inf.is.odysseus.rcp.viewer.opbreak.OperatorBreak;
 import de.uniol.inf.is.odysseus.rcp.viewer.position.impl.SugiyamaPositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.select.ISelectListener;
 import de.uniol.inf.is.odysseus.rcp.viewer.select.ISelector;
@@ -184,15 +182,16 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 					if (obj instanceof IOdysseusNodeView) {
 						IOdysseusNodeView nodeView = (IOdysseusNodeView) obj;
 						selectedNodes.add(nodeView);
-					} else if( obj instanceof OperatorBreak ) {
-						ISource<?> src = ((OperatorBreak)obj).getOperator();
-						for( INodeView<?> node : getGraphView().getViewedNodes() ) {
-							if( node.getModelNode() != null && node.getModelNode().getContent() != null ) {
-								if( node.getModelNode().getContent() == src )
-									selectedNodes.add((IOdysseusNodeView)node);
-							}
-						}
-					}
+					} 
+//					else if( obj instanceof OperatorBreak ) {
+//						ISource<?> src = ((OperatorBreak)obj).getOperator();
+//						for( INodeView<?> node : getGraphView().getViewedNodes() ) {
+//							if( node.getModelNode() != null && node.getModelNode().getContent() != null ) {
+//								if( node.getModelNode().getContent() == src )
+//									selectedNodes.add((IOdysseusNodeView)node);
+//							}
+//						}
+//					}
 				}
 				renderManager.getSelector().unselectAll();
 				renderManager.getSelector().select(selectedNodes);

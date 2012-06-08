@@ -61,7 +61,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 	 * 
 	 * @param sinks Senken, welche die Ausgangspunkte der Traversierung des Ablaufplans darstellt.
 	 */
-	public OdysseusModelProviderMultipleSink( List<ISink<?>> sinks ) {
+	public OdysseusModelProviderMultipleSink( List<IPhysicalOperator> sinks ) {
 		if( sinks == null ) 
 			throw new IllegalArgumentException("sinks is null!");
 		
@@ -69,7 +69,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		
 		logger.info( "reading operator-tree from ODYSSEUS" );
 		
-		for( ISink<?> s : sinks ) 
+		for( IPhysicalOperator s : sinks ) 
 			parse( s, graphModel, null, false);
 		
 		logger.info( "reading operator-tree finished successfully!" );
@@ -84,14 +84,14 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 	// Verarbeitet eine Senke und dessen Subscriptions
 	// Handelt es sich um eine ISource, so werden dessen Subscriptions ebenfalls
 	// verarbeitet
-	private <T> void parse( ISink<T> sink, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
+	private <T> void parse( IPhysicalOperator operator, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
 		
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
 		// gefundene Knoten weiterverwendet.
 		INodeModel<IPhysicalOperator> node = null;	
 		for( INodeModel<IPhysicalOperator> n : graphModel.getNodes() ) {
-			if( n.getContent() == sink ) {
+			if( n.getContent() == operator ) {
 				node = n;
 				break;
 			}
@@ -99,7 +99,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		// Wurde das Objekt im Graphenmodell nicht gefunden, so muss
 		// ein neuer Knoten erzeugt und in das Graphenmodell hinzugefügt werden.
 		if( node == null ) {
-			node = new OdysseusNodeModel( sink );
+			node = new OdysseusNodeModel( operator );
 			graphModel.addNode( node );
 		} 
 		
@@ -118,23 +118,27 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		
 		// Wenn das Objekt zuvor schon besucht wurde, dann dürfen wir
 		// den Subscriptions nicht folgen.
-		if( traversedObjects.contains(sink)) {
+		if( traversedObjects.contains(operator)) {
 			return;
 		} 
-		traversedObjects.add( sink );
+		traversedObjects.add( operator );
 		
 		// Subscriptions folgen
-		Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
-		for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
-			if( sub.getTarget() instanceof ISink<?> ) {
-				parse( (ISink<?>)sub.getTarget(), graphModel, node, false );
-			} else {
-				parse( sub.getTarget(), graphModel, node, false );
+		if( operator.isSink() ) {
+			@SuppressWarnings("unchecked")
+			ISink<T> sink = (ISink<T>)operator;
+			Collection< PhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
+			for( PhysicalSubscription< ISource<? extends T> > sub : sources ) {
+				if( sub.getTarget() instanceof ISink<?> ) {
+					parse( (ISink<?>)sub.getTarget(), graphModel, node, false );
+				} else {
+					parse( sub.getTarget(), graphModel, node, false );
+				}
 			}
 		}
 		
-		if( sink instanceof ISource<?> ) {
-			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)sink).getSubscriptions() ){
+		if( operator instanceof ISource<?> ) {
+			for (PhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)operator).getSubscriptions() ){
 				parse( (ISink<?>)sub.getTarget(), graphModel, node, true );
 			}
 		}

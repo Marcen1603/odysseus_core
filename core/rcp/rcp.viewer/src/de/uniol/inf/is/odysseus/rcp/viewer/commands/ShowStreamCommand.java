@@ -14,8 +14,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -32,23 +30,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.SizeByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.commands.windows.ChooseOperatorWindow;
@@ -60,8 +46,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class ShowStreamCommand extends AbstractHandler implements IHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ShowStreamCommand.class);
-    
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
@@ -79,20 +63,15 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 			List<Object> selections = SelectionProvider.getSelection(event);
 			nextSelection: for (Object selectedObject : selections) {
 
-				if (selectedObject instanceof IPhysicalQuery) {
-					IPhysicalQuery query = (IPhysicalQuery) selectedObject;
-					optionalOpForStream = chooseOperator(query.getRoots());
-				}
+//				if (selectedObject instanceof IPhysicalQuery) {
+//					IPhysicalQuery query = (IPhysicalQuery) selectedObject;
+//					optionalOpForStream = chooseOperator(query.getRoots());
+//				}
 				
 				if( selectedObject instanceof Integer ) {
                     Integer queryID = (Integer)selectedObject;
                     IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-                    if( executor instanceof IServerExecutor ) {
-                        IServerExecutor serverExecutor = (IServerExecutor)executor;
-                        optionalOpForStream = chooseOperator(serverExecutor.getExecutionPlan().getQuery(queryID).getRoots());
-                    } else {
-                        LOG.error("Could not show stream outside server.");
-                    }
+                    optionalOpForStream = chooseOperator( executor.getPhysicalRoots(queryID));
 				}
 
 				if (selectedObject instanceof IOdysseusNodeView) {

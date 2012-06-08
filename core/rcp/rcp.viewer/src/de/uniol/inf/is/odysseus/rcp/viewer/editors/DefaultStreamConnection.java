@@ -21,16 +21,26 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.event.IEvent;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
+import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener;
 
-public class DefaultStreamConnection<In> extends AbstractSink<In> implements
-		IStreamConnection<In> {
+public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection<In> {
 
 	Logger logger = LoggerFactory.getLogger(DefaultStreamConnection.class);
 
@@ -43,13 +53,12 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean hasExceptions = false;
-
+	
 	public DefaultStreamConnection(List<ISubscription<? extends ISource<In>>> subscriptions) {
 		if (subscriptions == null || subscriptions.isEmpty())
 			throw new IllegalArgumentException("subscriptions is null or empty!");
 
 		this.subscriptions = subscriptions;
-		// logger.debug( "StreamManager created" );
 	}
 
 	@Override
@@ -83,8 +92,9 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements
 		return connected;
 	}
 
+		
 	@Override
-	protected void process_next(In element, int port, boolean isReadOnly) {
+	public void process(In element, int port, boolean isReadOnly) {
 		logger.debug("Objekt:" + element.toString());
 		if (hasExceptions)
 			return;
@@ -119,7 +129,7 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements
 			synchronized (collectedObjects) {
 				// gesammelte Daten nachträglich verarbeiten lassen
 				for (int i = 0; i < collectedObjects.size(); i++) {
-					process_next(collectedObjects.get(i),
+					process(collectedObjects.get(i),
 							collectedPorts.get(i), true);
 				}
 				collectedObjects.clear();
@@ -186,7 +196,178 @@ public class DefaultStreamConnection<In> extends AbstractSink<In> implements
 	}
 
 	@Override
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+	public boolean isSource() {
 		return false;
+	}
+
+	@Override
+	public boolean isSink() {
+		return true;
+	}
+
+	@Override
+	public boolean isPipe() {
+		return isSink() && isSource();
+	}
+
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
+	}
+
+	@Override
+	public String getName() {
+		return "DefaultStreamConnection";
+	}
+
+	@Override
+	public void setName(String name) {
+	}
+
+	@Override
+	public SDFSchema getOutputSchema() {
+		return getOutputSchema(0);
+	}
+
+	@Override
+	public SDFSchema getOutputSchema(int port) {
+		return null;
+	}
+
+	@Override
+	public void setOutputSchema(SDFSchema outputSchema) {
+	}
+
+	@Override
+	public void setOutputSchema(SDFSchema outputSchema, int port) {
+	}
+
+	@Override
+	public boolean isOpen() {
+		return true;
+	}
+
+	@Override
+	public void addOwner(IOperatorOwner owner) {		
+	}
+
+	@Override
+	public void removeOwner(IOperatorOwner owner) {
+	}
+
+	@Override
+	public void removeAllOwners() {
+	}
+
+	@Override
+	public boolean isOwnedBy(IOperatorOwner owner) {
+		return false;
+	}
+
+	@Override
+	public boolean hasOwner() {
+		return false;
+	}
+
+	@Override
+	public List<IOperatorOwner> getOwner() {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public String getOwnerIDs() {
+		return "";
+	}
+
+	@Override
+	public Collection<String> getProvidedMonitoringData() {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public boolean providesMonitoringData(String type) {
+		return false;
+	}
+
+	@Override
+	public <T> IMonitoringData<T> getMonitoringData(String type) {
+		return null;
+	}
+
+	@Override
+	public void createAndAddMonitoringData(@SuppressWarnings("rawtypes") IPeriodicalMonitoringData item, long period) {
+	}
+
+	@Override
+	public void addMonitoringData(String type, IMonitoringData<?> item) {
+	}
+
+	@Override
+	public void removeMonitoringData(String type) {
+	}
+
+	@Override
+	public void subscribe(IEventListener listener, IEventType type) {
+	}
+
+	@Override
+	public void unsubscribe(IEventListener listener, IEventType type) {
+	}
+
+	@Override
+	public void subscribeToAll(IEventListener listener) {
+	}
+
+	@Override
+	public void unSubscribeFromAll(IEventListener listener) {
+	}
+
+	@Override
+	public void fire(IEvent<?, ?> event) {
+	}
+
+	@Override
+	public void subscribeToSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	}
+
+	@Override
+	public void unsubscribeFromSource(PhysicalSubscription<ISource<? extends In>> subscription) {
+	}
+
+	@Override
+	public void unsubscribeFromAllSources() {
+	}
+
+	@Override
+	public void unsubscribeFromSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	}
+
+	@Override
+	public Collection<PhysicalSubscription<ISource<? extends In>>> getSubscribedToSource() {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public PhysicalSubscription<ISource<? extends In>> getSubscribedToSource(int i) {
+		return null;
+	}
+
+	@Override
+	public void process(Collection<? extends In> object, int port, boolean isReadOnly) {
+		for( In obj : object ) {
+			process(obj, port, isReadOnly);
+		}
+	}
+
+	@Override
+	public void done(int port) {
+	}
+
+	@Override
+	public void open() throws OpenFailedException {
+	}
+
+	@Override
+	public void close() {
 	}
 }

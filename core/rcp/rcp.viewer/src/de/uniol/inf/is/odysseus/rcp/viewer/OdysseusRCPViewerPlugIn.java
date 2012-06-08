@@ -36,8 +36,6 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 
 	public static final String OUTLINE_CONTEXT_MENU_ID = "de.uniol.inf.is.odysseus.rcp.viewer.view.outline";
 	
-	public static final String OPERATOR_BREAK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.OperatorBreakView";
-
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.viewer";
 	
 	public static OdysseusRCPViewerPlugIn context = null;

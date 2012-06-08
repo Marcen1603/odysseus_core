@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.commands;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -25,9 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
@@ -45,24 +44,22 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 		if (executor == null)
 			return null;
 
-		if (executor instanceof IServerExecutor) {
-			IServerExecutor se = (IServerExecutor) executor;
-			try {
-				ArrayList<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
-				for (IPhysicalOperator po : se.getExecutionPlan().getRoots())
-					sinkRoots.add((ISink<?>) po);
-
-				IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSink(
-						sinkRoots);
-
-				PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(
-						provider, "CurrentPlan");
-				page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
-
-			} catch (Exception ex) {
-				ex.getStackTrace();
+		Collection<Integer> queryIds = executor.getLogicalQueryIds();
+		try {
+			ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
+			for( Integer queryId : queryIds ) {
+				roots.addAll(executor.getPhysicalRoots(queryId));
 			}
+
+			IModelProvider<IPhysicalOperator> provider = new OdysseusModelProviderMultipleSink(roots);
+
+			PhysicalGraphEditorInput input = new PhysicalGraphEditorInput(provider, "CurrentPlan");
+			page.openEditor(input, OdysseusRCPViewerPlugIn.GRAPH_EDITOR_ID);
+
+		} catch (Exception ex) {
+			ex.getStackTrace();
 		}
+		
 		return null;
 	}
 
