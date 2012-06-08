@@ -70,7 +70,7 @@ public class EnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tu
 		List<Tuple<M>> values = this.store.getValues(ti);
 		for (Tuple<M> value : values) {			
 			Tuple<M> res = value.restrict(this.restrictList, true);
-			Tuple<M> newElement = merge(object, res.clone(), Order.LeftRight);		
+			Tuple<M> newElement = merge(object, res, Order.LeftRight);		
 			transfer(newElement);
 		}
 		if(values.size()==0 && outer){
