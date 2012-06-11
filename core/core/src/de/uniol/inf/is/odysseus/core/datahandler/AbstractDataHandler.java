@@ -16,12 +16,14 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.connection.ISourceControlHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
-	boolean prototype = true;
+	private boolean prototype = true;
+	private ISourceControlHandler sourceControlHandler = null;
 	
 	protected AbstractDataHandler(){
 	}
@@ -67,4 +69,15 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	
 	@Override
 	abstract public List<String> getSupportedDataTypes();
+	
+	@Override
+	public ISourceControlHandler getSourceControlHandler() {
+		return sourceControlHandler;
+	}
+	
+	@Override
+	public void setSourceControlHandler(
+			ISourceControlHandler sourceControlHandler) {
+		this.sourceControlHandler = sourceControlHandler;
+	}
 }

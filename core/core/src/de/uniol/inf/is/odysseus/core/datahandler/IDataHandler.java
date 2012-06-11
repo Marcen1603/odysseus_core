@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.connection.ISourceControlHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IDataHandler<T> {
@@ -19,4 +20,6 @@ public interface IDataHandler<T> {
 	public IDataHandler<T> createInstance(List<String> schema);
 	public boolean isPrototype();
 	public void setPrototype(boolean p);
+	public void setSourceControlHandler(ISourceControlHandler sourceControlHandler);
+	public ISourceControlHandler getSourceControlHandler();
 }
