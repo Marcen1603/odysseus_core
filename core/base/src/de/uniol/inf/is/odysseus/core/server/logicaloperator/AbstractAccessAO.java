@@ -41,6 +41,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String objectHandler;
 	private String inputDataHandler;
 	private String accessConnectionHandler = "nio";
+	
+	private String protocolHandler;
+	private String transportHandler;
 
 //	/**
 //	 * This variable will be used to generate an ID for every new input tuple
@@ -74,6 +77,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		input = po.input;
 		dataHandler = po.dataHandler;
 		transformer = po.transformer;
+		protocolHandler = po.protocolHandler;
+		transportHandler = po.transportHandler;
+		
 	}
 
 	public AbstractAccessAO(String source, String adapter, Map<String, String> optionsMap) {
@@ -245,5 +251,23 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public void setAccessConnectionHandler(String accessConnectionHandler) {
 		this.accessConnectionHandler = accessConnectionHandler;
 	}
+
+	public String getProtocolHandler() {
+		return protocolHandler;
+	}
+
+	public void setProtocolHandler(String protocolHandler) {
+		this.protocolHandler = protocolHandler;
+	}
+
+	public String getTransportHandler() {
+		return transportHandler;
+	}
+
+	public void setTransportHandler(String transportHandler) {
+		this.transportHandler = transportHandler;
+	}
+	
+	
 }
 

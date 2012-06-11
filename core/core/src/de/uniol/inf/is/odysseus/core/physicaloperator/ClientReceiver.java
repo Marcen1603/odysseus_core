@@ -511,10 +511,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	protected void process_done() {
 	}
 
-	@Override
-	public String getSourceName() {
-		return toString();
-	}
 
 	@Override
 	public boolean isOpened() {

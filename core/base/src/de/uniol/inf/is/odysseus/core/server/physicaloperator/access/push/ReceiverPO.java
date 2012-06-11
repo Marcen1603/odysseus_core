@@ -26,9 +26,11 @@ import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnectionListener<R>, ITransferHandler<W> {
+public class ReceiverPO<R, W> extends AbstractSource<W> implements
+		IAccessConnectionListener<R>, ITransferHandler<W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -41,12 +43,15 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 
 	protected IObjectHandler<W> objectHandler;
 	private boolean opened;
-	
-	final IAccessConnectionHandler<R> accessHandler;
-	final private IInputDataHandler<R,W> inputDataHandler;
 
+	IAccessConnectionHandler<R> accessHandler;
+	private IInputDataHandler<R, W> inputDataHandler;
 
-	public ReceiverPO(IObjectHandler<W> objectHandler, IInputDataHandler<R,W> inputDataHandler, IAccessConnectionHandler<R> accessHandler) {
+	private IProtocolHandler<W> protocolHandler;
+
+	public ReceiverPO(IObjectHandler<W> objectHandler,
+			IInputDataHandler<R, W> inputDataHandler,
+			IAccessConnectionHandler<R> accessHandler) {
 		super();
 		this.objectHandler = objectHandler;
 		this.inputDataHandler = inputDataHandler;
@@ -55,14 +60,27 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 		this.opened = false;
 	}
 
+	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
+		this.protocolHandler = protocolHandler;
+	}
+
+	public ReceiverPO() {
+	}
+	
+	public void setProtocolHandler(IProtocolHandler<W> ph) {
+		this.protocolHandler = ph;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public ReceiverPO(ReceiverPO<R,W> other) {
+	public ReceiverPO(ReceiverPO<R, W> other) {
 		super();
 		objectHandler = (IObjectHandler<W>) other.objectHandler.clone();
 		inputDataHandler = other.inputDataHandler.clone();
 		accessHandler = (IAccessConnectionHandler<R>) other.clone();
-		
+
 		opened = other.opened;
+
+		throw new IllegalArgumentException("CLONE CURRENTLY NOT SUPPORTED.");
 	}
 
 	@Override
@@ -75,9 +93,13 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
-				objectHandler.clear();
-				inputDataHandler.init();
-				accessHandler.open(this);
+				if (protocolHandler != null) {
+					protocolHandler.open();
+				} else {
+					objectHandler.clear();
+					inputDataHandler.init();
+					accessHandler.open(this);
+				}
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -91,36 +113,33 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 		if (opened) {
 			try {
 				opened = false; // Do not read any data anymore
-				accessHandler.close(this);
-				inputDataHandler.done();
-				objectHandler.clear();
+
+				if (protocolHandler != null) {
+					protocolHandler.close();
+				} else {
+					accessHandler.close(this);
+					inputDataHandler.done();
+					objectHandler.clear();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	
 	@Override
 	public void done() {
 		propagateDone();
 	}
 
-  
-
 	@Override
-	public synchronized void transfer(W toTransfer)  {
+	public synchronized void transfer(W toTransfer) {
 		super.transfer(toTransfer);
 	}
-	
-	@Override
-	public void process(R buffer) throws ClassNotFoundException{
-		inputDataHandler.process(buffer, objectHandler, accessHandler, this);
-	}
 
 	@Override
-	public String getSourceName() {
-		return toString();
+	public void process(R object) throws ClassNotFoundException {
+		inputDataHandler.process(object, objectHandler, accessHandler, this);
 	}
 
 	@Override
@@ -130,7 +149,8 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 		}
 		@SuppressWarnings("rawtypes")
 		ReceiverPO bbrpo = (ReceiverPO) ipo;
-		if (this.objectHandler.equals(bbrpo.objectHandler) && this.accessHandler.equals(bbrpo.accessHandler)) {
+		if (this.objectHandler.equals(bbrpo.objectHandler)
+				&& this.accessHandler.equals(bbrpo.accessHandler)) {
 			return true;
 		}
 		return false;
@@ -138,7 +158,7 @@ public class ReceiverPO<R,W> extends AbstractSource<W> implements IAccessConnect
 
 	@Override
 	public AbstractSource<W> clone() {
-		return new ReceiverPO<R,W>(this);
+		return new ReceiverPO<R, W>(this);
 	}
 
 

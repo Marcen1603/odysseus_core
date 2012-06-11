@@ -67,11 +67,19 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	
 	private final StringParameter accessConnectionHandler = new StringParameter(
 			"AccessConnectionHandler", REQUIREMENT.OPTIONAL);
+	
+	// TODO: These should be the only parameter in future
+	private final StringParameter transportHandler = new StringParameter(
+			"transport", REQUIREMENT.OPTIONAL);
+	private final StringParameter protocolHandler = new StringParameter(
+			"protocol", REQUIREMENT.OPTIONAL);
+	
 
 	public AccessAOBuilder() {
 		super(0, 0);
 		addParameters(sourceName, host, port, attributes, type, options,
-				inputSchema, adapter, input, transformer, dataHandler, objectHandler, inputDataHandler, accessConnectionHandler);
+				inputSchema, adapter, input, transformer, dataHandler, objectHandler, 
+				inputDataHandler, accessConnectionHandler, transportHandler,protocolHandler);
 	}
 
 	@Override
@@ -141,6 +149,13 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (accessConnectionHandler.hasValue()){
 			ao.setAccessConnectionHandler(accessConnectionHandler.getValue());
 		}
+		if (transportHandler.hasValue()){
+			ao.setTransportHandler(transportHandler.getValue());
+		}
+		if (protocolHandler.hasValue()){
+			ao.setProtocolHandler(protocolHandler.getValue());
+		}
+		
 		ILogicalOperator op = addTimestampAO(ao);
 		return op;
 	}

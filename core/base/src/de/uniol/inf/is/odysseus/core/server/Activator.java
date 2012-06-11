@@ -48,6 +48,7 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {		
 		// Add default Functions
@@ -60,6 +61,7 @@ public class Activator implements BundleActivator {
 				new FileAccessAOBuilder());
 		TransformerRegistry.register(new CSVTransformer());
 		TransformerRegistry.register(new ObjectInputStream2ObjectInputStreamTransformer());
+		
 		bundleContext = context;
 	}
 

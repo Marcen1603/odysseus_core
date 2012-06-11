@@ -10,31 +10,35 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSou
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToStringArrayTransformer;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
- * This class represents all sources that need to be scheduled to deliver 
- * input (pull). For all sources that push their data use ReceivePO
+ * This class represents all sources that need to be scheduled to deliver input
+ * (pull). For all sources that push their data use ReceivePO
  * 
  * @author Marco Grawunder
- *
- * @param <R> The immediate values that are send to 
- * @param <W> The Output that is written by this operator.
+ * 
+ * @param <R>
+ *            The immediate values that are send to
+ * @param <W>
+ *            The Output that is written by this operator.
  */
 public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AccessPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
 	private boolean isDone = false;
-	
+
 	private IInputHandler<R> input;
 
-	final private IDataHandler<W> dataHandler;
-	
+	private IDataHandler<W> dataHandler;
+
 	// Use different kinds of transformer to transform to
 	// the format the IDataHandler can read
-	final private IToStringArrayTransformer<R> stringTransformer;
-	final private IToObjectInputStreamTransformer<R> oisTransformer;
+	private IToStringArrayTransformer<R> stringTransformer;
+	private IToObjectInputStreamTransformer<R> oisTransformer;
+
+	private IProtocolHandler<W> protocolHandler;
 
 	/**
 	 * 
@@ -42,7 +46,9 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	 * @param transformer
 	 * @param dataHandler
 	 */
-	public AccessPO(IInputHandler<R> input, IToStringArrayTransformer<R> transformer,
+	@Deprecated
+	public AccessPO(IInputHandler<R> input,
+			IToStringArrayTransformer<R> transformer,
 			IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = transformer;
@@ -50,11 +56,18 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		this.oisTransformer = null;
 	}
 
-	public AccessPO(IInputHandler<R> input,IToObjectInputStreamTransformer<R> transformer, IDataHandler<W> dataHandler) {
+	@Deprecated
+	public AccessPO(IInputHandler<R> input,
+			IToObjectInputStreamTransformer<R> transformer,
+			IDataHandler<W> dataHandler) {
 		this.input = input;
 		this.stringTransformer = null;
 		this.dataHandler = dataHandler;
 		this.oisTransformer = transformer;
+	}
+
+	public AccessPO(IProtocolHandler<W> protocolHandler) {
+		this.protocolHandler = protocolHandler;
 	}
 
 	@Override
@@ -62,8 +75,13 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		if (isDone || !isOpen()) {
 			return false;
 		}
+
 		try {
-			return input.hasNext();
+			if (protocolHandler != null) {
+				return protocolHandler.hasNext();
+			} else {
+				return input.hasNext();
+			}
 		} catch (Exception e) {
 			LOG.error("Exception during input", e);
 		}
@@ -83,28 +101,34 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	@Override
 	public synchronized void transferNext() {
 		if (isOpen() && !isDone()) {
-			R object = null;
 			W toTransfer = null;
+			R object = null;
 			try {
-				object = input.getNext();				
-				if (object != null) {
-					if (stringTransformer != null){		
-						String[] data = stringTransformer.transform(object);
-						toTransfer = dataHandler.readData(data);
-						
-					}else if (oisTransformer != null){
-						toTransfer =  dataHandler.readData(oisTransformer.transform(object));
-					}
+				if (protocolHandler != null) {
+					toTransfer = protocolHandler.getNext();
 				} else {
+					object = input.getNext();
+					if (object != null) {
+						if (stringTransformer != null) {
+							String[] data = stringTransformer.transform(object);
+							toTransfer = dataHandler.readData(data);
+
+						} else if (oisTransformer != null) {
+							toTransfer = dataHandler.readData(oisTransformer
+									.transform(object));
+						}
+					}
+				}
+				if (toTransfer == null) {
 					isDone = true;
 					propagateDone();
 				}
 			} catch (Exception e) {
-				LOG.error("Cannot not transform object " +object, e);
+				LOG.error("Cannot not transform object " + object, e);
 			}
-			if (toTransfer != null){
+			if (toTransfer != null) {
 				transfer(toTransfer);
-			}else{
+			} else {
 				LOG.warn("Got empty object to transfer");
 			}
 		}
@@ -118,17 +142,34 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		if (!isOpen()) {
-			input.init();
-			if (dataHandler.isPrototype()){
-				throw new IllegalArgumentException("Data handler is not configured correctly!");
+			try {
+				if (protocolHandler != null) {
+					protocolHandler.open();
+				} else {
+					input.init();
+					if (dataHandler.isPrototype()) {
+						throw new IllegalArgumentException(
+								"Data handler is not configured correctly!");
+					}
+				}
+			} catch (Exception e) {
+				throw new OpenFailedException(e);
 			}
 		}
 	}
 
 	@Override
 	protected synchronized void process_close() {
-		if (isOpen()) {
-			input.terminate();
+		try {
+			if (isOpen()) {
+				if (protocolHandler != null) {
+					protocolHandler.close();
+				} else {
+					input.terminate();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
