@@ -117,24 +117,24 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	
 	abstract public OutputMode getOutputMode();
 	
-	@Override
-	public boolean isTransferExclusive() {
-		// Zun�chst Testen ob das Datum an mehrere Empf�nger
-		// versendet wird --> dann niemals exclusiv
-		boolean ret = super.isTransferExclusive();
-		OutputMode out = getOutputMode();
-		switch (out) {
-		case NEW_ELEMENT:
-			return ret;
-		default: // MODIFIED_INPUT und INPUT
-			// Wenn einer der Eing�nge nicht exclusive ist
-			// das Ergebnis auch nicht exclusive
-			// for (int i = 0; i < inputExclusive.length && ret; i++) {
-			// ret = ret && inputExclusive[i];
-			// }
-			return false;
-		}
-	}
+//	@Override
+//	public boolean isTransferExclusive() {
+//		// Zun�chst Testen ob das Datum an mehrere Empf�nger
+//		// versendet wird --> dann niemals exclusiv
+//		boolean ret = super.isTransferExclusive();
+//		OutputMode out = getOutputMode();
+//		switch (out) {
+//		case NEW_ELEMENT:
+//			return ret;
+//		default: // MODIFIED_INPUT und INPUT
+//			// Wenn einer der Eing�nge nicht exclusive ist
+//			// das Ergebnis auch nicht exclusive
+//			// for (int i = 0; i < inputExclusive.length && ret; i++) {
+//			// ret = ret && inputExclusive[i];
+//			// }
+//			return false;
+//		}
+//	}
 
 	@Override
 	protected boolean needsClone() {
