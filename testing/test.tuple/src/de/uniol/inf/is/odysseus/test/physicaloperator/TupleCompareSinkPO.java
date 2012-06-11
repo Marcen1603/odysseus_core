@@ -66,7 +66,7 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 	}
 
 	@Override
-	protected void process_next(Tuple<?> tuple, int port, boolean isReadOnly) {
+	protected void process_next(Tuple<?> tuple, int port) {
 		if (!isDone()) {
 			synchronized (expectedResults) {
 				Tuple<?> expected = expectedResults.remove(0);

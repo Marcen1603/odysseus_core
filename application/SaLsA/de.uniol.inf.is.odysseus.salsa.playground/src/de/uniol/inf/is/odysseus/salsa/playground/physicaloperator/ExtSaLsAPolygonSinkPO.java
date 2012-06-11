@@ -61,8 +61,7 @@ public class ExtSaLsAPolygonSinkPO extends AbstractSink<Tuple<? extends IMetaAtt
 
 	@Override
 	protected void process_next(
-			Tuple<? extends IMetaAttribute> object, int port,
-			boolean isReadOnly) {
+			Tuple<? extends IMetaAttribute> object, int port) {
 		 this.segments.offer(object);
 		
 	}

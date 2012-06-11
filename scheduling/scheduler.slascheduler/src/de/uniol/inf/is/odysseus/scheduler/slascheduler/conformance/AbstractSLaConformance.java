@@ -235,7 +235,7 @@ public abstract class AbstractSLaConformance<T> extends AbstractSink<T>
 	}
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		this.hasRunInWindow = true;
 	}
 

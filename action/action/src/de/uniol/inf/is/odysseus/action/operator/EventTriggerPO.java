@@ -105,7 +105,7 @@ public class EventTriggerPO<T> extends AbstractSink<T>{
 	
 	@SuppressWarnings({"rawtypes"})
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		//extract parameters
 		BenchmarkData bmData = null;
 		if (benchmark != null){

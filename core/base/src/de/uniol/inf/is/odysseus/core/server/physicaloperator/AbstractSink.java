@@ -232,21 +232,20 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void process(T object, int port, boolean isReadOnly) {
+	final public void process(T object, int port) {
 		fire(processInitEvent[port]);
-		process_next(object, port, isReadOnly);
+		process_next(object, port);
 		fire(processDoneEvent[port]);
 	}
 
 	@Override
-	public void process(Collection<? extends T> object, int port,
-			boolean isReadOnly) {
+	public void process(Collection<? extends T> object, int port) {
 		for (T cur : object) {
-			process(cur, port, isReadOnly);
+			process(cur, port);
 		}
 	}
 
-	protected abstract void process_next(T object, int port, boolean isReadOnly);
+	protected abstract void process_next(T object, int port);
 
 	@Override
 	public abstract void processPunctuation(PointInTime timestamp, int port);

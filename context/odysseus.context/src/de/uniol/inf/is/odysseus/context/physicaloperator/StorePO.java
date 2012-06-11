@@ -43,7 +43,7 @@ public class StorePO<T extends Tuple<? extends ITimeInterval>> extends AbstractS
 	}	
 	
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		this.store.insertValue(object);
 		this.store.processTime(object.getMetadata().getStart());
 	}

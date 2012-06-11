@@ -140,7 +140,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>> {
 	}
 
 	@Override
-	protected void process_next(Tuple<ITimeInterval> tuple, int port, boolean isReadOnly) {
+	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
 		if(!opened){
 			System.err.println("Error: not connected to database");
 			return;

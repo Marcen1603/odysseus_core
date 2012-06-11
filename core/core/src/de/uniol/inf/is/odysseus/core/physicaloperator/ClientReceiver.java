@@ -299,8 +299,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void transfer(Collection<W> object, int sourceOutPort) {
 		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort(),
-						hasSingleConsumer());
+				sink.getTarget().process(object, sink.getSinkInPort());
 			}
 		}
 	}
@@ -315,8 +314,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().process(object, sink.getSinkInPort(),
-							hasSingleConsumer());
+					sink.getTarget().process(object, sink.getSinkInPort());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();

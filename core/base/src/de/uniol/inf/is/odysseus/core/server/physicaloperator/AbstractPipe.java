@@ -43,9 +43,9 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	protected class DelegateSink extends AbstractSink<R> {
 
 		@Override
-		protected void process_next(R object, int port, boolean exclusive) {
+		protected void process_next(R object, int port) {
 			if (isOpen()){
-				AbstractPipe.this.delegatedProcess(object, port, exclusive);
+				AbstractPipe.this.delegatedProcess(object, port);
 			}
 		}
 
@@ -176,11 +176,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void process(R object, int port, boolean exclusive) {
-		this.delegateSink.process(object, port, exclusive);
+	public void process(R object, int port) {
+		this.delegateSink.process(object, port);
 	}
 
-	private void delegatedProcess(R object, int port, boolean exclusive) {
+	private void delegatedProcess(R object, int port) {
 		process_next(object, port);
 	}
 
@@ -189,9 +189,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	}
 
 	@Override
-	public void process(Collection<? extends R> object, int port,
-			boolean exclusive) {
-		delegateSink.process(object, port, exclusive);
+	public void process(Collection<? extends R> object, int port) {
+		delegateSink.process(object, port);
 	}
 
 	abstract protected void process_next(R object, int port);

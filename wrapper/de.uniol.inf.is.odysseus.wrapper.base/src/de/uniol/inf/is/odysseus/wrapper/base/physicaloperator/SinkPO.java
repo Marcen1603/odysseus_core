@@ -65,8 +65,7 @@ public class SinkPO<T extends IMetaAttribute> extends AbstractSink<Tuple<TimeInt
     }
 
     @Override
-    protected void process_next(final Tuple<TimeInterval> event, final int port,
-            final boolean isReadOnly) {
+    protected void process_next(final Tuple<TimeInterval> event, final int port) {
         if (this.isOpen()) {
             try {
                 SinkPool.transfer(this, event.getMetadata().getStart().getMainPoint(),

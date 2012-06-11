@@ -36,7 +36,7 @@ public class DataSourceObserverSink<In> extends AbstractSink<In> {
 	}
 
 	@Override
-	protected void process_next(In object, int port, boolean isReadOnly) {
+	protected void process_next(In object, int port) {
 		fireStreamElementRecieveEvent(object, port);
 	}
 

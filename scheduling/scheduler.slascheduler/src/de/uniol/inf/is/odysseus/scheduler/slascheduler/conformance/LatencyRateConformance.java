@@ -94,8 +94,8 @@ public class LatencyRateConformance<T> extends AbstractSLaConformance<T> {
 	 * measures the latency and counts how often it exceeds the threshold
 	 */
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
-		super.process_next(object, port, isReadOnly);
+	protected void process_next(T object, int port) {
+		super.process_next(object, port);
 		MetaAttributeContainer<?> metaAttributeContainer = (MetaAttributeContainer<?>) object;
 		IMetaAttribute metadata = metaAttributeContainer.getMetadata();
 		if (metadata instanceof ILatency) {

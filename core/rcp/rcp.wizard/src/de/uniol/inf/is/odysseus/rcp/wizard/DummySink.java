@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 public class DummySink<T> extends AbstractSink<T>{
 
 	@Override
-	protected void process_next(T object, int port, boolean isReadOnly) {
+	protected void process_next(T object, int port) {
 		// intentionally we won't do anything
 	}
 

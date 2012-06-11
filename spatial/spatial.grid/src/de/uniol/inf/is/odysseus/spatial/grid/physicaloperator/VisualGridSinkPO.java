@@ -93,8 +93,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(final Object object, final int port,
-			final boolean isReadOnly) {
+	protected void process_next(final Object object, final int port) {
 		Grid grid = (Grid) ((Tuple<TimeInterval>) object)
 				.getAttribute(0);
 

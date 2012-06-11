@@ -61,7 +61,7 @@ public class SimpleCompareSink extends AbstractSink<Object> implements
 	}
 
 	@Override
-	protected void process_next(Object object, int port, boolean isReadOnly) {
+	protected void process_next(Object object, int port) {
 		if (!isDone()) {
 			synchronized (compareInput) {
 				String line = compareInput.remove(0);

@@ -51,7 +51,7 @@ public class SocketSinkPO extends AbstractSink<Object> {
 	}
 	
 	@Override
-	protected void process_next(Object object, int port, boolean isReadOnly) {
+	protected void process_next(Object object, int port) {
 		synchronized (subscribe) {
 			Iterator<ISinkStreamHandler> iter = subscribe.iterator();
 			Object toTransfer = object;

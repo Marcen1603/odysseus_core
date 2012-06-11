@@ -161,7 +161,7 @@ public class P2PSinkPO<T> extends AbstractSink<T> {
     }
 
     @Override
-    protected void process_next(T object, int port, boolean isReadOnly) {
+    protected void process_next(T object, int port) {
         synchronized (subscribe) {
             for (StreamHandler sh : subscribe) {
                 sh.transfer(object);

@@ -94,7 +94,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 
 		
 	@Override
-	public void process(In element, int port, boolean isReadOnly) {
+	public void process(In element, int port) {
 		logger.debug("Objekt:" + element.toString());
 		if (hasExceptions)
 			return;
@@ -130,7 +130,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 				// gesammelte Daten nachträglich verarbeiten lassen
 				for (int i = 0; i < collectedObjects.size(); i++) {
 					process(collectedObjects.get(i),
-							collectedPorts.get(i), true);
+							collectedPorts.get(i));
 				}
 				collectedObjects.clear();
 				collectedPorts.clear();
@@ -353,9 +353,9 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	}
 
 	@Override
-	public void process(Collection<? extends In> object, int port, boolean isReadOnly) {
+	public void process(Collection<? extends In> object, int port) {
 		for( In obj : object ) {
-			process(obj, port, isReadOnly);
+			process(obj, port);
 		}
 	}
 

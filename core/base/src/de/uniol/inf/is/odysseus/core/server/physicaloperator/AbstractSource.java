@@ -271,8 +271,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().process(cloneIfNessessary(object,isTransferExclusive()), sink.getSinkInPort(),
-							isTransferExclusive());
+					sink.getTarget().process(cloneIfNessessary(object,isTransferExclusive()), sink.getSinkInPort());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();
@@ -293,7 +292,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		fire(this.pushListInitEvent);
 		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort(), isTransferExclusive());
+				sink.getTarget().process(object, sink.getSinkInPort());
 			}
 		}
 		fire(this.pushListDoneEvent);
@@ -310,7 +309,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	 * 
 	 * @return
 	 */
-	protected boolean isTransferExclusive() {
+	final protected boolean isTransferExclusive() {
 		return hasSingleConsumer();
 	}
 	

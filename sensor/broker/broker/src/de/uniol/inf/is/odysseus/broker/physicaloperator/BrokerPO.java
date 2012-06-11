@@ -336,7 +336,7 @@ public class BrokerPO<T extends IMetaAttributeContainer<ITimeInterval>> extends 
 		// synchronized (this.getSubscriptions()) {
 		for (PhysicalSubscription<ISink<? super T>> sink : this.getSubscriptions()) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
-				sink.getTarget().process(object, sink.getSinkInPort(), !this.hasSingleConsumer());
+				sink.getTarget().process(object, sink.getSinkInPort());
 			}
 		}
 		// }

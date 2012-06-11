@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 public class SinkPO<R> extends AbstractSink<R> {
 
 	@Override
-	protected void process_next(R object, int port, boolean isReadOnly) {		
+	protected void process_next(R object, int port) {		
 	}
 
 	@Override

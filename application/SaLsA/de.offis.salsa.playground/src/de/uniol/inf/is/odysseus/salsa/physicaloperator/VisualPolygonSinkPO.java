@@ -61,7 +61,7 @@ public class VisualPolygonSinkPO extends AbstractSink<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void process_next(final Object object, final int port, final boolean isReadOnly) {
+    protected void process_next(final Object object, final int port) {
         this.segments.offer((Geometry) ((Tuple<TimeInterval>) object).getAttribute(0));
     }
 

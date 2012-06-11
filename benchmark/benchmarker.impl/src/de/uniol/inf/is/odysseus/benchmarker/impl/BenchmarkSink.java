@@ -64,7 +64,7 @@ public class BenchmarkSink<M extends ILatency> extends
 	int i = 0;
 	@Override
 	protected synchronized void process_next(Tuple<M> object,
-			int port, boolean isReadOnly) {
+			int port) {
 		if (resultsToRead == -1 || result.size() < resultsToRead) {
 			addToResult(object);
 		} else {
