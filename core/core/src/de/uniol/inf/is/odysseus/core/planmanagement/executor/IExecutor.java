@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -195,5 +196,7 @@ public interface IExecutor extends IClientPlanManager{
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
 	void reloadStoredQueries(ISession caller);
+	
+	public SDFSchema getOutputSchema(int queryId);
 
 }
