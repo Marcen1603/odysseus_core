@@ -18,8 +18,8 @@ import javax.xml.ws.ResponseWrapper;
  */
 @WebService(name = "WebserviceServer", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/")
 @XmlSeeAlso({
-    de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ObjectFactory.class,
-    net.java.dev.jaxb.array.ObjectFactory.class
+    net.java.dev.jaxb.array.ObjectFactory.class,
+    de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ObjectFactory.class
 })
 public interface WebserviceServer {
 
@@ -51,6 +51,57 @@ public interface WebserviceServer {
     public BooleanResponse isRunning(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
+
+    /**
+     * 
+     * @param id
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.QueryResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQuery", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQuery")
+    @ResponseWrapper(localName = "getLogicalQueryResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQueryResponse")
+    public QueryResponse getLogicalQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "id", targetNamespace = "")
+        String id);
+
+    /**
+     * 
+     * @param queryId
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.SdfSchemaResponse
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getOutputSchema", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetOutputSchema")
+    @ResponseWrapper(localName = "getOutputSchemaResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetOutputSchemaResponse")
+    public SdfSchemaResponse getOutputSchema(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryId", targetNamespace = "")
+        int queryId);
+
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return
+     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.StringResponse
+     */
+    @WebMethod
+    @WebResult(name = "securitytoken", targetNamespace = "")
+    @RequestWrapper(localName = "login", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.Login")
+    @ResponseWrapper(localName = "loginResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LoginResponse")
+    public StringResponse login(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password);
 
     /**
      * 
@@ -116,23 +167,6 @@ public interface WebserviceServer {
     public StringListResponse getInstalledQueries(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
-
-    /**
-     * 
-     * @param id
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.QueryResponse
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQuery", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQuery")
-    @ResponseWrapper(localName = "getLogicalQueryResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.GetLogicalQueryResponse")
-    public QueryResponse getLogicalQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "id", targetNamespace = "")
-        String id);
 
     /**
      * 
@@ -403,22 +437,5 @@ public interface WebserviceServer {
         String securitytoken,
         @WebParam(name = "queryId", targetNamespace = "")
         int queryId);
-
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return
-     *     returns de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.StringResponse
-     */
-    @WebMethod
-    @WebResult(name = "securitytoken", targetNamespace = "")
-    @RequestWrapper(localName = "login", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.Login")
-    @ResponseWrapper(localName = "loginResponse", targetNamespace = "http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LoginResponse")
-    public StringResponse login(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password);
 
 }
