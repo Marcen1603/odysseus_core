@@ -57,6 +57,19 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
+            id="isQueryID">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <instanceof
+                     value="java.lang.Integer">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
+      <definition
             id="isNodeView">
          <with
                variable="selection">
@@ -81,7 +94,7 @@
                      definitionId="isNodeView">
                </reference>
                <reference
-                     definitionId="isQuery">
+                     definitionId="isQueryID">
                </reference>
             </or>
          </enabledWhen>

@@ -15,20 +15,16 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="isQuery">
+            id="isPhysicalQuery">
          <with
                variable="selection">
             <iterate
                   ifEmpty="false"
                   operator="or">
-               <or>
-                  <instanceof
-                        value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
-                  </instanceof>
-                  <instanceof
-                        value="java.lang.Integer">
-                  </instanceof>
-               </or>
+               <instanceof
+                     value="de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery">
+               </instanceof>
+               <or></or>
             </iterate>
          </with>
       </definition>

@@ -26,6 +26,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	@Override
 	public void init(QueryView view) {
 		this.view = view;
+		this.view.getTableViewer().addDoubleClickListener(this);
 	}
 
 	@Override
@@ -44,6 +45,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 
 	@Override
 	public void dispose() {
+		this.view.getTableViewer().removeDoubleClickListener(this);
 		this.view = null;
 	}
 
