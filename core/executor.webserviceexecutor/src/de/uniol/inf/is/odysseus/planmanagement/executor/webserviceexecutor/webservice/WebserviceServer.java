@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,9 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.ws.Endpoint;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -41,6 +45,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
@@ -60,11 +66,13 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webse
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.IntegerCollectionResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.Response;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFAttributeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFDatatypeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFSchemaInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SDFSchemaResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.response.StringResponse;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 
 /**
  * 
@@ -522,5 +530,24 @@ public class WebserviceServer {
 			port = min + (int) (Math.random() * ((max - min) + 1));
 		} while (!socketPortMap.containsKey(port));
 		return port;
+	}
+	
+	public SDFSchemaResponse getOutputSchema(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryId") int queryId) {
+		try {
+			loginWithSecurityToken(securityToken);
+			SDFSchema schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId);
+			Collection<SDFAttribute> attributes = schema.getAttributes();
+			Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
+			for(SDFAttribute attr : attributes) {
+				attrInfo.add(new SDFAttributeInformation(attr.getSourceName(), attr.getAttributeName(), new SDFDatatypeInformation(attr.getDatatype().getURI())));
+			}
+			SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(), attrInfo);
+			return new SDFSchemaResponse(info, true);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return new SDFSchemaResponse(null, false);
+		}
 	}
 }
