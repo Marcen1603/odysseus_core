@@ -50,11 +50,16 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.ConnectionInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.LogicalQueryInfo;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.SdfAttributeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.SdfDatatypeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.SdfSchemaInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor.webservice.WebserviceServerService;
 import de.uniol.inf.is.odysseus.planmanagement.executor.wsclient.util.WsClientSession;
@@ -290,7 +295,6 @@ public class WsClient implements IExecutor, IClientExecutor{
 			throws PlanManagementException {
 		Collection<Integer> response = getWebserviceServer().addQuery(user.getToken(), parserID, query, queryBuildConfigurationName).getResponseValue();
 		for(Integer val : response) {
-			// TODO firePlanModification aufrufen.
 			this.queries.put(val, getLogicalQuery(val));
 		}
 		return response;
@@ -308,10 +312,8 @@ public class WsClient implements IExecutor, IClientExecutor{
 	 * @return LogicalQuery
 	 */
 	public LogicalQuery createLogicalQueryFromInfo(LogicalQueryInfo info) {
-		LogicalQuery query = new LogicalQuery();
+		LogicalQuery query = new LogicalQuery(info.getId(), info.getParserID(), null, info.getPriority());
 		query.setContainsCycles(info.isContainsCycles());
-		query.setParserId(info.getParserID());
-		query.setPriority(info.getPriority());
 		query.setQueryText(info.getQueryText());
 		query.setUser(this.user);
 		return query;
@@ -353,7 +355,7 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private ClientReceiver createClientReceiver(IExecutor exec, int queryId) {
 		ClientReceiver receiver = null;
-		SDFSchema outputSchema = exec.getLogicalQuery(queryId).getLogicalPlan().getOutputSchema();
+		SDFSchema outputSchema = exec.getOutputSchema(queryId);
 		IDataHandler tdh = DataHandlerRegistry.getDataHandler("Tuple", outputSchema);
 		InetSocketAddress adr = (InetSocketAddress) ((IClientExecutor)exec).getSocketConnectionInformation(queryId);
 		// TODO username and password get from anywhere
@@ -391,6 +393,32 @@ public class WsClient implements IExecutor, IClientExecutor{
 	@Override
 	public ISession getUser() {
 		return this.user;
+	}
+	
+	@Override
+	public SDFSchema getOutputSchema(int queryId) {
+		if(getWebserviceServer() != null) {
+			return createSchemaFromInformation(getWebserviceServer().getOutputSchema(getSecurityToken(), queryId).getResponseValue());
+		}
+		return null;
+	}
+	
+	private SDFSchema createSchemaFromInformation(SdfSchemaInformation info) {
+		String uri = info.getUri();
+		Collection<SdfAttributeInformation> attributeInfos = info.getAttributes();
+		Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for(SdfAttributeInformation attrInfo : attributeInfos) {
+			attributes.add(createAttributeFromInformation(attrInfo));
+		}
+		return new SDFSchema(uri, attributes);
+	}
+	
+	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {
+		return new SDFAttribute(info.getSourcename(), info.getAttributename(), createDatatypeFromInformation(info.getDatatype()));
+	}
+	
+	private SDFDatatype createDatatypeFromInformation(SdfDatatypeInformation info) {
+		return new SDFDatatype(info.getUri());
 	}
 	
 /********************************************************************
