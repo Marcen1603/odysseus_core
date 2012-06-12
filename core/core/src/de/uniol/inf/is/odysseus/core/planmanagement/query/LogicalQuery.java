@@ -85,6 +85,23 @@ public class LogicalQuery implements ILogicalQuery {
 		this.priority = priority;
 	}
 
+	/**
+	 * 
+	 * Use this constructor only if a query is copied
+	 * 
+	 * @param id
+	 * @param parserID
+	 * @param logicalPlan
+	 * @param priority
+	 */
+	public LogicalQuery(int id, String parserID, ILogicalOperator logicalPlan,
+			int priority) {
+		this.id = id;
+		this.parserID = parserID;
+		this.logicalPlan = logicalPlan;
+		this.priority = priority;
+	}
+	
 	public LogicalQuery(ILogicalOperator logicalPlan, int priority) {
 		this("", logicalPlan, priority);
 	}
