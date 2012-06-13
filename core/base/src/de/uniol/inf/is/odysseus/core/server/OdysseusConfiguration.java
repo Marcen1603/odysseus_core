@@ -196,6 +196,16 @@ public class OdysseusConfiguration {
 		String val = props.getProperty(key);
 		return val != null ? Long.parseLong(val) : defaultValue;
 	}
+	
+	public static int getInt( String key, int defaultValue ) {
+		String val = props.getProperty(key);
+		try {
+			return val != null ? Integer.parseInt(val) : defaultValue;
+		} catch ( Exception ex ) {
+			_logger.error("Exception during getting value of configuration-key '{}'", key, ex);
+			return defaultValue;
+		}
+	}
 
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
