@@ -48,7 +48,6 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {		
 		// Add default Functions

@@ -139,7 +139,6 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			} else { // must be generic push, else isExecutable would not had
 						// returned true
 
-				final IDataHandler dataHandler;
 				IDataHandler concreteHandler = null;
 				if (operator.getInputSchema() != null
 						&& operator.getInputSchema().size() > 0) {
