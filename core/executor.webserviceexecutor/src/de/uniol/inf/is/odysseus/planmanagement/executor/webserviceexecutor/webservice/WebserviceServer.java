@@ -445,7 +445,7 @@ public class WebserviceServer {
 		List<IPhysicalOperator> roots = query.getRoots();
 		if (roots.size() == 1) {
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder = new ByteBufferSinkStreamHandlerBuilder();
-			boolean useNio = false;
+			boolean useNio = true;
 			boolean loginNeeded = false;
 			int sourceInPort = 0;
 			int sourceOutPort = 0;
