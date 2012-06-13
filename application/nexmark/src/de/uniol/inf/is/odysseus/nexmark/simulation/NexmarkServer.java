@@ -202,7 +202,7 @@ public class NexmarkServer {
 
 	public static void main(String[] args) {
 		// Hack to load bundle??
-		DataHandlerRegistry.getDataHandler("",(SDFSchema)null);
+		//DataHandlerRegistry.getDataHandler("",(SDFSchema)null);
 		int personPort = 0, auctionPort = 0, bidPort = 0, categoryPort = 0;
 		int startPort = 0;
 		int elementLimit = 0;
