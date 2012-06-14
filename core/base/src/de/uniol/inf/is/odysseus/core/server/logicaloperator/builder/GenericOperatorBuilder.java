@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 
 public class GenericOperatorBuilder extends AbstractOperatorBuilder {
@@ -61,6 +62,10 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 						: REQUIREMENT.MANDATORY;
 
 				parameter.setRequirement(requirement);
+				
+				USAGE usage = parameterAnnotation.deprecated() ? USAGE.DEPRECATED : USAGE.RECENT;
+				
+				parameter.setUsage(usage);
 
 				if (parameterAnnotation.isList()) {
 					if (!List.class

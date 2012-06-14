@@ -47,6 +47,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     {
       throw new ValidationException(identifier, builder.getErrors());
     }
+    for (Exception e: builder.getWarnings())
+    {
+                // TODO: How to transport this to the gui?
+                System.err.println("WARNING "+e.getMessage());
+    }
     ILogicalOperator operator = builder.createOperator();
     return operator;
   }

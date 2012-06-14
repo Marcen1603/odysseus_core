@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+
 /**
  * @author Jonas Jacobi
  */
@@ -22,8 +23,16 @@ public class DirectParameter<T> extends AbstractParameter<T> {
 	
 	private static final long serialVersionUID = -2905933267361030479L;
 
+	public DirectParameter() {
+		super();
+	}
+	
+	public DirectParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
+	}
+
 	public DirectParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);
+		super(name, requirement, USAGE.RECENT);
 	}
 
 	@SuppressWarnings("unchecked")

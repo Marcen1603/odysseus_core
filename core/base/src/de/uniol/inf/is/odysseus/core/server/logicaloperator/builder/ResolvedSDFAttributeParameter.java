@@ -22,7 +22,11 @@ public class ResolvedSDFAttributeParameter extends
 	private static final long serialVersionUID = -8628692018760465548L;
 
 	public ResolvedSDFAttributeParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);
+		super(name, requirement, USAGE.RECENT);
+	}
+
+	public ResolvedSDFAttributeParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
 	}
 
 	public ResolvedSDFAttributeParameter() {

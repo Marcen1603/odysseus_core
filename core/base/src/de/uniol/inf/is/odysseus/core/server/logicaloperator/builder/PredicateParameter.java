@@ -22,8 +22,12 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 
 	public PredicateParameter(){}
 	
+	public PredicateParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
+	}
+	
 	public PredicateParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);
+		super(name, requirement, USAGE.RECENT);
 	}
 
 	@Override

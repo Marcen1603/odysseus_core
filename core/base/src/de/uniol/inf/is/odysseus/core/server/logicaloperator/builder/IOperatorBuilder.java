@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public interface IOperatorBuilder extends Serializable {
 	public Set<IParameter<?>> getParameters();
@@ -34,6 +34,7 @@ public interface IOperatorBuilder extends Serializable {
 	public boolean validate();
 
 	public List<Exception> getErrors();
+	public List<Exception> getWarnings();
 
 	public void setInputOperator(int inputPort, ILogicalOperator operator,
 			int outputPort);

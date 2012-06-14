@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
+import javax.jws.soap.SOAPBinding.Use;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -30,8 +32,12 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		super();
 	}
 
+	public AggregateItemParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
+	}
+	
 	public AggregateItemParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);
+		super(name, requirement, USAGE.RECENT);
 	}
 
 	@SuppressWarnings("unchecked")

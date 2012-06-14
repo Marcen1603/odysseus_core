@@ -27,10 +27,17 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 
 	public ListParameter(String name, REQUIREMENT requirement,
 			IParameter<T> singleParameter) {
-		super(name, requirement);
+		super(name, requirement, USAGE.RECENT);
 		this.singleParameter = singleParameter;
 	}
 
+	public ListParameter(String name, REQUIREMENT requirement,
+			IParameter<T> singleParameter, USAGE usage) {
+		super(name, requirement, usage);
+		this.singleParameter = singleParameter;
+	}
+
+	
 	public ListParameter(IParameter<T> singleParameter) {
 		this.singleParameter = singleParameter;
 	}

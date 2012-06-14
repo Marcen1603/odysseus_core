@@ -23,7 +23,7 @@ public @interface Parameter {
 
 	/**
 	 * Name of the parameter. If no name is given, the name of the annotated
-	 * property is used.
+	 * property (e.g. there must be a getter and setter for this property) is used.
 	 */
 	public String name() default "";
 
@@ -38,4 +38,9 @@ public @interface Parameter {
 	 * so the return value of the created parameter would be List<value of parameter type>
 	 */
 	public boolean isList() default false;
+	
+	/**
+	 * Defines if the parameter is deprecated
+	 */
+	public boolean deprecated() default false;
 }

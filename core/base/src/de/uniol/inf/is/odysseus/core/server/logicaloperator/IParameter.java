@@ -28,10 +28,13 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttrib
  */
 public interface IParameter<T> extends Serializable {
 	public static enum REQUIREMENT { MANDATORY, OPTIONAL }
+	public static enum USAGE {RECENT, DEPRECATED}
 	public void setName(String name);
 	public String getName();
 	public IParameter.REQUIREMENT getRequirement();
 	public void setRequirement(REQUIREMENT requirement);
+	public void setUsage(USAGE usage);
+	public boolean isDeprecated();
 	public void setInputValue(Object object);
 	public boolean validate();
 	public List<Exception> getErrors();

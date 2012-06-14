@@ -14,6 +14,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+
 public class BooleanParameter extends AbstractParameter<Boolean> {
 	
 	private static final long serialVersionUID = -7491596371995854348L;
@@ -21,8 +22,12 @@ public class BooleanParameter extends AbstractParameter<Boolean> {
 	public BooleanParameter(){
 	}
 	
+	public BooleanParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement,usage);		
+	}
+	
 	public BooleanParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);		
+		super(name, requirement,USAGE.RECENT);		
 	}
 
 	@Override

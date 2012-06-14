@@ -21,10 +21,15 @@ public class IntegerParameter extends AbstractParameter<Integer> {
 		super();
 	}
 	
-	public IntegerParameter(String name, REQUIREMENT requirement) {
-		super(name, requirement);
+	public IntegerParameter(String name, REQUIREMENT requirement, USAGE usage) {
+		super(name, requirement, usage);
 	}
 
+	public IntegerParameter(String name, REQUIREMENT requirement) {
+		super(name, requirement, USAGE.RECENT);
+	}
+
+	
 	@Override
 	protected void internalAssignment() {
 		int value = ((Long) inputValue).intValue();

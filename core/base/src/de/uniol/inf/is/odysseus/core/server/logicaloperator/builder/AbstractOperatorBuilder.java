@@ -40,6 +40,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private Set<IParameter<?>> parameters;
 	private List<Exception> errors;
+	private List<Exception> warnings;
 	private int minPortCount;
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
@@ -60,6 +61,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		this.maxPortCount = maxPortCount;
 		this.parameters = new HashSet<IParameter<?>>();
 		this.errors = new ArrayList<Exception>();
+		this.warnings = new ArrayList<Exception>();
 		this.inputOperators = new TreeMap<Integer, InputOperatorItem>();
 	}
 
@@ -87,6 +89,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		return this.errors;
 	}
 
+	public List<Exception> getWarnings(){
+		return this.warnings;
+	}
+	
 	@Override
 	public int getMaxInputOperatorCount() {
 		return maxPortCount;
@@ -146,6 +152,9 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 			if (!parameter.validate()) {
 				isValid = false;
 				this.errors.addAll(parameter.getErrors());
+			}
+			if (parameter.hasValue() && parameter.isDeprecated()){
+				this.warnings.add(new DeprecatedParameterWarning("Parameter "+parameter.getName()+" is deprecated!"));
 			}
 		}
 

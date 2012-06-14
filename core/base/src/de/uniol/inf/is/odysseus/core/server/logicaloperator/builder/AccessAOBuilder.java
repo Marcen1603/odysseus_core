@@ -16,6 +16,9 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -23,20 +26,27 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 /**
- * @author Jonas Jacobi
+ * This Operatorbuilder is used to create a new AccessAO.
+ * 
+ * 
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class AccessAOBuilder extends AbstractOperatorBuilder {
 
+	static Logger logger = LoggerFactory.getLogger(AccessAOBuilder.class);
+
 	private static final long serialVersionUID = 2682090172449918821L;
+	
 	private final StringParameter sourceName = new StringParameter("SOURCE",
 			REQUIREMENT.MANDATORY);
 	private final IntegerParameter port = new IntegerParameter("PORT",
-			REQUIREMENT.OPTIONAL);
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter type = new StringParameter("TYPE",
 			REQUIREMENT.OPTIONAL);
 	private final StringParameter host = new StringParameter("HOST",
@@ -58,28 +68,28 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	// TODO: Make mandatory
 	private final StringParameter dataHandler = new StringParameter(
 			"DATAHANDLER", REQUIREMENT.OPTIONAL);
-	
+
 	private final StringParameter objectHandler = new StringParameter(
 			"OBJECTHANDLER", REQUIREMENT.OPTIONAL);
-	
+
 	private final StringParameter inputDataHandler = new StringParameter(
 			"InputDataHandler", REQUIREMENT.OPTIONAL);
-	
+
 	private final StringParameter accessConnectionHandler = new StringParameter(
 			"AccessConnectionHandler", REQUIREMENT.OPTIONAL);
-	
+
 	// TODO: These should be the only parameter in future
 	private final StringParameter transportHandler = new StringParameter(
 			"transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter(
 			"protocol", REQUIREMENT.OPTIONAL);
-	
 
 	public AccessAOBuilder() {
 		super(0, 0);
 		addParameters(sourceName, host, port, attributes, type, options,
-				inputSchema, adapter, input, transformer, dataHandler, objectHandler, 
-				inputDataHandler, accessConnectionHandler, transportHandler,protocolHandler);
+				inputSchema, adapter, input, transformer, dataHandler,
+				objectHandler, inputDataHandler, accessConnectionHandler,
+				transportHandler, protocolHandler);
 	}
 
 	@Override
@@ -121,7 +131,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		AccessAO ao = new AccessAO(sourceName, adapterName, optionsMap);
 		ao.setOutputSchema(schema);
-		
+
 		if (host.hasValue()) {
 			ao.setHost(host.getValue());
 		}
@@ -140,22 +150,22 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		if (dataHandler.hasValue()) {
 			ao.setDataHandler(dataHandler.getValue());
 		}
-		if (objectHandler.hasValue()){
+		if (objectHandler.hasValue()) {
 			ao.setObjectHandler(objectHandler.getValue());
 		}
-		if (inputDataHandler.hasValue()){
+		if (inputDataHandler.hasValue()) {
 			ao.setInputDataHandler(inputDataHandler.getValue());
 		}
-		if (accessConnectionHandler.hasValue()){
+		if (accessConnectionHandler.hasValue()) {
 			ao.setAccessConnectionHandler(accessConnectionHandler.getValue());
 		}
-		if (transportHandler.hasValue()){
+		if (transportHandler.hasValue()) {
 			ao.setTransportHandler(transportHandler.getValue());
 		}
-		if (protocolHandler.hasValue()){
+		if (protocolHandler.hasValue()) {
 			ao.setProtocolHandler(protocolHandler.getValue());
 		}
-		
+
 		ILogicalOperator op = addTimestampAO(ao);
 		return op;
 	}
@@ -184,9 +194,16 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
-					|| attributes.hasValue()) {
+					|| attributes.hasValue() || options.hasValue()
+					|| inputSchema.hasValue() || adapter.hasValue()
+					|| input.hasValue() || transformer.hasValue()
+					|| dataHandler.hasValue() || objectHandler.hasValue()
+					|| inputDataHandler.hasValue()
+					|| accessConnectionHandler.hasValue()
+					|| transportHandler.hasValue()
+					|| protocolHandler.hasValue()) {
 				addError(new IllegalArgumentException("view " + sourceName
-						+ " already exists"));
+						+ " already exists. Use one only parameter source for an existing source."));
 				return false;
 			}
 		} else {
