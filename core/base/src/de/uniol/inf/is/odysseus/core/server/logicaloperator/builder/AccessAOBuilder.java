@@ -49,8 +49,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter host = new StringParameter("HOST",
 			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	private final ListParameter<String> inputSchema = new ListParameter<String>(
-			"INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final StringParameter adapter = new StringParameter("ADAPTER",
 			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter input = new StringParameter("INPUT",
@@ -58,6 +56,9 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final StringParameter transformer = new StringParameter(
 			"transformer", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
+	private final StringParameter inputDataHandler = new StringParameter(
+			"InputDataHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
+	
 	private final StringParameter accessConnectionHandler = new StringParameter(
 			"AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
@@ -71,8 +72,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			"DATAHANDLER", REQUIREMENT.OPTIONAL);
 	private final StringParameter objectHandler = new StringParameter(
 			"OBJECTHANDLER", REQUIREMENT.OPTIONAL);
-	private final StringParameter inputDataHandler = new StringParameter(
-			"InputDataHandler", REQUIREMENT.OPTIONAL);
+
 	private final StringParameter transportHandler = new StringParameter(
 			"transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter(
@@ -84,14 +84,17 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL,
 			new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
 	
-	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
+	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
+	
+	private final ListParameter<String> inputSchema = new ListParameter<String>(
+			"INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 
 	
 	public AccessAOBuilder() {
 		super(0, 0);
-		addParameters(sourceName, host, port, attributes, type, options, options2,
+		addParameters(sourceName, host, port, outputschema, type, options, options2,
 				inputSchema, adapter, input, transformer, dataHandler,
 				objectHandler, inputDataHandler, accessConnectionHandler,
 				transportHandler, protocolHandler, wrapper);
@@ -119,7 +122,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				.getValue();
 		wrapperName = wrapper.hasValue() ? wrapper.getValue():wrapperName;
 		
-		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
+		SDFSchema schema = new SDFSchema(sourceName, outputschema.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 		
 		if (options.hasValue()) {
@@ -208,7 +211,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		if (getDataDictionary().containsViewOrStream(sourceName, getCaller())) {
 			if (host.hasValue() || type.hasValue() || port.hasValue()
-					|| attributes.hasValue() || options.hasValue()
+					|| outputschema.hasValue() || options.hasValue()
 					|| inputSchema.hasValue() || adapter.hasValue()
 					|| input.hasValue() || transformer.hasValue()
 					|| dataHandler.hasValue() || objectHandler.hasValue()
@@ -240,8 +243,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			return false;
 		}
 
-		if (this.attributes.hasValue() && this.inputSchema.hasValue()) {
-			if (this.attributes.getValue().size() != this.inputSchema
+		if (this.outputschema.hasValue() && this.inputSchema.hasValue()) {
+			if (this.outputschema.getValue().size() != this.inputSchema
 					.getValue().size()) {
 				addError(new IllegalArgumentException(
 						"For each attribute there must be at least one reader in the input schema"));
@@ -258,7 +261,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	@Override
 	public void setDataDictionary(IDataDictionary dataDictionary) {
-		((CreateSDFAttributeParameter) ((attributes).getSingleParameter()))
+		((CreateSDFAttributeParameter) ((outputschema).getSingleParameter()))
 				.setDataDictionary(dataDictionary);
 		super.setDataDictionary(dataDictionary);
 	}
