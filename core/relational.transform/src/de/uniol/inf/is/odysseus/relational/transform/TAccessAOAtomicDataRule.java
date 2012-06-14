@@ -64,7 +64,7 @@ public class TAccessAOAtomicDataRule extends AbstractTransformationRule<AccessAO
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {		
 		if(getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
-			if(accessAO.getAdapter().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getAdapter().equals("RelationalStreaming")){
+			if(accessAO.getWrapper().equals(RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS) || accessAO.getWrapper().equals("RelationalStreaming")){
 				return true;
 			}
 		}

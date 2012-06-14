@@ -31,7 +31,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String password;
 	private boolean autoreconnect = false;
 	private Map<String, String> optionsMap;
-	private String adapter;
+	private String wrapper;
 	
 	private String input;
 	// Default handler is tuple
@@ -71,7 +71,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		login = po.login;
 		password = po.password;
 		autoreconnect = po.autoreconnect;
-		adapter = po.adapter;
+		wrapper = po.wrapper;
 		optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
 		inputSchema = po.inputSchema;		
 		input = po.input;
@@ -82,15 +82,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		
 	}
 
-	public AbstractAccessAO(String source, String adapter, Map<String, String> optionsMap) {
+	public AbstractAccessAO(String source, String wrapper, Map<String, String> optionsMap) {
 		this.source = source;
-		this.adapter = adapter;
+		this.wrapper = wrapper;
 		this.optionsMap = optionsMap;
 	}
 
-	public AbstractAccessAO(String source, String adapter, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
+	public AbstractAccessAO(String source, String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){
 		this.source = source;
-		this.adapter = adapter;
+		this.wrapper = wrapper;
 		this.input = input;
 		this.transformer = transformer;
 		this.dataHandler = dataHandler;
@@ -159,7 +159,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public String toString() {
 		return getName() + " ("
 				+ this.getSourcename() 
-				+ " | " + this.adapter + ")";
+				+ " | " + this.wrapper + ")";
 	}
 
 	@Override
@@ -195,13 +195,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public Map<String, String> getOptionsMap() {
 		return optionsMap;
 	}
-
-	public void setAdapter(String value) {
-		this.adapter = value;
-	}
 	
-	public String getAdapter() {
-		return adapter;
+	public String getWrapper() {
+		return wrapper;
 	}
 	
 	public String getInput() {

@@ -1407,7 +1407,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		accAO.setOutputSchema(outputSchema);
 
 		// before adding the acces operator, add the corresponding entity
-		dd.addSourceType(streamName, accAO.getAdapter());
+		dd.addSourceType(streamName, accAO.getWrapper());
 		dd.addEntitySchema(streamName, outputSchema, user);
 
 		TimestampAO op = addTimestampAO(accAO);

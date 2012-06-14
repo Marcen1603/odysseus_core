@@ -57,7 +57,7 @@ public class TJDVEAccessMVPOAsListRule extends AbstractTransformationRule<Access
 	@Override
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
-		if(operator.getAdapter().equals("JDVEAccessMVPO") &&
+		if(operator.getWrapper().equals("JDVEAccessMVPO") &&
 				getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
 			return true;
 		}

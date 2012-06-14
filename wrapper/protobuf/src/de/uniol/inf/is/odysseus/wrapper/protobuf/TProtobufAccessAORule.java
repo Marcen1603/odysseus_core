@@ -54,7 +54,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 	@Override
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
-		return (operator.getAdapter() != null && operator.getAdapter()
+		return (operator.getWrapper() != null && operator.getWrapper()
 				.equalsIgnoreCase("GoogleProtoBuf"));
 	}
 

@@ -26,12 +26,12 @@ public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
     public void execute(final AccessAO operator, final TransformationConfiguration config) {
         try {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-			SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getAdapter(),
+			SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getWrapper(),
                     operator.getOptionsMap());
 //            if (SourcePool.hasSemanticallyEqualSource(po)) {
 //                po = SourcePool.getSemanticallyEqualSource(po);
 //            }else {
-                SourcePool.registerSource(operator.getAdapter(), po, operator.getOptionsMap());
+                SourcePool.registerSource(operator.getWrapper(), po, operator.getOptionsMap());
 //            }
             final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
                     operator, po);
@@ -49,7 +49,7 @@ public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
     @Override
     public boolean isExecutable(final AccessAO operator, final TransformationConfiguration config) {
     	//TODO: Remove hard coded google
-    	return (operator.getAdapter() != null && !"GoogleProtoBuf".equalsIgnoreCase(operator.getAdapter()) );
+    	return (operator.getWrapper() != null && !"GoogleProtoBuf".equalsIgnoreCase(operator.getWrapper()) );
     }
 
     @Override

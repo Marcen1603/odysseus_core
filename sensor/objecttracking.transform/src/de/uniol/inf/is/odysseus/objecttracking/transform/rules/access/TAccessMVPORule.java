@@ -55,7 +55,7 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 	@Override
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
-		if(operator.getAdapter().equals("RelationalAtomicDataInputStreamAccessMVPO") &&
+		if(operator.getWrapper().equals("RelationalAtomicDataInputStreamAccessMVPO") &&
 				getDataDictionary().getAccessPlan(operator.getSourcename()) == null){
 			return true;
 		}

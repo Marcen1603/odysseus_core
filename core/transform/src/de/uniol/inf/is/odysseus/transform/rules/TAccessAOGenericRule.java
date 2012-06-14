@@ -72,7 +72,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 						+ operator.getDataHandler() + " found.");
 			}
 
-			if ("genericpull".equals(operator.getAdapter().toLowerCase())) {
+			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
 
 				IProtocolHandler ph = ProtocolHandlerRegistry
 						.getInstance(protocolHandler, options,
@@ -99,7 +99,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		} else {
 
 			// older generic accessao style
-			if ("genericpull".equals(operator.getAdapter().toLowerCase())) {
+			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
 
 				IInputHandler inputHandlerPrototype = InputHandlerRegistry
 						.getInputHandler(operator.getInput());
@@ -202,9 +202,9 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 	public boolean isExecutable(AccessAO operator,
 			TransformationConfiguration config) {
 		return (getDataDictionary().getAccessPlan(operator.getSourcename()) == null
-				&& operator.getAdapter() != null && ("genericpull"
-				.equals(operator.getAdapter().toLowerCase()) || "genericpush"
-				.equals(operator.getAdapter().toLowerCase())));
+				&& operator.getWrapper() != null && ("genericpull"
+				.equals(operator.getWrapper().toLowerCase()) || "genericpush"
+				.equals(operator.getWrapper().toLowerCase())));
 	}
 
 	@Override

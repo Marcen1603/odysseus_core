@@ -70,7 +70,7 @@ public class TBrokerAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 	@Override
 	public boolean isExecutable(AccessAO operator, TransformationConfiguration transformConfig) {
-		if (operator.getAdapter().equals("RelationalByteBufferAccessPO")) {
+		if (operator.getWrapper().equals("RelationalByteBufferAccessPO")) {
 			if (transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 				if (transformConfig.getOption("IBrokerInterval") != null) {
 					if (getDataDictionary().getAccessPlan(operator.getSourcename()) == null) {

@@ -70,7 +70,7 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 	@Override
 	public boolean isExecutable(AccessAO accessAO, TransformationConfiguration transformConfig) {
 		if(getDataDictionary().getAccessPlan(accessAO.getSourcename()) == null){
-			if(accessAO.getAdapter().equals("RelationalByteBufferAccessPO")){
+			if(accessAO.getWrapper().equals("RelationalByteBufferAccessPO")){
 				return true;
 			}
 		}

@@ -43,14 +43,12 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private static final long serialVersionUID = 2682090172449918821L;
 	
-	private final StringParameter sourceName = new StringParameter("SOURCE",
-			REQUIREMENT.MANDATORY);
 	private final IntegerParameter port = new IntegerParameter("PORT",
 			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter type = new StringParameter("TYPE",
-			REQUIREMENT.OPTIONAL);
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter host = new StringParameter("HOST",
-			REQUIREMENT.OPTIONAL);
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final ListParameter<SDFAttribute> attributes = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
@@ -59,26 +57,27 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final ListParameter<String> options = new ListParameter<String>(
 			"OPTIONS", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final StringParameter adapter = new StringParameter("ADAPTER",
-			REQUIREMENT.OPTIONAL);
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter input = new StringParameter("INPUT",
-			REQUIREMENT.OPTIONAL);
+			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter transformer = new StringParameter(
-			"transformer", REQUIREMENT.OPTIONAL);
-
-	// TODO: Make mandatory
-	private final StringParameter dataHandler = new StringParameter(
-			"DATAHANDLER", REQUIREMENT.OPTIONAL);
-
-	private final StringParameter objectHandler = new StringParameter(
-			"OBJECTHANDLER", REQUIREMENT.OPTIONAL);
-
-	private final StringParameter inputDataHandler = new StringParameter(
-			"InputDataHandler", REQUIREMENT.OPTIONAL);
+			"transformer", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
 	private final StringParameter accessConnectionHandler = new StringParameter(
-			"AccessConnectionHandler", REQUIREMENT.OPTIONAL);
+			"AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
 	// TODO: These should be the only parameter in future
+	// Make mandatory
+	private final StringParameter wrapper = new StringParameter("WRAPPER",
+			REQUIREMENT.OPTIONAL);
+	private final StringParameter sourceName = new StringParameter("SOURCE",
+			REQUIREMENT.MANDATORY);
+	private final StringParameter dataHandler = new StringParameter(
+			"DATAHANDLER", REQUIREMENT.OPTIONAL);
+	private final StringParameter objectHandler = new StringParameter(
+			"OBJECTHANDLER", REQUIREMENT.OPTIONAL);
+	private final StringParameter inputDataHandler = new StringParameter(
+			"InputDataHandler", REQUIREMENT.OPTIONAL);
 	private final StringParameter transportHandler = new StringParameter(
 			"transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter(
@@ -89,7 +88,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		addParameters(sourceName, host, port, attributes, type, options,
 				inputSchema, adapter, input, transformer, dataHandler,
 				objectHandler, inputDataHandler, accessConnectionHandler,
-				transportHandler, protocolHandler);
+				transportHandler, protocolHandler, wrapper);
 	}
 
 	@Override
@@ -110,8 +109,10 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private ILogicalOperator createNewAccessAO(String sourceName) {
 
-		String adapterName = adapter.hasValue() ? adapter.getValue() : type
+		String wrapperName = adapter.hasValue() ? adapter.getValue() : type
 				.getValue();
+		wrapperName = wrapper.hasValue() ? wrapper.getValue():wrapperName;
+		
 		SDFSchema schema = new SDFSchema(sourceName, attributes.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
 
@@ -129,7 +130,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
 		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
-		AccessAO ao = new AccessAO(sourceName, adapterName, optionsMap);
+		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
 		ao.setOutputSchema(schema);
 
 		if (host.hasValue()) {
@@ -207,16 +208,16 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				return false;
 			}
 		} else {
-			if (type.hasValue() && adapter.hasValue()) {
+			if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
 						"to much information for the creation of source "
-								+ sourceName + ". expecting type OR adapter."));
+								+ sourceName + ". expecting wrapper OR type OR adapter."));
 				return false;
 			}
-			if (!type.hasValue() && !adapter.hasValue()) {
+			if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
-						"to much information for the creation of source "
-								+ sourceName + ". expecting type OR adapter."));
+						"to less information for the creation of source "
+								+ sourceName + ". expecting wrapper, type or adapter."));
 				return false;
 			}
 		}
