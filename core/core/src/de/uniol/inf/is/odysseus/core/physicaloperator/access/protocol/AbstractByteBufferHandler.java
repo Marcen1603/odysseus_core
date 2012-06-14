@@ -1,11 +1,11 @@
-package de.uniol.inf.is.odysseus.core.objecthandler;
+package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.nio.ByteOrder;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-abstract public class AbstractByteBufferHandler<R,W> implements IInputDataHandler<R,W> {
-
+abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener{
+	
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
 
 	public void setByteOrder(ByteOrder byteOrder) {
@@ -19,8 +19,4 @@ abstract public class AbstractByteBufferHandler<R,W> implements IInputDataHandle
 			byteOrder = ByteOrder.BIG_ENDIAN;
 		}
 	}
-	
-	@Override
-    public abstract IInputDataHandler<R,W> clone();
-	
 }

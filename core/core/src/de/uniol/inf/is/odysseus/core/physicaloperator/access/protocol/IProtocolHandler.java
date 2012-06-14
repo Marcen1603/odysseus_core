@@ -17,8 +17,6 @@ public interface IProtocolHandler <T> {
 	
 	public IProtocolHandler<T> createInstance(Map<String, String> options, ITransportHandler transportHandler, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
 	
-	// TODO: Push
-
 	String getName();
 	
 }

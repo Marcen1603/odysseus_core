@@ -10,9 +10,8 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-public class SizeByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener{
+public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
@@ -104,6 +103,7 @@ public class SizeByteBufferHandler<T> extends AbstractProtocolHandler<T> impleme
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
 		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
+		instance.setByteOrder(options.get("byteorder"));
 		transportHandler.addListener(instance);
 		return instance;
 	}

@@ -10,9 +10,8 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-public class MarkerByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener{
+public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 
 	private ByteBufferHandler<T> objectHandler;
 	private byte start;
@@ -40,6 +39,7 @@ public class MarkerByteBufferHandler<T> extends AbstractProtocolHandler<T> imple
 		transportHandler.addListener(instance);
 		instance.start = Byte.parseByte(options.get("start"));
 		instance.end = Byte.parseByte(options.get("end"));
+		instance.setByteOrder(options.get("byteorder"));
 		return instance;
 	}
 

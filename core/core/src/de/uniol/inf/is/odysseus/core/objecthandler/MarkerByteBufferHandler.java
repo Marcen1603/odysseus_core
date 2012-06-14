@@ -76,7 +76,9 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBu
 	@Override
 	public IInputDataHandler<ByteBuffer, T> getInstance(
 			Map<String, String> option) {
-		return new MarkerByteBufferHandler<T>(Byte.parseByte(option.get("start")), Byte.parseByte(option.get("end")));
+		MarkerByteBufferHandler<T> ret = new MarkerByteBufferHandler<T>(Byte.parseByte(option.get("start")), Byte.parseByte(option.get("end")));
+		ret.setByteOrder(option.get("byteorder"));
+		return ret;
 	}
 
 	@Override

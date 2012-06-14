@@ -13,7 +13,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
-
+	
 	public SizeByteBufferHandler(){
 	}
 	
@@ -40,6 +40,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 	public void process(ByteBuffer buffer, IObjectHandler<T> objectHandler,
 			IAccessConnectionHandler<ByteBuffer> accessHandler, ITransferHandler<T> transferHandler) throws ClassNotFoundException {
 		try {
+			buffer.order(byteOrder);
 			while (buffer.remaining() > 0) {
 
 				// size ist dann ungleich -1 wenn die vollständige
@@ -91,7 +92,9 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<ByteBuff
 	@Override
 	public IInputDataHandler<ByteBuffer, T> getInstance(
 			Map<String, String> option) {
-		return new SizeByteBufferHandler<T>();
+		SizeByteBufferHandler<T> handler = new SizeByteBufferHandler<T>();
+		handler.setByteOrder(option.get("byteorder"));
+		return handler;
 	}
 	
 	@Override

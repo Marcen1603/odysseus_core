@@ -50,9 +50,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		instance.setTransfer(transfer);
 		return instance;
 	}
-	
-	// TODO: Push
-	
+		
 	@Override
 	public String getName() {
 		return "Line";
