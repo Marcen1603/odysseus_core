@@ -20,6 +20,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
@@ -50,7 +51,9 @@ public class OdysseusApplication implements IApplication {
 		try {
 
 			waitForExecutor();
-			chooseWorkspace(display);
+			if( !chooseWorkspace(display) ) {
+				return IApplication.EXIT_OK;
+			}
 
 			if (executor instanceof IClientExecutor) {
 				setClientConnection(display);
@@ -115,7 +118,7 @@ public class OdysseusApplication implements IApplication {
 		Connect.connectWindow(display, false, false);
 	}
 
-	private static void chooseWorkspace(Display display) {
+	private static boolean chooseWorkspace(Display display) {
 		try {
 			File file = new File(System.getProperty("user.home"), "workspace");
 			String path = file.getAbsolutePath().replace(File.separatorChar, '/');
@@ -125,6 +128,7 @@ public class OdysseusApplication implements IApplication {
 
 			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
 			dialog.prompt(false);
+			
 			
 			// in case that the workspace was automatically selected
 			if( data.getSelection() != null && !Platform.getInstanceLocation().isSet() ) {
@@ -137,8 +141,11 @@ public class OdysseusApplication implements IApplication {
 				}
 			}
 			
+			return dialog.getReturnCode() == Window.OK;
+			
 		} catch (Exception e) {
 			LOG.error("Exception during choosing workspace", e);
+			return false;
 		}
 	}
 	

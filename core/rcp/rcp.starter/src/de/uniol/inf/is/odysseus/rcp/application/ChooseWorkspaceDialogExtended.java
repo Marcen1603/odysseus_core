@@ -41,6 +41,11 @@ public class ChooseWorkspaceDialogExtended extends ChooseWorkspaceDialog {
 		setReturnCode(OK);
 		close();
 	}
+	
+	@Override
+	protected void cancelPressed() {
+		super.cancelPressed();
+	}
 
 	private static boolean releaseAndSetLocation(String selection) {
 		try {
