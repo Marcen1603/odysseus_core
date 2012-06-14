@@ -28,4 +28,9 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		return instance;
 	}
 
+	@Override
+	public String getName() {
+		return "CSV";
+	}
+	
 }
