@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener{
+abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> implements ITransportHandlerListener<ByteBuffer>{
 	
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
 

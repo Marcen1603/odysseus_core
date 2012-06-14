@@ -1,13 +1,12 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
-import java.nio.ByteBuffer;
 
-public interface ITransportHandlerListener {
+public interface ITransportHandlerListener<T> {
 	
 	public void onConnect(ITransportHandler caller);
 	public void onDisonnect(ITransportHandler caller);
 	
 
-	public void process(ByteBuffer messsage);
+	public void process(T messsage);
 
 }
