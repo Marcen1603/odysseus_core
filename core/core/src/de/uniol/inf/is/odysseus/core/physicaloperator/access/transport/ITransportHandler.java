@@ -18,8 +18,6 @@ public interface ITransportHandler  {
 	public ITransportHandler createInstance(Map<String, String> options);
 	
 	public InputStream getInputStream();
-	
-	//TODO: Handle cases where ITransport pushes data! 
-	
+		
 	String getName();
 }
