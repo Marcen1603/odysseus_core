@@ -42,39 +42,39 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	public static final String REPLACEMENT_END_KEY = "}";
 
 	public static final String LOOP_START_KEY = "LOOP";
-	public static final String LOOP_END_KEY = "ENDLOOP";	
-	public static final String LOOP_UPTO	= "UPTO";
-	
+	public static final String LOOP_END_KEY = "ENDLOOP";
+	public static final String LOOP_UPTO = "UPTO";
+
 	public static final String SINGLE_LINE_COMMENT_KEY = "///";
-	
+
 	private int currentLine;
 
 	@Override
 	public String getParameterKey() {
 		return PARAMETER_KEY;
 	}
-	
+
 	@Override
 	public String getReplacementEndKey() {
 		return REPLACEMENT_END_KEY;
 	}
-	
+
 	@Override
 	public String getReplacementStartKey() {
 		return REPLACEMENT_START_KEY;
 	}
-	
+
 	@Override
 	public String getSingleLineCommentKey() {
 		return SINGLE_LINE_COMMENT_KEY;
 	}
 
 	@Override
-	public Set<String> getStaticWords(){
+	public Set<String> getStaticWords() {
 		Set<String> strings = Sets.newHashSet();
 		strings.add(REPLACEMENT_DEFINITION_KEY);
 		strings.add(LOOP_END_KEY);
-		strings.add(LOOP_START_KEY);		
+		strings.add(LOOP_START_KEY);
 		strings.add(LOOP_UPTO);
 		strings.add(IfController.IFDEF_KEY);
 		strings.add(IfController.ELSE_KEY);
@@ -83,7 +83,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		strings.add(IfController.UNDEF_KEY);
 		return strings;
 	}
-	
+
 	@Override
 	public Set<String> getKeywordNames() {
 		Set<String> keywordNames = Sets.newHashSet();
@@ -91,9 +91,14 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		keywordNames.addAll(getStaticWords());
 		return keywordNames;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute(java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute
+	 * (java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 
 	@Override
@@ -101,14 +106,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(java.util.List, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(
+	 * java.util.List, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@Override
 	public void execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
-		if (defaultSink != null){
+		if (defaultSink != null) {
 			variables.put("_defaultSink", defaultSink);
 		}
 		// Validieren
@@ -118,7 +127,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 		// Ausf�hren
 		variables = new HashMap<String, Object>();
-		if (defaultSink != null){
+		if (defaultSink != null) {
 			variables.put("_defaultSink", defaultSink);
 		}
 		for (PreParserStatement stmt : statements) {
@@ -126,8 +135,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript
+	 * (java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@Override
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException {
@@ -140,8 +154,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		return parseScript(lines.toArray(new String[lines.size()]), caller);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript(java.lang.String[], de.uniol.inf.is.odysseus.core.server.usermanagement.User)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseScript
+	 * (java.lang.String[],
+	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
 	@Override
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException {
@@ -162,10 +181,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				if ((line == null) || (line.equals("null")))
 					continue;
 
-				if( !ifController.canExecuteNextLine()) {
+				if (!ifController.canExecuteNextLine()) {
 					continue;
 				}
-				
+
 				line = line.trim();
 				// Ersetzungen einsetzen
 				line = useReplacements(line, replacements).trim();
@@ -177,9 +196,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 				if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
 					continue;
-				
+
 				// Undefine
-				if( line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1 ) {
+				if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
 					String[] parts = line.trim().split(" |\t", 3);
 					replacements.remove(parts[1]);
 				}
@@ -187,32 +206,41 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				if (line.length() > 0) {
 
 					// Neue Parameterzuweisung?
-					boolean foundParam = false;
-					for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
-						String toFind = PARAMETER_KEY + param;
-						final int pos = line.indexOf(toFind);
-						if (pos != -1) {
-
-							// alten parameter ausführen
-							if (sb != null && currentKey != null) {
-								IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
-								statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+					if( line.startsWith(PARAMETER_KEY)) {
+						boolean foundParam = false;
+						for (String param : KEYWORD_REGISTRY.getKeywordNames()) {
+							String toFind = PARAMETER_KEY + param;
+							final int pos = line.indexOf(toFind);
+							if (pos != -1) {
+	
+								// alten parameter ausführen
+								if (sb != null && currentKey != null) {
+									IPreParserKeyword keyword = KEYWORD_REGISTRY.createKeywordExecutor(currentKey);
+									statements.add(new PreParserStatement(currentKey, keyword, sb.toString()));
+								}
+	
+								// neue parameterzuweisung
+								sb = new StringBuffer();
+								sb.append(line.substring(pos + param.length() + 1).trim());
+								currentKey = param;
+								foundParam = true;
+								break;
 							}
-
-							// neue parameterzuweisung
-							sb = new StringBuffer();
-							sb.append(line.substring(pos + param.length() + 1).trim());
-							currentKey = param;
-							foundParam = true;
-							break;
+						}
+						
+						if( !foundParam ) {
+							throw new OdysseusScriptException("Undefined key '" + line.substring(1) + "'");
+						}
+						
+						
+					} else {
+						if (sb == null) {
+							throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
+						} else {
+							sb.append("\n").append(line.trim());
 						}
 					}
-					if (foundParam)
-						continue;
 
-					if (sb == null)
-						throw new OdysseusScriptException("No key set in line " + (currentLine + 1));
-					sb.append("\n").append(line.trim());
 				}
 			}
 
@@ -232,9 +260,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
-		for (int linenr = 0; linenr < textToParse.length; linenr++) {			
+		for (int linenr = 0; linenr < textToParse.length; linenr++) {
 			String line = textToParse[linenr].trim();
-			if(line.startsWith(SINGLE_LINE_COMMENT_KEY)){
+			if (line.startsWith(SINGLE_LINE_COMMENT_KEY)) {
 				continue;
 			}
 			if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
@@ -257,18 +285,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				String loopDef = textToParse[from].replaceFirst(PARAMETER_KEY + LOOP_START_KEY, "").trim();
 				try {
 					String[] parts = loopDef.split(" ");
-					if(parts.length!=4){
+					if (parts.length != 4) {
 						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable FROM 1 TO 10\"");
 					}
 					String variable = parts[0].trim();
-					int startCount = Integer.parseInt(parts[1].trim());					
-					int endCount = Integer.parseInt(parts[3].trim());					
-					
+					int startCount = Integer.parseInt(parts[1].trim());
+					int endCount = Integer.parseInt(parts[3].trim());
+
 					for (int counter = startCount; counter < endCount; counter++) {
 						for (int i = from + 1; i < to; i++) {
 							String toChange = textToParse[i];
-							
-							toChange=toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY+variable+REPLACEMENT_END_KEY), Integer.toString(counter));							
+
+							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + REPLACEMENT_END_KEY), Integer.toString(counter));
 							text.add(toChange);
 						}
 					}
@@ -278,8 +306,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 
 				from = -1;
 				to = -1;
-			}else{
-				if(from==-1){
+			} else {
+				if (from == -1) {
 					text.add(line);
 				}
 			}
@@ -287,26 +315,34 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		}
 		if (from != -1 || to != -1) {
 			throw new OdysseusScriptException("Loop has missing start or end!");
-		}		
-		
-//		System.out.println("------------------");
-//		for(String s: text){
-//			System.out.println(s);
-//		}
-//		System.out.println("------------------");
+		}
+
+		// System.out.println("------------------");
+		// for(String s: text){
+		// System.out.println(s);
+		// }
+		// System.out.println("------------------");
 		return text.toArray(new String[0]);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
+	 * (java.lang.String)
 	 */
 	@Override
 	public Map<String, String> getReplacements(String text) throws OdysseusScriptException {
 		return getReplacements(splitToList(text).toArray(new String[0]));
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements(java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
+	 * (java.lang.String[])
 	 */
 	@Override
 	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
@@ -320,12 +356,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				// parts[0] is #DEFINE
 				// parts[1] is replacement name
 				// parts[2] is replacement value (optional!)
-				if( parts.length >= 3 ) {
+				if (parts.length >= 3) {
 					repl.put(parts[1].trim(), parts[2].trim());
 				}
 			}
 			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
-			if(posLoop!= -1){
+			if (posLoop != -1) {
 				String[] parts = replacedLine.split(" |\t", 3);
 				repl.put(parts[1].trim(), parts[1].trim());
 			}
@@ -337,7 +373,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		int posStart = line.indexOf(REPLACEMENT_START_KEY);
 		while (posStart != -1) {
 			int posEnd = posStart + 1 + line.substring(posStart + 1).indexOf(REPLACEMENT_END_KEY);
-			if(posEnd==posStart){
+			if (posEnd == posStart) {
 				// end not found
 				break;
 			}
@@ -345,7 +381,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 				String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
 				if (replacements.containsKey(key)) {
 					line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
-				} else {								
+				} else {
 					throw new OdysseusScriptException("Replacement key " + key + " not defined or has no value!");
 				}
 			}
@@ -363,7 +399,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		if (commentPos != -1) {
 			if (commentPos == 0)
 				return "";
-            return line.substring(0, commentPos);
+			return line.substring(0, commentPos);
 		}
 
 		return line;
@@ -388,22 +424,22 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		}
 		return lines;
 	}
-	
+
 	// --------------------------------------------
 	// Umstellung auf OSGi declarative Services
 	// --------------------------------------------
-	
-	public void addKeywordProvider(IPreParserKeywordProvider provider){
+
+	public void addKeywordProvider(IPreParserKeywordProvider provider) {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = provider.getKeywords();
-		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()){
+		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()) {
 			KEYWORD_REGISTRY.addKeyword(entry.getKey(), entry.getValue());
-			//System.out.println("Added Preparser-Keyword "+entry.getKey());
+			// System.out.println("Added Preparser-Keyword "+entry.getKey());
 		}
 	}
-	
-	public void removeKeywordProvider(IPreParserKeywordProvider provider){
+
+	public void removeKeywordProvider(IPreParserKeywordProvider provider) {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = provider.getKeywords();
-		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()){
+		for (Entry<String, Class<? extends IPreParserKeyword>> entry : keywords.entrySet()) {
 			KEYWORD_REGISTRY.removeKeyword(entry.getKey());
 		}
 	}
