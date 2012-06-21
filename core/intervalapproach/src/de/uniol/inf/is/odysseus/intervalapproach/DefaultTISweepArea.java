@@ -272,7 +272,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 				T s_hat = li.next();
 				// Alle Elemente entfernen, die nicht mehr verschnitten werden
 				// k�nnen (also davor liegen)
-				if (s_hat.getMetadata().getEnd().before(time)) {
+				if (s_hat.getMetadata().getEnd().beforeOrEquals(time)) {
 					li.remove();
 				} else {
 					break;
