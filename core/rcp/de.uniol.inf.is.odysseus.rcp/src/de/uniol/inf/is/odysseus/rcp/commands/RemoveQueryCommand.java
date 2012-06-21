@@ -50,7 +50,7 @@ public class RemoveQueryCommand extends AbstractHandler implements IHandler {
 		for (final Integer qID: selectedObj) {
 			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
-				Job job = new Job("Starting query") {
+				Job job = new Job("Removing query") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
