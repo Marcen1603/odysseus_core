@@ -14,8 +14,8 @@ public class TransportHandlerRegistry {
 
 	static public void register(ITransportHandler handler) {
 		logger.debug("Register new Handler " + handler.getName());
-		if (!handlers.containsKey(handler.getName())) {
-			handlers.put(handler.getName(), handler);
+		if (!handlers.containsKey(handler.getName().toLowerCase())) {
+			handlers.put(handler.getName().toLowerCase(), handler);
 		} else {
 			logger.error("Handler with name " + handler.getName()
 					+ " already registered");
@@ -24,11 +24,11 @@ public class TransportHandlerRegistry {
 	
 	static public void remove(ITransportHandler handler){
 		logger.debug("Remove handler "+handler.getName());
-		handlers.remove(handler.getName());
+		handlers.remove(handler.getName().toLowerCase());
 	}
 	
 	static public ITransportHandler getInstance(String name, Map<String, String> options){
-		ITransportHandler ret = handlers.get(name);
+		ITransportHandler ret = handlers.get(name.toLowerCase());
 		if (ret != null){
 			return ret.createInstance(options);
 		}

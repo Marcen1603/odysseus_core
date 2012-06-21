@@ -18,8 +18,8 @@ public class ProtocolHandlerRegistry {
 
 	static public void register(IProtocolHandler<?> handler) {
 		logger.debug("Register new Handler " + handler.getName());
-		if (!handlers.containsKey(handler.getName())) {
-			handlers.put(handler.getName(), handler);
+		if (!handlers.containsKey(handler.getName().toLowerCase())) {
+			handlers.put(handler.getName().toLowerCase(), handler);
 		} else {
 			logger.error("Handler with name " + handler.getName()
 					+ " already registered");
@@ -28,13 +28,13 @@ public class ProtocolHandlerRegistry {
 	
 	static public void remove(IProtocolHandler<?> handler){
 		logger.debug("Remove handler "+handler.getName());
-		handlers.remove(handler.getName());
+		handlers.remove(handler.getName().toLowerCase());
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static public IProtocolHandler<?> getInstance(String name, Map<String, String> options, 
 			ITransportHandler transportHandler, IDataHandler dataHandler, ITransferHandler transfer){
-		IProtocolHandler<?> ret = handlers.get(name);
+		IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
 		if (ret != null){
 			return ret.createInstance(options, transportHandler, dataHandler, transfer);
 		}
