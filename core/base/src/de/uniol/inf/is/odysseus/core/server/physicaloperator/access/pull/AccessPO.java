@@ -122,14 +122,15 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 				if (toTransfer == null) {
 					isDone = true;
 					propagateDone();
+				} else {
+					transfer(toTransfer);
 				}
 			} catch (Exception e) {
-				LOG.error("Cannot not transform object " + object, e);
-			}
-			if (toTransfer != null) {
-				transfer(toTransfer);
-			} else {
-				LOG.warn("Got empty object to transfer");
+				if (object != null) {
+					LOG.error("Cannot not transform object " + object, e);
+				} else {
+					LOG.error("Error Reading from input", e);
+				}
 			}
 		}
 	}

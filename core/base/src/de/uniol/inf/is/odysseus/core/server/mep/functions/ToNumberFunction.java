@@ -44,7 +44,7 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.DOUBLE};
+	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.STRING};
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
@@ -55,7 +55,7 @@ public class ToNumberFunction extends AbstractFunction<Double> {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
         SDFDatatype[] accTypes = new SDFDatatype[1];
-        accTypes[0] = SDFDatatype.DOUBLE;
+        accTypes[0] = SDFDatatype.STRING;
         return accTypes;
 	}
 }

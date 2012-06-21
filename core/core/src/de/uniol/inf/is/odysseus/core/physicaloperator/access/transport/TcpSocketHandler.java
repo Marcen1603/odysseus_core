@@ -25,6 +25,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	@Override
 	public void process_close() throws IOException {
 		if (socket != null) {
+			socket.getInputStream().close();
 			socket.close();
 		}
 	}

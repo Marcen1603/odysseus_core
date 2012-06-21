@@ -124,6 +124,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		} catch (Exception e) {
 			this.errors.add(new IllegalParameterException("illegal value for "
 					+ getName() + ": " + e.getMessage()));
+			e.printStackTrace();
 			return false;
 		}
 		return true;

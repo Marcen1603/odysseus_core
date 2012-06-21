@@ -30,6 +30,7 @@ import de.offis.xml.schema.scai20.SCAIDocument.SCAI.Payload.Measurements;
 import de.offis.xml.schema.scai20.SensorDataDescription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerException;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -120,18 +121,19 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	@Override
 	public Tuple<?> readData(String string) {
 		String value = string.replace("\n", "").replace("\r", "").trim();
-		LOG.debug(value);
+		//LOG.debug(value);
 		ProtocolObject stackObject = null;
 		Analyser analyser = new Analyser();
 		try {
 			stackObject = analyser.buildSCAIStackObject(value);
 		} catch (Exception e) {
-			LOG.warn(e.getMessage(), e);
+			//LOG.warn(e.getMessage(), e);
+			throw new DataHandlerException(e);
 		}
 		if (stackObject != null && stackObject.getContent() != null) {
 			return process((SCAIDocument) stackObject.getContent());
 		} else {
-			return null;
+			throw new DataHandlerException("Error Reading Scai Document ");
 		}
 	}
 
