@@ -86,10 +86,13 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 			LOG.error("Exception during input", e);
 		}
 
-		tryPropagateDone();
+		// TODO: We should think about propagate done ... maybe its better
+		// to send a punctuation??
+		//tryPropagateDone();
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private void tryPropagateDone() {
 		try {
 			propagateDone();
