@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Odysseus Studio 2" id="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio" application="de.uniol.inf.is.odysseus.rcp.starter.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Odysseus Studio 2" id="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio" application="de.uniol.inf.is.odysseus.rcp.starter.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="false">
 
    <aboutInfo>
       <image path="icons/128_128.gif"/>
