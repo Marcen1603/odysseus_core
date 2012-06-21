@@ -54,10 +54,10 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	private final Charset charset = Charset.forName("UTF-8");
 	private SDFSchema schema;
 
-	public ScaiDataHandler(){
+	public ScaiDataHandler() {
 		// Needed for declarative service
 	}
-	
+
 	/**
 	 * Create a new SCAI Data Handler
 	 * 
@@ -66,7 +66,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	private ScaiDataHandler(SDFSchema schema) {
 		this.schema = schema;
 	}
-	
+
 	@Override
 	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
 		return new ScaiDataHandler(schema);
@@ -128,9 +128,9 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		} catch (Exception e) {
 			LOG.warn(e.getMessage(), e);
 		}
-		if (stackObject != null && stackObject.getContent() != null){
+		if (stackObject != null && stackObject.getContent() != null) {
 			return process((SCAIDocument) stackObject.getContent());
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -233,13 +233,14 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		SCAI scai = data.getSCAI();
 		Payload payload = scai.getPayload();
 		Measurements measurements = payload.getMeasurements();
-		
-	
+
 		if (measurements != null) {
-			final SensorDataDescription[] sensorDataDescriptions = measurements.getDataStreamArray();
+			final SensorDataDescription[] sensorDataDescriptions = measurements
+					.getDataStreamArray();
 			for (int i = 0; i < sensorDataDescriptions.length; ++i) {
 
-				final Calendar timestamp = sensorDataDescriptions[i].getTimeStamp();
+				final Calendar timestamp = sensorDataDescriptions[i]
+						.getTimeStamp();
 				final String name = sensorDataDescriptions[i].getSensorName();
 				final String domain = sensorDataDescriptions[i]
 						.getSensorDomainName();
@@ -264,7 +265,19 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 					Object[] retObj = new Object[schema.size()];
 					for (int ii = 0; ii < schema.size(); ii++) {
 						String attr = schema.get(ii).getAttributeName();
-						retObj[ii] = event.get(attr);
+						Object value = event.get(attr);
+						// If value was not recognized correctly ...
+						if (schema.get(ii).getDatatype().isNumeric()
+								&& value instanceof String) {
+							if (schema.get(ii).getDatatype().isInteger()) {
+								retObj[ii] = Integer.parseInt((String) value);
+							} else if (schema.get(ii).getDatatype().isFloat()
+									|| schema.get(ii).getDatatype().isDouble()) {
+								retObj[ii] = Double.parseDouble((String) value);
+							}
+						} else {
+							retObj[ii] = value;
+						}
 					}
 					ret = new Tuple(retObj, false);
 
@@ -276,5 +289,4 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 		return ret;
 	}
-
 }
