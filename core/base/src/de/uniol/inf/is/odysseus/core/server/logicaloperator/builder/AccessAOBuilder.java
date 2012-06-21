@@ -139,7 +139,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		
 		if (options2.hasValue()){
 			for (Option option: options2.getValue()){
-				optionsMap.put(option.getName(), option.getValue());
+				optionsMap.put(option.getName().toLowerCase(), option.getValue());
 			}
 		}
 		
