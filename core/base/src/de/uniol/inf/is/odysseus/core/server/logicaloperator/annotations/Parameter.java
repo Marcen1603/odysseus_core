@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Jonas Jacobi Annotation for properties (set-methods) of logical
@@ -35,7 +36,9 @@ public @interface Parameter {
 	
 	/**
 	 * Defines whether the parameter type should be encapsulated by a ListParameter,
-	 * so the return value of the created parameter would be List<value of parameter type>
+	 * so the return value of the created parameter would be List<value of parameter type>.
+	 * 
+	 * if isMap is used too, isList indicates if the value of the map is a list 
 	 */
 	public boolean isList() default false;
 	
@@ -43,4 +46,19 @@ public @interface Parameter {
 	 * Defines if the parameter is deprecated
 	 */
 	public boolean deprecated() default false;
+
+	/**
+	 * Defines whether the parameter should be encapsulated by a MapParameter,
+	 * so the return value of the created parameter would be Map<String, value of parameter type>.
+	 * 
+	 * set isList to true to indicate that the value of the map is a list
+	 */
+	public boolean isMap() default false;
+
+	/**
+	 * Defines the type of the key for map parameters. its similar to the type parameter.
+	 * the value part of the map is provided via the type attribute 
+	 */
+	@SuppressWarnings("rawtypes")
+	Class<? extends IParameter> keytype() default StringParameter.class;
 }

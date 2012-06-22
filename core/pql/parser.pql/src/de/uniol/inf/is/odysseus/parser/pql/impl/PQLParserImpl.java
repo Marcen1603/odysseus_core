@@ -387,16 +387,24 @@ public class PQLParserImpl implements PQLParserImplConstants {
       t = jj_consume_token(CHAR_LITERAL);
       value = t.image.substring(1, t.image.length() - 1);
       break;
-    case 24:
-      value = list();
-      break;
-    case IDENTIFIER:
-      value = predicate();
-      break;
     default:
       jj_la1[7] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_2(4)) {
+        value = list();
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case IDENTIFIER:
+          value = predicate();
+          break;
+        case 24:
+          value = map();
+          break;
+        default:
+          jj_la1[8] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
     }
     {if (true) return value;}
     throw new Error("Missing return statement in function");
@@ -421,7 +429,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           ;
           break;
         default:
-          jj_la1[8] = jj_gen;
+          jj_la1[9] = jj_gen;
           break label_3;
         }
         jj_consume_token(22);
@@ -430,11 +438,52 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
       break;
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[10] = jj_gen;
       ;
     }
     jj_consume_token(25);
     {if (true) return list;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Map < Object, Object > map() throws ParseException {
+  Object key;
+  Object value;
+  Map < Object, Object > map = new HashMap < Object, Object > ();
+    jj_consume_token(24);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case IDENTIFIER:
+    case CHAR_LITERAL:
+    case FLOAT:
+    case INTEGER:
+    case 24:
+      key = parameterValue();
+      jj_consume_token(18);
+      value = parameterValue();
+                  map.put(key, value);
+      label_4:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 22:
+          ;
+          break;
+        default:
+          jj_la1[11] = jj_gen;
+          break label_4;
+        }
+        jj_consume_token(22);
+        key = parameterValue();
+        jj_consume_token(18);
+        value = parameterValue();
+                  map.put(key, value);
+      }
+      break;
+    default:
+      jj_la1[12] = jj_gen;
+      ;
+    }
+    jj_consume_token(25);
+    {if (true) return map;}
     throw new Error("Missing return statement in function");
   }
 
@@ -452,21 +501,21 @@ public class PQLParserImpl implements PQLParserImplConstants {
         jj_consume_token(26);
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[13] = jj_gen;
         ;
       }
       operator = operator(namedOps);
       port = tPort == null ? 0 : Integer.parseInt(tPort.image);
       list.add(new InputOperatorItem(operator, port));
-      label_4:
+      label_5:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case 22:
           ;
           break;
         default:
-          jj_la1[11] = jj_gen;
-          break label_4;
+          jj_la1[14] = jj_gen;
+          break label_5;
         }
         jj_consume_token(22);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -475,7 +524,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           jj_consume_token(26);
           break;
         default:
-          jj_la1[12] = jj_gen;
+          jj_la1[15] = jj_gen;
           ;
         }
         operator = operator(namedOps);
@@ -484,7 +533,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
     {if (true) return list;}
@@ -509,9 +558,115 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(0, xla); }
   }
 
+  static private boolean jj_2_2(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_2(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(1, xla); }
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(24)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(25)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(FLOAT)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(18)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_14()) return true;
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(21)) return true;
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
   static private boolean jj_3_1() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(21)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(22)) return true;
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(24)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_17()) jj_scanpos = xsp;
+    if (jj_scan_token(25)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_9()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -527,15 +682,15 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static private Token jj_scanpos, jj_lastpos;
   static private int jj_la;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[14];
+  static final private int[] jj_la1 = new int[17];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x20,0x10000,0x1c0000,0x400000,0x10000,0x20,0x400000,0x1006120,0x400000,0x1006120,0x4000,0x400000,0x4000,0x4020,};
+      jj_la1_0 = new int[] {0x20,0x10000,0x1c0000,0x400000,0x10000,0x20,0x400000,0x6100,0x1000020,0x400000,0x1006120,0x400000,0x1006120,0x4000,0x400000,0x4000,0x4020,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[1];
+  static final private JJCalls[] jj_2_rtns = new JJCalls[2];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -557,7 +712,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -572,7 +727,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -590,7 +745,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -601,7 +756,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -618,7 +773,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -628,7 +783,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 14; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 17; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -745,7 +900,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 17; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -781,7 +936,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -789,6 +944,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
           jj_la = p.arg; jj_lastpos = jj_scanpos = p.first;
           switch (i) {
             case 0: jj_3_1(); break;
+            case 1: jj_3_2(); break;
           }
         }
         p = p.next;
