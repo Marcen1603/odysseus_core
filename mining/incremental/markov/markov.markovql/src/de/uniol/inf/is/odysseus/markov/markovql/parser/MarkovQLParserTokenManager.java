@@ -4,7 +4,6 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class MarkovQLParserTokenManager implements MarkovQLParserConstants
 {
 

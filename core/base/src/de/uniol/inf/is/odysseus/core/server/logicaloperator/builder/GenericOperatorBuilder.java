@@ -21,15 +21,15 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	private ILogicalOperator operator;
 	private Map<Parameter, Method> parameterAnnotationMap;
 
-	public GenericOperatorBuilder(Class<? extends ILogicalOperator> operatorClass, Map<Parameter, Method> parameterMap, int minPortCount, int maxPortCount) {
-		super(minPortCount, maxPortCount);
+	public GenericOperatorBuilder(Class<? extends ILogicalOperator> operatorClass, String name, Map<Parameter, Method> parameterMap, int minPortCount, int maxPortCount) {		
+		super(name, minPortCount, maxPortCount);		
 		this.operatorClass = operatorClass;
 		this.parameterAnnotationMap = parameterMap;
 		initParameters();
 	}
 
 	public GenericOperatorBuilder(GenericOperatorBuilder builder) {
-		this(builder.operatorClass, builder.parameterAnnotationMap, builder.getMinInputOperatorCount(), builder.getMaxInputOperatorCount());
+		this(builder.operatorClass, builder.getName(), builder.parameterAnnotationMap, builder.getMinInputOperatorCount(), builder.getMaxInputOperatorCount());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -151,5 +151,5 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	@Override
 	public GenericOperatorBuilder cleanCopy() {
 		return new GenericOperatorBuilder(this);
-	}
+	}	
 }

@@ -3,14 +3,9 @@ package de.uniol.inf.is.odysseus.markov.operator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.markov.operator.logical.MarkovAOBuilder;
-
 public class Activator implements BundleActivator {
 
-	private static BundleContext context;
-	
-	private static final String MARKOV = "MARKOV";
+	private static BundleContext context;	
 
 	static BundleContext getContext() {
 		return context;
@@ -22,8 +17,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		OperatorBuilderFactory.putOperatorBuilderType(MARKOV, new MarkovAOBuilder());
+		Activator.context = bundleContext;		
 	}
 
 	/*
@@ -32,8 +26,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
     public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-		OperatorBuilderFactory.removeOperatorBuilderType(MARKOV);
+		Activator.context = null;		
 	}
 
 }

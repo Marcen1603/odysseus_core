@@ -52,7 +52,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	private IDataDictionary dataDictionary;
 
-	public AbstractOperatorBuilder(int minPortCount, int maxPortCount) {
+	private String name;
+
+	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount) {
+		this.name = name;
 		if (minPortCount > maxPortCount) {
 			throw new IllegalArgumentException(
 					"minimum number of ports may not be higher than maximum number");
@@ -76,6 +79,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		}
 	}
 
+	public String getName(){
+		return this.name;
+	}
+	
 	protected void addError(Exception e) {
 		this.errors.add(e);
 	}

@@ -105,7 +105,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 				}
 				String operatorName = classObject.getAnnotation(
 						LogicalOperator.class).name();
-				OperatorBuilderFactory.removeOperatorBuilderType(operatorName);
+				OperatorBuilderFactory.removeOperatorBuilderByName(operatorName);
 			}else if (curURL.toString().contains("/udf")) {
 				@SuppressWarnings("rawtypes")
 				Class<? extends IUserDefinedFunction> classObject = loadUDFClass(
@@ -241,12 +241,10 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 			}
 			logger.debug("Create GenericOperatorBuilder Builder for " + curOp
 					+ " with parameters " + parameters);
-			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp,
-					parameters, logicalOperatorAnnotation.minInputPorts(),
+			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),
 					logicalOperatorAnnotation.maxInputPorts());
 
-			OperatorBuilderFactory.putOperatorBuilderType(
-					logicalOperatorAnnotation.name(), builder);
+			OperatorBuilderFactory.addOperatorBuilder(builder);
 		}catch(NoClassDefFoundError e){			
 			e.printStackTrace();
 			logger.error("LogicalOperator "+curOp.getCanonicalName()+" not found. Check if core and core-server plugins were added as dependencies in its bundle");

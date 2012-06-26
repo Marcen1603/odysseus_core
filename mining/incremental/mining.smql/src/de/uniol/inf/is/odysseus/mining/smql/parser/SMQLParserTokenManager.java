@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
 /** Token Manager. */
-@SuppressWarnings("all")
 public class SMQLParserTokenManager implements SMQLParserConstants
 {
 

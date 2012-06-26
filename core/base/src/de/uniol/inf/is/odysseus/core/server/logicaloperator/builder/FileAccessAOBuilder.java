@@ -49,7 +49,7 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	static Logger logger = LoggerFactory.getLogger(FileAccessAOBuilder.class);
 
 	public FileAccessAOBuilder() {
-		super(0, 0);
+		super("FILE", 0, 0);
 		addParameters(sourceName, path, fileType, type, attributes, separator);
 	}
 
@@ -110,4 +110,5 @@ public class FileAccessAOBuilder extends AbstractOperatorBuilder {
 	public FileAccessAOBuilder cleanCopy() {
 		return new FileAccessAOBuilder();
 	}
+	
 }

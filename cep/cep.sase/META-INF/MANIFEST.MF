@@ -19,9 +19,8 @@ Import-Package: de.uniol.inf.is.odysseus.cep,
  org.osgi.framework;version="1.5.0",
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.cep.sase
-Service-Component: OSGI-INF/SaseRelational.xml
+Service-Component: OSGI-INF/SaseRelational.xml, OSGI-INF/OperatorBuilder.xml
 Bundle-Activator: de.uniol.inf.is.odysseus.cep.sase.SaseBuilder
-Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  ANTLR3_4;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

@@ -93,7 +93,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	
 	public AccessAOBuilder() {
-		super(0, 0);
+		super("ACCESS", 0, 0);
 		addParameters(sourceName, host, port, outputschema, type, options, options2,
 				inputSchema, adapter, input, transformer, dataHandler,
 				objectHandler, inputDataHandler, accessConnectionHandler,
@@ -265,4 +265,5 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				.setDataDictionary(dataDictionary);
 		super.setDataDictionary(dataDictionary);
 	}
+	
 }

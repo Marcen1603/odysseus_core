@@ -35,6 +35,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.markov.operator.logical,
  de.uniol.inf.is.odysseus.markov.operator.transform
-Service-Component: OSGI-INF/RuleService.xml
+Service-Component: OSGI-INF/RuleService.xml, OSGI-INF/OperatorBuilderFactory.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

@@ -34,7 +34,7 @@ public class PriorityAOBuilder extends AbstractOperatorBuilder {
 			"PRIORITIZE", REQUIREMENT.MANDATORY);
 
 	public PriorityAOBuilder() {
-		super(1, 1);
+		super("PRIORITY", 1, 1);
 		addParameters(prioritize);
 	}
 

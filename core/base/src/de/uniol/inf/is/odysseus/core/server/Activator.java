@@ -17,23 +17,15 @@ package de.uniol.inf.is.odysseus.core.server;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileAccessAOBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.CSVTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.TransformerRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.Distance;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.DolToEur;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.Now;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function.Polygon;
 
 public class Activator implements BundleActivator {
-
-	private IFunction<?>[] functions = new IFunction[] { new DolToEur(),
-			new Now(), new Distance(), new Polygon() };
+	
 
 	private static BundleContext bundleContext;
 	
@@ -50,14 +42,8 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {		
-		// Add default Functions
-//		for (IFunction function : functions) {
-//			MEP.registerFunction(function);
-//		}
-		OperatorBuilderFactory.putOperatorBuilderType("ACCESS",
-				new AccessAOBuilder());
-		OperatorBuilderFactory.putOperatorBuilderType("FILE",
-				new FileAccessAOBuilder());
+		OperatorBuilderFactory.addOperatorBuilder(new AccessAOBuilder());
+		OperatorBuilderFactory.addOperatorBuilder(new FileAccessAOBuilder());
 		TransformerRegistry.register(new CSVTransformer());
 		TransformerRegistry.register(new ObjectInputStream2ObjectInputStreamTransformer());
 		
@@ -72,9 +58,6 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		for (IFunction<?> function : functions) {
-			MEP.unregisterFunction(function.getSymbol());
-		}
 		bundleContext = null;
 	}
 

@@ -31,7 +31,7 @@ public class MarkovAOBuilder extends AbstractOperatorBuilder {
 	private StringParameter hmm = new StringParameter("HMM", REQUIREMENT.MANDATORY);
 
 	public MarkovAOBuilder() {
-		super(1, 1);
+		super("MARKOV", 1, 1);
 		super.addParameters(groupBy, aggregations, hmm);
 	}
 

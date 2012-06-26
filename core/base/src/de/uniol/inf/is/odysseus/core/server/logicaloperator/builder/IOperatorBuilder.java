@@ -48,4 +48,6 @@ public interface IOperatorBuilder extends Serializable {
 	void setDataDictionary(IDataDictionary dataDictionary);
 
 	public IOperatorBuilder cleanCopy();
+	
+	public String getName();
 }

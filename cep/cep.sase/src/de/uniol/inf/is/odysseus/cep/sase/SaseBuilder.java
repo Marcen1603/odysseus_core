@@ -32,11 +32,10 @@ import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolT
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class SaseBuilder implements IQueryParser, BundleActivator {
@@ -51,8 +50,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public void start(BundleContext arg0) throws Exception {
-		OperatorBuilderFactory.putOperatorBuilderType("SASE",
-				new SaseAOBuilder());
+		
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 
 
 	public SaseAOBuilder() {
-		super(1, Integer.MAX_VALUE);
+		super("SASE", 1, Integer.MAX_VALUE);
 		addParameters(query, oneMatchPerInstance, heartbeatrate);
 	}
 
