@@ -9,9 +9,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IOdysseusScriptParser {
 
-	public void parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
-	public void execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException;
 

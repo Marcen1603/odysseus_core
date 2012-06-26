@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -102,8 +104,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 */
 
 	@Override
-	public void parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
-		execute(parseScript(completeText, caller), caller, defaultSink);
+	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
+		return execute(parseScript(completeText, caller), caller, defaultSink);
 	}
 
 	/*
@@ -113,8 +115,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#execute(
 	 * java.util.List, de.uniol.inf.is.odysseus.core.server.usermanagement.User)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
+	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
 		Map<String, Object> variables = new HashMap<String, Object>();
 		if (defaultSink != null) {
@@ -130,9 +133,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser {
 		if (defaultSink != null) {
 			variables.put("_defaultSink", defaultSink);
 		}
+		
+		List results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
-			stmt.execute(variables, caller, this);
+			Optional<?> optionalResult = stmt.execute(variables, caller, this);
+			if( optionalResult.isPresent() ) {
+				results.add(optionalResult.get());
+			}
 		}
+		
+		return results;
 	}
 
 	/*

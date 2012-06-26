@@ -16,6 +16,8 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
@@ -35,9 +37,10 @@ public final class PreParserStatement {
 		keyword.validate(variables, parameter, caller);
 	}
 	
-	public void execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+	public Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
 		keyword.setParser(parser);
-		keyword.execute(variables, parameter, caller);
+		Object result = keyword.execute(variables, parameter, caller);
+		return result == null ? Optional.absent() : Optional.of(result);
 	}
 	
 	public String getParameter() {
