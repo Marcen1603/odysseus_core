@@ -19,7 +19,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
-public class PreParserStatement {
+public final class PreParserStatement {
 
 	private IPreParserKeyword keyword;
 	private String keywordText;
