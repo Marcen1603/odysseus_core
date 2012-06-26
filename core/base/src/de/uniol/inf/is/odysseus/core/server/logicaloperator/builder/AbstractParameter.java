@@ -119,7 +119,11 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		}
 		try {
 			if (inputValue != null) {
-				internalAssignment();
+				if(internalValidation()){
+					internalAssignment();
+				}else{
+					return false;
+				}
 			}
 		} catch (Exception e) {
 			this.errors.add(new IllegalParameterException("illegal value for "
@@ -132,6 +136,10 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 
 	abstract protected void internalAssignment();
 
+	public boolean internalValidation(){
+		return true;
+	}
+	
 	@Override
 	public final T getValue() {
 		if (!validate()) {
