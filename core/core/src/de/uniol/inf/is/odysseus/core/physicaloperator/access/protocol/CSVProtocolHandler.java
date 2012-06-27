@@ -19,13 +19,17 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		String line = reader.readLine();
 		if (line != null) {
 			StringBuffer elem = new StringBuffer();
-			boolean overreadModus = false;
+			boolean overreadModus1 = false;
+			boolean overreadModus2 = false;
 			for (char c : line.toCharArray()) {
-				if (delimiter == '\"' || delimiter == '\'') {
-					overreadModus = !overreadModus;
+				if (delimiter == '\"') {
+					overreadModus1 = !overreadModus1;
+					elem.append(c);
+				} else if (delimiter == '\'') {
+					overreadModus2 = !overreadModus2;
 					elem.append(c);
 				} else {
-					if (overreadModus) {
+					if (overreadModus1 || overreadModus2) {
 						elem.append(c);
 					} else {
 						if (delimiter == c) {
