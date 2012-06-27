@@ -43,7 +43,7 @@ public class KMLReader {
 		xr.setErrorHandler(kmlHandler);
 	}
 	
-	public List read(String xmlText) throws IOException, SAXException,
+	public List<Geometry> read(String xmlText) throws IOException, SAXException,
 			ParserConfigurationException {
 
 		Reader r = new BufferedReader(new StringReader(xmlText));
@@ -55,7 +55,7 @@ public class KMLReader {
 
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		KMLReader reader = new KMLReader();
-		List ret = reader.read("<Polygon><outerBoundaryIs><LinearRing><coordinates>1.44583614083,42.6019451433,0 1.73860914641,42.6163911858,0 1.72360906008,42.5094360893,0 1.45152728546,42.4462450888,0 1.44583614083,42.6019451433,0</coordinates></LinearRing></outerBoundaryIs></Polygon>");
+		List<Geometry> ret = reader.read("<Polygon><outerBoundaryIs><LinearRing><coordinates>1.44583614083,42.6019451433,0 1.73860914641,42.6163911858,0 1.72360906008,42.5094360893,0 1.45152728546,42.4462450888,0 1.44583614083,42.6019451433,0</coordinates></LinearRing></outerBoundaryIs></Polygon>");
 		ret.addAll(reader.read("<MultiGeometry>"+
           "<Polygon>"+
             "<outerBoundaryIs>"+
@@ -81,17 +81,17 @@ public class KMLReader {
 }
 
 class KMLHandler extends DefaultHandler {
-	private List geoms = new ArrayList();;
+	private List<Geometry> geoms = new ArrayList<Geometry>();;
 
 	private GMLHandler currGeomHandler;
-	private String lastEltName = null;
+	//private String lastEltName = null;
 	private GeometryFactory fact = new FixingGeometryFactory();
 
 	public KMLHandler() {
 		super();
 	}
 
-	public List getGeometries() {
+	public List<Geometry> getGeometries() {
 		return geoms;
 	}
 
@@ -117,10 +117,10 @@ class KMLHandler extends DefaultHandler {
 		}
 		if (currGeomHandler != null)
 			currGeomHandler.startElement(uri, name, qName, atts);
-		if (currGeomHandler == null) {
-			lastEltName = name;
-			// System.out.println(name);
-		}
+//		if (currGeomHandler == null) {
+//			lastEltName = name;
+//			// System.out.println(name);
+//		}
 	}
 
 	public void characters(char[] ch, int start, int length)
@@ -182,6 +182,9 @@ class KMLHandler extends DefaultHandler {
  * 
  */
 class FixingGeometryFactory extends GeometryFactory {
+
+	private static final long serialVersionUID = 7926882598374133743L;
+
 	public LinearRing createLinearRing(CoordinateSequence cs) {
 		if (cs.getCoordinate(0).equals(cs.getCoordinate(cs.size() - 1)))
 			return super.createLinearRing(cs);

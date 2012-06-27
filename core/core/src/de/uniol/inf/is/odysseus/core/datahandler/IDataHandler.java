@@ -11,6 +11,7 @@ public interface IDataHandler<T> {
 	public T readData(ByteBuffer buffer);
 	public T readData(ObjectInputStream inputStream) throws IOException;
 	public T readData(String[] input);
+	public T readData(List<String> input);
 	public T readData(String string);
 	public void writeData(ByteBuffer buffer, Object data);
 	public List<String> getSupportedDataTypes();

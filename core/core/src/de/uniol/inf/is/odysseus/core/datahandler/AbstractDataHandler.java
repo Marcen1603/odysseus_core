@@ -54,6 +54,12 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return readData(input[0]);
 	}
 	
+	@Override
+	public T readData(List<String> input) {
+		if (input.size() != 1) throw new IllegalArgumentException("Input-size must be one!");
+		return readData(input.get(0));
+	}
+	
 	
 	@Override
 	public boolean isPrototype() {

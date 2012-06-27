@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -9,11 +11,37 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
-	private String delimiter;
+	private char delimiter;
 
 	@Override
 	public T getNext() throws IOException {
-		return getDataHandler().readData(reader.readLine().split(delimiter));
+		List<String> ret = new LinkedList<String>();
+		String line = reader.readLine();
+		if (line != null) {
+			StringBuffer elem = new StringBuffer();
+			boolean overreadModus = false;
+			for (char c : line.toCharArray()) {
+				if (delimiter == '\"' || delimiter == '\'') {
+					overreadModus = !overreadModus;
+					elem.append(c);
+				} else {
+					if (overreadModus) {
+						elem.append(c);
+					} else {
+						if (delimiter == c) {
+							ret.add(elem.toString());
+							elem = new StringBuffer();
+						} else {
+							elem.append(c);
+						}
+					}
+
+				}
+
+				return getDataHandler().readData(ret);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -24,7 +52,7 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setDataHandler(dataHandler);
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
-		instance.delimiter = options.get("delimiter");
+		instance.delimiter = options.get("delimiter").toCharArray()[0];
 		return instance;
 	}
 
@@ -32,5 +60,5 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 	public String getName() {
 		return "CSV";
 	}
-	
+
 }

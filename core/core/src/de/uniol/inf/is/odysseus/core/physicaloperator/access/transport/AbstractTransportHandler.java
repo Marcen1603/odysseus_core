@@ -8,23 +8,24 @@ import java.util.List;
 
 abstract public class AbstractTransportHandler implements ITransportHandler {
 
-	private List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
+	private List<ITransportHandlerListener<?>> transportHandlerListener = new ArrayList<ITransportHandlerListener<?>>();
 	private int openCounter = 0;
 	
 	
 	@Override
-	public void addListener(ITransportHandlerListener listener) {
+	public void addListener(ITransportHandlerListener<?> listener) {
 		this.transportHandlerListener.add(listener);
 	}
 
 	@Override
-	public void removeListener(ITransportHandlerListener listener) {
+	public void removeListener(ITransportHandlerListener<?> listener) {
 		this.transportHandlerListener.remove(listener);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void fireProcess(ByteBuffer message){
-		for (ITransportHandlerListener l: transportHandlerListener){
-			l.process(message);
+		for (ITransportHandlerListener<?> l: transportHandlerListener){
+			((ITransportHandlerListener<ByteBuffer>)l).process(message);
 		}
 	}
 	

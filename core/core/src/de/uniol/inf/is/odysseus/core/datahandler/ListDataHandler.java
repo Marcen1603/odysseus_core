@@ -70,6 +70,16 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		return values;
 	}
 
+	@Override
+	public List<?> readData(List<String> input) {
+		ArrayList<Object> values = new ArrayList<Object>();
+		for (String line:input){
+			Object value = this.handler.readData(line);
+			values.add(value);
+		}
+		return values;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData(java.nio.ByteBuffer)
 	 */

@@ -7,8 +7,8 @@ import java.util.Map;
 
 public interface ITransportHandler  {
 	
-	public void addListener(ITransportHandlerListener listener);
-	public void removeListener(ITransportHandlerListener listener);
+	public void addListener(ITransportHandlerListener<?> listener);
+	public void removeListener(ITransportHandlerListener<?> listener);
 	
 	public void open() throws UnknownHostException, IOException;
 	public void close() throws IOException;
