@@ -13,4 +13,5 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  org.osgeo.proj4j;bundle-version="1.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0"
+ com.vividsolutions.jts;bundle-version="1.0.0",
+ org.apache.xerces;bundle-version="2.9.0"
