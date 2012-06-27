@@ -126,7 +126,7 @@ public class DashboardPartDescriptorTest {
 		assertNotNull(configuration);
 		
 		for( SettingDescriptor<?> settingDescriptor : settingDescriptors ) {
-			assertEquals(configuration.get(settingDescriptor.getName()).get(), settingDescriptor.getDefaultValue());
+			assertEquals(configuration.get(settingDescriptor.getName()), settingDescriptor.getDefaultValue());
 		}
 	}
 	
