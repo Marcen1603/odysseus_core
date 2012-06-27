@@ -127,11 +127,11 @@ class KMLHandler extends DefaultHandler {
 			throws SAXException {
 		if (currGeomHandler != null) {
 			currGeomHandler.characters(ch, start, length);
-		} else {
-			String content = new String(ch, start, length).trim();
-			if (content.length() > 0) {
-				System.out.println(lastEltName + "= " + content);
-			}
+//		} else {
+//			String content = new String(ch, start, length).trim();
+//			if (content.length() > 0) {
+//				System.out.println(lastEltName + "= " + content);
+//			}
 		}
 	}
 
@@ -156,14 +156,14 @@ class KMLHandler extends DefaultHandler {
 	 */
 	public void endElement(String uri, String name, String qName)
 			throws SAXException {
-		System.out.println("/" + name);
+//		System.out.println("/" + name);
 
 		if (currGeomHandler != null) {
 			currGeomHandler.endElement(uri, name, qName);
 
 			if (currGeomHandler.isGeometryComplete()) {
 				Geometry g = currGeomHandler.getGeometry();
-				System.out.println(g);
+//				System.out.println(g);
 				geoms.add(g);
 
 				// reset to indicate no longer parsing geometry
