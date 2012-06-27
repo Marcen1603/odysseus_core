@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test.desc;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
@@ -13,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 
@@ -109,6 +114,20 @@ public class DashboardPartDescriptorTest {
 		
 		assertEquals(desc.getImage(), image);
 		assertTrue(desc.hasImage());
+	}
+	
+	@Test
+	public void testCreateDefaultConfiguration() {
+		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
+		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
+		
+		Configuration configuration = desc.createDefaultConfiguration();
+		
+		assertNotNull(configuration);
+		
+		for( SettingDescriptor<?> settingDescriptor : settingDescriptors ) {
+			assertEquals(configuration.get(settingDescriptor.getName()).get(), settingDescriptor.getDefaultValue());
+		}
 	}
 	
 	private static List<SettingDescriptor<?>> newEmptySettingDescriptorList() {

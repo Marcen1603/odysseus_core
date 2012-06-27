@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
+
 public final class SettingDescriptor<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SettingDescriptor.class);
@@ -53,5 +55,9 @@ public final class SettingDescriptor<T> {
 	
 	public boolean isEditable() {
 		return isEditable;
+	}
+	
+	public Setting<T> createSetting() {
+		return new Setting<T>(this);
 	}
 }

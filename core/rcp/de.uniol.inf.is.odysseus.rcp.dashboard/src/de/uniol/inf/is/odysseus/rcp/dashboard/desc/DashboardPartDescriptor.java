@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 
 public final class DashboardPartDescriptor {
 	
@@ -22,7 +23,7 @@ public final class DashboardPartDescriptor {
 
 	private static final String DEFAULT_DESCRIPTION = "DashboardPart description for";
 	
-	private final Map<String, SettingDescriptor<?>> settings;
+	private final Map<String, SettingDescriptor<?>> settingDescriptors;
 	private final String name;
 	private final String description;
 	private final Image image;
@@ -54,22 +55,22 @@ public final class DashboardPartDescriptor {
 			settingDescriptors = Lists.newArrayList();
 		}
 		
-		settings = createSettingsMap( settingDescriptors );
+		this.settingDescriptors = createSettingsMap( settingDescriptors );
 		
 		this.image = image;
 	}
 	
 	public ImmutableList<String> getSettingDescriptorNames() {
-		return ImmutableList.copyOf(settings.keySet());
+		return ImmutableList.copyOf(settingDescriptors.keySet());
 	}
 	
 	public Optional<SettingDescriptor<?>> getSettingDescriptor( String descName ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(descName), "Name of SettingDescriptor is null or empty!");
-		return Optional.<SettingDescriptor<?>>fromNullable(settings.get(descName));
+		return Optional.<SettingDescriptor<?>>fromNullable(settingDescriptors.get(descName));
 	}
 	
 	public boolean hasSettingDescriptor( String descName ) {
-		return settings.containsKey(descName);
+		return settingDescriptors.containsKey(descName);
 	}
 	
 	public String getName() {
@@ -89,7 +90,11 @@ public final class DashboardPartDescriptor {
 	}
 	
 	public Configuration createDefaultConfiguration() {
-		return new Configuration();
+		Map<String, Setting<?>> settings = Maps.newHashMap();
+		for( String settingDescriptor : settingDescriptors.keySet()) {
+			settings.put(settingDescriptor, settingDescriptors.get(settingDescriptor).createSetting());
+		}
+		return new Configuration(settings);
 	}
 
 	private static Map<String, SettingDescriptor<?>> createSettingsMap(List<SettingDescriptor<?>> settingDescriptors) {

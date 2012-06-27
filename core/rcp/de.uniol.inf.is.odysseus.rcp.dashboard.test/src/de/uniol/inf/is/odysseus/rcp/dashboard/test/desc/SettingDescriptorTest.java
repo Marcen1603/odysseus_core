@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 
 public class SettingDescriptorTest {
@@ -52,6 +53,15 @@ public class SettingDescriptorTest {
 		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, optional, editable);
 		assertEquals(desc.isEditable(), editable, "IsEditable differs!");
 		assertEquals(desc.isOptional(), optional, "IsOptional differs!");
+	}
+	
+	@Test
+	public void testCreateSetting() {
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, true, true);
+		
+		Setting<Integer> setting = desc.createSetting();
+		assertNotNull(setting);
+		assertEquals(setting.get(), (Integer)100);
 	}
 	
 	@SuppressWarnings("unused")
