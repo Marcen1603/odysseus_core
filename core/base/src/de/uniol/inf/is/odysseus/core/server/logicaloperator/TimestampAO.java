@@ -24,8 +24,21 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
 
+	// To be used if timestamps are given in one attribute
 	private SDFAttribute startTimestamp;
 	private SDFAttribute endTimestamp;
+	
+	// To be used if timestamps are seperated
+	private SDFAttribute startTimestampYear;
+	private SDFAttribute startTimestampMonth;
+	private SDFAttribute startTimestampDay;
+	private SDFAttribute startTimestampHour;
+	private SDFAttribute startTimestampMinute;
+	private SDFAttribute startTimestampSecond;
+	private SDFAttribute startTimestampMillisecond;
+	private int factor;
+
+	
 	private boolean isUsingSystemTime;
 	private boolean isUsingNoTime;
 
@@ -107,6 +120,78 @@ public class TimestampAO extends UnaryLogicalOp {
 	
 	public boolean isUsingNoTime(){
 		return this.isUsingNoTime;
+	}
+
+	public SDFAttribute getStartTimestampYear() {
+		return startTimestampYear;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "YEAR", isList = false, optional = true)
+	public void setStartTimestampYear(SDFAttribute startTimestampYear) {
+		this.startTimestampYear = startTimestampYear;
+	}
+
+	public SDFAttribute getStartTimestampMonth() {
+		return startTimestampMonth;
+	}
+	
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MONTH", isList = false, optional = true)
+	public void setStartTimestampMonth(SDFAttribute startTimestampMonth) {
+		this.startTimestampMonth = startTimestampMonth;
+	}
+
+	public SDFAttribute getStartTimestampDay() {
+		return startTimestampDay;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DAY", isList = false, optional = true)
+	public void setStartTimestampDay(SDFAttribute startTimestampDay) {
+		this.startTimestampDay = startTimestampDay;
+	}
+
+	public SDFAttribute getStartTimestampHour() {
+		return startTimestampHour;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "HOUR", isList = false, optional = true)
+	public void setStartTimestampHour(SDFAttribute startTimestampHour) {
+		this.startTimestampHour = startTimestampHour;
+	}
+
+	public SDFAttribute getStartTimestampMinute() {
+		return startTimestampMinute;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MINUTE", isList = false, optional = true)
+	public void setStartTimestampMinute(SDFAttribute startTimestampMinute) {
+		this.startTimestampMinute = startTimestampMinute;
+	}
+
+	public SDFAttribute getStartTimestampSecond() {
+		return startTimestampSecond;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SECOND", isList = false, optional = true)
+	public void setStartTimestampSecond(SDFAttribute startTimestampSecond) {
+		this.startTimestampSecond = startTimestampSecond;
+	}
+
+	public SDFAttribute getStartTimestampMillisecond() {
+		return startTimestampMillisecond;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MILLISECOND", isList = false, optional = true)
+	public void setStartTimestampMillisecond(SDFAttribute startTimestampMillisecond) {
+		this.startTimestampMillisecond = startTimestampMillisecond;
+	}
+
+	public int getFactor() {
+		return factor;
+	}
+
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "FACTOR", isList = false, optional = true)
+	public void setFactor(int factor) {
+		this.factor = factor;
 	}
 
 	@Override
