@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -8,10 +9,9 @@ import org.osgi.framework.BundleContext;
  */
 public class DashboardPlugIn extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.dashboard"; //$NON-NLS-1$
-
-	// The shared instance
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.dashboard";
+	public static final String EXTENSION_POINT_ID = "de.uniol.inf.is.odysseus.rcp.DashboardPart";
+	
 	private static DashboardPlugIn plugin;
 	
 	/**
@@ -28,7 +28,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		DashboardPartExtensionPointResolver.resolve();
+		DashboardPartExtensionPointResolver.execute(Platform.getExtensionRegistry());
 	}
 
 	/*
@@ -38,6 +38,8 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		
+		DashboardPartRegistry.unregisterAll();
 	}
 
 	/**
@@ -48,5 +50,5 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public static DashboardPlugIn getDefault() {
 		return plugin;
 	}
-
+	
 }
