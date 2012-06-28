@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Dashboard
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn
 Bundle-Vendor: Timo Michelsen
@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.rcp.dashboard

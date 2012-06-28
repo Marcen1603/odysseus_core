@@ -27,6 +27,8 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		DashboardPartExtensionPointResolver.resolve();
 	}
 
 	/*

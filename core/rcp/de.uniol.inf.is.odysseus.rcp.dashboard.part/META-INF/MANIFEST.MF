@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Default Dashboard Part
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.uniol.inf.is.odysseus.rcp.dashboard

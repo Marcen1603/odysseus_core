@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.rcp.DashboardPart" name="Dashboard Part Extension Point" schema="schema/de.uniol.inf.is.odysseus.rcp.DashboardPart.exsd"/>
+
+</plugin>

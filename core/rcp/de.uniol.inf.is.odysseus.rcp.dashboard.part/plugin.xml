@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.SampleDashboardPart"
+            description="A sample for creating dashboard parts"
+            name="de.uniol.inf.is.odysseus.rcp.dashboard.part.SampleDashboardPart">
+         <setting
+               defaultValue="Default"
+               description="Sample setting in string type"
+               isEditable="true"
+               isOptional="false"
+               name="StringSetting"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="42"
+               description="Some sample setting in integer type"
+               isEditable="true"
+               isOptional="false"
+               name="IntegerSetting"
+               type="Integer">
+         </setting>
+      </dashboardPart>
+   </extension>
+
+</plugin>

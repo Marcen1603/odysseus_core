@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="de.uniol.inf.is.odysseus.rcp.dashboard" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="de.uniol.inf.is.odysseus.rcp.dashboard" id="de.uniol.inf.is.odysseus.rcp.DashboardPart" name="Dashboard Part Extension Point"/>
+      </appinfo>
+      <documentation>
+         Extension Point for adding new types of parts for Dashboards.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="dashboardPart"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dashboardPart">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="setting"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the dashboardPart
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Optional text for describing the dashboard part further.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Class, which implements the DashboardPart. Must have a default-constructor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="image" type="string">
+            <annotation>
+               <documentation>
+                  Image to show in wizards.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="setting">
+      <annotation>
+         <documentation>
+            Custom setting to configure dashboardParts.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique name of this setting
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Type of setting. Allowed are Integer, Long, Float, Double, String, Boolean
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultValue" type="string">
+            <annotation>
+               <documentation>
+                  Default value to use as first value in used dashboard parts. Input as string, but it will be tried to convert it to given type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isOptional" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Sets, if this setting have to have a value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isEditable" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Sets, if the setting can be changed after the dashboardpart was created.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>
