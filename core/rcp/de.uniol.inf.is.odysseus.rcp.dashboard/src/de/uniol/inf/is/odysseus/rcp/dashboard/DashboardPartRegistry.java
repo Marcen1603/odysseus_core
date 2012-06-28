@@ -40,6 +40,7 @@ public class DashboardPartRegistry {
 		Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
 		
 		registeredParts.put(descriptor.getName(), new Registration(dashboardPartClass, descriptor));
+		LOG.debug("Registered DashboardPart {}.", descriptor.getName());
 	}
 	
 	public static void unregister( Class<? extends IDashboardPart> dashboardPartClass ) {
@@ -58,6 +59,7 @@ public class DashboardPartRegistry {
 		
 		if( registeredParts.containsKey(dashboardPartName) ) {
 			registeredParts.remove(dashboardPartName);
+			LOG.debug("Unregistered DashboardPart {}.", dashboardPartName);
 		} else {
 			LOG.warn("Tried to unregister unknown DashboardPart " + dashboardPartName);
 		}
@@ -116,6 +118,7 @@ public class DashboardPartRegistry {
 			IDashboardPart instance = optInstance.get();
 			DashboardPartDescriptor descriptor = reg.descriptor;
 			if( instance.init(descriptor.createDefaultConfiguration()) ) {
+				LOG.debug("Created DashboardPart-instance of {}.", dashboardPartName);
 				return instance;
 			}
 			
