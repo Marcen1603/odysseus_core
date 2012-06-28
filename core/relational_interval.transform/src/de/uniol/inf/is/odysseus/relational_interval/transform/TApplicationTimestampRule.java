@@ -16,12 +16,13 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -36,11 +37,26 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
-		int pos = timestampAO.getInputSchema().indexOf(timestampAO.getStartTimestamp());
-		int posEnd = timestampAO.hasEndTimestamp() ? timestampAO.getInputSchema().indexOf(timestampAO.getEndTimestamp()) : -1;
+		SDFSchema schema =  timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
-		RelationalTimestampAttributeTimeIntervalMFactory mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd, clearEnd); 
-	 
+		int pos = schema.indexOf(timestampAO.getStartTimestamp());
+		RelationalTimestampAttributeTimeIntervalMFactory mUpdater;
+		if (pos > 0){
+			int posEnd = timestampAO.hasEndTimestamp() ? timestampAO.getInputSchema().indexOf(timestampAO.getEndTimestamp()) : -1;
+			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd, clearEnd); 
+		}else{
+			
+			int year = schema.indexOf(timestampAO.getStartTimestampYear());
+			int month = schema.indexOf(timestampAO.getStartTimestampMonth());
+			int day = schema.indexOf(timestampAO.getStartTimestampDay());
+			int hour = schema.indexOf(timestampAO.getStartTimestampHour());
+			int minute = schema.indexOf(timestampAO.getStartTimestampMinute());
+			int second = schema.indexOf(timestampAO.getStartTimestampSecond());
+			int millisecond = schema.indexOf(timestampAO.getStartTimestampMillisecond());
+			int factor = timestampAO.getFactor();
+			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(year, month, day, hour, minute,second, millisecond, factor, clearEnd);
+		}
+		
 		MetadataUpdatePO<?,?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(mUpdater);
 		po.setOutputSchema(timestampAO.getOutputSchema());
 		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(timestampAO, po);

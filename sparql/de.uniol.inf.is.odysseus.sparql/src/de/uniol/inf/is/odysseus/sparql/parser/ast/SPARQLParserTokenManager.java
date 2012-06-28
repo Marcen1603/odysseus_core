@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class SPARQLParserTokenManager implements SPARQLParserConstants
 {
 
