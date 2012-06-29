@@ -2,5 +2,16 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.uniol.inf.is.odysseus.rcp.DashboardPart" name="Dashboard Part Extension Point" schema="schema/de.uniol.inf.is.odysseus.rcp.DashboardPart.exsd"/>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardPartWizard"
+            icon="icons/dashboardPart.jpg"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard"
+            name="New Dashboard Part Wizard"
+            project="false">
+      </wizard>
+   </extension>
 
 </plugin>

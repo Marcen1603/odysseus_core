@@ -13,4 +13,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp.dashboard
 Import-Package: de.uniol.inf.is.odysseus.core.metadata,
- de.uniol.inf.is.odysseus.rcp.viewer.model.stream
+ de.uniol.inf.is.odysseus.rcp.viewer.model.stream,
+ org.eclipse.ui.dialogs
