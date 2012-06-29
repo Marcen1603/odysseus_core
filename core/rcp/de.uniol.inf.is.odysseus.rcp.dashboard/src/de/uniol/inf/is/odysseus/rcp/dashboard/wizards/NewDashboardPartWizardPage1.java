@@ -19,4 +19,5 @@ public class NewDashboardPartWizardPage1 extends WizardNewFileCreationPage {
 		setFileName("DashboardPart.prt");
 		setPageComplete(validatePage());
 	}
+	
 }
