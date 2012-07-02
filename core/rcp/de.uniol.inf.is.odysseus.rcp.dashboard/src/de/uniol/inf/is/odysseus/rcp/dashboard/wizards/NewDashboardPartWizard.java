@@ -22,6 +22,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
 	
 	private NewDashboardPartWizardPage1 page1;
+	private NewDashboardPartWizardPage2 page2;
 	
 	public NewDashboardPartWizard() {
 		super();
@@ -31,12 +32,14 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		page1 = new NewDashboardPartWizardPage1("New Dashboard Part", selection);
+		page1 = new NewDashboardPartWizardPage1("Select file name", selection);
+		page2 = new NewDashboardPartWizardPage2("Select type of Dashboard Part");
 	}
 	
 	@Override
 	public void addPages() {
 		addPage(page1);
+		addPage(page2);
 	}
 
 	@Override
