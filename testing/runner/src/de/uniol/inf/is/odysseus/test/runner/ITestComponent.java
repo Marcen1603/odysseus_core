@@ -9,7 +9,7 @@ package de.uniol.inf.is.odysseus.test.runner;
  *
  */
 public interface ITestComponent {
-	
+	public void setUp();
 	public Object startTesting(String[] args);
 	
 }

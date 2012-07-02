@@ -6,10 +6,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * TestComponent for running tests in nexmark.
- * Nexmark usually uses files for repeating the same data.
+ * Wrapper class for an implementation of ITestComponent.
  * 
- * @author Timo Michelsen
+ * @author Timo Michelsen, Alexander Funk
  *
  */
 public class TestComponentRunner extends Thread {
@@ -26,6 +25,8 @@ public class TestComponentRunner extends Thread {
 		setName("TestComponentRunner:" + component);
 		this.component = component;
 		this.args = args;
+		
+		component.setUp();
 	}
 	
 	@Override

@@ -270,4 +270,10 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 		return NEXMARK_TESTS_NAME;
 	}
 
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
