@@ -4,7 +4,7 @@ Bundle-Name: Spatial
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.spatial;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Service-Component: OSGI-INF/SpatialDatatypeProvider.xml, OSGI-INF/SpatialFunctionProvider.xml, OSGI-INF/SpatialByteHandler.xml 
+Service-Component: OSGI-INF/* 
 Export-Package: de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.geom,
  de.uniol.inf.is.odysseus.spatial.access,
@@ -13,5 +13,4 @@ Export-Package: de.uniol.inf.is.odysseus.spatial,
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
  org.osgeo.proj4j;bundle-version="1.0.0",
- com.vividsolutions.jts;bundle-version="1.0.0",
- org.apache.xerces;bundle-version="2.9.0"
+ com.vividsolutions.jts;bundle-version="1.0.0"

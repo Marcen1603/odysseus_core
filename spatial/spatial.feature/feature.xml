@@ -17,6 +17,17 @@
    </license>
 
    <requires>
+      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="org.osgeo.proj4j" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.vividsolutions.jts" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.context"/>
+      <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
+      <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
    </requires>
 
