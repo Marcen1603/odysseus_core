@@ -33,9 +33,5 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf.unit,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
-Service-Component: OSGI-INF/DataHandlerRegistry.xml, OSGI-INF/DateHandler.xml, OSGI-INF/DoubleHandler.xml, OSGI-INF/IntegerHandler.xml, OSGI-INF/StringHandler.xml, 
- OSGI-INF/LongHandler.xml, OSGI-INF/BooleanHandler.xml, OSGI-INF/TupleHandler.xml, 
- OSGI-INF/ObjectHandlerRegistry.xml, OSGI-INF/ByteBufferHandler.xml, OSGI-INF/InputDataHandlerRegistry.xml, 
- OSGI-INF/AccessConnectionHandlerRegistry.xml, OSGI-INF/NioConnectionHandler.xml, OSGI-INF/MarkerByteBufferHandler.xml, 
- OSGI-INF/SizeByteBufferHandler.xml, OSGI-INF/TransportHandlerRegistry.xml, OSGI-INF/ProtocolHandlerRegistry.xml
+Service-Component: OSGI-INF/*
 
