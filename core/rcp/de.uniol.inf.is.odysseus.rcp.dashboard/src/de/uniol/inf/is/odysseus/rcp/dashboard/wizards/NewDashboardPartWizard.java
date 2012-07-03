@@ -23,23 +23,27 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	
 	private NewDashboardPartWizardPage1 page1;
 	private NewDashboardPartWizardPage2 page2;
+	private NewDashboardPartWizardPage3 page3;
 	
 	public NewDashboardPartWizard() {
 		super();
 		setWindowTitle("New Odysseus Script");
-		setNeedsProgressMonitor(true);
+		
+		
 	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		page1 = new NewDashboardPartWizardPage1("Select file name", selection);
 		page2 = new NewDashboardPartWizardPage2("Select type of Dashboard Part");
+		page3 = new NewDashboardPartWizardPage3("Select query");
 	}
 	
 	@Override
 	public void addPages() {
 		addPage(page1);
 		addPage(page2);
+		addPage(page3);
 	}
 
 	@Override
