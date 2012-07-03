@@ -65,8 +65,14 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 						+ operator.getTransportHandler() + " found.");
 			}
 
-			IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(
-					operator.getDataHandler(), operator.getOutputSchema());
+			IDataHandler dataHandler = null;
+			if (operator.getInputSchema() != null){
+				dataHandler = DataHandlerRegistry.getDataHandler(
+						operator.getDataHandler(), operator.getInputSchema());
+			}else{
+				dataHandler =  DataHandlerRegistry.getDataHandler(
+						operator.getDataHandler(), operator.getOutputSchema());
+			}
 			if (dataHandler == null) {
 				throw new TransformationException("No data handler "
 						+ operator.getDataHandler() + " found.");
@@ -110,8 +116,16 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 				IInputHandler input = inputHandlerPrototype
 						.getInstance(operator.getOptionsMap());
 
-				IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(
-						operator.getDataHandler(), operator.getOutputSchema());
+				IDataHandler dataHandler = null;
+				if (operator.getInputSchema() != null){
+					dataHandler = DataHandlerRegistry.getDataHandler(
+							operator.getDataHandler(), operator.getInputSchema());
+				}else{
+					dataHandler =  DataHandlerRegistry.getDataHandler(
+							operator.getDataHandler(), operator.getOutputSchema());
+				}
+				
+				
 				if (dataHandler == null) {
 					throw new TransformationException("No data handler "
 							+ operator.getDataHandler() + " found.");
