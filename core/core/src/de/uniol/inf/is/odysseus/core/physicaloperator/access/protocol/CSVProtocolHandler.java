@@ -41,9 +41,9 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 					}
 
 				}
-
-				return getDataHandler().readData(ret);
 			}
+			ret.add(elem.toString());
+			return getDataHandler().readData(ret);
 		}
 		return null;
 	}
