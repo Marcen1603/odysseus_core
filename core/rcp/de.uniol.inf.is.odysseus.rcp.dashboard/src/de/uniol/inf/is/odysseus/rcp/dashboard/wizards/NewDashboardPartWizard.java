@@ -45,7 +45,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		addPage(page2);
 		addPage(page3);
 	}
-
+	
 	@Override
 	public boolean performFinish() {
 		try {

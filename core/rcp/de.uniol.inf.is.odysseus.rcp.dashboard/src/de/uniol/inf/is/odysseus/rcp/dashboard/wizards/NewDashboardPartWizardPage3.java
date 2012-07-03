@@ -32,6 +32,6 @@ public class NewDashboardPartWizardPage3 extends WizardPage {
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(rootComposite);
-		setPageComplete(true);
+		setPageComplete(false);
 	}
 }

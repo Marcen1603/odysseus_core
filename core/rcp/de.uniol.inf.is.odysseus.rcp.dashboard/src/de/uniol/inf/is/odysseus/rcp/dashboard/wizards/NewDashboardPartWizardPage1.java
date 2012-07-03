@@ -19,7 +19,6 @@ public class NewDashboardPartWizardPage1 extends WizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		setFileName("DashboardPart." + DashboardPlugIn.DASHBOARD_PART_EXTENSION);
-		setPageComplete(false);
 	}
 	
 }
