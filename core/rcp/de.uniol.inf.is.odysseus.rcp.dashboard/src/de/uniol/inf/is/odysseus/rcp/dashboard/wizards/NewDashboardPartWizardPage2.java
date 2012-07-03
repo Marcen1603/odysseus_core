@@ -37,14 +37,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 public class NewDashboardPartWizardPage2 extends WizardPage {
 
 	private static class SettingValuePair {
-		public String setting;
+		public SettingDescriptor<?> setting;
 		public String value;
-		public String description;
 
-		public SettingValuePair(String setting, String value, String description) {
+		public SettingValuePair(SettingDescriptor<?> setting) {
 			this.setting = setting;
-			this.value = value;
-			this.description = description;
+			this.value = setting.getDefaultValue() != null ? setting.getDefaultValue().toString() : "";
 		}
 	}
 
@@ -141,7 +139,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 	private void selectSetting(ISelection selection) {
 		IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 		SettingValuePair pair = (SettingValuePair)structuredSelection.getFirstElement();
-		settingDescriptionLabel.setText(pair != null ? pair.description : "");
+		settingDescriptionLabel.setText(pair != null ? pair.setting.getDescription() : "");
 	}
 
 	private void refreshSettingsTable(String dashboardName) {
@@ -179,7 +177,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 				Optional<SettingDescriptor<?>> optSettingDescriptor = descriptor.getSettingDescriptor(settingDescriptorName);
 				if( optSettingDescriptor.isPresent() ) {
 					SettingDescriptor<?> settingDescriptor = optSettingDescriptor.get();
-					result.add(new SettingValuePair(settingDescriptorName, toString(settingDescriptor.getDefaultValue()), settingDescriptor.getDescription()));
+					result.add(new SettingValuePair(settingDescriptor));
 				} else {
 					LOG.error("Could not find SettingDescriptor {} in DashboardPart {}", settingDescriptorName, dashboardPartName);
 				}
@@ -211,7 +209,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 			@Override
 			public void update(ViewerCell cell) {
 				SettingValuePair pair = (SettingValuePair)cell.getElement();
-				cell.setText(pair.setting);
+				cell.setText(pair.setting.getName());
 			}
 		});
 		
@@ -233,13 +231,5 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 
 	private static List<String> determineDashboardPartNames() {
 		return DashboardPartRegistry.getDashboardPartNames();
-	}
-	
-	private static String toString(Object obj) {
-		if( obj == null ) {
-			return "";
-		} else {
-			return obj.toString();
-		}
 	}
 }
