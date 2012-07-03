@@ -22,6 +22,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -46,6 +47,10 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 
 		public SettingValuePair(SettingDescriptor<?> setting) {
 			this.setting = setting;
+			reset();
+		}
+		
+		public void reset() {
 			this.value = setting.getDefaultValue() != null ? setting.getDefaultValue().toString() : "";
 		}
 	}
@@ -114,18 +119,31 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 			}
 			
 		});
-
-		settingDescriptionLabel = new Label(rootComposite, SWT.BORDER);
+		
+		Composite settingDescriptionComposite = new Composite(rootComposite, SWT.NONE);
 		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
 		gd2.heightHint = DESCRIPTION_LABEL_HEIGHT;
-		settingDescriptionLabel.setLayoutData(gd2);
+		settingDescriptionComposite.setLayoutData(gd2);
+		settingDescriptionComposite.setLayout(new GridLayout(2, false));
+
+		settingDescriptionLabel = new Label(settingDescriptionComposite, SWT.BORDER);
+		settingDescriptionLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		settingDescriptionLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		settingDescriptionLabel.setText("");
+		
+		Button resetSettingsButton = new Button(settingDescriptionComposite, SWT.PUSH);
+		resetSettingsButton.setText("Reset settings");
+		resetSettingsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				resetSettings();
+			}
+		});
 
 		selectDashboardPart(0);
 		finishCreation(rootComposite);
 	}
-
+	
 	private void finishCreation(Composite rootComposite) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -150,6 +168,14 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 		settings = getSettings(dashboardName);
 		
 		settingsTable.setInput(settings);
+		settingsTable.refresh();
+	}
+
+	private void resetSettings() {
+		for( SettingValuePair pair : settings ) {
+			pair.reset();
+		}
+		
 		settingsTable.refresh();
 	}
 
