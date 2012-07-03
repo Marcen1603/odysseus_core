@@ -1,13 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
-import java.util.List;
+import org.eclipse.core.resources.IFile;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
-	private List<String> query;
+	private IFile queryFile;
 	
 	@Override
 	public boolean init(Configuration configuration) {
@@ -20,15 +20,14 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
-
+	
 	@Override
-	public void setQuery(List<String> queryLines) {
-		this.query = queryLines;
+	public IFile getQueryFile() {
+		return queryFile;
 	}
 
 	@Override
-	public ImmutableList<String> getQuery() {
-		return ImmutableList.copyOf(query);
+	public void setQueryFile(IFile file) {
+		this.queryFile = Preconditions.checkNotNull(file, "QueryFile for DashboardPart must not be null!");
 	}
-
 }

@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
-
-import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
@@ -45,11 +43,11 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void setQuery(List<String> queryLines) {
+	public void setQueryFile(IFile file) {
 	}
 
 	@Override
-	public ImmutableList<String> getQuery() {
+	public IFile getQueryFile() {
 		return null;
 	}
 

@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
-
-import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
@@ -39,20 +37,20 @@ public class SampleDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void setQuery(List<String> queryLines) {
-	}
-
-	@Override
-	public ImmutableList<String> getQuery() {
-		return null;
-	}
-
-	@Override
 	public void streamElementRecieved(Object element, int port) {
 	}
 
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
+	}
+
+	@Override
+	public void setQueryFile(IFile file) {
+	}
+
+	@Override
+	public IFile getQueryFile() {
+		return null;
 	}
 
 }
