@@ -100,7 +100,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public Tuple<?> readData(List<String> input) {
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(), false);
 		for (int i=0;i<input.size();i++){
-			tuple.addAttributeValue(i, this.dataHandlers[i].readData(input.get(i)));
+			tuple.setAttribute(i, this.dataHandlers[i].readData(input.get(i)));
 		}
 		return tuple;
 	}
