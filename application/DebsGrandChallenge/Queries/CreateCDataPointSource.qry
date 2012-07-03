@@ -5,7 +5,7 @@
 gchSource := ACCESS({SOURCE = 'GrandChallengeDataPoint',
 PORT=9999,
 ADAPTER='GoogleProtoBuf',
-OPTIONS=['type:debs.challenge.msg.CDataPoint'],
+OPTIONS=[['type','debs.challenge.msg.CDataPoint']],
 SCHEMA=[['ts','StartTimeStamp'],
 	['index','long'],
 	['mf01','integer'],
