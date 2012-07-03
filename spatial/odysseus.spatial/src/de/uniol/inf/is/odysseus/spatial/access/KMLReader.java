@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
@@ -41,11 +40,12 @@ public class KMLReader {
 	
 	public KMLReader() throws ParserConfigurationException, SAXException {
 		
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-	    spf.setValidating(false);
-
-	    SAXParser parser = spf.newSAXParser();
-	    xr = parser.getXMLReader();
+//		SAXParserFactory spf = SAXParserFactory.newInstance();
+//	    spf.setValidating(false);
+//
+//	    SAXParser parser = spf.newSAXParser();
+//	    xr = parser.getXMLReader();
+	    xr = XMLReaderFactory.createXMLReader();
 		
 		xr.setContentHandler(kmlHandler);
 		xr.setErrorHandler(kmlHandler);
