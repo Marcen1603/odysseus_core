@@ -36,7 +36,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		page1 = new NewDashboardPartWizardPage1("Select file name", selection);
 		page2 = new NewDashboardPartWizardPage2("Select type of Dashboard Part");
-		page3 = new NewDashboardPartWizardPage3("Select query");
+		page3 = new NewDashboardPartWizardPage3("Select query", page1);
 	}
 	
 	@Override
