@@ -57,7 +57,7 @@ public class DashboardPartExtensionPointResolver {
 		String isOptional = e.getAttribute("isOptional");
 		String isEditable = e.getAttribute("isEditable");
 
-		return new SettingDescriptor<Object>(name, description, convertValue(defaultValue, type), Boolean.valueOf(isOptional), Boolean.valueOf(isEditable));
+		return new SettingDescriptor<Object>(name, description, type, convertValue(defaultValue, type), Boolean.valueOf(isOptional), Boolean.valueOf(isEditable));
 	}
 
 	private static Class<? extends IDashboardPart> checkAndGetDashboardPartClass(Object obj) throws Exception {

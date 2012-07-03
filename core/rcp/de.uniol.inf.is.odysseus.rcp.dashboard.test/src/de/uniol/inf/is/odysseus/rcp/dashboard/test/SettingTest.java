@@ -32,6 +32,6 @@ public class SettingTest {
 	}
 	
 	private static SettingDescriptor<Integer> newSettingDescriptor() {
-		return new SettingDescriptor<Integer>("Name", "Description", 100, true, true);
+		return new SettingDescriptor<Integer>("Name", "Description", "Integer", 100, true, true);
 	}
 }

@@ -13,35 +13,35 @@ public class SettingDescriptorTest {
 
 	@Test
 	public void testConstructor() {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, true, true);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", "Integer", 100, true, true);
 		assertNotNull(desc, "Constructor of SettingDescriptor failed.");
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testMissingName() {
-		new SettingDescriptor<Integer>(null, "Description", 100, true, false);
+		new SettingDescriptor<Integer>(null, "Description", "Integer", 100, true, false);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testEmptyName() {
-		new SettingDescriptor<Integer>("", "Description", 100, true, false);
+		new SettingDescriptor<Integer>("", "Description", "Integer",100, true, false);
 	}
 
 	@Test
 	public void testMissingDescription() {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", null, 100, true, true);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", null, "Integer",100, true, true);
 		assertFalse( Strings.isNullOrEmpty(desc.getDescription()));
 	}
 
 	@Test
 	public void testEmptyDescription() {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "", 100, true, true);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "", "Integer", 100, true, true);
 		assertFalse( Strings.isNullOrEmpty(desc.getDescription()));
 	}
 
 	@Test
 	public void testGetter() {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, true, true);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", "Integer",100, true, true);
 		
 		assertEquals(desc.getDefaultValue(), (Integer)100, "Default value differs!");
 		assertEquals(desc.getDescription(), "Description", "Description differs!");
@@ -50,14 +50,14 @@ public class SettingDescriptorTest {
 	
 	@Test(dataProvider = "settingsDataProvider")
 	public void testSettings( boolean optional, boolean editable ) {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, optional, editable);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", "Integer",100, optional, editable);
 		assertEquals(desc.isEditable(), editable, "IsEditable differs!");
 		assertEquals(desc.isOptional(), optional, "IsOptional differs!");
 	}
 	
 	@Test
 	public void testCreateSetting() {
-		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", 100, true, true);
+		SettingDescriptor<Integer> desc = new SettingDescriptor<Integer>("Name", "Description", "Integer",100, true, true);
 		
 		Setting<Integer> setting = desc.createSetting();
 		assertNotNull(setting);

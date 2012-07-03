@@ -146,7 +146,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		finishCreation(rootComposite);
 	}
 	
-	public String getSelectedDashboardPart() {
+	public String getSelectedDashboardPartName() {
 		return choosePartNameCombo.getText();
 	}
 	

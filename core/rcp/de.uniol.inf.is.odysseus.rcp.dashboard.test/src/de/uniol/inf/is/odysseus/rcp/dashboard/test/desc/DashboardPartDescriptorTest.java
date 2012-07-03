@@ -136,16 +136,16 @@ public class DashboardPartDescriptorTest {
 	
 	private static List<SettingDescriptor<?>> newSettingDescriptorList() {
 		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
-		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", 100, true, true));
-		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "Hallo", false, false));
+		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", "Integer", 100, true, true));
+		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "String", "Hallo", false, false));
 		return settingDescriptors;
 	}
 	
 	private static List<SettingDescriptor<?>> newSettingDescriptorListWithDuplicates() {
 		List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
-		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", 100, true, true));
-		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "Hallo", false, false));
-		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Another Description of setting2", "Hallo Again", false, true));
+		settingDescriptors.add(new SettingDescriptor<Integer>("Setting1", "Description of setting1", "Integer", 100, true, true));
+		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "String", "Hallo", false, false));
+		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Another Description of setting2", "String", "Hallo Again", false, true));
 		return settingDescriptors;
 	}
 	

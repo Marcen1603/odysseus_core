@@ -16,14 +16,19 @@ public final class SettingDescriptor<T> {
 	
 	private final String name;
 	private final String description;
+	private final String type;
+	
 	private final T defaultValue;
 	private final boolean isOptional;
 	private final boolean isEditable;
 	
-	public SettingDescriptor( String name, String description, T defaultValue, boolean optional, boolean editable ) {
+	public SettingDescriptor( String name, String description, String type, T defaultValue, boolean optional, boolean editable ) {
 		
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of SettingDescriptor must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(type), "Type of SettingDescriptor must not be null or empty!");
+		
 		this.name = name;
+		this.type = type;
 		
 		if( Strings.isNullOrEmpty(description)) {
 			LOG.warn("Description of Setting " + name + " is null or empty!");
@@ -59,5 +64,9 @@ public final class SettingDescriptor<T> {
 	
 	public Setting<T> createSetting() {
 		return new Setting<T>(this);
+	}
+	
+	public String getType() {
+		return type;
 	}
 }

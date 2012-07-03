@@ -58,13 +58,16 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			dashboardPartFile.create(null, IResource.NONE, null);
 
 			System.out.println("Creation of DashboardPartFile : " + dashboardPartFile.getName());
-			System.out.println("DashboardPartType             : " + partTypePage.getSelectedDashboardPart());
+			System.out.println("DashboardPartType             : " + partTypePage.getSelectedDashboardPartName());
 			System.out.println("Settings");
 			Map<String, String> settings = partTypePage.getSelectedSettings();
 			for( String key : settings.keySet() ) {
 				System.out.println("\t" + key + " = " + settings.get(key));
 			}
 			System.out.println("Query file                    : " + queryFilePage.getQueryFile().getName());
+			
+//			IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
+//			Configuration defaultConfiguration = part.getConfiguration();
 			
 			return true;
 		} catch (CancelException ex) {

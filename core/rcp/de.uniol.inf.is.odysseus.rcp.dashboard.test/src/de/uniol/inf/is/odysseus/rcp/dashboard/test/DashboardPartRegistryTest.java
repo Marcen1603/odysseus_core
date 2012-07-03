@@ -133,16 +133,16 @@ public class DashboardPartRegistryTest {
 	}
 
 	private static DashboardPartDescriptor newDashboardPartDescriptor() {
-		SettingDescriptor<Integer> setting1 = newSettingDescriptor("Setting1", 100);
-		SettingDescriptor<String> setting2 = newSettingDescriptor("Setting2", "Hallo");
-		SettingDescriptor<Double> setting3 = newSettingDescriptor("Setting3", 20.0);
+		SettingDescriptor<Integer> setting1 = newSettingDescriptor("Setting1", "Integer", 100);
+		SettingDescriptor<String> setting2 = newSettingDescriptor("Setting2", "String", "Hallo");
+		SettingDescriptor<Double> setting3 = newSettingDescriptor("Setting3", "Double", 20.0);
 
 		List<SettingDescriptor<?>> settings = Lists.<SettingDescriptor<?>> newArrayList(setting1, setting2, setting3);
 
 		return new DashboardPartDescriptor("SomeDashboardPart", "Description", settings);
 	}
 
-	private static <T> SettingDescriptor<T> newSettingDescriptor(String settingName, T defaultValue) {
-		return new SettingDescriptor<T>(settingName, "Description", defaultValue, false, true);
+	private static <T> SettingDescriptor<T> newSettingDescriptor(String settingName, String type, T defaultValue) {
+		return new SettingDescriptor<T>(settingName, "Description", type, defaultValue, false, true);
 	}
 }

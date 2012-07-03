@@ -19,8 +19,8 @@ public class ConfigurationTest {
 	
 	@BeforeTest
 	public void createSettingMap() {
-		SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", 100, true, true );
-		SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "Default", true, false);
+		SettingDescriptor<Integer> intSetting = new SettingDescriptor<Integer>("IntSetting", "Description", "Integer", 100, true, true );
+		SettingDescriptor<String> strSetting = new SettingDescriptor<String>("StrSetting", "Description 2", "String", "Default", true, false);
 		
 		settingMap = Maps.newHashMap();
 		settingMap.put(intSetting.getName(), intSetting.createSetting());
