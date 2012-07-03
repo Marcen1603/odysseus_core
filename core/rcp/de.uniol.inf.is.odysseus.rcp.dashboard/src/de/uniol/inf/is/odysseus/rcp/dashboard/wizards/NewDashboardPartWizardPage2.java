@@ -4,14 +4,17 @@ import java.util.List;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -24,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,7 +199,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		TableViewer tableViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
+		final TableViewer tableViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
 
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -224,6 +228,30 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 			}
 		});
 
+		tableViewer.setCellModifier(new ICellModifier() {
+
+			@Override
+			public boolean canModify(Object element, String property) {
+				return "settingValue".equals(property);
+			}
+
+			@Override
+			public Object getValue(Object element, String property) {
+				return ((SettingValuePair)element).value;
+			}
+
+			@Override
+			public void modify(Object element, String property, Object value) {
+				TableItem item = (TableItem)element;
+				SettingValuePair pair = (SettingValuePair)item.getData();
+				pair.value = value.toString();
+				tableViewer.update(item.getData(), null);
+			}
+			
+		});
+		
+		tableViewer.setColumnProperties(new String[] { "setting", "settingValue" });
+		tableViewer.setCellEditors(new CellEditor[] { null, new TextCellEditor(tableViewer.getTable()) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		return tableViewer;
