@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
@@ -142,6 +144,18 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 
 		selectDashboardPart(0);
 		finishCreation(rootComposite);
+	}
+	
+	public String getSelectedDashboardPart() {
+		return choosePartNameCombo.getText();
+	}
+	
+	public Map<String, String> getSelectedSettings() {
+		Map<String, String> settingMap = Maps.newHashMap();
+		for( SettingValuePair pair : settings ) {
+			settingMap.put(pair.setting.getName(), pair.value);
+		}
+		return settingMap;
 	}
 	
 	private void finishCreation(Composite rootComposite) {
