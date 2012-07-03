@@ -27,7 +27,7 @@ public class TestBundleTracker implements BundleTrackerCustomizer<Object> {
 	private FragmentTestsComponent testComp;
 	
 	public TestBundleTracker(BundleContext context, FragmentTestsComponent testComponent) {
-		track = new BundleTracker<>(context, Bundle.RESOLVED, this);
+		track = new BundleTracker<Object>(context, Bundle.RESOLVED, this);
 		this.testComp = testComponent;
 	}
 

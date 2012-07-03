@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 public class FragmentTestsComponent implements ITestComponent {
 	private static Logger LOG = LoggerFactory.getLogger(FragmentTestsComponent.class);
 
-	private List<Long> alreadyTested = new ArrayList<>();
+	private List<Long> alreadyTested = new ArrayList<Long>();
 	
 //	private SynchronizedQueue<Bundle> bundlesToTest = new SynchronizedQueue<>(100); // TODO remove capacity
 	
