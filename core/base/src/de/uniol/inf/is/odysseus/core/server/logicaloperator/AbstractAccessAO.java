@@ -25,7 +25,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String source = null;
 	private List<String> inputSchema = null;
 
-	private int port;
+	private int port = -1;
 	private String host;
 	private String login;
 	private String password;

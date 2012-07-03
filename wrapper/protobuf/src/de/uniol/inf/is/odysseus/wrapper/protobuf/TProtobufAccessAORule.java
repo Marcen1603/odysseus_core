@@ -29,8 +29,12 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 		String accessPOName = operator.getSourcename();
 		ChannelHandlerReceiverPO<?, ?> accessPO = null;
 
-		SocketAddress socketAddress = new InetSocketAddress("0.0.0.0",
-				operator.getPort());
+		int port = operator.getPort();
+		if (port <=0 ){
+			port = Integer.parseInt(operator.getOptionsMap().get("port"));
+		}
+		
+		SocketAddress socketAddress = new InetSocketAddress("0.0.0.0",port);
 		GeneratedMessage msg = ProtobufTypeRegistry.getMessageType(operator.getOptionsMap().get("type"));
 		if (msg == null){
 			throw new RuntimeException( new TransformationException("No valid type given: " +operator.getOptionsMap().get("type")));

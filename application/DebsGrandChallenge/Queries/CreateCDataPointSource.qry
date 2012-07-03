@@ -3,9 +3,8 @@
 #TRANSCFG Standard
 #QUERY
 gchSource := ACCESS({SOURCE = 'GrandChallengeDataPoint',
-PORT=9999,
-ADAPTER='GoogleProtoBuf',
-OPTIONS=[['type','debs.challenge.msg.CDataPoint']],
+WRAPPER='GoogleProtoBuf',
+OPTIONS=[['type','debs.challenge.msg.CDataPoint'],['port','9999']],
 SCHEMA=[['ts','StartTimeStamp'],
 	['index','long'],
 	['mf01','integer'],
