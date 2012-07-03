@@ -48,7 +48,8 @@ public class SpatialKMLHandler extends AbstractDataHandler<Object> {
 
 	private KMLReader reader;
 
-	private SpatialKMLHandler() throws ParserConfigurationException, SAXException {
+	// Must be public for Service
+	public SpatialKMLHandler() throws ParserConfigurationException, SAXException {
 		this.reader = new KMLReader();
 	}
 
