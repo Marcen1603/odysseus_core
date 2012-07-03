@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 
-public class NewDashboardPartWizardPage2 extends WizardPage {
+public class DashboardPartTypeSelectionPage extends WizardPage {
 
 	private static class SettingValuePair {
 		public SettingDescriptor<?> setting;
@@ -57,7 +57,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 		}
 	}
 
-	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizardPage2.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartTypeSelectionPage.class);
 	private static final int DESCRIPTION_LABEL_HEIGHT = 60;
 
 	private final List<String> dashboardPartNames;
@@ -69,7 +69,7 @@ public class NewDashboardPartWizardPage2 extends WizardPage {
 	private TableViewer settingsTable;
 	private List<SettingValuePair> settings;
 
-	public NewDashboardPartWizardPage2(String pageName) {
+	public DashboardPartTypeSelectionPage(String pageName) {
 		super(pageName);
 
 		setTitle("Choose type of DashboardPart");

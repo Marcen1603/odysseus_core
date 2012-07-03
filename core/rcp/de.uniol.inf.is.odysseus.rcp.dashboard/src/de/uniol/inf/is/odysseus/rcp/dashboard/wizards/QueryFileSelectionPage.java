@@ -31,14 +31,14 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
-public class NewDashboardPartWizardPage3 extends WizardPage {
+public class QueryFileSelectionPage extends WizardPage {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizardPage3.class);
-	private final NewDashboardPartWizardPage1 page1;
+	private static final Logger LOG = LoggerFactory.getLogger(QueryFileSelectionPage.class);
+	private final ContainerSelectionPage page1;
 	
 	private TableViewer filesTable;
 
-	protected NewDashboardPartWizardPage3(String pageName, NewDashboardPartWizardPage1 page1) {
+	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage page1) {
 		super(pageName);
 		this.page1 = page1;
 

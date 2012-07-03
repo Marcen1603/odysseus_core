@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,9 +23,9 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	private static final Logger LOG = LoggerFactory.getLogger(NewDashboardPartWizard.class);
 	
-	private NewDashboardPartWizardPage1 page1;
-	private NewDashboardPartWizardPage2 page2;
-	private NewDashboardPartWizardPage3 page3;
+	private ContainerSelectionPage containerPage;
+	private DashboardPartTypeSelectionPage partTypePage;
+	private QueryFileSelectionPage queryFilePage;
 	
 	public NewDashboardPartWizard() {
 		super();
@@ -34,30 +36,36 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		page1 = new NewDashboardPartWizardPage1("Select file name", selection);
-		page2 = new NewDashboardPartWizardPage2("Select type of Dashboard Part");
-		page3 = new NewDashboardPartWizardPage3("Select query", page1);
+		containerPage = new ContainerSelectionPage("Select file name", selection);
+		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
+		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
 	}
 	
 	@Override
 	public void addPages() {
-		addPage(page1);
-		addPage(page2);
-		addPage(page3);
+		addPage(containerPage);
+		addPage(partTypePage);
+		addPage(queryFilePage);
 	}
 	
 	@Override
 	public boolean performFinish() {
 		try {
-			String queryFileName = getQueryFileName();
+			String dashboardPartFileName = getDashboardPartFileName();
 
-			IPath path = page1.getContainerFullPath().append(queryFileName);
-			IFile newFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			newFile.create(null, IResource.NONE, null);
+			IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
+			IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			dashboardPartFile.create(null, IResource.NONE, null);
 
-			// open editor
-//			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(newFile), OdysseusRCPEditorTextPlugIn.ODYSSEUS_SCRIPT_EDITOR_ID, true);
-
+			System.out.println("Creation of DashboardPartFile : " + dashboardPartFile.getName());
+			System.out.println("DashboardPartType             : " + partTypePage.getSelectedDashboardPart());
+			System.out.println("Settings");
+			Map<String, String> settings = partTypePage.getSelectedSettings();
+			for( String key : settings.keySet() ) {
+				System.out.println("\t" + key + " = " + settings.get(key));
+			}
+			System.out.println("Query file                    : " + queryFilePage.getQueryFile().getName());
+			
 			return true;
 		} catch (CancelException ex) {
 			return false;
@@ -67,8 +75,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private String getQueryFileName() throws CancelException {
-		String queryFileName = page1.getFileName();
+	private String getDashboardPartFileName() throws CancelException {
+		String queryFileName = containerPage.getFileName();
 
 		Optional<String> optionalExtension = getFileExtension(queryFileName);
 		if (!optionalExtension.isPresent()) {

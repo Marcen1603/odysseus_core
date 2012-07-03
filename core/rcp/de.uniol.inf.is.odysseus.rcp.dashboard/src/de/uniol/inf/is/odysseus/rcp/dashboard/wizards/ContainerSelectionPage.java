@@ -6,9 +6,9 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 
-public class NewDashboardPartWizardPage1 extends WizardNewFileCreationPage {
+public class ContainerSelectionPage extends WizardNewFileCreationPage {
 
-	public NewDashboardPartWizardPage1(String pageName, IStructuredSelection selection ) {
+	public ContainerSelectionPage(String pageName, IStructuredSelection selection ) {
 		super(pageName, selection);
 		
 		setTitle("Choose project and folder");
