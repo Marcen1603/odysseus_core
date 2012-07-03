@@ -17,7 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.XMLDashboardPartHandler;
 
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
@@ -56,18 +61,17 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
 			IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			dashboardPartFile.create(null, IResource.NONE, null);
-
-			System.out.println("Creation of DashboardPartFile : " + dashboardPartFile.getName());
-			System.out.println("DashboardPartType             : " + partTypePage.getSelectedDashboardPartName());
-			System.out.println("Settings");
+			
+			IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
+			Configuration defaultConfiguration = part.getConfiguration();
 			Map<String, String> settings = partTypePage.getSelectedSettings();
 			for( String key : settings.keySet() ) {
-				System.out.println("\t" + key + " = " + settings.get(key));
-			}
-			System.out.println("Query file                    : " + queryFilePage.getQueryFile().getName());
+				defaultConfiguration.setAsString(key, settings.get(key));
+			}			
+			part.setQueryFile(queryFilePage.getQueryFile());
 			
-//			IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
-//			Configuration defaultConfiguration = part.getConfiguration();
+			IDashboardPartHandler handler = new XMLDashboardPartHandler();
+			handler.save(part, dashboardPartFile);
 			
 			return true;
 		} catch (CancelException ex) {

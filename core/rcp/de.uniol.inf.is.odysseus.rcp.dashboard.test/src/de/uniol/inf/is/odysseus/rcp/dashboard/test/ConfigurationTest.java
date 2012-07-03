@@ -90,7 +90,7 @@ public class ConfigurationTest {
 		Configuration config = new Configuration(settingMap);
 
 		config.set("IntSetting", 200);
-		config.set("StrSetting", "Moin");
+		config.setAsString("StrSetting", "Moin");
 		
 		config.resetAll();
 		

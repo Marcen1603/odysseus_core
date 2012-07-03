@@ -35,7 +35,9 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
 			Document doc = docBuilder.newDocument();
+			
 			Element rootElement = doc.createElement("DashboardPart");
+			doc.appendChild(rootElement);
 			rootElement.setAttribute("class", partClass.toString());
 			rootElement.setAttribute("queryFile", part.getQueryFile().getFullPath().toString());
 			

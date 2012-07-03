@@ -30,6 +30,14 @@ public class Configuration {
 		setting.set(value);
 	}
 	
+	public void setAsString( String settingName, String value ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
+		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
+		
+		Setting<?> setting = getSettingImpl(settingName);
+		setting.setAsString(value);
+	}
+	
 	public boolean exists( String settingName ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
 		return settings.containsKey(settingName);

@@ -29,7 +29,7 @@ public final class Setting<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void set( String stringValue ) {
+	public void setAsString( String stringValue ) {
 		value = (T) convertValue( stringValue, type );
 	}
 	
