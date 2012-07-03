@@ -21,7 +21,8 @@ class SynchronizedQueue<V> {
   public synchronized V remove() throws InterruptedException {
     while (size == 0)
       wait();
-    V r = (V) elements[head];
+    @SuppressWarnings("unchecked")
+	V r = (V) elements[head];
     head++;
     size--;
     if (head == elements.length)
