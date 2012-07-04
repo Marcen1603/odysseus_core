@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -81,7 +83,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		setMaxTuplesCount(maxTuples);
 		
 		//Create Map Background 
-		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
+		//layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
 	@Override
@@ -90,11 +92,25 @@ public class StreamMapEditor implements IStreamEditorType {
 			LOG.error("Warning: StreamMap is only for relational tuple!");
 			return;
 		}
+		LOG.info("Received Element: " + element.toString());
+		
 		for (Integer key : spatialDataIndex.keySet()) {
-			spatialDataIndex.get(key).addGeometry(
-					(Geometry) ((Tuple<?>) element).getAttribute(key));
+				
+			if( !(((Tuple<?>) element).getAttribute(key) instanceof ArrayList) ){
+				spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
+			}
+			else{
+				//spatialDataIndex.get(key).addGeometry((GeometryCollection)((Tuple<?>) element).getAttribute(key));	
+				for(Geometry g: (List<Geometry>)((Tuple<?>) element).getAttribute(key)){
+					LOG.info(g.toString());
+					spatialDataIndex.get(key).addGeometry(g);	
+				}
+				
+				
+			}
 		}
 
+		
 		tuples.add(0, (Tuple<?>) element);
 		if (tuples.size() > getMaxTuplesCount()) {
 			tuples.remove(tuples.size() - 1);
@@ -115,6 +131,7 @@ public class StreamMapEditor implements IStreamEditorType {
 						}
 					});
 		}
+		
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public class SpatialDatatypeProvider {
 						SDFSpatialDatatype.SPATIAL_GEOMETRY);
 			} catch (DataDictionaryException e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 	}
 

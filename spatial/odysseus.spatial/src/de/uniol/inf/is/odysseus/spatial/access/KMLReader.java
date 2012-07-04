@@ -64,8 +64,8 @@ public class KMLReader {
 			// FIXME: Make constant or use existing constant!
 			// WSG84 == EPSG4326
 			g.setSRID(4326);
+			return elems;
 		}
-		
 		return elems;
 	}
 
