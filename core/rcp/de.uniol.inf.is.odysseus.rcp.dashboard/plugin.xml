@@ -13,5 +13,16 @@
             project="false">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartEditor"
+            default="true"
+            extensions="prt"
+            icon="icons/dashboardPart_icon.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartEditor"
+            name="Odysseus Dashboard Part Editor">
+      </editor>
+   </extension>
 
 </plugin>
