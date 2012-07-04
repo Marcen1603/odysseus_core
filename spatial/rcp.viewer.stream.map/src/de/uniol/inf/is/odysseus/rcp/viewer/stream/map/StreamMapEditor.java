@@ -179,10 +179,10 @@ public class StreamMapEditor implements IStreamEditorType {
 		this.schema = schema;
 		for (int i = 0; i < schema.size(); i++) {
 			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
-				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema
-						.getAttribute(i).getDatatype();
+				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema.getAttribute(i).getDatatype();
 
 				Style style = null;
+				
 				if (spatialDatatype.isPoint()) {
 					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
 				} else if (spatialDatatype.isLineString()) {
@@ -207,8 +207,7 @@ public class StreamMapEditor implements IStreamEditorType {
 				}
 				
 				if (style != null) {
-					VectorLayer layer = new VectorLayer(transformation,
-							schema.getAttribute(i), style);
+					VectorLayer layer = new VectorLayer(transformation, schema.getAttribute(i), style);
 					spatialDataIndex.put(i, layer);
 					layerOrder.add(layer);
 				} else {

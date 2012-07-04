@@ -41,23 +41,14 @@ public class MapLayer implements Layer {
 	protected Image image = null;
 	protected String name = null;
 	
-	private String mapType = "bing";
-	//private String mapType = "osm";
+	//private String mapType = "bing";
+	private String mapType = "osm";
 	private String mapFormat = "image/png";
-
-	private double currentMin_X;
-	private double currentMin_Y;
-	private double currentMax_X;
-	private double currentMax_Y;
 	
 	public MapLayer(ScreenTransformation transformation, Style style) {
 		this.name = "Map";
 		this.transformation = transformation;
 		this.style = style;
-		currentMin_X 	= 	-180.0;
-		currentMin_Y 	= 	-85.0;
-		currentMax_X 	= 	180.0;
-		currentMax_Y 	= 	85.0;
 		LOG.debug("Create new ImageLayer: " + name);
 	}
 
@@ -65,39 +56,36 @@ public class MapLayer implements Layer {
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
 			
-			currentMin_X 	= 	transformation.getLat(transformation.getCurrentScreen().x);
-			//transformation.computeRelativeX(transformation.getCurrentScreen().x, currentMax_X);  
+			double minLat 	= 	transformation.getLat(transformation.getCurrentScreen().x);
+			double minLon 	=   transformation.getLon(transformation.getCurrentScreen().y);
 			
-			currentMax_X 	=   transformation.getLat(transformation.getCurrentScreen().width);	
-			//transformation.computeRelativeX(transformation.getCurrentScreen().width - transformation.getCurrentScreen().x, currentMax_X);     			
+			double maxLat 	=   transformation.getLat(transformation.getCurrentScreen().width);				
+			double maxLon 	=   transformation.getLon(transformation.getCurrentScreen().height);	
+
+			transformation.setMinLat(minLat);
+			transformation.setMinLon(minLon);
+			transformation.setMaxLat(maxLat);
+			transformation.setMaxLon(maxLon);
+
 			
-			currentMin_Y 	=   transformation.getLon((int)transformation.getRelativeHeight(transformation.getCurrentScreen().x));
-			//currentMin_Y 	=   transformation.getLon(transformation.getCurrentScreen().y);	
-			//currentMin_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().y, currentMax_Y);
-			
-			//currentMax_Y 	=   transformation.getLon((int)transformation.getRelativeHeight(transformation.getCurrentScreen().height));
-			currentMax_Y 	=   transformation.getLon(transformation.getCurrentScreen().height);	
-			//currentMax_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().height - transformation.getCurrentScreen().y, currentMax_Y); 
-			
-			transformation.setMaxLat(currentMax_X);
-			transformation.setMaxLon(currentMax_Y);
-			
-			LOG.debug("Map: " + " x="+ currentMin_X + "," + currentMin_Y + " y=" + currentMax_X + "," + currentMax_Y);
+			LOG.debug("Calculated Map: " + " x="+ minLat + "," + minLon + " y=" + maxLat + "," + maxLon);
 			
 			//Only for testing. 
-			if(		(currentMin_Y >= -85.0 	&& currentMin_Y <= 85.0)  &&
-					(currentMax_Y >= -85.0 	&& currentMax_Y <= 85.0)  &&
-					(currentMin_X >= -180.0 && currentMin_X <= 180.0) &&
-					(currentMax_X >= -180.0 && currentMax_X <= 180.0)
+			if(		(minLon >= -85.0 	&& minLon <= 85.0)  &&
+					(maxLon >= -85.0 	&& maxLon <= 85.0)  &&
+					(minLat >= -180.0 && minLat <= 180.0) &&
+					(maxLat >= -180.0 && maxLat <= 180.0)
 			){
-				image = updateImage(gc, transformation.getOriginScreen().width , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
+				image = updateImage(gc, transformation.getOriginScreen().width, transformation.getOriginScreen().height, minLat, minLon, maxLat, maxLon);				
+				//image = updateImage(gc, transformation.getOriginScreen().width,transformation.getOriginScreen().height , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
+
 			}
 			else{
 				throw new RuntimeException("Illegal Coordinates");
 			}
 			transformation.update(false);
 		}
-		gc.drawImage(image, transformation.getOriginScreen().x, transformation.getOriginScreen().y);
+		gc.drawImage(image, 0, 0);
 	}
 
 	@Override
@@ -105,8 +93,17 @@ public class MapLayer implements Layer {
 		return name;
 	}
 
-	private Image updateImage(GC gc, int width, double min_x,double min_y, double max_x, double max_y) {
-		LOG.debug("Update Image: " + width + " " + "BBox[ " + min_x + "," + min_y + "," + max_x + "," + max_y +"]");
+	
+	/*
+	 * http://www.openstreetmap.org/?minlon=-16.609584883169063&minlat=-28.32078788122744&maxlon=29.410602531980885&maxlat=19.249285513021775&box=yes
+	 * 
+	 * http://www.openstreetmap.org/?lon=0&lat=0
+	 * 
+	 */
+	
+	
+	private Image updateImage(GC gc, int width,int height, double minLat,double minLon, double maxLat, double maxLon) {
+		LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
 		Image image = null;
 		try {
 			String url = "http://wms.latlon.org/?"
@@ -116,14 +113,22 @@ public class MapLayer implements Layer {
 					+ mapType
 					+ "&width="
 					+ width
+					+ "&height="
+					+ height
 					+ "&bbox="
-					+ min_x
+					+ minLat
 					+ ","
-					+ min_y
+					+ minLon
 					+ ","
-					+ max_x	
+					+ maxLat
 					+ ","
-					+ max_y;
+					+ maxLon
+					+ "&mlat="
+					+ 0.0
+					+ "&mlon="
+					+ 0.0
+					;
+					
 			LOG.debug("Image URL: " + url);
 			
 			URL imageUrl = new URL(url);

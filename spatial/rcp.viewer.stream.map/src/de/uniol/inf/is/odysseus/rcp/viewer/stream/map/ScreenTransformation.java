@@ -40,8 +40,11 @@ public class ScreenTransformation {
 	private double conversionX = 0;
 	private double conversionY = 0;
 	
-	private double maxLat = 180.0;
-	private double maxLon = 85.0;
+	private double minLat = -180.0;
+	private double maxLat =  180.0;
+	
+	private double minLon =  85.0;
+	private double maxLon = -85.0;
 	
 	private Point center = new Point(0, 0);
 	
@@ -180,32 +183,63 @@ public class ScreenTransformation {
 		return (double)(width * d); 
 	}
 	
-	public void setMaxLat(double lat) {
-		this.maxLat = lat;
-		computeConversionX();
-	}
-
-	public void setMaxLon(double lon) {
-		this.maxLon = lon;
-		computeConversionY();
-	}
 
 	public double getLat(int screenCoordinate){
-		return conversionX * screenCoordinate;
+		return (conversionX * screenCoordinate) - maxLat;
 	}
 	
 	public double getLon(int screenCoordinate){
-		return conversionY * screenCoordinate;
+			return (conversionY * screenCoordinate) - minLon;	
 	}
 	
-	//Local
 	
+
+	public double getMinLat() {
+		return minLat;
+	}
+
+	public void setMinLat(double minLat) {
+		this.minLat = minLat;
+		computeConversionX();
+	}
+
+	public double getMaxLat() {
+		return maxLat;
+	}
+
+	public void setMaxLat(double maxLat) {
+		this.maxLat = maxLat;
+		computeConversionX();
+	}
+
+	public double getMinLon() {
+		return minLon;
+	}
+
+	public void setMinLon(double minLon) {
+		this.minLon = minLon;
+		computeConversionY();
+	}
+
+	public double getMaxLon() {
+		return maxLon;
+	}
+
+	public void setMaxLon(double maxLon) {
+		this.maxLon = maxLon;
+		computeConversionY();
+	}
+
 	private void computeConversionX(){
-		conversionX = maxLat/currentScreen.width;
+		double distance = maxLat - minLat;
+		LOG.debug("Current X distance:" + distance);
+		conversionX = distance/currentScreen.width;
 	}
 	
 	private void computeConversionY(){
-		conversionY = maxLon/currentScreen.height;
+		double distance = minLon - maxLon;
+		LOG.debug("Current Y distance:" + distance);
+		conversionY = distance/currentScreen.height;
 	}
 	
 }

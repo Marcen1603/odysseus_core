@@ -17,6 +17,8 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tool.MouseLabel;
+
 public class ScreenManager {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
@@ -26,17 +28,21 @@ public class ScreenManager {
 	private ScreenTransformation transformation;
 	private Canvas viewer;	
 	private Rectangle mouseSelection = null;
+	private MouseLabel mouseLabel   = new MouseLabel();
+	
 	
 	public ScreenManager(ScreenTransformation transformation, StreamMapEditor editor) {
 		this.transformation = transformation;
 		this.editor = editor;
+		
 	}
 	
 	protected Canvas createCanvas(Composite parent) {
 		Canvas canvasViewer = new Canvas(parent, SWT.NONE);
 		canvasViewer.setBackground(WHITE);
-		
 		canvasViewer.addPaintListener(new GeometryPaintListener(editor));
+		
+		
 		canvasViewer.addControlListener(new ControlListener() {
 
 			@Override
@@ -80,7 +86,6 @@ public class ScreenManager {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				
-			
 				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
 				LOG.debug("OnMouseDown: " + e.x + "," + e.y);	
 				LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
@@ -95,28 +100,38 @@ public class ScreenManager {
 		canvasViewer.addMouseMoveListener(new MouseMoveListener() {
 
 			@Override
-			public void mouseMove(MouseEvent e) {
-				//LOG.debug("Mouse: x=" + e.x + " y=" + e.y);
+			public void mouseMove(MouseEvent e) { 
+				mouseLabel.label =  "Screen Coordinate: " + e.x + "," + e.y + "\n";
+				mouseLabel.label += "Map Coordinate: " + transformation.getLat(e.x) + ", " + transformation.getLon(e.y);
 				
+				mouseLabel.x = e.x;
+				mouseLabel.y = e.y;
 				
 				// TODO Auto-generated method stub
 				if (mouseSelection != null) {
 					mouseSelection.width = e.x - mouseSelection.x;
 					mouseSelection.height = e.y - mouseSelection.y;
-					
-					if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
-						PlatformUI.getWorkbench().getDisplay()
-								.asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										if (!getCanvasViewer().isDisposed())
-											getCanvasViewer().redraw();
-									}
-								});
-					}
 				}
+				
+				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
+					PlatformUI.getWorkbench().getDisplay()
+							.asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									if (!getCanvasViewer().isDisposed())
+										getCanvasViewer().redraw();
+								}
+							});
+				}
+
+				//LOG.debug("Mouse: x=" + e.x + " y=" + e.y);
+				//LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
+				
 			}
 		});
+		
+		
+		
 		canvasViewer.addKeyListener(new KeyListener() {
 
 			@Override
@@ -164,6 +179,10 @@ public class ScreenManager {
 	
 	public Rectangle getMouseSelection(){
 		return mouseSelection;
+	}
+	
+	public MouseLabel getMouseLabel(){
+		return mouseLabel;
 	}
 	
 }

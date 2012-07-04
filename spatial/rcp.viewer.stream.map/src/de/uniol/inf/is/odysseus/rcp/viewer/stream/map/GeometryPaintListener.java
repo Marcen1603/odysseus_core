@@ -53,9 +53,10 @@ final class GeometryPaintListener implements PaintListener {
 				throw new RuntimeException("Layer Nullpointer");
 			}
 		}
-		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){
 			e.gc.drawRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
 		}
+		e.gc.drawText(this.streamMapEditor.getScreenManager().getMouseLabel().label, this.streamMapEditor.getScreenManager().getMouseLabel().x + 15 , this.streamMapEditor.getScreenManager().getMouseLabel().y,true); 
 	}
 }
