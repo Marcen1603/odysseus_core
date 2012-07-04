@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
-import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
@@ -35,14 +36,6 @@ public class TestDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void save(ByteBuffer buffer) {
-	}
-
-	@Override
-	public void load(ByteBuffer buffer) {
-	}
-
-	@Override
 	public void setQueryFile(IFile file) {
 	}
 
@@ -53,6 +46,22 @@ public class TestDashboardPart implements IDashboardPart {
 
 	@Override
 	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+	}
+
+	@Override
+	public void onStart(List<IPhysicalOperator> physicalRoots) {
+	}
+
+	@Override
+	public void onPause() {
+	}
+
+	@Override
+	public void onUnpause() {
+	}
+
+	@Override
+	public void onStop() {
 	}
 
 }

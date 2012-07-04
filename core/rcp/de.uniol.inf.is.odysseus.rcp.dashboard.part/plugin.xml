@@ -6,7 +6,7 @@
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.SampleDashboardPart"
             description="A sample for creating dashboard parts"
-            name="SampleDashboardPart">
+            name="Sample">
          <setting
                defaultValue="Default"
                description="Sample setting in string type"
@@ -22,6 +22,18 @@
                isOptional="false"
                name="IntegerSetting"
                type="Integer">
+         </setting>
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TableDashboardPart"
+            description="Tabular overview of recieved tuples of one query"
+            name="Table">
+         <setting
+               description="Comma-separated list of attribute-names shown in the table. Must be not empty."
+               isEditable="true"
+               isOptional="false"
+               name="Attributes"
+               type="String">
          </setting>
       </dashboardPart>
    </extension>

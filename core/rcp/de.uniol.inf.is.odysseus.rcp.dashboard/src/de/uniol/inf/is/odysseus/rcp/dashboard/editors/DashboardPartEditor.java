@@ -164,7 +164,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		rightPart.setLayoutData(new GridData(GridData.FILL_BOTH));
 		rightPart.setLayout(new GridLayout());
 
-		settingDescriptionLabel = new Label(rightPart, SWT.BORDER);
+		settingDescriptionLabel = new Label(rightPart, SWT.BORDER | SWT.WRAP);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 80;
 		settingDescriptionLabel.setLayoutData(gd);

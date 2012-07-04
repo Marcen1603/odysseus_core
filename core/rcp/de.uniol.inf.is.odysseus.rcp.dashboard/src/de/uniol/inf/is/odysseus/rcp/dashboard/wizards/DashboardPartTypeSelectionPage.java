@@ -97,7 +97,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		choosePartNameCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		choosePartNameCombo.setItems(dashboardPartNames.toArray(new String[0]));
 
-		partDescriptionLabel = new Label(rootComposite, SWT.BORDER);
+		partDescriptionLabel = new Label(rootComposite, SWT.BORDER | SWT.WRAP);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = DESCRIPTION_LABEL_HEIGHT;
 		partDescriptionLabel.setLayoutData(gd);
@@ -128,7 +128,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		settingDescriptionComposite.setLayoutData(gd2);
 		settingDescriptionComposite.setLayout(new GridLayout(2, false));
 
-		settingDescriptionLabel = new Label(settingDescriptionComposite, SWT.BORDER);
+		settingDescriptionLabel = new Label(settingDescriptionComposite, SWT.BORDER | SWT.WRAP);
 		settingDescriptionLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		settingDescriptionLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		settingDescriptionLabel.setText("");

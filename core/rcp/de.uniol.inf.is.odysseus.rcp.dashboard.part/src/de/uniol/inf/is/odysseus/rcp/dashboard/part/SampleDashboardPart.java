@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
-import java.nio.ByteBuffer;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -19,14 +17,6 @@ public class SampleDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-	}
-	
-	@Override
-	public void save(ByteBuffer buffer) {
-	}
-
-	@Override
-	public void load(ByteBuffer buffer) {
 	}
 
 	@Override
