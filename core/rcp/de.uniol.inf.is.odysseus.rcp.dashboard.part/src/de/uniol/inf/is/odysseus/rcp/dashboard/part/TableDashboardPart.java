@@ -90,9 +90,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 		operator = physicalRoots.get(0);
 		positions = determinePositions(operator.getOutputSchema(), attributes);
-
-		System.out.println(attributes);
-		System.out.println(operator.getOutputSchema());
 	}
 
 	@Override
