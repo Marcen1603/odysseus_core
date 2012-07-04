@@ -57,12 +57,12 @@ public class ScreenManager {
 				//transformation.update(getRect());
 				
 				mouseSelection.width = e.x;
-				mouseSelection.height = e.x;
+				mouseSelection.height = e.y;
 				transformation.updateCurrent(mouseSelection);
 				//setRect(null);
 				mouseSelection = null;
 
-				LOG.debug("OnMouseUp: " + e.x + "," + e.x);
+				LOG.debug("OnMouseUp: " + e.x + "," + e.y);
 				
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -80,7 +80,7 @@ public class ScreenManager {
 			public void mouseDown(MouseEvent e) {
 				
 			
-				mouseSelection = new Rectangle(e.x, e.x/2, 0, 0);
+				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
 				LOG.debug("OnMouseDown: " + e.x + "," + e.x);	
 			}
 
@@ -99,7 +99,7 @@ public class ScreenManager {
 				// TODO Auto-generated method stub
 				if (mouseSelection != null) {
 					mouseSelection.width = e.x - mouseSelection.x;
-					mouseSelection.height = e.x - mouseSelection.y;
+					mouseSelection.height = e.y - mouseSelection.y;
 					
 					if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 						PlatformUI.getWorkbench().getDisplay()
