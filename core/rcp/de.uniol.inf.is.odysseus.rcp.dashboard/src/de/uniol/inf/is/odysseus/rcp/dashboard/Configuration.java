@@ -72,4 +72,15 @@ public class Configuration {
 	private <T> Setting<T> getSettingImpl( String settingName ) {
 		return (Setting<T>) settings.get(settingName);
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Configuration{");
+		for( String settingName : settings.keySet()) {
+			sb.append(settingName).append("=").append(settings.get(settingName)).append(", ");
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 }
