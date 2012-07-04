@@ -58,7 +58,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	private IDashboardPart dashboardPart;
 	private DashboardPartController dashboardPartController;
 	private boolean dirty;
-	
+
 	private TabFolder tabFolder;
 	private TableViewer settingsTableViewer;
 	private Label settingDescriptionLabel;
@@ -72,7 +72,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		try {
 			DASHBOARD_PART_HANDLER.save(dashboardPart, input.getFile());
 			setDirty(false);
-			
+
 		} catch (IOException e) {
 			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), e);
 		}
@@ -98,20 +98,20 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
 			dashboardPart.getConfiguration().addListener(this);
-			
+
 			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (IOException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		dashboardPartController.stop();
-		
+
 		dashboardPart.getConfiguration().removeListener(this);
-		
+
 		super.dispose();
 	}
 
@@ -119,8 +119,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	public boolean isDirty() {
 		return dirty;
 	}
-	
-	public void setDirty( boolean dirty ) {
+
+	public void setDirty(boolean dirty) {
 		if (dirty != this.dirty) {
 			this.dirty = dirty;
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -140,17 +140,15 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
-		
+
 		tabFolder = new TabFolder(parent, SWT.NONE);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.setLayout(new GridLayout());
-		
+
 		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
 		Composite settingsTab = createTabComposite(tabFolder, "Settings");
-		
-		dashboardPart.createPartControl(presentationTab);
-		
-		settingsTab.setLayout(new GridLayout(2, true));	
+
+		settingsTab.setLayout(new GridLayout(2, true));
 		settingsTableViewer = createSettingsTableViewer(settingsTab);
 		settingsTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -158,47 +156,53 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			public void selectionChanged(SelectionChangedEvent event) {
 				refreshSettingDescription();
 			}
-			
+
 		});
 		settingsTableViewer.setInput(dashboardPart.getConfiguration().getSettings());
-		
+
 		Composite rightPart = new Composite(settingsTab, SWT.NONE);
 		rightPart.setLayoutData(new GridData(GridData.FILL_BOTH));
 		rightPart.setLayout(new GridLayout());
-		
+
 		settingDescriptionLabel = new Label(rightPart, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 80;
 		settingDescriptionLabel.setLayoutData(gd);
 		settingDescriptionLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		
+
 		resetButton = createButton(rightPart, "Reset");
 		resetButton.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Optional<? extends Setting<?>> optSetting = getSelectedSetting();
-				if( optSetting.isPresent() ) {
+				if (optSetting.isPresent()) {
 					Setting<?> setting = optSetting.get();
 					setting.reset();
 				} else {
 					LOG.warn("Tried to reset non-existing setting");
 				}
 			}
-			
+
 		});
-		
+
 		Button resetAllButton = createButton(rightPart, "Reset all");
 		resetAllButton.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dashboardPart.getConfiguration().resetAll();
 			}
-			
+
 		});
 		
-		dashboardPartController.start();
+		try {
+			dashboardPart.createPartControl(presentationTab);
+			dashboardPartController.start();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+
 	}
 
 	@Override
@@ -211,38 +215,38 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		setDirty(true);
 		settingsTableViewer.refresh();
 	}
-	
+
 	private void refreshSettingDescription() {
 		String desc = determineSettingDescription();
 		settingDescriptionLabel.setText(desc);
 		resetButton.setEnabled(!Strings.isNullOrEmpty(desc));
 	}
-	
+
 	private String determineSettingDescription() {
 		Optional<? extends Setting<?>> optSetting = getSelectedSetting();
-		if( optSetting.isPresent() ) { 
+		if (optSetting.isPresent()) {
 			Setting<?> setting = optSetting.get();
 			StringBuilder sb = new StringBuilder();
 			sb.append("(").append(setting.getSettingDescriptor().getType()).append(") ");
 			sb.append(setting.getSettingDescriptor().getDescription());
 			return sb.toString();
 		}
-		
+
 		return "";
 	}
-	
+
 	private Optional<? extends Setting<?>> getSelectedSetting() {
 		IStructuredSelection selection = (IStructuredSelection) settingsTableViewer.getSelection();
-		if( selection == null ) {
+		if (selection == null) {
 			return Optional.absent();
 		}
-		Setting<?> setting = (Setting<?>)selection.getFirstElement();
-		if( setting != null ) {
+		Setting<?> setting = (Setting<?>) selection.getFirstElement();
+		if (setting != null) {
 			return Optional.of(setting);
-		} 
+		}
 		return Optional.absent();
 	}
-	
+
 	private static Button createButton(Composite parent, String title) {
 		Button resetAllButton = new Button(parent, SWT.PUSH);
 		GridData gd = new GridData();
@@ -260,29 +264,29 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 		final TableViewer tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
-		
+
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		
+
 		TableViewerColumn settingNameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		settingNameColumn.getColumn().setText("Setting");
 		tableColumnLayout.setColumnData(settingNameColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		settingNameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Setting<?> setting = (Setting<?>)cell.getElement();
+				Setting<?> setting = (Setting<?>) cell.getElement();
 				cell.setText(setting.getSettingDescriptor().getName());
 			}
 		});
-		
+
 		TableViewerColumn settingValueColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		settingValueColumn.getColumn().setText("Value");
 		tableColumnLayout.setColumnData(settingValueColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		settingValueColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				Setting<?> setting = (Setting<?>)cell.getElement();
+				Setting<?> setting = (Setting<?>) cell.getElement();
 				cell.setText(setting.get().toString());
 			}
 		});
@@ -291,43 +295,43 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 			@Override
 			public boolean canModify(Object element, String property) {
-				Setting<?> setting = (Setting<?>)element;
+				Setting<?> setting = (Setting<?>) element;
 				return "settingValue".equals(property) && setting.getSettingDescriptor().isEditable();
 			}
 
 			@Override
 			public Object getValue(Object element, String property) {
-				return ((Setting<?>)element).get().toString();
+				return ((Setting<?>) element).get().toString();
 			}
 
 			@Override
 			public void modify(Object element, String property, Object value) {
-				TableItem item = (TableItem)element;
-				Setting<?> setting = (Setting<?>)item.getData();
-				
+				TableItem item = (TableItem) element;
+				Setting<?> setting = (Setting<?>) item.getData();
+
 				// use configuration to invoke listeners
 				dashboardPart.getConfiguration().setAsString(setting.getSettingDescriptor().getName(), value.toString());
 			}
-			
+
 		});
-		
+
 		tableViewer.setColumnProperties(new String[] { "setting", "settingValue" });
 		tableViewer.setCellEditors(new CellEditor[] { null, new TextCellEditor(tableViewer.getTable()) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		
+
 		return tableViewer;
 	}
-	
-	private static Composite createTabComposite( TabFolder tabFolder, String title ) {
+
+	private static Composite createTabComposite(TabFolder tabFolder, String title) {
 		TabItem presentationTab = new TabItem(tabFolder, SWT.NULL);
 		presentationTab.setText(title);
-		
+
 		Composite presentationTabComposite = new Composite(tabFolder, SWT.NONE);
 		presentationTabComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		presentationTabComposite.setLayout(new GridLayout());
-		
+
 		presentationTab.setControl(presentationTabComposite);
-		
+
 		return presentationTabComposite;
 	}
 

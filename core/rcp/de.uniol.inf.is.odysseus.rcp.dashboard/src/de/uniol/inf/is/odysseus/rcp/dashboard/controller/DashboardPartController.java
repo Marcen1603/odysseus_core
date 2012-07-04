@@ -47,7 +47,7 @@ public final class DashboardPartController {
 		return dashboardPart;
 	}
 
-	public void start() {
+	public void start() throws OdysseusScriptException {
 		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
 		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
 
@@ -79,9 +79,7 @@ public final class DashboardPartController {
 
 		} catch (CoreException e) {
 			LOG.error("Could not start query", e);
-		} catch (OdysseusScriptException e) {
-			LOG.error("Could not start query", e);
-		}
+		} 
 	}
 
 	public void pause() {
@@ -140,7 +138,7 @@ public final class DashboardPartController {
 		return subs;
 	}
 
-	private List<Integer> getExecutedQueryIDs(List<?> results) {
+	private static List<Integer> getExecutedQueryIDs(List<?> results) {
 		List<Integer> ids = Lists.newArrayList();
 
 		for (Object result : results) {
