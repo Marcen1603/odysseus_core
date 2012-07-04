@@ -5,13 +5,16 @@ import java.io.IOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -25,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -206,7 +210,11 @@ public class DashboardPartEditor extends EditorPart {
 	private String determineSettingDescription() {
 		Optional<? extends Setting<?>> optSetting = getSelectedSetting();
 		if( optSetting.isPresent() ) { 
-			return optSetting.get().getSettingDescriptor().getDescription();
+			Setting<?> setting = optSetting.get();
+			StringBuilder sb = new StringBuilder();
+			sb.append("(").append(setting.getSettingDescriptor().getType()).append(") ");
+			sb.append(setting.getSettingDescriptor().getDescription());
+			return sb.toString();
 		}
 		
 		return "";
@@ -233,7 +241,7 @@ public class DashboardPartEditor extends EditorPart {
 		return resetAllButton;
 	}
 
-	private static TableViewer createSettingsTableViewer(Composite parent) {
+	private TableViewer createSettingsTableViewer(Composite parent) {
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -267,7 +275,37 @@ public class DashboardPartEditor extends EditorPart {
 				cell.setText(setting.get().toString());
 			}
 		});
+
+		tableViewer.setCellModifier(new ICellModifier() {
+
+			@Override
+			public boolean canModify(Object element, String property) {
+				Setting<?> setting = (Setting<?>)element;
+				return "settingValue".equals(property) && setting.getSettingDescriptor().isEditable();
+			}
+
+			@Override
+			public Object getValue(Object element, String property) {
+				return ((Setting<?>)element).get().toString();
+			}
+
+			@Override
+			public void modify(Object element, String property, Object value) {
+				TableItem item = (TableItem)element;
+				Setting<?> pair = (Setting<?>)item.getData();
+				
+				Object oldValue = pair.get();
+				pair.setAsString(value.toString());
+				if( !Objects.equal(oldValue, pair.get())) {
+					setDirty(true);
+				}
+				tableViewer.update(item.getData(), null);
+			}
+			
+		});
 		
+		tableViewer.setColumnProperties(new String[] { "setting", "settingValue" });
+		tableViewer.setCellEditors(new CellEditor[] { null, new TextCellEditor(tableViewer.getTable()) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		
 		return tableViewer;
