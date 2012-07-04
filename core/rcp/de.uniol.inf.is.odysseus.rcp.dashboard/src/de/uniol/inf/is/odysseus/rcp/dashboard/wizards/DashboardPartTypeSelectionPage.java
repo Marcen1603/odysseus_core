@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -170,6 +171,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		String dashboardName = getDashboardPartName(index);
 		refreshPartDescriptionLabel(dashboardName);
 		refreshSettingsTable(dashboardName);
+		validateSettings();
 	}
 	
 	private void selectSetting(ISelection selection) {
@@ -191,6 +193,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		}
 		
 		settingsTable.refresh();
+		validateSettings();
 	}
 
 	private void refreshPartDescriptionLabel(String dashboardPartName) {
@@ -233,7 +236,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		return result;
 	}
 
-	private static TableViewer createSettingsTableViewer(Composite parent) {
+	private TableViewer createSettingsTableViewer(Composite parent) {
 		Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -253,7 +256,8 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			@Override
 			public void update(ViewerCell cell) {
 				SettingValuePair pair = (SettingValuePair)cell.getElement();
-				cell.setText(pair.setting.getName());
+				String txt = pair.setting.isOptional() ? pair.setting.getName() : pair.setting.getName() + "*";
+				cell.setText(txt);
 			}
 		});
 		
@@ -286,6 +290,8 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 				SettingValuePair pair = (SettingValuePair)item.getData();
 				pair.value = value.toString();
 				tableViewer.update(item.getData(), null);
+				
+				validateSettings();
 			}
 			
 		});
@@ -299,5 +305,16 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 	private static List<String> determineDashboardPartNames() {
 		return DashboardPartRegistry.getDashboardPartNames();
+	}
+	
+	private void validateSettings() {
+		for( SettingValuePair pair : settings ) {
+			if(!pair.setting.isOptional() && Strings.isNullOrEmpty(pair.value)) {
+				setPageComplete(false);
+				return;
+			}
+		}
+		
+		setPageComplete(true);
 	}
 }

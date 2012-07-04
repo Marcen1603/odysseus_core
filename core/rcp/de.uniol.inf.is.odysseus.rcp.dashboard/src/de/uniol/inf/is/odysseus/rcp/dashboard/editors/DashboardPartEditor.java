@@ -276,7 +276,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			@Override
 			public void update(ViewerCell cell) {
 				Setting<?> setting = (Setting<?>) cell.getElement();
-				cell.setText(setting.getSettingDescriptor().getName());
+				String txt = setting.getSettingDescriptor().isOptional() ? setting.getSettingDescriptor().getName() : setting.getSettingDescriptor().getName() + "*";
+				cell.setText(txt);
 			}
 		});
 
