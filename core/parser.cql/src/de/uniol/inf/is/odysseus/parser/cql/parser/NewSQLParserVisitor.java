@@ -118,6 +118,7 @@ public interface NewSQLParserVisitor
   public Object visit(ASTDropViewStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTCreateRoleStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTIfExists node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+  public Object visit(ASTIfNotExists node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTDropRoleStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTGrantRoleStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTRevokeRoleStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -125,4 +126,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=770a3f9eab0d4ca8d4e59027bacaf624 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f4525fe22458a74aceac936f5d6a70eb (do not edit this line) */

@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTFileSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHost;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfNotExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTLoginPassword;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
@@ -98,14 +99,24 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateStatement node, Object data)
 			throws QueryParseException {
+		int startOtherValues = 2;
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		if(node.jjtGetNumChildren()>2){
+			if(node.jjtGetChild(2) instanceof ASTIfNotExists){
+				startOtherValues = 3;
+				if(this.dd.containsViewOrStream(name, caller)){
+					return data;
+				}
+			}
+		}
+		
 
 		node.jjtGetChild(1).jjtAccept(this, data);
 		SDFSchema outschema = new SDFSchema(name, attributes);
 		dd.addSourceType(name, "RelationalStreaming");
 		dd.addEntitySchema(name, outschema, caller);
 
-		for (int i = 2; i < node.jjtGetNumChildren(); ++i) {
+		for (int i = startOtherValues; i < node.jjtGetNumChildren(); ++i) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
 

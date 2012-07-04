@@ -252,7 +252,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateStatement */
   try {
-/*@egen*/  (    < K_CREATE >  | < K_ATTACH >  | < K_ADD >  )  < K_STREAM > Identifier() "(" AttributeDefinitions() ")"  [    (      < K_FROM >    | < K_WITH >    )    "("    (      LOOKAHEAD(2)      TimedTuples()    | PriorizedStatement()    )    ")"  | CreateFromDatabase()  | Socket()  | Channel()  | FileSource()  | Silab()  ]  [ LoginPassword() ]/*@bgen(jjtree)*/
+/*@egen*/  (    < K_CREATE >  | < K_ATTACH >  | < K_ADD >  )  < K_STREAM > Identifier() "(" AttributeDefinitions() ")"  [ IfNotExists() ]  [    (      < K_FROM >    | < K_WITH >    )    "("    (      LOOKAHEAD(2)      TimedTuples()    | PriorizedStatement()    )    ")"    | CreateFromDatabase()  | Socket()  | Channel()  | FileSource()  | Silab()  ]    [ LoginPassword() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -272,7 +272,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void LoginPassword() :{/*@bgen(jjtree) LoginPassword */
+/*@egen*/  }void LoginPassword() :{/*@bgen(jjtree) LoginPassword */
   ASTLoginPassword jjtn000 = new ASTLoginPassword(JJTLOGINPASSWORD);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -2873,7 +2873,19 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}  void DropRoleStatement() :{/*@bgen(jjtree) DropRoleStatement */
+/*@egen*/}void IfNotExists():{/*@bgen(jjtree) IfNotExists */
+  ASTIfNotExists jjtn000 = new ASTIfNotExists(JJTIFNOTEXISTS);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}{/*@bgen(jjtree) IfNotExists */
+  try {
+/*@egen*/  <K_IF > <K_NOT > <K_EXISTS >/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}  void DropRoleStatement() :{/*@bgen(jjtree) DropRoleStatement */
   ASTDropRoleStatement jjtn000 = new ASTDropRoleStatement(JJTDROPROLESTATEMENT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

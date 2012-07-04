@@ -1511,4 +1511,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
+		return null;
+	}
+
 }
