@@ -13,9 +13,16 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.rcp.dashboard
-Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+Import-Package: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.viewer.editors,
  de.uniol.inf.is.odysseus.rcp.viewer.model.stream,
+ de.uniol.inf.is.odysseus.script.parser,
  org.eclipse.core.resources,
  org.eclipse.ui.dialogs,
  org.eclipse.ui.part
+Service-Component: OSGI-INF/scriptParser.xml, OSGI-INF/executor.xml

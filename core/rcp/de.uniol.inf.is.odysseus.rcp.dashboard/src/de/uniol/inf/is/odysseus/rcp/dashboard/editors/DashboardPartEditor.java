@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 
 public class DashboardPartEditor extends EditorPart implements IConfigurationListener {
 
@@ -55,6 +56,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 	private FileEditorInput input;
 	private IDashboardPart dashboardPart;
+	private DashboardPartController dashboardPartController;
 	private boolean dirty;
 	
 	private TabFolder tabFolder;
@@ -96,6 +98,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
 			dashboardPart.getConfiguration().addListener(this);
+			
+			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (IOException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
@@ -104,6 +108,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	
 	@Override
 	public void dispose() {
+		dashboardPartController.stop();
+		
 		dashboardPart.getConfiguration().removeListener(this);
 		
 		super.dispose();
@@ -191,6 +197,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			}
 			
 		});
+		
+		dashboardPartController.start();
 	}
 
 	@Override

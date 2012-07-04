@@ -31,6 +31,7 @@ public class SampleDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
+		System.out.println(element);
 	}
 
 	@Override
