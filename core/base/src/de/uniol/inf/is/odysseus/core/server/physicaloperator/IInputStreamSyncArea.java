@@ -19,31 +19,59 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
- * Diese Klasse dient dazu, dem zugehoerigen Operator die Daten aus mehreren Eingabenstroemen 
- * in einer stromuebergreifdenden sortierten Ordnung zur Verfuegung zu stellen
- * 
+ *	This class can be used to generate time order over different input streams. 
+ *  Additional Streams can be connected.
+ *  
+ *  @author Marco Grawunder
  *
- * @param <T> Datentyp der Elemente, die Verarbeitet werden sollen.
+ * @param <T> Elements that will be processed
  */
 public interface IInputStreamSyncArea<T extends IMetaAttributeContainer<?>> extends IClone {
 	
 	/**
-	 * Fuegt ein neues Element dem Eingabepuffer hinzu und stösst ggf. die Produktion an
-	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
-	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
+	 * Adds a new element to the input area and determines if new elements can be generated
+	 * Drops out of order elements.
+	 * @param object the element top add
+	 * @param port the input port of the element
 	 */
 	public void newElement(T object, int inPort);
 
+	/**
+	 * Can be called to state time progress 
+	 * @param heartbeat all following elements have a new time stamp 
+	 * @param inPort on this port
+	 */
+	public void newHeartbeat(PointInTime heartbeat, int inPort);
+
+	/**
+	 * States the end of processing and leads to sending all elements from 
+	 * the input area to the next operator
+	 */
 	public void done();
 
+	/**
+	 * This method needs to be called before elements are send to the area
+	 * @param sink
+	 */
 	public void init(IProcessInternal<T> sink);
-	public void setSink(IProcessInternal<T> sink);
 
+	/** 
+	 * This method can be used to add another port at runtime. Out out time elements
+	 * will be removed and processing interrupted until all input streams are in sync again 
+	 */
+	void addInputPort(int port);	
+
+	/**
+	 * Removed the input port port from processing
+	 * @param pos
+	 */
+	void removeInputPort(int port);
+	
 	public int size();
 
 	@Override
 	public IInputStreamSyncArea<T> clone();
 	
-	public void newHeartbeat(PointInTime heartbeat, int inPort);	
+
 	
 }

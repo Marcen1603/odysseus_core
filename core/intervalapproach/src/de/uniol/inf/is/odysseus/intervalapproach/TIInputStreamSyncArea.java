@@ -15,15 +15,20 @@
 package de.uniol.inf.is.odysseus.intervalapproach;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
@@ -43,7 +48,8 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 		return _logger;
 	}
 
-	final protected PointInTime[] minTs;
+	final protected Map<Integer, PointInTime> minTsForPort = new HashMap<Integer, PointInTime>();
+	private PointInTime minTs = null;
 	protected IProcessInternal<T> po;
 	private PriorityQueue<IPair<T, Integer>> inputQueue = new PriorityQueue<IPair<T, Integer>>(
 			10, new Comparator<IPair<T, Integer>>() {
@@ -56,41 +62,63 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 			});
 
 	public TIInputStreamSyncArea() {
-		minTs = new PointInTime[2];
+		this(2);
 	}
 
 	public TIInputStreamSyncArea(int inputPortCount) {
-		minTs = new PointInTime[inputPortCount];
-	}
-
-	public TIInputStreamSyncArea(TIInputStreamSyncArea<T> tiTransferFunction) {
-		minTs = new PointInTime[tiTransferFunction.minTs.length];
-		for (int i = 0; i < minTs.length; i++) {
-			minTs[i] = tiTransferFunction.minTs[i] != null ? tiTransferFunction.minTs[i]
-					.clone() : null;
+		for (int i = 0; i < inputPortCount; i++) {
+			minTsForPort.put(i, null);
 		}
-		inputQueue.addAll(tiTransferFunction.inputQueue);
 	}
 
-	@Override
-	public void setSink(IProcessInternal<T> po) {
-		this.po = po;
+	public TIInputStreamSyncArea(TIInputStreamSyncArea<T> tiInputStreamSyncArea) {
+		for (int i = 0; i < minTsForPort.size(); i++) {
+			PointInTime fktn = tiInputStreamSyncArea.minTsForPort.get(i);
+			minTsForPort.put(i, fktn != null ? fktn.clone() : null);
+		}
+		inputQueue.addAll(tiInputStreamSyncArea.inputQueue);
 	}
 
 	@Override
 	public void init(IProcessInternal<T> po) {
 		this.po = po;
-		for (int i = 0; i < minTs.length; i++) {
-			this.minTs[i] = null;
-		}
 		this.inputQueue.clear();
 	}
 
 	@Override
-	public void newElement(T object, int inPort) {
-		// getLogger().debug("New Element "+object+" "+inPort);
-		inputQueue.add(new Pair<T, Integer>(object, inPort));
-		newHeartbeat(object.getMetadata().getStart(), inPort);
+	public synchronized void addInputPort(int port) {
+		if (minTsForPort.get(port) == null) {
+			getLogger().debug("Added new input port "+port+" current min "+minTs);
+			this.minTsForPort.put(port, null);
+		} else {
+			throw new IllegalArgumentException("Port "+port+" is already in use!!");
+		}
+	}
+
+	@Override
+	public synchronized void removeInputPort(int port) {
+		getLogger().debug("Removed input port "+port);
+		this.minTsForPort.remove(port);
+	}
+	
+	@Override
+	public synchronized void newElement(T object, int inPort) {
+		//getLogger().debug("New Element "+object+" Port="+inPort+" current min "+minTs);
+		// Remove all elements that are before minTS
+		// can happen if a new source is appended at runtime
+		PointInTime ts = object.getMetadata().getStart();
+		if (minTsForPort.containsKey(inPort)){
+		if (minTs == null || !ts.before(minTs) ) {
+			inputQueue.add(new Pair<T, Integer>(object, inPort));
+			newHeartbeat(ts, inPort);
+		} else {
+			getLogger().warn(
+					"Removed out of time element " + object + " from port "
+							+ inPort);
+		}
+		}else{
+			getLogger().warn("Removed element "+object+" for not registered port "+inPort);
+		}
 	}
 
 	@Override
@@ -112,46 +140,142 @@ public class TIInputStreamSyncArea<T extends IMetaAttributeContainer<? extends I
 	}
 
 	@Override
-	public void newHeartbeat(PointInTime heartbeat, int inPort) {
-		if (po == null)
-			return;
-		PointInTime minimum = null;
-		synchronized (minTs) {
-			minTs[inPort] = heartbeat;
-			minimum = getMinTs();
-			// getLogger().debug("Current minimum "+minimum);
-		}
-		if (minimum != null) {
-			synchronized (this.inputQueue) {
-				// don't use an iterator, it does NOT guarantee ordered
-				// traversal!
-				IPair<T, Integer> elem = this.inputQueue.peek();
-				while (elem != null
-						&& elem.getE1().getMetadata().getStart()
-								.beforeOrEquals(minimum)) {
-					this.inputQueue.poll();
+	public synchronized void newHeartbeat(PointInTime heartbeat, int inPort) {
+		if (minTs == null || !heartbeat.before(minTs)) {
 
-					po.process_internal(elem.getE1(), elem.getE2());
-					// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
-					elem = this.inputQueue.peek();
+			synchronized (minTsForPort) {
+				minTsForPort.put(inPort, heartbeat);
+				calcMinTs();
+				// getLogger().debug("Current minimum "+minimum);
+			}
+			if (minTs != null) {
+				synchronized (this.inputQueue) {
+					// don't use an iterator, it does NOT guarantee ordered
+					// traversal!
+					IPair<T, Integer> elem = this.inputQueue.peek();
+					while (elem != null
+							&& elem.getE1().getMetadata().getStart()
+									.beforeOrEquals(minTs)) {
+						this.inputQueue.poll();
+
+						po.process_internal(elem.getE1(), elem.getE2());
+						// getLogger().debug("Process "+elem.getE1()+" on Port "+elem.getE2());
+						elem = this.inputQueue.peek();
+					}
+					po.process_newHeartbeat(minTs);
 				}
-				po.process_newHeartbeat(minimum);
 			}
 		}
 	}
 
-	private PointInTime getMinTs() {
-		PointInTime minimum = minTs[0];
-		for (PointInTime p : minTs) {
+	private void calcMinTs() {
+		PointInTime minimum = minTsForPort.get(0);
+		for (Entry<Integer, PointInTime> p : minTsForPort.entrySet()) {
 			// if one element has no value, no element
 			// has been read from this input port
 			// --> no data can be send
-			if (p == null) {
-				return null;
+			if (p.getValue() == null) {
+				return;
 			}
-			minimum = PointInTime.min(minimum, p);
+			minimum = PointInTime.min(minimum, p.getValue());
 		}
-		return minimum;
+		// If for all initial sources there has ever been calculates
+		// a minimal time stamp, the next time stamp is not allowed
+		// to be lower!
+		if (minTs == null || minTs.beforeOrEquals(minimum)) {
+			minTs = minimum;
+		} else {
+			throw new RuntimeException("Input streams are out of order! "
+					+ minTs + " " + minimum);
+		}
+	}
+
+	public static void main(String[] args) throws InterruptedException {
+		final TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>> area = new TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>>();
+		TestClass<IMetaAttributeContainer<? extends ITimeInterval>> sink = new TestClass<IMetaAttributeContainer<? extends ITimeInterval>>();
+		area.init(sink);
+
+		int maxSleep = 10;
+
+		startSource(area, 0, 0, 1000, maxSleep);
+		startSource(area, 10, 1, 1000, maxSleep);
+
+		Thread.sleep(100);
+		area.removeInputPort(1);
+		Thread.sleep(10);
+		area.addInputPort(2);
+		startSource(area, 5, 2, 1000, maxSleep);
+
+		Thread.sleep(100);
+		area.addInputPort(3);
+		area.addInputPort(4);
+		startSource(area, 5, 3, 1000, maxSleep);
+		startSource(area, 0, 4, 1000, maxSleep);
+
+		Thread.sleep(10);
+		
+		Thread.sleep(10);
+		area.addInputPort(5);
+		area.addInputPort(6);
+		startSource(area, 5, 5, 1000, maxSleep);
+		startSource(area, 0, 6, 1000, maxSleep);
+
+	    area.removeInputPort(3);
+	}
+
+	private static void startSource(
+			final TIInputStreamSyncArea<IMetaAttributeContainer<? extends ITimeInterval>> area,
+			final long start, final int port, final int elemCount,
+			final int maxSleep) {
+		new Thread() {
+			public void run() {
+				Random rnd = new Random();
+				for (int i = 0; i < elemCount; i++) {
+					Tuple<ITimeInterval> test = new Tuple<ITimeInterval>(1,
+							false);
+					test.setMetadata(new TimeInterval());
+					test.getMetadata().setStart(new PointInTime(start + i));
+					area.newElement(test, port);
+					try {
+						Thread.sleep(rnd.nextInt(maxSleep));
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+			};
+		}.start();
+	}
+
+}
+
+class TestClass<R extends IMetaAttributeContainer<? extends ITimeInterval>>
+		implements IProcessInternal<R> {
+
+	PointInTime lastElement = null;
+
+	@Override
+	public void process_internal(R event, int port) {
+		validate(event.getMetadata().getStart(), event);
+		System.out.println("Element processed " + event + " from port " + port);
+	}
+
+	@Override
+	public void process_newHeartbeat(PointInTime pointInTime) {
+		validate(pointInTime, null);
+	}
+
+	private void validate(PointInTime start, R event) {
+		if (lastElement == null) {
+			lastElement = start;
+		} else {
+			if (lastElement.beforeOrEquals(start)) {
+				lastElement = start;
+			} else {
+				throw new RuntimeException("Elements are out of order!! "
+						+ event);
+			}
+		}
 	}
 
 }
