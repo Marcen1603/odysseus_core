@@ -47,6 +47,10 @@ public class Configuration {
 		return ImmutableList.copyOf(settings.keySet());
 	}
 	
+	public ImmutableList<Setting<?>> getSettings() {
+		return ImmutableList.copyOf(settings.values());
+	}
+	
 	public void reset( String settingName ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);

@@ -9,7 +9,7 @@
             class="de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardPartWizard"
             icon="icons/dashboardPart.jpg"
             id="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardPartWizard"
-            name="New Dashboard Part Wizard"
+            name="Dashboard Part"
             project="false">
       </wizard>
    </extension>
