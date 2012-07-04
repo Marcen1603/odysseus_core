@@ -141,7 +141,6 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		
 		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
 		Composite settingsTab = createTabComposite(tabFolder, "Settings");
-		createTabComposite(tabFolder, "XML");
 		
 		dashboardPart.createPartControl(presentationTab);
 		
@@ -192,8 +191,6 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			}
 			
 		});
-		
-		createButton(rightPart, "Apply");
 	}
 
 	@Override
