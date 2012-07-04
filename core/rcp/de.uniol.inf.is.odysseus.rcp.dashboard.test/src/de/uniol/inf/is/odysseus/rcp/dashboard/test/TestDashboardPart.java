@@ -51,5 +51,9 @@ public class TestDashboardPart implements IDashboardPart {
 		return null;
 	}
 
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+	}
+
 }
 

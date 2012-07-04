@@ -12,6 +12,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public boolean init(Configuration configuration) {
 		this.configuration = configuration;
+		this.configuration.addListener(this);
 		
 		return true;
 	}
@@ -30,4 +31,5 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public void setQueryFile(IFile file) {
 		this.queryFile = Preconditions.checkNotNull(file, "QueryFile for DashboardPart must not be null!");
 	}
+
 }

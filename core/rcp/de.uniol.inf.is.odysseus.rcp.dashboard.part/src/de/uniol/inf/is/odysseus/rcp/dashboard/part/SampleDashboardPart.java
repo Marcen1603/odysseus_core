@@ -18,6 +18,10 @@ public class SampleDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+	}
+	
+	@Override
 	public void save(ByteBuffer buffer) {
 	}
 
@@ -32,5 +36,6 @@ public class SampleDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void punctuationElementRecieved(PointInTime point, int port) {
 	}
+
 
 }

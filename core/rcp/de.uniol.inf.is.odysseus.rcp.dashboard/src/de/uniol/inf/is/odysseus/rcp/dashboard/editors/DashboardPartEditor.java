@@ -39,16 +39,16 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.XMLDashboardPartHandler;
 
-public class DashboardPartEditor extends EditorPart {
+public class DashboardPartEditor extends EditorPart implements IConfigurationListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartEditor.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
@@ -95,10 +95,18 @@ public class DashboardPartEditor extends EditorPart {
 
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
+			dashboardPart.getConfiguration().addListener(this);
 		} catch (IOException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
 		}
+	}
+	
+	@Override
+	public void dispose() {
+		dashboardPart.getConfiguration().removeListener(this);
+		
+		super.dispose();
 	}
 
 	@Override
@@ -167,13 +175,7 @@ public class DashboardPartEditor extends EditorPart {
 				Optional<? extends Setting<?>> optSetting = getSelectedSetting();
 				if( optSetting.isPresent() ) {
 					Setting<?> setting = optSetting.get();
-					Object oldValue = setting.get();
 					setting.reset();
-					if( !Objects.equal(oldValue, setting.get())) {
-						settingsTableViewer.update(setting, null);
-						setDirty(true);
-					}
-					
 				} else {
 					LOG.warn("Tried to reset non-existing setting");
 				}
@@ -187,8 +189,6 @@ public class DashboardPartEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dashboardPart.getConfiguration().resetAll();
-				settingsTableViewer.refresh();
-				setDirty(true);
 			}
 			
 		});
@@ -199,6 +199,12 @@ public class DashboardPartEditor extends EditorPart {
 	@Override
 	public void setFocus() {
 		tabFolder.setFocus();
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+		setDirty(true);
+		settingsTableViewer.refresh();
 	}
 	
 	private void refreshSettingDescription() {
@@ -292,14 +298,10 @@ public class DashboardPartEditor extends EditorPart {
 			@Override
 			public void modify(Object element, String property, Object value) {
 				TableItem item = (TableItem)element;
-				Setting<?> pair = (Setting<?>)item.getData();
+				Setting<?> setting = (Setting<?>)item.getData();
 				
-				Object oldValue = pair.get();
-				pair.setAsString(value.toString());
-				if( !Objects.equal(oldValue, pair.get())) {
-					setDirty(true);
-				}
-				tableViewer.update(item.getData(), null);
+				// use configuration to invoke listeners
+				dashboardPart.getConfiguration().setAsString(setting.getSettingDescriptor().getName(), value.toString());
 			}
 			
 		});
@@ -323,4 +325,5 @@ public class DashboardPartEditor extends EditorPart {
 		
 		return presentationTabComposite;
 	}
+
 }

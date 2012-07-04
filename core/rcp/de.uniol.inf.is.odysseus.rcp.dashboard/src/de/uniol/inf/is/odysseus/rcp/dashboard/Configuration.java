@@ -1,14 +1,23 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class Configuration {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
+	
 	private final Map<String, Setting<?>> settings;
+	private final List<IConfigurationListener> listeners = Lists.newArrayList();
 	
 	public Configuration( Map<String, Setting<?>> settings) {
 		this.settings = Preconditions.checkNotNull(settings, "Map of settings must not be null!");
@@ -27,7 +36,11 @@ public class Configuration {
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
 		
 		Setting<T> setting = getSettingImpl(settingName);
-		setting.set(value);
+		T oldValue = setting.get();
+		if( !Objects.equal(oldValue, value)) {
+			setting.set(value);
+			fireSettingChangeEvent(setting, oldValue);
+		}
 	}
 	
 	public void setAsString( String settingName, String value ) {
@@ -35,7 +48,12 @@ public class Configuration {
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
 		
 		Setting<?> setting = getSettingImpl(settingName);
+		Object oldValue = setting.get();
 		setting.setAsString(value);
+		Object newValue = setting.get();
+		if( !Objects.equal(oldValue, newValue)) {
+			fireSettingChangeEvent(setting, oldValue);
+		}
 	}
 	
 	public boolean exists( String settingName ) {
@@ -56,7 +74,12 @@ public class Configuration {
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
 		
 		Setting<?> setting = getSettingImpl(settingName);
+		Object oldValue = setting.get();
 		setting.reset();
+		Object newValue = setting.get();
+		if( !Objects.equal(oldValue, newValue)) {
+			fireSettingChangeEvent(setting, oldValue);
+		}
 	}
 	
 	public void resetAll() {
@@ -70,6 +93,31 @@ public class Configuration {
 		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
 		
 		return getSettingImpl(settingName);
+	}
+	
+	public void addListener( IConfigurationListener listener ) {
+		Preconditions.checkNotNull(listener, "Listener must not be null!");
+		synchronized(listeners) {
+			listeners.add(listener);
+		}
+	}
+	
+	public void removeListener( IConfigurationListener listener ) {
+		synchronized(listeners) {
+			listeners.remove(listener);
+		}
+	}
+	
+	private void fireSettingChangeEvent(Setting<?> setting, Object oldValue) {
+		synchronized( listeners ) {
+			for( IConfigurationListener listener : listeners ) {
+				try {
+					listener.settingChanged(setting.getSettingDescriptor().getName(), oldValue, setting.get());
+				} catch( Throwable t ) {
+					LOG.error("Exception during executing listener for configuration", t);
+				}
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

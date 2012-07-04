@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener;
 
-public interface IDashboardPart extends IStreamElementListener<Object> {
+public interface IDashboardPart extends IStreamElementListener<Object>, IConfigurationListener {
 	
 	public boolean init( Configuration configuration );
 	public Configuration getConfiguration();
