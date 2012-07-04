@@ -15,6 +15,8 @@
 package de.uniol.inf.is.odysseus.rcp.application;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -42,6 +44,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setTitle("Odysseus Studio 2");
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(true);		
+		
+		PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
 	}
 	
 	@Override
