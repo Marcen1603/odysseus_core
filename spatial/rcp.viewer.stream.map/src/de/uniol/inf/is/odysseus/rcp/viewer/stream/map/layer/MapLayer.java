@@ -52,47 +52,48 @@ public class MapLayer implements Layer {
 	
 	public MapLayer(ScreenTransformation transformation, Style style) {
 		this.name = "Map";
-		LOG.debug("Create new ImageLayer: " + name);
 		this.transformation = transformation;
 		this.style = style;
-
 		currentMin_X 	= 	-180.0;
 		currentMin_Y 	= 	-85.0;
 		currentMax_X 	= 	180.0;
 		currentMax_Y 	= 	85.0;
+		LOG.debug("Create new ImageLayer: " + name);
 	}
 
 	@Override
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
 			
-			currentMin_X 	= 	transformation.getMapX(transformation.getCurrentScreen().x);
+			currentMin_X 	= 	transformation.getLat(transformation.getCurrentScreen().x);
 			//transformation.computeRelativeX(transformation.getCurrentScreen().x, currentMax_X);  
 			
-			currentMax_X 	=   transformation.getMapX(transformation.getCurrentScreen().width);	
-			//transformation.computeRelativeX(transformation.getCurrentScreen().width - transformation.getCurrentScreen().x, currentMax_X);     
+			currentMax_X 	=   transformation.getLat(transformation.getCurrentScreen().width);	
+			//transformation.computeRelativeX(transformation.getCurrentScreen().width - transformation.getCurrentScreen().x, currentMax_X);     			
 			
-			transformation.setxMap(currentMax_X);
-			
-			
-			currentMin_Y 	=   transformation.getMapY((int)transformation.getComputedHight(transformation.getCurrentScreen().x));
-			//currentMin_Y 	=   transformation.getMapY(transformation.getCurrentScreen().y);	
+			currentMin_Y 	=   transformation.getLon((int)transformation.getRelativeHeight(transformation.getCurrentScreen().x));
+			//currentMin_Y 	=   transformation.getLon(transformation.getCurrentScreen().y);	
 			//currentMin_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().y, currentMax_Y);
 			
-			currentMax_Y 	=   transformation.getMapY((int)transformation.getComputedHight(transformation.getCurrentScreen().height));
-			currentMax_Y 	=   transformation.getMapY(transformation.getCurrentScreen().height);	
+			//currentMax_Y 	=   transformation.getLon((int)transformation.getRelativeHeight(transformation.getCurrentScreen().height));
+			currentMax_Y 	=   transformation.getLon(transformation.getCurrentScreen().height);	
 			//currentMax_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().height - transformation.getCurrentScreen().y, currentMax_Y); 
-			transformation.setyMap(currentMax_Y);
+			
+			transformation.setMaxLat(currentMax_X);
+			transformation.setMaxLon(currentMax_Y);
 			
 			LOG.debug("Map: " + " x="+ currentMin_X + "," + currentMin_Y + " y=" + currentMax_X + "," + currentMax_Y);
 			
 			//Only for testing. 
-			if((currentMin_Y >= -85.0 && currentMin_Y <= 85.0) &&
-					(currentMax_Y >= -85.0 && currentMax_Y <= 85.0) &&
+			if(		(currentMin_Y >= -85.0 	&& currentMin_Y <= 85.0)  &&
+					(currentMax_Y >= -85.0 	&& currentMax_Y <= 85.0)  &&
 					(currentMin_X >= -180.0 && currentMin_X <= 180.0) &&
 					(currentMax_X >= -180.0 && currentMax_X <= 180.0)
-					){
+			){
 				image = updateImage(gc, transformation.getOriginScreen().width , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
+			}
+			else{
+				throw new RuntimeException("Illegal Coordinates");
 			}
 			transformation.update(false);
 		}

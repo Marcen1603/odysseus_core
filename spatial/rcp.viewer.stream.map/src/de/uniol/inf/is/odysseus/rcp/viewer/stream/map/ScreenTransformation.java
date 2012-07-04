@@ -37,11 +37,11 @@ public class ScreenTransformation {
 	private Rectangle currentScreen = new Rectangle(0, 0, 0, 0);
 	private Rectangle originScreen = new Rectangle(0, 0, 0, 0);
 	
-	private double xTransform = 0;
-	private double yTransform = 0;
+	private double conversionX = 0;
+	private double conversionY = 0;
 	
-	private double xMap = 180.0;
-	private double yMap = 85.0;
+	private double maxLat = 180.0;
+	private double maxLon = 85.0;
 	
 	private Point center = new Point(0, 0);
 	
@@ -50,9 +50,10 @@ public class ScreenTransformation {
 		LOG.debug("Update Origin");
 		originScreen = rectangle;
 		currentScreen = rectangle;
-
-		computeXTransform();
-		computeYTransform();
+		
+		//Compute the new conversion factors
+		computeConversionX();
+		computeConversionY();
 		
 		update = true;
 	}
@@ -61,10 +62,11 @@ public class ScreenTransformation {
 		LOG.debug("Update Current");
 		currentScreen = rectangle;
 
-		LOG.debug(String.format("Current Screen %d %d %d %d", currentScreen.x, currentScreen.y, currentScreen.width, currentScreen.height));
+		//LOG.debug(String.format("Current Screen %d %d %d %d", currentScreen.x, currentScreen.y, currentScreen.width, currentScreen.height));
 		
-		computeXTransform();
-		computeYTransform();
+		//Compute the new conversion factors
+		computeConversionX();
+		computeConversionY();
 		
 		if (this.min != null) {
 			min.x = ((rectangle.x + rectangle.width / 2 - this.center.x) * scale)
@@ -81,12 +83,6 @@ public class ScreenTransformation {
 		}
 		update = true;
 	}
-
-//	public void updateMapSize(Rectangle clientArea) {
-//		this.currentScreen = clientArea;
-//		center = new Point(clientArea.width / 2, clientArea.height / 2);
-//		update = true;
-//	}
 
 	public int[] transformCoord(Coordinate coord) {
 		
@@ -179,66 +175,37 @@ public class ScreenTransformation {
 		return this.update;
 	}
 	
-//	public double computeRelativeX(int c,double b){
-//		
-//		LOG.debug("Proportion:" + (double)originScreen.width/originScreen.height);		
-//		LOG.debug("CurrentProportion:" + (double)(currentScreen.width - currentScreen.x )/(currentScreen.height- currentScreen.y));
-//		
-//		LOG.debug("c = " + c + " b = " + b);
-// 		double bTa = b/(double)originScreen.width;
-// 		LOG.debug("b/a = " + bTa);
-//		double d = (c * bTa);
-//		LOG.debug("(c * b/a) = " + d);
-//		
-//		return d;
-//	}
-//	
-//	public double computeRelativeY(int c,double b){
-//		
-//		c = (int) Math.round(getComputedHight(c));
-//		
-//		LOG.debug("Proportion:" + (double)originScreen.width/originScreen.height);
-//		LOG.debug("CurrentProportion:" + (double)(currentScreen.width - currentScreen.x )/(getComputedHight(currentScreen.height- currentScreen.y)));
-//
-//		LOG.debug("c=" + c + " b=" + b);
-// 		double bTa = b/(double)originScreen.width;
-// 		LOG.debug("b/a = " + bTa);
-//		double d = (c * bTa);
-//		LOG.debug("(c * b/a) = " + d);
-//				
-//		return d;
-//	}
-	
-	public double getComputedHight(int width){
-		double d = (double)originScreen.width/originScreen.height;
-		return (d * width); 
+	public double getRelativeHeight(int width){
+		double d = (double)(originScreen.height/originScreen.width);
+		return (double)(width * d); 
 	}
 	
-	
-	private void computeXTransform(){
-		xTransform = xMap/currentScreen.width;
-	}
-	
-	private void computeYTransform(){
-		yTransform = (double)(yMap/currentScreen.height);
-	}
-	
-	public void setxMap(double xMap) {
-		computeXTransform();
-		this.xMap = xMap;
+	public void setMaxLat(double lat) {
+		this.maxLat = lat;
+		computeConversionX();
 	}
 
-	public void setyMap(double yMap) {
-		computeYTransform();
-		this.yMap = yMap;
+	public void setMaxLon(double lon) {
+		this.maxLon = lon;
+		computeConversionY();
 	}
 
-	public double getMapX(int screenCoordinate){
-		return xTransform * screenCoordinate;
+	public double getLat(int screenCoordinate){
+		return conversionX * screenCoordinate;
 	}
 	
-	public double getMapY(int screenCoordinate){
-		return yTransform * screenCoordinate;
+	public double getLon(int screenCoordinate){
+		return conversionY * screenCoordinate;
+	}
+	
+	//Local
+	
+	private void computeConversionX(){
+		conversionX = maxLat/currentScreen.width;
+	}
+	
+	private void computeConversionY(){
+		conversionY = maxLon/currentScreen.height;
 	}
 	
 }

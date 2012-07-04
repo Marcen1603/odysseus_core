@@ -63,7 +63,7 @@ public class ScreenManager {
 				mouseSelection = null;
 
 				LOG.debug("OnMouseUp: " + e.x + "," + e.y);
-				LOG.debug("Map: x=" + transformation.getMapX(e.x) + " y=" + transformation.getMapY(e.y)) ;
+				LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
 				
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -83,7 +83,7 @@ public class ScreenManager {
 			
 				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
 				LOG.debug("OnMouseDown: " + e.x + "," + e.y);	
-				LOG.debug("Map: x=" + transformation.getMapX(e.x) + " y=" + transformation.getMapY(e.y)) ;
+				LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
 			}
 
 			@Override
