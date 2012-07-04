@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -57,8 +58,15 @@ public class KMLReader {
 		Reader r = new BufferedReader(new StringReader(xmlText));
 		LineNumberReader myReader = new LineNumberReader(r);
 		xr.parse(new InputSource(myReader));
-
-		return kmlHandler.getGeometries();
+	
+		List<Geometry> elems = kmlHandler.getGeometries();
+		for (Geometry g:elems){
+			// FIXME: Make constant or use existing constant!
+			// WSG84 == EPSG4326
+			g.setSRID(4326);
+		}
+		
+		return elems;
 	}
 
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
