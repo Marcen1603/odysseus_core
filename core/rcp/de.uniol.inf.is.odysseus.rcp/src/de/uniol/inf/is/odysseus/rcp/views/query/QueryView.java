@@ -80,10 +80,12 @@ public class QueryView extends ViewPart {
 
             @Override
             public void run() {
-            	refreshData(dataProvider, queries);
-
-                if (!tableViewer.getControl().isDisposed())
-                    tableViewer.refresh();
+            	if( dataProvider != null ) {
+	            	refreshData(dataProvider, queries);
+	
+	                if (!tableViewer.getControl().isDisposed())
+	                    tableViewer.refresh();
+            	}
             }
 
         });
