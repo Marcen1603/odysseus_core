@@ -36,7 +36,12 @@ public class ScreenTransformation {
 	
 	private Rectangle currentScreen = new Rectangle(0, 0, 0, 0);
 	private Rectangle originScreen = new Rectangle(0, 0, 0, 0);
-
+	
+	private double xTransform = 0;
+	private double yTransform = 0;
+	
+	private double xMap = 180.0;
+	private double yMap = 85.0;
 	
 	private Point center = new Point(0, 0);
 	
@@ -45,12 +50,22 @@ public class ScreenTransformation {
 		LOG.debug("Update Origin");
 		originScreen = rectangle;
 		currentScreen = rectangle;
+
+		computeXTransform();
+		computeYTransform();
+		
 		update = true;
 	}
 	
 	public void updateCurrent(Rectangle rectangle) {
 		LOG.debug("Update Current");
 		currentScreen = rectangle;
+
+		LOG.debug(String.format("Current Screen %d %d %d %d", currentScreen.x, currentScreen.y, currentScreen.width, currentScreen.height));
+		
+		computeXTransform();
+		computeYTransform();
+		
 		if (this.min != null) {
 			min.x = ((rectangle.x + rectangle.width / 2 - this.center.x) * scale)
 					+ min.x;
@@ -164,40 +179,66 @@ public class ScreenTransformation {
 		return this.update;
 	}
 	
-	public double computeRelativeX(int c,double b){
-		LOG.debug("c = " + c + " b = " + b);
-		double b2 = 2*b;
-		LOG.debug("2*b = " + b2);
- 		double bTa = b2/(double)originScreen.width;
- 		LOG.debug("2*b/a = " + bTa);
-		double d = (c * bTa);
-		LOG.debug("(c * 2*b/a) = " + d);
-		LOG.debug("(c * 2*b/a)-b = " + (d-b));
+//	public double computeRelativeX(int c,double b){
+//		
+//		LOG.debug("Proportion:" + (double)originScreen.width/originScreen.height);		
+//		LOG.debug("CurrentProportion:" + (double)(currentScreen.width - currentScreen.x )/(currentScreen.height- currentScreen.y));
+//		
+//		LOG.debug("c = " + c + " b = " + b);
+// 		double bTa = b/(double)originScreen.width;
+// 		LOG.debug("b/a = " + bTa);
+//		double d = (c * bTa);
+//		LOG.debug("(c * b/a) = " + d);
+//		
+//		return d;
+//	}
+//	
+//	public double computeRelativeY(int c,double b){
+//		
+//		c = (int) Math.round(getComputedHight(c));
+//		
+//		LOG.debug("Proportion:" + (double)originScreen.width/originScreen.height);
+//		LOG.debug("CurrentProportion:" + (double)(currentScreen.width - currentScreen.x )/(getComputedHight(currentScreen.height- currentScreen.y)));
+//
+//		LOG.debug("c=" + c + " b=" + b);
+// 		double bTa = b/(double)originScreen.width;
+// 		LOG.debug("b/a = " + bTa);
+//		double d = (c * bTa);
+//		LOG.debug("(c * b/a) = " + d);
+//				
+//		return d;
+//	}
+	
+	public double getComputedHight(int width){
+		double d = (double)originScreen.width/originScreen.height;
+		return (d * width); 
+	}
+	
+	
+	private void computeXTransform(){
+		xTransform = xMap/currentScreen.width;
+	}
+	
+	private void computeYTransform(){
+		yTransform = (double)(yMap/currentScreen.height);
+	}
+	
+	public void setxMap(double xMap) {
+		computeXTransform();
+		this.xMap = xMap;
+	}
 
-		if(c == 0)
-			return b;
-		else			
-			return d-b;
+	public void setyMap(double yMap) {
+		computeYTransform();
+		this.yMap = yMap;
+	}
+
+	public double getMapX(int screenCoordinate){
+		return xTransform * screenCoordinate;
 	}
 	
-	public double computeRelativeY(int c,double b){
-		LOG.debug("c=" + c + " b=" + b);
-		double b2 = 2*b;
-		LOG.debug("2*b = " + b2);
- 		double bTa = b2/(double)originScreen.height;
- 		LOG.debug("2*b/a = " + bTa);
-		double d = (c * bTa);
-		LOG.debug("(c * 2*b/a) = " + d);
-		LOG.debug("(c * 2*b/a)-b = " + (d -b));
-		
-		if(c == 0)
-			return b;
-		else			
-			return d-b;
+	public double getMapY(int screenCoordinate){
+		return yTransform * screenCoordinate;
 	}
 	
-	public int getComputedHight(int width){
-		double d = (double)originScreen.height/(double)originScreen.width;
-		return (int)(d * width); 
-	}
 }

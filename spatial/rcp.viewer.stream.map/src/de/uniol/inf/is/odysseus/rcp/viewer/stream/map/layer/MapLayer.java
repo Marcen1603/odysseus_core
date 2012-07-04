@@ -45,32 +45,55 @@ public class MapLayer implements Layer {
 	//private String mapType = "osm";
 	private String mapFormat = "image/png";
 
-	private double currentMin_X 	= 	-179.9;
-	private double currentMin_Y 	= 	-79.9;
-	private double currentMax_X 	= 	179.9;
-	private double currentMax_Y 	= 	79.9;
+	private double currentMin_X;
+	private double currentMin_Y;
+	private double currentMax_X;
+	private double currentMax_Y;
 	
 	public MapLayer(ScreenTransformation transformation, Style style) {
 		this.name = "Map";
 		LOG.debug("Create new ImageLayer: " + name);
 		this.transformation = transformation;
 		this.style = style;
-	}
 
-//	public void drawImage(Image image, Point point, GC gc) {
-//		int[] uv = transformation.transformCoord(point.getCoordinate());
-//		gc.drawImage(image, uv[0], uv[1]);
-//	}
+		currentMin_X 	= 	-180.0;
+		currentMin_Y 	= 	-85.0;
+		currentMax_X 	= 	180.0;
+		currentMax_Y 	= 	85.0;
+	}
 
 	@Override
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
-			currentMin_X 	= 	transformation.computeRelativeX(transformation.getCurrentScreen().x,	currentMin_X);  
-			currentMin_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().y,	currentMin_Y);
-			currentMax_X 	= 	transformation.computeRelativeX(transformation.getCurrentScreen().width,		currentMax_X);   
-			currentMax_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().height,		currentMax_Y);   
+			
+			currentMin_X 	= 	transformation.getMapX(transformation.getCurrentScreen().x);
+			//transformation.computeRelativeX(transformation.getCurrentScreen().x, currentMax_X);  
+			
+			currentMax_X 	=   transformation.getMapX(transformation.getCurrentScreen().width);	
+			//transformation.computeRelativeX(transformation.getCurrentScreen().width - transformation.getCurrentScreen().x, currentMax_X);     
+			
+			transformation.setxMap(currentMax_X);
+			
+			
+			currentMin_Y 	=   transformation.getMapY((int)transformation.getComputedHight(transformation.getCurrentScreen().x));
+			//currentMin_Y 	=   transformation.getMapY(transformation.getCurrentScreen().y);	
+			//currentMin_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().y, currentMax_Y);
+			
+			currentMax_Y 	=   transformation.getMapY((int)transformation.getComputedHight(transformation.getCurrentScreen().height));
+			currentMax_Y 	=   transformation.getMapY(transformation.getCurrentScreen().height);	
+			//currentMax_Y 	= 	transformation.computeRelativeY(transformation.getCurrentScreen().height - transformation.getCurrentScreen().y, currentMax_Y); 
+			transformation.setyMap(currentMax_Y);
+			
 			LOG.debug("Map: " + " x="+ currentMin_X + "," + currentMin_Y + " y=" + currentMax_X + "," + currentMax_Y);
-			image = updateImage(gc, transformation.getOriginScreen().width , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);
+			
+			//Only for testing. 
+			if((currentMin_Y >= -85.0 && currentMin_Y <= 85.0) &&
+					(currentMax_Y >= -85.0 && currentMax_Y <= 85.0) &&
+					(currentMin_X >= -180.0 && currentMin_X <= 180.0) &&
+					(currentMax_X >= -180.0 && currentMax_X <= 180.0)
+					){
+				image = updateImage(gc, transformation.getOriginScreen().width , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
+			}
 			transformation.update(false);
 		}
 		gc.drawImage(image, transformation.getOriginScreen().x, transformation.getOriginScreen().y);
@@ -101,11 +124,7 @@ public class MapLayer implements Layer {
 					+ ","
 					+ max_y;
 			LOG.debug("Image URL: " + url);
-
-			// URL imageUrl = new
-			// URL("http://wms.latlon.org/?layers=bing&request=GetTile&width="+
-			// width
-			// +"&height="+height+"&x="+x+"&y="+y+"&z="+Math.round(scale)+"");
+			
 			URL imageUrl = new URL(url);
 			InputStream in = imageUrl.openStream();
 			image = new Image(gc.getDevice(), in);
