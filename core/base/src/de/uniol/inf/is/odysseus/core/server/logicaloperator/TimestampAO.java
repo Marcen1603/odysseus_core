@@ -51,6 +51,15 @@ public class TimestampAO extends UnaryLogicalOp {
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
 		this.clearEnd = ao.clearEnd;
+		startTimestampYear= ao.startTimestampYear;
+		startTimestampMonth= ao.startTimestampMonth;
+		startTimestampDay= ao.startTimestampDay;
+		startTimestampHour= ao.startTimestampHour;
+		startTimestampMinute= ao.startTimestampMinute;
+		startTimestampSecond= ao.startTimestampSecond;
+		startTimestampMillisecond= ao.startTimestampMillisecond;
+		factor= ao.factor;
+		
 	}
 
 	public TimestampAO() {
@@ -129,6 +138,11 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "YEAR", isList = false, optional = true)
 	public void setStartTimestampYear(SDFAttribute startTimestampYear) {
 		this.startTimestampYear = startTimestampYear;
+		if (this.startTimestampYear == null) {
+			this.isUsingSystemTime = true;
+		} else {
+			this.isUsingSystemTime = false;
+		}
 	}
 
 	public SDFAttribute getStartTimestampMonth() {
