@@ -71,7 +71,7 @@ public class DataProvider extends StreamClientHandler {
 
 		long nanoLong = Long.parseLong(nano);
 		long microsLong = Long.parseLong(micros);
-		long ts = ((TimeUnit.MILLISECONDS.toMicros(millis) + microsLong) * 1000) + nanoLong;
+		long ts = (((TimeUnit.MILLISECONDS.toMicros(millis) + microsLong) * 10) + nanoLong)*100;
 		return ts;
 	}
 
