@@ -26,7 +26,7 @@ public class DashboardPartEditorToolBar {
 		
 		final DashboardPartController partController = editor.getDashboardPartController();
 		
-		toolBar = new ToolBar(presentationTab, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
+		toolBar = new ToolBar(presentationTab, SWT.WRAP | SWT.RIGHT);
 		
 		startStopItem = createToolItem(toolBar, "Stop");
 		startStopItem.addSelectionListener(new SelectionAdapter() {

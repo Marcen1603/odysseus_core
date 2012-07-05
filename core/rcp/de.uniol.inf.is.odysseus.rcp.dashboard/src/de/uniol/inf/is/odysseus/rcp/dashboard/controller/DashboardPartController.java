@@ -61,7 +61,12 @@ public final class DashboardPartController {
 
 		List<IPhysicalOperator> roots = Lists.newArrayList();
 		for (Integer id : queryIDs) {
-			roots.addAll(DashboardPlugIn.getExecutor().getPhysicalRoots(id));
+			List<IPhysicalOperator> rootsOfQuery = DashboardPlugIn.getExecutor().getPhysicalRoots(id);
+			for( IPhysicalOperator rootOfQuery : rootsOfQuery ) {
+				if( !(rootOfQuery instanceof DefaultStreamConnection)) {
+					roots.add(rootOfQuery);
+				}
+			}
 		}
 
 		streamConnection = new DefaultStreamConnection<Object>(getSubscriptions(roots));
