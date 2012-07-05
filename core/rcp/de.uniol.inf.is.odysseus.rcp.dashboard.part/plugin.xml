@@ -11,14 +11,14 @@
                defaultValue="Default"
                description="Sample setting in string type"
                isEditable="true"
-               isOptional="false"
+               isOptional="true"
                name="StringSetting"
                type="String">
          </setting>
          <setting
                defaultValue="42"
                description="Some sample setting in integer type"
-               isEditable="true"
+               isEditable="false"
                isOptional="false"
                name="IntegerSetting"
                type="Integer">

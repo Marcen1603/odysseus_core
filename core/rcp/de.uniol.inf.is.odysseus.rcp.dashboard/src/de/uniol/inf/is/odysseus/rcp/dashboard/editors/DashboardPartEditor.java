@@ -312,6 +312,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 				Setting<?> setting = (Setting<?>) cell.getElement();
 				String txt = setting.getSettingDescriptor().isOptional() ? setting.getSettingDescriptor().getName() : setting.getSettingDescriptor().getName() + "*";
 				cell.setText(txt);
+
+				if( !setting.getSettingDescriptor().isEditable() ) {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				} else {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));					
+				}
 			}
 		});
 
@@ -323,6 +329,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			public void update(ViewerCell cell) {
 				Setting<?> setting = (Setting<?>) cell.getElement();
 				cell.setText(setting.get().toString());
+				
+				if( !setting.getSettingDescriptor().isEditable() ) {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+				} else {
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));					
+				}
 			}
 		});
 
