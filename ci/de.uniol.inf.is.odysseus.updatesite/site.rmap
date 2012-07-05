@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rmap
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.eclipse.org/buckminster/RMap-1.0"
-    xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
-    xmlns:mp="http://www.eclipse.org/buckminster/MavenProvider-1.0"
-    xmlns:pp="http://www.eclipse.org/buckminster/PDEMapProvider-1.0">
- 
-    <searchPath name="ci">
-        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature"
-                  mutable="true" source="true">
-            <uri format="file:///{0}/ci/{1}/">
-                <bc:propertyRef key="workspace.root" />
-                <bc:propertyRef key="buckminster.component" />
-            </uri>
-        </provider>
-    </searchPath>   
-    
-    <searchPath name="core">
-        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature"
-                  mutable="true" source="true">
-            <uri format="file:///{0}/core/core.feature/">
-                <bc:propertyRef key="workspace.root" />
-                <bc:propertyRef key="buckminster.component" />
-            </uri>
-        </provider>
-    </searchPath>
- 
-    <locator searchPathRef="ci" pattern="de.uniol.inf.is.odysseus.updatesite"/>
-    <locator searchPathRef="core" pattern="de.uniol.inf.is.odysseus.core.feature"/>
-</rmap>
+<rm:rmap xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0" xmlns:rm="http://www.eclipse.org/buckminster/RMap-1.0">
+  <rm:locator pattern="de.uniol.inf.is.odysseus.updatesite" searchPathRef="ci"/>
+  <rm:locator pattern="de.uniol.inf.is.odysseus.core.feature" searchPathRef="core"/>
+  <rm:searchPath name="ci">
+    <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
+      <rm:uri format="file:///{0}/ci/{1}/">
+        <bc:propertyRef key="workspace.root"/>
+        <bc:propertyRef key="buckminster.component"/>       
+      </rm:uri>
+    </rm:provider>
+  </rm:searchPath>
+  <rm:searchPath name="core">
+    <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
+      <rm:uri format="file:///{0}/core/{1}/">
+        <bc:propertyRef key="workspace.root"/>        
+         <bc:replace>
+      		<bc:propertyRef key="buckminster.component" />
+      		<bc:match pattern="^de\.uniol\.inf\.is\.odysseus(?:.\w+)*$"
+                replacement="$1" />
+    		</bc:replace>
+      </rm:uri>
+    </rm:provider>
+  </rm:searchPath>
+</rm:rmap>
