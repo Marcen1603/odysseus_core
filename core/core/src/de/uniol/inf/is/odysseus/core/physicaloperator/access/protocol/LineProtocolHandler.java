@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	protected BufferedReader reader;
+	private long delay;
 	
 	@Override
 	public void open() throws UnknownHostException, IOException {
@@ -33,7 +34,18 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
+		delay();
 		return getDataHandler().readData(reader.readLine());
+	}
+
+	protected void delay() {
+		if (delay > 0){
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -48,12 +60,22 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		instance.setTransportHandler(transportHandler);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
+		instance.setDelay(Long.parseLong(options.get("delay")));
+
 		return instance;
 	}
 		
 	@Override
 	public String getName() {
 		return "Line";
+	}
+
+	public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(long delay) {
+		this.delay = delay;
 	}
 
 }

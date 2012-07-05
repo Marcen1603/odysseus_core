@@ -14,6 +14,7 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval;
 
+import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -106,8 +107,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 					.getAttribute(startTimestampMinutePos) : 0);
 			int second = (Integer) (startTimestampSecondPos > 0 ? inElem
 					.getAttribute(startTimestampSecondPos) : 0);
-			cal.set(year, month, day, hour, minute, second);
+			cal.set(year, month-1, day, hour, minute, second);
 			long ts = cal.getTimeInMillis();
+			
 			if (startTimestampMillisecondPos > 0) {
 				ts = ts
 						+ ((Long) inElem

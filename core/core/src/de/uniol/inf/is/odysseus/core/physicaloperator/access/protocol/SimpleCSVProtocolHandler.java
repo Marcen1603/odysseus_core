@@ -13,6 +13,7 @@ public class SimpleCSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
+		delay();
 		return getDataHandler().readData(reader.readLine().split(delimiter));
 	}
 
