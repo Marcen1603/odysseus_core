@@ -251,7 +251,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		
 		Link queryFileLabel = new Link(informationComposite, SWT.NONE);
 		queryFileLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		queryFileLabel.setText("QueryFile: <a>" + dashboardPart.getQueryFile().getFullPath().toString() + "</a>");
+		queryFileLabel.setText("Open corresponding query file: <a>" + dashboardPart.getQueryFile().getFullPath().toString() + "</a>");
 		queryFileLabel.addSelectionListener( new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
