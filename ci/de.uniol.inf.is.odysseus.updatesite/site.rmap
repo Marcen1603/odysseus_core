@@ -26,6 +26,6 @@
         </provider>
     </searchPath>
  
-    <locator searchPathRef="ci"/>
-    <locator searchPathRef="core" pattern="^core(.+)\.feature"/>
+    <locator searchPathRef="ci" pattern="de.uniol.inf.is.odysseus.updatesite"/>
+    <locator searchPathRef="core" pattern="^de.uniol.inf.is.odysseus.core(.+)\.feature"/>
 </rmap>
