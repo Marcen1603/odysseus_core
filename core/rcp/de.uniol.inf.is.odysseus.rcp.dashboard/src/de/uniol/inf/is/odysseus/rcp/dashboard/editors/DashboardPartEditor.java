@@ -222,12 +222,6 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		settingDescriptionLabel.setText(desc);
 		resetButton.setEnabled(!Strings.isNullOrEmpty(desc));
 	}
-	
-	private static void resetSetting( Setting<?> setting ) {
-		if( setting.getSettingDescriptor().isEditable() ) {
-			setting.reset();
-		}
-	}
 
 	private String determineSettingDescription() {
 		Optional<? extends Setting<?>> optSetting = getSelectedSetting();
@@ -254,6 +248,11 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		return Optional.absent();
 	}
 
+	private static void resetSetting( Setting<?> setting ) {
+		if( setting.getSettingDescriptor().isEditable() ) {
+			setting.reset();
+		}
+	}
 	private static Button createButton(Composite parent, String title) {
 		Button resetAllButton = new Button(parent, SWT.PUSH);
 		GridData gd = new GridData();
