@@ -93,7 +93,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			inElem.getMetadata().setEnd(PointInTime.getInfinityTime());
 		}
 
-		if (startTimestampYearPos > 0) {
+		if (startTimestampYearPos >= 0) {
 
 			Calendar cal = new GregorianCalendar();
 			int year = inElem.getAttribute(startTimestampYearPos);
