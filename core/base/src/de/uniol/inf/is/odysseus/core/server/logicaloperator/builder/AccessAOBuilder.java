@@ -42,7 +42,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	static Logger logger = LoggerFactory.getLogger(AccessAOBuilder.class);
 
 	private static final long serialVersionUID = 2682090172449918821L;
-	
+
 	private final IntegerParameter port = new IntegerParameter("PORT",
 			REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 	private final StringParameter type = new StringParameter("TYPE",
@@ -58,7 +58,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	private final StringParameter inputDataHandler = new StringParameter(
 			"InputDataHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
-	
+
 	private final StringParameter accessConnectionHandler = new StringParameter(
 			"AccessConnectionHandler", REQUIREMENT.OPTIONAL, USAGE.DEPRECATED);
 
@@ -77,27 +77,31 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			"transport", REQUIREMENT.OPTIONAL);
 	private final StringParameter protocolHandler = new StringParameter(
 			"protocol", REQUIREMENT.OPTIONAL);
-	
+
 	private final ListParameter<String> options = new ListParameter<String>(
 			"OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
 
-	private final ListParameter<Option> options2 = new ListParameter<Option>("OPTIONS", REQUIREMENT.OPTIONAL,
-			new CreateOptionParameter("OPTION", REQUIREMENT.MANDATORY));
-	
+	private final ListParameter<Option> options2 = new ListParameter<Option>(
+			"OPTIONS", REQUIREMENT.OPTIONAL, new CreateOptionParameter(
+					"OPTION", REQUIREMENT.MANDATORY));
+
 	private final ListParameter<SDFAttribute> outputschema = new ListParameter<SDFAttribute>(
 			"SCHEMA", REQUIREMENT.OPTIONAL, new CreateSDFAttributeParameter(
 					"ATTRIBUTE", REQUIREMENT.MANDATORY, getDataDictionary()));
-	
+
 	private final ListParameter<String> inputSchema = new ListParameter<String>(
 			"INPUTSCHEMA", REQUIREMENT.OPTIONAL, new StringParameter());
 
-	
+	private final StringParameter dateFormat = new StringParameter(
+			"dateFormat", REQUIREMENT.OPTIONAL);
+
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
-		addParameters(sourceName, host, port, outputschema, type, options, options2,
-				inputSchema, adapter, input, transformer, dataHandler,
-				objectHandler, inputDataHandler, accessConnectionHandler,
-				transportHandler, protocolHandler, wrapper);
+		addParameters(sourceName, host, port, outputschema, type, options,
+				options2, inputSchema, adapter, input, transformer,
+				dataHandler, objectHandler, inputDataHandler,
+				accessConnectionHandler, transportHandler, protocolHandler,
+				wrapper, dateFormat);
 	}
 
 	@Override
@@ -120,11 +124,11 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		String wrapperName = adapter.hasValue() ? adapter.getValue() : type
 				.getValue();
-		wrapperName = wrapper.hasValue() ? wrapper.getValue():wrapperName;
-		
+		wrapperName = wrapper.hasValue() ? wrapper.getValue() : wrapperName;
+
 		SDFSchema schema = new SDFSchema(sourceName, outputschema.getValue());
 		HashMap<String, String> optionsMap = new HashMap<String, String>();
-		
+
 		if (options.hasValue()) {
 			for (final String item : options.getValue()) {
 				final String[] option = item.split(":");
@@ -136,13 +140,14 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				}
 			}
 		}
-		
-		if (options2.hasValue()){
-			for (Option option: options2.getValue()){
-				optionsMap.put(option.getName().toLowerCase(), option.getValue());
+
+		if (options2.hasValue()) {
+			for (Option option : options2.getValue()) {
+				optionsMap.put(option.getName().toLowerCase(),
+						option.getValue());
 			}
 		}
-		
+
 		getDataDictionary().addSourceType(sourceName, "RelationalStreaming");
 		getDataDictionary().addEntitySchema(sourceName, schema, getCaller());
 
@@ -183,22 +188,31 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			ao.setProtocolHandler(protocolHandler.getValue());
 		}
 
-		ILogicalOperator op = addTimestampAO(ao);
+		String df = dateFormat.hasValue() ? dateFormat.getValue() : null;
+		ILogicalOperator op = addTimestampAO(ao, df);
 		return op;
 	}
 
-	private static ILogicalOperator addTimestampAO(ILogicalOperator operator) {
+	private static ILogicalOperator addTimestampAO(ILogicalOperator operator,
+			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
+		timestampAO.setDateFormat(dateFormat);
+
 		for (SDFAttribute attr : operator.getOutputSchema()) {
 			if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())) {
+					attr.getDatatype().getURI())
+					|| SDFDatatype.START_TIMESTAMP_STRING.toString()
+							.equalsIgnoreCase(attr.getDatatype().getURI())) {
 				timestampAO.setStartTimestamp(attr);
 			}
 
 			if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
-					attr.getDatatype().getURI())) {
+					attr.getDatatype().getURI())
+					|| SDFDatatype.END_TIMESTAMP_STRING.toString()
+							.equalsIgnoreCase(attr.getDatatype().getURI())) {
 				timestampAO.setEndTimestamp(attr);
 			}
+
 		}
 
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
@@ -219,27 +233,32 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 					|| accessConnectionHandler.hasValue()
 					|| transportHandler.hasValue()
 					|| protocolHandler.hasValue()) {
-				addError(new IllegalArgumentException("view " + sourceName
-						+ " already exists. Use one only parameter source for an existing source."));
+				addError(new IllegalArgumentException(
+						"view "
+								+ sourceName
+								+ " already exists. Use one only parameter source for an existing source."));
 				return false;
 			}
 		} else {
 			if (type.hasValue() && adapter.hasValue() && wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
 						"to much information for the creation of source "
-								+ sourceName + ". expecting wrapper OR type OR adapter."));
+								+ sourceName
+								+ ". expecting wrapper OR type OR adapter."));
 				return false;
 			}
 			if (!type.hasValue() && !adapter.hasValue() && !wrapper.hasValue()) {
 				addError(new IllegalArgumentException(
 						"to less information for the creation of source "
-								+ sourceName + ". expecting wrapper, type or adapter."));
+								+ sourceName
+								+ ". expecting wrapper, type or adapter."));
 				return false;
 			}
 		}
-		
-		if (options.hasValue() && options2.hasValue()){
-			addError(new IllegalArgumentException("Only one kind of options is allowed!"));
+
+		if (options.hasValue() && options2.hasValue()) {
+			addError(new IllegalArgumentException(
+					"Only one kind of options is allowed!"));
 			return false;
 		}
 
@@ -265,5 +284,5 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 				.setDataDictionary(dataDictionary);
 		super.setDataDictionary(dataDictionary);
 	}
-	
+
 }

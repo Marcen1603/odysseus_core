@@ -14,7 +14,9 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -32,6 +34,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	// Time is given in base format
 	final private int startAttrPos;
 	final private int endAttrPos;
+	final private SimpleDateFormat df;
 
 	// Time is separated to different attributes
 	final private int startTimestampYearPos;
@@ -46,9 +49,15 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private boolean clearEnd;
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
-			int endAttrPos, boolean clearEnd) {
+			int endAttrPos, boolean clearEnd, String dateFormat) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
+		
+		if (dateFormat != null){
+			df = new SimpleDateFormat(dateFormat);
+		}else{
+			df = null;
+		}
 
 		startTimestampYearPos = -1;
 		startTimestampMonthPos = -1;
@@ -81,11 +90,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 		this.clearEnd = clearEnd;
 
-	}
-
-	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
-			boolean clearEnd) {
-		this(startAttrPos, -1, clearEnd);
+		df = null;
 	}
 
 	@Override
@@ -134,9 +139,20 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	}
 
-	private static PointInTime extractTimestamp(
+	private PointInTime extractTimestamp(
 			Tuple<? extends ITimeInterval> inElem, int attrPos) {
-		Number timeN = (Number) inElem.getAttribute(attrPos);
+		final Number timeN;
+		if (df != null){
+			String timeString = (String)inElem.getAttribute(attrPos);
+			try {
+				timeN = df.parse(timeString).getTime();
+			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Date cannot be parsed! "+timeString);
+			}
+		}else{
+			timeN=(Number) inElem.getAttribute(attrPos);
+		}
 		PointInTime time = null;
 		if (timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();
@@ -146,4 +162,14 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		return time;
 	}
 
+	
+	public static void main(String[] args) throws ParseException {
+		String test = "2012-02-22T16:50:34.2669408+00:00";
+		String form = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+		SimpleDateFormat df = new SimpleDateFormat(form);
+		ParsePosition ps = new ParsePosition(0);
+		System.out.println(df.parse(test,ps)+" parse position "+ps+" "+test.substring(ps.getIndex()));
+		
+	}
+	
 }

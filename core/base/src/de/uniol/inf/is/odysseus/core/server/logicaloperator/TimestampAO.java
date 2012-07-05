@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp")
 public class TimestampAO extends UnaryLogicalOp {
@@ -27,6 +28,8 @@ public class TimestampAO extends UnaryLogicalOp {
 	// To be used if timestamps are given in one attribute
 	private SDFAttribute startTimestamp;
 	private SDFAttribute endTimestamp;
+	// an optional String representation of the date format
+	private String dateFormat;
 	
 	// To be used if timestamps are seperated
 	private SDFAttribute startTimestampYear;
@@ -37,6 +40,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	private SDFAttribute startTimestampSecond;
 	private SDFAttribute startTimestampMillisecond;
 	private int factor;
+	
 
 	
 	private boolean isUsingSystemTime;
@@ -51,6 +55,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
 		this.clearEnd = ao.clearEnd;
+		this.dateFormat = ao.dateFormat;
 		startTimestampYear= ao.startTimestampYear;
 		startTimestampMonth= ao.startTimestampMonth;
 		startTimestampDay= ao.startTimestampDay;
@@ -211,6 +216,15 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Override
 	public String toString() {
 		return  super.toString()+"s :"+startTimestamp+" e:"+endTimestamp+" "+isUsingSystemTime+" "+isUsingNoTime+" "+clearEnd;
+	}
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+	
+	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true)
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
 	}
 	
 }

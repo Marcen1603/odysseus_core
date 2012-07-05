@@ -27,6 +27,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("String");
+		types.add("StartTimestampString");
 	}
 	
 	@Override

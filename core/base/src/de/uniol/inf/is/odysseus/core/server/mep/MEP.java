@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CeilFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.ContainsFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.CosinusFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.DebsDateFormatParse;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DivisionOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.DoubleToLongFunction;
@@ -153,6 +154,8 @@ public class MEP implements IExpressionParser {
 		registerFunction(new ContainsFunction());
 		
 		registerFunction(new IsNullFunction());
+		
+		registerFunction(new DebsDateFormatParse());
 		
 	}
 

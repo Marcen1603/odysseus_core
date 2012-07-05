@@ -43,7 +43,7 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 		RelationalTimestampAttributeTimeIntervalMFactory mUpdater;
 		if (pos >= 0){
 			int posEnd = timestampAO.hasEndTimestamp() ? timestampAO.getInputSchema().indexOf(timestampAO.getEndTimestamp()) : -1;
-			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd, clearEnd); 
+			mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd, clearEnd, timestampAO.getDateFormat()); 
 		}else{
 			
 			int year = schema.indexOf(timestampAO.getStartTimestampYear());
