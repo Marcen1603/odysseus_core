@@ -148,6 +148,31 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
 		Composite settingsTab = createTabComposite(tabFolder, "Settings");
 
+		createSettingsTabContent(settingsTab);
+		createPresentationTabContent(presentationTab);
+	}
+
+	@Override
+	public void setFocus() {
+		tabFolder.setFocus();
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+		setDirty(true);
+		settingsTableViewer.refresh();
+	}
+
+	private void createPresentationTabContent(Composite presentationTab) {
+		try {
+			dashboardPart.createPartControl(presentationTab);
+			dashboardPartController.start();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private void createSettingsTabContent(Composite settingsTab) {
 		settingsTab.setLayout(new GridLayout(2, true));
 		settingsTableViewer = createSettingsTableViewer(settingsTab);
 		settingsTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -190,31 +215,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for( Setting<?> setting : dashboardPart.getConfiguration().getSettings()) {
+				for (Setting<?> setting : dashboardPart.getConfiguration().getSettings()) {
 					resetSetting(setting);
 				}
 			}
 
 		});
-		
-		try {
-			dashboardPart.createPartControl(presentationTab);
-			dashboardPartController.start();
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-
-	}
-
-	@Override
-	public void setFocus() {
-		tabFolder.setFocus();
-	}
-
-	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-		setDirty(true);
-		settingsTableViewer.refresh();
 	}
 
 	private void refreshSettingDescription() {
@@ -248,11 +254,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		return Optional.absent();
 	}
 
-	private static void resetSetting( Setting<?> setting ) {
-		if( setting.getSettingDescriptor().isEditable() ) {
+	private static void resetSetting(Setting<?> setting) {
+		if (setting.getSettingDescriptor().isEditable()) {
 			setting.reset();
 		}
 	}
+
 	private static Button createButton(Composite parent, String title) {
 		Button resetAllButton = new Button(parent, SWT.PUSH);
 		GridData gd = new GridData();
