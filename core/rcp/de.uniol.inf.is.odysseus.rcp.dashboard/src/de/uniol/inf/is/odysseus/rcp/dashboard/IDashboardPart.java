@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener;
@@ -14,7 +15,7 @@ public interface IDashboardPart extends IStreamElementListener<Object>, IConfigu
 	public boolean init( Configuration configuration );
 	public Configuration getConfiguration();
 	
-	public void createPartControl( Composite parent );
+	public void createPartControl( Composite parent, ToolBar toolbar );
 	
 	public void onStart( List<IPhysicalOperator> physicalRoots) throws Exception;
 	public void onPause();

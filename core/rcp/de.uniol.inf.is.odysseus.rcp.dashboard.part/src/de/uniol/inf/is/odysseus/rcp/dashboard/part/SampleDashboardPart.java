@@ -5,6 +5,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 public class SampleDashboardPart extends AbstractDashboardPart {
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent, ToolBar toolbar) {
 		Label label = new Label(parent, SWT.BORDER);
 		label.setText("SampleDashboardPart with settings " + getConfiguration());
 	}

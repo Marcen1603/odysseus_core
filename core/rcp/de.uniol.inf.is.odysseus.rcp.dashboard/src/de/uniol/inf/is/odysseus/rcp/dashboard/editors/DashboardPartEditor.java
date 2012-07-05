@@ -64,6 +64,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	private Label settingDescriptionLabel;
 	private Button resetButton;
 
+	private DashboardPartEditorToolBar dashboardPartToolBar; 
+	
 	public DashboardPartEditor() {
 	}
 
@@ -104,6 +106,10 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
 		}
+	}
+	
+	public DashboardPartController getDashboardPartController() {
+		return dashboardPartController;
 	}
 
 	@Override
@@ -162,12 +168,27 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		setDirty(true);
 		settingsTableViewer.refresh();
 	}
+	
+	public void setPartNameSuffix(String partNameSuffix) {
+		if( Strings.isNullOrEmpty(partNameSuffix)) {
+			super.setPartName(this.input.getFile().getName());
+		} else {
+			super.setPartName( this.input.getFile().getName() + " [" + partNameSuffix + "]");
+		}
+	}
 
 	private void createPresentationTabContent(Composite presentationTab) {
+		dashboardPartToolBar = new DashboardPartEditorToolBar(presentationTab, this);
+		
+		Composite comp = new Composite(presentationTab, SWT.NONE);
+		comp.setLayout(new GridLayout());
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		try {
-			dashboardPart.createPartControl(presentationTab);
+			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());
 			dashboardPartController.start();
 		} catch (Exception ex) {
+			dashboardPartToolBar.setStatusToStopped();
 			throw new RuntimeException(ex);
 		}
 	}
@@ -348,5 +369,4 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 		return presentationTabComposite;
 	}
-
 }

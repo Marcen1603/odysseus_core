@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Strings;
@@ -37,7 +38,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	private List<Tuple<?>> data = Lists.newArrayList();
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent, ToolBar toolbar) {
 		
 		String attributeList = getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
