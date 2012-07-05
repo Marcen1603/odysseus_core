@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.dashboard;
+package de.uniol.inf.is.odysseus.rcp.dashboard.handler;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +30,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 
 public class XMLDashboardPartHandler implements IDashboardPartHandler {

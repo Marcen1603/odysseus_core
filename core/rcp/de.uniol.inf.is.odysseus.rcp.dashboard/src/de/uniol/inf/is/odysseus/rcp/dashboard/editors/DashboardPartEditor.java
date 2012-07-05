@@ -47,8 +47,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
-import de.uniol.inf.is.odysseus.rcp.dashboard.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
+import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 public class DashboardPartEditor extends EditorPart implements IConfigurationListener {

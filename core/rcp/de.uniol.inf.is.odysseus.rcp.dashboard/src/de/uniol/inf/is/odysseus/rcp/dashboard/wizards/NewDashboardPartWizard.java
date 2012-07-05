@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
