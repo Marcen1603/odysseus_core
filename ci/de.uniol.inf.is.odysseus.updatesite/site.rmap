@@ -27,5 +27,5 @@
     </searchPath>
  
     <locator searchPathRef="ci" pattern="de.uniol.inf.is.odysseus.updatesite"/>
-    <locator searchPathRef="core" pattern="^de.uniol.inf.is.odysseus.core(.+)\.feature"/>
+    <locator searchPathRef="core" pattern="de.uniol.inf.is.odysseus.core.feature"/>
 </rmap>
