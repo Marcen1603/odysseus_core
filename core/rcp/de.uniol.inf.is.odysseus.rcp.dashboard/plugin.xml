@@ -19,9 +19,17 @@
             class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartEditor"
             default="true"
             extensions="prt"
-            icon="icons/dashboardPart_icon.png"
+            icon="icons/dashboardPart.jpg"
             id="de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartEditor"
             name="Odysseus Dashboard Part Editor">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor"
+            default="true"
+            extensions="dsh"
+            icon="icons/dashboard.jpg"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.DashboardEditor"
+            name="Odysseus Dashboard Editor">
       </editor>
    </extension>
 
