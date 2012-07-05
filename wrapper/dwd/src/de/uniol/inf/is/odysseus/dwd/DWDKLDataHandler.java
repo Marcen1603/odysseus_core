@@ -51,8 +51,7 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	protected IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DWDKLDataHandler();
 	}
 
 	@Override
@@ -65,8 +64,9 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 	static private Object[] splitDWDKLDataString(String data) {
 		String kennung = data.substring(0, 2);
 		// With puffer ;-)
-		Object[] ret = new Object[139];
-		if ("KL".equals(kennung)) {
+		Object[] ret = new Object[140];
+		if ("KL".equals(kennung) || "KX".equals(kennung) || "KF".equals(kennung) || "KG".equals(kennung)) {
+			ret[0] = kennung;
 			int[] pos = { 3, 8, 12, 14, 16, 20, 25, 26, 31, 32, 37, 38, 43, 44,
 					48, 49, 53, 54, 57, 58, 62, 63, 64, 68, 69, 73, 74, 78, 79,
 					83, 84, 88, 89, 90, 94, 95, 96, 100, 101, 102, 105, 106,
@@ -81,7 +81,17 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 					282, 283 };
 			for (int i = 0; i < pos.length; i++) {
 				if (i < pos.length - 1) {
-					ret[i] = data.substring(pos[i] - 1, pos[i + 1] - 1).trim();
+					String val = data.substring(pos[i] - 1, pos[i + 1] - 1).trim();
+					try{
+						if (val.length() > 0){
+							ret[i+1] = Integer.parseInt(val);
+						}else{
+							ret[i+1] = 0;
+						}
+						
+					}catch(NumberFormatException e){
+						ret[i+1] = 0;
+					}
 				}
 			}
 
