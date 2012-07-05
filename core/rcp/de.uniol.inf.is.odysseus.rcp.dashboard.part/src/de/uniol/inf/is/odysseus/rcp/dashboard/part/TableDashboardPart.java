@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -52,7 +53,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		tableViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
@@ -134,4 +135,17 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		
 		return positions;
 	}
+
+	@Override
+	public Map<String, String> onSave() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

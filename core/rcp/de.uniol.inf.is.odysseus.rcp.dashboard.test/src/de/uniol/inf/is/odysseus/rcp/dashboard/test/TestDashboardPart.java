@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
@@ -62,6 +63,16 @@ public class TestDashboardPart implements IDashboardPart {
 
 	@Override
 	public void onStop() {
+	}
+
+	@Override
+	public Map<String, String> onSave() {
+		return null;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		
 	}
 
 }

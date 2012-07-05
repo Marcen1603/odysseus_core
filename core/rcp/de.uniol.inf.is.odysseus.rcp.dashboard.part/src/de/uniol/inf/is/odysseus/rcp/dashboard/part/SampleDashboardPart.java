@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -28,5 +30,14 @@ public class SampleDashboardPart extends AbstractDashboardPart {
 	public void punctuationElementRecieved(PointInTime point, int port) {
 	}
 
+	@Override
+	public Map<String, String> onSave() {
+		return null;
+	}
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		
+	}
 
 }

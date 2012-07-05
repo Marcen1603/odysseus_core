@@ -36,13 +36,18 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 	public static final String DASHBOARD_PART_XML_ELEMENT = "DashboardPart";
 	public static final String SETTING_XML_ELEMENT = "Setting";
+	public static final String CUSTOM_SETTING_XML_ELEMENT = "Setting";
+	public static final String CUSTOM_XML_ELEMENT = "Custom";
 	
 	public static final String CLASS_XML_ATTRIBUTE = "class";
 	public static final String QUERY_FILE_XML_ATTRIBUTE = "queryFile";
 	public static final String SETTING_NAME_XML_ATTRIBUTE = "name";
 	public static final String SETTING_VALUE_XML_ATTRIBUTE = "value";
 	
+	public static final String NULL_SETTING = "<null>";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(XMLDashboardPartHandler.class);
+	
 	
 	@Override
 	public void save(IDashboardPart part, IFile to) throws IOException {
@@ -68,9 +73,28 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 				
 				Element settingElement = doc.createElement(SETTING_XML_ELEMENT);
 				settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, name);
-				settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, setting.get().toString());
+				
+				Object value = setting.get();
+				settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : NULL_SETTING);
 				rootElement.appendChild(settingElement);
 			}
+			
+			Element customElement = doc.createElement(CUSTOM_XML_ELEMENT);
+			
+			Map<String, String> customSave = part.onSave();
+			if( customSave != null && !customSave.isEmpty()) {
+				for( String key : customSave.keySet() ) {
+					Element settingElement = doc.createElement(CUSTOM_SETTING_XML_ELEMENT);
+					settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, key);
+					
+					String value = customSave.get(key);
+					settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value : NULL_SETTING);
+					customElement.appendChild(settingElement);
+					
+				}
+			}
+			
+			rootElement.appendChild(customElement);
 			
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -123,13 +147,40 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			}
 			
 			Map<String, String> settingsMap = parseSettingsMap(rootNode);
+
+			Map<String, String> customSettings = Maps.newHashMap();
+			NodeList customElements = doc.getElementsByTagName(CUSTOM_XML_ELEMENT);
+			if( customElements.getLength() != 1 ) {
+				Node customElement = customElements.item(0);
+				
+				NodeList customSettingElements = customElement.getChildNodes();
+				
+				for( int i = 0; i < customSettingElements.getLength(); i++ ) {
+					Node node = customSettingElements.item(i);
+					
+					if( node.getNodeType() == Node.ELEMENT_NODE && CUSTOM_SETTING_XML_ELEMENT.equals(node.getNodeName())) {
+						String settingName = node.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
+						String settingValue = node.getAttributes().getNamedItem(SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
+						if( NULL_SETTING.equals(settingValue)) {
+							settingValue = null;
+						}
+						
+						customSettings.put(settingName, settingValue);
+					}
+				}
+			} else {
+				LOG.error("Could not load custom settings. <Custom>-Tag must exist exactly once.");
+			}
 			
 			IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
 			Configuration defaultConfiguration = part.getConfiguration();
 			for( String key : settingsMap.keySet() ) {
-				defaultConfiguration.setAsString(key, settingsMap.get(key));
+				String value = settingsMap.get(key);
+				defaultConfiguration.setAsString(key, NULL_SETTING.equals(value) ? null : value);
 			}			
+			
 			part.setQueryFile(file);
+			part.onLoad(customSettings);
 			
 			return part;
 		} catch (ParserConfigurationException e) {
