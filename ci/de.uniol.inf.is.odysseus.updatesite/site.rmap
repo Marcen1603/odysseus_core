@@ -14,17 +14,8 @@
                 <bc:propertyRef key="buckminster.component" />
             </uri>
         </provider>
-    </searchPath>
-    <searchPath name="core">
-        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature"
-                  mutable="true" source="true">
-            <uri format="file:///{0}/core/{1}/">
-                <bc:propertyRef key="workspace.root" />
-                <bc:propertyRef key="buckminster.component" />
-            </uri>
-        </provider>
-    </searchPath>
+    </searchPath>   
  
     <locator searchPathRef="ci"/>
-    <locator searchPathRef="core"/>
+    <locator searchPathRef="core" pattern="^core(.+)\.feature"/>
 </rmap>
