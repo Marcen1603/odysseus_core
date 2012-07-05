@@ -177,8 +177,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			public void widgetSelected(SelectionEvent e) {
 				Optional<? extends Setting<?>> optSetting = getSelectedSetting();
 				if (optSetting.isPresent()) {
-					Setting<?> setting = optSetting.get();
-					setting.reset();
+					resetSetting(optSetting.get());
 				} else {
 					LOG.warn("Tried to reset non-existing setting");
 				}
@@ -191,7 +190,9 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dashboardPart.getConfiguration().resetAll();
+				for( Setting<?> setting : dashboardPart.getConfiguration().getSettings()) {
+					resetSetting(setting);
+				}
 			}
 
 		});
@@ -220,6 +221,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		String desc = determineSettingDescription();
 		settingDescriptionLabel.setText(desc);
 		resetButton.setEnabled(!Strings.isNullOrEmpty(desc));
+	}
+	
+	private static void resetSetting( Setting<?> setting ) {
+		if( setting.getSettingDescriptor().isEditable() ) {
+			setting.reset();
+		}
 	}
 
 	private String determineSettingDescription() {
