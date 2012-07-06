@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.IAttributeResolver;
@@ -42,9 +43,9 @@ public class EnrichAO extends AbstractLogicalOperator {
 		this.storeName = storeName;
 	}
 
-	@Parameter(name = "OUTER", type = StringParameter.class, optional = true)
-	public void setOuterEnrich(String outer) {
-		this.outer = Boolean.parseBoolean(outer);
+	@Parameter(name = "OUTER", type = BooleanParameter.class, optional = true)
+	public void setOuterEnrich(Boolean outer) {
+		this.outer = outer;
 	}
 
 	private void calcOutputSchema() {
