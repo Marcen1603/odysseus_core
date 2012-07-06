@@ -1,1526 +1,2415 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rm:rmap xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0" xmlns:rm="http://www.eclipse.org/buckminster/RMap-1.0">
-	  <rm:locator pattern="de.uniol.inf.is.odysseus.updatesite" searchPathRef="ci"/>
-	  <rm:locator pattern=".*" searchPathRef="default" failOnError="false"/>
-  <rm:searchPath name="ci">
-	    <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-	      <rm:uri format="file:///{0}/ci/{1}/">
-	        <bc:propertyRef key="workspace.root"/>
-	        <bc:propertyRef key="buckminster.component"/>
-</rm:uri>
-	    </rm:provider>
-</rm:searchPath>
-<rm:searchPath name="default">
-<rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/.metadata/.plugins/org.eclipse.jdt.core/.org.eclipse.jdt.core.external.folders/">
-        <bc:propertyRef key="workspace.root"/>
-    </rm:uri>
-</rm:provider>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.admissioncontrol\.feature" searchPathRef="de.uniol.inf.is.odysseus.admissioncontrol.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.admissioncontrol.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/admissioncontrol.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.reaction" searchPathRef="de.uniol.inf.is.odysseus.ac.reaction"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.ac.reaction">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.reaction/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.standard" searchPathRef="de.uniol.inf.is.odysseus.ac.standard"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.ac.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.updater" searchPathRef="de.uniol.inf.is.odysseus.ac.updater"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.ac.updater">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.updater/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action" searchPathRef="de.uniol.inf.is.odysseus.action"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.actuator\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.actuator.impl"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.actuator.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.actuator.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.benchmark">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.benchmark/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark.impl"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.benchmark.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.benchmark.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.demoApp" searchPathRef="de.uniol.inf.is.odysseus.action.demoApp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.demoApp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.demoApp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.feature" searchPathRef="de.uniol.inf.is.odysseus.action.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.dataSources" searchPathRef="de.uniol.inf.is.odysseus.action.dataSources"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.dataSources">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.ideaalWrapper/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.services" searchPathRef="de.uniol.inf.is.odysseus.action.services"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.services">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.services/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.test" searchPathRef="de.uniol.inf.is.odysseus.action.test"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.action.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.bpel\.service" searchPathRef="de.uniol.inf.is.odysseus.bpel.service"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.bpel.service">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/bpel.correlationService/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.apache\.cxf" searchPathRef="org.apache.cxf"/>
+<rm:searchPath name="org.apache.cxf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/org.apache.cxf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.eca" searchPathRef="de.uniol.inf.is.odysseus.parser.eca"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.eca">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/parser.eca/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.debschallenge\.reader" searchPathRef="de.uniol.inf.is.debschallenge.reader"/>
+<rm:searchPath name="de.uniol.inf.is.debschallenge.reader">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DebsGrandChallenge/debschallenge.reader/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="challengeServer" searchPathRef="challengeServer"/>
+<rm:searchPath name="challengeServer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DebsGrandChallenge/receiver/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dsm\.generators" searchPathRef="de.uniol.inf.is.odysseus.dsm.generators"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.dsm.generators">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DemandSideManagement/generators/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion" searchPathRef="de.uniol.inf.is.odysseus.fusion"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.fusion">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.feature" searchPathRef="de.uniol.inf.is.odysseus.fusion.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.fusion.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.starter" searchPathRef="de.uniol.inf.is.odysseus.fusion.starter"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.fusion.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.bank" searchPathRef="de.uniol.inf.is.odysseus.generator.bank"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.bank">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.bank/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator" searchPathRef="de.uniol.inf.is.odysseus.generator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.context" searchPathRef="de.uniol.inf.is.odysseus.generator.context"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.context">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.context/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.debs" searchPathRef="de.uniol.inf.is.odysseus.generator.debs"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.debs">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.debs/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.dodgers" searchPathRef="de.uniol.inf.is.odysseus.generator.dodgers"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.dodgers">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.dodgers/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.example" searchPathRef="de.uniol.inf.is.odysseus.generator.example"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.example">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.example/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.frequentitem" searchPathRef="de.uniol.inf.is.odysseus.generator.frequentitem"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.frequentitem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.frequentitem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.hmm" searchPathRef="de.uniol.inf.is.odysseus.generator.hmm"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.hmm">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.hmm/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.income" searchPathRef="de.uniol.inf.is.odysseus.generator.income"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.income">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.income/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.outliersanddirty" searchPathRef="de.uniol.inf.is.odysseus.generator.outliersanddirty"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.outliersanddirty">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.outliersanddirty/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.smarthome" searchPathRef="de.uniol.inf.is.odysseus.generator.smarthome"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.smarthome">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.smarthome/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticchange" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticchange"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.syntheticchange">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.syntheticchange/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticclusters" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticclusters"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.syntheticclusters">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.syntheticclusters/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.txt" searchPathRef="de.uniol.inf.is.odysseus.generator.txt"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.txt">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.txt/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database" searchPathRef="de.uniol.inf.is.odysseus.database"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.cql" searchPathRef="de.uniol.inf.is.odysseus.database.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.feature" searchPathRef="de.uniol.inf.is.odysseus.database.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.postgresql" searchPathRef="de.uniol.inf.is.odysseus.database.postgresql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database.postgresql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.postgresql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.rcp" searchPathRef="de.uniol.inf.is.odysseus.database.rcp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.smarthome\.starter" searchPathRef="de.uniol.inf.is.odysseus.smarthome.starter"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.smarthome.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/ideeal/ideaal.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.sensorregistry">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry\.feature" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.sensorregistry.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.nexmark" searchPathRef="de.uniol.inf.is.odysseus.nexmark"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.nexmark">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/nexmark/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.nexmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.nexmark.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.nexmark.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/nexmark.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.lms" searchPathRef="de.offis.salsa.lms"/>
+<rm:searchPath name="de.offis.salsa.lms">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.springsource\.org\.apache\.log4j" searchPathRef="com.springsource.org.apache.log4j"/>
+<rm:searchPath name="com.springsource.org.apache.log4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.org.apache.log4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.springsource\.slf4j\.api" searchPathRef="com.springsource.slf4j.api"/>
+<rm:searchPath name="com.springsource.slf4j.api">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.api/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.springsource\.slf4j\.log4j" searchPathRef="com.springsource.slf4j.log4j"/>
+<rm:searchPath name="com.springsource.slf4j.log4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.log4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.playground" searchPathRef="de.offis.salsa.playground"/>
+<rm:searchPath name="de.offis.salsa.playground">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.playground/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.starter" searchPathRef="de.offis.salsa.starter"/>
+<rm:searchPath name="de.offis.salsa.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.wrapper\.car" searchPathRef="de.offis.salsa.wrapper.car"/>
+<rm:searchPath name="de.offis.salsa.wrapper.car">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.car/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.wrapper\.raw" searchPathRef="de.offis.salsa.wrapper.raw"/>
+<rm:searchPath name="de.offis.salsa.wrapper.raw">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.raw/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.wrapper\.scooter" searchPathRef="de.offis.salsa.wrapper.scooter"/>
+<rm:searchPath name="de.offis.salsa.wrapper.scooter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.scooter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.salsa\.playground" searchPathRef="de.uniol.inf.is.odysseus.salsa.playground"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.salsa.playground">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="SaLsA_Default" searchPathRef="SaLsA_Default"/>
+<rm:searchPath name="SaLsA_Default">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.offis\.salsa\.feature" searchPathRef="de.offis.salsa.feature"/>
+<rm:searchPath name="de.offis.salsa.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/salsa.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Aalso" searchPathRef="Aalso"/>
+<rm:searchPath name="Aalso">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Aalso/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Siafu" searchPathRef="Siafu"/>
+<rm:searchPath name="Siafu">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Siafu/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Simulation-IDEAAL" searchPathRef="Simulation-IDEAAL"/>
+<rm:searchPath name="Simulation-IDEAAL">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Simulation-IDEAAL/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing" searchPathRef="de.uniol.inf.is.odysseus.application.storing"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.application.storing">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/storing/application.storing/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing\.feature" searchPathRef="de.uniol.inf.is.odysseus.application.storing.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.application.storing.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/storing/application.storing.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.Ostermillerutils\.csvparser" searchPathRef="com.Ostermillerutils.csvparser"/>
+<rm:searchPath name="com.Ostermillerutils.csvparser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/_resources/com.Ostermillerutils.csvparser/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.benchmark.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.benchmark.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmark.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker" searchPathRef="de.uniol.inf.is.odysseus.benchmarker"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.benchmarker\.gui" searchPathRef="de.uniol.inf.is.odysseus.rcp.benchmarker.gui"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.benchmarker.gui">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.gui/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.impl" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.impl"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.runner" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.runner"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker.runner">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.runner/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.startBundles" searchPathRef="de.uniol.inf.is.odysseus.startBundles"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.startBundles">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.startBundles/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.simpleframework\.xml" searchPathRef="org.simpleframework.xml"/>
+<rm:searchPath name="org.simpleframework.xml">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/resources/org.simpleframework.xml/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.cepviewer" searchPathRef="de.uniol.inf.is.odysseus.cep.cepviewer"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.cepviewer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.cepviewer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.epa" searchPathRef="de.uniol.inf.is.odysseus.cep.epa"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.epa">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.epa/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.metamodel" searchPathRef="de.uniol.inf.is.odysseus.cep.metamodel"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.metamodel">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.metamodel/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.relational" searchPathRef="de.uniol.inf.is.odysseus.cep.relational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.sase" searchPathRef="de.uniol.inf.is.odysseus.cep.sase"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.sase">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.sase/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.studio.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.studio.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.studio.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.transform" searchPathRef="de.uniol.inf.is.odysseus.cep.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.cep.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.updatesite" searchPathRef="de.uniol.inf.is.odysseus.updatesite"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.updatesite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ci/de.uniol.inf.is.odysseus.updatesite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.cql" searchPathRef="de.uniol.inf.is.odysseus.context.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.context.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/context.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.rcp" searchPathRef="de.uniol.inf.is.odysseus.context.rcp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.context.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/context.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context" searchPathRef="de.uniol.inf.is.odysseus.context"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.context">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/odysseus.context/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.feature" searchPathRef="de.uniol.inf.is.odysseus.context.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.context.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/odysseus.context.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.args" searchPathRef="de.uniol.inf.is.odysseus.args"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.args">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/args/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.server" searchPathRef="de.uniol.inf.is.odysseus.core.server"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.core.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core" searchPathRef="de.uniol.inf.is.odysseus.core"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.core">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.client.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.core.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.core.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.filestore">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.filestore/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.filestore.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.filestore.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.mem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.mem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.mem.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.mem.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.standardexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.standardexecutor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webserviceexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.webserviceexecutor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.wsclient" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.wsclient/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.executor\.wsclient\.feature" searchPathRef="de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.executor.wsclient.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.wsclient.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.interval.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.interval.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/interval.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.intervalapproach" searchPathRef="de.uniol.inf.is.odysseus.intervalapproach"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.intervalapproach">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/intervalapproach/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency" searchPathRef="de.uniol.inf.is.odysseus.interval_latency"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.interval_latency">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/interval_latency/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency" searchPathRef="de.uniol.inf.is.odysseus.latency"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.latency">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency\.feature" searchPathRef="de.uniol.inf.is.odysseus.latency.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.latency.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency\.transform" searchPathRef="de.uniol.inf.is.odysseus.latency.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.latency.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.builder" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.logicaloperator.builder">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/logicaloperator.collector/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.logicaloperator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/logicaloperator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mep\.matrix" searchPathRef="de.uniol.inf.is.odysseus.mep.matrix"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mep.matrix">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/mep.matrix/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.persistentqueries" searchPathRef="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational.persistentqueries">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/odysseus.persistentqueries/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.parser.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/parser.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.physicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.physicaloperator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/physicaloperator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.querybufferplacement" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.querybufferplacement/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.sourcebufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.sourcebufferplacementstrategy/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.standardbufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.standardbufferplacementstrategy/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.compiler\.standardcompiler" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.compiler.standardcompiler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installprocesscallsmonitor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.installprocesscallsmonitor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installstandardmetadatalistener" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.installstandardmetadatalistener/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.plan\.standardplanoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.plan.standardplanoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.query\.standardqueryoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.query.standardqueryoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.standardoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.standardoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmgmt\.standard\.feature" searchPathRef="de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmgmt.standard.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmgmt.standard.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql" searchPathRef="de.uniol.inf.is.odysseus.parser.pql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/pql/parser.pql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.relational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.relational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/pql/parser.pql.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority" searchPathRef="de.uniol.inf.is.odysseus.priority"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority\.cql" searchPathRef="de.uniol.inf.is.odysseus.priority.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.priority.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/priority.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.querysharing" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/querysharing/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp" searchPathRef="de.uniol.inf.is.odysseus.rcp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.part">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part.test"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.part.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.test"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.logical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.logical"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.queryview.logical">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.logical/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.physical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.physical"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.queryview.physical">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.physical/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.server"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.server/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.server"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.viewer.server/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.studio\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.client.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.studio.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.studio.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.parameters" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.parameters"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.parameters">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.parameters/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.cql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.pql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.pql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text.pql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.pql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.starter" searchPathRef="de.uniol.inf.is.odysseus.rcp.starter"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.chart" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.chart/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.table" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.table">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.table/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.wizard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.wizard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard\.output" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard.output"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.wizard.output">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.wizard.output/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.studio.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/studio.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.base" searchPathRef="de.uniol.inf.is.odysseus.relational.base"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.feature" searchPathRef="de.uniol.inf.is.odysseus.relational.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.relational.rewrite"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval" searchPathRef="de.uniol.inf.is.odysseus.relational_interval"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational_interval">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational_interval/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational_interval.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.relational_interval.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational_interval.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.rewrite"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ruleengine" searchPathRef="de.uniol.inf.is.odysseus.ruleengine"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.ruleengine">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/ruleengine/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.singlethreadscheduler2\.0" searchPathRef="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.singlethreadscheduler2.0/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.aurorafactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.strategy.factory.aurorafactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.simplestratfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.strategy.factory.simplestratfactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.manager\.singleschedulermanager" searchPathRef="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/schedulermanager.singleschedulermanager/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.script\.parser" searchPathRef="de.uniol.inf.is.odysseus.script.parser"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.script.parser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/script/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.script\.exector" searchPathRef="de.uniol.inf.is.odysseus.script.exector"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.script.exector">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/script.exector/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.transform" searchPathRef="de.uniol.inf.is.odysseus.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.filestore">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.filestore/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.filestore.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.filestore.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.mem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.mem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.mem.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.mem.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="ANTLR3_4" searchPathRef="ANTLR3_4"/>
+<rm:searchPath name="ANTLR3_4">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/ANTLR3_4/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.google\.guava" searchPathRef="com.google.guava"/>
+<rm:searchPath name="com.google.guava">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/com.google.guava/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.google\.protobuf" searchPathRef="com.google.protobuf"/>
+<rm:searchPath name="com.google.protobuf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/com.google.protobuf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Commons\.Math" searchPathRef="Commons.Math"/>
+<rm:searchPath name="Commons.Math">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/Commons.Math/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.slf4j" searchPathRef="de.uniol.inf.is.odysseus.slf4j"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.slf4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/de.uniol.inf.is.odysseus.slf4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.jfreechart" searchPathRef="de.uniol.inf.is.jfreechart"/>
+<rm:searchPath name="de.uniol.inf.is.jfreechart">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/jfreechart/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.apache\.commons\.math3" searchPathRef="org.apache.commons.math3"/>
+<rm:searchPath name="org.apache.commons.math3">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/org.apache.commons.math3/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.jboss\.netty" searchPathRef="org.jboss.netty"/>
+<rm:searchPath name="org.jboss.netty">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/org.jboss.netty/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.opcount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.opcount"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.opcount">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.opcount/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.datasrc" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.datasrc"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.datasrc">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.datasrc/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.relational" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.relational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.util" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.util"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.util">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.util/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.querycount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.querycount"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.querycount">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.querycount/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.creatermap" searchPathRef="de.uniol.inf.is.odysseus.creatermap"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.creatermap">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/de.uniol.inf.is.odysseus.creatermap/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency_priority" searchPathRef="de.uniol.inf.is.odysseus.interval_latency_priority"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.interval_latency_priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/interval_latency_priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.loadshedding" searchPathRef="de.uniol.inf.is.odysseus.loadshedding"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.loadshedding">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/loadshedding/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.priority" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.priority"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/parser.pql.priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority_interval" searchPathRef="de.uniol.inf.is.odysseus.priority_interval"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.priority_interval">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/priority_interval/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority\.feature" searchPathRef="de.uniol.inf.is.odysseus.priority.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.priority.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.mining\.arff" searchPathRef="de.uniol.inf.is.odysseus.generator.mining.arff"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.generator.mining.arff">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/generator.mining.arff/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.classification" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.classification"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.classification">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/classification/mining.classification/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.cleaning">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning.smql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.cleaning.smql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.smql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.clustering" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.clustering"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.clustering">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/clustering/mining.clustering/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.markovql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.markovql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.markovql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.markovql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.model" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.model"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.model">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.model/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.operator" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.operator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.operator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.operator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/mining.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.smql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.smql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/mining.smql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining" searchPathRef="de.uniol.inf.is.odysseus.mining"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/mining/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.feature" searchPathRef="de.uniol.inf.is.odysseus.mining.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.mining.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/mining.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.statistics" searchPathRef="de.uniol.inf.is.odysseus.statistics"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.statistics">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/statistics/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.weka" searchPathRef="de.uniol.inf.is.odysseus.weka"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.weka">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/weka/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bid">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid.standard"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bid.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bidselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.estimator" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.estimator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.estimator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.estimator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ap.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p" searchPathRef="de.uniol.inf.is.odysseus.p2p"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.client.queryselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.provider/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.provider.clientselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.client">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/client/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client.queryselection"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.client.queryselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/client.queryselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.client">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/distribution.bidding.client/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.provider">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/provider/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/provider.clientselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/adminpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.lifecycle.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.lifecycle.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/adminpeer.lifecycle.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/base.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.lifecycle.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.sp.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/superpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.jxta"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/thinpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/op.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/adminpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op" searchPathRef="de.uniol.inf.is.odysseus.p2p.op"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/operatorpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.sp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/superpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/thinpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.executor" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.executor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.executor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/tp.executor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.physicaloperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.physicaloperator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.physicaloperator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/physicaloperator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.base" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.base"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.nosplitting" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.nosplitting"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.nosplitting">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/nosplitting/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.oneplanperoperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/oneplanperoperator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.sourcesplit" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/sourcesplit/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/tp.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.transform" searchPathRef="de.uniol.inf.is.odysseus.p2p.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.p2p.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="apache\.commons\.codec" searchPathRef="apache.commons.codec"/>
+<rm:searchPath name="apache.commons.codec">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/_resources/apache.commons.codec/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Jxta\.2\.6" searchPathRef="Jxta.2.6"/>
+<rm:searchPath name="Jxta.2.6">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/_resources/Jxta.2.6/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.prototyping" searchPathRef="de.uniol.inf.is.odysseus.prototyping"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.prototyping">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/rapid-prototyping/prototyping/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.prototyping\.feature" searchPathRef="de.uniol.inf.is.odysseus.prototyping.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.prototyping.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/rapid-prototyping/prototyping.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slapriorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.priorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.priorityscheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.priorityscheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slascheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slascheduler"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.slascheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.slascheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.chainfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.strategy.factory.chainfactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduling\.feature" searchPathRef="de.uniol.inf.is.odysseus.scheduling.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scheduling.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduling.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker" searchPathRef="de.uniol.inf.is.odysseus.broker"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.broker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.executor" searchPathRef="de.uniol.inf.is.odysseus.broker.executor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.broker.executor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.executor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.broker.parser.cql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.broker.parser.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.parser.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.transform" searchPathRef="de.uniol.inf.is.odysseus.broker.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.broker.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.transformation\.helper\.broker" searchPathRef="de.uniol.inf.is.odysseus.transformation.helper.broker"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.transformation.helper.broker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/transformation.helper.broker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking" searchPathRef="de.uniol.inf.is.odysseus.objecttracking"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.parser" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.parser"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.parser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.parser/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.rewrite"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.transform" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.objectrelational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.objectrelational"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.objectrelational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/or/parser.pql.objectrelational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.objectfusionconfig" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/rcp.viewer.objectfusionconfig/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars" searchPathRef="de.uniol.inf.is.odysseus.scars"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scars">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars\.transform" searchPathRef="de.uniol.inf.is.odysseus.scars.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scars.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars\.util" searchPathRef="de.uniol.inf.is.odysseus.scars.util"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scars.util">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/scars.util/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.xith3d" searchPathRef="org.xith3d"/>
+<rm:searchPath name="org.xith3d">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.xith3d\.linux\.amd64" searchPathRef="org.xith3d.linux.amd64"/>
+<rm:searchPath name="org.xith3d.linux.amd64">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.amd64/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.xith3d\.linux\.i586" searchPathRef="org.xith3d.linux.i586"/>
+<rm:searchPath name="org.xith3d.linux.i586">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.i586/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.xith3d\.win\.amd64" searchPathRef="org.xith3d.win.amd64"/>
+<rm:searchPath name="org.xith3d.win.amd64">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.amd64/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.xith3d\.win\.i586" searchPathRef="org.xith3d.win.i586"/>
+<rm:searchPath name="org.xith3d.win.i586">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.i586/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.maplesoft" searchPathRef="com.maplesoft"/>
+<rm:searchPath name="com.maplesoft">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/_resources/com.maplesoft/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.service\.sensor" searchPathRef="de.uniol.inf.is.odysseus.service.sensor"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.service.sensor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/sensor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.service\.test" searchPathRef="de.uniol.inf.is.odysseus.service.test"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.service.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.client.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.webservice.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/webservice.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql" searchPathRef="de.uniol.inf.is.odysseus.sparql"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.sparql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.transform" searchPathRef="de.uniol.inf.is.odysseus.sparql.transform"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.sparql.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="Jena264" searchPathRef="Jena264"/>
+<rm:searchPath name="Jena264">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/Jena264/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.feature" searchPathRef="de.uniol.inf.is.odysseus.sparql.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.sparql.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/sparql.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/wrapper.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.spatial" searchPathRef="de.uniol.inf.is.odysseus.database.spatial"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.database.spatial">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/database.spatial/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="com\.vividsolutions\.jts" searchPathRef="com.vividsolutions.jts"/>
+<rm:searchPath name="com.vividsolutions.jts">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/java.topological.suite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial" searchPathRef="de.uniol.inf.is.odysseus.spatial"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.spatial">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/odysseus.spatial/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.osgeo\.proj4j" searchPathRef="org.osgeo.proj4j"/>
+<rm:searchPath name="org.osgeo.proj4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/org.osgeo.proj4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.map" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.map">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/rcp.viewer.stream.map/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.feature" searchPathRef="de.uniol.inf.is.odysseus.spatial.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.spatial.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/spatial.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.grid" searchPathRef="de.uniol.inf.is.odysseus.spatial.grid"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.spatial.grid">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/spatial.grid/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.feature" searchPathRef="de.uniol.inf.is.odysseus.test.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.test.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/de.uniol.inf.is.odysseus.test.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.runner" searchPathRef="de.uniol.inf.is.odysseus.test.runner"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.test.runner">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/runner/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test" searchPathRef="de.uniol.inf.is.odysseus.test"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.tuple" searchPathRef="de.uniol.inf.is.odysseus.test.tuple"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.test.tuple">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/test.tuple/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.jpa" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.jpa"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.jpa">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/usermanagement/usermanagement.jpa/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="org\.apache\.derby" searchPathRef="org.apache.derby"/>
+<rm:searchPath name="org.apache.derby">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/usermanagement/_resources/org.apache.derby/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservicesclient" searchPathRef="de.uniol.inf.is.odysseus.webservicesclient"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.webservicesclient">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/odysseus.webservicesclient/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice" searchPathRef="de.uniol.inf.is.odysseus.webservice"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.webservice">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/webservice/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.webservice.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/webservice.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.base" searchPathRef="de.uniol.inf.is.odysseus.wrapper.base"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.csv" searchPathRef="de.uniol.inf.is.odysseus.wrapper.csv"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.csv">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.csv/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.file" searchPathRef="de.uniol.inf.is.odysseus.wrapper.file"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.file">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.file/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.html" searchPathRef="de.uniol.inf.is.odysseus.wrapper.html"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.html">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.html/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.nmea" searchPathRef="de.uniol.inf.is.odysseus.wrapper.nmea"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.nmea">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.nmea/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.scai" searchPathRef="de.uniol.inf.is.odysseus.wrapper.scai"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.scai">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.scai/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.sick" searchPathRef="de.uniol.inf.is.odysseus.wrapper.sick"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.sick">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.sick/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.twitter" searchPathRef="de.uniol.inf.is.odysseus.wrapper.twitter"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.twitter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.twitter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dwd" searchPathRef="de.uniol.inf.is.odysseus.dwd"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.dwd">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/dwd/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dwd\.feature" searchPathRef="de.uniol.inf.is.odysseus.dwd.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.dwd.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/dwd.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scai" searchPathRef="de.uniol.inf.is.odysseus.scai"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scai">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/odysseus.scai/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.gc2012" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf.gc2012/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
+</rm:searchPath>
+<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scai\.feature" searchPathRef="de.uniol.inf.is.odysseus.scai.feature"/>
+<rm:searchPath name="de.uniol.inf.is.odysseus.scai.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/scai.feature/">
         <bc:propertyRef key="workspace.root"/>
