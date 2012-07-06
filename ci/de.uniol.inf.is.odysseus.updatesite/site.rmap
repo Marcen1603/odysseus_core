@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rm:rmap xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0" xmlns:rm="http://www.eclipse.org/buckminster/RMap-1.0">
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.admissioncontrol\.feature" searchPathRef="de.uniol.inf.is.odysseus.admissioncontrol.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.admissioncontrol\.feature" searchPathRef="de.uniol.inf.is.odysseus.admissioncontrol.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.admissioncontrol.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/admissioncontrol.feature/">
@@ -8,7 +8,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.reaction" searchPathRef="de.uniol.inf.is.odysseus.ac.reaction"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.ac\.reaction" searchPathRef="de.uniol.inf.is.odysseus.ac.reaction"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.ac.reaction">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.reaction/">
@@ -16,7 +16,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.standard" searchPathRef="de.uniol.inf.is.odysseus.ac.standard"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.ac\.standard" searchPathRef="de.uniol.inf.is.odysseus.ac.standard"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.ac.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.standard/">
@@ -24,7 +24,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ac\.updater" searchPathRef="de.uniol.inf.is.odysseus.ac.updater"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.ac\.updater" searchPathRef="de.uniol.inf.is.odysseus.ac.updater"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.ac.updater">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.updater/">
@@ -32,7 +32,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action" searchPathRef="de.uniol.inf.is.odysseus.action"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action" searchPathRef="de.uniol.inf.is.odysseus.action"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action/">
@@ -40,7 +40,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.actuator\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.actuator.impl"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.actuator\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.actuator.impl"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.actuator.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.actuator.impl/">
@@ -48,7 +48,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.benchmark">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.benchmark/">
@@ -56,7 +56,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark.impl"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.benchmark\.impl" searchPathRef="de.uniol.inf.is.odysseus.action.benchmark.impl"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.benchmark.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.benchmark.impl/">
@@ -64,7 +64,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.demoApp" searchPathRef="de.uniol.inf.is.odysseus.action.demoApp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.demoApp" searchPathRef="de.uniol.inf.is.odysseus.action.demoApp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.demoApp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.demoApp/">
@@ -72,7 +72,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.feature" searchPathRef="de.uniol.inf.is.odysseus.action.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.feature" searchPathRef="de.uniol.inf.is.odysseus.action.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.feature/">
@@ -80,7 +80,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.dataSources" searchPathRef="de.uniol.inf.is.odysseus.action.dataSources"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.dataSources" searchPathRef="de.uniol.inf.is.odysseus.action.dataSources"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.dataSources">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.ideaalWrapper/">
@@ -88,7 +88,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.services" searchPathRef="de.uniol.inf.is.odysseus.action.services"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.services" searchPathRef="de.uniol.inf.is.odysseus.action.services"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.services">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.services/">
@@ -96,7 +96,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.action\.test" searchPathRef="de.uniol.inf.is.odysseus.action.test"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.action\.test" searchPathRef="de.uniol.inf.is.odysseus.action.test"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.action.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/action.test/">
@@ -104,7 +104,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.bpel\.service" searchPathRef="de.uniol.inf.is.odysseus.bpel.service"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.bpel\.service" searchPathRef="de.uniol.inf.is.odysseus.bpel.service"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.bpel.service">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/bpel.correlationService/">
@@ -112,7 +112,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.apache\.cxf" searchPathRef="org.apache.cxf"/>
+<rm:locator failOnError="false" pattern="org\.apache\.cxf" searchPathRef="org.apache.cxf"/>
 <rm:searchPath name="org.apache.cxf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/org.apache.cxf/">
@@ -120,7 +120,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.eca" searchPathRef="de.uniol.inf.is.odysseus.parser.eca"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.eca" searchPathRef="de.uniol.inf.is.odysseus.parser.eca"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.eca">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/action/parser.eca/">
@@ -128,7 +128,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.debschallenge\.reader" searchPathRef="de.uniol.inf.is.debschallenge.reader"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.debschallenge\.reader" searchPathRef="de.uniol.inf.is.debschallenge.reader"/>
 <rm:searchPath name="de.uniol.inf.is.debschallenge.reader">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DebsGrandChallenge/debschallenge.reader/">
@@ -136,7 +136,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="challengeServer" searchPathRef="challengeServer"/>
+<rm:locator failOnError="false" pattern="challengeServer" searchPathRef="challengeServer"/>
 <rm:searchPath name="challengeServer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DebsGrandChallenge/receiver/">
@@ -144,7 +144,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dsm\.generators" searchPathRef="de.uniol.inf.is.odysseus.dsm.generators"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.dsm\.generators" searchPathRef="de.uniol.inf.is.odysseus.dsm.generators"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.dsm.generators">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/DemandSideManagement/generators/">
@@ -152,7 +152,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion" searchPathRef="de.uniol.inf.is.odysseus.fusion"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.fusion" searchPathRef="de.uniol.inf.is.odysseus.fusion"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.fusion">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion/">
@@ -160,7 +160,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.feature" searchPathRef="de.uniol.inf.is.odysseus.fusion.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.feature" searchPathRef="de.uniol.inf.is.odysseus.fusion.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.fusion.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion.feature/">
@@ -168,7 +168,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.starter" searchPathRef="de.uniol.inf.is.odysseus.fusion.starter"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.fusion\.starter" searchPathRef="de.uniol.inf.is.odysseus.fusion.starter"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.fusion.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/fusion/fusion.starter/">
@@ -176,7 +176,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.bank" searchPathRef="de.uniol.inf.is.odysseus.generator.bank"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.bank" searchPathRef="de.uniol.inf.is.odysseus.generator.bank"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.bank">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.bank/">
@@ -184,7 +184,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator" searchPathRef="de.uniol.inf.is.odysseus.generator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator" searchPathRef="de.uniol.inf.is.odysseus.generator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.base/">
@@ -192,7 +192,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.context" searchPathRef="de.uniol.inf.is.odysseus.generator.context"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.context" searchPathRef="de.uniol.inf.is.odysseus.generator.context"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.context">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.context/">
@@ -200,7 +200,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.debs" searchPathRef="de.uniol.inf.is.odysseus.generator.debs"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.debs" searchPathRef="de.uniol.inf.is.odysseus.generator.debs"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.debs">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.debs/">
@@ -208,7 +208,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.dodgers" searchPathRef="de.uniol.inf.is.odysseus.generator.dodgers"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.dodgers" searchPathRef="de.uniol.inf.is.odysseus.generator.dodgers"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.dodgers">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.dodgers/">
@@ -216,7 +216,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.example" searchPathRef="de.uniol.inf.is.odysseus.generator.example"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.example" searchPathRef="de.uniol.inf.is.odysseus.generator.example"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.example">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.example/">
@@ -224,7 +224,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.frequentitem" searchPathRef="de.uniol.inf.is.odysseus.generator.frequentitem"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.frequentitem" searchPathRef="de.uniol.inf.is.odysseus.generator.frequentitem"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.frequentitem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.frequentitem/">
@@ -232,7 +232,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.hmm" searchPathRef="de.uniol.inf.is.odysseus.generator.hmm"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.hmm" searchPathRef="de.uniol.inf.is.odysseus.generator.hmm"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.hmm">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.hmm/">
@@ -240,7 +240,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.income" searchPathRef="de.uniol.inf.is.odysseus.generator.income"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.income" searchPathRef="de.uniol.inf.is.odysseus.generator.income"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.income">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.income/">
@@ -248,7 +248,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.outliersanddirty" searchPathRef="de.uniol.inf.is.odysseus.generator.outliersanddirty"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.outliersanddirty" searchPathRef="de.uniol.inf.is.odysseus.generator.outliersanddirty"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.outliersanddirty">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.outliersanddirty/">
@@ -256,7 +256,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.smarthome" searchPathRef="de.uniol.inf.is.odysseus.generator.smarthome"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.smarthome" searchPathRef="de.uniol.inf.is.odysseus.generator.smarthome"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.smarthome">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.smarthome/">
@@ -264,7 +264,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticchange" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticchange"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticchange" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticchange"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.syntheticchange">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.syntheticchange/">
@@ -272,7 +272,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticclusters" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticclusters"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.syntheticclusters" searchPathRef="de.uniol.inf.is.odysseus.generator.syntheticclusters"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.syntheticclusters">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.syntheticclusters/">
@@ -280,7 +280,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.txt" searchPathRef="de.uniol.inf.is.odysseus.generator.txt"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.txt" searchPathRef="de.uniol.inf.is.odysseus.generator.txt"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.txt">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/generator/generator.txt/">
@@ -288,7 +288,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database" searchPathRef="de.uniol.inf.is.odysseus.database"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database" searchPathRef="de.uniol.inf.is.odysseus.database"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database/">
@@ -296,7 +296,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.cql" searchPathRef="de.uniol.inf.is.odysseus.database.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database\.cql" searchPathRef="de.uniol.inf.is.odysseus.database.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.cql/">
@@ -304,7 +304,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.feature" searchPathRef="de.uniol.inf.is.odysseus.database.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database\.feature" searchPathRef="de.uniol.inf.is.odysseus.database.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.feature/">
@@ -312,7 +312,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.postgresql" searchPathRef="de.uniol.inf.is.odysseus.database.postgresql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database\.postgresql" searchPathRef="de.uniol.inf.is.odysseus.database.postgresql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database.postgresql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.postgresql/">
@@ -320,7 +320,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.rcp" searchPathRef="de.uniol.inf.is.odysseus.database.rcp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database\.rcp" searchPathRef="de.uniol.inf.is.odysseus.database.rcp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/database/database.rcp/">
@@ -328,7 +328,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.smarthome\.starter" searchPathRef="de.uniol.inf.is.odysseus.smarthome.starter"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.smarthome\.starter" searchPathRef="de.uniol.inf.is.odysseus.smarthome.starter"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.smarthome.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/ideeal/ideaal.starter/">
@@ -336,7 +336,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.sensorregistry">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry/">
@@ -344,7 +344,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry\.feature" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.sensorregistry\.feature" searchPathRef="de.uniol.inf.is.odysseus.sensorregistry.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.sensorregistry.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry.feature/">
@@ -352,7 +352,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.nexmark" searchPathRef="de.uniol.inf.is.odysseus.nexmark"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.nexmark" searchPathRef="de.uniol.inf.is.odysseus.nexmark"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.nexmark">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/nexmark/">
@@ -360,7 +360,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.nexmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.nexmark.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.nexmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.nexmark.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.nexmark.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/nexmark.feature/">
@@ -368,7 +368,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.lms" searchPathRef="de.offis.salsa.lms"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.lms" searchPathRef="de.offis.salsa.lms"/>
 <rm:searchPath name="de.offis.salsa.lms">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/">
@@ -376,7 +376,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.springsource\.org\.apache\.log4j" searchPathRef="com.springsource.org.apache.log4j"/>
+<rm:locator failOnError="false" pattern="com\.springsource\.org\.apache\.log4j" searchPathRef="com.springsource.org.apache.log4j"/>
 <rm:searchPath name="com.springsource.org.apache.log4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.org.apache.log4j/">
@@ -384,7 +384,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.springsource\.slf4j\.api" searchPathRef="com.springsource.slf4j.api"/>
+<rm:locator failOnError="false" pattern="com\.springsource\.slf4j\.api" searchPathRef="com.springsource.slf4j.api"/>
 <rm:searchPath name="com.springsource.slf4j.api">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.api/">
@@ -392,7 +392,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.springsource\.slf4j\.log4j" searchPathRef="com.springsource.slf4j.log4j"/>
+<rm:locator failOnError="false" pattern="com\.springsource\.slf4j\.log4j" searchPathRef="com.springsource.slf4j.log4j"/>
 <rm:searchPath name="com.springsource.slf4j.log4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.log4j/">
@@ -400,7 +400,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.playground" searchPathRef="de.offis.salsa.playground"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.playground" searchPathRef="de.offis.salsa.playground"/>
 <rm:searchPath name="de.offis.salsa.playground">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.playground/">
@@ -408,7 +408,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.starter" searchPathRef="de.offis.salsa.starter"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.starter" searchPathRef="de.offis.salsa.starter"/>
 <rm:searchPath name="de.offis.salsa.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.starter/">
@@ -416,7 +416,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.wrapper\.car" searchPathRef="de.offis.salsa.wrapper.car"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.wrapper\.car" searchPathRef="de.offis.salsa.wrapper.car"/>
 <rm:searchPath name="de.offis.salsa.wrapper.car">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.car/">
@@ -424,7 +424,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.wrapper\.raw" searchPathRef="de.offis.salsa.wrapper.raw"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.wrapper\.raw" searchPathRef="de.offis.salsa.wrapper.raw"/>
 <rm:searchPath name="de.offis.salsa.wrapper.raw">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.raw/">
@@ -432,7 +432,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.wrapper\.scooter" searchPathRef="de.offis.salsa.wrapper.scooter"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.wrapper\.scooter" searchPathRef="de.offis.salsa.wrapper.scooter"/>
 <rm:searchPath name="de.offis.salsa.wrapper.scooter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.scooter/">
@@ -440,7 +440,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.salsa\.playground" searchPathRef="de.uniol.inf.is.odysseus.salsa.playground"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.salsa\.playground" searchPathRef="de.uniol.inf.is.odysseus.salsa.playground"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.salsa.playground">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/">
@@ -448,7 +448,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="SaLsA_Default" searchPathRef="SaLsA_Default"/>
+<rm:locator failOnError="false" pattern="SaLsA_Default" searchPathRef="SaLsA_Default"/>
 <rm:searchPath name="SaLsA_Default">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/">
@@ -456,7 +456,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.offis\.salsa\.feature" searchPathRef="de.offis.salsa.feature"/>
+<rm:locator failOnError="false" pattern="de\.offis\.salsa\.feature" searchPathRef="de.offis.salsa.feature"/>
 <rm:searchPath name="de.offis.salsa.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/SaLsA/salsa.feature/">
@@ -464,7 +464,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Aalso" searchPathRef="Aalso"/>
+<rm:locator failOnError="false" pattern="Aalso" searchPathRef="Aalso"/>
 <rm:searchPath name="Aalso">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Aalso/">
@@ -472,7 +472,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Siafu" searchPathRef="Siafu"/>
+<rm:locator failOnError="false" pattern="Siafu" searchPathRef="Siafu"/>
 <rm:searchPath name="Siafu">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Siafu/">
@@ -480,7 +480,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Simulation-IDEAAL" searchPathRef="Simulation-IDEAAL"/>
+<rm:locator failOnError="false" pattern="Simulation-IDEAAL" searchPathRef="Simulation-IDEAAL"/>
 <rm:searchPath name="Simulation-IDEAAL">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/siafu/Simulation-IDEAAL/">
@@ -488,7 +488,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing" searchPathRef="de.uniol.inf.is.odysseus.application.storing"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing" searchPathRef="de.uniol.inf.is.odysseus.application.storing"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.application.storing">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/storing/application.storing/">
@@ -496,7 +496,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing\.feature" searchPathRef="de.uniol.inf.is.odysseus.application.storing.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.application\.storing\.feature" searchPathRef="de.uniol.inf.is.odysseus.application.storing.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.application.storing.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/storing/application.storing.feature/">
@@ -504,7 +504,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.Ostermillerutils\.csvparser" searchPathRef="com.Ostermillerutils.csvparser"/>
+<rm:locator failOnError="false" pattern="com\.Ostermillerutils\.csvparser" searchPathRef="com.Ostermillerutils.csvparser"/>
 <rm:searchPath name="com.Ostermillerutils.csvparser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/application/_resources/com.Ostermillerutils.csvparser/">
@@ -512,7 +512,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.benchmark.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.benchmark\.feature" searchPathRef="de.uniol.inf.is.odysseus.benchmark.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.benchmark.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmark.feature/">
@@ -520,7 +520,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker" searchPathRef="de.uniol.inf.is.odysseus.benchmarker"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker" searchPathRef="de.uniol.inf.is.odysseus.benchmarker"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker/">
@@ -528,7 +528,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.benchmarker\.gui" searchPathRef="de.uniol.inf.is.odysseus.rcp.benchmarker.gui"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.benchmarker\.gui" searchPathRef="de.uniol.inf.is.odysseus.rcp.benchmarker.gui"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.benchmarker.gui">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.gui/">
@@ -536,7 +536,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.impl" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.impl"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.impl" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.impl"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker.impl">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.impl/">
@@ -544,7 +544,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.runner" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.runner"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.benchmarker\.runner" searchPathRef="de.uniol.inf.is.odysseus.benchmarker.runner"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.benchmarker.runner">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.runner/">
@@ -552,7 +552,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.startBundles" searchPathRef="de.uniol.inf.is.odysseus.startBundles"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.startBundles" searchPathRef="de.uniol.inf.is.odysseus.startBundles"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.startBundles">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/benchmarker.startBundles/">
@@ -560,7 +560,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.simpleframework\.xml" searchPathRef="org.simpleframework.xml"/>
+<rm:locator failOnError="false" pattern="org\.simpleframework\.xml" searchPathRef="org.simpleframework.xml"/>
 <rm:searchPath name="org.simpleframework.xml">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/benchmark/resources/org.simpleframework.xml/">
@@ -568,7 +568,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.cepviewer" searchPathRef="de.uniol.inf.is.odysseus.cep.cepviewer"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.cepviewer" searchPathRef="de.uniol.inf.is.odysseus.cep.cepviewer"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.cepviewer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.cepviewer/">
@@ -576,7 +576,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.epa" searchPathRef="de.uniol.inf.is.odysseus.cep.epa"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.epa" searchPathRef="de.uniol.inf.is.odysseus.cep.epa"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.epa">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.epa/">
@@ -584,7 +584,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.feature/">
@@ -592,7 +592,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.metamodel" searchPathRef="de.uniol.inf.is.odysseus.cep.metamodel"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.metamodel" searchPathRef="de.uniol.inf.is.odysseus.cep.metamodel"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.metamodel">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.metamodel/">
@@ -600,7 +600,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.relational" searchPathRef="de.uniol.inf.is.odysseus.cep.relational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.relational" searchPathRef="de.uniol.inf.is.odysseus.cep.relational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.relational/">
@@ -608,7 +608,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.sase" searchPathRef="de.uniol.inf.is.odysseus.cep.sase"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.sase" searchPathRef="de.uniol.inf.is.odysseus.cep.sase"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.sase">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.sase/">
@@ -616,7 +616,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.studio.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.cep.studio.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.studio.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.studio.feature/">
@@ -624,7 +624,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.cep\.transform" searchPathRef="de.uniol.inf.is.odysseus.cep.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.cep\.transform" searchPathRef="de.uniol.inf.is.odysseus.cep.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.cep.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/cep/cep.transform/">
@@ -632,7 +632,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.updatesite" searchPathRef="de.uniol.inf.is.odysseus.updatesite"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.updatesite" searchPathRef="de.uniol.inf.is.odysseus.updatesite"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.updatesite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/ci/de.uniol.inf.is.odysseus.updatesite/">
@@ -640,7 +640,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.cql" searchPathRef="de.uniol.inf.is.odysseus.context.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.context\.cql" searchPathRef="de.uniol.inf.is.odysseus.context.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.context.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/context.cql/">
@@ -648,7 +648,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.rcp" searchPathRef="de.uniol.inf.is.odysseus.context.rcp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.context\.rcp" searchPathRef="de.uniol.inf.is.odysseus.context.rcp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.context.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/context.rcp/">
@@ -656,7 +656,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context" searchPathRef="de.uniol.inf.is.odysseus.context"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.context" searchPathRef="de.uniol.inf.is.odysseus.context"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.context">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/odysseus.context/">
@@ -664,7 +664,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.context\.feature" searchPathRef="de.uniol.inf.is.odysseus.context.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.context\.feature" searchPathRef="de.uniol.inf.is.odysseus.context.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.context.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/context/odysseus.context.feature/">
@@ -672,7 +672,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.args" searchPathRef="de.uniol.inf.is.odysseus.args"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.args" searchPathRef="de.uniol.inf.is.odysseus.args"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.args">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/args/">
@@ -680,7 +680,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.server" searchPathRef="de.uniol.inf.is.odysseus.core.server"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.core\.server" searchPathRef="de.uniol.inf.is.odysseus.core.server"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.core.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/base/">
@@ -688,7 +688,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core" searchPathRef="de.uniol.inf.is.odysseus.core"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.core" searchPathRef="de.uniol.inf.is.odysseus.core"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.core">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core/">
@@ -696,7 +696,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.client.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.core\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.client.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.core.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core.client.feature/">
@@ -704,7 +704,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.core\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.core\.feature" searchPathRef="de.uniol.inf.is.odysseus.core.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.core.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/core.feature/">
@@ -712,7 +712,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.filestore">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.filestore/">
@@ -720,7 +720,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.filestore.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.filestore.feature/">
@@ -728,7 +728,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.mem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.mem/">
@@ -736,7 +736,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.datadictionary\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.datadictionary.mem.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.datadictionary.mem.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/datadictionary.mem.feature/">
@@ -744,7 +744,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.standardexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.standardexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.standardexecutor/">
@@ -752,7 +752,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webserviceexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.webserviceexecutor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.webserviceexecutor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.webserviceexecutor/">
@@ -760,7 +760,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.wsclient" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.executor\.wsclient" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.executor.wsclient">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.wsclient/">
@@ -768,7 +768,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.executor\.wsclient\.feature" searchPathRef="de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.executor\.wsclient\.feature" searchPathRef="de.uniol.inf.is.odysseus.executor.wsclient.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.executor.wsclient.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/executor.wsclient.feature/">
@@ -776,7 +776,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.interval.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.interval.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.interval.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/interval.transform/">
@@ -784,7 +784,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.intervalapproach" searchPathRef="de.uniol.inf.is.odysseus.intervalapproach"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.intervalapproach" searchPathRef="de.uniol.inf.is.odysseus.intervalapproach"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.intervalapproach">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/intervalapproach/">
@@ -792,7 +792,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency" searchPathRef="de.uniol.inf.is.odysseus.interval_latency"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency" searchPathRef="de.uniol.inf.is.odysseus.interval_latency"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.interval_latency">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/interval_latency/">
@@ -800,7 +800,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency" searchPathRef="de.uniol.inf.is.odysseus.latency"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.latency" searchPathRef="de.uniol.inf.is.odysseus.latency"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.latency">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency/">
@@ -808,7 +808,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency\.feature" searchPathRef="de.uniol.inf.is.odysseus.latency.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.latency\.feature" searchPathRef="de.uniol.inf.is.odysseus.latency.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.latency.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency.feature/">
@@ -816,7 +816,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.latency\.transform" searchPathRef="de.uniol.inf.is.odysseus.latency.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.latency\.transform" searchPathRef="de.uniol.inf.is.odysseus.latency.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.latency.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/latency.transform/">
@@ -824,7 +824,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.builder" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.builder" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.builder"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.logicaloperator.builder">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/logicaloperator.collector/">
@@ -832,7 +832,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.logicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.logicaloperator.relational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.logicaloperator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/logicaloperator.relational/">
@@ -840,7 +840,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mep\.matrix" searchPathRef="de.uniol.inf.is.odysseus.mep.matrix"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mep\.matrix" searchPathRef="de.uniol.inf.is.odysseus.mep.matrix"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mep.matrix">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/mep.matrix/">
@@ -848,7 +848,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.persistentqueries" searchPathRef="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational\.persistentqueries" searchPathRef="de.uniol.inf.is.odysseus.relational.persistentqueries"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational.persistentqueries">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/odysseus.persistentqueries/">
@@ -856,7 +856,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.parser.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.parser.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/parser.cql/">
@@ -864,7 +864,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.physicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.physicaloperator\.relational" searchPathRef="de.uniol.inf.is.odysseus.physicaloperator.relational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.physicaloperator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/physicaloperator.relational/">
@@ -872,7 +872,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.querybufferplacement" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.querybufferplacement" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.querybufferplacement">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.querybufferplacement/">
@@ -880,7 +880,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.sourcebufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.sourcebufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.sourcebufferplacementstrategy">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.sourcebufferplacementstrategy/">
@@ -888,7 +888,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.standardbufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.bufferplacement\.standardbufferplacementstrategy" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.bufferplacement.standardbufferplacementstrategy">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.standardbufferplacementstrategy/">
@@ -896,7 +896,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.compiler\.standardcompiler" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.compiler\.standardcompiler" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.compiler.standardcompiler/">
@@ -904,7 +904,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installprocesscallsmonitor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installprocesscallsmonitor" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.installprocesscallsmonitor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.installprocesscallsmonitor/">
@@ -912,7 +912,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installstandardmetadatalistener" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.installstandardmetadatalistener" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.installstandardmetadatalistener">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.installstandardmetadatalistener/">
@@ -920,7 +920,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.plan\.standardplanoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.plan\.standardplanoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.plan.standardplanoptimizer/">
@@ -928,7 +928,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.query\.standardqueryoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.query\.standardqueryoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.query.standardqueryoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.query.standardqueryoptimizer/">
@@ -936,7 +936,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.standardoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.standardoptimizer" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmanagement.optimization.standardoptimizer/">
@@ -944,7 +944,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmgmt\.standard\.feature" searchPathRef="de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmgmt\.standard\.feature" searchPathRef="de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmgmt.standard.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/planmgmt.standard.feature/">
@@ -952,7 +952,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql" searchPathRef="de.uniol.inf.is.odysseus.parser.pql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql" searchPathRef="de.uniol.inf.is.odysseus.parser.pql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/pql/parser.pql/">
@@ -960,7 +960,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.relational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.relational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.relational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.relational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/pql/parser.pql.relational/">
@@ -968,7 +968,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority" searchPathRef="de.uniol.inf.is.odysseus.priority"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.priority" searchPathRef="de.uniol.inf.is.odysseus.priority"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/priority/">
@@ -976,7 +976,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority\.cql" searchPathRef="de.uniol.inf.is.odysseus.priority.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.priority\.cql" searchPathRef="de.uniol.inf.is.odysseus.priority.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.priority.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/priority.cql/">
@@ -984,7 +984,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.querysharing" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.planmanagement\.optimization\.querysharing" searchPathRef="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.planmanagement.optimization.querysharing">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/querysharing/">
@@ -992,7 +992,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp" searchPathRef="de.uniol.inf.is.odysseus.rcp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp" searchPathRef="de.uniol.inf.is.odysseus.rcp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp/">
@@ -1000,7 +1000,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard/">
@@ -1008,7 +1008,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.part">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part/">
@@ -1016,7 +1016,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part.test"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.part\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.part.test"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.part.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part.test/">
@@ -1024,7 +1024,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.test"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.dashboard\.test" searchPathRef="de.uniol.inf.is.odysseus.rcp.dashboard.test"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.dashboard.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.test/">
@@ -1032,7 +1032,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.logical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.logical"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.logical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.logical"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.queryview.logical">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.logical/">
@@ -1040,7 +1040,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.physical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.physical"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.queryview\.physical" searchPathRef="de.uniol.inf.is.odysseus.rcp.queryview.physical"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.queryview.physical">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.physical/">
@@ -1048,7 +1048,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.server"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.server"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.server/">
@@ -1056,7 +1056,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.server"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.server" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.server"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.server">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.viewer.server/">
@@ -1064,7 +1064,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.studio\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.client.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.studio\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.client.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.studio.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.studio.client.feature/">
@@ -1072,7 +1072,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor/">
@@ -1080,7 +1080,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.parameters" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.parameters"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.parameters" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.parameters"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.parameters">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.parameters/">
@@ -1088,7 +1088,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text/">
@@ -1096,7 +1096,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.cql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.cql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.cql/">
@@ -1104,7 +1104,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.pql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.pql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.editor\.text\.pql" searchPathRef="de.uniol.inf.is.odysseus.rcp.editor.text.pql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.editor.text.pql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.pql/">
@@ -1112,7 +1112,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.starter" searchPathRef="de.uniol.inf.is.odysseus.rcp.starter"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.starter" searchPathRef="de.uniol.inf.is.odysseus.rcp.starter"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.starter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.starter/">
@@ -1120,7 +1120,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer/">
@@ -1128,7 +1128,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.chart" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.chart" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.chart/">
@@ -1136,7 +1136,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.table" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.table" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.table">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.table/">
@@ -1144,7 +1144,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.wizard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.wizard/">
@@ -1152,7 +1152,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard\.output" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard.output"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.wizard\.output" searchPathRef="de.uniol.inf.is.odysseus.rcp.wizard.output"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.wizard.output">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/rcp.wizard.output/">
@@ -1160,7 +1160,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.studio\.feature" searchPathRef="de.uniol.inf.is.odysseus.studio.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.studio.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rcp/studio.feature/">
@@ -1168,7 +1168,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.base" searchPathRef="de.uniol.inf.is.odysseus.relational.base"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational\.base" searchPathRef="de.uniol.inf.is.odysseus.relational.base"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.base/">
@@ -1176,7 +1176,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.feature" searchPathRef="de.uniol.inf.is.odysseus.relational.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational\.feature" searchPathRef="de.uniol.inf.is.odysseus.relational.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.feature/">
@@ -1184,7 +1184,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.relational.rewrite"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.relational.rewrite"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.rewrite/">
@@ -1192,7 +1192,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational.transform/">
@@ -1200,7 +1200,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval" searchPathRef="de.uniol.inf.is.odysseus.relational_interval"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval" searchPathRef="de.uniol.inf.is.odysseus.relational_interval"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational_interval">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational_interval/">
@@ -1208,7 +1208,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational_interval.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.relational_interval\.transform" searchPathRef="de.uniol.inf.is.odysseus.relational_interval.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.relational_interval.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/relational_interval.transform/">
@@ -1216,7 +1216,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.rewrite"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.rewrite"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/rewrite/">
@@ -1224,7 +1224,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.ruleengine" searchPathRef="de.uniol.inf.is.odysseus.ruleengine"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.ruleengine" searchPathRef="de.uniol.inf.is.odysseus.ruleengine"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.ruleengine">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/ruleengine/">
@@ -1232,7 +1232,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.singlethreadscheduler2\.0" searchPathRef="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.singlethreadscheduler2\.0" searchPathRef="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler2.0">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.singlethreadscheduler2.0/">
@@ -1240,7 +1240,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.aurorafactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.aurorafactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.strategy.factory.aurorafactory/">
@@ -1248,7 +1248,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.simplestratfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.simplestratfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.simplestratfactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/scheduler.strategy.factory.simplestratfactory/">
@@ -1256,7 +1256,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.manager\.singleschedulermanager" searchPathRef="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.manager\.singleschedulermanager" searchPathRef="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/schedulermanager.singleschedulermanager/">
@@ -1264,7 +1264,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.script\.parser" searchPathRef="de.uniol.inf.is.odysseus.script.parser"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.script\.parser" searchPathRef="de.uniol.inf.is.odysseus.script.parser"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.script.parser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/script/">
@@ -1272,7 +1272,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.script\.exector" searchPathRef="de.uniol.inf.is.odysseus.script.exector"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.script\.exector" searchPathRef="de.uniol.inf.is.odysseus.script.exector"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.script.exector">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/script.exector/">
@@ -1280,7 +1280,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.transform" searchPathRef="de.uniol.inf.is.odysseus.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.transform" searchPathRef="de.uniol.inf.is.odysseus.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/transform/">
@@ -1288,7 +1288,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.filestore">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.filestore/">
@@ -1296,7 +1296,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.filestore\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.filestore.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.filestore.feature/">
@@ -1304,7 +1304,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.mem">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.mem/">
@@ -1312,7 +1312,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.mem\.feature" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.mem.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.mem.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/usermanagement.mem.feature/">
@@ -1320,7 +1320,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="ANTLR3_4" searchPathRef="ANTLR3_4"/>
+<rm:locator failOnError="false" pattern="ANTLR3_4" searchPathRef="ANTLR3_4"/>
 <rm:searchPath name="ANTLR3_4">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/ANTLR3_4/">
@@ -1328,7 +1328,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.google\.guava" searchPathRef="com.google.guava"/>
+<rm:locator failOnError="false" pattern="com\.google\.guava" searchPathRef="com.google.guava"/>
 <rm:searchPath name="com.google.guava">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/com.google.guava/">
@@ -1336,7 +1336,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.google\.protobuf" searchPathRef="com.google.protobuf"/>
+<rm:locator failOnError="false" pattern="com\.google\.protobuf" searchPathRef="com.google.protobuf"/>
 <rm:searchPath name="com.google.protobuf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/com.google.protobuf/">
@@ -1344,7 +1344,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Commons\.Math" searchPathRef="Commons.Math"/>
+<rm:locator failOnError="false" pattern="Commons\.Math" searchPathRef="Commons.Math"/>
 <rm:searchPath name="Commons.Math">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/Commons.Math/">
@@ -1352,7 +1352,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.slf4j" searchPathRef="de.uniol.inf.is.odysseus.slf4j"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.slf4j" searchPathRef="de.uniol.inf.is.odysseus.slf4j"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.slf4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/de.uniol.inf.is.odysseus.slf4j/">
@@ -1360,7 +1360,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.jfreechart" searchPathRef="de.uniol.inf.is.jfreechart"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.jfreechart" searchPathRef="de.uniol.inf.is.jfreechart"/>
 <rm:searchPath name="de.uniol.inf.is.jfreechart">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/jfreechart/">
@@ -1368,7 +1368,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.apache\.commons\.math3" searchPathRef="org.apache.commons.math3"/>
+<rm:locator failOnError="false" pattern="org\.apache\.commons\.math3" searchPathRef="org.apache.commons.math3"/>
 <rm:searchPath name="org.apache.commons.math3">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/org.apache.commons.math3/">
@@ -1376,7 +1376,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.jboss\.netty" searchPathRef="org.jboss.netty"/>
+<rm:locator failOnError="false" pattern="org\.jboss\.netty" searchPathRef="org.jboss.netty"/>
 <rm:searchPath name="org.jboss.netty">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/core/_resources/org.jboss.netty/">
@@ -1384,7 +1384,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.opcount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.opcount"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.opcount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.opcount"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.opcount">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.opcount/">
@@ -1392,7 +1392,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator/">
@@ -1400,7 +1400,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.datasrc" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.datasrc"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.datasrc" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.datasrc"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.datasrc">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.datasrc/">
@@ -1408,7 +1408,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.relational" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.relational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.relational" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.relational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.relational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.relational/">
@@ -1416,7 +1416,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.util" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.util"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.operator\.util" searchPathRef="de.uniol.inf.is.odysseus.costmodel.operator.util"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.operator.util">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.util/">
@@ -1424,7 +1424,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.querycount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.querycount"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.costmodel\.querycount" searchPathRef="de.uniol.inf.is.odysseus.costmodel.querycount"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.costmodel.querycount">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.querycount/">
@@ -1432,7 +1432,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.creatermap" searchPathRef="de.uniol.inf.is.odysseus.creatermap"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.creatermap" searchPathRef="de.uniol.inf.is.odysseus.creatermap"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.creatermap">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/de.uniol.inf.is.odysseus.creatermap/">
@@ -1440,7 +1440,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency_priority" searchPathRef="de.uniol.inf.is.odysseus.interval_latency_priority"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.interval_latency_priority" searchPathRef="de.uniol.inf.is.odysseus.interval_latency_priority"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.interval_latency_priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/interval_latency_priority/">
@@ -1448,7 +1448,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.loadshedding" searchPathRef="de.uniol.inf.is.odysseus.loadshedding"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.loadshedding" searchPathRef="de.uniol.inf.is.odysseus.loadshedding"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.loadshedding">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/loadshedding/">
@@ -1456,7 +1456,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.priority" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.priority"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.priority" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.priority"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.priority">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/parser.pql.priority/">
@@ -1464,7 +1464,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority_interval" searchPathRef="de.uniol.inf.is.odysseus.priority_interval"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.priority_interval" searchPathRef="de.uniol.inf.is.odysseus.priority_interval"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.priority_interval">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority/priority_interval/">
@@ -1472,7 +1472,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.priority\.feature" searchPathRef="de.uniol.inf.is.odysseus.priority.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.priority\.feature" searchPathRef="de.uniol.inf.is.odysseus.priority.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.priority.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/metadata/priority.feature/">
@@ -1480,7 +1480,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.generator\.mining\.arff" searchPathRef="de.uniol.inf.is.odysseus.generator.mining.arff"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.generator\.mining\.arff" searchPathRef="de.uniol.inf.is.odysseus.generator.mining.arff"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.generator.mining.arff">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/generator.mining.arff/">
@@ -1488,7 +1488,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.classification" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.classification"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.classification" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.classification"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.classification">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/classification/mining.classification/">
@@ -1496,7 +1496,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.cleaning">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.base/">
@@ -1504,7 +1504,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning.smql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.cleaning\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.cleaning.smql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.cleaning.smql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.smql/">
@@ -1512,7 +1512,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.clustering" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.clustering"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.clustering" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.clustering"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.clustering">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/clustering/mining.clustering/">
@@ -1520,7 +1520,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.markovql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.markovql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.markovql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.markovql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.markovql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.markovql/">
@@ -1528,7 +1528,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.model" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.model"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.model" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.model"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.model">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.model/">
@@ -1536,7 +1536,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.operator" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.operator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.markov\.operator" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.markov.operator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.markov.operator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/markov/markov.operator/">
@@ -1544,7 +1544,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/mining.base/">
@@ -1552,7 +1552,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.smql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.incremental\.smql" searchPathRef="de.uniol.inf.is.odysseus.mining.incremental.smql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.incremental.smql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/incremental/mining.smql/">
@@ -1560,7 +1560,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining" searchPathRef="de.uniol.inf.is.odysseus.mining"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining" searchPathRef="de.uniol.inf.is.odysseus.mining"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/mining/">
@@ -1568,7 +1568,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.mining\.feature" searchPathRef="de.uniol.inf.is.odysseus.mining.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.mining\.feature" searchPathRef="de.uniol.inf.is.odysseus.mining.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.mining.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/mining.feature/">
@@ -1576,7 +1576,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.statistics" searchPathRef="de.uniol.inf.is.odysseus.statistics"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.statistics" searchPathRef="de.uniol.inf.is.odysseus.statistics"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.statistics">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/statistics/">
@@ -1584,7 +1584,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.weka" searchPathRef="de.uniol.inf.is.odysseus.weka"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.weka" searchPathRef="de.uniol.inf.is.odysseus.weka"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.weka">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/mining/weka/">
@@ -1592,7 +1592,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bid">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid/">
@@ -1600,7 +1600,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid.standard"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bid\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bid.standard"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bid.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid.standard/">
@@ -1608,7 +1608,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bidselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection/">
@@ -1616,7 +1616,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.bidselection\.standard" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard/">
@@ -1624,7 +1624,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.estimator" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.estimator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ac\.estimator" searchPathRef="de.uniol.inf.is.odysseus.p2p.ac.estimator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ac.estimator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.estimator/">
@@ -1632,7 +1632,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/ap.feature/">
@@ -1640,7 +1640,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p" searchPathRef="de.uniol.inf.is.odysseus.p2p"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p" searchPathRef="de.uniol.inf.is.odysseus.p2p"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/base/">
@@ -1648,7 +1648,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.client.queryselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.client.queryselection/">
@@ -1656,7 +1656,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.provider/">
@@ -1664,7 +1664,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.provider.clientselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/bidding.provider.clientselection/">
@@ -1672,7 +1672,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.client">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/client/">
@@ -1680,7 +1680,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client.queryselection"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.client\.queryselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.client.queryselection"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.client.queryselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/client.queryselection/">
@@ -1688,7 +1688,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.bidding\.client" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.bidding.client"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.bidding.client">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/distribution.bidding.client/">
@@ -1696,7 +1696,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.provider">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/provider/">
@@ -1704,7 +1704,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.distr\.provider\.clientselection" searchPathRef="de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.distr.provider.clientselection">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/distribution/provider.clientselection/">
@@ -1712,7 +1712,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/adminpeer.jxta/">
@@ -1720,7 +1720,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.lifecycle.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap.lifecycle.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap.lifecycle.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/adminpeer.lifecycle.jxta/">
@@ -1728,7 +1728,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/base.jxta/">
@@ -1736,7 +1736,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.jxta/">
@@ -1744,7 +1744,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.lifecycle\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.lifecycle.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.lifecycle.jxta/">
@@ -1752,7 +1752,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.sp.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/superpeer.jxta/">
@@ -1760,7 +1760,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.jxta"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.jxta" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.jxta"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.jxta">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/jxta/thinpeer.jxta/">
@@ -1768,7 +1768,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/op.feature/">
@@ -1776,7 +1776,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.ap" searchPathRef="de.uniol.inf.is.odysseus.p2p.ap"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.ap">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/adminpeer/">
@@ -1784,7 +1784,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op" searchPathRef="de.uniol.inf.is.odysseus.p2p.op"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op" searchPathRef="de.uniol.inf.is.odysseus.p2p.op"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/operatorpeer/">
@@ -1792,7 +1792,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.sp" searchPathRef="de.uniol.inf.is.odysseus.p2p.sp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.sp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/superpeer/">
@@ -1800,7 +1800,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/thinpeer/">
@@ -1808,7 +1808,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.executor" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.executor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.executor" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.executor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.executor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/peer/tp.executor/">
@@ -1816,7 +1816,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.physicaloperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.physicaloperator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.op\.physicaloperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.op.physicaloperator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.op.physicaloperator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/physicaloperator/">
@@ -1824,7 +1824,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.base" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.base"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.base" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.base"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/base/">
@@ -1832,7 +1832,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.nosplitting" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.nosplitting"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.nosplitting" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.nosplitting"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.nosplitting">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/nosplitting/">
@@ -1840,7 +1840,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.oneplanperoperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.oneplanperoperator" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.oneplanperoperator">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/oneplanperoperator/">
@@ -1848,7 +1848,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.sourcesplit" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.splitting\.sourcesplit" searchPathRef="de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.splitting.sourcesplit">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/splitting/sourcesplit/">
@@ -1856,7 +1856,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.tp\.feature" searchPathRef="de.uniol.inf.is.odysseus.p2p.tp.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.tp.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/tp.feature/">
@@ -1864,7 +1864,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.transform" searchPathRef="de.uniol.inf.is.odysseus.p2p.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.p2p\.transform" searchPathRef="de.uniol.inf.is.odysseus.p2p.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.p2p.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/transform/">
@@ -1872,7 +1872,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="apache\.commons\.codec" searchPathRef="apache.commons.codec"/>
+<rm:locator failOnError="false" pattern="apache\.commons\.codec" searchPathRef="apache.commons.codec"/>
 <rm:searchPath name="apache.commons.codec">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/_resources/apache.commons.codec/">
@@ -1880,7 +1880,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Jxta\.2\.6" searchPathRef="Jxta.2.6"/>
+<rm:locator failOnError="false" pattern="Jxta\.2\.6" searchPathRef="Jxta.2.6"/>
 <rm:searchPath name="Jxta.2.6">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/p2p/_resources/Jxta.2.6/">
@@ -1888,7 +1888,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.prototyping" searchPathRef="de.uniol.inf.is.odysseus.prototyping"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.prototyping" searchPathRef="de.uniol.inf.is.odysseus.prototyping"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.prototyping">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/rapid-prototyping/prototyping/">
@@ -1896,7 +1896,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.prototyping\.feature" searchPathRef="de.uniol.inf.is.odysseus.prototyping.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.prototyping\.feature" searchPathRef="de.uniol.inf.is.odysseus.prototyping.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.prototyping.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/rapid-prototyping/prototyping.feature/">
@@ -1904,7 +1904,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slapriorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slapriorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler/">
@@ -1912,7 +1912,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.priorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.priorityscheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.priorityscheduler"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.priorityscheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.priorityscheduler/">
@@ -1920,7 +1920,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slascheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slascheduler"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.slascheduler" searchPathRef="de.uniol.inf.is.odysseus.scheduler.slascheduler"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.slascheduler">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.slascheduler/">
@@ -1928,7 +1928,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.chainfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduler\.strategy\.factory\.chainfactory" searchPathRef="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduler.strategy.factory.chainfactory">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduler.strategy.factory.chainfactory/">
@@ -1936,7 +1936,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scheduling\.feature" searchPathRef="de.uniol.inf.is.odysseus.scheduling.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scheduling\.feature" searchPathRef="de.uniol.inf.is.odysseus.scheduling.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scheduling.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/scheduling/scheduling.feature/">
@@ -1944,7 +1944,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker" searchPathRef="de.uniol.inf.is.odysseus.broker"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.broker" searchPathRef="de.uniol.inf.is.odysseus.broker"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.broker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker/">
@@ -1952,7 +1952,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.executor" searchPathRef="de.uniol.inf.is.odysseus.broker.executor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.broker\.executor" searchPathRef="de.uniol.inf.is.odysseus.broker.executor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.broker.executor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.executor/">
@@ -1960,7 +1960,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.broker.parser.cql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.broker\.parser\.cql" searchPathRef="de.uniol.inf.is.odysseus.broker.parser.cql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.broker.parser.cql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.parser.cql/">
@@ -1968,7 +1968,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.broker\.transform" searchPathRef="de.uniol.inf.is.odysseus.broker.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.broker\.transform" searchPathRef="de.uniol.inf.is.odysseus.broker.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.broker.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/broker.transform/">
@@ -1976,7 +1976,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.transformation\.helper\.broker" searchPathRef="de.uniol.inf.is.odysseus.transformation.helper.broker"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.transformation\.helper\.broker" searchPathRef="de.uniol.inf.is.odysseus.transformation.helper.broker"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.transformation.helper.broker">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/broker/transformation.helper.broker/">
@@ -1984,7 +1984,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking" searchPathRef="de.uniol.inf.is.odysseus.objecttracking"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking" searchPathRef="de.uniol.inf.is.odysseus.objecttracking"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking/">
@@ -1992,7 +1992,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.parser" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.parser"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.parser" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.parser"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.parser">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.parser/">
@@ -2000,7 +2000,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.rewrite"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.rewrite" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.rewrite"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.rewrite">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.rewrite/">
@@ -2008,7 +2008,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.transform" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.objecttracking\.transform" searchPathRef="de.uniol.inf.is.odysseus.objecttracking.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.objecttracking.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/objecttracking.transform/">
@@ -2016,7 +2016,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.objectrelational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.objectrelational"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.parser\.pql\.objectrelational" searchPathRef="de.uniol.inf.is.odysseus.parser.pql.objectrelational"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.parser.pql.objectrelational">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/or/parser.pql.objectrelational/">
@@ -2024,7 +2024,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.objectfusionconfig" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.objectfusionconfig" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.objectfusionconfig">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/rcp.viewer.objectfusionconfig/">
@@ -2032,7 +2032,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars" searchPathRef="de.uniol.inf.is.odysseus.scars"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scars" searchPathRef="de.uniol.inf.is.odysseus.scars"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scars">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars/">
@@ -2040,7 +2040,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars\.transform" searchPathRef="de.uniol.inf.is.odysseus.scars.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scars\.transform" searchPathRef="de.uniol.inf.is.odysseus.scars.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scars.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars.transform/">
@@ -2048,7 +2048,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scars\.util" searchPathRef="de.uniol.inf.is.odysseus.scars.util"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scars\.util" searchPathRef="de.uniol.inf.is.odysseus.scars.util"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scars.util">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/scars.util/">
@@ -2056,7 +2056,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.xith3d" searchPathRef="org.xith3d"/>
+<rm:locator failOnError="false" pattern="org\.xith3d" searchPathRef="org.xith3d"/>
 <rm:searchPath name="org.xith3d">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d/">
@@ -2064,7 +2064,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.xith3d\.linux\.amd64" searchPathRef="org.xith3d.linux.amd64"/>
+<rm:locator failOnError="false" pattern="org\.xith3d\.linux\.amd64" searchPathRef="org.xith3d.linux.amd64"/>
 <rm:searchPath name="org.xith3d.linux.amd64">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.amd64/">
@@ -2072,7 +2072,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.xith3d\.linux\.i586" searchPathRef="org.xith3d.linux.i586"/>
+<rm:locator failOnError="false" pattern="org\.xith3d\.linux\.i586" searchPathRef="org.xith3d.linux.i586"/>
 <rm:searchPath name="org.xith3d.linux.i586">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.i586/">
@@ -2080,7 +2080,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.xith3d\.win\.amd64" searchPathRef="org.xith3d.win.amd64"/>
+<rm:locator failOnError="false" pattern="org\.xith3d\.win\.amd64" searchPathRef="org.xith3d.win.amd64"/>
 <rm:searchPath name="org.xith3d.win.amd64">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.amd64/">
@@ -2088,7 +2088,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.xith3d\.win\.i586" searchPathRef="org.xith3d.win.i586"/>
+<rm:locator failOnError="false" pattern="org\.xith3d\.win\.i586" searchPathRef="org.xith3d.win.i586"/>
 <rm:searchPath name="org.xith3d.win.i586">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.i586/">
@@ -2096,7 +2096,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.maplesoft" searchPathRef="com.maplesoft"/>
+<rm:locator failOnError="false" pattern="com\.maplesoft" searchPathRef="com.maplesoft"/>
 <rm:searchPath name="com.maplesoft">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sensor/_resources/com.maplesoft/">
@@ -2104,7 +2104,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.service\.sensor" searchPathRef="de.uniol.inf.is.odysseus.service.sensor"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.service\.sensor" searchPathRef="de.uniol.inf.is.odysseus.service.sensor"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.service.sensor">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/sensor/">
@@ -2112,7 +2112,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.service\.test" searchPathRef="de.uniol.inf.is.odysseus.service.test"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.service\.test" searchPathRef="de.uniol.inf.is.odysseus.service.test"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.service.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/test/">
@@ -2120,7 +2120,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.client.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.client\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.client.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.webservice.client.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/service/webservice.client.feature/">
@@ -2128,7 +2128,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql" searchPathRef="de.uniol.inf.is.odysseus.sparql"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.sparql" searchPathRef="de.uniol.inf.is.odysseus.sparql"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.sparql">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql/">
@@ -2136,7 +2136,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.transform" searchPathRef="de.uniol.inf.is.odysseus.sparql.transform"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.transform" searchPathRef="de.uniol.inf.is.odysseus.sparql.transform"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.sparql.transform">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql.transform/">
@@ -2144,7 +2144,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="Jena264" searchPathRef="Jena264"/>
+<rm:locator failOnError="false" pattern="Jena264" searchPathRef="Jena264"/>
 <rm:searchPath name="Jena264">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/Jena264/">
@@ -2152,7 +2152,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.feature" searchPathRef="de.uniol.inf.is.odysseus.sparql.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.sparql\.feature" searchPathRef="de.uniol.inf.is.odysseus.sparql.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.sparql.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/sparql.feature/">
@@ -2160,7 +2160,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/sparql/wrapper.feature/">
@@ -2168,7 +2168,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.database\.spatial" searchPathRef="de.uniol.inf.is.odysseus.database.spatial"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.database\.spatial" searchPathRef="de.uniol.inf.is.odysseus.database.spatial"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.database.spatial">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/database.spatial/">
@@ -2176,7 +2176,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="com\.vividsolutions\.jts" searchPathRef="com.vividsolutions.jts"/>
+<rm:locator failOnError="false" pattern="com\.vividsolutions\.jts" searchPathRef="com.vividsolutions.jts"/>
 <rm:searchPath name="com.vividsolutions.jts">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/java.topological.suite/">
@@ -2184,7 +2184,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial" searchPathRef="de.uniol.inf.is.odysseus.spatial"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.spatial" searchPathRef="de.uniol.inf.is.odysseus.spatial"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.spatial">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/odysseus.spatial/">
@@ -2192,7 +2192,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.osgeo\.proj4j" searchPathRef="org.osgeo.proj4j"/>
+<rm:locator failOnError="false" pattern="org\.osgeo\.proj4j" searchPathRef="org.osgeo.proj4j"/>
 <rm:searchPath name="org.osgeo.proj4j">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/org.osgeo.proj4j/">
@@ -2200,7 +2200,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.map" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.rcp\.viewer\.stream\.map" searchPathRef="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.rcp.viewer.stream.map">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/rcp.viewer.stream.map/">
@@ -2208,7 +2208,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.feature" searchPathRef="de.uniol.inf.is.odysseus.spatial.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.feature" searchPathRef="de.uniol.inf.is.odysseus.spatial.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.spatial.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/spatial.feature/">
@@ -2216,7 +2216,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.grid" searchPathRef="de.uniol.inf.is.odysseus.spatial.grid"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.spatial\.grid" searchPathRef="de.uniol.inf.is.odysseus.spatial.grid"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.spatial.grid">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/spatial/spatial.grid/">
@@ -2224,7 +2224,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.feature" searchPathRef="de.uniol.inf.is.odysseus.test.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.test\.feature" searchPathRef="de.uniol.inf.is.odysseus.test.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.test.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/de.uniol.inf.is.odysseus.test.feature/">
@@ -2232,7 +2232,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.runner" searchPathRef="de.uniol.inf.is.odysseus.test.runner"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.test\.runner" searchPathRef="de.uniol.inf.is.odysseus.test.runner"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.test.runner">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/runner/">
@@ -2240,7 +2240,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test" searchPathRef="de.uniol.inf.is.odysseus.test"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.test" searchPathRef="de.uniol.inf.is.odysseus.test"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.test">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/test/">
@@ -2248,7 +2248,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.test\.tuple" searchPathRef="de.uniol.inf.is.odysseus.test.tuple"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.test\.tuple" searchPathRef="de.uniol.inf.is.odysseus.test.tuple"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.test.tuple">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/testing/test.tuple/">
@@ -2256,7 +2256,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.jpa" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.jpa"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.usermanagement\.jpa" searchPathRef="de.uniol.inf.is.odysseus.usermanagement.jpa"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.usermanagement.jpa">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/usermanagement/usermanagement.jpa/">
@@ -2264,7 +2264,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="org\.apache\.derby" searchPathRef="org.apache.derby"/>
+<rm:locator failOnError="false" pattern="org\.apache\.derby" searchPathRef="org.apache.derby"/>
 <rm:searchPath name="org.apache.derby">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/usermanagement/_resources/org.apache.derby/">
@@ -2272,7 +2272,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservicesclient" searchPathRef="de.uniol.inf.is.odysseus.webservicesclient"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.webservicesclient" searchPathRef="de.uniol.inf.is.odysseus.webservicesclient"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.webservicesclient">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/odysseus.webservicesclient/">
@@ -2280,7 +2280,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice" searchPathRef="de.uniol.inf.is.odysseus.webservice"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.webservice" searchPathRef="de.uniol.inf.is.odysseus.webservice"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.webservice">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/webservice/">
@@ -2288,7 +2288,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.webservice\.feature" searchPathRef="de.uniol.inf.is.odysseus.webservice.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.webservice.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/webservice/webservice.feature/">
@@ -2296,7 +2296,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.base" searchPathRef="de.uniol.inf.is.odysseus.wrapper.base"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.base" searchPathRef="de.uniol.inf.is.odysseus.wrapper.base"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.base">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.base/">
@@ -2304,7 +2304,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.csv" searchPathRef="de.uniol.inf.is.odysseus.wrapper.csv"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.csv" searchPathRef="de.uniol.inf.is.odysseus.wrapper.csv"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.csv">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.csv/">
@@ -2312,7 +2312,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.file" searchPathRef="de.uniol.inf.is.odysseus.wrapper.file"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.file" searchPathRef="de.uniol.inf.is.odysseus.wrapper.file"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.file">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.file/">
@@ -2320,7 +2320,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.html" searchPathRef="de.uniol.inf.is.odysseus.wrapper.html"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.html" searchPathRef="de.uniol.inf.is.odysseus.wrapper.html"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.html">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.html/">
@@ -2328,7 +2328,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.nmea" searchPathRef="de.uniol.inf.is.odysseus.wrapper.nmea"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.nmea" searchPathRef="de.uniol.inf.is.odysseus.wrapper.nmea"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.nmea">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.nmea/">
@@ -2336,7 +2336,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.scai" searchPathRef="de.uniol.inf.is.odysseus.wrapper.scai"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.scai" searchPathRef="de.uniol.inf.is.odysseus.wrapper.scai"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.scai">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.scai/">
@@ -2344,7 +2344,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.sick" searchPathRef="de.uniol.inf.is.odysseus.wrapper.sick"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.sick" searchPathRef="de.uniol.inf.is.odysseus.wrapper.sick"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.sick">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.sick/">
@@ -2352,7 +2352,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.twitter" searchPathRef="de.uniol.inf.is.odysseus.wrapper.twitter"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.twitter" searchPathRef="de.uniol.inf.is.odysseus.wrapper.twitter"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.twitter">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.twitter/">
@@ -2360,7 +2360,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dwd" searchPathRef="de.uniol.inf.is.odysseus.dwd"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.dwd" searchPathRef="de.uniol.inf.is.odysseus.dwd"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.dwd">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/dwd/">
@@ -2368,7 +2368,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.dwd\.feature" searchPathRef="de.uniol.inf.is.odysseus.dwd.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.dwd\.feature" searchPathRef="de.uniol.inf.is.odysseus.dwd.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.dwd.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/dwd.feature/">
@@ -2376,7 +2376,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scai" searchPathRef="de.uniol.inf.is.odysseus.scai"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scai" searchPathRef="de.uniol.inf.is.odysseus.scai"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scai">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/odysseus.scai/">
@@ -2384,7 +2384,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf/">
@@ -2392,7 +2392,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.feature" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf.feature/">
@@ -2400,7 +2400,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.gc2012" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.wrapper\.protobuf\.gc2012" searchPathRef="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.wrapper.protobuf.gc2012">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/protobuf.gc2012/">
@@ -2408,7 +2408,7 @@
     </rm:uri>
 </rm:provider>
 </rm:searchPath>
-<rm:locator pattern="de\.uniol\.inf\.is\.odysseus\.scai\.feature" searchPathRef="de.uniol.inf.is.odysseus.scai.feature"/>
+<rm:locator failOnError="false" pattern="de\.uniol\.inf\.is\.odysseus\.scai\.feature" searchPathRef="de.uniol.inf.is.odysseus.scai.feature"/>
 <rm:searchPath name="de.uniol.inf.is.odysseus.scai.feature">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
     <rm:uri format="file:///{0}/wrapper/scai.feature/">
