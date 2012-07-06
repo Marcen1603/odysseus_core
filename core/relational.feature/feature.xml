@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.relational"
+      id="de.uniol.inf.is.odysseus.relational.feature"
       label="Relational Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">

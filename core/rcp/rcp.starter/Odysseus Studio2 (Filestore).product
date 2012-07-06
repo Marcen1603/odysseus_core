@@ -71,7 +71,7 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
