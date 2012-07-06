@@ -12,902 +12,902 @@
 </rm:searchPath>
 <rm:searchPath name="default">
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/.metadata\.plugins\org.eclipse.jdt.core\.org.eclipse.jdt.core.external.folders/">
+    <rm:uri format="file:///{0}/.metadata/.plugins/org.eclipse.jdt.core/.org.eclipse.jdt.core.external.folders/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/ac\admissioncontrol.feature/">
+    <rm:uri format="file:///{0}/ac/admissioncontrol.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/ac\de.uniol.inf.is.odysseus.ac.reaction/">
+    <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.reaction/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/ac\de.uniol.inf.is.odysseus.ac.standard/">
+    <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/ac\de.uniol.inf.is.odysseus.ac.updater/">
+    <rm:uri format="file:///{0}/ac/de.uniol.inf.is.odysseus.ac.updater/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action/">
+    <rm:uri format="file:///{0}/action/action/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.actuator.impl/">
+    <rm:uri format="file:///{0}/action/action.actuator.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.benchmark/">
+    <rm:uri format="file:///{0}/action/action.benchmark/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.benchmark.impl/">
+    <rm:uri format="file:///{0}/action/action.benchmark.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.demoApp/">
+    <rm:uri format="file:///{0}/action/action.demoApp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.feature/">
+    <rm:uri format="file:///{0}/action/action.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.ideaalWrapper/">
+    <rm:uri format="file:///{0}/action/action.ideaalWrapper/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.services/">
+    <rm:uri format="file:///{0}/action/action.services/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\action.test/">
+    <rm:uri format="file:///{0}/action/action.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\bpel.correlationService/">
+    <rm:uri format="file:///{0}/action/bpel.correlationService/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\org.apache.cxf/">
+    <rm:uri format="file:///{0}/action/org.apache.cxf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/action\parser.eca/">
+    <rm:uri format="file:///{0}/action/parser.eca/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\DebsGrandChallenge\debschallenge.reader/">
+    <rm:uri format="file:///{0}/application/DebsGrandChallenge/debschallenge.reader/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\DebsGrandChallenge\receiver/">
+    <rm:uri format="file:///{0}/application/DebsGrandChallenge/receiver/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\DemandSideManagement\generators/">
+    <rm:uri format="file:///{0}/application/DemandSideManagement/generators/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\fusion\fusion/">
+    <rm:uri format="file:///{0}/application/fusion/fusion/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\fusion\fusion.feature/">
+    <rm:uri format="file:///{0}/application/fusion/fusion.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\fusion\fusion.starter/">
+    <rm:uri format="file:///{0}/application/fusion/fusion.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.bank/">
+    <rm:uri format="file:///{0}/application/generator/generator.bank/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.base/">
+    <rm:uri format="file:///{0}/application/generator/generator.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.context/">
+    <rm:uri format="file:///{0}/application/generator/generator.context/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.debs/">
+    <rm:uri format="file:///{0}/application/generator/generator.debs/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.dodgers/">
+    <rm:uri format="file:///{0}/application/generator/generator.dodgers/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.example/">
+    <rm:uri format="file:///{0}/application/generator/generator.example/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.frequentitem/">
+    <rm:uri format="file:///{0}/application/generator/generator.frequentitem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.hmm/">
+    <rm:uri format="file:///{0}/application/generator/generator.hmm/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.income/">
+    <rm:uri format="file:///{0}/application/generator/generator.income/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.outliersanddirty/">
+    <rm:uri format="file:///{0}/application/generator/generator.outliersanddirty/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.smarthome/">
+    <rm:uri format="file:///{0}/application/generator/generator.smarthome/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.syntheticchange/">
+    <rm:uri format="file:///{0}/application/generator/generator.syntheticchange/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.syntheticclusters/">
+    <rm:uri format="file:///{0}/application/generator/generator.syntheticclusters/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\generator\generator.txt/">
+    <rm:uri format="file:///{0}/application/generator/generator.txt/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\database\database/">
+    <rm:uri format="file:///{0}/application/middleware/database/database/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\database\database.cql/">
+    <rm:uri format="file:///{0}/application/middleware/database/database.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\database\database.feature/">
+    <rm:uri format="file:///{0}/application/middleware/database/database.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\database\database.postgresql/">
+    <rm:uri format="file:///{0}/application/middleware/database/database.postgresql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\database\database.rcp/">
+    <rm:uri format="file:///{0}/application/middleware/database/database.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\ideeal\ideaal.starter/">
+    <rm:uri format="file:///{0}/application/middleware/ideeal/ideaal.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\sensorregistry\sensorregistry/">
+    <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\middleware\sensorregistry\sensorregistry.feature/">
+    <rm:uri format="file:///{0}/application/middleware/sensorregistry/sensorregistry.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\nexmark/">
+    <rm:uri format="file:///{0}/application/nexmark/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\nexmark.feature/">
+    <rm:uri format="file:///{0}/application/nexmark.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.lms/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.lms\lib\com.springsource.org.apache.log4j/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.org.apache.log4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.lms\lib\com.springsource.slf4j.api/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.api/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.lms\lib\com.springsource.slf4j.log4j/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.lms/lib/com.springsource.slf4j.log4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.playground/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.playground/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.starter/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.wrapper.car/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.car/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.wrapper.raw/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.raw/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.offis.salsa.wrapper.scooter/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.offis.salsa.wrapper.scooter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.uniol.inf.is.odysseus.salsa.playground/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\de.uniol.inf.is.odysseus.salsa.playground\SaLsA_Default/">
+    <rm:uri format="file:///{0}/application/SaLsA/de.uniol.inf.is.odysseus.salsa.playground/SaLsA_Default/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\SaLsA\salsa.feature/">
+    <rm:uri format="file:///{0}/application/SaLsA/salsa.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\siafu\Aalso/">
+    <rm:uri format="file:///{0}/application/siafu/Aalso/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\siafu\Siafu/">
+    <rm:uri format="file:///{0}/application/siafu/Siafu/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\siafu\Simulation-IDEAAL/">
+    <rm:uri format="file:///{0}/application/siafu/Simulation-IDEAAL/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\storing\application.storing/">
+    <rm:uri format="file:///{0}/application/storing/application.storing/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\storing\application.storing.feature/">
+    <rm:uri format="file:///{0}/application/storing/application.storing.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/application\_resources\com.Ostermillerutils.csvparser/">
+    <rm:uri format="file:///{0}/application/_resources/com.Ostermillerutils.csvparser/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmark.feature/">
+    <rm:uri format="file:///{0}/benchmark/benchmark.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmarker/">
+    <rm:uri format="file:///{0}/benchmark/benchmarker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmarker.gui/">
+    <rm:uri format="file:///{0}/benchmark/benchmarker.gui/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmarker.impl/">
+    <rm:uri format="file:///{0}/benchmark/benchmarker.impl/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmarker.runner/">
+    <rm:uri format="file:///{0}/benchmark/benchmarker.runner/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\benchmarker.startBundles/">
+    <rm:uri format="file:///{0}/benchmark/benchmarker.startBundles/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/benchmark\resources\org.simpleframework.xml/">
+    <rm:uri format="file:///{0}/benchmark/resources/org.simpleframework.xml/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.cepviewer/">
+    <rm:uri format="file:///{0}/cep/cep.cepviewer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.epa/">
+    <rm:uri format="file:///{0}/cep/cep.epa/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.feature/">
+    <rm:uri format="file:///{0}/cep/cep.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.metamodel/">
+    <rm:uri format="file:///{0}/cep/cep.metamodel/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.relational/">
+    <rm:uri format="file:///{0}/cep/cep.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.sase/">
+    <rm:uri format="file:///{0}/cep/cep.sase/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.studio.feature/">
+    <rm:uri format="file:///{0}/cep/cep.studio.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/cep\cep.transform/">
+    <rm:uri format="file:///{0}/cep/cep.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/ci\de.uniol.inf.is.odysseus.updatesite/">
+    <rm:uri format="file:///{0}/ci/de.uniol.inf.is.odysseus.updatesite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/context\context.cql/">
+    <rm:uri format="file:///{0}/context/context.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/context\context.rcp/">
+    <rm:uri format="file:///{0}/context/context.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/context\odysseus.context/">
+    <rm:uri format="file:///{0}/context/odysseus.context/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/context\odysseus.context.feature/">
+    <rm:uri format="file:///{0}/context/odysseus.context.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\args/">
+    <rm:uri format="file:///{0}/core/args/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\base/">
+    <rm:uri format="file:///{0}/core/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\core/">
+    <rm:uri format="file:///{0}/core/core/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\core.client.feature/">
+    <rm:uri format="file:///{0}/core/core.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\core.feature/">
+    <rm:uri format="file:///{0}/core/core.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\datadictionary.filestore/">
+    <rm:uri format="file:///{0}/core/datadictionary.filestore/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\datadictionary.filestore.feature/">
+    <rm:uri format="file:///{0}/core/datadictionary.filestore.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\datadictionary.mem/">
+    <rm:uri format="file:///{0}/core/datadictionary.mem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\datadictionary.mem.feature/">
+    <rm:uri format="file:///{0}/core/datadictionary.mem.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\executor.standardexecutor/">
+    <rm:uri format="file:///{0}/core/executor.standardexecutor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\executor.webserviceexecutor/">
+    <rm:uri format="file:///{0}/core/executor.webserviceexecutor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\executor.wsclient/">
+    <rm:uri format="file:///{0}/core/executor.wsclient/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\executor.wsclient.feature/">
+    <rm:uri format="file:///{0}/core/executor.wsclient.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\interval.transform/">
+    <rm:uri format="file:///{0}/core/interval.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\intervalapproach/">
+    <rm:uri format="file:///{0}/core/intervalapproach/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\interval_latency/">
+    <rm:uri format="file:///{0}/core/interval_latency/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\latency/">
+    <rm:uri format="file:///{0}/core/latency/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\latency.feature/">
+    <rm:uri format="file:///{0}/core/latency.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\latency.transform/">
+    <rm:uri format="file:///{0}/core/latency.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\logicaloperator.collector/">
+    <rm:uri format="file:///{0}/core/logicaloperator.collector/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\logicaloperator.relational/">
+    <rm:uri format="file:///{0}/core/logicaloperator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\mep.matrix/">
+    <rm:uri format="file:///{0}/core/mep.matrix/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\odysseus.persistentqueries/">
+    <rm:uri format="file:///{0}/core/odysseus.persistentqueries/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\parser.cql/">
+    <rm:uri format="file:///{0}/core/parser.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\physicaloperator.relational/">
+    <rm:uri format="file:///{0}/core/physicaloperator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.bufferplacement.querybufferplacement/">
+    <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.querybufferplacement/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.bufferplacement.sourcebufferplacementstrategy/">
+    <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.sourcebufferplacementstrategy/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.bufferplacement.standardbufferplacementstrategy/">
+    <rm:uri format="file:///{0}/core/planmanagement.bufferplacement.standardbufferplacementstrategy/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.compiler.standardcompiler/">
+    <rm:uri format="file:///{0}/core/planmanagement.compiler.standardcompiler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.optimization.installprocesscallsmonitor/">
+    <rm:uri format="file:///{0}/core/planmanagement.optimization.installprocesscallsmonitor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.optimization.installstandardmetadatalistener/">
+    <rm:uri format="file:///{0}/core/planmanagement.optimization.installstandardmetadatalistener/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.optimization.plan.standardplanoptimizer/">
+    <rm:uri format="file:///{0}/core/planmanagement.optimization.plan.standardplanoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.optimization.query.standardqueryoptimizer/">
+    <rm:uri format="file:///{0}/core/planmanagement.optimization.query.standardqueryoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmanagement.optimization.standardoptimizer/">
+    <rm:uri format="file:///{0}/core/planmanagement.optimization.standardoptimizer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\planmgmt.standard.feature/">
+    <rm:uri format="file:///{0}/core/planmgmt.standard.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\pql\parser.pql/">
+    <rm:uri format="file:///{0}/core/pql/parser.pql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\pql\parser.pql.relational/">
+    <rm:uri format="file:///{0}/core/pql/parser.pql.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\priority/">
+    <rm:uri format="file:///{0}/core/priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\priority.cql/">
+    <rm:uri format="file:///{0}/core/priority.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\querysharing/">
+    <rm:uri format="file:///{0}/core/querysharing/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.dashboard/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.dashboard.part/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.dashboard.part.test/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.part.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.dashboard.test/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.dashboard.test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.queryview.logical/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.logical/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.queryview.physical/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.queryview.physical/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.server/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.server/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.rcp.viewer.server/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.rcp.viewer.server/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\de.uniol.inf.is.odysseus.studio.client.feature/">
+    <rm:uri format="file:///{0}/core/rcp/de.uniol.inf.is.odysseus.studio.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.editor/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.editor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.editor.parameters/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.editor.parameters/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.editor.text/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.editor.text/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.editor.text.cql/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.editor.text.pql/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.editor.text.pql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.starter/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.starter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.viewer/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.viewer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.viewer.stream.chart/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.chart/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.viewer.stream.table/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.viewer.stream.table/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.wizard/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.wizard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\rcp.wizard.output/">
+    <rm:uri format="file:///{0}/core/rcp/rcp.wizard.output/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rcp\studio.feature/">
+    <rm:uri format="file:///{0}/core/rcp/studio.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational.base/">
+    <rm:uri format="file:///{0}/core/relational.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational.feature/">
+    <rm:uri format="file:///{0}/core/relational.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational.rewrite/">
+    <rm:uri format="file:///{0}/core/relational.rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational.transform/">
+    <rm:uri format="file:///{0}/core/relational.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational_interval/">
+    <rm:uri format="file:///{0}/core/relational_interval/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\relational_interval.transform/">
+    <rm:uri format="file:///{0}/core/relational_interval.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\rewrite/">
+    <rm:uri format="file:///{0}/core/rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\ruleengine/">
+    <rm:uri format="file:///{0}/core/ruleengine/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\scheduler.singlethreadscheduler2.0/">
+    <rm:uri format="file:///{0}/core/scheduler.singlethreadscheduler2.0/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\scheduler.strategy.factory.aurorafactory/">
+    <rm:uri format="file:///{0}/core/scheduler.strategy.factory.aurorafactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\scheduler.strategy.factory.simplestratfactory/">
+    <rm:uri format="file:///{0}/core/scheduler.strategy.factory.simplestratfactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\schedulermanager.singleschedulermanager/">
+    <rm:uri format="file:///{0}/core/schedulermanager.singleschedulermanager/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\script/">
+    <rm:uri format="file:///{0}/core/script/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\script.exector/">
+    <rm:uri format="file:///{0}/core/script.exector/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\transform/">
+    <rm:uri format="file:///{0}/core/transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\usermanagement.filestore/">
+    <rm:uri format="file:///{0}/core/usermanagement.filestore/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\usermanagement.filestore.feature/">
+    <rm:uri format="file:///{0}/core/usermanagement.filestore.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\usermanagement.mem/">
+    <rm:uri format="file:///{0}/core/usermanagement.mem/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\usermanagement.mem.feature/">
+    <rm:uri format="file:///{0}/core/usermanagement.mem.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\ANTLR3_4/">
+    <rm:uri format="file:///{0}/core/_resources/ANTLR3_4/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\com.google.guava/">
+    <rm:uri format="file:///{0}/core/_resources/com.google.guava/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\com.google.protobuf/">
+    <rm:uri format="file:///{0}/core/_resources/com.google.protobuf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\Commons.Math/">
+    <rm:uri format="file:///{0}/core/_resources/Commons.Math/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\de.uniol.inf.is.odysseus.slf4j/">
+    <rm:uri format="file:///{0}/core/_resources/de.uniol.inf.is.odysseus.slf4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\jfreechart/">
+    <rm:uri format="file:///{0}/core/_resources/jfreechart/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\org.apache.commons.math3/">
+    <rm:uri format="file:///{0}/core/_resources/org.apache.commons.math3/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/core\_resources\org.jboss.netty/">
+    <rm:uri format="file:///{0}/core/_resources/org.jboss.netty/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.opcount/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.opcount/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.operator/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.operator.datasrc/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.datasrc/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.operator.relational/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.relational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.operator.util/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.operator.util/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/costmodel\de.uniol.inf.is.odysseus.costmodel.querycount/">
+    <rm:uri format="file:///{0}/costmodel/de.uniol.inf.is.odysseus.costmodel.querycount/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
@@ -917,612 +917,612 @@
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/metadata\priority\interval_latency_priority/">
+    <rm:uri format="file:///{0}/metadata/priority/interval_latency_priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/metadata\priority\loadshedding/">
+    <rm:uri format="file:///{0}/metadata/priority/loadshedding/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/metadata\priority\parser.pql.priority/">
+    <rm:uri format="file:///{0}/metadata/priority/parser.pql.priority/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/metadata\priority\priority_interval/">
+    <rm:uri format="file:///{0}/metadata/priority/priority_interval/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/metadata\priority.feature/">
+    <rm:uri format="file:///{0}/metadata/priority.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\generator.mining.arff/">
+    <rm:uri format="file:///{0}/mining/generator.mining.arff/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\classification\mining.classification/">
+    <rm:uri format="file:///{0}/mining/incremental/classification/mining.classification/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\cleaning\cleaning.base/">
+    <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\cleaning\cleaning.smql/">
+    <rm:uri format="file:///{0}/mining/incremental/cleaning/cleaning.smql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\clustering\mining.clustering/">
+    <rm:uri format="file:///{0}/mining/incremental/clustering/mining.clustering/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\markov\markov.markovql/">
+    <rm:uri format="file:///{0}/mining/incremental/markov/markov.markovql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\markov\markov.model/">
+    <rm:uri format="file:///{0}/mining/incremental/markov/markov.model/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\markov\markov.operator/">
+    <rm:uri format="file:///{0}/mining/incremental/markov/markov.operator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\mining.base/">
+    <rm:uri format="file:///{0}/mining/incremental/mining.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\incremental\mining.smql/">
+    <rm:uri format="file:///{0}/mining/incremental/mining.smql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\mining/">
+    <rm:uri format="file:///{0}/mining/mining/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\mining.feature/">
+    <rm:uri format="file:///{0}/mining/mining.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\statistics/">
+    <rm:uri format="file:///{0}/mining/statistics/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/mining\weka/">
+    <rm:uri format="file:///{0}/mining/weka/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ac\de.uniol.inf.is.odysseus.p2p.ac.bid/">
+    <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ac\de.uniol.inf.is.odysseus.p2p.ac.bid.standard/">
+    <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bid.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ac\de.uniol.inf.is.odysseus.p2p.ac.bidselection/">
+    <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ac\de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard/">
+    <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.bidselection.standard/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ac\de.uniol.inf.is.odysseus.p2p.ac.estimator/">
+    <rm:uri format="file:///{0}/p2p/ac/de.uniol.inf.is.odysseus.p2p.ac.estimator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\ap.feature/">
+    <rm:uri format="file:///{0}/p2p/ap.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\base/">
+    <rm:uri format="file:///{0}/p2p/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\bidding.client.queryselection/">
+    <rm:uri format="file:///{0}/p2p/distribution/bidding.client.queryselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\bidding.provider/">
+    <rm:uri format="file:///{0}/p2p/distribution/bidding.provider/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\bidding.provider.clientselection/">
+    <rm:uri format="file:///{0}/p2p/distribution/bidding.provider.clientselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\client/">
+    <rm:uri format="file:///{0}/p2p/distribution/client/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\client.queryselection/">
+    <rm:uri format="file:///{0}/p2p/distribution/client.queryselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\distribution.bidding.client/">
+    <rm:uri format="file:///{0}/p2p/distribution/distribution.bidding.client/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\provider/">
+    <rm:uri format="file:///{0}/p2p/distribution/provider/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\distribution\provider.clientselection/">
+    <rm:uri format="file:///{0}/p2p/distribution/provider.clientselection/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\adminpeer.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/adminpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\adminpeer.lifecycle.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/adminpeer.lifecycle.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\base.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/base.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\operatorpeer.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\operatorpeer.lifecycle.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/operatorpeer.lifecycle.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\superpeer.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/superpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\jxta\thinpeer.jxta/">
+    <rm:uri format="file:///{0}/p2p/jxta/thinpeer.jxta/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\op.feature/">
+    <rm:uri format="file:///{0}/p2p/op.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\peer\adminpeer/">
+    <rm:uri format="file:///{0}/p2p/peer/adminpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\peer\operatorpeer/">
+    <rm:uri format="file:///{0}/p2p/peer/operatorpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\peer\superpeer/">
+    <rm:uri format="file:///{0}/p2p/peer/superpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\peer\thinpeer/">
+    <rm:uri format="file:///{0}/p2p/peer/thinpeer/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\peer\tp.executor/">
+    <rm:uri format="file:///{0}/p2p/peer/tp.executor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\physicaloperator/">
+    <rm:uri format="file:///{0}/p2p/physicaloperator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\splitting\base/">
+    <rm:uri format="file:///{0}/p2p/splitting/base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\splitting\nosplitting/">
+    <rm:uri format="file:///{0}/p2p/splitting/nosplitting/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\splitting\oneplanperoperator/">
+    <rm:uri format="file:///{0}/p2p/splitting/oneplanperoperator/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\splitting\sourcesplit/">
+    <rm:uri format="file:///{0}/p2p/splitting/sourcesplit/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\tp.feature/">
+    <rm:uri format="file:///{0}/p2p/tp.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\transform/">
+    <rm:uri format="file:///{0}/p2p/transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\_resources\apache.commons.codec/">
+    <rm:uri format="file:///{0}/p2p/_resources/apache.commons.codec/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/p2p\_resources\Jxta.2.6/">
+    <rm:uri format="file:///{0}/p2p/_resources/Jxta.2.6/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/rapid-prototyping\prototyping/">
+    <rm:uri format="file:///{0}/rapid-prototyping/prototyping/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/rapid-prototyping\prototyping.feature/">
+    <rm:uri format="file:///{0}/rapid-prototyping/prototyping.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/scheduling\de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler/">
+    <rm:uri format="file:///{0}/scheduling/de.uniol.inf.is.odysseus.scheduler.slapriorityscheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/scheduling\scheduler.priorityscheduler/">
+    <rm:uri format="file:///{0}/scheduling/scheduler.priorityscheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/scheduling\scheduler.slascheduler/">
+    <rm:uri format="file:///{0}/scheduling/scheduler.slascheduler/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/scheduling\scheduler.strategy.factory.chainfactory/">
+    <rm:uri format="file:///{0}/scheduling/scheduler.strategy.factory.chainfactory/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/scheduling\scheduling.feature/">
+    <rm:uri format="file:///{0}/scheduling/scheduling.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\broker\broker/">
+    <rm:uri format="file:///{0}/sensor/broker/broker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\broker\broker.executor/">
+    <rm:uri format="file:///{0}/sensor/broker/broker.executor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\broker\broker.parser.cql/">
+    <rm:uri format="file:///{0}/sensor/broker/broker.parser.cql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\broker\broker.transform/">
+    <rm:uri format="file:///{0}/sensor/broker/broker.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\broker\transformation.helper.broker/">
+    <rm:uri format="file:///{0}/sensor/broker/transformation.helper.broker/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\objecttracking/">
+    <rm:uri format="file:///{0}/sensor/objecttracking/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\objecttracking.parser/">
+    <rm:uri format="file:///{0}/sensor/objecttracking.parser/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\objecttracking.rewrite/">
+    <rm:uri format="file:///{0}/sensor/objecttracking.rewrite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\objecttracking.transform/">
+    <rm:uri format="file:///{0}/sensor/objecttracking.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\or\parser.pql.objectrelational/">
+    <rm:uri format="file:///{0}/sensor/or/parser.pql.objectrelational/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\rcp.viewer.objectfusionconfig/">
+    <rm:uri format="file:///{0}/sensor/rcp.viewer.objectfusionconfig/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\de.uniol.inf.is.odysseus.scars/">
+    <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\de.uniol.inf.is.odysseus.scars.transform/">
+    <rm:uri format="file:///{0}/sensor/streamcars/de.uniol.inf.is.odysseus.scars.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\scars.util/">
+    <rm:uri format="file:///{0}/sensor/streamcars/scars.util/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\_resources\org.xith3d/">
+    <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\_resources\org.xith3d.linux.amd64/">
+    <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.amd64/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\_resources\org.xith3d.linux.i586/">
+    <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.linux.i586/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\_resources\org.xith3d.win.amd64/">
+    <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.amd64/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\streamcars\_resources\org.xith3d.win.i586/">
+    <rm:uri format="file:///{0}/sensor/streamcars/_resources/org.xith3d.win.i586/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sensor\_resources\com.maplesoft/">
+    <rm:uri format="file:///{0}/sensor/_resources/com.maplesoft/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/service\sensor/">
+    <rm:uri format="file:///{0}/service/sensor/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/service\test/">
+    <rm:uri format="file:///{0}/service/test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/service\webservice.client.feature/">
+    <rm:uri format="file:///{0}/service/webservice.client.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sparql\de.uniol.inf.is.odysseus.sparql/">
+    <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sparql\de.uniol.inf.is.odysseus.sparql.transform/">
+    <rm:uri format="file:///{0}/sparql/de.uniol.inf.is.odysseus.sparql.transform/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sparql\Jena264/">
+    <rm:uri format="file:///{0}/sparql/Jena264/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sparql\sparql.feature/">
+    <rm:uri format="file:///{0}/sparql/sparql.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/sparql\wrapper.feature/">
+    <rm:uri format="file:///{0}/sparql/wrapper.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\database.spatial/">
+    <rm:uri format="file:///{0}/spatial/database.spatial/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\java.topological.suite/">
+    <rm:uri format="file:///{0}/spatial/java.topological.suite/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\odysseus.spatial/">
+    <rm:uri format="file:///{0}/spatial/odysseus.spatial/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\org.osgeo.proj4j/">
+    <rm:uri format="file:///{0}/spatial/org.osgeo.proj4j/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\rcp.viewer.stream.map/">
+    <rm:uri format="file:///{0}/spatial/rcp.viewer.stream.map/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\spatial.feature/">
+    <rm:uri format="file:///{0}/spatial/spatial.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/spatial\spatial.grid/">
+    <rm:uri format="file:///{0}/spatial/spatial.grid/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/testing\de.uniol.inf.is.odysseus.test.feature/">
+    <rm:uri format="file:///{0}/testing/de.uniol.inf.is.odysseus.test.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/testing\runner/">
+    <rm:uri format="file:///{0}/testing/runner/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/testing\test/">
+    <rm:uri format="file:///{0}/testing/test/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/testing\test.tuple/">
+    <rm:uri format="file:///{0}/testing/test.tuple/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/usermanagement\usermanagement.jpa/">
+    <rm:uri format="file:///{0}/usermanagement/usermanagement.jpa/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/usermanagement\_resources\org.apache.derby/">
+    <rm:uri format="file:///{0}/usermanagement/_resources/org.apache.derby/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/webservice\odysseus.webservicesclient/">
+    <rm:uri format="file:///{0}/webservice/odysseus.webservicesclient/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/webservice\webservice/">
+    <rm:uri format="file:///{0}/webservice/webservice/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/webservice\webservice.feature/">
+    <rm:uri format="file:///{0}/webservice/webservice.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.base/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.base/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.csv/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.csv/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.file/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.file/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.html/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.html/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.nmea/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.nmea/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.scai/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.scai/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.sick/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.sick/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\de.uniol.inf.is.odysseus.wrapper.twitter/">
+    <rm:uri format="file:///{0}/wrapper/de.uniol.inf.is.odysseus.wrapper.twitter/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\dwd/">
+    <rm:uri format="file:///{0}/wrapper/dwd/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\dwd.feature/">
+    <rm:uri format="file:///{0}/wrapper/dwd.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\odysseus.scai/">
+    <rm:uri format="file:///{0}/wrapper/odysseus.scai/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\protobuf/">
+    <rm:uri format="file:///{0}/wrapper/protobuf/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\protobuf.feature/">
+    <rm:uri format="file:///{0}/wrapper/protobuf.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\protobuf.gc2012/">
+    <rm:uri format="file:///{0}/wrapper/protobuf.gc2012/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
 <rm:provider componentTypes="osgi.bundle,eclipse.feature" readerType="local">
-    <rm:uri format="file:///{0}/wrapper\scai.feature/">
+    <rm:uri format="file:///{0}/wrapper/scai.feature/">
         <bc:propertyRef key="workspace.root"/>
     </rm:uri>
 </rm:provider>
