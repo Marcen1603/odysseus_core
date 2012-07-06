@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
-public class DashboardPartPlacement {
+public final class DashboardPartPlacement {
 
 	private final IDashboardPart part;
 	
@@ -17,7 +17,6 @@ public class DashboardPartPlacement {
 	private final String title;
 	
 	public DashboardPartPlacement( IDashboardPart part, String title, int x, int y, int w, int h ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(title), "Title must not be null or empty!");
 		this.part = Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
 		
 		Preconditions.checkArgument(x >= 0, "x must be positive instead of %s", x);
@@ -35,6 +34,10 @@ public class DashboardPartPlacement {
 	
 	public String getTitle() {
 		return title;
+	}
+	
+	public boolean hasTitle() {
+		return !Strings.isNullOrEmpty(title);
 	}
 	
 	public IDashboardPart getDashboardPart() {

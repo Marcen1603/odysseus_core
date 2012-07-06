@@ -59,6 +59,8 @@ public class XMLDashboardHandler implements IDashboardHandler {
 						throw new DashboardHandlerException("File of DashboardPart to load is null or empty!");
 					}
 					
+					String title = getAttribute(dashboardNode, "title", null);
+					
 					int x = tryToInteger(getAttribute(dashboardNode, "x", "0"), 0);
 					int y = tryToInteger(getAttribute(dashboardNode, "y", "0"), 0);
 					int w = tryToInteger(getAttribute(dashboardNode, "w", "100"), 100);
@@ -68,7 +70,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 					
 					IDashboardPart dashboardPart = partHandler.load(dashboardPartFile);
-					DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, dashboardPartFile.getName(), x, y, w, h);
+					DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, title, x, y, w, h);
 					dashboard.add(plc);
 				}
 			}
