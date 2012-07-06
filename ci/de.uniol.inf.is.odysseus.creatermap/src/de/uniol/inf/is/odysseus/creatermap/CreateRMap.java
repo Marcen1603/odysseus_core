@@ -24,18 +24,19 @@ public class CreateRMap {
 	public static void main(String[] args) {
 		if (args.length > 0) {
 			String rootPath = args[0];
-			// String rootPath = "E:\\Odysseus\\trunk";
+			//String rootPath = "E:\\Odysseus\\trunk";
 			String destination = args[1];
+			
 			System.out.println("Creating RMAP on root path: " + rootPath);
 			StringBuilder sb = new StringBuilder();
 			buildHeader(sb);
 			searchRecursive(rootPath, sb);
 			buildFooter(sb);
 
-			// System.out.println("----------------- RMAP FILE --------------------");
-			// System.out.println(sb.toString());
-			// System.out.println("------------------------------------------------");
-			saveFile(sb, destination);
+//			 System.out.println("----------------- RMAP FILE --------------------");
+//			 System.out.println(sb.toString());
+//			 System.out.println("------------------------------------------------");
+			 saveFile(sb, destination);
 
 		} else {
 			System.out.println("Error: no root path given!");
@@ -44,6 +45,7 @@ public class CreateRMap {
 	}
 
 	private static void saveFile(StringBuilder sb, String destination) {
+		System.out.println("Writing RMAP to: "+destination);
 		try {
 			File file = new File(destination);
 			FileWriter writer = new FileWriter(file);
@@ -63,6 +65,10 @@ public class CreateRMap {
 
 	public static void searchRecursive(File rootDir, File mainRoot, StringBuilder sb) {
 		// System.out.println("Searching in: "+rootDir.getAbsolutePath());
+		if(rootDir==null){
+			System.out.println("Error: "+rootDir+" not found (null)");
+			return;
+		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
 				if (!f.getName().equalsIgnoreCase(".metadata")) {
@@ -84,7 +90,7 @@ public class CreateRMap {
 		String componentName = getComponentName(projectFile);
 		String componentNamePattern = componentName.replace(".", "\\.");
 
-		sb.append("<rm:locator pattern=\"" + componentNamePattern + "\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+		sb.append("<rm:locator failOnError=\"false\" pattern=\"" + componentNamePattern + "\" searchPathRef=\"" + componentName + "\"/>").append("\n");
 		sb.append("<rm:searchPath name=\"" + componentName + "\">").append("\n");
 		sb.append("<rm:provider componentTypes=\"osgi.bundle,eclipse.feature\" readerType=\"local\">").append("\n");
 		sb.append("    <rm:uri format=\"file:///{0}/" + relativPath + "/\">").append("\n");
