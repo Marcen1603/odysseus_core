@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -77,7 +78,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			DASHBOARD_PART_HANDLER.save(dashboardPart, input.getFile());
 			setDirty(false);
 
-		} catch (IOException e) {
+		} catch (DashboardHandlerException e) {
 			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), e);
 		}
 	}
@@ -104,9 +105,12 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			dashboardPart.getConfiguration().addListener(this);
 
 			dashboardPartController = new DashboardPartController(dashboardPart);
-		} catch (IOException e) {
+		} catch (DashboardHandlerException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
+		} catch (FileNotFoundException ex) {
+			LOG.error("Could not load corresponding query file!", ex);
+			throw new PartInitException("Could not load corresponding query file!", ex);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.handler;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -54,7 +56,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(XMLDashboardPartHandler.class);
 
 	@Override
-	public void save(IDashboardPart part, IFile to) throws IOException {
+	public void save(IDashboardPart part, IFile to) throws DashboardHandlerException {
 		Preconditions.checkNotNull(part, "Part to save must not be null!");
 		Preconditions.checkNotNull(to, "File to save to must not be null!");
 
@@ -71,12 +73,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 		} catch (ParserConfigurationException e) {
 			LOG.error("Could not save DashboardPart " + part.getClass() + " to file " + to.getName(), e);
-			throw new IOException("Could not save DashboardPart " + part.getClass() + " to file " + to.getName(), e);
+			throw new DashboardHandlerException("Could not save DashboardPart " + part.getClass() + " to file " + to.getName(), e);
 		}
 	}
 
 	@Override
-	public IDashboardPart load(IFile from) throws IOException {
+	public IDashboardPart load(IFile from) throws DashboardHandlerException, FileNotFoundException {
 		Preconditions.checkNotNull(from, "File to load from must not be null!");
 
 		try {
@@ -92,14 +94,14 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			
 		} catch (ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart from file " + from.getName(), e);
-			throw new IOException("Could not load DashboardPart from file " + from.getName(), e);
+			throw new DashboardHandlerException("Could not load DashboardPart from file " + from.getName(), e);
 		} catch (SAXException e) {
 			LOG.error("Could not load DashboardPart from file " + from.getName(), e);
-			throw new IOException("Could not load DashboardPart from file " + from.getName(), e);
+			throw new DashboardHandlerException("Could not load DashboardPart from file " + from.getName(), e);
 		}
 	}
 
-	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IFile file, Map<String, String> settingsMap, Map<String, String> customSettings) throws IOException {
+	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IFile file, Map<String, String> settingsMap, Map<String, String> customSettings) throws DashboardHandlerException {
 		try {
 			IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
 			Configuration defaultConfiguration = part.getConfiguration();
@@ -113,7 +115,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			return part;
 		} catch (InstantiationException e) {
 			LOG.error("Could not load DashboardPart from file " + file.getName(), e);
-			throw new IOException("Could not load DashboardPart from file " + file.getName(), e);
+			throw new DashboardHandlerException("Could not load DashboardPart from file " + file.getName(), e);
 		}
 	}
 
@@ -144,43 +146,54 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return customSettings;
 	}
 
-	private static IFile getQueryFile(Node rootNode) throws IOException {
+	private static IFile getQueryFile(Node rootNode) throws FileNotFoundException {
 		String queryFileName = rootNode.getAttributes().getNamedItem(QUERY_FILE_XML_ATTRIBUTE).getNodeValue();
 		IPath queryFilePath = new Path(queryFileName);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 		if (!file.exists()) {
-			throw new IOException("File " + file.getName() + " not found in workspace.");
+			throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
 		}
 		return file;
 	}
 
-	private static DashboardPartDescriptor getDashboardPartDescriptor(Node rootNode) throws IOException {
+	private static DashboardPartDescriptor getDashboardPartDescriptor(Node rootNode) throws DashboardHandlerException {
 		String dashboardPartClass = rootNode.getAttributes().getNamedItem(CLASS_XML_ATTRIBUTE).getNodeValue();
 		Optional<DashboardPartDescriptor> optDescriptor = getDescriptorFromClassName(dashboardPartClass);
 		if (!optDescriptor.isPresent()) {
-			throw new IOException("Unknown class " + dashboardPartClass + " in registry.");
+			throw new DashboardHandlerException("Unknown class " + dashboardPartClass + " in registry.");
 		}
 		DashboardPartDescriptor descriptor = optDescriptor.get();
 		return descriptor;
 	}
 
-	private static Node getRootNode(Document doc) throws IOException {
+	private static Node getRootNode(Document doc) throws DashboardHandlerException {
 		NodeList nodes = doc.getElementsByTagName(DASHBOARD_PART_XML_ELEMENT);
 		if (nodes.getLength() != 1) {
-			throw new IOException("Malformed XML-File: It must have exactly one " + DASHBOARD_PART_XML_ELEMENT + "-Element.");
+			throw new DashboardHandlerException("Malformed XML-File: It must have exactly one " + DASHBOARD_PART_XML_ELEMENT + "-Element.");
 		}
 
 		Node rootNode = nodes.item(0);
 		return rootNode;
 	}
 
-	private static Document getDocument(IFile from) throws ParserConfigurationException, SAXException, IOException {
+	private static Document getDocument(IFile from) throws ParserConfigurationException, SAXException, FileNotFoundException {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-		Document doc = docBuilder.parse(from.getLocation().toFile());
-		doc.getDocumentElement().normalize();
-		return doc;
+		IPath path = from.getLocation();
+		if( path == null ) {
+			LOG.error("Could not find file {}!", from.getName());
+			throw new FileNotFoundException("Could not find file " + from.getName());
+		}
+		
+		try {
+			Document doc = docBuilder.parse(from.getLocation().toFile());
+			doc.getDocumentElement().normalize();
+			return doc;
+		} catch (IOException ex) {
+			LOG.error("Could not find file {}!", from.getName(), ex);
+			throw new FileNotFoundException("Could not find file " + from.getName());
+		}
 	}
 
 	private static Map<String, String> parseSettingsMap(Node rootNode) {
@@ -214,7 +227,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return Optional.absent();
 	}
 
-	private static void saveToFile(Document doc, IFile to) throws IOException {
+	private static void saveToFile(Document doc, IFile to) throws DashboardHandlerException {
 		try {
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -222,12 +235,13 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			StreamResult result = new StreamResult(to.getLocation().toFile());
 
 			transformer.transform(source, result);
+			
 		} catch (TransformerConfigurationException e) {
 			LOG.error("Could not save DashboardPart to file " + to.getName(), e);
-			throw new IOException("Could not save DashboardPart  to file " + to.getName(), e);
+			throw new DashboardHandlerException("Could not save DashboardPart  to file " + to.getName(), e);
 		} catch (TransformerException e) {
 			LOG.error("Could not save DashboardPart to file " + to.getName(), e);
-			throw new IOException("Could not save DashboardPart to file " + to.getName(), e);
+			throw new DashboardHandlerException("Could not save DashboardPart to file " + to.getName(), e);
 		}
 	}
 

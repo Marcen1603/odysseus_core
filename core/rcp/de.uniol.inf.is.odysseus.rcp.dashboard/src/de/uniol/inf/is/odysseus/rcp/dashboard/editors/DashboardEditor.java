@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -61,9 +62,12 @@ public class DashboardEditor extends EditorPart {
 		try {
 			dashboard = DASHBOARD_HANDLER.load(this.input.getFile(), DASHBOARD_PART_HANDLER);
 			controllers = createControllers(dashboard.getDashboardPartPlacements());
-		} catch (IOException ex) {
+		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
 			throw new PartInitException("Could not load Dashboard!", ex);
+		} catch (FileNotFoundException ex) {
+			LOG.error("Could not load query file!", ex);
+			throw new PartInitException("Could not load query file!", ex);
 		}
 	}
 
