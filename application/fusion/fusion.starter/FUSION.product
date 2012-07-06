@@ -46,8 +46,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <plugin id="de.uniol.inf.is.odysseus.rcp"/>
       <plugin id="de.uniol.inf.is.odysseus.rcp.starter"/>
       <plugin id="javax.transaction" fragment="true"/>
-      <plugin id="org.apache.commons.collections"/>
-      <plugin id="org.apache.log4j"/>
+      <plugin id="org.apache.commons.collections" fragment=""/>
+      <plugin id="org.apache.log4j" fragment=""/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -108,7 +108,7 @@ http://odysseus.offis.uni-oldenburg.de/
    <features>
       <feature id="de.uniol.inf.is.odysseus.fusion.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>

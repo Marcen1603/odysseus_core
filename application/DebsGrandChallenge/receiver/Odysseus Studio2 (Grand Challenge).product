@@ -70,8 +70,8 @@ http://odysseus.offis.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
@@ -81,10 +81,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
-      <feature id="org.eclipse.equinox.core.feature" version="1.0.1.R37x_v20110907-7K7VFB_ETaXFZ3mP_8CeJQ02722"/>
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scai.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.rcp.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.dwd.feature" version="1.0.0.qualifier"/>
    </features>
 
