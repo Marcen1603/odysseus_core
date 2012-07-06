@@ -4,27 +4,6 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
-            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.SampleDashboardPart"
-            description="A sample for creating dashboard parts"
-            name="Sample">
-         <setting
-               defaultValue="Default"
-               description="Sample setting in string type"
-               isEditable="true"
-               isOptional="true"
-               name="StringSetting"
-               type="String">
-         </setting>
-         <setting
-               defaultValue="42"
-               description="Some sample setting in integer type"
-               isEditable="false"
-               isOptional="false"
-               name="IntegerSetting"
-               type="Integer">
-         </setting>
-      </dashboardPart>
-      <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TableDashboardPart"
             description="Tabular overview of recieved tuples of one query"
             name="Table">
