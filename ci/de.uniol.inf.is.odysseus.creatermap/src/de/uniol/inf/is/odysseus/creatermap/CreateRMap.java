@@ -1,0 +1,113 @@
+package de.uniol.inf.is.odysseus.creatermap;
+
+import java.io.File;
+import java.io.FileWriter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+public class CreateRMap {
+
+	private static void buildHeader(StringBuilder sb) {
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append("\n");
+		sb.append("<rm:rmap xmlns:bc=\"http://www.eclipse.org/buckminster/Common-1.0\" xmlns:rm=\"http://www.eclipse.org/buckminster/RMap-1.0\">").append("\n");
+	}
+
+	private static void buildFooter(StringBuilder sb) {
+
+		sb.append("</rm:rmap>");
+	}
+
+	public static void main(String[] args) {
+		if (args.length > 0) {
+			String rootPath = args[0];
+			// String rootPath = "E:\\Odysseus\\trunk";
+			String destination = args[1];
+			System.out.println("Creating RMAP on root path: " + rootPath);
+			StringBuilder sb = new StringBuilder();
+			buildHeader(sb);
+			searchRecursive(rootPath, sb);
+			buildFooter(sb);
+
+			// System.out.println("----------------- RMAP FILE --------------------");
+			// System.out.println(sb.toString());
+			// System.out.println("------------------------------------------------");
+			saveFile(sb, destination);
+
+		} else {
+			System.out.println("Error: no root path given!");
+		}
+
+	}
+
+	private static void saveFile(StringBuilder sb, String destination) {
+		try {
+			File file = new File(destination);
+			FileWriter writer = new FileWriter(file);
+			writer.write(sb.toString());
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void searchRecursive(String mainRoot, StringBuilder sb) {
+		File rootDir = new File(mainRoot);
+		searchRecursive(rootDir, rootDir, sb);
+	}
+
+	public static void searchRecursive(File rootDir, File mainRoot, StringBuilder sb) {
+		// System.out.println("Searching in: "+rootDir.getAbsolutePath());
+		for (File f : rootDir.listFiles()) {
+			if (f.isDirectory()) {
+				if (!f.getName().equalsIgnoreCase(".metadata")) {
+					searchRecursive(f, mainRoot, sb);
+				}
+			} else {
+				if (f.isFile() && f.getName().equals(".project")) {
+					// .project found:
+					parseProject(f, mainRoot, sb);
+				}
+			}
+		}
+	}
+
+	private static void parseProject(File projectFile, File mainRoot, StringBuilder sb) {
+		// System.out.println("   Found: " +
+		// projectFile.getParentFile().getAbsolutePath());
+		String relativPath = projectFile.getParentFile().getAbsolutePath().substring(mainRoot.getAbsolutePath().length() + 1);
+		String componentName = getComponentName(projectFile);
+		String componentNamePattern = componentName.replace(".", "\\.");
+
+		sb.append("<rm:locator pattern=\"" + componentNamePattern + "\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+		sb.append("<rm:searchPath name=\"" + componentName + "\">").append("\n");
+		sb.append("<rm:provider componentTypes=\"osgi.bundle,eclipse.feature\" readerType=\"local\">").append("\n");
+		sb.append("    <rm:uri format=\"file:///{0}/" + relativPath + "/\">").append("\n");
+		sb.append("        <bc:propertyRef key=\"workspace.root\"/>").append("\n");
+		sb.append("    </rm:uri>").append("\n");
+		sb.append("</rm:provider>").append("\n");
+		sb.append("</rm:searchPath>").append("\n");
+	}
+
+	private static String getComponentName(File projectFile) {
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc;
+
+			doc = dBuilder.parse(projectFile);
+			doc.getDocumentElement().normalize();
+			Element nameNode = (Element) doc.getElementsByTagName("name").item(0);
+			String projectName = nameNode.getChildNodes().item(0).getNodeValue();
+			return projectName;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+}
