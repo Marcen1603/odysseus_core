@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -52,7 +53,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			this.setting = setting;
 			reset();
 		}
-		
+
 		public void reset() {
 			this.value = setting.getDefaultValue() != null ? setting.getDefaultValue().toString() : "";
 		}
@@ -66,6 +67,11 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private Label partDescriptionLabel;
 	private Combo choosePartNameCombo;
 	private Label settingDescriptionLabel;
+	
+	private Composite settingsArea;
+	private StackLayout stackLayout;
+	private Composite settingsTableArea;
+	private Composite emptySettingsTableArea;
 
 	private TableViewer settingsTable;
 	private List<SettingValuePair> settings;
@@ -113,17 +119,24 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 		});
 
-		settingsTable = createSettingsTableViewer(rootComposite);
+		settingsArea = new Composite(rootComposite, SWT.NONE);
+		settingsArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		stackLayout = new StackLayout();
+		settingsArea.setLayout(stackLayout);
+		
+		settingsTableArea = new Composite(settingsArea, SWT.NONE);
+		settingsTableArea.setLayout(new GridLayout());
+		settingsTable = createSettingsTableViewer(settingsTableArea);
 		settingsTable.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				selectSetting(settingsTable.getSelection());
 			}
-			
+
 		});
-		
-		Composite settingDescriptionComposite = new Composite(rootComposite, SWT.NONE);
+
+		Composite settingDescriptionComposite = new Composite(settingsTableArea, SWT.NONE);
 		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
 		gd2.heightHint = DESCRIPTION_LABEL_HEIGHT;
 		settingDescriptionComposite.setLayoutData(gd2);
@@ -133,7 +146,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		settingDescriptionLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		settingDescriptionLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		settingDescriptionLabel.setText("");
-		
+
 		Button resetSettingsButton = new Button(settingDescriptionComposite, SWT.PUSH);
 		resetSettingsButton.setText("Reset settings");
 		resetSettingsButton.addSelectionListener(new SelectionAdapter() {
@@ -142,23 +155,29 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 				resetSettings();
 			}
 		});
+		
+		emptySettingsTableArea = new Composite(settingsArea, SWT.NONE);
+		emptySettingsTableArea.setLayout(new GridLayout());
+		Label noSettingsLabel = new Label(emptySettingsTableArea, SWT.NONE);
+		noSettingsLabel.setText("No settings for this type of DashboardPart.");
+		noSettingsLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		selectDashboardPart(0);
 		finishCreation(rootComposite);
 	}
-	
+
 	public String getSelectedDashboardPartName() {
 		return choosePartNameCombo.getText();
 	}
-	
+
 	public Map<String, String> getSelectedSettings() {
 		Map<String, String> settingMap = Maps.newHashMap();
-		for( SettingValuePair pair : settings ) {
+		for (SettingValuePair pair : settings) {
 			settingMap.put(pair.setting.getName(), pair.value);
 		}
 		return settingMap;
 	}
-	
+
 	private void finishCreation(Composite rootComposite) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -171,27 +190,35 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		String dashboardName = getDashboardPartName(index);
 		refreshPartDescriptionLabel(dashboardName);
 		refreshSettingsTable(dashboardName);
+		
+		if( settings.isEmpty() ) {
+			stackLayout.topControl = emptySettingsTableArea;
+		} else {
+			stackLayout.topControl = settingsTableArea;
+		}
+		settingsArea.layout();
+		
 		validateSettings();
 	}
-	
+
 	private void selectSetting(ISelection selection) {
-		IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-		SettingValuePair pair = (SettingValuePair)structuredSelection.getFirstElement();
+		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		SettingValuePair pair = (SettingValuePair) structuredSelection.getFirstElement();
 		settingDescriptionLabel.setText(pair != null ? pair.setting.getDescription() : "");
 	}
 
 	private void refreshSettingsTable(String dashboardName) {
 		settings = getSettings(dashboardName);
-		
+
 		settingsTable.setInput(settings);
 		settingsTable.refresh();
 	}
 
 	private void resetSettings() {
-		for( SettingValuePair pair : settings ) {
+		for (SettingValuePair pair : settings) {
 			pair.reset();
 		}
-		
+
 		settingsTable.refresh();
 		validateSettings();
 	}
@@ -199,7 +226,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private void refreshPartDescriptionLabel(String dashboardPartName) {
 		partDescriptionLabel.setText(getDescription(dashboardPartName));
 	}
-	
+
 	private String getDashboardPartName(int index) {
 		return dashboardPartNames.get(index);
 	}
@@ -218,11 +245,11 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private static List<SettingValuePair> getSettings(String dashboardPartName) {
 		Optional<DashboardPartDescriptor> optDescriptor = DashboardPartRegistry.getDashboardPartDescriptor(dashboardPartName);
 		List<SettingValuePair> result = Lists.newArrayList();
-		if( optDescriptor.isPresent() ) {
+		if (optDescriptor.isPresent()) {
 			DashboardPartDescriptor descriptor = optDescriptor.get();
-			for( String settingDescriptorName : descriptor.getSettingDescriptorNames() ) {
+			for (String settingDescriptorName : descriptor.getSettingDescriptorNames()) {
 				Optional<SettingDescriptor<?>> optSettingDescriptor = descriptor.getSettingDescriptor(settingDescriptorName);
-				if( optSettingDescriptor.isPresent() ) {
+				if (optSettingDescriptor.isPresent()) {
 					SettingDescriptor<?> settingDescriptor = optSettingDescriptor.get();
 					result.add(new SettingValuePair(settingDescriptor));
 				} else {
@@ -232,7 +259,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		} else {
 			LOG.error("Could not find DashboardPartDescriptor for {}.", dashboardPartName);
 		}
-		
+
 		return result;
 	}
 
@@ -255,19 +282,19 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		settingNameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				SettingValuePair pair = (SettingValuePair)cell.getElement();
+				SettingValuePair pair = (SettingValuePair) cell.getElement();
 				String txt = pair.setting.isOptional() ? pair.setting.getName() : pair.setting.getName() + "*";
 				cell.setText(txt);
 			}
 		});
-		
+
 		TableViewerColumn settingValueColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		settingValueColumn.getColumn().setText("Value");
 		tableColumnLayout.setColumnData(settingValueColumn.getColumn(), new ColumnWeightData(5, 25, true));
 		settingValueColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
-				SettingValuePair pair = (SettingValuePair)cell.getElement();
+				SettingValuePair pair = (SettingValuePair) cell.getElement();
 				cell.setText(pair.value);
 			}
 		});
@@ -281,21 +308,21 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 			@Override
 			public Object getValue(Object element, String property) {
-				return ((SettingValuePair)element).value;
+				return ((SettingValuePair) element).value;
 			}
 
 			@Override
 			public void modify(Object element, String property, Object value) {
-				TableItem item = (TableItem)element;
-				SettingValuePair pair = (SettingValuePair)item.getData();
+				TableItem item = (TableItem) element;
+				SettingValuePair pair = (SettingValuePair) item.getData();
 				pair.value = value.toString();
 				tableViewer.update(item.getData(), null);
-				
+
 				validateSettings();
 			}
-			
+
 		});
-		
+
 		tableViewer.setColumnProperties(new String[] { "setting", "settingValue" });
 		tableViewer.setCellEditors(new CellEditor[] { null, new TextCellEditor(tableViewer.getTable()) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -306,15 +333,15 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private static List<String> determineDashboardPartNames() {
 		return DashboardPartRegistry.getDashboardPartNames();
 	}
-	
+
 	private void validateSettings() {
-		for( SettingValuePair pair : settings ) {
-			if(!pair.setting.isOptional() && Strings.isNullOrEmpty(pair.value)) {
+		for (SettingValuePair pair : settings) {
+			if (!pair.setting.isOptional() && Strings.isNullOrEmpty(pair.value)) {
 				setPageComplete(false);
 				return;
 			}
 		}
-		
+
 		setPageComplete(true);
 	}
 }

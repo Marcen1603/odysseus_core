@@ -153,20 +153,30 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 
-		tabFolder = new TabFolder(parent, SWT.NONE);
-		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tabFolder.setLayout(new GridLayout());
+		if( !dashboardPart.getConfiguration().getSettings().isEmpty() ) {
+			tabFolder = new TabFolder(parent, SWT.NONE);
+			tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+			tabFolder.setLayout(new GridLayout());
 
-		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
-		Composite settingsTab = createTabComposite(tabFolder, "Settings");
-
-		createSettingsTabContent(settingsTab);
-		createPresentationTabContent(presentationTab);
+			Composite presentationTab = createTabComposite(tabFolder, "Presentation");
+			Composite settingsTab = createTabComposite(tabFolder, "Settings");
+			createSettingsTabContent(settingsTab);
+			createPresentationTabContent(presentationTab);
+		} else {
+			Composite comp = new Composite(parent, SWT.NONE);
+			comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+			comp.setLayout(new GridLayout());
+			
+			createPresentationTabContent(comp);
+		}
+		
 	}
 
 	@Override
 	public void setFocus() {
-		tabFolder.setFocus();
+		if( tabFolder != null ) {
+			tabFolder.setFocus();
+		}
 	}
 
 	@Override
@@ -189,7 +199,8 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		Composite comp = new Composite(presentationTab, SWT.NONE);
 		comp.setLayout(new GridLayout());
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		comp.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		
 		try {
 			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());
 			dashboardPartController.start();

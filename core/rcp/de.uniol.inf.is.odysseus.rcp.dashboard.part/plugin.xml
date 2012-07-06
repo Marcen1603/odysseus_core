@@ -15,6 +15,11 @@
                type="String">
          </setting>
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.NoSettingsDashboardPart"
+            description="Dashboard Part with no settings to configure"
+            name="NoSettings">
+      </dashboardPart>
    </extension>
 
 </plugin>
