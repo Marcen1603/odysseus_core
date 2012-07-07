@@ -112,6 +112,7 @@ public abstract class Style{
 	public Image getImage(int[] list){
 		if (!changed)
 			return ColorManager.getInstance().getImage(this);
+		
 		Display display = Display.getCurrent();
 //	    Color white = display.getSystemColor(SWT.COLOR_WHITE);
 	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
@@ -139,6 +140,7 @@ public abstract class Style{
 		Image icon = new Image(display, imageData, maskData);
 		ColorManager.getInstance().getImage(this);
 		changed = false;
+		
 		return icon;
 	}
     

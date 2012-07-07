@@ -70,7 +70,7 @@ public class StreamMapEditor implements IStreamEditorType {
 	private ScreenTransformation transformation;
 	private ScreenManager screenManager;
 
-	private int maxTuplesCount = 0;
+	private int maxTuplesCount = Integer.MAX_VALUE;
 
 	protected Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
@@ -83,7 +83,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		setMaxTuplesCount(maxTuples);
 		
 		//Create Map Background 
-		//layerOrder.add(new MapLayer(transformation, new ImageStyle()));
+		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class StreamMapEditor implements IStreamEditorType {
 			LOG.error("Warning: StreamMap is only for relational tuple!");
 			return;
 		}
-		LOG.info("Received Element: " + element.toString());
+		//LOG.info("Received Element: " + element.toString());
 		
 		for (Integer key : spatialDataIndex.keySet()) {
 				
@@ -102,7 +102,7 @@ public class StreamMapEditor implements IStreamEditorType {
 			else{
 				//spatialDataIndex.get(key).addGeometry((GeometryCollection)((Tuple<?>) element).getAttribute(key));	
 				for(Geometry g: (List<Geometry>)((Tuple<?>) element).getAttribute(key)){
-					LOG.info(g.toString());
+					//LOG.info(g.toString());
 					spatialDataIndex.get(key).addGeometry(g);	
 				}
 				
@@ -110,10 +110,12 @@ public class StreamMapEditor implements IStreamEditorType {
 			}
 		}
 
+
+		tuples.addFirst((Tuple<?>) element);
+		//LOG.debug("Tuples: " + tuples.size());
 		
-		tuples.add(0, (Tuple<?>) element);
 		if (tuples.size() > getMaxTuplesCount()) {
-			tuples.remove(tuples.size() - 1);
+			tuples.removeLast();
 			for (VectorLayer layer : spatialDataIndex.values()) {
 				layer.removeLast();
 			}

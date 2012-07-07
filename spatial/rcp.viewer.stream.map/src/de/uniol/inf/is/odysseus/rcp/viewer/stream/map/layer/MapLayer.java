@@ -56,33 +56,31 @@ public class MapLayer implements Layer {
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
 			
-			double minLat 	= 	transformation.getLat(transformation.getCurrentScreen().x);
-			double minLon 	=   transformation.getLon(transformation.getCurrentScreen().y);
-			
-			double maxLat 	=   transformation.getLat(transformation.getCurrentScreen().width);				
-			double maxLon 	=   transformation.getLon(transformation.getCurrentScreen().height);	
+			double[] min = transformation.SC2WGS(transformation.getCurrentScreen().x, transformation.getCurrentScreen().y);
+			double[] max = transformation.SC2WGS(transformation.getCurrentScreen().width, transformation.getCurrentScreen().height);	
 
-			transformation.setMinLat(minLat);
-			transformation.setMinLon(minLon);
-			transformation.setMaxLat(maxLat);
-			transformation.setMaxLon(maxLon);
+			transformation.setMinLat(min[0]);
+			transformation.setMinLon(min[1]);
+			transformation.setMaxLat(max[0]);
+			transformation.setMaxLon(max[1]);
 
 			
-			LOG.debug("Calculated Map: " + " x="+ minLat + "," + minLon + " y=" + maxLat + "," + maxLon);
+			LOG.debug("Calculated Map: " + " x="+ min[0] + "," + min[1] + " y=" + max[0] + "," + max[1]);
 			
 			//Only for testing. 
-			if(		(minLon >= -85.0 	&& minLon <= 85.0)  &&
-					(maxLon >= -85.0 	&& maxLon <= 85.0)  &&
-					(minLat >= -180.0 && minLat <= 180.0) &&
-					(maxLat >= -180.0 && maxLat <= 180.0)
+			if(		(min[1] >= -85.0 	&& min[1] <= 85.0)  &&
+					(max[1] >= -85.0 	&& max[1] <= 85.0)  &&
+					(min[0] >= -180.0 && min[0] <= 180.0) &&
+					(max[0] >= -180.0 && max[0] <= 181.0)
 			){
-				image = updateImage(gc, transformation.getOriginScreen().width, transformation.getOriginScreen().height, minLat, minLon, maxLat, maxLon);				
+				max[0] = 180;
+				image = updateImage(gc, transformation.getOriginScreen().width, transformation.getOriginScreen().height, min[0], min[1], max[0], max[1]);				
 				//image = updateImage(gc, transformation.getOriginScreen().width,transformation.getOriginScreen().height , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
 
 			}
-			else{
-				throw new RuntimeException("Illegal Coordinates");
-			}
+//			else{
+//				throw new RuntimeException("Illegal Coordinates");
+//			}
 			transformation.update(false);
 		}
 		gc.drawImage(image, 0, 0);
@@ -102,7 +100,7 @@ public class MapLayer implements Layer {
 	 */
 	
 	
-	private Image updateImage(GC gc, int width,int height, double minLat,double minLon, double maxLat, double maxLon) {
+	private Image updateImage(GC gc, int width,int height, double minLat,double maxLon , double maxLat, double minLon) {
 		LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
 		Image image = null;
 		try {

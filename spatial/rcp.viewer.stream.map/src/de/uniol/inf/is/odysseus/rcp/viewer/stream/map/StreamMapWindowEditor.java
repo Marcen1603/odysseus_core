@@ -34,64 +34,8 @@ public class StreamMapWindowEditor extends StreamMapEditor {
 	private ITimeInterval metadata = null;
 	
 	public StreamMapWindowEditor() {
-		//BAD!
-		super(100);
+		super(1000000000);
 	}
 
-	@Override
-	public void streamElementRecieved(Object element, int port) {
-		if (!(element instanceof Tuple<?>)) {
-			LOG.error("Warning: StreamMap is only for relational tuple!");
-			return;
-		}
-		for (Integer key : spatialDataIndex.keySet()) {
-			spatialDataIndex.get(key).addGeometry(
-					(Geometry) ((Tuple<?>) element).getAttribute(key));
-		}
-		
-		
-		/*
-		 * 
-		 * This shouldn't work right!
-		 * 
-		 */		
-		//if(((Tuple<?>)element).getMetadata() instanceof ITimeInterval){
-//			ITimeInterval metadata = (ITimeInterval)((Tuple<?>)element).getMetadata();
-//
-//			tuples.add(0, (Tuple<?>) element);
-//			if(this.metadata != null){
-//				LOG.error(this.metadata.getEnd().minus(metadata.getStart()).toString());
-//				
-//				if(this.metadata.getEnd().after(metadata.getStart())){
-//					tuples.clear();
-////					for (Layer layer : spatialDataIndex.values()) {
-////						//layer.clean();
-////					}
-//					this.metadata = metadata;
-//				}
-//			}
-//			else{
-//				this.metadata = metadata;
-//			}
-//			
-//			if (update == null && hasCanvasViewer()
-//					&& !getCanvasViewer().isDisposed()) {
-//				PlatformUI.getWorkbench().getDisplay()
-//						.asyncExec(update = new Runnable() {
-//							@Override
-//							public void run() {
-//								if (!getCanvasViewer().isDisposed())
-//									getCanvasViewer().redraw();
-//								update = null;
-//							}
-//						});
-//			}
-//			
-////		}
-//		else{
-//			throw new RuntimeException("Windowed Map visualisations must be from type: ITimeInterval");
-//		}
-		
-	}
-	
+
 }

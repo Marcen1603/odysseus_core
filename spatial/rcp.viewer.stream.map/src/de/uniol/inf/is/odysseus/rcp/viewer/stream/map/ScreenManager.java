@@ -64,12 +64,13 @@ public class ScreenManager {
 				
 				mouseSelection.width = e.x;
 				mouseSelection.height = e.y;
-				transformation.updateCurrent(mouseSelection);
+				//transformation.updateCurrent(mouseSelection);
+				
 				//setRect(null);
 				mouseSelection = null;
 
 				LOG.debug("OnMouseUp: " + e.x + "," + e.y);
-				LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
+				//LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
 				
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -88,7 +89,7 @@ public class ScreenManager {
 				
 				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
 				LOG.debug("OnMouseDown: " + e.x + "," + e.y);	
-				LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
+				//LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" + transformation.getLon(e.y)) ;
 			}
 
 			@Override
@@ -102,7 +103,14 @@ public class ScreenManager {
 			@Override
 			public void mouseMove(MouseEvent e) { 
 				mouseLabel.label =  "Screen Coordinate: " + e.x + "," + e.y + "\n";
-				mouseLabel.label += "Map Coordinate: " + transformation.getLat(e.x) + ", " + transformation.getLon(e.y);
+				
+				
+				double[] mapCoord = transformation.SC2WGS(e.x, e.y);
+				int[] scCoord = transformation.WGS2SC(mapCoord[0], mapCoord[1]);
+				
+				mouseLabel.label += "Computed Coordinate: " + scCoord[0] + ", " + scCoord[1] + "\n";	
+				mouseLabel.label += "Map Coordinate: " + mapCoord[0] + ", " + mapCoord[1];
+			
 				
 				mouseLabel.x = e.x;
 				mouseLabel.y = e.y;

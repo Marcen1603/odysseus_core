@@ -68,7 +68,7 @@ public class ImageLayer implements Layer {
 
 	public void drawImage(Image image, Point point, GC gc) {
 		this.point = point;
-		int[] uv = transformation.transformCoord(point.getCoordinate());
+		int[] uv = transformation.transformCoord(point.getCoordinate(),point.getSRID());
 		gc.drawImage(image, uv[0], uv[1]);
 	}
 

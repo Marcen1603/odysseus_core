@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.GC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -37,6 +39,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  */
 public class VectorLayer implements Layer{
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(VectorLayer.class);
+	
 	private LinkedList<Geometry> geometries = null;
 	private ScreenTransformation transformation = null;
 	private SDFAttribute sdfAttribute = null;
@@ -87,7 +92,7 @@ public class VectorLayer implements Layer{
 	}
 
 	private void drawPoint(Point point, GC gc) {
-		int[] uv = transformation.transformCoord(point.getCoordinate());
+		int[] uv = transformation.transformCoord(point.getCoordinate(),point.getSRID());
 		this.style.draw(gc, uv);
 	}
 
@@ -96,7 +101,7 @@ public class VectorLayer implements Layer{
 		int[] path = new int[lineString.getNumPoints()
 				+ lineString.getNumPoints()];
 		for (Coordinate coord : lineString.getCoordinates()) {
-			int[] uv = transformation.transformCoord(coord);
+			int[] uv = transformation.transformCoord(coord,lineString.getSRID());
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
@@ -108,7 +113,7 @@ public class VectorLayer implements Layer{
 		int[] path = new int[lineString.getNumPoints()
 				+ lineString.getNumPoints()];
 		for (Coordinate coord : lineString.getCoordinates()) {
-			int[] uv = transformation.transformCoord(coord);
+			int[] uv = transformation.transformCoord(coord,lineString.getSRID());
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
@@ -126,18 +131,21 @@ public class VectorLayer implements Layer{
 	}
 	
 	public void addGeometry(Geometry geometry) {
+		//LOG.debug("(ADD)Current Geometries:" + geometries.size());
 		synchronized (geometries) {
 			this.geometries.offer(geometry);
 		}
 	}
 
 	public void removeLast() {
+		LOG.debug("(REMOVE)Current Geometries:" + geometries.size());
 		synchronized (geometries) {
 			this.geometries.poll();
 		}
 	}
 	
 	public void clean() {
+		LOG.debug("(CLEAN)Current Geometries:" + geometries.size());
 		synchronized (geometries) {
 			this.geometries.clear();
 		}
