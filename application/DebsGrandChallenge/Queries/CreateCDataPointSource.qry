@@ -4,9 +4,9 @@
 #QUERY
 #DEFINE DELAY 1000
 #DEFINE FILENAME E:/odysseus/application/DebsGrandChallenge/allData.txt
-#UNDEF SERVER
+#DEFINE SERVER
 #UNDEF FILE_STRING_1
-#DEFINE FILE_STRING_2
+#UNDEF FILE_STRING_2
 
 #IFDEF SERVER
 gchSource := ACCESS({SOURCE = 'GrandChallengeDataPoint',
