@@ -90,7 +90,7 @@ public class CreateRMap {
 		String componentName = getComponentName(projectFile);
 		String componentNamePattern = componentName.replace(".", "\\.");
 
-		sb.append("<rm:locator failOnError=\"false\" pattern=\"" + componentNamePattern + "$\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+		sb.append("<rm:locator failOnError=\"false\" pattern=\"^" + componentNamePattern + "\" searchPathRef=\"" + componentName + "\"/>").append("\n");
 		sb.append("<rm:searchPath name=\"" + componentName + "\">").append("\n");
 		sb.append("<rm:provider componentTypes=\"osgi.bundle,eclipse.feature\" readerType=\"local\">").append("\n");
 		sb.append("    <rm:uri format=\"file:///{0}/" + relativPath + "/\">").append("\n");
