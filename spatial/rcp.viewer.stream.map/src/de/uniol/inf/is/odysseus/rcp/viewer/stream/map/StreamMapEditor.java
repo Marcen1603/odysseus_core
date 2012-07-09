@@ -83,7 +83,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		setMaxTuplesCount(maxTuples);
 		
 		//Create Map Background 
-		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
+		//layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
 	@Override
