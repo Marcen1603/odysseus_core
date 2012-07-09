@@ -28,6 +28,18 @@
          id="org.eclipse.equinox.p2.rcp.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.gef"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.draw2d"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.zest"
+         version="0.0.0"/>
+
    <requires>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
    </requires>
@@ -144,20 +156,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer.server"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.draw2d"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.gef"
          download-size="0"
          install-size="0"
          version="0.0.0"
