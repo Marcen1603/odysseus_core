@@ -26,15 +26,15 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.relational"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.platform"
          version="0.0.0"/>
 
    <includes
          id="org.eclipse.rcp"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.relational.feature"
          version="0.0.0"/>
 
    <plugin

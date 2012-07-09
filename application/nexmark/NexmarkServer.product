@@ -101,7 +101,6 @@ This Software contains parts of the nexmark generator
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.net4j.jms.api"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
    </plugins>
