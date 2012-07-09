@@ -27,7 +27,7 @@
                 <attribute name="create.product" />
             </prerequisites>
             <products alias="action.output" base="${buckminster.output}">
-                <path path="/../../downloads/odysseus.${target.ws}.${target.os}.${target.arch}.zip" />
+                <path path="../../downloads/odysseus.${target.ws}.${target.os}.${target.arch}.zip" />
             </products>
         </public>
     </actions>
