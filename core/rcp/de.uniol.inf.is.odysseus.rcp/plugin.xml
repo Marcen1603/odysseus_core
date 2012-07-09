@@ -292,7 +292,7 @@
       <image
             icon="icons/OdysseusProjectIconSmall.png"
             id="de.uniol.inf.is.odysseus.rcp.natures.OdysseusProjectNatureImage"
-            natureId="de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature">
+            natureId="de.uniol.inf.is.odysseus.rcp.base.OdysseusProjectNature">
       </image>
    </extension>
    <extension
