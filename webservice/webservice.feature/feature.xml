@@ -21,7 +21,7 @@
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="de.uniol.inf.is.odysseus.core"/>
       <import plugin="org.eclipse.osgi"/>
-      <import feature="de.uniol.inf.is.odysseus.relational" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
