@@ -21,10 +21,6 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.benchmark.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.cep.feature"
          version="0.0.0"/>
 
