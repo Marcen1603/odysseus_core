@@ -105,12 +105,16 @@ public class ScreenManager {
 				mouseLabel.label =  "Screen Coordinate: " + e.x + "," + e.y + "\n";
 				
 				
-				double[] mapCoord = transformation.SC2WGS(e.x, e.y);
-				int[] scCoord = transformation.WGS2SC(mapCoord[0], mapCoord[1]);
+				double[] map4326 	= transformation.screenToEpsg4326(e.x, e.y);
+				
+				double[] map3857 	= transformation.epsg4326To(3395,map4326[0], map4326[1]);
+				
+				int[] scCoord 		= transformation.epsg4326tToScreen(map4326[0], map4326[1]);
+				
 				
 				mouseLabel.label += "Computed Coordinate: " + scCoord[0] + ", " + scCoord[1] + "\n";	
-				mouseLabel.label += "Map Coordinate: " + mapCoord[0] + ", " + mapCoord[1];
-			
+				mouseLabel.label += "4326 Coordinate: " + map4326[0] + ", " + map4326[1] + "\n";	
+				mouseLabel.label += "3857 Coordinate: " + map3857[0] + ", " + map3857[1] + "\n";	
 				
 				mouseLabel.x = e.x;
 				mouseLabel.y = e.y;

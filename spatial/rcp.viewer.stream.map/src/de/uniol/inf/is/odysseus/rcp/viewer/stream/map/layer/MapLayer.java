@@ -56,8 +56,8 @@ public class MapLayer implements Layer {
 	public void draw(GC gc) {
 		if (transformation.hasUpdate()) {
 			
-			double[] min = transformation.SC2WGS(transformation.getCurrentScreen().x, transformation.getCurrentScreen().y);
-			double[] max = transformation.SC2WGS(transformation.getCurrentScreen().width, transformation.getCurrentScreen().height);	
+			double[] min = transformation.screenToEpsg4326(transformation.getCurrentScreen().x, transformation.getCurrentScreen().y);
+			double[] max = transformation.screenToEpsg4326(transformation.getCurrentScreen().width, transformation.getCurrentScreen().height);	
 
 			transformation.setMinLat(min[0]);
 			transformation.setMinLon(min[1]);
@@ -75,15 +75,13 @@ public class MapLayer implements Layer {
 			){
 				max[0] = 180;
 				image = updateImage(gc, transformation.getOriginScreen().width, transformation.getOriginScreen().height, min[0], min[1], max[0], max[1]);				
-				//image = updateImage(gc, transformation.getOriginScreen().width,transformation.getOriginScreen().height , currentMin_X, currentMin_Y, currentMax_X, currentMax_Y);				
-
 			}
-//			else{
-//				throw new RuntimeException("Illegal Coordinates");
-//			}
+
 			transformation.update(false);
 		}
-		gc.drawImage(image, 0, 0);
+		if(image != null){
+			gc.drawImage(image, 0, 0);
+		}
 	}
 
 	@Override
@@ -101,43 +99,47 @@ public class MapLayer implements Layer {
 	
 	
 	private Image updateImage(GC gc, int width,int height, double minLat,double maxLon , double maxLat, double minLon) {
-		LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
 		Image image = null;
-		try {
-			String url = "http://wms.latlon.org/?"
-					+ "&format=" 
-					+ mapFormat
-					+ "&layers="
-					+ mapType
-					+ "&width="
-					+ width
-					+ "&height="
-					+ height
-					+ "&bbox="
-					+ minLat
-					+ ","
-					+ minLon
-					+ ","
-					+ maxLat
-					+ ","
-					+ maxLon
-					+ "&mlat="
-					+ 0.0
-					+ "&mlon="
-					+ 0.0
-					;
-					
-			LOG.debug("Image URL: " + url);
-			
-			URL imageUrl = new URL(url);
-			InputStream in = imageUrl.openStream();
-			image = new Image(gc.getDevice(), in);
-			in.close();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		if((this.image == null) || ((this.image.getImageData().width != width) && (this.image.getImageData().height != height))){
+			LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
+			try {
+				String url = "http://wms.latlon.org/?"
+						+ "&format=" 
+						+ mapFormat
+						+ "&layers="
+						+ mapType
+						+ "&width="
+						+ width
+						+ "&height="
+						+ height
+						+ "&bbox="
+						+ minLat
+						+ ","
+						+ minLon
+						+ ","
+						+ maxLat
+						+ ","
+						+ maxLon
+						+ "&mlat="
+						+ 0.0
+						+ "&mlon="
+						+ 0.0
+						;
+						
+				LOG.debug("Image URL: " + url);
+				
+				URL imageUrl = new URL(url);
+				InputStream in = imageUrl.openStream();
+				image = new Image(gc.getDevice(), in);
+				in.close();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		return image;
 	}
 
