@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Odysseus Cep Plug-in
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.cep.epa
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.exception,
