@@ -30,7 +30,6 @@
 
 package de.uniol.inf.is.odysseus.latency.transform;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferedFilterAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -49,7 +48,7 @@ public class TBufferedFilterLatencyRule extends AbstractTransformationRule<Buffe
 
 	@Override
 	public int getPriority() {
-		return 0;
+		return 10;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -81,7 +80,7 @@ public class TBufferedFilterLatencyRule extends AbstractTransformationRule<Buffe
 	
 	@Override
 	public Class<?> getConditionClass() {	
-		return BufferedFilterAO.class;
+		return BufferedFilterPO.class;
 	}
 
 }
