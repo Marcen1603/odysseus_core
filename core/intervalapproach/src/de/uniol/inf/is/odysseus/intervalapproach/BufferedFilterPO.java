@@ -28,11 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea.Order;
 
-public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeContainer<K>>
-		extends AbstractPipe<R, R> {
+public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeContainer<K>> extends AbstractPipe<R, R> {
 
 	private static final int BUFFERPORT = 0;
-	
+
 	private final IPredicate<? super R> predicate;
 	private final List<R> buffer = new LinkedList<R>();
 	private final long bufferTime;
@@ -41,11 +40,10 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 
 	final IDataMergeFunction<R> dataMerge;
 	final IMetadataMergeFunction<K> metadataMerge;
-	
+
 	private R trigger = null;
 
-	public BufferedFilterPO(IPredicate<? super R> predicate, long bufferTime,
-			long deliverTime, IDataMergeFunction<R> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
+	public BufferedFilterPO(IPredicate<? super R> predicate, long bufferTime, long deliverTime, IDataMergeFunction<R> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
 		super();
 		this.predicate = predicate.clone();
 		this.bufferTime = bufferTime;
@@ -87,10 +85,9 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 			} else {
 				if (predicate.evaluate(object)) {
 					// Set output time
-					deliverUntil = PointInTime.plus(object.getMetadata()
-							.getStart(), deliverTime);
+					deliverUntil = PointInTime.plus(object.getMetadata().getStart(), deliverTime);
 					// Set trigger object, that will be appended
-					trigger  = object;
+					trigger = object;
 				}
 			}
 			produceData(object.getMetadata().getStart());
@@ -110,8 +107,7 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 			boolean bufferCleard = false;
 			while (buffer.size() > 0 && !bufferCleard) {
 				elem = buffer.get(0);
-				if (elem.getMetadata().getStart().getMainPoint() + bufferTime < timestamp
-						.getMainPoint()) {
+				if (elem.getMetadata().getStart().getMainPoint() + bufferTime < timestamp.getMainPoint()) {
 					// Send filtered data to output port 1
 					transfer(buffer.remove(0), 1);
 					continue;
@@ -120,18 +116,19 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 				}
 			}
 
-			// 2. Produce values, if timestamp before deliverUntil
-			if (deliverUntil != null
-					&& PointInTime.beforeOrEquals(timestamp, deliverUntil)) {
-				// all elements remaining in the buffer are relevant
-				while (buffer.size() > 0) {
-					R toTransfer = merge(trigger,buffer.remove(0), Order.LeftRight);
+			// 2. Produce values
+			if (deliverUntil != null) {
+				R toTest = buffer.get(0);
+				while (toTest != null && toTest.getMetadata().getStart().beforeOrEquals(deliverUntil)) {
+					R toTransfer = merge(trigger, toTest, Order.LeftRight);
 					transfer(toTransfer);
+					buffer.remove(0);
+					toTest = buffer.get(0);
 				}
 			}
 		}
 	}
-	
+
 	protected R merge(R left, R right, Order order) {
 		// if (logger.isTraceEnabled()) {
 		// logger.trace("JoinTIPO (" + hashCode() + ") start merging: " + left
@@ -141,12 +138,10 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 		K mergedMetadata;
 		if (order == Order.LeftRight) {
 			mergedData = dataMerge.merge(left, right);
-			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(),
-					right.getMetadata());
+			mergedMetadata = metadataMerge.mergeMetadata(left.getMetadata(), right.getMetadata());
 		} else {
 			mergedData = dataMerge.merge(right, left);
-			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(),
-					left.getMetadata());
+			mergedMetadata = metadataMerge.mergeMetadata(right.getMetadata(), left.getMetadata());
 		}
 		mergedData.setMetadata(mergedMetadata);
 		return mergedData;
