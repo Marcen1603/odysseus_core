@@ -155,7 +155,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	private static Map<String, String> getCustoms(Document doc) {
 		Map<String, String> customSettings = Maps.newHashMap();
 		NodeList customElements = doc.getElementsByTagName(CUSTOM_XML_ELEMENT);
-		if (customElements.getLength() != 1) {
+		if (customElements.getLength() == 1) {
 			Node customElement = customElements.item(0);
 
 			NodeList customSettingElements = customElement.getChildNodes();
