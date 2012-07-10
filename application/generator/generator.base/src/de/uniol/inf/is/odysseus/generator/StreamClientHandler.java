@@ -49,6 +49,10 @@ public abstract class StreamClientHandler extends Thread {
 	private Socket connection;
 	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
 	private Map<IValueGenerator, DataType> datatypes = new HashMap<IValueGenerator, DataType>();
+	/**
+	 * Gibt an, ob der StreamClientHandler Security Aware ist, also Security Punctuation verarbeitet.
+	 */
+	private Boolean isSA = false;
 
 	public abstract void init();
 
@@ -106,6 +110,17 @@ public abstract class StreamClientHandler extends Thread {
 	private ByteBuffer getByteBuffer(DataTuple tuple) {
 		bytebuffer = ByteBuffer.allocate(tuple.memSize(false));
 		bytebuffer.clear();
+		
+		if(tuple instanceof SADataTuple) {
+			if(isSA) {
+				if(((SADataTuple)tuple).isSP()) {
+					bytebuffer.putInt(1);
+				} else {
+					bytebuffer.putInt(0);
+				}
+			}
+		}
+		
 		for (Object data : tuple.getAttributes()) {
 			if (data instanceof Integer) {
 				bytebuffer.putInt((Integer) data);
@@ -192,5 +207,13 @@ public abstract class StreamClientHandler extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setIsSA(Boolean isSA) {
+		this.isSA = isSA;
+	}
+	
+	public Boolean isSA() {
+		return this.isSA;
 	}
 }

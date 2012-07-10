@@ -20,12 +20,15 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.SecurityPunctuationHandler;
 
 public class ByteBufferHandler<T> implements
 		IObjectHandler<T> {
 
 	ByteBuffer byteBuffer = null;
 	private IDataHandler<?> dataHandler;
+	
+	private SecurityPunctuationHandler securityPunctuationHandler = new SecurityPunctuationHandler();
 	
 	public ByteBufferHandler() {
 	}
@@ -68,9 +71,25 @@ public class ByteBufferHandler<T> implements
 		return retval;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public synchronized T create(boolean isSP) throws IOException, ClassNotFoundException, BufferUnderflowException {
+		T retval = null;
+		synchronized(byteBuffer){
+			byteBuffer.flip();
+			if(!isSP) {
+				retval = (T)this.dataHandler.readData(byteBuffer);
+			} else {
+				retval = (T)this.securityPunctuationHandler.readData(byteBuffer);
+				System.out.println("retval: " + retval);
+			}
+			byteBuffer.clear();
+		}
+		return retval;
+	}
+	
 	private void checkOverflow(ByteBuffer buffer, int size) {
 		if (size+byteBuffer.position()>=byteBuffer.capacity()){
-			// TODO: Effizientere �berlaufbehandlung?
+			// TODO: Effizientere ?berlaufbehandlung?
 			//logger.warn("ObjectHandler OVERFLOW");
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit()+size+byteBuffer.position())*2);
 			newBB.put(byteBuffer);
