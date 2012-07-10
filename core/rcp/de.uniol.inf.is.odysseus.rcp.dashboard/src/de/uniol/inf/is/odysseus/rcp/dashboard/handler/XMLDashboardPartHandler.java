@@ -286,7 +286,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
 			queryElement.appendChild(fileElement);
 
-			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getName());
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getFullPath().toString());
 
 		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
 
