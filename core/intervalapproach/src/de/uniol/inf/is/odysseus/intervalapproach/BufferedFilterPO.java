@@ -116,14 +116,14 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IMetaAttributeC
 				}
 			}
 
-			// 2. Produce values
-			if (deliverUntil != null) {
+			// 2. Produce values if there are any
+			if (deliverUntil != null && buffer.size() > 0) {
 				R toTest = buffer.get(0);
 				while (toTest != null && toTest.getMetadata().getStart().beforeOrEquals(deliverUntil)) {
 					R toTransfer = merge(trigger, toTest, Order.LeftRight);
 					transfer(toTransfer);
 					buffer.remove(0);
-					toTest = buffer.get(0);
+					toTest = buffer.size() > 0? buffer.get(0):null;
 				}
 			}
 		}
