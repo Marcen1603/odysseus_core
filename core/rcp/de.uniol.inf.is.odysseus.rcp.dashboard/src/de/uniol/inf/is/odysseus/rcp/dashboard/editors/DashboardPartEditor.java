@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.io.FileNotFoundException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -50,6 +51,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 public class DashboardPartEditor extends EditorPart implements IConfigurationListener {
@@ -264,19 +266,24 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		informationComposite.setLayout(new GridLayout());
 		informationComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Link queryFileLabel = new Link(informationComposite, SWT.NONE);
-		queryFileLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		queryFileLabel.setText("Open corresponding query file: <a>" + dashboardPart.getQueryFile().getFullPath().toString() + "</a>");
-		queryFileLabel.addSelectionListener( new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(dashboardPart.getQueryFile()), OdysseusRCPEditorTextPlugIn.ODYSSEUS_SCRIPT_EDITOR_ID);
-				} catch (PartInitException ex) {
-					LOG.error("Could not open editor", ex);
+		if( dashboardPart.getQueryTextProvider() instanceof ResourceFileQueryTextProvider ) {
+			ResourceFileQueryTextProvider resFile = (ResourceFileQueryTextProvider)dashboardPart.getQueryTextProvider();
+			final IFile queryFile = resFile.getFile();
+			
+			Link queryFileLabel = new Link(informationComposite, SWT.NONE);
+			queryFileLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			queryFileLabel.setText("Open corresponding query file: <a>" + queryFile.getFullPath().toString() + "</a>");
+			queryFileLabel.addSelectionListener( new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					try {
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(queryFile), OdysseusRCPEditorTextPlugIn.ODYSSEUS_SCRIPT_EDITOR_ID);
+					} catch (PartInitException ex) {
+						LOG.error("Could not open editor", ex);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private void refreshSettingDescription() {

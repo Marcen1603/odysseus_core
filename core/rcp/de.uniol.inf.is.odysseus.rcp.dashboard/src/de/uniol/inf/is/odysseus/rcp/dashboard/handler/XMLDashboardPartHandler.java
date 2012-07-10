@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,12 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
@@ -36,20 +40,32 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 
 public class XMLDashboardPartHandler implements IDashboardPartHandler {
+
+	// DashboardPart
+	// Query
+	// File / Text
+	// Setting
+	// Custom
 
 	public static final String DASHBOARD_PART_XML_ELEMENT = "DashboardPart";
 	public static final String SETTING_XML_ELEMENT = "Setting";
 	public static final String CUSTOM_SETTING_XML_ELEMENT = "Setting";
 	public static final String CUSTOM_XML_ELEMENT = "Custom";
+	public static final String QUERY_TEXT_XML_ELEMENT = "Query";
+	public static final String QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT = "File";
+	public static final String QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT = "Text";
 
 	public static final String CLASS_XML_ATTRIBUTE = "class";
-	public static final String QUERY_FILE_XML_ATTRIBUTE = "queryFile";
 	public static final String SETTING_NAME_XML_ATTRIBUTE = "name";
 	public static final String SETTING_VALUE_XML_ATTRIBUTE = "value";
+	public static final String FILE_XML_ATTRIBUTE = "file";
 
 	public static final String NULL_SETTING = "<null>";
 
@@ -66,7 +82,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 			Document doc = docBuilder.newDocument();
 
-			Element rootElement = createRootElement(part.getQueryFile(), part.getClass(), doc);
+			Element rootElement = createRootElement(part.getClass(), doc);
+			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
 			appendConfiguration(part.getConfiguration(), doc, rootElement);
 			appendCustoms(part, doc, rootElement);
 			saveToFile(doc, to);
@@ -86,12 +103,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			Node rootNode = getRootNode(doc);
 
 			DashboardPartDescriptor descriptor = getDashboardPartDescriptor(rootNode);
-			IFile file = getQueryFile(rootNode);
+			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
 			Map<String, String> settingsMap = parseSettingsMap(rootNode);
 			Map<String, String> customSettings = getCustoms(doc);
 
-			return buildDashboardPart(descriptor, file, settingsMap, customSettings);
-			
+			return buildDashboardPart(descriptor, queryTextProvider, settingsMap, customSettings);
+
 		} catch (ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart from file " + from.getName(), e);
 			throw new DashboardHandlerException("Could not load DashboardPart from file " + from.getName(), e);
@@ -101,7 +118,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
-	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IFile file, Map<String, String> settingsMap, Map<String, String> customSettings) throws DashboardHandlerException {
+	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IDashboardPartQueryTextProvider queryTextProvider, Map<String, String> settingsMap,
+			Map<String, String> customSettings) throws DashboardHandlerException {
 		try {
 			IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
 			Configuration defaultConfiguration = part.getConfiguration();
@@ -110,12 +128,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 				defaultConfiguration.setAsString(key, NULL_SETTING.equals(value) ? null : value);
 			}
 
-			part.setQueryFile(file);
+			part.setQueryTextProvider(queryTextProvider);
 			part.onLoad(customSettings);
 			return part;
 		} catch (InstantiationException e) {
-			LOG.error("Could not load DashboardPart from file " + file.getName(), e);
-			throw new DashboardHandlerException("Could not load DashboardPart from file " + file.getName(), e);
+			LOG.error("Could not load DashboardPart", e);
+			throw new DashboardHandlerException("Could not load DashboardPart", e);
 		}
 	}
 
@@ -146,9 +164,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return customSettings;
 	}
 
-	private static IFile getQueryFile(Node rootNode) throws FileNotFoundException {
-		String queryFileName = rootNode.getAttributes().getNamedItem(QUERY_FILE_XML_ATTRIBUTE).getNodeValue();
-		IPath queryFilePath = new Path(queryFileName);
+	private static IFile getQueryFile(String fileName) throws FileNotFoundException {
+		IPath queryFilePath = new Path(fileName);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 		if (!file.exists()) {
 			throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
@@ -181,11 +198,11 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		IPath path = from.getLocation();
-		if( path == null ) {
+		if (path == null) {
 			LOG.error("Could not find file {}!", from.getName());
 			throw new FileNotFoundException("Could not find file " + from.getName());
 		}
-		
+
 		try {
 			Document doc = docBuilder.parse(from.getLocation().toFile());
 			doc.getDocumentElement().normalize();
@@ -235,7 +252,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			StreamResult result = new StreamResult(to.getLocation().toFile());
 
 			transformer.transform(source, result);
-			
+
 		} catch (TransformerConfigurationException e) {
 			LOG.error("Could not save DashboardPart to file " + to.getName(), e);
 			throw new DashboardHandlerException("Could not save DashboardPart  to file " + to.getName(), e);
@@ -243,6 +260,62 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			LOG.error("Could not save DashboardPart to file " + to.getName(), e);
 			throw new DashboardHandlerException("Could not save DashboardPart to file " + to.getName(), e);
 		}
+	}
+
+	private static void appendQueryTextProvider(IDashboardPartQueryTextProvider queryTextProvider, Document doc, Element rootElement) throws DashboardHandlerException {
+		Element queryElement = doc.createElement(QUERY_TEXT_XML_ELEMENT);
+		rootElement.appendChild(queryElement);
+
+		if (queryTextProvider instanceof ResourceFileQueryTextProvider) {
+
+			Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
+			queryElement.appendChild(fileElement);
+
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getName());
+
+		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
+
+			Element textElement = doc.createElement(QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT);
+			queryElement.appendChild(textElement);
+			textElement.appendChild(doc.createTextNode(linesToString(((SimpleQueryTextProvider) queryTextProvider).getQueryText())));
+
+		} else {
+			throw new DashboardHandlerException("Unknown IDashboardPartQueryTextProvider " + queryTextProvider.getClass());
+		}
+	}
+
+	private static IDashboardPartQueryTextProvider getQueryTextProvider(Node rootNode) throws DashboardHandlerException, FileNotFoundException {
+		NodeList nodes = rootNode.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE && QUERY_TEXT_XML_ELEMENT.equals(node.getNodeName())) {
+
+				NodeList childs = node.getChildNodes();
+				for (int j = 0; j < childs.getLength(); j++) {
+					Node child = childs.item(j);
+					if (child.getNodeType() == Node.ELEMENT_NODE) {
+
+						if (QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
+
+							String fileName = getAttribute(child, FILE_XML_ATTRIBUTE, null);
+							if (Strings.isNullOrEmpty(fileName)) {
+								throw new DashboardHandlerException("FileName for query must not be null or empty.");
+							}
+
+							IFile file = getQueryFile(fileName);
+							return new ResourceFileQueryTextProvider(file);
+
+						} else if (QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
+							String queryText = child.getChildNodes().item(0).getNodeValue();
+
+							return new SimpleQueryTextProvider(stringToLines(queryText));
+						}
+					}
+				}
+
+			}
+		}
+		return null;
 	}
 
 	private static void appendCustoms(IDashboardPart part, Document doc, Element rootElement) {
@@ -276,11 +349,46 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
-	private static Element createRootElement(IFile queryFile, Class<? extends IDashboardPart> partClass, Document doc) {
+	private static Element createRootElement(Class<? extends IDashboardPart> partClass, Document doc) {
 		Element rootElement = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
 		doc.appendChild(rootElement);
 		rootElement.setAttribute(CLASS_XML_ATTRIBUTE, partClass.getName());
-		rootElement.setAttribute(QUERY_FILE_XML_ATTRIBUTE, queryFile.getFullPath().toString());
 		return rootElement;
 	}
+
+	private static String getAttribute(Node element, String attributeName, String defaultValue) {
+		NamedNodeMap nodeMap = element.getAttributes();
+		if (nodeMap == null) {
+			return defaultValue;
+		}
+
+		Node attributeNode = nodeMap.getNamedItem(attributeName);
+		if (attributeNode == null) {
+			return defaultValue;
+		}
+
+		return attributeNode.getNodeValue();
+	}
+
+	private static List<String> stringToLines(String queryText) {
+		Scanner lineScanner = new Scanner(queryText);
+
+		List<String> lines = Lists.newArrayList();
+		while (lineScanner.hasNextLine()) {
+			lines.add(lineScanner.nextLine());
+		}
+
+		return lines;
+	}
+
+	private static String linesToString(List<String> queryText) {
+		StringBuilder sb = new StringBuilder();
+
+		for (String line : queryText) {
+			sb.append(line).append("\n");
+		}
+
+		return sb.toString();
+	}
+
 }

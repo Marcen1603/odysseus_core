@@ -22,7 +22,10 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
@@ -68,7 +71,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			for( String key : settings.keySet() ) {
 				defaultConfiguration.setAsString(key, settings.get(key));
 			}			
-			part.setQueryFile(queryFilePage.getQueryFile());
+			part.setQueryTextProvider(createQueryTextProvider(queryFilePage.isQueryFileCopy(), queryFilePage.getQueryFile()));
 			
 			IDashboardPartHandler handler = new XMLDashboardPartHandler();
 			handler.save(part, dashboardPartFile);
@@ -117,6 +120,14 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			return Optional.of(fileName.substring(lastPoint + 1));
 		}
 		return Optional.absent();
+	}
+
+	private static IDashboardPartQueryTextProvider createQueryTextProvider(boolean queryFileCopy, IFile queryFile) {
+		if( queryFileCopy ) {
+			return new SimpleQueryTextProvider(queryFile);
+		} else {
+			return new ResourceFileQueryTextProvider(queryFile);
+		}
 	}
 }
 

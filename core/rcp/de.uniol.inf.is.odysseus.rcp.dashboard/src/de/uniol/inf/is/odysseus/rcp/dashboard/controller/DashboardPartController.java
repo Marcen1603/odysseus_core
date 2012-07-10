@@ -3,10 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -16,10 +12,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public final class DashboardPartController {
 
@@ -45,18 +43,12 @@ public final class DashboardPartController {
 		Preconditions.checkState(status != Status.RUNNING, "Container for DashboardParts already started");
 		Preconditions.checkState(status != Status.PAUSED, "Container for DashboardParts is paused and cannot be started.");
 
-		IFile file = dashboardPart.getQueryFile();
-		if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
-			file.refreshLocal(IResource.DEPTH_ZERO, null);
-		}
-		Scanner lineScanner = new Scanner(file.getContents());
+		List<String> queryTextLines = dashboardPart.getQueryTextProvider().getQueryText();
 
-		StringBuilder sb = new StringBuilder();
-		while (lineScanner.hasNextLine()) {
-			sb.append(lineScanner.nextLine()).append("\n");
-		}
-
-		List<?> results = DashboardPlugIn.getScriptParser().parseAndExecute(sb.toString(), OdysseusRCPPlugIn.getActiveSession(), null);
+		IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
+		ISession caller = OdysseusRCPPlugIn.getActiveSession();
+		
+		List<?> results = parser.execute( parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);  
 		queryIDs = getExecutedQueryIDs(results);
 
 		List<IPhysicalOperator> roots = Lists.newArrayList();

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.test;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
@@ -11,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 
 public class TestDashboardPart implements IDashboardPart {
 
@@ -35,15 +35,6 @@ public class TestDashboardPart implements IDashboardPart {
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		
-	}
-
-	@Override
-	public void setQueryFile(IFile file) {
-	}
-
-	@Override
-	public IFile getQueryFile() {
-		return null;
 	}
 
 	@Override
@@ -74,6 +65,18 @@ public class TestDashboardPart implements IDashboardPart {
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		
+	}
+
+	@Override
+	public void setQueryTextProvider(IDashboardPartQueryTextProvider file) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IDashboardPartQueryTextProvider getQueryTextProvider() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

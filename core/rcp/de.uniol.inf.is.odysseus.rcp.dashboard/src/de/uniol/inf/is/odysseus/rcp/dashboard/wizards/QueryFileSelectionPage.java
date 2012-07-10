@@ -22,6 +22,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class QueryFileSelectionPage extends WizardPage {
 	private final ContainerSelectionPage page1;
 	
 	private TableViewer filesTable;
+	private Button copyQueryTextCheck;
 
 	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage page1) {
 		super(pageName);
@@ -86,6 +88,9 @@ public class QueryFileSelectionPage extends WizardPage {
 			}
 			
 		});
+		
+		copyQueryTextCheck = new Button(rootComposite, SWT.CHECK);
+		copyQueryTextCheck.setText("Copy query into file (query-file and dashboard part are independent)");
 
 		finishCreation(rootComposite);
 	}
@@ -110,6 +115,10 @@ public class QueryFileSelectionPage extends WizardPage {
 	public IFile getQueryFile() {
 		IStructuredSelection selection = (IStructuredSelection) filesTable.getSelection();
 		return (IFile) selection.getFirstElement();
+	}
+	
+	public boolean isQueryFileCopy() {
+		return copyQueryTextCheck.getSelection();
 	}
 
 	private static void traverse(IResource resource, List<IFile> foundFiles) {

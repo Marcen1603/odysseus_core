@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -14,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
-	private IFile queryFile;
+	private IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IPhysicalOperator> roots;
 	
 	@Override
@@ -35,13 +33,13 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	}
 	
 	@Override
-	public IFile getQueryFile() {
-		return queryFile;
+	public IDashboardPartQueryTextProvider getQueryTextProvider() {
+		return queryTextProvider;
 	}
 
 	@Override
-	public void setQueryFile(IFile file) {
-		this.queryFile = Preconditions.checkNotNull(file, "QueryFile for DashboardPart must not be null!");
+	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
+		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
 	}
 
 	@Override

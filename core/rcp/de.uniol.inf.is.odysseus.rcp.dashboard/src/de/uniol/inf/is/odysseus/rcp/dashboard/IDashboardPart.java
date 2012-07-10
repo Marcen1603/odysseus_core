@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
@@ -25,6 +24,6 @@ public interface IDashboardPart extends IStreamElementListener<Object>, IConfigu
 	public Map<String, String> onSave();
 	public void onLoad(Map<String, String> saved);
 	
-	public void setQueryFile( IFile file );
-	public IFile getQueryFile();
+	public void setQueryTextProvider( IDashboardPartQueryTextProvider file );
+	public IDashboardPartQueryTextProvider getQueryTextProvider();
 }
