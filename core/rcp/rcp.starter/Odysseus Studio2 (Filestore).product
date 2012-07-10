@@ -49,7 +49,8 @@ http://odysseus.offis.uni-oldenburg.de/
    <license>
         <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         <text>
-   /** Copyright [2011] [The Odysseus Team]
+   /********************************************************************************** 
+  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.

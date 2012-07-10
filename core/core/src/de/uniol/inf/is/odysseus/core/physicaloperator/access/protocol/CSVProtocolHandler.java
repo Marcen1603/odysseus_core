@@ -12,9 +12,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	private char delimiter;
+	private boolean readFirstLine = true;
+	private boolean firstLineSkipped = false;
 
 	@Override
 	public T getNext() throws IOException {
+		if (!firstLineSkipped && !readFirstLine){
+			reader.readLine();
+			firstLineSkipped = true;
+		}
 		delay();
 		List<String> ret = new LinkedList<String>();
 		String line = reader.readLine();
@@ -59,6 +65,11 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
 		instance.delimiter = options.get("delimiter").toCharArray()[0];
+		if (options.get("readFirstLine") != null){
+			instance.readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
+		}else{
+			readFirstLine = true;
+		}
 		return instance;
 	}
 
