@@ -20,6 +20,56 @@
             description="Dashboard Part with no settings to configure"
             name="NoSettings">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LinesDashboardPart"
+            name="Lines">
+         <setting
+               defaultValue="Line chart"
+               description="Chart title to be printed in"
+               isEditable="true"
+               isOptional="true"
+               name="Title"
+               type="String">
+         </setting>
+         <setting
+               description="List of comma-separated attributes which should be mapped on the x-axis"
+               isEditable="true"
+               isOptional="false"
+               name="X-Axis"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="X-Axis"
+               description="Descriptive label of X-axis"
+               isEditable="true"
+               isOptional="true"
+               name="X-Axis label"
+               type="String">
+         </setting>
+         <setting
+               description="List of comma-separated attributes which should be mapped on the y-axis"
+               isEditable="true"
+               isOptional="false"
+               name="Y-Axis"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="Y-Axis"
+               description="Descriptive label of Y-axis"
+               isEditable="true"
+               isOptional="true"
+               name="Y-Axis label"
+               type="String">
+         </setting>
+         <setting
+               defaultValue="50"
+               description="Maximum number of past data elements to be printed."
+               isEditable="true"
+               isOptional="false"
+               name="Value count"
+               type="Integer">
+         </setting>
+      </dashboardPart>
    </extension>
 
 </plugin>
