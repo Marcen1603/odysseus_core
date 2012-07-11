@@ -17,10 +17,13 @@ package de.uniol.inf.is.odysseus.rcp.viewer.manage.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.manage.IGraphViewFactory;
@@ -88,6 +91,18 @@ public class OdysseusGraphViewFactory implements IGraphViewFactory<IPhysicalOper
 			
 			createConnectionSymbol( connView, symbolFactory );
 			graphView.insertViewedConnection( connView );
+		}
+		
+		// Filter
+		List<INodeView<IPhysicalOperator>> nodesToFilter = Lists.newArrayList();
+		for( INodeView<IPhysicalOperator> node : graphView.getViewedNodes()) {
+			if( PhysicalOperatorFilter.isFiltered(node.getModelNode().getContent())) {
+				nodesToFilter.add(node);
+			}
+		}
+		
+		for( INodeView<IPhysicalOperator> nodeToFilter : nodesToFilter ) {
+			graphView.removeViewedNode(nodeToFilter);
 		}
 		
 		return graphView;
