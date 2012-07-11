@@ -88,9 +88,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		int round = (int)(RECT_ROUND_SIZE_PIXELS * zoomFactor);
 
 		gc.setBackground(OWNER_COLORS[ownerID % OWNER_COLORS.length]);
-		gc.setForeground(OWNER_BORDER_COLOR);
 		gc.fillRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
-		gc.drawRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
 	}
 
 	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs) {
