@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,8 +95,7 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(final Object object, final int port,
-			final boolean isReadOnly) {
+	protected void process_next(final Object object, final int port) {
 		Grid grid = (Grid) ((Tuple<TimeInterval>) object).getAttribute(0);
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
 			IplImage image = OpenCVUtil.gridToImage(grid);
@@ -111,5 +110,4 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 	public void processPunctuation(final PointInTime timestamp, final int port) {
 
 	}
-
 }
