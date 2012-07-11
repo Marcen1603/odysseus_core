@@ -64,7 +64,7 @@ public class TupleTestComponent {
 	private long startTime;
 
 	public void activate(ComponentContext context) {
-		startTesting();		
+		
 	}
 
 	public void bindExecutor(IExecutor executor) {

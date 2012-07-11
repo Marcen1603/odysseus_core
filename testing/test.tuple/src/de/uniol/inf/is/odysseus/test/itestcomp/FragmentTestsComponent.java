@@ -24,11 +24,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
-import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.test.TupleTestActivator;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 
 /**
@@ -57,14 +57,13 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
  * @author Timo Michelsen
  *
  */
-public class FragmentTestsComponent implements ITestComponent {
+public class FragmentTestsComponent implements ITestComponent, TestObserver {
 	private static Logger LOG = LoggerFactory.getLogger(FragmentTestsComponent.class);
 
 	private List<Long> alreadyTested = new ArrayList<Long>();
 	
-//	private SynchronizedQueue<Bundle> bundlesToTest = new SynchronizedQueue<>(100); // TODO remove capacity
-	
-	private List<Bundle> bundlesToTest = Collections.synchronizedList(new ArrayList<Bundle>());
+//	private List<Bundle> bundlesToTest = Collections.synchronizedList(new ArrayList<Bundle>());
+	private List<Bundle> bundlesToTest = new ArrayList<Bundle>();
 	
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
@@ -75,9 +74,8 @@ public class FragmentTestsComponent implements ITestComponent {
 
 	private BufferedWriter out;
 	private long startTime;
-
-	public void activate(ComponentContext context) {
-	}
+	
+	private Writer logFile;
 
 	public void bindExecutor(IExecutor executor) {
 		checkArgument(executor instanceof IServerExecutor, "Executor must be instance of " + IServerExecutor.class.getName() + " instead of " + executor.getClass().getName());
@@ -86,6 +84,15 @@ public class FragmentTestsComponent implements ITestComponent {
 
 	public void bindScriptParser(IOdysseusScriptParser scriptParser) {
 		parser = scriptParser;
+	}
+	
+	public FragmentTestsComponent() {		
+		try {			
+			File file = new File("C:\\Users\\Alex\\Desktop\\ody.txt"); // TODO
+			logFile = new BufferedWriter(new FileWriter(file));
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -135,35 +142,52 @@ public class FragmentTestsComponent implements ITestComponent {
 
 	@Override
 	public void setUp() {
+		logIntoFile("SET UP " + this.getClass().getSimpleName() + " AT " + new Date().toString() +"\n");
 		// lese alle schon installierten bundles aus und führe deren tests durch
-		for(Bundle b : TestBundleActivator.context.getBundles()){
+		for(Bundle b : TupleTestActivator.context.getBundles()){
 			checkForTestsAndQueueThem(b);
 		}		
 		
+		// TODO bundle listener
 		// ... außerdem installiere bundleListener um nachträglich installierte bundles zu testen
-		TestBundleActivator.context.addBundleListener(new BundleListener() {
-			
-			@Override
-			public void bundleChanged(BundleEvent event) {
-				checkForTestsAndQueueThem(event.getBundle());
-			}
-		});		
+//		TupleTestActivator.context.addBundleListener(new BundleListener() {
+//			
+//			@Override
+//			public void bundleChanged(BundleEvent event) {
+//				checkForTestsAndQueueThem(event.getBundle());
+//			}
+//		});		
 	}
 	
 	private void checkForTestsAndQueueThem(Bundle bundle) {
+//		logIntoFile(
+//				"SEARCHING FOR TESTS IN BUNDLE " + 
+//						bundle.getSymbolicName() + 
+//						"(" + bundle.getBundleId() + ") ... ");		
+		
 		if (alreadyTested.contains(bundle.getBundleId())) {
+			logIntoFile("ALREADY TESTED - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
 			return;
 		}
 
 		// look for "tests" Folder
 		URL fileUrl = bundle.getResource("tests");
 
+		if(fileUrl == null){
+			logIntoFile("NO TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+			return;
+		}
+		
 		try {
 			File testsDir = new File(FileLocator.toFileURL(fileUrl).getPath());
 
 			// ... and add to queue for later testing if found
 			if (testsDir != null) {
+				logIntoFile("TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
 				bundlesToTest.add(bundle);
+				
+//				if(!isExecuting)
+//					startTesting(null);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -184,7 +208,16 @@ public class FragmentTestsComponent implements ITestComponent {
 		}
 	}
 	
-	private void executeTests(Bundle bundle){
+	private void executeTests(int index){
+		Bundle bundle = bundlesToTest.get(index);
+		if(alreadyTested.contains(bundle.getBundleId())){
+			logIntoFile("BUNDLE ALREADY TESTED BEFORE - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+			return;			
+		}
+		
+		logIntoFile("BUNDLE START TESTS - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+		
+		
 		// diese methode soll alle entahlten tests (param) ausführen
 		File testFolder = getTestsFolder(bundle);
 		Map<String, List<File>> testsQueries = readQueries(testFolder);
@@ -198,13 +231,19 @@ public class FragmentTestsComponent implements ITestComponent {
 		
 		ISession session = UserManagement.getSessionmanagement().login("System", "manager".getBytes());
 		
-		out = createWriter(testFolder); // TODO write into correct directory
+		out = createWriter(new File("")); // TODO write into correct directory
 
-		tryStartExecutor(executor);		
+		tryStartExecutor(executor);
 
 		LOG.debug("Processing " + testsQueries.size() + " queries ...");
+		
+		boolean errors = false;
+		
 		for (Entry<String, List<File>> queries : testsQueries.entrySet()) {
+			logIntoFile("CATEGORY START " + queries.getKey() + " WITH " + queries.getValue().size() + " TESTS \n");
 			
+			int success = 0;
+			int fail = 0;
 			
 			for(File qry : queries.getValue()){
 				final String queryKey = qry.getName();
@@ -217,43 +256,64 @@ public class FragmentTestsComponent implements ITestComponent {
 					
 					checkForErrors(errorText);
 					LOG.debug("Query {} successfull", queryKey);
-
+					success++;
 				} catch (OdysseusScriptException e) {
 					LOG.error("Query {} failed! ", queryKey, e);
+					fail++;
 					tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
+					errors = true;
 				} catch( IOException e ) {
 	                LOG.error("Query {} failed! ", queryKey, e);
+	                fail++;
 	                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
+	                errors = true;
 				}
 				
 			}
 			
+			logIntoFile("CATEGORY END " + queries.getKey() + ": " + success + " SUCCESS " + fail + " FAILED \n");
+			
+			
 		}
 		
 		tryClose(out);
+		
 		tryStopExecutor(executor);
 		
+		alreadyTested.add(bundle.getBundleId());
+		
 		LOG.debug("[TESTS] Finished tests for bundle {}", bundle.toString());
+		
+		logIntoFile("BUNDLE END - " + (errors? "HAD ERRORS" : "NO ERRORS") + "\n");
+				
+		if(bundlesToTest.size() > index){
+			executeTests(index++);
+		}
 	}
 	
 	@Override
-	public synchronized Object startTesting(String[] args) {		
-//		checkArgument(args.length == 3, "NexmarkTest needs exactly three arguments: [User], [Password], [FolderWithQueries]");
-
+	public Object startTesting(String[] args) {
+		logIntoFile("STARTED " + this.getClass().getSimpleName() + " AT " + new Date().toString() +"\n");
+		
 		if(isExecuting){
+			logIntoFile("ALREADY EXECUTING");
 			return "Already Executing";
 		}
 		
 		isExecuting = true;
 		
-		synchronized (bundlesToTest) {
-		      Iterator<Bundle> i = bundlesToTest.iterator(); // Must be in synchronized block
-		      while (i.hasNext())
-		          executeTests(i.next());
-		  }
-		 
+		if(bundlesToTest.size() > 0){
+			executeTests(0);
+		}		 
+		
 		isExecuting = false;
 		
+		try {
+			logFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "Success";
 	}
 
@@ -335,5 +395,25 @@ public class FragmentTestsComponent implements ITestComponent {
 		}
 		reader.close();
 		return queryString.toString();
+	}
+
+	@Override
+	public void onBundleTestsStarted() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBundleTestsFinished() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void logIntoFile(String line) {
+		try {			
+			logFile.write(line);			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

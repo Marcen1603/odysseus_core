@@ -11,7 +11,7 @@
 ///# 1. fest definiertes Geometry-Objekt und angle
 GRANT READ ON test:stream TO Public;
 DROP STREAM test:stream;
-ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, angle DOUBLE) FILE '${PATH}/salsa/data/RotateViewPoint_Geometry.csv'
+ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, angle DOUBLE) FILE '${PATH}/data/RotateViewPoint_Geometry.csv'
 
 ///# 2. fest definierte Werte als Parameter fuer RotateViewPoint benutzen und diese ausfuehren
 ///map({expressions = ['RotateViewPoint(scan, 43.0)']}, globalLms1Punctuation)

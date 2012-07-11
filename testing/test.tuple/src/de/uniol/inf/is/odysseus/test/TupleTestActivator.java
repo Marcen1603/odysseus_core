@@ -41,10 +41,8 @@ public class TupleTestActivator implements BundleActivator {
 	
 	@Override
 	public void start(BundleContext ctx) throws Exception {
-		context = ctx;
-		LOG.info("Start Tuple Test, Testfile path: " + getBundlePath());
+		context = ctx;		
 		TupleTestActivator.bundlePath = getBundlePath().getAbsolutePath();
-//		new TupleTestComponent().startTesting(new String[]{});
 	}
 
 	@Override
