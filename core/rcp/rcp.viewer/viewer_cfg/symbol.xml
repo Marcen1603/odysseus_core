@@ -26,6 +26,7 @@
 			<Parameter key="g" value="255"/>
 			<Parameter key="b" value="255"/>
 		</SymbolElement>
+		<SymbolElement type="owner"/>
 	</Default>
 	
 			

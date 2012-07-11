@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTFillCircleSymbolEl
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTFillRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTImageSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTInvisibleSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTOwnerSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectivitySymbolElement;
@@ -80,6 +81,9 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 		if( type.equals( "text" ))
 			element = new SWTTextSymbolElement<C>(getColorFromParams(params));
+		
+		if( type.equals("owner"))
+			element = new SWTOwnerSymbolElement<C>();
 
 		if (element == null ) {
 			element = new SWTRectSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
