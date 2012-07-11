@@ -61,7 +61,10 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	}
 
 	private DataTuple generateSecurityPunctuation() {
-		DataTuple tuple = new DataTuple(true);
+
+		// FIXME: Constructor is currently not available
+		//DataTuple tuple = new DataTuple(true);
+		DataTuple tuple = new DataTuple();
 		// Security Punctuation Flag
 		tuple.addAttribute("SecurityPunctuation");
 		// DDP - Stream
