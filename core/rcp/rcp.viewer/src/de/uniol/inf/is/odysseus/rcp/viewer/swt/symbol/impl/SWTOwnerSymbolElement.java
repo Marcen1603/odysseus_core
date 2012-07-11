@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -135,9 +134,6 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			}
 		}
 
-		Collections.sort(ownerIDs); // absteigend sortiert
-		Collections.reverse(ownerIDs); // jetzt aufsteigend sortiert
-		
 		return ownerIDs;
 	}
 
