@@ -25,9 +25,9 @@ public final class GridUtil {
 	public static final double MAX_VALUE = 0.999999;
 	public static final double MIN_VALUE = 1.0 - MAX_VALUE;
 
-	public static final double FREE = -Math.log(1.0 - MIN_VALUE);
-	public static final double UNKNOWN = -Math.log(1.0 - 0.5);
-	public static final double OBSTACLE = -Math.log(MAX_VALUE);
+	public static final double FREE = MIN_VALUE;
+	public static final double UNKNOWN =  0.5;
+	public static final double OBSTACLE = MAX_VALUE;
 
 	private GridUtil() {
 	}

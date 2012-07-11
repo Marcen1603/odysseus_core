@@ -34,8 +34,7 @@ public class Grid implements IClone {
 	public final double cellsize;
 	private final DoubleBuffer buffer;
 
-	public Grid(Coordinate origin, int width, int height,
-			double cellsize) {
+	public Grid(Coordinate origin, int width, int height, double cellsize) {
 		this.origin = origin;
 		this.cellsize = cellsize;
 		this.width = width;
@@ -43,20 +42,20 @@ public class Grid implements IClone {
 		this.buffer = DoubleBuffer.allocate(this.width * this.height);
 	}
 
-	public Grid(Coordinate origin, int width, int height,
-			double cellsize, DoubleBuffer buffer) {
+	public Grid(Coordinate origin, int width, int height, double cellsize,
+			DoubleBuffer buffer) {
 		this(new Coordinate(origin.x, origin.y), width, height, cellsize);
 		buffer.rewind();
 		this.buffer.put(buffer.duplicate());
 	}
 
 	public double get(int x, int y) {
-		return this.buffer.get((this.height - 1 - y) * this.width + x);
+		return this.buffer.get(y * this.width + x);
 	}
 
 	public double get(double x, double y) {
-		int gridX = (int) (x / cellsize);
-		int gridY = (int) (y / cellsize);
+		int gridX = (int) ((x - origin.x) / cellsize);
+		int gridY = (int) ((y - origin.y) / cellsize);
 		return get(gridX, gridY);
 	}
 
@@ -66,12 +65,12 @@ public class Grid implements IClone {
 	}
 
 	public void set(int x, int y, double value) {
-		this.buffer.put((this.height - 1 - y) * this.width + x, value);
+		this.buffer.put(y * this.width + x, value);
 	}
 
 	public void set(double x, double y, double value) {
-		int gridX = (int) (x / cellsize);
-		int gridY = (int) (y / cellsize);
+		int gridX = (int) ((x - origin.x) / cellsize);
+		int gridY = (int) ((y - origin.y) / cellsize);
 		set(gridX, gridY, value);
 	}
 
@@ -86,14 +85,14 @@ public class Grid implements IClone {
 
 	@Override
 	public Grid clone() {
-		Grid grid = new Grid(this.origin, this.width,
-				this.height, this.cellsize, this.buffer);
+		Grid grid = new Grid(this.origin, this.width, this.height,
+				this.cellsize, this.buffer);
 		return grid;
 	}
 
 	@Override
 	public String toString() {
-		return "{Origin: " + origin + ", Width: " + width + " Depth: " + height
+		return "{Origin: " + origin + ", Width: " + width + " Height: " + height
 				+ " CellSize: " + this.cellsize + "}";
 	}
 }

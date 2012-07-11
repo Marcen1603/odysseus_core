@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.grid.common.GridUtil;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
 import de.uniol.inf.is.odysseus.spatial.grid.sourcedescription.sdf.schema.SDFGridDatatype;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
@@ -38,7 +39,6 @@ public class CreateGridIfNull extends AbstractFunction<Grid> {
 			{ SDFGridDatatype.GRID },
 			{ SDFSpatialDatatype.SPATIAL_COORDINATE }, { SDFDatatype.INTEGER },
 			{ SDFDatatype.INTEGER }, { SDFDatatype.DOUBLE } };
-	private static final double UNKNOWN = -Math.log(1.0 - 0.5);
 
 	@Override
 	public int getArity() {
@@ -77,7 +77,7 @@ public class CreateGridIfNull extends AbstractFunction<Grid> {
 			grid = (Grid) this.getInputValue(0);
 		} else {
 			grid = new Grid(origin, width, height, cellsize);
-			grid.fill(UNKNOWN);
+			grid.fill(GridUtil.UNKNOWN);
 		}
 		return grid;
 	}

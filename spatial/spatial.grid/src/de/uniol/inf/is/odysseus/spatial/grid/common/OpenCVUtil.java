@@ -55,4 +55,16 @@ public final class OpenCVUtil {
 		image = null;
 		return grid;
 	}
+	
+	public static void imageToProbScale(IplImage image){
+		opencv_core.cvExp(image, image);
+		opencv_core.cvConvertScale(image, image, -1.0, 0);
+		opencv_core.cvAddS(image, opencv_core.cvScalarAll(1), image, null);
+	}
+	
+	public static void imageToLogScale(IplImage image){	
+		opencv_core.cvConvertScale(image, image, -1.0, 0);
+		opencv_core.cvAddS(image, opencv_core.cvScalarAll(1), image, null);
+		opencv_core.cvLog(image, image);
+	}
 }
