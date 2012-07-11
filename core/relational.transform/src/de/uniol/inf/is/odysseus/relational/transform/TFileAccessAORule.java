@@ -40,6 +40,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 		return 10;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(FileAccessAO fileAccessAO,
 			TransformationConfiguration transformConfig) {
