@@ -21,7 +21,7 @@
             name="NoSettings">
       </dashboardPart>
       <dashboardPart
-            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LinesDashboardPart"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LineChartDashboardPart"
             name="Lines">
          <setting
                defaultValue="Line chart"
