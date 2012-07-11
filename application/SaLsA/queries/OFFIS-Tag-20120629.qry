@@ -32,11 +32,11 @@ globalLms2Punctuation =  punctuation({ratio = 5}, globalLms2, globalLms1)
 /// 3. Y-Versatz
 
 /// Erster LaserScanner
-globalMovedLms1 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, -45.0), -213.0, 76.0)']}, globalLms1Punctuation))
+globalMovedLms1 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, -45.0), -210.0, 87.0)']}, globalLms1Punctuation))
 
 
 /// Zweiter LaserScanner
-globalMovedLms2 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, -45.0), -1274, 91.0)']}, globalLms2Punctuation))
+globalMovedLms2 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, 132.5), -176.0, -502.0)']}, globalLms2Punctuation))
 
 /// Vereinigung der Laserscanner-Daten
 globalLms = union(globalMovedLms1,globalMovedLms2)
@@ -58,7 +58,7 @@ globalSinkUDP = binding({options = ['port:9090','host:192.168.1.53'], adapter = 
 
 
 /// Anzeige mit feinerem Raster
-globalGrid2 = rename({aliases = ['grid']}, map({expressions = ['ToGrid(scan, -1200.0, -900.0, 2000.0, 2000.0, 10.0)']}, globalLms))
+globalGrid2 = rename({aliases = ['grid']}, map({expressions = ['ToGrid(scan, -500.0, -500.0, 3000.0, 2000.0, 5.0)']}, globalLms))
 /// Aggregation
 globalAggregatePlausabilityGrid2 = aggregate({ aggregations=[ [ 'MERGEPLAUSABILITYGRID', 'grid',  'grid'] ]}, globalGrid2)
 /// Visualisierung der Grids
