@@ -62,6 +62,10 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C>{
 	}
 
 	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs) {
+		if( ownerIDs.isEmpty() ) {
+			return;
+		}
+		
 		int x = (int)position.getX();
 		int y = (int)position.getY();
 		
@@ -89,7 +93,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C>{
 
 	private static List<Integer> determineOwnerIDs(Object content) {
 		if( !(content instanceof IPhysicalOperator )) {
-			return Lists.newArrayList((Integer)0);
+			return Lists.newArrayList();
 		}
 		
 		IPhysicalOperator operator = (IPhysicalOperator)content;
