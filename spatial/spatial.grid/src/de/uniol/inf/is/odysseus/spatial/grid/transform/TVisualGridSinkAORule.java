@@ -114,7 +114,7 @@ public class TVisualGridSinkAORule extends
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super VisualGridSinkAO> getConditionClass() {
 		return VisualGridSinkAO.class;
 	}
 }

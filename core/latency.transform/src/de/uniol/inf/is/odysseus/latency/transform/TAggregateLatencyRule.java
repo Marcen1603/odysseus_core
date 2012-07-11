@@ -62,7 +62,7 @@ public class TAggregateLatencyRule extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super AggregateTIPO<?,?,?>> getConditionClass() {	
 		return AggregateTIPO.class;
 	}
 

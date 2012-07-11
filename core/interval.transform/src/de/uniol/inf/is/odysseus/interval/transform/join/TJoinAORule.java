@@ -98,7 +98,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super JoinAO> getConditionClass() {	
 		return JoinAO.class;
 	}
 

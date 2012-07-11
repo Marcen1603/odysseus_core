@@ -90,7 +90,7 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super TimestampAO> getConditionClass() {	
 		return TimestampAO.class;
 	}
 

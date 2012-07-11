@@ -96,7 +96,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super JoinAO> getConditionClass() {	
 		return JoinAO.class;
 	}
 

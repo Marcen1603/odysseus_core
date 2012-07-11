@@ -75,7 +75,7 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ExistenceAO> getConditionClass() {	
 		return ExistenceAO.class;
 	}
 

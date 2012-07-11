@@ -73,7 +73,7 @@ public class RSwitchSelectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super WindowAO> getConditionClass() {	
 		return WindowAO.class;
 	}
 

@@ -105,7 +105,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super AggregatePO> getConditionClass() {	
 		return AggregatePO.class;
 	}
 

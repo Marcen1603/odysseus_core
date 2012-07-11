@@ -55,7 +55,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super SinkAO> getConditionClass() {
 		return SinkAO.class;
 	}
 

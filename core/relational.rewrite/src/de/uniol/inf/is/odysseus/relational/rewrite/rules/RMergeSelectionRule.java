@@ -76,7 +76,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<?  super SelectAO> getConditionClass() {	
 		return SelectAO.class;
 	}
 

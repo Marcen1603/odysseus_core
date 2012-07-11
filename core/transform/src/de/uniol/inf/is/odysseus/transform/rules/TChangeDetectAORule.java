@@ -59,7 +59,7 @@ public class TChangeDetectAORule extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super ChangeDetectAO> getConditionClass() {
 		return ChangeDetectAO.class;
 	}
 

@@ -79,7 +79,7 @@ public class TTupleCompareSinkAORule extends AbstractTransformationRule<TupleCom
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super TupleCompareSinkAO> getConditionClass() {
 		return TupleCompareSinkAO.class;
 	}
 

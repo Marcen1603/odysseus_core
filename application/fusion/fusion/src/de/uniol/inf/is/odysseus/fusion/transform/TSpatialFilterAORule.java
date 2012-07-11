@@ -98,7 +98,7 @@ public class TSpatialFilterAORule extends AbstractTransformationRule<SpatialFilt
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super SpatialFilterAO> getConditionClass() {
         return SpatialFilterAO.class;
     }
 }

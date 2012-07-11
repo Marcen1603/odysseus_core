@@ -74,7 +74,7 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super BufferedFilterAO> getConditionClass() {
 		return BufferedFilterAO.class;
 	}
 

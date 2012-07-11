@@ -62,7 +62,7 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {	
 		return SelectAO.class;
 	}
 

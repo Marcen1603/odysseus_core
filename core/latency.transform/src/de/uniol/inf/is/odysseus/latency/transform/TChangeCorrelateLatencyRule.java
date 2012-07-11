@@ -59,7 +59,7 @@ public class TChangeCorrelateLatencyRule extends AbstractTransformationRule<Chan
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ChangeCorrelatePO<?, ?>> getConditionClass() {	
 		return ChangeCorrelatePO.class;
 	}
 	

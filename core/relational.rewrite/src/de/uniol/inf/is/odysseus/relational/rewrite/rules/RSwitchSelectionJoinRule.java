@@ -87,7 +87,7 @@ public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super JoinAO> getConditionClass() {	
 		return JoinAO.class;
 	}
 }

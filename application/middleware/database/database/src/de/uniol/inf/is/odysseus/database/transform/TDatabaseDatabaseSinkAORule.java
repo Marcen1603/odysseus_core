@@ -78,7 +78,7 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super DatabaseSinkAO> getConditionClass() {
 		return DatabaseSinkAO.class;
 	}
 

@@ -79,7 +79,7 @@ public class RSwitchSelectionProjectionRule extends AbstractRewriteRule<ProjectA
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ProjectAO> getConditionClass() {	
 		return ProjectAO.class;
 	}
 

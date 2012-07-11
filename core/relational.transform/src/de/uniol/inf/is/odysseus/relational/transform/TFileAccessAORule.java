@@ -91,7 +91,7 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super FileAccessAO> getConditionClass() {
 		return FileAccessAO.class;
 	}
 

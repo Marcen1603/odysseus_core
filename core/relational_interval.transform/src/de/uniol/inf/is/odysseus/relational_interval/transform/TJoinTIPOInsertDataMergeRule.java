@@ -58,7 +58,7 @@ public class TJoinTIPOInsertDataMergeRule extends AbstractTransformationRule<Joi
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super JoinTIPO<?, ?>> getConditionClass() {	
 		return JoinTIPO.class;
 	}
 

@@ -66,7 +66,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super MapAO> getConditionClass() {	
 		return MapAO.class;
 	}
 

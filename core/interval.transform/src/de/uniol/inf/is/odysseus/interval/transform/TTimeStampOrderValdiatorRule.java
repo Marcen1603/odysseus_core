@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.interval.transform;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -59,7 +60,7 @@ public class TTimeStampOrderValdiatorRule extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super TimeStampOrderValidatorAO>  getConditionClass() {	
 		return TimeStampOrderValidatorAO.class;
 	}
 

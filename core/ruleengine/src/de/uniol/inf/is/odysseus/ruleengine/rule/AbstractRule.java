@@ -32,7 +32,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
     protected static Logger LOGGER = LoggerFactory.getLogger(AbstractRule.class);
 
     private WorkingMemory currentWorkingMemory;
-    private Class<?> condtionClass = null;
+    private Class<? super T> condtionClass = null;
 
     public AbstractRule() {
 
@@ -121,11 +121,11 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super T> getConditionClass() {
         if (this.condtionClass == null) {
             for (Method method : getClass().getMethods()) {
                 if (method.getName().equals("execute")) {
-                    Class<?> pt = method.getParameterTypes()[0];
+                    Class<? super T> pt = (Class<? super T>) method.getParameterTypes()[0];
                     if (!pt.equals(Object.class)) {
                         this.condtionClass = pt;
                     }

@@ -98,7 +98,7 @@ public class TExtPolygonSinkAORule extends AbstractTransformationRule<ExtPolygon
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super ExtPolygonSinkAO> getConditionClass() {
         return ExtPolygonSinkAO.class;
     }
 }

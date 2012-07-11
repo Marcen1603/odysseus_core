@@ -65,7 +65,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ProjectAO> getConditionClass() {	
 		return ProjectAO.class;
 	}
 }

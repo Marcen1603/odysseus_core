@@ -76,7 +76,7 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super AggregateAO> getConditionClass() {	
 		return AggregateAO.class;
 	}
 

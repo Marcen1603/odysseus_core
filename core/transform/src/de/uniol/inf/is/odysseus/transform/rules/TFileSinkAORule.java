@@ -64,7 +64,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super FileSinkAO> getConditionClass() {	
 		return FileSinkAO.class;
 	}
 

@@ -97,7 +97,7 @@ public class TVisualPolygonSinkAORule extends AbstractTransformationRule<VisualP
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super VisualPolygonSinkAO> getConditionClass() {
         return VisualPolygonSinkAO.class;
     }
 }

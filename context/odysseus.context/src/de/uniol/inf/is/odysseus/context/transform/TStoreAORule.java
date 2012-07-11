@@ -79,7 +79,7 @@ public class TStoreAORule extends AbstractTransformationRule<StoreAO>{
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super StoreAO> getConditionClass() {	
 		return StoreAO.class;
 	}
 

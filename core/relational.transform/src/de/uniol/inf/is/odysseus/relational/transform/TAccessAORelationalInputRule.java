@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 import java.io.ObjectInputStream;
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.ObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -26,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessP
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectStreamInputHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem.Accuracy;
@@ -77,7 +77,7 @@ public class TAccessAORelationalInputRule extends AbstractTransformationRule<Acc
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super AccessAO> getConditionClass() {	
 		return AccessAO.class;
 	}
 }

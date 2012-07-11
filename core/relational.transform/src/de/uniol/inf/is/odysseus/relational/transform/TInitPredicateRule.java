@@ -56,7 +56,7 @@ public class TInitPredicateRule extends AbstractTransformationRule<ILogicalOpera
 	}
 
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ILogicalOperator> getConditionClass() {	
 		return ILogicalOperator.class;
 	}
 

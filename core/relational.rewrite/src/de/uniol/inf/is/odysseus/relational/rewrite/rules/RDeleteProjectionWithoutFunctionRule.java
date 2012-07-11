@@ -59,7 +59,7 @@ public class RDeleteProjectionWithoutFunctionRule extends AbstractRewriteRule<Pr
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ProjectAO> getConditionClass() {	
 		return ProjectAO.class;
 	}
 

@@ -60,7 +60,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {	
 		return SelectAO.class;
 	}
 

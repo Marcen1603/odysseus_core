@@ -71,7 +71,7 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super UnionAO> getConditionClass() {	
 		return UnionAO.class;
 	}
 

@@ -97,7 +97,7 @@ public class TExtSaLsAPolygonSinkAORule extends AbstractTransformationRule<ExtSa
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super ExtSaLsAPolygonSinkAO> getConditionClass() {
         return ExtSaLsAPolygonSinkAO.class;
     }
 }

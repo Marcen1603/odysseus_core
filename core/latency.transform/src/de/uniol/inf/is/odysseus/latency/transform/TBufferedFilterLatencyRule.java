@@ -79,7 +79,7 @@ public class TBufferedFilterLatencyRule extends AbstractTransformationRule<Buffe
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super BufferedFilterPO<?,?>> getConditionClass() {	
 		return BufferedFilterPO.class;
 	}
 

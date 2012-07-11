@@ -59,7 +59,7 @@ public class TJoinLatencyRule extends AbstractTransformationRule<JoinTIPO<?,?>> 
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super JoinTIPO<?,?>> getConditionClass() {	
 		return JoinTIPO.class;
 	}
 	

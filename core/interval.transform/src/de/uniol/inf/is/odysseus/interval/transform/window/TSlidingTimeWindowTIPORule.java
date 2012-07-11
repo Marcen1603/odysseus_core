@@ -78,7 +78,7 @@ public class TSlidingTimeWindowTIPORule extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super WindowAO> getConditionClass() {	
 		return WindowAO.class;
 	}
 

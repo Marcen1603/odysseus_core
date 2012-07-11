@@ -65,7 +65,7 @@ public class TDeleteRenameAORule extends AbstractTransformationRule<RenameAO>{
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super RenameAO> getConditionClass() {	
 		return RenameAO.class;
 	}
 }

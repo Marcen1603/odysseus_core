@@ -59,7 +59,7 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super AccessAO> getConditionClass() {	
 		return AccessAO.class;
 	}
 }

@@ -68,7 +68,7 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super TimestampAO> getConditionClass() {	
 		return TimestampAO.class;
 	}
 

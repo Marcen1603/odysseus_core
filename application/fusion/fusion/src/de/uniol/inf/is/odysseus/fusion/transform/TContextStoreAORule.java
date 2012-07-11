@@ -98,7 +98,7 @@ public class TContextStoreAORule extends AbstractTransformationRule<ContextStore
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super ContextStoreAO> getConditionClass() {
         return ContextStoreAO.class;
     }
 }

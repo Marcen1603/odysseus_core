@@ -70,7 +70,7 @@ public class TPunctuationAORule extends AbstractTransformationRule<PunctuationAO
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super PunctuationAO> getConditionClass() {
     	return PunctuationAO.class;
     }
     

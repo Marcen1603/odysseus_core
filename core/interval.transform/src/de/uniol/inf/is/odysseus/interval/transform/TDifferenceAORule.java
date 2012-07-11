@@ -61,7 +61,7 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super DifferenceAO> getConditionClass() {	
 		return DifferenceAO.class;
 	}
 }

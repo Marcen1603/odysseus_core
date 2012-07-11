@@ -56,7 +56,7 @@ public class TRouteAORule extends AbstractTransformationRule<RouteAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super RouteAO> getConditionClass() {	
 		return RouteAO.class;
 	}
 

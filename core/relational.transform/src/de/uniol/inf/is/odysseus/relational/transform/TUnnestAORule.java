@@ -88,7 +88,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super UnNestAO>  getConditionClass() {
         return UnNestAO.class;
     }
 

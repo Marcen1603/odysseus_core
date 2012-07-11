@@ -98,7 +98,7 @@ public class TSpatialAssociationAORule extends AbstractTransformationRule<Spatia
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super SpatialAssociationAO> getConditionClass() {
         return SpatialAssociationAO.class;
     }
 }

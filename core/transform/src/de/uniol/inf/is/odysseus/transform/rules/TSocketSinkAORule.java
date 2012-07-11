@@ -99,7 +99,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super SocketSinkAO> getConditionClass() {
 		return SocketSinkAO.class;
 	}
 

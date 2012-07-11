@@ -98,7 +98,7 @@ public class TCreateMetadataRule extends AbstractTransformationRule<ISource<?>> 
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ISource<?>> getConditionClass() {	
 		return ISource.class;
 	}
 

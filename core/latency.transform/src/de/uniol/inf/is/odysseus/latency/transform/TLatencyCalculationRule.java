@@ -57,7 +57,7 @@ public class TLatencyCalculationRule extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super LatencyCalculationAO> getConditionClass() {	
 		return LatencyCalculationAO.class;
 	}
 

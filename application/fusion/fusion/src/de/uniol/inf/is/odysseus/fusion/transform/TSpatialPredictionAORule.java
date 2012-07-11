@@ -98,7 +98,7 @@ public class TSpatialPredictionAORule extends AbstractTransformationRule<Spatial
     }
 
     @Override
-    public Class<?> getConditionClass() {
+    public Class<? super SpatialPredictionAO> getConditionClass() {
         return SpatialPredictionAO.class;
     }
 }

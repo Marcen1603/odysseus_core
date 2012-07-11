@@ -100,7 +100,7 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super LeftJoinAO> getConditionClass() {	
 		return LeftJoinAO.class;
 	}
 

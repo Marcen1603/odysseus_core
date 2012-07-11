@@ -77,7 +77,7 @@ public class TJoinTIPOAddMetadataMergeRule extends AbstractTransformationRule<Jo
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super JoinTIPO<?, ?>> getConditionClass() {
 		return JoinTIPO.class;
 	}
 

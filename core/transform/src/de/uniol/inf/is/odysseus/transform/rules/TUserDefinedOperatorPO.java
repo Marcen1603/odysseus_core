@@ -59,7 +59,7 @@ public class TUserDefinedOperatorPO extends
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super UserDefinedOperatorAO> getConditionClass() {
 		return UserDefinedOperatorAO.class;
 	}
 

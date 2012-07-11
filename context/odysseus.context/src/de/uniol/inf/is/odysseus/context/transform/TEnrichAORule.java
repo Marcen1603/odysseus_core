@@ -85,7 +85,7 @@ public class TEnrichAORule extends AbstractTransformationRule<EnrichAO>{
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super EnrichAO> getConditionClass() {
 		return EnrichAO.class;	
 	}
 

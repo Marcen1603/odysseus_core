@@ -144,7 +144,7 @@ public class TLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIP
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super LeftJoinTIPO> getConditionClass() {	
 		return LeftJoinTIPO.class;
 	}
 

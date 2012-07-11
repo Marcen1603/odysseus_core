@@ -66,7 +66,7 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super FixedSetAccessAO<?>> getConditionClass() {	
 		return FixedSetAccessAO.class;
 	}
 

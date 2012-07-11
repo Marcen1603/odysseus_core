@@ -96,7 +96,7 @@ public class TChangeCorrelateAORule extends AbstractTransformationRule<ChangeCor
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ChangeCorrelateAO> getConditionClass() {	
 		return ChangeCorrelateAO.class;
 	}
 

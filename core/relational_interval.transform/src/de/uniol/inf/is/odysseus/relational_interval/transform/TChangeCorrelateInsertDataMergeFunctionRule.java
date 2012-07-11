@@ -78,7 +78,7 @@ public class TChangeCorrelateInsertDataMergeFunctionRule extends AbstractTransfo
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super ChangeCorrelatePO<?, ?>> getConditionClass() {	
 		return ChangeCorrelatePO.class;
 	}
 

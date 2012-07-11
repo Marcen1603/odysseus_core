@@ -82,7 +82,7 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super DatabaseSourceAO> getConditionClass() {
 		return DatabaseSourceAO.class;
 	}
 

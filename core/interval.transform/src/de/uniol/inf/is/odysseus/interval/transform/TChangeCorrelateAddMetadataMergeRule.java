@@ -84,7 +84,7 @@ public class TChangeCorrelateAddMetadataMergeRule extends AbstractTransformation
 	}
 
 	@Override
-	public Class<?> getConditionClass() {
+	public Class<? super ChangeCorrelatePO<?, ?>> getConditionClass() {
 		return ChangeCorrelatePO.class;
 	}
 

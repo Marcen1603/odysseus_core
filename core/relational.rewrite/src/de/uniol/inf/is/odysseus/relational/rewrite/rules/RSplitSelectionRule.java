@@ -86,7 +86,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {	
 		return SelectAO.class;
 	}
 

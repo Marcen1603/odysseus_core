@@ -58,7 +58,7 @@ public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super LeftJoinTIPO<?,?>> getConditionClass() {	
 		return LeftJoinTIPO.class;
 	}
 

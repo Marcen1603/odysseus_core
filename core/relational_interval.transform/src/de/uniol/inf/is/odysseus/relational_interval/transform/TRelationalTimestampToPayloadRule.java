@@ -69,7 +69,7 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super TimestampToPayloadAO> getConditionClass() {	
 		return TimestampToPayloadAO.class;
 	}
 }

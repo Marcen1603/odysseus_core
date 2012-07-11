@@ -73,7 +73,7 @@ public class TLeftJoinTIPOAddMetadataMergeRule extends AbstractTransformationRul
 	}
 	
 	@Override
-	public Class<?> getConditionClass() {	
+	public Class<? super LeftJoinTIPO> getConditionClass() {	
 		return LeftJoinTIPO.class;
 	}
 
