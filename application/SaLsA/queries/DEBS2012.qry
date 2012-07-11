@@ -1,0 +1,49 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#QUERY
+DROP CONTEXT STORE gridStore IF EXISTS
+CREATE CONTEXT STORE gridStore (grid Grid, gridTime TIMESTAMP) AS MULTI SIZE 1
+
+#PARSER PQL
+#TRANSCFG salsa
+#QUERY
+///Your first query here
+
+/// LaserScanner
+
+lms1 =  adapter({schema = ['dist1:SpatialMultiPoint'], options = ['host:192.168.1.20', 'port:2111', 'x:-213.0', 'y:76.0', 'angle:-45.0'], adapter = 'Sick'})
+lms2 = adapter({schema = ['dist1:SpatialMultiPoint'], options = ['host:192.168.1.11', 'port:2111', 'x:-1274', 'y:91.0', 'angle:132.5'], adapter = 'Sick'})
+
+/// Punctuation for transmission/processing errors
+lms1Punctuation = punctuation({ratio = 5}, lms1, lms2)
+lms2Punctuation =  punctuation({ratio = 5}, lms2, lms1)
+
+/// Enrich scan with stored context model
+enrichLms1 = ENRICH({store='gridStore', outer='true'}, lms1Punctuation)
+enrichLms2 = ENRICH({store='gridStore', outer='true'}, lms2Punctuation)
+
+/// Create empty grid if non exists
+createGrid1 = rename({aliases = ['grid','gridTime','dist1']}, map({expressions = ['CreateGridIfNull(grid, ToCartesianCoordinate(-800.0, -800.0), 80, 80, 20.0)','gridTime','dist1']}, enrichLms1))
+createGrid2 = rename({aliases = ['grid','gridTime','dist1']}, map({expressions = ['CreateGridIfNull(grid, ToCartesianCoordinate(-800.0, -800.0), 80, 80, 20.0)','gridTime','dist1']}, enrichLms2))
+
+/// Add timestamp to payload
+addTimestamp1 = Timestamp({start='meta_valid_start', clearEnd='true'}, TIMESTAMPTOPAYLOAD(createGrid1))
+addTimestamp2 = Timestamp({start='meta_valid_start', clearEnd='true'}, TIMESTAMPTOPAYLOAD(createGrid2))
+
+/// Spread probability of new objects
+spreadGrid1 = rename({aliases = ['grid','dist1','gridTime']}, map({expressions = ['SpreadOccupancyGrid(grid, gridTime, meta_valid_start, 0.25)','dist1','meta_valid_start']}, addTimestamp1))
+spreadGrid2 = rename({aliases = ['grid','dist1','gridTime']}, map({expressions = ['SpreadOccupancyGrid(grid, gridTime, meta_valid_start, 0.25)','dist1','meta_valid_start']}, addTimestamp2))
+
+/// Merge grid with new scan data
+occupancyGrid1 = rename({aliases = ['grid','gridTime']}, map({expressions = ['MergeOccupancyGrid(grid, dist1, ToCartesianCoordinate(0.0, -10.6), 135.0, 20, 20.0)','gridTime']}, spreadGrid1))
+occupancyGrid2 = rename({aliases = ['grid','gridTime']}, map({expressions = ['MergeOccupancyGrid(grid, dist1, ToCartesianCoordinate(0.0, 14.0), -45.0, 20, 20.0)','gridTime']}, spreadGrid2))
+
+/// Union of all grids
+unionGrid = UNION(occupancyGrid1,occupancyGrid2)
+
+/// Store new grid into context store
+store = store({store = 'gridStore'}, unionGrid)
+
+/// Show current grid
+ui = VGRIDSINK(unionGrid)
