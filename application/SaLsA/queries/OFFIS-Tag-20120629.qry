@@ -1,0 +1,73 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG salsa
+#QUERY
+///Your first query here
+
+/// LaserScanner
+/// Parameter:
+/// - host: IP des SICK LaserScanners
+/// - port: Port des SICK LaserScanners
+
+/// Parameter size und slide sind jeweils an die Frequenz der LaserScanner anzupassen (25Hz=40ms, 50Hz=20ms)
+
+/// Erster LaserScanner
+globalLms1 = window({size = 40, slide = 40, type = 'time'}, adapter({schema = ['scan:SpatialMultiPoint','timestamp:Long'], options = ['host:192.168.1.20', 'port:2111'], adapter = 'Sick'}))
+
+/// Zweiter LaserScanner
+globalLms2 = window({size = 40, slide = 40, type = 'time'}, adapter({schema = ['scan:SpatialMultiPoint','timestamp:Long'], options = ['host:192.168.1.11', 'port:2111'], adapter = 'Sick'}))
+
+globalLms1Punctuation = punctuation({ratio = 5}, globalLms1, globalLms2)
+globalLms2Punctuation =  punctuation({ratio = 5}, globalLms2, globalLms1)
+
+
+/// Rotation und Verschiebung des Koordinatensystems
+
+/// Parameter der RotateViewPoint Methode
+/// 1. LaserScanner-Daten (siehe LaserScanner Adapter)
+/// 2. Winkel in Grad
+/// Parameter der MoveViewPoint Methode
+/// 1. LaserScanner-Daten (siehe LaserScanner Adapter)
+/// 2. X-Versatz
+/// 3. Y-Versatz
+
+/// Erster LaserScanner
+globalMovedLms1 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, -45.0), -213.0, 76.0)']}, globalLms1Punctuation))
+
+
+/// Zweiter LaserScanner
+globalMovedLms2 = rename({aliases = ['scan']}, map({expressions = ['MoveViewPoint(RotateViewPoint(scan, -45.0), -1274, 91.0)']}, globalLms2Punctuation))
+
+/// Vereinigung der Laserscanner-Daten
+globalLms = union(globalMovedLms1,globalMovedLms2)
+
+/// Umwandlung der LaserScanner-Daten in ein Grid
+
+/// Parameter der toGrid Methode
+/// 1. LaserScanner-Daten (siehe LaserScanner Adapter)
+/// 2. X-Position
+/// 3. Y-Position
+/// 4. Breite des Grids
+/// 5. Tiefe des Grids
+/// 6. Zellengroesse
+globalGrid = rename({aliases = ['grid']}, map({expressions = ['ToGrid(scan, -500.0, -150.0, 1000.0, 1000.0, 50.0)']}, globalLms))
+/// Aggregation
+globalAggregatePlausabilityGrid = aggregate({ aggregations=[ [ 'MERGEPLAUSABILITYGRID', 'grid',  'grid'] ]}, globalGrid)
+/// Uebertragung an Fahrzeug
+globalSinkUDP = binding({options = ['port:9090','host:192.168.1.53'], adapter = 'SALSA-Car-UDP'}, map({expressions = ['0','grid']}, globalAggregatePlausabilityGrid))
+
+
+/// Anzeige mit feinerem Raster
+globalGrid2 = rename({aliases = ['grid']}, map({expressions = ['ToGrid(scan, -1200.0, -900.0, 2000.0, 2000.0, 10.0)']}, globalLms))
+/// Aggregation
+globalAggregatePlausabilityGrid2 = aggregate({ aggregations=[ [ 'MERGEPLAUSABILITYGRID', 'grid',  'grid'] ]}, globalGrid2)
+/// Visualisierung der Grids
+globalVisoP = vgridsink(globalAggregatePlausabilityGrid2)
+
+
+
+
+
+
+
+
