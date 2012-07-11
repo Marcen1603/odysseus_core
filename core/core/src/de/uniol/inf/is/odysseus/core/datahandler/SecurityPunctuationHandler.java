@@ -59,6 +59,7 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 		
 		boolean requiresDeepClone = false;
+		@SuppressWarnings("rawtypes")
 		Tuple tuple = new Tuple(objects, requiresDeepClone);
 		return tuple;
 	}
