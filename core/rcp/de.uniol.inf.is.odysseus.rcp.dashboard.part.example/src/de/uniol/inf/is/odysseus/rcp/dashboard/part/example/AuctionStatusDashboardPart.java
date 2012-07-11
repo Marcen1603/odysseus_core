@@ -48,9 +48,7 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	private static final int MARKER_SPACE_PIXELS = 15;
 	private static final int MARKER_STEP = MARKER_SPACE_PIXELS + MARKER_SIZE_PIXELS;
 
-	private static final Color[] COLOR_MAP = new Color[] { Display.getDefault().getSystemColor(SWT.COLOR_RED), Display.getDefault().getSystemColor(SWT.COLOR_YELLOW),
-			Display.getDefault().getSystemColor(SWT.COLOR_GREEN), };
-
+	private Color[] colorMap;
 	private final Map<Double, Double> markerMap = Maps.newHashMap();
 	private final Map<Double, Long> timestampMap = Maps.newHashMap();
 
@@ -62,6 +60,9 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
 		canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		canvas.addPaintListener(this);
+
+		colorMap = new Color[] { PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_RED), PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_YELLOW),
+				PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_GREEN), };
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 				int y = MARKER_SPACE_PIXELS;
 				gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 				for (Double auctionId : markerMap.keySet()) {
-					gc.setBackground(COLOR_MAP[markerMap.get(auctionId).intValue()]);
+					gc.setBackground(colorMap[markerMap.get(auctionId).intValue()]);
 					gc.fillOval(x, y, MARKER_SIZE_PIXELS, MARKER_SIZE_PIXELS);
 					gc.drawOval(x, y, MARKER_SIZE_PIXELS, MARKER_SIZE_PIXELS);
 					gc.drawText(String.valueOf(auctionId.intValue()), x + (MARKER_SIZE_PIXELS / 4), y + (MARKER_SIZE_PIXELS / 4));
