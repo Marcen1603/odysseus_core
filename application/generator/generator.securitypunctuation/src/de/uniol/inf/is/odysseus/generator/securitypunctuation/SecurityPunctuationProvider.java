@@ -4,33 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.generator.DataTuple;
+import de.uniol.inf.is.odysseus.generator.SADataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 public class SecurityPunctuationProvider extends StreamClientHandler {
-
+	
 	Integer i = 0;
 	
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
+		super.setIsSA(true);
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public List<DataTuple> next() {
 		System.out.println("next");
 		List<DataTuple> list = new ArrayList<DataTuple>();
-		if(Math.random() > 0.5) {
+		if(Math.random() > 0.2) {
 			list.add(generateDataTuple());
 		} else {
 			list.add(generateSecurityPunctuation());
 		}
+
 		i++;
+		
 		if(i > 1) {
 			try {
 				Thread.sleep(500);
@@ -52,19 +53,16 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		return new SecurityPunctuationProvider();
 	}
 
-	private DataTuple generateDataTuple() {
-		DataTuple tuple = new DataTuple();
+	private SADataTuple generateDataTuple() {
+		SADataTuple tuple = new SADataTuple(false);
 		tuple.addAttribute(new Integer(55));
 		tuple.addAttribute("beispiel text");
 		tuple.addAttribute(new Integer(76));
 		return tuple;
 	}
 
-	private DataTuple generateSecurityPunctuation() {
-
-		// FIXME: Constructor is currently not available
-		//DataTuple tuple = new DataTuple(true);
-		DataTuple tuple = new DataTuple();
+	private SADataTuple generateSecurityPunctuation() {
+		SADataTuple tuple = new SADataTuple(true);
 		// Security Punctuation Flag
 		tuple.addAttribute("SecurityPunctuation");
 		// DDP - Stream
@@ -80,7 +78,7 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// Sign
 		tuple.addAttribute(new Integer(1));
 		// ts
-		tuple.addAttribute(new Integer(i));
+		tuple.addAttribute(new Integer(1));
 		return tuple;
 	}
 	
