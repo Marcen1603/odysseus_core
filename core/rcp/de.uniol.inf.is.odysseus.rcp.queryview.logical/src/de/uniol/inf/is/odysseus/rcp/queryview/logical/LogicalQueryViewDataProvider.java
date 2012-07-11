@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDoubleClickListener {
+public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDoubleClickListener, KeyListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LogicalQueryViewDataProvider.class);
 	private QueryView view;
@@ -42,6 +44,7 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	public void init(QueryView view) {
 		this.view = view;
 		this.view.getTableViewer().addDoubleClickListener(this);
+		this.view.getTableViewer().getTable().addKeyListener(this);
 	}
 
 	@Override
@@ -61,19 +64,15 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	@Override
 	public void dispose() {
 		this.view.getTableViewer().removeDoubleClickListener(this);
+		this.view.getTableViewer().getTable().removeKeyListener(this);
 		this.view = null;
 	}
 
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
-        IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
-        try {
-            handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
-        } catch (Exception ex) {
-        	LOG.error("Exception during calling graph editor", ex);
-        }
+		executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand");
 	}
-
+	
 	private static List<ILogicalQuery> getLogicalQueries( IExecutor executor ) {
 		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds();
 		
@@ -83,5 +82,25 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 		}
 		
 		return logicalQueries;
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.keyCode == 127) { // delete-key
+			executeCommand("de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand");
+		}
+	}
+	
+	private void executeCommand( String cmdID ) {
+		IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(cmdID, null);
+		} catch (Exception ex) {
+			LOG.error("Exception during executing command {}.", cmdID, ex);
+		}		
 	}
 }

@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,26 +35,28 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
 
-public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener, IDoubleClickListener {
+public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IPlanModificationListener, IDoubleClickListener, KeyListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryViewDataProvider.class);
 	private QueryView view;
-	
+
 	@Override
 	public void init(QueryView view) {
 		this.view = view;
-		
-        view.getTableViewer().addDoubleClickListener(this);
-        listenToExecutor();
+
+		view.getTableViewer().addDoubleClickListener(this);
+		view.getTableViewer().getTable().addKeyListener(this);
+		listenToExecutor();
 	}
 
 	@Override
 	public void dispose() {
 		view.getTableViewer().removeDoubleClickListener(this);
+		view.getTableViewer().getTable().removeKeyListener(this);
 		this.view = null;
 		unlistenToExecutor();
 	}
-	
+
 	private void unlistenToExecutor() {
 		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
 		executor.removePlanModificationListener(this);
@@ -64,35 +68,31 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 	}
 
 	@Override
-    public Collection<? extends IQueryViewData> getData() {
+	public Collection<? extends IQueryViewData> getData() {
 
-        IServerExecutor serverExecutor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
-        Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan().getQueries();
+		IServerExecutor serverExecutor = PhysicalQueryViewDataProviderPlugIn.getServerExecutor();
+		Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan().getQueries();
 
-        List<IQueryViewData> result = new ArrayList<IQueryViewData>();
-        for (IPhysicalQuery query : queries) {
-            result.add( new PhysicalQueryViewData(
-                    query.getID(), 
-                    getQueryStatus(query),
-                    query.getPriority(), 
-                    query.getLogicalQuery().getParserId(),
-                    getQueryUser(query), 
-                    query.getLogicalQuery().getQueryText()) );
-        }
+		List<IQueryViewData> result = new ArrayList<IQueryViewData>();
+		for (IPhysicalQuery query : queries) {
+			result.add(new PhysicalQueryViewData(query.getID(), getQueryStatus(query), query.getPriority(), query.getLogicalQuery().getParserId(), getQueryUser(query), query.getLogicalQuery()
+					.getQueryText()));
+		}
 
-        return result;
-    }
-    
-    private static String getQueryStatus(IPhysicalQuery q) {
-        return q.isOpened() ? "Running" : "Inactive";
-    }
-    
-    private static String getQueryUser( IPhysicalQuery query ) {
-//        if( query.getUser() != null && query.getUser().getUser() != null && query.getUser().getUser().getName() != null ) {
-//            return query.getUser().getUser().getName();
-//        }
-        return "[No user]";
-    }
+		return result;
+	}
+
+	private static String getQueryStatus(IPhysicalQuery q) {
+		return q.isOpened() ? "Running" : "Inactive";
+	}
+
+	private static String getQueryUser(IPhysicalQuery query) {
+		// if( query.getUser() != null && query.getUser().getUser() != null &&
+		// query.getUser().getUser().getName() != null ) {
+		// return query.getUser().getUser().getName();
+		// }
+		return "[No user]";
+	}
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
@@ -101,12 +101,26 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider, IP
 
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
-        IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
-        try {
-            handlerService.executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand", null);
-        } catch (Exception ex) {
-        	LOG.error("Exception during calling graph editor", ex);
-        }
+		executeCommand("de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand");
 	}
 
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.keyCode == 127) { // delete-key
+			executeCommand("de.uniol.inf.is.odysseus.rcp.commands.RemoveQueryCommand");
+		}
+	}
+
+	private void executeCommand( String cmdID ) {
+		IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(cmdID, null);
+		} catch (Exception ex) {
+			LOG.error("Exception during executing command {}.", cmdID, ex);
+		}		
+	}
 }
