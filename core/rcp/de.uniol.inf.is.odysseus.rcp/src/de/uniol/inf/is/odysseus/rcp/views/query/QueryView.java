@@ -65,12 +65,16 @@ public class QueryView extends ViewPart {
     
     @Override
     public void dispose() {
-    	dataProvider.dispose();
-    	dataProvider = null;
+    	try {
+    		dataProvider.dispose();
+    		dataProvider = null;
+    	} catch( Exception ex ) {
+    		// ignore
+    	}
     	
         super.dispose();
     }
-
+    
     @Override
     public void setFocus() {
     	tableViewer.getTable().setFocus();
