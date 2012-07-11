@@ -52,7 +52,7 @@ public class Grid implements IClone {
 	}
 
 	public double get(int x, int y) {
-		return this.buffer.get(y * this.width + x);
+		return this.buffer.get((this.height - 1 - y) * this.width + x);
 	}
 
 	public double get(double x, double y) {
@@ -67,7 +67,7 @@ public class Grid implements IClone {
 	}
 
 	public void set(int x, int y, double value) {
-		this.buffer.put(y * this.width + x, value);
+		this.buffer.put((this.height - 1 - y) * this.width + x, value);
 	}
 
 	public void set(double x, double y, double value) {
