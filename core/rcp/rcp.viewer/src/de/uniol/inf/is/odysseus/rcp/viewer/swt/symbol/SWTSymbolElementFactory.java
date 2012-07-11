@@ -82,7 +82,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		if( type.equals( "text" ))
 			element = new SWTTextSymbolElement<C>(getColorFromParams(params));
 		
-		if( type.equals("owner"))
+		if( type.equals("ownerRectangle"))
 			element = new SWTOwnerSymbolElement<C>();
 
 		if (element == null ) {
