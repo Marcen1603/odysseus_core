@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -40,6 +43,8 @@ public final class DashboardPartController {
 		RUNNING, STOPPED, PAUSED
 	}
 
+	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartController.class);
+	
 	private final IDashboardPart dashboardPart;
 	private List<Integer> queryIDs;
 	private DefaultStreamConnection<Object> streamConnection;
@@ -115,7 +120,11 @@ public final class DashboardPartController {
 		dashboardPart.onStop();
 
 		for (Integer id : queryIDs) {
-			DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
+			try {
+				DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
+			} catch( Throwable t ) {
+				LOG.error("Exception during stopping query {}.", id, t);
+			}
 		}
 		queryIDs = null;
 
