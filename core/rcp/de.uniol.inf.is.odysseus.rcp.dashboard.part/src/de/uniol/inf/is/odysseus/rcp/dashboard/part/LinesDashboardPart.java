@@ -44,6 +44,7 @@ public class LinesDashboardPart extends AbstractDashboardPart {
 
 	private JFreeChart chart;
 	private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+	private ChartComposite chartComposite;
 
 	private String[] xAttributes;
 	private String[] yAttributes;
@@ -59,7 +60,7 @@ public class LinesDashboardPart extends AbstractDashboardPart {
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setBackgroundPaint(Color.WHITE);
 
-		ChartComposite chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
+		chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
 		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -108,9 +109,11 @@ public class LinesDashboardPart extends AbstractDashboardPart {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				dataset.addValue(value, xAxis, yAxis);
-				if( dataset.getColumnCount() > getSettingValue(MAX_DATA_COUNT, 50)) {
-					dataset.removeColumn(0);
+				if( !chartComposite.isDisposed() ) {
+					dataset.addValue(value, xAxis, yAxis);
+					if( dataset.getColumnCount() > getSettingValue(MAX_DATA_COUNT, 50)) {
+						dataset.removeColumn(0);
+					}
 				}
 			}
 		});
