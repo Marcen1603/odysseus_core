@@ -33,6 +33,5 @@ Export-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.sdf.unit,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.core.util
- OSGI-INF/LongHandler.xml, OSGI-INF/BooleanHandler.xml, OSGI-INF/TupleHandler.xml, OSGI-INF/SecurityPunctuationHandler.xml,
 Service-Component: OSGI-INF/*
 
