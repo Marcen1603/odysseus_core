@@ -52,7 +52,7 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		
 		// calculate ideal font-size
 		// save width to cache font...
-		while( !ok && lastWidth != width) {
+		while( !ok && lastWidth != width ) {
 			
 			if( font != null ) {
 				font.dispose();
@@ -69,6 +69,10 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			
 			if( textWidth > width * 0.9 ) {
 				fontSize--;
+				if( fontSize < 2 ) {
+					font = null;
+					return;
+				}
 			} else {
 				ok = true;
 				lastWidth = width;
@@ -77,11 +81,13 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			}
 		}
 		
-		final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
-		final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
-		
-		gc.setFont(font);
-		gc.setForeground(color);
-		gc.drawText(name, x, y, true);
+		if( font != null ) {
+			final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
+			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
+
+			gc.setFont(font);
+			gc.setForeground(color);
+			gc.drawText(name, x, y, true);
+		}
 	}
 }
