@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class OperatorBuilderFactory {
+public class OperatorBuilderFactory implements IOperatorBuilderFactory{
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
 	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
@@ -119,5 +119,10 @@ public class OperatorBuilderFactory {
 	
 	public static void removeOperatorBuilderByName(String name){
 		removePredicateBuilder(name);
+	}
+
+	@Override
+	public Set<String> getOperatorBuilder() {
+		return getOperatorBuilderNames();
 	}
 }
