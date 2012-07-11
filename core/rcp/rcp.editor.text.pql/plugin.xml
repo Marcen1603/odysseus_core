@@ -11,5 +11,16 @@
             name="PQL">
       </group>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView"
+            name="PQL Operators"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

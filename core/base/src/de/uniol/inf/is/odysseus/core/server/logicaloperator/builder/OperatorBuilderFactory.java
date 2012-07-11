@@ -16,8 +16,11 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
@@ -122,7 +125,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory{
 	}
 
 	@Override
-	public Set<String> getOperatorBuilder() {
-		return getOperatorBuilderNames();
+	public List<IOperatorBuilder> getOperatorBuilder() {
+		return ImmutableList.copyOf(operatorBuilders.values());
 	}
 }

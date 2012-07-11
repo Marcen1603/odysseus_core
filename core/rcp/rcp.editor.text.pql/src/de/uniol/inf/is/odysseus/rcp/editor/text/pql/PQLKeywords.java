@@ -15,16 +15,23 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IKeywordGroup;
 
 public class PQLKeywords implements IKeywordGroup {
 
 	@Override
 	public String[] getKeywords() {
-		// TODO: Dies klappt nicht immer: nur wenn zufällig das Logicaloperator-Bundle vorher geladen wurde 
-		// sollte also irgendwie ein service sein!
-		return OperatorBuilderFactory.getOperatorBuilderNames().toArray(new String[0]);
+		return determineNames(PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder());
 	}
 
+	private static String[] determineNames( List<IOperatorBuilder> builders ){
+		String[] names = new String[builders.size()];
+		for( int i = 0; i < names.length; i++ ){
+			names[i] = builders.get(i).getName().toUpperCase();
+		}
+		return names;
+	}
 }
