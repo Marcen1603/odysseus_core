@@ -125,7 +125,8 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
         if (this.condtionClass == null) {
             for (Method method : getClass().getMethods()) {
                 if (method.getName().equals("execute")) {
-                    Class<? super T> pt = (Class<? super T>) method.getParameterTypes()[0];
+                    @SuppressWarnings("unchecked")
+					Class<? super T> pt = (Class<? super T>) method.getParameterTypes()[0];
                     if (!pt.equals(Object.class)) {
                         this.condtionClass = pt;
                     }
