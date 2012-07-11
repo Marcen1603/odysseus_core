@@ -147,8 +147,8 @@ public class DatabaseVisitor extends CQLParser {
 		String name = sink.getConnectionName();
 		SDFSchema schema = sink.getOutputSchema();
 		IDatabaseConnection con = DatabaseConnectionDictionary.getInstance().getDatabaseConnection(name);
-		if(con==null){
-			throw new QueryParseException("There is no connection with name \""+name+"\"");
+		if (con == null) {
+			throw new QueryParseException("There is no connection with name \"" + name + "\"");
 		}
 		if (!sink.isDrop()) {
 			if (!con.equalSchemas(sink.getTablename(), schema)) {
@@ -171,16 +171,19 @@ public class DatabaseVisitor extends CQLParser {
 		String host = "localhost";
 		int port = -1;
 		String user = "";
-		String pass = "";
-		int offset = 0;
-		if (node.jjtGetChild(3) instanceof ASTHost) {
-			host = ((ASTHost) node.jjtGetChild(3)).getValue();
-			port = ((ASTInteger) node.jjtGetChild(4)).getValue().intValue();
-			offset = 2;
-		}
-		if (node.jjtGetChild(3 + offset) instanceof ASTIdentifier) {
-			user = ((ASTIdentifier) node.jjtGetChild(3 + offset)).getName();
-			pass = ((ASTIdentifier) node.jjtGetChild(4 + offset)).getName();
+		String pass = "";		
+		if (node.jjtGetNumChildren() > 3) {
+			if (node.jjtGetChild(3) instanceof ASTHost) {
+				host = ((ASTHost) node.jjtGetChild(3)).getValue();
+				port = ((ASTInteger) node.jjtGetChild(4)).getValue().intValue();
+				if(node.jjtGetNumChildren()>5){
+					user = ((ASTIdentifier) node.jjtGetChild(5)).getName();
+					pass = ((ASTIdentifier) node.jjtGetChild(6)).getName();
+				}
+			}else if (node.jjtGetChild(3) instanceof ASTIdentifier) {
+				user = ((ASTIdentifier) node.jjtGetChild(3)).getName();
+				pass = ((ASTIdentifier) node.jjtGetChild(4)).getName();
+			}
 		}
 		// check if type is supported
 		IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getInstance().getFactory(dbms);
