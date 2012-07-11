@@ -129,12 +129,9 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 									// FIXME Use 3D Grid when height>1
 									for (int x = 0; x < width; x++) {
 										for (int y = 0; y < height; y++) {
-											grid.set(
-													x,
-													y,
+											grid.set(x, y,
 													new Double(
-															-Math.log(1.0 - buffer
-																	.get() / 100)));
+															buffer.get() / 100));
 										}
 									}
 									if (calendar.getTimeInMillis() >= timestamp) {

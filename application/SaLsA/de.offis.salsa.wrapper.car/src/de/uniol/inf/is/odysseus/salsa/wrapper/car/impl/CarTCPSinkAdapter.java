@@ -138,8 +138,7 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 
 							for (int x = 0; x < grid.width; x++) {
 								for (int y = 0; y < grid.height; y++) {
-									buffer.put((byte) ((1.0 - Math.exp(-grid
-											.get(x, y))) * 100));
+									buffer.put((byte) (grid.get(x, y) * 100));
 								}
 							}
 							buffer.flip();

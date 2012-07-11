@@ -120,17 +120,14 @@ public class CarGridTCPSourceAdapter extends AbstractPushingSourceAdapter {
 									short future = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
-									Grid grid = new Grid(
-											origin, width, height, cell);
+									Grid grid = new Grid(origin, width, height,
+											cell);
 									// FIXME Use 3D Grid when height>1
 									for (int x = 0; x < width; x++) {
 										for (int y = 0; y < height; y++) {
-											grid.set(
-													x,
-													y,
+											grid.set(x, y,
 													new Double(
-															-Math.log(1.0 - buffer
-																	.get() / 100)));
+															buffer.get() / 100));
 										}
 									}
 									this.listener.transfer(source,
