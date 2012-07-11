@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -528,6 +529,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		if (!this.owners.contains(owner)) {
 			this.owners.add(owner);
 		}
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 
 	@Override
@@ -538,6 +540,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		// synchronized (this.deactivateRequestControls) {
 		// this.deactivateRequestControls.remove(owner);
 		// }
+		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 
 	@Override
