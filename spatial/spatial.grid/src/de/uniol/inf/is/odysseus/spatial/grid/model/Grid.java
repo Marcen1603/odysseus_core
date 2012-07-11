@@ -47,8 +47,7 @@ public class Grid implements IClone {
 			double cellsize, DoubleBuffer buffer) {
 		this(new Coordinate(origin.x, origin.y), width, height, cellsize);
 		buffer.rewind();
-		this.buffer.put(buffer);
-
+		this.buffer.put(buffer.duplicate());
 	}
 
 	public double get(int x, int y) {

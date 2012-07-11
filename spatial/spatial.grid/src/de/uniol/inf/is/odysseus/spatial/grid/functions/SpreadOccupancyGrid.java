@@ -102,11 +102,8 @@ public class SpreadOccupancyGrid extends AbstractFunction<Grid> {
 				.longValue();
 		final double velocity = this.getNumericalInputValue(3);
 
-		int cells = (int) (((((double) (currentTimestamp - startTimestamp)) / 1000.0)
-				* velocity / grid.cellsize) * 2.0 + 1.5);
-		if (cells < 3) {
-			cells = 3;
-		}
+		int cells = ((int) Math.ceil((((double) (currentTimestamp - startTimestamp)) / 1000.0)
+				* velocity / grid.cellsize)) * 2 + 1;
 		IplImage image = OpenCVUtil.gridToImage(grid);
 		CvMat kernel = CvMat.create(cells, cells, opencv_core.CV_64F,
 				image.nChannels());
