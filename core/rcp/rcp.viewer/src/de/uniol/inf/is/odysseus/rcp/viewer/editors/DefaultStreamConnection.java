@@ -111,8 +111,7 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 			try {
 				notifyListeners(element, port);
 			} catch (Exception ex) {
-				// logger.error( "Bei der Verarbeitung des Datenelements " +
-				// element.toString() + " trat eine Exception auf!", ex);
+				logger.error( "Bei der Verarbeitung des Datenelements " + element.toString() + " trat eine Exception auf!", ex);
 				hasExceptions = true;
 			}
 		}
