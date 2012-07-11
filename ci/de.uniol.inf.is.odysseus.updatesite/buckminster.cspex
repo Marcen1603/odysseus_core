@@ -27,7 +27,7 @@
                 <attribute name="create.memoryproduct" />
             </prerequisites>
             <products alias="action.output" base="${buckminster.output}">
-                <path path="../../downloads/odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />
+                <path path="../../downloads/memorystore/odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />
             </products>
         </public>
         
