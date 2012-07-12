@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
@@ -43,7 +44,11 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	public void draw(Vector position, int width, int height, float zoomFactor) {
 		GC gc = getActualGC();
 		INodeView<C> view = getNodeView();
+		C content = view.getModelNode().getContent();
 		String name = view.getModelNode().getContent().getClass().getSimpleName();
+		if( content instanceof IPhysicalOperator ) {
+			name = ((IPhysicalOperator)content).getName();
+		}
 
 		boolean ok = false;
 		int textWidth = 0;
