@@ -32,11 +32,11 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
 	@Override
 	public T getNext() throws IOException {
+		delay();
 		if (!firstLineSkipped && !readFirstLine){
 			reader.readLine();
 			firstLineSkipped = true;
 		}
-		delay();
 		List<String> ret = new LinkedList<String>();
 		String line = reader.readLine();
 		if (line != null) {

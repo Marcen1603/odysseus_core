@@ -96,6 +96,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 	private final StringParameter dateFormat = new StringParameter(
 			"dateFormat", REQUIREMENT.OPTIONAL);
 
+	
 	public AccessAOBuilder() {
 		super("ACCESS", 0, 0);
 		addParameters(sourceName, host, port, outputschema, type, options,
@@ -154,7 +155,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		AccessAO ao = new AccessAO(sourceName, wrapperName, optionsMap);
 		ao.setOutputSchema(schema);
-
+		
 		if (host.hasValue()) {
 			ao.setHost(host.getValue());
 		}

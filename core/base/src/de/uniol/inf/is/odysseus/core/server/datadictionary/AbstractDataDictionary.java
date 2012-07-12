@@ -342,6 +342,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary {
 		}
 
 		AccessAO ao = new AccessAO(viewname, getSourceType(viewname), null);
+		ao.setName(viewname);
 
 		SDFSchema entity = getEntitySchema(viewname, caller);
 		ao.setOutputSchema(entity);
