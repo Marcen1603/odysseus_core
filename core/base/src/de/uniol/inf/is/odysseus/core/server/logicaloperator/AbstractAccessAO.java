@@ -123,7 +123,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	@Override
 	public String getName() {
-		return this.getClass().getSimpleName();
+		return getSourcename();
 	}
 
 //	private static long genID() {
@@ -264,7 +264,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public void setTransportHandler(String transportHandler) {
 		this.transportHandler = transportHandler;
 	}
-	
-	
+
+
 }
 
