@@ -84,6 +84,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scai.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.dwd.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.spatial.rcp.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
