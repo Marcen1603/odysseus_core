@@ -17,17 +17,22 @@ package de.uniol.inf.is.odysseus.rcp.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class OdysseusProjectWizard extends BasicNewProjectResourceWizard {
 
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusProjectWizard.class);
+	
 	@Override
 	public boolean performFinish() {
 		boolean result = super.performFinish();
-		result = configureProject(getNewProject());
+		result &= configureProject(getNewProject());
 		return result;
 	}
 
@@ -39,9 +44,14 @@ public class OdysseusProjectWizard extends BasicNewProjectResourceWizard {
 			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 			newNatures[prevNatures.length] = OdysseusRCPPlugIn.ODYSSEUS_PROJECT_NATURE_ID;
 			description.setNatureIds(newNatures);
+			
+			if( !project.isSynchronized(IResource.DEPTH_ZERO) ) {
+				project.refreshLocal(IResource.DEPTH_ZERO, null);
+			}
+			
 			project.setDescription(description, null);
 		} catch (CoreException e) {
-			e.printStackTrace();
+			LOG.error("Could not configure project {} project.", e);
 			return false;
 		}
 		return true;

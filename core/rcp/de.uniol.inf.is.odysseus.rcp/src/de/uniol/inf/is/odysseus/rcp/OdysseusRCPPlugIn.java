@@ -50,7 +50,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 
 	public static final String BUILD_CONFIGURATION_EXTENSION_ID = "de.uniol.inf.is.odysseus.rcp.buildConfiguration";
 
-	public static final String ODYSSEUS_PROJECT_NATURE_ID = "de.uniol.inf.is.odysseus.rcp.OdysseusProjectNature";
+	public static final String ODYSSEUS_PROJECT_NATURE_ID = "de.uniol.inf.is.odysseus.rcp.base.OdysseusProjectNature";
 
 	public static final String RCP_USER_TOKEN = "RCP";
 
