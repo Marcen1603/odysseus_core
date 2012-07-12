@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.osgeo.proj4j.CoordinateReferenceSystem;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -69,12 +68,14 @@ public class KMLReader {
 	
 	public List<Geometry> read(String xmlText) throws IOException, SAXException,
 			ParserConfigurationException {
+		kmlHandler.clear();
 
 		Reader r = new BufferedReader(new StringReader(xmlText));
 		LineNumberReader myReader = new LineNumberReader(r);
 		xr.parse(new InputSource(myReader));
 	
 		List<Geometry> elems = kmlHandler.getGeometries();
+		
 		for (Geometry g:elems){
 			// FIXME: Make constant or use existing constant!
 			// WSG84 == EPSG4326
@@ -112,7 +113,7 @@ public class KMLReader {
 }
 
 class KMLHandler extends DefaultHandler {
-	private List<Geometry> geoms = new ArrayList<Geometry>();;
+	private List<Geometry> geoms = new ArrayList<Geometry>();
 
 	private GMLHandler currGeomHandler;
 	//private String lastEltName = null;
@@ -124,6 +125,10 @@ class KMLHandler extends DefaultHandler {
 
 	public List<Geometry> getGeometries() {
 		return geoms;
+	}
+	
+	public void clear(){
+		this.geoms = new ArrayList<Geometry>();
 	}
 
 	/**
