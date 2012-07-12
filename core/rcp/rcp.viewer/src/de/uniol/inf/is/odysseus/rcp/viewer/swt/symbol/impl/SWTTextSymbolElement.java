@@ -21,6 +21,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
@@ -47,7 +49,7 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		C content = view.getModelNode().getContent();
 		String name = view.getModelNode().getContent().getClass().getSimpleName();
 		if( content instanceof IPhysicalOperator ) {
-			name = ((IPhysicalOperator)content).getName();
+			name = getRealName((IPhysicalOperator)content);
 		}
 
 		boolean ok = false;
@@ -94,5 +96,21 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			gc.setForeground(color);
 			gc.drawText(name, x, y, true);
 		}
+	}
+
+	private static String getRealName(IPhysicalOperator operator) {
+		String name = operator.getName();
+		if( Strings.isNullOrEmpty(name)) {
+			return "[No name]";
+		}
+		
+		int index1 = name.indexOf("(");
+		int index2 = name.indexOf(" ");
+		if( index1 == -1 && index2 == -1 ) {
+			return name;
+		}
+		
+		int pos = index1 == -1 ? index2 : index1;
+		return name.substring(0, pos);
 	}
 }
