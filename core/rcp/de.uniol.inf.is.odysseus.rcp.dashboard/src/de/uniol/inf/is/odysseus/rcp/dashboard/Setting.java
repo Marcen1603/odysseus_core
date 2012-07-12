@@ -76,7 +76,11 @@ public final class Setting<T> {
 		if ("Float".equalsIgnoreCase(type)) {
 			return Float.valueOf(value);
 		}
+		
+		if( "String".equalsIgnoreCase(type)) {
+			return value;
+		}
 
-		return value;
+		throw new IllegalArgumentException("Type " + type + " (yet) not supported in Setting!");
 	}
 }

@@ -20,13 +20,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 
 public final class SettingDescriptor<T> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SettingDescriptor.class);
+	// lower case!
+	public static final ImmutableList<String> SUPPORTED_TYPES = ImmutableList.<String>builder()
+			.add("string") 
+			.add("integer")
+			.add("long")
+			.add("double")
+			.add("float")
+			.add("boolean")
+			.build();
 	
+	private static final Logger LOG = LoggerFactory.getLogger(SettingDescriptor.class);
 	private static final String DEFAULT_DESCRIPTION = "Description of Setting";
 	
 	private final String name;
@@ -41,6 +51,8 @@ public final class SettingDescriptor<T> {
 		
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of SettingDescriptor must not be null or empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(type), "Type of SettingDescriptor must not be null or empty!");
+		Preconditions.checkArgument(SUPPORTED_TYPES.contains(type.toLowerCase()), "Type %s not supported!", type);
+		Preconditions.checkArgument(checkDefaultValueWithType(defaultValue, type), "Default value %s is not from Type %s.", defaultValue, type);
 		
 		this.name = name;
 		this.type = type;
@@ -56,7 +68,7 @@ public final class SettingDescriptor<T> {
 		isOptional = optional;
 		isEditable = editable;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -83,5 +95,13 @@ public final class SettingDescriptor<T> {
 	
 	public String getType() {
 		return type;
+	}
+	
+	private static boolean checkDefaultValueWithType(Object value, String type) {
+		if( value == null ) {
+			return true;
+		}
+		
+		return value.getClass().getSimpleName().equalsIgnoreCase(type);		
 	}
 }
