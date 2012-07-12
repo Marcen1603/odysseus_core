@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.desc;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.graphics.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +40,12 @@ public final class DashboardPartDescriptor {
 	private final Map<String, SettingDescriptor<?>> settingDescriptors;
 	private final String name;
 	private final String description;
-	private final Image image;
 	
-	public DashboardPartDescriptor( String name, String description ) {
+	public DashboardPartDescriptor( String name, String description) {
 		this(name, description, Lists.<SettingDescriptor<?>>newArrayList());
 	}
 	
-	public DashboardPartDescriptor( String name, String description, List<SettingDescriptor<?>> settingDescriptors ) {
-		this(name, description, settingDescriptors, null);
-	}
-	
-	public DashboardPartDescriptor( String name, String description, Image image) {
-		this(name, description, Lists.<SettingDescriptor<?>>newArrayList(), image);
-	}
-	
-	public DashboardPartDescriptor( String name, String description, List<SettingDescriptor<?>> settingDescriptors, Image image ) {
+	public DashboardPartDescriptor( String name, String description, List<SettingDescriptor<?>> settingDescriptors) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name of DashboardPartDescriptor is null or empty!");
 		this.name = name;
 		
@@ -71,8 +61,6 @@ public final class DashboardPartDescriptor {
 		}
 		
 		this.settingDescriptors = createSettingsMap( settingDescriptors );
-		
-		this.image = image;
 	}
 	
 	public ImmutableList<String> getSettingDescriptorNames() {
@@ -94,14 +82,6 @@ public final class DashboardPartDescriptor {
 	
 	public String getDescription() {
 		return description;
-	}
-	
-	public Image getImage() {
-		return image;
-	}
-	
-	public boolean hasImage() {
-		return image != null;
 	}
 	
 	public Configuration createDefaultConfiguration() {

@@ -18,13 +18,10 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.test.desc;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.testng.annotations.Test;
 
 import com.beust.jcommander.internal.Lists;
@@ -46,7 +43,7 @@ public class DashboardPartDescriptorTest {
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructorNullArgs() {
-		new DashboardPartDescriptor(null, null, null, null);
+		new DashboardPartDescriptor(null, null, null);
 	}
 
 	@Test
@@ -118,20 +115,6 @@ public class DashboardPartDescriptorTest {
 	}
 	
 	@Test
-	public void testImage() {
-		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description");
-		
-		assertFalse( desc.hasImage() );
-		assertNull( desc.getImage() );
-		
-		Image image = newImage();
-		desc = new DashboardPartDescriptor("Name", "Description", image);
-		
-		assertEquals(desc.getImage(), image);
-		assertTrue(desc.hasImage());
-	}
-	
-	@Test
 	public void testCreateDefaultConfiguration() {
 		List<SettingDescriptor<?>> settingDescriptors = newSettingDescriptorList();
 		DashboardPartDescriptor desc = new DashboardPartDescriptor("Name", "Description", settingDescriptors);
@@ -162,9 +145,5 @@ public class DashboardPartDescriptorTest {
 		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Description of setting2", "String", "Hallo", false, false));
 		settingDescriptors.add(new SettingDescriptor<String>("Setting2", "Another Description of setting2", "String", "Hallo Again", false, true));
 		return settingDescriptors;
-	}
-	
-	private static Image newImage() {
-		return new Image(Display.getDefault(), 100, 100);
 	}
 }

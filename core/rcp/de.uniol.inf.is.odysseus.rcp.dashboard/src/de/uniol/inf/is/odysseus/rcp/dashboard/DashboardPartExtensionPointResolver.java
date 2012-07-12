@@ -60,7 +60,6 @@ public class DashboardPartExtensionPointResolver {
 			settingDescriptors.add(evaluateSetting(child));
 		}
 
-		// TODO: Image
 		DashboardPartRegistry.register(clazz, new DashboardPartDescriptor(name, description, settingDescriptors));
 	}
 
