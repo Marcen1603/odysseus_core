@@ -46,9 +46,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.test.TupleTestActivator;
+import de.uniol.inf.is.odysseus.test.physicaloperator.TupleCompareSinkPO;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
 import de.uniol.inf.is.odysseus.test.tuple.ICompareSinkListener;
-import de.uniol.inf.is.odysseus.test.tuple.TupleCompareCallbackSink;
 
 
 public class FragmentTestsComponent implements ITestComponent, ICompareSinkListener {
@@ -372,7 +372,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 		
 		String path = "#DEFINE PATH " + query.getAbsolutePath() + " \n";
 		
-		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareCallbackSink(expcetedResults, this));
+		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareSinkPO(expcetedResults, this));
 	}
 
 	private static String getQueryString(File query) throws IOException {

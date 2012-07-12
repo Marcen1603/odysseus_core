@@ -17,13 +17,13 @@ ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, a
 ///map({expressions = ['RotateViewPoint(scan, 43.0)']}, globalLms1Punctuation)
 
 ///#RUNQUERY
-///SELECT RotateViewPoint(points, angle) AS scan FROM nexmark:coordinates
+///SELECT RotateViewPoint(points, angle) AS scan FROM test:stream
 
 ///# (3. Die erwartete Ausgabe ist zu finden in der Datei RotateViewPoint.csv)
  
  
-#PARSER PQL
-#TRANSCFG Standard
-#ADDQUERY
-RotateViewPoint = MAP({expressions = ['RotateViewPoint(points, angle)']}, test:stream)
-test = TUPLECOMPARESINK({fileName= 'salsa/RotateViewPoint.csv'}, RotateViewPoint )
+///#PARSER PQL
+///#TRANSCFG Standard
+///#ADDQUERY
+///RotateViewPoint = MAP({expressions = ['RotateViewPoint(points, angle)']}, test:stream)
+///test = TUPLECOMPARESINK({fileName= 'salsa/RotateViewPoint.csv'}, RotateViewPoint )

@@ -32,18 +32,25 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.test.TupleTestActivator;
+import de.uniol.inf.is.odysseus.test.tuple.ICompareSinkListener;
 
 public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TupleCompareSinkPO.class);
 
 	private String compareFile = null;
-	//final private ICompareSinkListener sinkListener;
 	List<Tuple<?>> expectedResults = new LinkedList<Tuple<?>>();	
 	TupleDataHandler tupleDataHandler = null;
 	String qry;
+	private ICompareSinkListener sinkListener = null;
+	private File expectedResultsFile = null;
 
 	public TupleCompareSinkPO() {
+	}
+	
+	public TupleCompareSinkPO(File expectedResultsFile, ICompareSinkListener sinkListener) {
+		this.expectedResultsFile = expectedResultsFile;
+		this.sinkListener = sinkListener;
 	}
 	
 	public TupleCompareSinkPO(String compareFile) {
@@ -52,6 +59,8 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 
 	public TupleCompareSinkPO(TupleCompareSinkPO tupleCompareSinkPO) {
 		compareFile = tupleCompareSinkPO.getCompareFile();
+		sinkListener = tupleCompareSinkPO.sinkListener;
+		expectedResultsFile = tupleCompareSinkPO.expectedResultsFile;
 	}
 	
 	@Override
@@ -62,12 +71,14 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 		synchronized (expectedResults) {
 			try {
 				LOG.debug("Reading Compare File " + compareFile);
-				
-//				URL fileUrl = TupleTestActivator.context.getBundle().getResource(compareFile);
-//				File f = new File(FileLocator.toFileURL(fileUrl).getPath());
-				File f = new File(TupleTestActivator.bundlePath + File.separator + compareFile);
-				this.qry = f.getName();
-				BufferedReader reader = new BufferedReader(new FileReader(f));
+				File expected = 
+						expectedResultsFile == null? 
+								new File(TupleTestActivator.bundlePath + File.separator + compareFile)
+								: expectedResultsFile;
+									
+//				File expected = new File(TupleTestActivator.bundlePath + File.separator + compareFile);
+				this.qry = expected.getName();
+				BufferedReader reader = new BufferedReader(new FileReader(expected));
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					this.expectedResults.add(this.tupleDataHandler.readData(line.trim().split(";")));
