@@ -62,7 +62,7 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 
 	@SuppressWarnings("unchecked")
 	public final <K> K getAttribute(int pos) {
-		if (pos < 0)
+		if (pos < 0 || pos > attributes.length)
 			return null;
 		return (K) this.attributes[pos];
 	}
