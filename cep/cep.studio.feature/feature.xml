@@ -2,7 +2,8 @@
 <feature
       id="de.uniol.inf.is.odysseus.cep.studio.feature"
       label="CEP Studio Feature"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -24,6 +25,10 @@ Unless required by applicable law or agreed to in writing, software
  See the License for the specific language governing permissions and 
  limitations under the License.
    </license>
+
+   <url>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+   </url>
 
    <requires>
       <import feature="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>

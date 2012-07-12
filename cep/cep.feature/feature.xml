@@ -26,6 +26,10 @@ Unless required by applicable law or agreed to in writing, software
  limitations under the License.
    </license>
 
+   <url>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+   </url>
+
    <plugin
          id="de.uniol.inf.is.odysseus.cep.metamodel"
          download-size="0"
