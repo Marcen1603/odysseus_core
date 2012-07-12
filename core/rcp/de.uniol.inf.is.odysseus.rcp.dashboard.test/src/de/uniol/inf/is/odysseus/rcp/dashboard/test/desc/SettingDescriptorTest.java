@@ -79,6 +79,21 @@ public class SettingDescriptorTest {
 		assertEquals(setting.get(), (Integer)100);
 	}
 	
+	@Test(dataProvider = "typeDefaultValueDataProvider")
+	public void testTypeDefaultValueCombinations(Object defValue, String type) {
+		SettingDescriptor<Object> desc = new SettingDescriptor<Object>("SettingName", "SettingDescription", type, defValue, true, true);
+		
+		assertEquals(desc.getDefaultValue(), defValue);
+		assertEquals(desc.getType(), type);
+	}
+	
+	@Test(dataProvider = "invalidTypeDefaultValueDataProvider", expectedExceptions = IllegalArgumentException.class)
+	public void testInvalidTypeDefaultValueCombinations(Object defValue, String type) {
+		new SettingDescriptor<Object>("SettingName", "SettingDescription", type, defValue, true, true);
+		
+		fail();
+	}
+	
 	@SuppressWarnings("unused")
 	@DataProvider
 	private static Object[][] settingsDataProvider() {
@@ -87,6 +102,35 @@ public class SettingDescriptorTest {
 				{false, true},
 				{false, false},
 				{true, false}
+		};
+	}
+	
+	@SuppressWarnings("unused")
+	@DataProvider
+	private static Object[][] typeDefaultValueDataProvider() {
+		return new Object[][] {
+				{"Hallo", "String"},
+				{100, "Integer"},
+				{100L, "Long"},
+				{100.0f, "Float"},
+				{100.0, "Double"},
+				{true, "Boolean"},
+		};
+	}
+	
+	@SuppressWarnings("unused")
+	@DataProvider
+	private static Object[][] invalidTypeDefaultValueDataProvider() {
+		return new Object[][] {
+				// unsupported types
+				{ "Waka", "Object"},
+				{ null, "SomeClass"},
+				
+				// invalid combinations
+				{ 100.0, "Float"},
+				{ 100.0f, "Double"},
+				{ 100.0f, "Long"},
+				{ true, "String"},
 		};
 	}
 }

@@ -29,7 +29,7 @@ public final class DashboardPartPlacement {
 	private int w;
 	private int h;
 	
-	private final String title;
+	private String title;
 	
 	public DashboardPartPlacement( IDashboardPart part, String title, int x, int y, int w, int h ) {
 		this.part = Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
@@ -53,6 +53,10 @@ public final class DashboardPartPlacement {
 	
 	public boolean hasTitle() {
 		return !Strings.isNullOrEmpty(title);
+	}
+	
+	public void setTitle( String title ) {
+		this.title = title;
 	}
 	
 	public IDashboardPart getDashboardPart() {
