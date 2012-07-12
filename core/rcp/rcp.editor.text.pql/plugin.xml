@@ -22,5 +22,69 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.rcp.editor.text.pql.StartUp">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ToggleShowOptionalParameters"
+               icon="icons/optional.png"
+               label="Show/Hide optional parameters"
+               style="toggle"
+               tooltip="Show/Hide optional parameters">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.RefreshPQLOperatorView"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ExpandAllPQLOperatorView"
+               icon="icons/expandall.gif"
+               label="Expand All"
+               style="push"
+               tooltip="Expand All">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.editor.text.pql.CollapseAllPQLOperatorView"
+               icon="icons/collapseall.gif"
+               label="Collapse All"
+               style="push"
+               tooltip="Collapse All">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.RefreshPQLOperatorViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.RefreshPQLOperatorView"
+            name="Refresh PQL Operator View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ExpandAllPQLOperatorViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ExpandAllPQLOperatorView"
+            name="Expand All in PQL Operator View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.CollapseAllPQLOperatorViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.CollapseAllPQLOperatorView"
+            name="Collapse All in PQL Operator View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.editor.text.pql.commands.ToggleShowOptionalParametersCommand"
+            id="de.uniol.inf.is.odysseus.rcp.editor.text.pql.ToggleShowOptionalParameters"
+            name="Show optional parameters">
+      </command>
+   </extension>
 
 </plugin>

@@ -46,6 +46,17 @@ public class PQLOperatorsLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
+		if( element instanceof IOperatorBuilder ) {
+			return PQLEditorTextPlugIn.getDefault().getImageRegistry().get("pqlOperator");
+		}
+		if( element instanceof IParameter ) {
+			if( ((IParameter<?>)element).isMandatory() ) {
+				return PQLEditorTextPlugIn.getDefault().getImageRegistry().get("pqlAttribute");
+			} else {
+				return PQLEditorTextPlugIn.getDefault().getImageRegistry().get("pqlOptionalAttribute");
+			}
+		}
+		
 		return null;
 	}
 

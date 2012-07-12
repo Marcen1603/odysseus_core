@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 
 public class PQLOperatorsContentProvider implements ITreeContentProvider {
 
+	private boolean showOptionalParameters = true;
+	
 	@Override
 	public void dispose() {
 	}
@@ -54,7 +56,7 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 			for( IParameter<?> param : builder.getParameters()) {
 				if( param.isMandatory() ) {
 					manParams.add(param);
-				} else {
+				} else if( showOptionalParameters ){
 					optParams.add(param);
 				}
 			}
@@ -82,6 +84,10 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 		}
 		
 		return false;
+	}
+	
+	public void showOptionalParameters( boolean show ) {
+		showOptionalParameters = show;
 	}
 
 }
