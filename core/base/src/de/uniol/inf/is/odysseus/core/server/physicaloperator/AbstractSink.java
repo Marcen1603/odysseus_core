@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -263,10 +263,15 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath) {
 		if (this.isSinkOpen.get()) {
-			this.isSinkOpen.set(false);
-			process_close();
-			stopMonitoring();
-			callCloseOnChildren(callPath);
+			try {
+				process_close();
+				stopMonitoring();
+				callCloseOnChildren(callPath);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			} finally {
+				this.isSinkOpen.set(false);
+			}
 		}
 	}
 
@@ -362,7 +367,7 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public void removeOwner(IOperatorOwner owner) {
-		while (this.owners.remove(owner)){
+		while (this.owners.remove(owner)) {
 			// Remove all owners
 		}
 		Collections.sort(owners, OperatorOwnerComparator.getInstance());
