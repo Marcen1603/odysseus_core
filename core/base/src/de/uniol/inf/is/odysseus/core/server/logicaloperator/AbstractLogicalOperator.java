@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Marco Grawunder
@@ -232,6 +233,7 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 * #setPOName (java.lang.String)
 	 */
 	@Override
+	@Parameter(name="Name", type = StringParameter.class, optional = true)
 	public void setName(String name) {
 		this.name = name;
 	}

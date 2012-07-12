@@ -54,7 +54,7 @@ public class RenameAO extends UnaryLogicalOp {
 		this.aliases = aliases;
 	}
 	
-	@Parameter(type = StringParameter.class, optional = true)
+	@Parameter(name="Type",type = StringParameter.class, optional = true)
 	public void setType(String typeName) {
 		this.typeName = typeName;
 	}	
