@@ -80,10 +80,13 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
 		instance.delimiter = options.get("delimiter").toCharArray()[0];
-		if (options.get("readFirstLine") != null){
+		if (options.get("readfirstline") != null){
 			instance.readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
 		}else{
 			readFirstLine = true;
+		}
+		if (options.get("delay") != null) {
+			instance.setDelay(Long.parseLong(options.get("delay")));
 		}
 		return instance;
 	}
