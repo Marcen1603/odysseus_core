@@ -57,7 +57,8 @@ import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
  * @author Timo Michelsen
  *
  */
-public class FragmentTestsComponent implements ITestComponent, TestObserver {
+//public class FragmentTestsComponent implements ITestComponent, TestObserver {
+public class FragmentTestsComponent implements ITestComponent {
 	private static Logger LOG = LoggerFactory.getLogger(FragmentTestsComponent.class);
 
 	private List<Long> alreadyTested = new ArrayList<Long>();
@@ -397,17 +398,17 @@ public class FragmentTestsComponent implements ITestComponent, TestObserver {
 		return queryString.toString();
 	}
 
-	@Override
-	public void onBundleTestsStarted() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onBundleTestsFinished() {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	public void onBundleTestsStarted() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void onBundleTestsFinished() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 	
 	private void logIntoFile(String line) {
 		try {			
