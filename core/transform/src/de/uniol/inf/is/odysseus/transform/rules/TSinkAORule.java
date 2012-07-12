@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SinkAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SinkPO;
@@ -32,10 +33,8 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
 	@Override
 	public void execute(SinkAO operator,
 			TransformationConfiguration config) {
-		@SuppressWarnings("rawtypes")
-		SinkPO sinkPO = new SinkPO();
-		replace(operator, sinkPO, config);
-		retract(operator);
+		SinkPO<?> sinkPO = new SinkPO<IMetaAttribute>();
+		defaultExecute(operator, sinkPO, config, true);
 	}
 
 	@Override

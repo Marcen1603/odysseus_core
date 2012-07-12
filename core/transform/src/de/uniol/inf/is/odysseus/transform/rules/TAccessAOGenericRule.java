@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Collection;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.connection.AccessConnectionHandlerRegistry;
@@ -23,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.InputDataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectHandlerRegistry;
@@ -216,14 +214,8 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			}
 		}
 
-		accessPO.setOutputSchema(operator.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		Collection<ILogicalOperator> toUpdate = config
-				.getTransformationHelper().replace(operator, accessPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(operator);
+		defaultExecute(operator, accessPO, config, true);
 		insert(accessPO);
 	}
 

@@ -30,6 +30,17 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 
 public abstract class AbstractTransformationRule<T> extends AbstractRule<T,TransformationConfiguration> {
 	
+	protected void defaultExecute(ILogicalOperator logical,
+			IPhysicalOperator physical, TransformationConfiguration config,
+			boolean retract) {
+		physical.setOutputSchema(logical.getOutputSchema());
+		physical.setName(logical.getName());
+		replace(logical, physical, config);
+		if (retract) {
+			retract(logical);
+		}
+	}
+	
 	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig){
 		
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
@@ -46,8 +57,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T,Trans
 		}		
 		for (ILogicalOperator o:toUpdate){
 			update(o);
-		}		
-		
+		}			
 	}
 	
 }

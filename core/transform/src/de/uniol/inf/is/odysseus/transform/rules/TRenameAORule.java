@@ -15,13 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.RenamePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-
 
 public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
@@ -32,11 +32,8 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO operator, TransformationConfiguration config) {
-		@SuppressWarnings({"rawtypes" })
-		RenamePO<?> renamePO = new RenamePO();
-		renamePO.setOutputSchema(operator.getOutputSchema());
-		replace(operator, renamePO, config);		
-		retract(operator);
+		RenamePO<?> renamePO = new RenamePO<IMetaAttribute>();
+		defaultExecute(operator, renamePO, config ,true);
 	}
 
 	@Override
@@ -59,5 +56,5 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 	public Class<? super RenameAO> getConditionClass() {
 		return RenameAO.class;
 	}
-	
+
 }

@@ -35,11 +35,9 @@ public class TUserDefinedOperatorPO extends
 	public void execute(UserDefinedOperatorAO operator,
 			TransformationConfiguration config) {
 		UserDefinedOperatorPO po = new UserDefinedOperatorPO();
-		po.setOutputSchema(operator.getOutputSchema());
 		po.setInitString(operator.getInitString());
 		po.setUdf(operator.getUdf());		
-		replace(operator, po, config);		
-		retract(operator);
+		defaultExecute(operator, po, config, true);
 	}
 
 	@Override

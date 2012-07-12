@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -35,11 +36,8 @@ public class TChangeDetectAORule extends
 	@Override
 	public void execute(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		@SuppressWarnings("rawtypes")
-		ChangeDetectPO<?> po = new ChangeDetectPO();
-		po.setOutputSchema(operator.getOutputSchema());
-		replace(operator, po, config);		
-		retract(operator);
+		ChangeDetectPO<?> po = new ChangeDetectPO<IMetaAttribute>();
+		defaultExecute(operator, po, config, true);
 	}
 
 	@Override

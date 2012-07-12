@@ -32,12 +32,9 @@ public class TRouteAORule extends AbstractTransformationRule<RouteAO> {
 
 	
 	@Override
-	public void execute(RouteAO routeAO, TransformationConfiguration transformConfig) {		
+	public void execute(RouteAO routeAO, TransformationConfiguration config) {		
 		RoutePO<?> routePO = new RoutePO(routeAO.getPredicates());
-		routePO.setOutputSchema(routeAO.getOutputSchema());
-		replace(routeAO, routePO, transformConfig);
-		retract(routeAO);
-
+		defaultExecute(routeAO, routePO, config, true);
 	}
 
 	@Override

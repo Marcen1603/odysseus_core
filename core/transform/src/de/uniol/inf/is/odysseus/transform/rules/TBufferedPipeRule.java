@@ -15,12 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BlockingBufferedPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferedPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -43,13 +40,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 			po = new BufferedPipe();
 		}
 		po.setBufferName(algebraOp.getBuffername());
-		Collection<ILogicalOperator> toUpdate = trafo.getTransformationHelper()
-				.replace(algebraOp, po);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(algebraOp);
-
+		defaultExecute(algebraOp, po, trafo, true);	
 	}
 
 	@Override
