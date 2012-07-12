@@ -35,8 +35,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,35 +47,18 @@ import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.test.TupleTestActivator;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
+import de.uniol.inf.is.odysseus.test.tuple.ICompareSinkListener;
+import de.uniol.inf.is.odysseus.test.tuple.TupleCompareCallbackSink;
 
-/**
- * This implementation of ITestComponent will execute all 
- * tests found in a corresponding tests-folder inside any bundle.
- * 
- * @author Timo Michelsen
- *
- */
-//public class FragmentTestsComponent implements ITestComponent, TestObserver {
-public class FragmentTestsComponent implements ITestComponent {
+
+public class FragmentTestsComponent implements ITestComponent, ICompareSinkListener {
+
 	private static Logger LOG = LoggerFactory.getLogger(FragmentTestsComponent.class);
 
-	private List<Long> alreadyTested = new ArrayList<Long>();
-	
-//	private List<Bundle> bundlesToTest = Collections.synchronizedList(new ArrayList<Bundle>());
-	private List<Bundle> bundlesToTest = new ArrayList<Bundle>();
-	
+	// OSGI injections
 	private IServerExecutor executor;
 	private IOdysseusScriptParser parser;
-
-	private static final String NEWLINE = System.getProperty("line.separator");
-	private boolean isExecuting;
-	private String errorText;
-
-	private BufferedWriter out;
-	private long startTime;
 	
-	private Writer logFile;
-
 	public void bindExecutor(IExecutor executor) {
 		checkArgument(executor instanceof IServerExecutor, "Executor must be instance of " + IServerExecutor.class.getName() + " instead of " + executor.getClass().getName());
 		this.executor = (IServerExecutor) executor;
@@ -86,6 +67,19 @@ public class FragmentTestsComponent implements ITestComponent {
 	public void bindScriptParser(IOdysseusScriptParser scriptParser) {
 		parser = scriptParser;
 	}
+	
+	private List<Long> alreadyTested = new ArrayList<Long>();	
+	private List<Bundle> bundlesToTest = new ArrayList<Bundle>();
+	
+	private static final String NEWLINE = System.getProperty("line.separator");
+	
+	private boolean isExecuting;
+	private String errorText;
+
+	private BufferedWriter out;
+	private long startTime;
+	
+	private Writer logFile;
 	
 	public FragmentTestsComponent() {		
 		try {			
@@ -161,11 +155,6 @@ public class FragmentTestsComponent implements ITestComponent {
 	}
 	
 	private void checkForTestsAndQueueThem(Bundle bundle) {
-//		logIntoFile(
-//				"SEARCHING FOR TESTS IN BUNDLE " + 
-//						bundle.getSymbolicName() + 
-//						"(" + bundle.getBundleId() + ") ... ");		
-		
 		if (alreadyTested.contains(bundle.getBundleId())) {
 			logIntoFile("ALREADY TESTED - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
 			return;
@@ -209,16 +198,23 @@ public class FragmentTestsComponent implements ITestComponent {
 		}
 	}
 	
-	private void executeTests(int index){
+	private void executeTests2(int index){
 		Bundle bundle = bundlesToTest.get(index);
+		executeTests(bundle);
+		
+		if(bundlesToTest.size() - 1 > index++){
+			executeTests2(index);
+		}
+	}
+	
+	private void executeTests(Bundle bundle){		
 		if(alreadyTested.contains(bundle.getBundleId())){
 			logIntoFile("BUNDLE ALREADY TESTED BEFORE - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
 			return;			
 		}
 		
 		logIntoFile("BUNDLE START TESTS - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
-		
-		
+				
 		// diese methode soll alle entahlten tests (param) ausführen
 		File testFolder = getTestsFolder(bundle);
 		Map<String, List<File>> testsQueries = readQueries(testFolder);
@@ -234,11 +230,17 @@ public class FragmentTestsComponent implements ITestComponent {
 		
 		out = createWriter(new File("")); // TODO write into correct directory
 
-		tryStartExecutor(executor);
+		// try to start the executor
+		try {
+			LOG.debug("Starting executor");
+			executor.startExecution();
+		} catch (PlanManagementException e1) {
+			throw new RuntimeException(e1);
+		}
 
 		LOG.debug("Processing " + testsQueries.size() + " queries ...");
 		
-		boolean errors = false;
+		int errors = 0;
 		
 		for (Entry<String, List<File>> queries : testsQueries.entrySet()) {
 			logIntoFile("CATEGORY START " + queries.getKey() + " WITH " + queries.getValue().size() + " TESTS \n");
@@ -247,54 +249,59 @@ public class FragmentTestsComponent implements ITestComponent {
 			int fail = 0;
 			
 			for(File qry : queries.getValue()){
-				final String queryKey = qry.getName();
+				final String queryName = qry.getName();;
 				final File queryFile = qry;
+				final File expectedResults = changeFileEnding(queryFile, "csv");
 				
 				try {
-					test(queryKey, queryFile, parser, session);
+					logIntoFile("QUERY START - " + queryName + NEWLINE);
+					test(queryName, queryFile, expectedResults, parser, session);
 					
 					executor.removeAllQueries(session);
 					
 					checkForErrors(errorText);
-					LOG.debug("Query {} successfull", queryKey);
+					LOG.debug("Query {} successfull", queryName);
+					logIntoFile("QUERY END - " + queryName + " - SUCCESS" + NEWLINE);
 					success++;
 				} catch (OdysseusScriptException e) {
-					LOG.error("Query {} failed! ", queryKey, e);
+					LOG.error("Query {} failed! ", queryName, e);
+					logIntoFile("QUERY END - " + queryName + " - FAILED" + NEWLINE);
 					fail++;
-					tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
-					errors = true;
+					tryWrite(out, "Query " + queryName + " failed! " + NEWLINE + e.getMessage());
 				} catch( IOException e ) {
-	                LOG.error("Query {} failed! ", queryKey, e);
+	                LOG.error("Query {} failed! ", queryName, e);
+	                logIntoFile("QUERY END - " + queryName + " - FAILED" + NEWLINE);
 	                fail++;
-	                tryWrite(out, "Query " + queryKey + " failed! " + NEWLINE + e.getMessage());
-	                errors = true;
+	                tryWrite(out, "Query " + queryName + " failed! " + NEWLINE + e.getMessage());
 				}
 				
 			}
 			
-			logIntoFile("CATEGORY END " + queries.getKey() + ": " + success + " SUCCESS " + fail + " FAILED \n");
+			logIntoFile("CATEGORY END " + queries.getKey() + ": " + success + " SUCCESS " + fail + " FAILED" + NEWLINE);
 			
-			
+			errors += fail;
 		}
 		
 		tryClose(out);
 		
-		tryStopExecutor(executor);
+		// try to stop the executor
+		try {
+			LOG.debug("Stopping executor");
+			executor.stopExecution();
+		} catch (PlanManagementException e) {
+			LOG.error("Exception during stopping executor", e);
+		}
 		
 		alreadyTested.add(bundle.getBundleId());
 		
 		LOG.debug("[TESTS] Finished tests for bundle {}", bundle.toString());
 		
-		logIntoFile("BUNDLE END - " + (errors? "HAD ERRORS" : "NO ERRORS") + "\n");
-				
-		if(bundlesToTest.size() > index){
-			executeTests(index++);
-		}
+		logIntoFile("BUNDLE END - " + errors + " ERRORS IN THIS BUNDLE\n");
 	}
 	
 	@Override
 	public Object startTesting(String[] args) {
-		logIntoFile("STARTED " + this.getClass().getSimpleName() + " AT " + new Date().toString() +"\n");
+		logIntoFile("STARTED " + this.getClass().getSimpleName() + " AT " + new Date().toString()  + NEWLINE);
 		
 		if(isExecuting){
 			logIntoFile("ALREADY EXECUTING");
@@ -304,7 +311,7 @@ public class FragmentTestsComponent implements ITestComponent {
 		isExecuting = true;
 		
 		if(bundlesToTest.size() > 0){
-			executeTests(0);
+			executeTests2(0);
 		}		 
 		
 		isExecuting = false;
@@ -312,7 +319,6 @@ public class FragmentTestsComponent implements ITestComponent {
 		try {
 			logFile.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "Success";
@@ -340,24 +346,6 @@ public class FragmentTestsComponent implements ITestComponent {
 		}
 	}
 
-	private static void tryStartExecutor(IServerExecutor executor) {
-		try {
-			LOG.debug("Starting executor");
-			executor.startExecution();
-		} catch (PlanManagementException e1) {
-			throw new RuntimeException(e1);
-		}
-	}
-
-	private static void tryStopExecutor(IServerExecutor executor) {
-		try {
-			LOG.debug("Stopping executor");
-			executor.stopExecution();
-		} catch (PlanManagementException e) {
-			LOG.error("Exception during stopping executor", e);
-		}
-	}
-
 	private static void tryClose(BufferedWriter out) {
 		try {
 			out.flush();
@@ -375,8 +363,8 @@ public class FragmentTestsComponent implements ITestComponent {
 		}
 	}
 
-	private void test(String key, File query, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {		
-		String text = "Testing Query " + key + " from file " + query;
+	private void test(String queryName, File query, File expcetedResults, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {		
+		String text = "Testing Query " + queryName + " from file " + query;
 		LOG.debug(text);
 		tryWrite(out, text);
 		
@@ -384,7 +372,7 @@ public class FragmentTestsComponent implements ITestComponent {
 		
 		String path = "#DEFINE PATH " + query.getAbsolutePath() + " \n";
 		
-		parser.parseAndExecute(path + getQueryString(query), user, null);
+		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareCallbackSink(expcetedResults, this));
 	}
 
 	private static String getQueryString(File query) throws IOException {
@@ -397,24 +385,30 @@ public class FragmentTestsComponent implements ITestComponent {
 		reader.close();
 		return queryString.toString();
 	}
-
-//	@Override
-//	public void onBundleTestsStarted() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void onBundleTestsFinished() {
-//		// TODO Auto-generated method stub
-//		
-//	}
 	
+	private static File changeFileEnding(File file, String newEnding){
+		File result = new File(file.getAbsolutePath().substring(0,
+				file.getAbsolutePath().length() - 4)
+				+ "." + newEnding);
+		return result;
+	}
+
+
 	private void logIntoFile(String line) {
 		try {			
 			logFile.write(line);			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onQuerySuccessful() {
+		logIntoFile("onQuerySuccessful");
+	}
+
+	@Override
+	public void onQueryError(Object expected, Object real) {
+		logIntoFile("onQueryError");
 	}
 }
