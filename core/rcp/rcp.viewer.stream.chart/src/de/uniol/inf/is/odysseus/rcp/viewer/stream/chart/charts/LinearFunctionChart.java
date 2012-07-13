@@ -75,22 +75,24 @@ public class LinearFunctionChart extends AbstractJFreeChart<Double, IMetaAttribu
 		getChart().getXYPlot().getRangeAxis().setLowerBound(lowerY);
 		getChart().getXYPlot().getRangeAxis().setUpperBound(upperY);
 		getChart().getXYPlot().getDomainAxis().setLowerBound(lowerX);
-		getChart().getXYPlot().getDomainAxis().setUpperBound(upperX);
-		
+		getChart().getXYPlot().getDomainAxis().setUpperBound(upperX);			
 	}
 
-	private void calcRanges(double m, double b){		
-		double mb = m+b;
+	private void calcRanges(double x1, double y1, double x2, double y2){				
 		// positive slope		
-		if(mb>b){
-			lowerY = b*0.95;
-			upperY = mb*1.05;
+		if(y1>=y2){
+			lowerY = y2;
+			upperY = y1;
 		}else{
-			lowerY = mb*0.95;
-			upperY = b*1.05;
+			lowerY = y2;
+			upperY = y1;
 		}
-		lowerX = -0.5;
-		upperX = (lowerX+m)*1.05;
+		lowerX = x1;
+		upperX = x2;		
+		System.out.println("\t x \tLower: "+lowerX);
+		System.out.println("\t x \tUpper: "+upperX);
+		System.out.println("\t y \tLower: "+lowerY);
+		System.out.println("\t y \tUpper: "+upperY);
 		
 	}
 	
@@ -110,11 +112,16 @@ public class LinearFunctionChart extends AbstractJFreeChart<Double, IMetaAttribu
 					double m = tuple.get(slope);
 					double b = tuple.get(intercept);
 					XYSeries series = new XYSeries("f");					
-					calcRanges(m, b);
-					resetRanges();
-					series.add(0, b);					
-					series.add(1, m+b);
+					
+					double x1 = 0;
+					double y1 = b;
+					double x2 = Math.abs(m); 
+					double y2 = m+x2+b;
+					series.add(x1, y1);					
+					series.add(x2, y2);
+					calcRanges(x1, y1, x2, y2);					
 					dataset.addSeries(series);
+					resetRanges();
 				} catch (SWTException e) {
 					dispose();
 					return;
