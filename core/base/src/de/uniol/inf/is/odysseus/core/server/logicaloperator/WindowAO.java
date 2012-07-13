@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW")
 public class WindowAO extends UnaryLogicalOp {
@@ -110,11 +111,6 @@ public class WindowAO extends UnaryLogicalOp {
 		this.windowType = windowType;
 	}
 
-	@Override
-	public String getName() {
-		return WindowAO.class.getSimpleName();
-	}
-
 	@GetParameter(name = "PARTITION")
 	public List<SDFAttribute> getPartitionBy() {
 		if (partitionedBy != null) {
@@ -173,4 +169,5 @@ public class WindowAO extends UnaryLogicalOp {
 		}
 		return true;
 	}
+	
 }

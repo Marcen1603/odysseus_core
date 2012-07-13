@@ -222,7 +222,14 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	 */
 	@Override
 	public String getName() {
-		return name == null ? this.getClass().getSimpleName() : name;
+		if (name == null){
+			name = this.getClass().getSimpleName();
+			if (name.endsWith("AO")){
+				name = name.substring(0,name.length()-2);
+			}
+		}
+		
+		return name;
 	}
 
 	/*
