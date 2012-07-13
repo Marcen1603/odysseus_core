@@ -101,13 +101,17 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 					System.err.println(expected);
 					System.err.println(tuple);
 					System.err.println("Difference at " + expected.compareTo(tuple));
-					//sinkListener.processingError(expected.toString(), tuple.toString());
+					if(sinkListener != null){
+						sinkListener.onQueryError(expected, tuple);
+					}
 				}
 
 				if (expectedResults.isEmpty()) {
 					this.done(port);
 					System.out.println("Finished testing of Query: " + qry);
-					//sinkListener.processingDone();
+					if(sinkListener != null){
+						sinkListener.onQuerySuccessful();
+					}
 				}
 
 			}

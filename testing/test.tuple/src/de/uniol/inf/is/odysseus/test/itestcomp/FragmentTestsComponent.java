@@ -82,7 +82,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 	private Writer logFile;
 	
 	public FragmentTestsComponent() {		
-		try {			
+		try {
 			File file = new File("C:\\Users\\Alex\\Desktop\\ody.txt"); // TODO
 			logFile = new BufferedWriter(new FileWriter(file));
 		} catch (IOException e) {			
@@ -395,8 +395,8 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 
 
 	private void logIntoFile(String line) {
-		try {			
-			logFile.write(line);			
+		try {
+			logFile.write("[" + System.nanoTime() + "] " + line);			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
