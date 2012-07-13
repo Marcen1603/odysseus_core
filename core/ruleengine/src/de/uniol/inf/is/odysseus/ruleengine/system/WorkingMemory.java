@@ -15,10 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.ruleengine.system;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,7 +33,7 @@ public class WorkingMemory {
 	private Map<IRule<?, ?>, Object> notexecuted = new HashMap<IRule<?, ?>, Object>();
 
 	private IWorkingEnvironment<?> env;
-	private List<Object> objects = new ArrayList<Object>();
+	private Collection<Object> objects = new HashSet<Object>();
 	private volatile boolean hasChanged = false;
 
 	private ISession caller;
@@ -147,7 +147,7 @@ public class WorkingMemory {
 		}
 	}
 
-	public List<Object> getCurrentContent() {
+	public Collection<Object> getCurrentContent() {
 		return this.objects;
 	}
 
