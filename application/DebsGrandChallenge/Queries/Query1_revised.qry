@@ -46,9 +46,9 @@ s710_t = RENAME({aliases = ['ts1', 'ts2']} ,SASE({name='SEQ_7_10',heartbeatrate=
 s710 = RENAME({type='s710',aliases = ['ts', 'dt']}, MAP({name='Duration_7_10',expressions = ['toLong(ts2)','toLong(ts2-ts1)']}, s710_t))
 
 /// 24 hour sliding window
-s58_windowed = WINDOW({name='24HourWindow', SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s58)
-s69_windowed = WINDOW({name='24HourWindow',SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s69)
-s710_windowed = WINDOW({name='24HourWindow',SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s710)
+s58_windowed = WINDOW({name='24HourSliding', SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s58)
+s69_windowed = WINDOW({name='24HourSliding',SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s69)
+s710_windowed = WINDOW({name='24HourSliding',SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s710)
 
 /// Operator 10
 sout10_agg = AGGREGATE({Name='MIN_MAX_MAX', dumpAtValueCount=1, aggregations=[		

@@ -3,7 +3,7 @@
 #DEFINE TwentySeconds 20000000000
 #DEFINE SeventySeconds 70000000000
 #PARSER PQL
-#DEFINE LATENCY
+///#DEFINE LATENCY
 #IFDEF LATENCY
 #TRANSCFG StandardLatency
 #DEFINE DUMPPATH F:/Grand Challenge/results/
@@ -13,7 +13,7 @@
 #DOQUERYSHARING true
 #RUNQUERY
 projected =  PROJECT({attributes=['ts','mf01','mf02', 'mf03']}, gchSource)
-mf01prj = WINDOW({SIZE=${OneSecond}, SLIDE=${OneSecond}, type='time'}, projected )
+mf01prj = WINDOW({name='1SecWindow',SIZE=${OneSecond}, SLIDE=${OneSecond}, type='time'}, projected )
 
 /// Operator 1-3
 mf01avg = AGGREGATE({aggregations=[
@@ -46,19 +46,19 @@ op4 = BufferedFilter({predicate = RelationalPredicate('rngmf01 > 0.3 || rngmf02 
 					  s1)
 
 
-s1_windowed = WINDOW({SIZE=${SixtySeconds}, SLIDE=${SixtySeconds}, type='time'}, s1)
+s1_windowed = WINDOW({name='60SecWindow',SIZE=${SixtySeconds}, SLIDE=${SixtySeconds}, type='time'}, s1)
 
 /// Operator 5
 s1_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf01','avgmf01'],['LAST','ts','ts','long']]},s1_windowed)
-s5 = RENAME({type='s5',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf01^(1/3))']}, s1_windowed_last))
+s5 = RENAME({name='PwrS5',type='s5',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf01^(1/3))']}, s1_windowed_last))
 
 /// Operator 6
 s2_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf02','avgmf02'],['LAST','ts','ts','long']]},s1_windowed)
-s6 = RENAME({type='s6',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf02^(1/3))']}, s2_windowed_last))
+s6 = RENAME({name='PwrS6',type='s6',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf02^(1/3))']}, s2_windowed_last))
 
 /// Operator 7
 s3_windowed_last = AGGREGATE({aggregations=[['LAST','avgmf03','avgmf03'],['LAST','ts','ts','long']]},s1_windowed)
-s7 = RENAME({type='s7',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf03^(1/3))']}, s3_windowed_last))
+s7 = RENAME({name='PwrS7',type='s7',aliases=['ts', 'pwr']}, MAP({expressions=['ts','208 / (avgmf03^(1/3))']}, s3_windowed_last))
 
 #IFDEF LATENCY
 filesink1 = FILESINK({file='${DUMPPATH}q2_s5.csv',  filetype='csv', dumpMetaData='true', cachesize = 100}, CALCLATENCY(s5))
