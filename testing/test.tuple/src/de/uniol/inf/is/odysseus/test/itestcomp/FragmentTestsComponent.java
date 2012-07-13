@@ -83,7 +83,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 	
 	public FragmentTestsComponent() {		
 		try {
-			File file = new File("C:\\Users\\Alex\\Desktop\\ody.txt"); // TODO
+			File file = new File("ody.txt"); // TODO
 			logFile = new BufferedWriter(new FileWriter(file));
 		} catch (IOException e) {			
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 
 	@Override
 	public void setUp() {
-		logIntoFile("SET UP " + this.getClass().getSimpleName() + " AT " + new Date().toString() +"\n");
+		logIntoFile("SET UP " + this.getClass().getSimpleName() + " AT " + new Date().toString() + NEWLINE);
 		// lese alle schon installierten bundles aus und führe deren tests durch
 		for(Bundle b : TupleTestActivator.context.getBundles()){
 			checkForTestsAndQueueThem(b);
@@ -156,7 +156,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 	
 	private void checkForTestsAndQueueThem(Bundle bundle) {
 		if (alreadyTested.contains(bundle.getBundleId())) {
-			logIntoFile("ALREADY TESTED - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+			logIntoFile("ALREADY TESTED - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 			return;
 		}
 
@@ -164,7 +164,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 		URL fileUrl = bundle.getResource("tests");
 
 		if(fileUrl == null){
-			logIntoFile("NO TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+			logIntoFile("NO TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 			return;
 		}
 		
@@ -173,7 +173,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 
 			// ... and add to queue for later testing if found
 			if (testsDir != null) {
-				logIntoFile("TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+				logIntoFile("TESTS FOUND - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 				bundlesToTest.add(bundle);
 				
 //				if(!isExecuting)
@@ -209,11 +209,11 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 	
 	private void executeTests(Bundle bundle){		
 		if(alreadyTested.contains(bundle.getBundleId())){
-			logIntoFile("BUNDLE ALREADY TESTED BEFORE - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+			logIntoFile("BUNDLE ALREADY TESTED BEFORE - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 			return;			
 		}
 		
-		logIntoFile("BUNDLE START TESTS - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + "\n");
+		logIntoFile("BUNDLE START TESTS - " + bundle.getSymbolicName() + "(" + bundle.getBundleId() + ")" + NEWLINE);
 				
 		// diese methode soll alle entahlten tests (param) ausführen
 		File testFolder = getTestsFolder(bundle);
@@ -243,7 +243,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 		int errors = 0;
 		
 		for (Entry<String, List<File>> queries : testsQueries.entrySet()) {
-			logIntoFile("CATEGORY START " + queries.getKey() + " WITH " + queries.getValue().size() + " TESTS \n");
+			logIntoFile("CATEGORY START " + queries.getKey() + " WITH " + queries.getValue().size() + " TESTS" + NEWLINE);
 			
 			int success = 0;
 			int fail = 0;
@@ -296,7 +296,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 		
 		LOG.debug("[TESTS] Finished tests for bundle {}", bundle.toString());
 		
-		logIntoFile("BUNDLE END - " + errors + " ERRORS IN THIS BUNDLE\n");
+		logIntoFile("BUNDLE END - " + errors + " ERRORS IN THIS BUNDLE" + NEWLINE);
 	}
 	
 	@Override
@@ -304,7 +304,7 @@ public class FragmentTestsComponent implements ITestComponent, ICompareSinkListe
 		logIntoFile("STARTED " + this.getClass().getSimpleName() + " AT " + new Date().toString()  + NEWLINE);
 		
 		if(isExecuting){
-			logIntoFile("ALREADY EXECUTING");
+			logIntoFile("ALREADY EXECUTING" + NEWLINE);
 			return "Already Executing";
 		}
 		
