@@ -111,24 +111,25 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 											millisecond * 10);
 									short id = buffer.getShort();
 									Coordinate origin = new Coordinate(
-											buffer.getInt(), buffer.getInt());
+											buffer.getFloat() / 100,
+											buffer.getFloat() / 100);
+									short length = buffer.getShort();
 									short width = buffer.getShort();
 									short height = buffer.getShort();
-									short future = buffer.getShort();
 									int cell = buffer.getInt() / 10;
 
-									Grid grid = new Grid(
-											origin, width, height, cell);
+									Grid grid = new Grid(origin, width, length,
+											cell);
 									buffer.compact();
-									while (buffer.position() < width * height
-											* future) {
+									while (buffer.position() < width * length
+											* height) {
 										channel.receive(buffer);
 									}
 									pos = buffer.position();
 									buffer.flip();
 									// FIXME Use 3D Grid when height>1
 									for (int x = 0; x < width; x++) {
-										for (int y = 0; y < height; y++) {
+										for (int y = 0; y < length; y++) {
 											grid.set(x, y,
 													new Double(
 															buffer.get() / 100));
@@ -149,6 +150,8 @@ public class CarGridUDPSourceAdapter extends AbstractPushingSourceAdapter {
 								} else {
 									buffer.clear();
 								}
+							}else {
+								channel.receive(buffer);
 							}
 						}
 					} catch (IOException e) {

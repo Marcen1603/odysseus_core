@@ -124,13 +124,13 @@ public class CarTCPSinkAdapter extends AbstractSinkAdapter implements
 							Grid grid = (Grid) data[1];
 
 							// X Position
-							buffer.putInt((int) grid.origin.x);
+							buffer.putFloat(((float) grid.origin.x) / 100);
 							// Y Position
-							buffer.putInt((int) grid.origin.y);
+							buffer.putFloat(((float) grid.origin.y) / 100);
 							// Grid Length
-							buffer.putShort((short) grid.width);
-							// Grid Width
 							buffer.putShort((short) grid.height);
+							// Grid Width
+							buffer.putShort((short) grid.width);
 							// Grid Height
 							buffer.putShort((short) 1);
 							// Cell Size
