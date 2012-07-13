@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.wrapper.sick;
+package de.uniol.inf.is.odysseus.wrapper.sick.physicaloperator.access;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -40,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
+import de.uniol.inf.is.odysseus.wrapper.sick.SICKConstants;
 import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickReadErrorException;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
@@ -72,6 +75,9 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 	private final static String OUTPUT_STATUS_ATTRIBUTE = "OutputStatus";
 	private final static String SCANNING_FREQUENCY_ATTRIBUTE = "ScanningFrequency";
 	private final static String MEASUREMENT_FREQUENCY_ATTRIBUTE = "MeasurementFrequency";
+
+	public SICKDataHandler() {
+	}
 
 	/**
 	 * Create a new SCAI Data Handler
@@ -139,6 +145,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 			return process(string);
 		} catch (SickReadErrorException e) {
 			LOG.warn(e.getMessage(), e);
+			dumpPackage(string);
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -152,8 +159,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		// TODO Auto-generated method stub
-
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	/*
@@ -165,8 +171,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public int memSize(Object attribute) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	/*
@@ -199,7 +204,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 				LOG.warn(String.format("Dirtyness %s ", dirtyness));
 			}
 		} else if (message.startsWith(SICKConstants.SEA)) {
-			LOG.info(String.format("Receive message %s (%s byte)", message,
+			LOG.debug(String.format("Receive message %s (%s byte)", message,
 					message.getBytes().length + 2));
 		} else if (message.startsWith(SICKConstants.SSN)) {
 			if (SICKConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
@@ -317,7 +322,6 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						final int channels8Bit = Integer.parseInt(data[pos++],
 								16);
 						for (int i = 0; i < channels8Bit; i++) {
-							// TODO Support 8Bit measurements
 							final String name = data[pos++];
 							if ((name.equalsIgnoreCase(SICKConstants.DIST1))
 									|| (name.equalsIgnoreCase(SICKConstants.DIST2))
@@ -330,9 +334,11 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 								final float scalingOffset = Float
 										.intBitsToFloat(((Long) Long.parseLong(
 												data[pos++], 16)).intValue());
+								@SuppressWarnings("unused")
 								final double startingAngle = Double
 										.longBitsToDouble(Long.parseLong(
 												data[pos++], 16)) / 10000;
+								@SuppressWarnings("unused")
 								final double angularStepWidth = ((double) Integer
 										.parseInt(data[pos++], 16)) / 10000;
 
@@ -346,6 +352,23 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 											data[pos++], 16)
 											* scalingFactor
 											+ scalingOffset;
+									if (name.equalsIgnoreCase(SICKConstants.DIST1)) {
+										measurement.getSamples()[j]
+												.setDist1(value);
+
+									} else if (name
+											.equalsIgnoreCase(SICKConstants.DIST2)) {
+										measurement.getSamples()[j]
+												.setDist2(value);
+									} else if (name
+											.equalsIgnoreCase(SICKConstants.RSSI1)) {
+										measurement.getSamples()[j]
+												.setRssi1(value);
+									} else if (name
+											.equalsIgnoreCase(SICKConstants.RSSI2)) {
+										measurement.getSamples()[j]
+												.setRssi2(value);
+									}
 								}
 
 							} else {
@@ -355,28 +378,49 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 						int hasPosition = Integer.parseInt(data[pos++], 16);
 						if (hasPosition == 1) {
-							// TODO Support position information
+							@SuppressWarnings("unused")
 							float xPosition = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							float yPosition = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							float zPosition = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							float xRotation = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							float yRotation = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							float zRotation = Float.intBitsToFloat(((Long) Long
 									.parseLong(data[pos++], 16)).intValue());
+							@SuppressWarnings("unused")
 							int rotationType = Integer.parseInt(data[pos++]);
 						}
 						int hasName = Integer.parseInt(data[pos++], 16);
 						if (hasName == 1) {
-							measurement.setName(data[pos++]);
+							StringBuffer buffer = new StringBuffer();
+							String name = data[pos++];
+							while ((!"0".equals(name)) && (!"1".equals(name))) {
+								buffer.append(name);
+								name = data[pos++];
+							}
+							measurement.setName(buffer.toString());
+							pos--;
 						}
 						int hasComment = Integer.parseInt(data[pos++], 16);
 						if (hasComment == 1) {
-							measurement.setComment(data[pos++]);
+							StringBuffer buffer = new StringBuffer();
+							String comment = data[pos++];
+							while ((!"0".equals(comment))
+									&& (!"1".equals(comment))) {
+								buffer.append(comment);
+								comment = data[pos++];
+							}
+							measurement.setName(buffer.toString());
+							pos--;
 						}
 						int hasTimeInfo = Integer.parseInt(data[pos++], 16);
 						if (hasTimeInfo == 1) {
@@ -389,7 +433,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 							Long milliseconds = Long.parseLong(data[pos++], 16) / 1000;
 							calendar.set(Calendar.YEAR, year);
 							calendar.set(Calendar.MONTH, month);
-							calendar.set(Calendar.DATE, day);
+							calendar.set(Calendar.DAY_OF_MONTH, day);
 							calendar.set(Calendar.HOUR_OF_DAY, hour);
 							calendar.set(Calendar.MINUTE, minute);
 							calendar.set(Calendar.SECOND, second);
@@ -398,11 +442,14 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						}
 						int hasEventInfo = Integer.parseInt(data[pos++], 16);
 						if (hasEventInfo == 1) {
-							// TODO Support event information
+							@SuppressWarnings("unused")
 							String eventType = data[pos++];
+							@SuppressWarnings("unused")
 							int encoderPosition = Integer.parseInt(data[pos++],
 									16);
+							@SuppressWarnings("unused")
 							int eventTime = Integer.parseInt(data[pos++], 16);
+							@SuppressWarnings("unused")
 							int angularPosition = Integer.parseInt(data[pos++],
 									16);
 						}
@@ -459,13 +506,22 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						retObj[i] = event.get(schema.get(i));
 					}
 					ret = new Tuple(retObj, false);
-
 				}
 			}
 		} else {
-			LOG.info(String.format("Receive message %s (%s byte)", message,
+			LOG.debug(String.format("Receive message %s (%s byte)", message,
 					message.getBytes().length + 2));
 		}
 		return ret;
+	}
+
+	private void dumpPackage(final String message) {
+		final File debug = new File("debug.out");
+		try {
+			FileWriter fw = new FileWriter(debug);
+			fw.write(message);
+		} catch (final IOException e) {
+			LOG.error(e.getMessage(), e);
+		}
 	}
 }
