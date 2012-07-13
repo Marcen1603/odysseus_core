@@ -65,7 +65,6 @@ public class TimestampAO extends UnaryLogicalOp {
 		startTimestampSecond= ao.startTimestampSecond;
 		startTimestampMillisecond= ao.startTimestampMillisecond;
 		factor= ao.factor;
-		
 	}
 
 	public TimestampAO() {
@@ -226,6 +225,17 @@ public class TimestampAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true)
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
+	}
+	
+
+	public String getStandardName() {
+		if (isUsingSystemTime){
+			return "SystemTime";
+		}
+		if (isUsingNoTime){
+			return "NoTime";
+		}
+		return "ApplicationTime";
 	}
 	
 }

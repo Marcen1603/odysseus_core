@@ -218,6 +218,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+		timestampAO.setName(timestampAO.getStandardName());
 		return timestampAO;
 	}
 

@@ -51,7 +51,7 @@ s69_windowed = WINDOW({name='24HourWindow',SIZE=${TwentyFourHours}, ADVANCE=1, T
 s710_windowed = WINDOW({name='24HourWindow',SIZE=${TwentyFourHours}, ADVANCE=1, TYPE='TIME'}, s710)
 
 /// Operator 10
-sout10_agg = AGGREGATE({Name='MIN_MAX_MAX_1', dumpAtValueCount=1, aggregations=[		
+sout10_agg = AGGREGATE({Name='MIN_MAX_MAX', dumpAtValueCount=1, aggregations=[		
 		['MIN', 'dt', 'dtmin', 'long'],
 		['MAX', 'dt', 'dtmax', 'long'],
 		['MAX', 'ts', 'ts', 'long']]}, s58_windowed)
@@ -62,7 +62,7 @@ sout10 = RENAME({Name='Alarm_10',aliases = ['alarm', 'ts']}, MAP({expressions=['
 reg11 = REGRESSION({X='ts', Y='dt'}, s58_windowed)
 
 /// Operator 12
-sout12_agg = AGGREGATE({Name='MIN_MAX_MAX_2',dumpAtValueCount=1, aggregations=[		
+sout12_agg = AGGREGATE({Name='MIN_MAX_MAX',dumpAtValueCount=1, aggregations=[		
 		['MIN', 'dt', 'dtmin', 'long'],
 		['MAX', 'dt', 'dtmax', 'long'],
 		['MAX', 'ts', 'ts', 'long']]}, s69_windowed)
@@ -73,7 +73,7 @@ sout12 = RENAME({Name='Alarm_12', aliases = ['alarm', 'ts']}, MAP({expressions=[
 reg13 = REGRESSION({X='ts', Y='dt'}, s69_windowed)
 
 /// Operator 14
-sout14_agg = AGGREGATE({Name='MIN_MAX_MAX_3',dumpAtValueCount=1, aggregations=[		
+sout14_agg = AGGREGATE({Name='MIN_MAX_MAX',dumpAtValueCount=1, aggregations=[		
 		['MIN', 'dt', 'dtmin', 'long'],
 		['MAX', 'dt', 'dtmax', 'long'],
 		['MAX', 'ts', 'ts', 'long']]}, s710_windowed)
