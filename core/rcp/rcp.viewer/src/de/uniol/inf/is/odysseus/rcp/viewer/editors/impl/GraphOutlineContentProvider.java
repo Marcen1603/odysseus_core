@@ -59,9 +59,6 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			
 			Collection<Object> children = new ArrayList<Object>();
 			
-			//toString-Representation
-			children.add("toString(): " + node.getModelNode().getContent().toString());
-			
 			// Add Schemainformation
 			if (node.getModelNode().getContent().getOutputSchema() != null){
 				children.add( node.getModelNode().getContent().getOutputSchema());
@@ -86,7 +83,15 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 				children.addAll(subs);
 			}
 			
+			//toString-Representation
+			children.add(new StringNode(node.getModelNode().getContent().toString()));
+			
+
 			return children.toArray();
+		}
+		
+		if( parentElement instanceof StringNode ) {
+			return new Object[]{ ((StringNode)parentElement).getContent() };
 		}
 		
 		if (parentElement instanceof SDFSchema){
@@ -137,6 +142,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		if (element instanceof SDFSchema) return true;
 		if( element instanceof SDFAttribute) {
 			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
+		}
+		if( element instanceof StringNode ) {
+			return true;
 		}
 		return false;
 	}

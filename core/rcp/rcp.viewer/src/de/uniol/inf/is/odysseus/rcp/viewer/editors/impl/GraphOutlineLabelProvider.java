@@ -92,7 +92,7 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("pipe_icon");
 		}
 		
-		if (element instanceof String) {
+		if (element instanceof String || element instanceof StringNode ) {
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("string");
 		}
 
@@ -142,6 +142,10 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 		
 		if (element instanceof OwnerWrapper){
 			return ((OwnerWrapper)element).content;
+		}
+		
+		if( element instanceof StringNode ) {
+			return "toString()";
 		}
 
 		if( element instanceof String) {
