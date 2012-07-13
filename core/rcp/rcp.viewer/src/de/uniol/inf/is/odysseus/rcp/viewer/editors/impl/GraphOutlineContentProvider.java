@@ -20,6 +20,8 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
@@ -34,6 +36,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
 public class GraphOutlineContentProvider implements ITreeContentProvider {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(GraphOutlineContentProvider.class);
 	private IOdysseusGraphView activeGraph;
 	
 	@Override
@@ -56,22 +59,22 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			
 			Collection<Object> children = new ArrayList<Object>();
 			
+			//toString-Representation
+			children.add("toString(): " + node.getModelNode().getContent().toString());
+			
 			// Add Schemainformation
 			if (node.getModelNode().getContent().getOutputSchema() != null){
-//				for( SDFAttribute attr : node.getModelNode().getContent().getOutputSchema())
-//					children.add(attr);
 				children.add( node.getModelNode().getContent().getOutputSchema());
 			}else{
-				System.err.println("No output Schema for "+node.getModelNode().getContent());
+				LOG.error("No output Schema for {}!", node.getModelNode().getContent());
 			}
-//			if (node.getModelNode().getContent() instanceof IHasPredicate){
-//				children.add(((IHasPredicate)node.getModelNode().getContent()).getPredicate());
-//			}
+
 			StringBuffer owner = new StringBuffer("Part of Query: ");
 			for(IOperatorOwner o: node.getModelNode().getContent().getOwner()){
 				owner.append("#"+o.getID()).append(" ");
 			}
 			children.add(new OwnerWrapper(owner.toString()));
+			
 			// Add Metadatainformation
 			for( String type : node.getModelNode().getContent().getProvidedMonitoringData()){
 				children.add(node.getModelNode().getContent().getMonitoringData(type));

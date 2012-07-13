@@ -91,6 +91,11 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			}
 			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("pipe_icon");
 		}
+		
+		if (element instanceof String) {
+			return OdysseusRCPViewerPlugIn.getDefault().getImageRegistry().get("string");
+		}
+
 
 		return null;
 	}
@@ -102,25 +107,25 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			String name = node.getModelNode().getContent().getName();
 			return name;
 		}
-		if (element != null && element instanceof ISubscription){
+		if (element instanceof ISubscription){
 			ISubscription<?> s = (ISubscription<?>) element;
 			return " In("+s.getSinkInPort()+") "+" out("+s.getSourceOutPort()+") "+s.getTarget();
 		}
-		if (element != null && element instanceof SDFSchema){				
+		if (element instanceof SDFSchema){				
 			return "OutputSchema ("+((SDFSchema)element).getURI()+")";
 		}
 
-		if (element != null && element instanceof IPredicate){				
+		if (element instanceof IPredicate){				
 			return element.toString();
 		}
 
-		if (element != null && element instanceof SDFAttribute){
+		if (element instanceof SDFAttribute){
 			SDFAttribute a = (SDFAttribute) element;
 			StringBuffer name = new StringBuffer(a.getURI());
 			name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
-		if (element != null && element instanceof IMonitoringData<?>) {
+		if (element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
 			final String type = monData.getType();
 			
@@ -135,10 +140,14 @@ public class GraphOutlineLabelProvider implements ILabelProvider {
 			return type + " = " + valueString;
 		}
 		
-		if (element != null && element instanceof OwnerWrapper){
+		if (element instanceof OwnerWrapper){
 			return ((OwnerWrapper)element).content;
 		}
 
+		if( element instanceof String) {
+			return (String)element;
+		}
+		
 		return element.getClass().getName();
 	}
 
