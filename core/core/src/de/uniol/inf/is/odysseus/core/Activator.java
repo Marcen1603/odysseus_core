@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.core;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.ListDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SASizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
@@ -63,6 +65,8 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
+		
+		DataHandlerRegistry.registerDataHandler(new ListDataHandler());
 	}
 
 	/*

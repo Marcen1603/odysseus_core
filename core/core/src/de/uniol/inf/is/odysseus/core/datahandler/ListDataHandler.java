@@ -37,6 +37,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	SDFSchema subType = null;
 	IDataHandler<?> handler = null;
 	
+	public ListDataHandler(){
+		// Needed for declarative service!
+	}
+	
 	public ListDataHandler(SDFSchema subType){
 		this.subType = subType;
 		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
