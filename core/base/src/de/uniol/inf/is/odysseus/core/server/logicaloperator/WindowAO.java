@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW")
 public class WindowAO extends UnaryLogicalOp {
