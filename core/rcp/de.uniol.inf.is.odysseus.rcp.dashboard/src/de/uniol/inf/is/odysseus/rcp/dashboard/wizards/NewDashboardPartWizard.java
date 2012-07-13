@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -41,6 +42,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
@@ -89,7 +91,8 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			part.setQueryTextProvider(createQueryTextProvider(queryFilePage.isQueryFileCopy(), queryFilePage.getQueryFile()));
 			
 			IDashboardPartHandler handler = new XMLDashboardPartHandler();
-			handler.save(part, dashboardPartFile);
+			List<String> lines = handler.save(part);
+			FileUtil.write(lines, dashboardPartFile);
 			
 			return true;
 		} catch (CancelException ex) {

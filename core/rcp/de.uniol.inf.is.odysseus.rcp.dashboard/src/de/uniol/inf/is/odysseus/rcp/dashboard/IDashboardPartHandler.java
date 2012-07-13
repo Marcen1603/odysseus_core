@@ -16,12 +16,11 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
 import java.io.FileNotFoundException;
-
-import org.eclipse.core.resources.IFile;
+import java.util.List;
 
 public interface IDashboardPartHandler {
 
-	public void save( IDashboardPart part, IFile to) throws DashboardHandlerException;
-	public IDashboardPart load( IFile from) throws DashboardHandlerException, FileNotFoundException;
+	public List<String> save( IDashboardPart part) throws DashboardHandlerException;
+	public IDashboardPart load( List<String> lines) throws DashboardHandlerException, FileNotFoundException;
 	
 }

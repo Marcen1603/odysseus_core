@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,6 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class DashboardEditor extends EditorPart {
 
@@ -75,7 +77,7 @@ public class DashboardEditor extends EditorPart {
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboard = DASHBOARD_HANDLER.load(this.input.getFile(), DASHBOARD_PART_HANDLER);
+			dashboard = DASHBOARD_HANDLER.load(FileUtil.read(this.input.getFile()), DASHBOARD_PART_HANDLER);
 			controllers = createControllers(dashboard.getDashboardPartPlacements());
 		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
@@ -83,19 +85,10 @@ public class DashboardEditor extends EditorPart {
 		} catch (FileNotFoundException ex) {
 			LOG.error("Could not load query file!", ex);
 			throw new PartInitException("Could not load query file!", ex);
+		} catch (CoreException ex) {
+			LOG.error("Could not load Dashboard!", ex);
+			throw new PartInitException("Could not load Dashboard!", ex);
 		}
-	}
-
-	private static Map<IDashboardPart, DashboardPartController> createControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
-		Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
-
-		for (DashboardPartPlacement place : dashboardPartPlacements) {
-			IDashboardPart part = place.getDashboardPart();
-			DashboardPartController controller = new DashboardPartController(part);
-			controllers.put(part, controller);
-		}
-
-		return controllers;
 	}
 
 	@Override
@@ -107,11 +100,11 @@ public class DashboardEditor extends EditorPart {
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-	
+
 	@Override
 	public void dispose() {
 		stopDashboard();
-		
+
 		super.dispose();
 	}
 
@@ -119,9 +112,9 @@ public class DashboardEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
-		
+
 		dashboard.createPartControl(parent, toolBar);
-		
+
 		try {
 			startDashboard();
 		} catch (Exception ex) {
@@ -135,14 +128,26 @@ public class DashboardEditor extends EditorPart {
 	}
 
 	private void startDashboard() throws Exception {
-		for( DashboardPartController controller : controllers.values() ) {
+		for (DashboardPartController controller : controllers.values()) {
 			controller.start();
 		}
 	}
-	
+
 	private void stopDashboard() {
-		for( DashboardPartController controller : controllers.values() ) {
+		for (DashboardPartController controller : controllers.values()) {
 			controller.stop();
 		}
+	}
+
+	private static Map<IDashboardPart, DashboardPartController> createControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
+		Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
+
+		for (DashboardPartPlacement place : dashboardPartPlacements) {
+			IDashboardPart part = place.getDashboardPart();
+			DashboardPartController controller = new DashboardPartController(part);
+			controllers.put(part, controller);
+		}
+
+		return controllers;
 	}
 }

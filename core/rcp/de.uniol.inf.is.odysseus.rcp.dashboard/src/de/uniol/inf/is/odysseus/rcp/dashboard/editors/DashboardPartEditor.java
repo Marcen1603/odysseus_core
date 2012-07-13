@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 import java.io.FileNotFoundException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -67,6 +68,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 public class DashboardPartEditor extends EditorPart implements IConfigurationListener {
@@ -92,11 +94,14 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			DASHBOARD_PART_HANDLER.save(dashboardPart, input.getFile());
+			FileUtil.write(DASHBOARD_PART_HANDLER.save(dashboardPart), this.input.getFile());
+			
 			setDirty(false);
 
 		} catch (DashboardHandlerException e) {
 			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), e);
+		} catch (CoreException ex) {
+			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), ex);
 		}
 	}
 
@@ -118,7 +123,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
+			dashboardPart = DASHBOARD_PART_HANDLER.load(FileUtil.read(this.input.getFile()));
 			dashboardPart.getConfiguration().addListener(this);
 
 			dashboardPartController = new DashboardPartController(dashboardPart);
@@ -126,6 +131,9 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
 		} catch (FileNotFoundException ex) {
+			LOG.error("Could not load corresponding query file!", ex);
+			throw new PartInitException("Could not load corresponding query file!", ex);
+		} catch (CoreException ex) {
 			LOG.error("Could not load corresponding query file!", ex);
 			throw new PartInitException("Could not load corresponding query file!", ex);
 		}
