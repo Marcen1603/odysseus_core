@@ -366,8 +366,8 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 			boolean foundmatch = false;
 			for (PhysicalSubscription<?> s2 : otherSubs) {
 				// Subscription enth�lt gleiche Quelle und gleiche Ports
-				if (((ISource<?>) s1.getTarget()).getName().equals(
-						((ISource<?>) s2.getTarget()).getName())
+				if (((ISource<?>) s1.getTarget()) ==
+						((ISource<?>) s2.getTarget())
 						&& s1.getSinkInPort() == s2.getSinkInPort()
 						&& s1.getSourceOutPort() == s2.getSourceOutPort()
 						&& s1.getSchema().compareTo(s2.getSchema()) == 0) {
@@ -399,5 +399,16 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 		return this.metadataAttributeSchema;
 	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof IPipe))
+			return false;
+		if (!this.hasSameSources(ipo)){
+			return false;
+		}
+		return process_isSemanticallyEqual(ipo);
+	}
+
 
 }

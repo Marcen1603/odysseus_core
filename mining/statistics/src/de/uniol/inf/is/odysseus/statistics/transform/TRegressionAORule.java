@@ -56,10 +56,7 @@ public class TRegressionAORule extends AbstractTransformationRule<RegressionAO>{
 		int x = operator.getInputSchema().indexOf(operator.getAttributeX());
 		int y = operator.getInputSchema().indexOf(operator.getAttributeY());
 		RegressionPO<ITimeInterval, Tuple<ITimeInterval>> po = new RegressionPO<ITimeInterval, Tuple<ITimeInterval>>(x, y);
-		po.setOutputSchema(operator.getOutputSchema());
-		replace(operator, po, config);
-		retract(operator);
-		
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

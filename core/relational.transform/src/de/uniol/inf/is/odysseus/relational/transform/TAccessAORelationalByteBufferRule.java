@@ -58,14 +58,8 @@ public class TAccessAORelationalByteBufferRule extends AbstractTransformationRul
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
-		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(accessAO);
-		insert(accessPO);
+		defaultExecute(accessAO, accessPO, transformConfig, true, true);
 	}
 
 	@Override

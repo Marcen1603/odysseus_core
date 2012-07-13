@@ -34,14 +34,11 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	@Override
 	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {		
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-		selectPO.setOutputSchema(selectAO.getOutputSchema());
 		if (selectAO.getHeartbeatRate() > 0){
 			selectPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					selectAO.getHeartbeatRate()));
 		}
-		replace(selectAO, selectPO, transformConfig);		
-		retract(selectAO);
-		
+		defaultExecute(selectAO, selectPO, transformConfig, true, true);
 	}
 
 	@Override

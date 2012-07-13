@@ -53,14 +53,12 @@ public class TTupleCompareSinkAORule extends AbstractTransformationRule<TupleCom
 	public void execute(TupleCompareSinkAO operator, TransformationConfiguration config) {
 		//ISink<?> sinkPO = getDataDictionary().getSink(operator.getSinkName());
 
-		ISink<?> sinkPO = new TupleCompareSinkPO();
-		
-		sinkPO = new TupleCompareSinkPO(operator.getFileName());			
-		sinkPO.setOutputSchema(operator.getOutputSchema());
+		ISink<?> sinkPO = new TupleCompareSinkPO(operator.getFileName());
+
 		//getDataDictionary().putSink("TupleCompareSink", sinkPO);
 		
-		replace(operator, sinkPO, config);		
-		retract(operator);		
+		defaultExecute(operator, sinkPO, config, true, true);		
+		
 	}
 
 	@Override

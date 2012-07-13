@@ -15,12 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.util.Collection;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.CSVTransformer;
@@ -59,16 +56,8 @@ public class TFileAccessAORule extends AbstractTransformationRule<FileAccessAO> 
 		ISource<?> fileAccessPO = new AccessPO<String,Tuple<?>>(input, transform, 
 				dataHandler);
 
-		fileAccessPO.setOutputSchema(fileAccessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(fileAccessPOName, fileAccessPO);
-		Collection<ILogicalOperator> toUpdate = transformConfig
-				.getTransformationHelper().replace(fileAccessAO, fileAccessPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-
-		retract(fileAccessAO);
-		insert(fileAccessPO);
+		defaultExecute(fileAccessAO, fileAccessPO, transformConfig, true, true);
 
 	}
 

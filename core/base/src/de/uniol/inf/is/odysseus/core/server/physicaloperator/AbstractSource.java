@@ -602,7 +602,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ISource || ipo instanceof IPipe))
-			return false;
+			return false;		
 		return process_isSemanticallyEqual(ipo);
 	}
 

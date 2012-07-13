@@ -71,7 +71,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IMetaAttributeContaine
 		}
 		MetadataUpdatePO<?,?> mdupo = (MetadataUpdatePO<?,?>) ipo;
 		if(this.hasSameSources(mdupo) &&
-				this.metadataFactory.getName().equals(mdupo.metadataFactory.getName())) {
+				this.metadataFactory.equals(mdupo.metadataFactory)) {
 			return true;
 		}
 		return false;

@@ -215,8 +215,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 		}
 
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		defaultExecute(operator, accessPO, config, true);
-		insert(accessPO);
+		defaultExecute(operator, accessPO, config, true,true);
 	}
 
 	@Override

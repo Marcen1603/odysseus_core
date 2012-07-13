@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.cep.transform;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCreator;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
@@ -67,19 +65,13 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 			e.printStackTrace();
 		}
 
-		cepPO.setOutputSchema(cepAO.getOutputSchema());
 
 		if (cepAO.getHeartbeatRate() > 0) {
 			cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					cepAO.getHeartbeatRate()));
 		}
 
-		Collection<ILogicalOperator> toUpdate = transformConfig
-				.getTransformationHelper().replace(cepAO, cepPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(cepAO);
+		defaultExecute(cepAO, cepPO, transformConfig, true, true);
 	}
 
 	@Override

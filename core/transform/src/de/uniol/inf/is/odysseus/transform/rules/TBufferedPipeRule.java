@@ -40,7 +40,7 @@ public class TBufferedPipeRule extends AbstractTransformationRule<BufferAO> {
 			po = new BufferedPipe();
 		}
 		po.setBufferName(algebraOp.getBuffername());
-		defaultExecute(algebraOp, po, trafo, true);	
+		defaultExecute(algebraOp, po, trafo, true, true);	
 	}
 
 	@Override

@@ -63,4 +63,31 @@ public class ObjectTrackingMetadataFactory extends AbstractMetadataUpdater<Objec
 		inElem.getMetadata().setCovariance(cov);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ObjectTrackingMetadataFactory other = (ObjectTrackingMetadataFactory) obj;
+		if (schema == null) {
+			if (other.schema != null)
+				return false;
+		} else if (!schema.equals(other.schema))
+			return false;
+		return true;
+	}
+	
+	
+
 }

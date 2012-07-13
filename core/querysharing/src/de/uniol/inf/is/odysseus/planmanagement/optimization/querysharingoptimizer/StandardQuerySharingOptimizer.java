@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	
 	@Override
+
 	public synchronized void applyQuerySharing(Collection<IPhysicalQuery> plan, List<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
 		boolean restructuringAllowed;
 		if(conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
@@ -106,8 +107,12 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 				IPhysicalOperator op1 = ipos.get(i);
 				IPhysicalOperator op2 = ipos.get(j);
 				//Einer der Operatoren ist zum Austausch berechtigt und es ist nicht ein und derselbe
-				if((newOps.contains(op1) || newOps.contains(op2) || restructuringAllowed)
-						&& !op1.getName().equals(op2.getName())) {
+				if((newOps.contains(op1) || newOps.contains(op2) || restructuringAllowed)){
+					
+					if (op1.equals(op2)) {
+						continue;
+					}
+						
 
 
 					//Schritt 1: Entfernen von identischen Operatoren

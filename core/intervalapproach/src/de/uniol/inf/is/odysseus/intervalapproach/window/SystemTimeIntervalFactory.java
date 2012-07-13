@@ -30,5 +30,5 @@ public class SystemTimeIntervalFactory <M extends ITimeInterval, T extends IMeta
 		M metadata = inElem.getMetadata();
 		metadata.setStart(PointInTime.currentPointInTime());
 	}
-
+		
 }

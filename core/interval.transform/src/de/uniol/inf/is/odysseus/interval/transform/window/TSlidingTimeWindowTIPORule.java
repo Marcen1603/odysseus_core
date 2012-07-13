@@ -15,10 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.interval.transform.window;
 
-import java.util.Collection;
-
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -40,15 +36,7 @@ public class TSlidingTimeWindowTIPORule extends
 	public void execute(WindowAO windowAO,
 			TransformationConfiguration transformConfig) {
 		SlidingTimeWindowTIPO windowPO = new SlidingTimeWindowTIPO(windowAO);
-		windowPO.setOutputSchema(windowAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig
-				.getTransformationHelper().replace(windowAO, windowPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		insert(windowPO);
-		retract(windowAO);
-
+		defaultExecute(windowAO, windowPO, transformConfig, true, true);
 	}
 
 	@Override

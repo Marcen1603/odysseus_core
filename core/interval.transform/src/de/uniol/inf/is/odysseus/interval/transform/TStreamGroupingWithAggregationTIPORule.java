@@ -15,9 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
@@ -39,20 +36,12 @@ public class TStreamGroupingWithAggregationTIPORule extends AbstractTransformati
 	public void execute(AggregateAO aggregateAO, TransformationConfiguration transformConfig) {
 		StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>> po = new StreamGroupingWithAggregationPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>, MetaAttributeContainer<ITimeInterval>>(aggregateAO.getInputSchema(), aggregateAO.getOutputSchemaIntern(0) , aggregateAO.getGroupingAttributes(),
 				aggregateAO.getAggregations());
-		po.setOutputSchema(aggregateAO.getOutputSchema()); 
 		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
 		po.setMetadataMerge(new CombinedMergeFunction<ITimeInterval>());
 		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation gesetzt!!
 		//((CombinedMergeFunction) po.getMetadataMerge()).add(new TimeIntervalInlineMetadataMergeFunction());
-
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(aggregateAO, po);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-
-		insert(po);
-		retract(aggregateAO);
-
+		defaultExecute(aggregateAO, po, transformConfig, true, true);
+		
 	}
 
 	@Override

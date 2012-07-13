@@ -34,7 +34,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
 	public void execute(SinkAO operator,
 			TransformationConfiguration config) {
 		SinkPO<?> sinkPO = new SinkPO<IMetaAttribute>();
-		defaultExecute(operator, sinkPO, config, true);
+		defaultExecute(operator, sinkPO, config, true, true);
 	}
 
 	@Override

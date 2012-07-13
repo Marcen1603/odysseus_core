@@ -24,5 +24,13 @@ abstract public class AbstractMetadataUpdater<M extends IClone, T extends IMetaA
 	public String getName() {
 		return getClass().getSimpleName();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof AbstractMetadataUpdater)){
+			return false;
+		}
+		return ((AbstractMetadataUpdater<?,?>)obj).getName().equals(getName());
+	}
 
 }

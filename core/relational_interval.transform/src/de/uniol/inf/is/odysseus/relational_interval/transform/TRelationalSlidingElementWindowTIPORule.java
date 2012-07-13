@@ -15,9 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -40,14 +37,8 @@ public class TRelationalSlidingElementWindowTIPORule extends
 			TransformationConfiguration transformConfig) {
 		RelationalSlidingElementWindowTIPO windowPO = new RelationalSlidingElementWindowTIPO(
 				windowAO);
-		windowPO.setOutputSchema(windowAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig
-				.getTransformationHelper().replace(windowAO, windowPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
+		defaultExecute(windowAO, windowPO, transformConfig, true, true);
 		insert(windowPO);
-		retract(windowAO);
 	}
 
 	@Override

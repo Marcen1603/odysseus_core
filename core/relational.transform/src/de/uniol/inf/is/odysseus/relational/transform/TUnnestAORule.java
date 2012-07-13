@@ -15,9 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -40,14 +37,7 @@ public class TUnnestAORule extends AbstractTransformationRule<UnNestAO> {
     public void execute(final UnNestAO operator, final TransformationConfiguration config) {
         final RelationalUnNestPO<?> po = new RelationalUnNestPO<IMetaAttribute>(
                 operator.getInputSchema(), operator.getAttributePosition());
-        po.setOutputSchema(operator.getOutputSchema());
-        final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
-                operator, po);
-        for (final ILogicalOperator o : toUpdate) {
-            this.update(o);
-        }
-        this.retract(operator);
-
+        defaultExecute(operator, po, config, true, true);
     }
 
     /*

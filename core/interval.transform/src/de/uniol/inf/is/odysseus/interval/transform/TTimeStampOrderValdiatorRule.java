@@ -15,9 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.interval.transform;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.MetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimeStampOrderValidatorAO;
@@ -38,9 +37,7 @@ public class TTimeStampOrderValdiatorRule extends
 	public void execute(TimeStampOrderValidatorAO operator,
 			TransformationConfiguration config) {		
 		TimeStampOrderValidatorTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>();
-		po.setOutputSchema(po.getOutputSchema());
-		replace(operator,po,config);
-		retract(operator);
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

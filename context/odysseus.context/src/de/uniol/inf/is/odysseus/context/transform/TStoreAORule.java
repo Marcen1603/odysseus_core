@@ -57,10 +57,8 @@ public class TStoreAORule extends AbstractTransformationRule<StoreAO>{
 	public void execute(StoreAO operator, TransformationConfiguration config) {
 		IContextStore<Tuple<? extends ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());			
 		StorePO<Tuple<? extends ITimeInterval>> newOperator = new StorePO<Tuple<? extends ITimeInterval>>(store);
-		newOperator.setOutputSchema(operator.getOutputSchema());
 		store.setWriter(newOperator);
-		replace(operator, newOperator, config);
-		retract(operator);		
+		defaultExecute(operator, newOperator, config, true, true);
 	}
 
 	@Override

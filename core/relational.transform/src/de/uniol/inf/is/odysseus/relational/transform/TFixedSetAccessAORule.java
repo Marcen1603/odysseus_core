@@ -15,11 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.FixedSetPO;
@@ -38,16 +35,8 @@ public class TFixedSetAccessAORule extends AbstractTransformationRule<FixedSetAc
 	public void execute(FixedSetAccessAO<?> accessAO, TransformationConfiguration transformConfig) {
 		String accessPOName = accessAO.getSourcename();
 		ISource<?> accessPO = new FixedSetPO<IMetaAttributeContainer<?>>(accessAO.getTuples());
-		accessPO.setOutputSchema(accessAO.getOutputSchema());
 		getDataDictionary().putAccessPlan(accessPOName, accessPO);
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(accessAO, accessPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		
-		retract(accessAO);
-		insert(accessPO);
-		
+		defaultExecute(accessAO, accessPO, transformConfig, true, true);
 	}
 
 	@Override

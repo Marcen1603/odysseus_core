@@ -15,9 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform.window;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -38,12 +35,7 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 	@Override
 	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
 		UnboundedWindowTIPO window = new UnboundedWindowTIPO(windowAO);
-		window.setOutputSchema(windowAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(windowAO, window);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(windowAO);
+		defaultExecute(windowAO, window, transformConfig, true, true);
 	}
 
 	@Override

@@ -15,9 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -36,12 +33,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public void execute(ProjectAO projectAO, TransformationConfiguration transformConfig) {		
 		RelationalProjectPO<?> projectPO = new RelationalProjectPO<IMetaAttribute>(projectAO.determineRestrictList());
-		projectPO.setOutputSchema(projectAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(projectAO,projectPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(projectAO);
+		defaultExecute(projectAO, projectPO, transformConfig, true, true);
 	}
 
 	@Override

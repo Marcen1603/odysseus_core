@@ -37,7 +37,7 @@ public class TChangeDetectAORule extends
 	public void execute(ChangeDetectAO operator,
 			TransformationConfiguration config) {
 		ChangeDetectPO<?> po = new ChangeDetectPO<IMetaAttribute>();
-		defaultExecute(operator, po, config, true);
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

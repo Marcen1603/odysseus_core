@@ -37,7 +37,7 @@ public class TUserDefinedOperatorPO extends
 		UserDefinedOperatorPO po = new UserDefinedOperatorPO();
 		po.setInitString(operator.getInitString());
 		po.setUdf(operator.getUdf());		
-		defaultExecute(operator, po, config, true);
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

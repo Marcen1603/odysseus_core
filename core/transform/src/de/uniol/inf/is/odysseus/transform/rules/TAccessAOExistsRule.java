@@ -37,12 +37,8 @@ public class TAccessAOExistsRule extends AbstractTransformationRule<AccessAO> {
 		ISource<?> accessPO = getDataDictionary().getAccessPlan(accessAO.getSourcename());
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafo = " + trafo);
 		LoggerSystem.printlog(Accuracy.TRACE, "Transform to existing AccessPO: trafoHelper = " + trafo.getTransformationHelper());
+		defaultExecute(accessAO, accessPO, trafo, true, true);
 		accessPO.setName(accessAO.getSourcename());
-		replace(accessAO, accessPO, trafo);		
-		retract(accessAO);
-		insert(accessPO);
-
-		
 	}
 
 	@Override

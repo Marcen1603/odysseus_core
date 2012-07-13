@@ -33,7 +33,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) {		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-		defaultExecute(selectAO, selectPO, transformConfig, true);		
+		defaultExecute(selectAO, selectPO, transformConfig, true, true);		
 	}
 
 	@Override

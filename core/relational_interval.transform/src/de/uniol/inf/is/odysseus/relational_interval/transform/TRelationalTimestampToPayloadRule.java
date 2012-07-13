@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
@@ -37,13 +34,7 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	@Override
 	public void execute(TimestampToPayloadAO operator,
 			TransformationConfiguration config) {
-		RelationalTimestampToPayloadPO po = new RelationalTimestampToPayloadPO();
-		po.setOutputSchema(operator.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(operator);
+		defaultExecute(operator, new RelationalTimestampToPayloadPO(), config, true, true);		
 	}
 
 	@Override

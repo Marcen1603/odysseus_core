@@ -15,9 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform.join;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
@@ -69,14 +66,9 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
-		joinPO.setOutputSchema(joinAO.getOutputSchema() == null?null:joinAO.getOutputSchema().clone());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(joinAO, joinPO);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		insert(joinPO);
-		retract(joinAO);		
+		
+		defaultExecute(joinAO, joinPO, transformConfig, true, true);
 	}
 
 	@Override

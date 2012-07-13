@@ -30,51 +30,46 @@ import de.uniol.inf.is.odysseus.wrapper.base.physicaloperator.SourcePO;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
 public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
-    private static Logger LOG = LoggerFactory.getLogger(TAccessAO2SourceRule.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(TAccessAO2SourceRule.class);
 
-    @Override
-    public int getPriority() {
-        return 10;
-    }
+	@Override
+	public int getPriority() {
+		return 10;
+	}
 
-    @Override
-    public void execute(final AccessAO operator, final TransformationConfiguration config) {
-        try {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-			SourcePO<?> po = new SourcePO(operator.getOutputSchema(), operator.getWrapper(),
-                    operator.getOptionsMap());
-//            if (SourcePool.hasSemanticallyEqualSource(po)) {
-//                po = SourcePool.getSemanticallyEqualSource(po);
-//            }else {
-                SourcePool.registerSource(operator.getWrapper(), po, operator.getOptionsMap());
-//            }
-            final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
-                    operator, po);
-            for (final ILogicalOperator o : toUpdate) {
-                this.update(o);
-            }
-            retract(operator);
-            insert(po);
-        }
-        catch (final Exception e) {
-            TAccessAO2SourceRule.LOG.error(e.getMessage(), e);
-        }
-    }
+	@Override
+	public void execute(final AccessAO operator,
+			final TransformationConfiguration config) {
+		try {
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			SourcePO<?> po = new SourcePO(operator.getOutputSchema(),
+					operator.getWrapper(), operator.getOptionsMap());
 
-    @Override
-    public boolean isExecutable(final AccessAO operator, final TransformationConfiguration config) {
-    	//TODO: Remove hard coded google
-    	return (operator.getWrapper() != null && !"GoogleProtoBuf".equalsIgnoreCase(operator.getWrapper()) );
-    }
+			SourcePool.registerSource(operator.getWrapper(), po,
+					operator.getOptionsMap());
+			defaultExecute(operator, po, config, true, true);
+		} catch (final Exception e) {
+			TAccessAO2SourceRule.LOG.error(e.getMessage(), e);
+		}
+	}
 
-    @Override
-    public String getName() {
-        return "AccessAO -> SourcePO";
-    }
+	@Override
+	public boolean isExecutable(final AccessAO operator,
+			final TransformationConfiguration config) {
+		// TODO: Remove hard coded google
+		return (operator.getWrapper() != null && !"GoogleProtoBuf"
+				.equalsIgnoreCase(operator.getWrapper()));
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.ACCESS;
-    }
+	@Override
+	public String getName() {
+		return "AccessAO -> SourcePO";
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.ACCESS;
+	}
 
 }

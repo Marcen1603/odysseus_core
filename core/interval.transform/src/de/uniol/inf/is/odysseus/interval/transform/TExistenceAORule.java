@@ -51,12 +51,7 @@ public class TExistenceAORule extends AbstractTransformationRule<ExistenceAO> {
 		leftSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
 		rightSA.setQueryPredicate(ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), predicate));
 		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(existenceAO, leftSA, rightSA);
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(existenceAO, po);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(existenceAO);
-		
+		defaultExecute(existenceAO, po, transformConfig, true, true);
 	}
 
 	@Override

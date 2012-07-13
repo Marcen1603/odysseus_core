@@ -162,8 +162,68 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		}
 		return time;
 	}
+	
+	
 
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (clearEnd ? 1231 : 1237);
+		result = prime * result + ((df == null) ? 0 : df.hashCode());
+		result = prime * result + endAttrPos;
+		result = prime * result + factor;
+		result = prime * result + startAttrPos;
+		result = prime * result + startTimestampDayPos;
+		result = prime * result + startTimestampHourPos;
+		result = prime * result + startTimestampMillisecondPos;
+		result = prime * result + startTimestampMinutePos;
+		result = prime * result + startTimestampMonthPos;
+		result = prime * result + startTimestampSecondPos;
+		result = prime * result + startTimestampYearPos;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RelationalTimestampAttributeTimeIntervalMFactory other = (RelationalTimestampAttributeTimeIntervalMFactory) obj;
+		if (clearEnd != other.clearEnd)
+			return false;
+		if (df == null) {
+			if (other.df != null)
+				return false;
+		} else if (!df.equals(other.df))
+			return false;
+		if (endAttrPos != other.endAttrPos)
+			return false;
+		if (factor != other.factor)
+			return false;
+		if (startAttrPos != other.startAttrPos)
+			return false;
+		if (startTimestampDayPos != other.startTimestampDayPos)
+			return false;
+		if (startTimestampHourPos != other.startTimestampHourPos)
+			return false;
+		if (startTimestampMillisecondPos != other.startTimestampMillisecondPos)
+			return false;
+		if (startTimestampMinutePos != other.startTimestampMinutePos)
+			return false;
+		if (startTimestampMonthPos != other.startTimestampMonthPos)
+			return false;
+		if (startTimestampSecondPos != other.startTimestampSecondPos)
+			return false;
+		if (startTimestampYearPos != other.startTimestampYearPos)
+			return false;
+		return true;
+	}
+
 	public static void main(String[] args) throws ParseException {
 		String test = "2012-02-22T16:50:34.2669408+00:00";
 		String form = "yyyy-MM-dd'T'HH:mm:ss.SSS";

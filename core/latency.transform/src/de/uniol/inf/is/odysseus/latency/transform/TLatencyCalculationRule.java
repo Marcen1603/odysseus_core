@@ -35,9 +35,7 @@ public class TLatencyCalculationRule extends
 			TransformationConfiguration config) {
 		@SuppressWarnings("rawtypes")
 		LatencyCalculationPipe pO = new LatencyCalculationPipe();
-		pO.setOutputSchema(operator.getOutputSchema());
-		replace(operator, pO, config);		
-		retract(operator);		
+		defaultExecute(operator, pO, config, true, true);
 	}
 
 	@Override

@@ -32,8 +32,7 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO operator, TransformationConfiguration config) {
-		RenamePO<?> renamePO = new RenamePO<IMetaAttribute>();
-		defaultExecute(operator, renamePO, config ,true);
+		defaultExecute(operator, new RenamePO<IMetaAttribute>(), config ,true, true);
 	}
 
 	@Override

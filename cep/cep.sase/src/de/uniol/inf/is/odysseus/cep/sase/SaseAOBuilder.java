@@ -39,10 +39,14 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 	
 	private final IntegerParameter heartbeatrate = new IntegerParameter("heartbeatrate", REQUIREMENT.OPTIONAL);
 
+	private final StringParameter name = new StringParameter("Name",
+			REQUIREMENT.OPTIONAL);
+
+	
 
 	public SaseAOBuilder() {
 		super("SASE", 1, Integer.MAX_VALUE);
-		addParameters(query, oneMatchPerInstance, heartbeatrate);
+		addParameters(query, name, oneMatchPerInstance, heartbeatrate);
 	}
 
 	@Override
@@ -71,6 +75,10 @@ public class SaseAOBuilder extends AbstractOperatorBuilder {
 			((PatternDetectAO<?>)ret).setHeartbeatRate(heartbeatrate.getValue());
 		}
 
+		if (name.hasValue()){
+			ret.setName(name.getValue());
+		}
+		
 		return ret;
 	}
 

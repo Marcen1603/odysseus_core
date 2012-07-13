@@ -37,12 +37,7 @@ public class TDifferenceAORule extends AbstractTransformationRule<DifferenceAO> 
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) {
 		AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, MetaAttributeContainer<ITimeInterval>>(differenceAO);
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(differenceAO, po);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(differenceAO);
-		
+		defaultExecute(differenceAO, po, transformConfig, true, true);		
 	}
 
 	@Override

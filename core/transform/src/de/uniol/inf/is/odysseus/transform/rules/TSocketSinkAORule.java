@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
-import java.util.Collection;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
@@ -60,14 +57,7 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
 				getDataDictionary().putSink(operator.getName(), socketSinkPO);
 			}
-			Collection<ILogicalOperator> toUpdate = config
-					.getTransformationHelper().replace(operator, socketSinkPO, true);
-			for (ILogicalOperator o : toUpdate) {
-				update(o);
-			}
-
-			retract(operator);
-			insert(socketSinkPO);
+			defaultExecute(operator, socketSinkPO, config, true, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

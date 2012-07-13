@@ -37,14 +37,12 @@ public class TRelationalChangeDetectAORule extends
 			TransformationConfiguration config) {
 		RelationalChangeDetectPO po = new RelationalChangeDetectPO(
 				operator.getComparePositions());
-		po.setOutputSchema(operator.getOutputSchema());
 		if (operator.getHeartbeatRate() > 0) {
 			po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
 					operator.getHeartbeatRate()));
 		}
 		po.setDeliverFirstElement(operator.isDeliverFirstElement());
-		replace(operator, po, config);
-		retract(operator);
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override

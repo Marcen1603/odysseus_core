@@ -59,12 +59,7 @@ public class TApplicationTimestampRule extends AbstractTransformationRule<Timest
 		}
 		
 		MetadataUpdatePO<?,?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(mUpdater);
-		po.setOutputSchema(timestampAO.getOutputSchema());
-		Collection<ILogicalOperator> toUpdate = transformConfig.getTransformationHelper().replace(timestampAO, po);
-		for (ILogicalOperator o:toUpdate){
-			update(o);
-		}
-		retract(timestampAO);		
+		defaultExecute(timestampAO, po, transformConfig, true, true);
 	}
 
 	@Override

@@ -17,11 +17,9 @@ package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Collection;
 
 import com.google.protobuf.GeneratedMessage;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer;
@@ -56,18 +54,10 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 		}
 		ITransformer transformer = new GeneratedMessageToTuple().getInstance(operator.getOptionsMap(),operator.getOutputSchema());
 		accessPO = new ChannelHandlerReceiverPO(socketAddress, msg, transformer);
-
-		accessPO.setOutputSchema(operator.getOutputSchema());
 		IDataDictionary dd = getDataDictionary();
 		dd.putAccessPlan(accessPOName, accessPO);
-		Collection<ILogicalOperator> toUpdate = config
-				.getTransformationHelper().replace(operator, accessPO);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-		retract(operator);
-		insert(accessPO);
 
+		defaultExecute(operator, accessPO, config, true, true);
 	}
 
 	@Override

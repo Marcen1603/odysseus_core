@@ -15,12 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.base.transform;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -42,13 +39,7 @@ public class TSinkAORule extends AbstractTransformationRule<SinkAO> {
         try {
         	final SinkPO<?> po = new SinkPO(operator.getOutputSchema(), operator.getAdapter(),
                     operator.getOptionsMap());
-            final Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(
-                    operator, po);
-            for (final ILogicalOperator o : toUpdate) {
-                this.update(o);
-            }
-            retract(operator);
-            insert(po);
+        	defaultExecute(operator, po, config, true, true);
         }
         catch (final Exception e) {
             TSinkAORule.LOG.error(e.getMessage(), e);

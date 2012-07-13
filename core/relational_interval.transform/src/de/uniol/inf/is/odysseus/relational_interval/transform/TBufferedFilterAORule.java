@@ -46,16 +46,7 @@ public class TBufferedFilterAORule extends AbstractTransformationRule<BufferedFi
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 
 		BufferedFilterPO po = new BufferedFilterPO(operator.getPredicate(), operator.getBufferTime(), operator.getDeliverTime(), dataMerge, metaDataMerge);
-		po.setOutputSchema(operator.getOutputSchema());
-
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, po);
-		for (ILogicalOperator o : toUpdate) {
-			update(o);
-		}
-
-		insert(po);
-		retract(operator);
-
+		defaultExecute(operator, po, config, true, true);		
 	}
 
 	@Override

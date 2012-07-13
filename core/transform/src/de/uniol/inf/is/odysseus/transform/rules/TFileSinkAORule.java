@@ -33,10 +33,7 @@ public class TFileSinkAORule extends AbstractTransformationRule<FileSinkAO> {
 	@Override
 	public void execute(FileSinkAO operator, TransformationConfiguration config) {
 		ISink<?> fileSinkPO = new FileSinkPO(operator.getFilename(), operator.getSinkType(), operator.getWriteAfterElements(), operator.getPrintMetadata());
-		defaultExecute(operator, fileSinkPO, config, true);
-		
-		retract(operator);
-		insert(fileSinkPO);		
+		defaultExecute(operator, fileSinkPO, config, true, true);
 	}
 
 	@Override

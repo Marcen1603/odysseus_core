@@ -40,16 +40,8 @@ public class TAccessMVPORule extends AbstractTransformationRule<AccessAO>{
 		System.out.println("CREATE AccessMVPO: " + operator); 
 		String sourceName = operator.getSourcename();
 		ISource accessPO = new AtomicDataInputStreamAccessMVPO(operator.getHost(), operator.getPort(), operator.getOutputSchema());
-		accessPO.setOutputSchema(operator.getOutputSchema());
 		getDataDictionary().putAccessPlan(sourceName, accessPO);
-		Collection<ILogicalOperator> toUpdate = config.getTransformationHelper().replace(operator, accessPO);
-
-		for(ILogicalOperator o: toUpdate){
-			update(o);
-		}		
-
-		retract(operator);
-		insert(accessPO);
+		defaultExecute(operator, accessPO, config, true, true);
 		System.out.println("CREATE AccessMVPO finished.");
 	}
 
