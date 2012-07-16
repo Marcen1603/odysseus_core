@@ -53,7 +53,7 @@ public class OdysseusNodeView extends DefaultNodeView<IPhysicalOperator> impleme
 		if(vis == false ) {
 			return false;
 		} else {
-			return (getModelNode().getContent() != null) &&  getModelNode().getContent().hasOwner();
+			return getModelNode() != null && getModelNode().getContent() != null &&  getModelNode().getContent().hasOwner();
 		}
 	}
 }
