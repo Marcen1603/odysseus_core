@@ -31,6 +31,10 @@ public class CreateRMap {
 		sb.append("<rm:rmap xmlns:bc=\"http://www.eclipse.org/buckminster/Common-1.0\" xmlns:rm=\"http://www.eclipse.org/buckminster/RMap-1.0\">").append("\n");
 	}
 
+	private static void addTargetPlatform(StringBuilder sb){
+		
+	}
+	
 	private static void buildFooter(StringBuilder sb) {
 
 		sb.append("</rm:rmap>");
