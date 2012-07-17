@@ -166,7 +166,8 @@ public class CreateRMap {
 			sb.append("</rm:provider>").append("\n");
 			sb.append("</rm:searchPath>").append("\n");
 		} else {
-			sb.append("<rm:locator failOnError=\"false\" pattern=\"^" + componentNamePattern + "(?!\\.)\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+			//sb.append("<rm:locator failOnError=\"false\" pattern=\"^" + componentNamePattern + "(?!\\.)\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+			sb.append("<rm:locator failOnError=\"false\" searchPathRef=\"" + componentName + "\"/>").append("\n");
 			sb.append("<rm:searchPath name=\"" + componentName + "\">").append("\n");
 			sb.append("<rm:provider componentTypes=\"osgi.bundle,eclipse.feature\" readerType=\"p2\">").append("\n");
 			sb.append("    <rm:uri format=\"http://odysseus.informatik.uni-oldenburg.de/update\" />").append("\n");
