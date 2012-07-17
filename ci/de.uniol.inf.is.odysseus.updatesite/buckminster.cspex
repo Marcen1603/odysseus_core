@@ -2,6 +2,35 @@
 <cspecExtension xmlns:com="http://www.eclipse.org/buckminster/Common-1.0"
                     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
     <actions>
+    <public name="create.memoryproducttest" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="product.ant" />
+                <property key="targets" value="create.product" />
+            </actorProperties>
+            <properties>
+                <property key="profile" value="Profile" />
+                <property key="iu" value="de.uniol.inf.is.odysseus.studio.product.memorystore" />
+            </properties>            
+            <products alias="destination" base="${buckminster.output}">
+                <path path="odysseus.${target.ws}.${target.os}.${target.arch}/" />
+            </products>
+        </public>
+        <public name="create.memoryproducttest.zip" actor="ant">
+            <actorProperties>
+                <property key="buildFileId" value="buckminster.pdetasks" />
+                <property key="targets" value="create.zip" />
+            </actorProperties>
+            <prerequisites alias="action.requirements">
+                <attribute name="create.memoryproduct" />
+            </prerequisites>
+            <products alias="action.output" base="${buckminster.output}">
+                <path path="../../downloads/memorystore/odysseus.memorystore.${target.ws}.${target.os}.${target.arch}.zip" />
+            </products>
+        </public>
+    
+    
+    
+    
         <public name="create.memoryproduct" actor="ant">
             <actorProperties>
                 <property key="buildFile" value="product.ant" />
