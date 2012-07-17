@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.uniol.inf.is.odysseus.cep.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.cep.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.cep.studio.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.context.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.core.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.core.client.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.core.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.database.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.datadictionary.filestore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.datadictionary.filestore.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.datadictionary.mem.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.dwd.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.dwd.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.executor.wsclient.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.executor.wsclient.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.latency.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.mining.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.planmgmt.standard.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.priority.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.priority.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.prototyping.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.prototyping.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.rcp.dashboard.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.relational.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.scheduling.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.sparql.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.sparql.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.spatial.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.studio.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.studio.client.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.studio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.usermanagement.filestore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.usermanagement.mem.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.webservice.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.webservice.client.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.webservice.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.webservice.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.wrapper.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.wrapper.protobuf.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier">
+      <category name="Odysseus"/>
+   </feature>
+   <category-def name="Odysseus" label="Odysseus"/>
+</site>
