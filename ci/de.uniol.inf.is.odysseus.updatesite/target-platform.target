@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.6"?><target name="Odysseus Target Platform" sequenceNumber="112">
+<?pde version="3.6"?><target includeMode="feature" name="Odysseus Target Platform" sequenceNumber="112">
 <locations>
 <location includeAllPlatforms="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.draw2d.feature.group" version="3.7.2.v20110927-2020-4617w3122212803131"/>
