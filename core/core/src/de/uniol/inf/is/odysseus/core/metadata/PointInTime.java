@@ -297,10 +297,5 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return ZERO.clone();
 	}
 
-	public static PointInTime add(PointInTime start, long deliverTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }
