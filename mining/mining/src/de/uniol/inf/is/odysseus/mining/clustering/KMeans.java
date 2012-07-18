@@ -75,9 +75,7 @@ public class KMeans<M extends ITimeInterval> implements IClusterer<M> {
 	private Random random = new Random();
 	private EmptyClusterStrategy emptyStrategy = EmptyClusterStrategy.LARGEST_POINTS_NUMBER;
 
-	public void setOptions(Map<String, String> options) {
-		numberOfClusters = Integer.parseInt(options.get("K"));
-	}
+	
 
 	public void init() {
 		means = new HashMap<Integer, Tuple<M>>();
@@ -269,5 +267,12 @@ public class KMeans<M extends ITimeInterval> implements IClusterer<M> {
 		
 		Tuple<M> removed = selectedCluster.removeTuple(selectedPoint);
 		return removed;		
+	}
+
+	
+	@Override
+	public void setOptions(Map<String, List<String>> options) {
+		
+		
 	}
 }

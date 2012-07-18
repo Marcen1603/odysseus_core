@@ -51,11 +51,11 @@ public class WekaClusteringPO<M extends ITimeInterval> extends
 	private int[] attributePositions;
 	private PointInTime lastWritten;
 	private ArrayList<Attribute> wekaAttributes = new ArrayList<Attribute>();
-	private List<String> options;
+	private Map<String, List<String>> options;
 	private Map<String, String> wekaOptions;
 
 	public WekaClusteringPO(IClusterer<M> clusterer, int[] attributePositions,
-			List<String> options) {
+			Map<String, List<String>> options) {
 		this.clusterer = clusterer;
 		this.attributePositions = attributePositions;
 		this.options = options;
@@ -149,9 +149,8 @@ public class WekaClusteringPO<M extends ITimeInterval> extends
 		sweepArea.clear();
 		calcWekaAttributes();
 		Map<String, String> optionMap = new HashMap<String, String>();
-		for (String option : this.options) {
-			String[] parts = option.split(" ");
-			optionMap.put(parts[0].trim(), parts[1].trim());
+		for (Entry<String, List<String>> option : this.options.entrySet()) {
+	//		optionMap.put(option.getKey(),option.getValue().get(0));
 		}
 		this.wekaOptions = optionMap;
 	}

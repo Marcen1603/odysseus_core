@@ -58,7 +58,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 
 	private IClusterer<ITimeInterval> clusterer;
 
-	private List<String> options;
+	private Map<String, List<String>> options;
 
 	private String clustererName;
 
@@ -90,13 +90,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		try {
 			// TODO: Clusterer dynamisch
 			KMeans<ITimeInterval> algo = new KMeans<ITimeInterval>();
-			
-			Map<String, String> optionMap = new HashMap<String, String>();
-			for(String option : this.options){
-				String[] parts = option.split("=");
-				optionMap.put(parts[0].trim(), parts[1].trim());
-			}			
-			algo.setOptions(optionMap);
+			algo.setOptions(this.options);
 			this.clusterer = algo;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,8 +98,8 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		}
 	}
 
-	@Parameter(name = "options", type = StringParameter.class, isList = true, optional = true)
-	public void setOptions(List<String> options) {
+	@Parameter(name = "options", type = StringParameter.class, isList = true, optional = true, isMap = true)
+	public void setOptions(Map<String, List<String>> options) {
 		this.options = options;
 	}
 
@@ -113,7 +107,7 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		return this.clusterer;
 	}
 
-	public List<String> getOptions() {
+	public Map<String, List<String>> getOptions() {
 		return this.options;
 	}
 

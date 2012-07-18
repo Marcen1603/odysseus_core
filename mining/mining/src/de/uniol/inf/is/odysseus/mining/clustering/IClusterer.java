@@ -45,4 +45,5 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 public interface IClusterer<M extends ITimeInterval> {
 
 	public Map<Integer, List<Tuple<M>>> processClustering(Iterator<Tuple<M>> tuples, int[] attributes);	
+	public void setOptions(Map<String, List<String>> options);
 }
