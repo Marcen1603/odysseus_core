@@ -21,7 +21,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 public enum WindowType {
 	TIME,
 	TUPLE,
-	UNBOUNDED
+	UNBOUNDED,
+	PREDICATE
 }
 //    PERIODIC_TIME_WINDOW, // Zeit mit SLIDE
 //    PERIODIC_TUPLE_WINDOW, // Tupel mit SLIDE
