@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.transform.rule;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -30,11 +33,16 @@ import de.uniol.inf.is.odysseus.ruleengine.system.LoggerSystem;
 
 public abstract class AbstractTransformationRule<T> extends
 		AbstractRule<T, TransformationConfiguration> {
+	
+	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
 
 	protected void defaultExecute(ILogicalOperator logical,
 			IPhysicalOperator physical, TransformationConfiguration config,
 			boolean retract, boolean insert) {
 		physical.setOutputSchema(logical.getOutputSchema());
+		if (logical.getOutputSchema() != null){
+			logger.warn("Operator "+logical+" has not output schema");
+		}
 		physical.setName(logical.getName());
 		replace(logical, physical, config);
 		if (retract) {
