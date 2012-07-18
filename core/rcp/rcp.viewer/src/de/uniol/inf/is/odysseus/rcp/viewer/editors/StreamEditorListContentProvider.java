@@ -21,10 +21,19 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import com.google.common.base.Preconditions;
+
 public class StreamEditorListContentProvider implements IStructuredContentProvider {
 
 	private List<String> elements = new LinkedList<String>();
+	private final int maxElements;
 	
+	public StreamEditorListContentProvider(int maxElements) {
+		Preconditions.checkArgument(maxElements > 0, "Maximum elements must be positive.");
+		
+		this.maxElements = maxElements;
+	}
+
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return elements.toArray();
@@ -40,6 +49,9 @@ public class StreamEditorListContentProvider implements IStructuredContentProvid
 
 	public void addElement(String element) {
 		elements.add(0, element);
+		if( elements.size() > maxElements ) {
+			elements.remove(elements.size() - 1);
+		}
 	}
 
 }

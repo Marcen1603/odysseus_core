@@ -21,17 +21,25 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
-public class StreamEditorList implements IStreamEditorType {
+public abstract class AbstractStreamEditorList implements IStreamEditorType {
 
 	private TableViewer tableViewer;
 	private IStreamEditorInput input;
-	private StreamEditorListContentProvider contentProvider = new StreamEditorListContentProvider();
+	private StreamEditorListContentProvider contentProvider;
 	private StreamEditorListLabelProvider labelProvider = new StreamEditorListLabelProvider();
-
+	
+	public AbstractStreamEditorList( int maxElements ) {
+		Preconditions.checkArgument(maxElements > 0, "Maximum elements must be positive.");
+		
+		contentProvider = new StreamEditorListContentProvider(maxElements);
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		tableViewer = new TableViewer(parent, SWT.BORDER);

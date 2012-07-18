@@ -176,9 +176,9 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList100"
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
-            label="List">
+            label="List 100">
       </editor>
    </extension>
 </plugin>
