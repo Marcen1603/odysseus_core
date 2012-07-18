@@ -339,7 +339,11 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public SDFSchema getOutputSchema(int port) {
-		return outputSchema.get(port);
+		SDFSchema schema = outputSchema.get(port);
+		if (schema == null){
+			schema = getSubscribedToSource(port).getSchema();
+		}
+		return schema;
 	}
 
 	@Override
