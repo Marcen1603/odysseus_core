@@ -61,7 +61,7 @@ public class CarObjectlistUDPSinkAdapter extends AbstractSinkAdapter implements
 					// ID
 					buffer.putShort(((Double) data[0]).shortValue());
 					// Class
-					buffer.put((byte) data[1]);
+					buffer.put((Byte) data[1]);
 
 					Coordinate position = (Coordinate) data[2];
 					// X Position in meter (m)
@@ -69,9 +69,9 @@ public class CarObjectlistUDPSinkAdapter extends AbstractSinkAdapter implements
 					// Y Position in meter (m)
 					buffer.putFloat(((float) position.y) / 100);
 					// Speed in m/s
-					buffer.putFloat((float) data[3]);
+					buffer.putFloat((Float) data[3]);
 					// Angle in Rad
-					buffer.putFloat((float) data[4]);
+					buffer.putFloat((Float) data[4]);
 					// Shape
 					Coordinate[] shape = (Coordinate[]) data[5];
 					// Shape type 0=point, 1=box
@@ -82,7 +82,7 @@ public class CarObjectlistUDPSinkAdapter extends AbstractSinkAdapter implements
 						buffer.putFloat((float) point.y / 100);
 					}
 					// Quality in 0..1
-					buffer.put((byte) data[6]);
+					buffer.put((Byte) data[6]);
 
 					buffer.flip();
 					this.channel.send(buffer, addr);
