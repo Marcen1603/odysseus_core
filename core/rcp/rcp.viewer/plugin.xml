@@ -176,6 +176,21 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.viewer.StreamEditor">
       <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List"
+            label="List">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList10"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List10"
+            label="List 10">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList50"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List50"
+            label="List 50">
+      </editor>
+      <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList100"
             id="de.uniol.inf.is.odysseus.rcp.streams.List"
             label="List 100">

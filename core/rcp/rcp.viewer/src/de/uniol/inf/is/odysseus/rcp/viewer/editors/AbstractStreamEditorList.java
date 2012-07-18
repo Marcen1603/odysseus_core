@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.base.Preconditions;
-
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -35,8 +33,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	private StreamEditorListLabelProvider labelProvider = new StreamEditorListLabelProvider();
 	
 	public AbstractStreamEditorList( int maxElements ) {
-		Preconditions.checkArgument(maxElements > 0, "Maximum elements must be positive.");
-		
+		// max Elements can be negative to indicate infinite
 		contentProvider = new StreamEditorListContentProvider(maxElements);
 	}
 	
