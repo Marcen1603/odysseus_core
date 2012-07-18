@@ -28,6 +28,7 @@ Unless required by applicable law or agreed to in writing, software
 
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+      <discovery label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
    <includes
