@@ -1,14 +1,24 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+
 public class PQLOperatorView extends ViewPart {
 
 	private TreeViewer treeViewer;
 	private boolean showOptionalParameters = true;
+	private boolean alphaSort = false;
+	
 	private PQLOperatorsContentProvider contentProvider;
 	
 	@Override
@@ -61,8 +71,30 @@ public class PQLOperatorView extends ViewPart {
 		contentProvider.showOptionalParameters(showOptionalParameters);
 		refresh();
 	}
+	
+	public void toogleAlphaOrder() {
+		alphaSort = !alphaSort;
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				Object input = alphaSort ? sortInput(determineInput()) : determineInput();
+				treeViewer.setInput(input);
+			}
+		});
+		refresh();
+	}
 
-	private Object determineInput() {
-		return PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder();
+	private List<IOperatorBuilder> determineInput() {
+		return Lists.newArrayList(PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder());
+	}
+	
+	private static List<IOperatorBuilder> sortInput(List<IOperatorBuilder> unsortedList) {
+		Collections.sort(unsortedList, new Comparator<IOperatorBuilder>() {
+			@Override
+			public int compare(IOperatorBuilder o1, IOperatorBuilder o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		return unsortedList;
 	}
 }
