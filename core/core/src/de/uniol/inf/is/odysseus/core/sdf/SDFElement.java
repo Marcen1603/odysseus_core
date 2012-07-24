@@ -168,6 +168,7 @@ public class SDFElement implements Serializable, IClone {
 //	protected void setURIWithoutQualName(String name) {
 //		uRIWithoutQualName = name;
 //	}
+	
 
 	@Override
 	public String toString() {
