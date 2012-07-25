@@ -57,7 +57,12 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T>{
 			return getDataHandler().readData(scanner.next());
 		}
 	}
-
+	
+	@Override
+	public void write(byte[] message) throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
+	
 	@Override
 	public IProtocolHandler<T> createInstance(Map<String, String> options,
 			ITransportHandler transportHandler, IDataHandler<T> dataHandler,

@@ -53,6 +53,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return getDataHandler().readData(reader.readLine());
 	}
 
+	@Override
+	public void write(byte[] message) throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
+	
 	protected void delay() {
 		if (delay > 0){
 			try {

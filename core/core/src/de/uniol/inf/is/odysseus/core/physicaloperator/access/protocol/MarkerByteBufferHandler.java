@@ -21,16 +21,20 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
-
-	private ByteBufferHandler<T> objectHandler;
-	private byte start;
-	private byte end;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MarkerByteBufferHandler.class);
+	protected ByteBufferHandler<T> objectHandler;
+	protected byte start;
+	protected byte end;
 	
 	@Override
 	public void open() throws UnknownHostException, IOException {	
@@ -42,6 +46,11 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 		getTransportHandler().close();
 	}
 
+	@Override
+	public void write(byte[] message) throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
+	
 	@Override
 	public IProtocolHandler<T> createInstance(Map<String, String> options,
 			ITransportHandler transportHandler, IDataHandler<T> dataHandler,
@@ -95,11 +104,11 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 				objectHandler.put(message);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} catch (BufferUnderflowException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 
 	}

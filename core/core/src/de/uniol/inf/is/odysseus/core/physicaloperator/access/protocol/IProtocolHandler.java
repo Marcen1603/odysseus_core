@@ -29,7 +29,7 @@ public interface IProtocolHandler <T> {
 	public void close() throws IOException;
 	public boolean hasNext() throws IOException;
 	public T getNext() throws IOException;
-	
+	public void write(byte[] message) throws IOException;;
 	public IProtocolHandler<T> createInstance(Map<String, String> options, ITransportHandler transportHandler, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
 	
 	String getName();

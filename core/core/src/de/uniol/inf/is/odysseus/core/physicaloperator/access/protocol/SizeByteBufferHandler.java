@@ -60,18 +60,23 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 	}
 	
 	@Override
+	public void write(byte[] message) throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
+	}
+	
+	@Override
 	public void process(ByteBuffer buffer) {
 		try {
 			while (buffer.remaining() > 0) {
 
-				// size ist dann ungleich -1 wenn die vollständige
-				// Größeninformation übertragen wird
+				// size ist dann ungleich -1 wenn die vollstï¿½ndige
+				// Grï¿½ï¿½eninformation ï¿½bertragen wird
 				// Ansonsten schon mal soweit einlesen
 				if (size == -1) {
 					while (sizeBuffer.position() < 4 && buffer.remaining() > 0) {
 						sizeBuffer.put(buffer.get());
 					}
-					// Wenn alles übertragen
+					// Wenn alles ï¿½bertragen
 					if (sizeBuffer.position() == 4) {
 						sizeBuffer.flip();
 						size = sizeBuffer.getInt();
@@ -81,13 +86,13 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T>{
 				// sein!
 				// Und Size kann gesetzt worden sein
 				if (size != -1) {
-					// Ist das was dazukommt kleiner als die finale Größe?
+					// Ist das was dazukommt kleiner als die finale Grï¿½ï¿½e?
 					if (currentSize + buffer.remaining() < size) {
 						currentSize = currentSize + buffer.remaining();
 						objectHandler.put(buffer);
 					} else {
 						// Splitten (wir sind mitten in einem Objekt
-						// 1. alles bis zur Grenze dem Handler übergeben
+						// 1. alles bis zur Grenze dem Handler ï¿½bergeben
 						// logger.debug(" "+(size-currentSize));
 						objectHandler.put(buffer, size - currentSize);
 						// 2. das fertige Objekt weiterleiten
