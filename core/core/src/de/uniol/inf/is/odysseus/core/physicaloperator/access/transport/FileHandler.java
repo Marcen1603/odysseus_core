@@ -40,6 +40,7 @@ public class FileHandler extends AbstractTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	@Override
