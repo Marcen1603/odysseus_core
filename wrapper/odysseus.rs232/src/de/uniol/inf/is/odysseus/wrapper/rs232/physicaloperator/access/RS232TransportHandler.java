@@ -113,7 +113,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements
 	}
 
 	@Override
-	public void write(byte[] message) throws IOException {
+	public void send(byte[] message) throws IOException {
 		if (this.output != null) {
 			this.output.write(message);
 			LOG.debug("RS232 Handler: > {}", message);
