@@ -44,6 +44,19 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void fireOnConnect(){
+		for (ITransportHandlerListener<?> l: transportHandlerListener){
+			((ITransportHandlerListener<ByteBuffer>)l).onConnect(this);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public void fireOnDisconnect(){
+		for (ITransportHandlerListener<?> l: transportHandlerListener){
+			((ITransportHandlerListener<ByteBuffer>)l).onDisonnect(this);
+		}
+	}
+	
 	final synchronized public void open() throws UnknownHostException, IOException {
 		if (openCounter == 0){
 			process_open();
