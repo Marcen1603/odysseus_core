@@ -113,6 +113,7 @@ public class SickConnectionImpl implements SickConnection {
 			this.sendMessage(SickConnectionImpl.STOP_SCAN);
 		}
 
+		@SuppressWarnings("unused")
 		private void onMessage(final String message)
 				throws SickReadErrorException {
 			final String[] data = message.split(" ");

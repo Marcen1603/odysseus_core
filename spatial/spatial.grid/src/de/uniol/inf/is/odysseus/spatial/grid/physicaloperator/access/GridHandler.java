@@ -49,6 +49,7 @@ public class GridHandler extends AbstractDataHandler<Grid> {
 		int y = stream.readInt();
 		short width = stream.readShort();
 		short height = stream.readShort();
+		@SuppressWarnings("unused")
 		short future = stream.readShort();
 		int cellsize = stream.readInt() / 10;
 		Grid grid = new Grid(new Coordinate(x, y), width,

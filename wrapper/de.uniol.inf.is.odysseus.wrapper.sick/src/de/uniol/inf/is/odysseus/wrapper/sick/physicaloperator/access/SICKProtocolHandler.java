@@ -140,7 +140,7 @@ public class SICKProtocolHandler<T> extends AbstractByteBufferHandler<T> {
 			messageBuffer[0] = SICKConstants.START;
 			System.arraycopy(message, 0, messageBuffer, 1, message.length);
 			messageBuffer[messageBuffer.length - 1] = SICKConstants.END;
-			getTransportHandler().write(messageBuffer);
+			getTransportHandler().send(messageBuffer);
 
 			LOG.debug(String.format("SICK: Send message %s", message));
 		} catch (final IOException e) {
