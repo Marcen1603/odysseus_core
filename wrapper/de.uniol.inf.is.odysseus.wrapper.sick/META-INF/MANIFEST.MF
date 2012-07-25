@@ -8,6 +8,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.objecthandler,
+ de.uniol.inf.is.odysseus.core.physicaloperator,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.spatial,
  de.uniol.inf.is.odysseus.spatial.geom,
@@ -15,5 +19,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.wrapper.base.model,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Service-Component: OSGI-INF/SickSourceAdapter.xml, OSGI-INF/SickDataHandler.xml
+Service-Component: OSGI-INF/SickSourceAdapter.xml, OSGI-INF/SickDataHandler.xml, OSGI-INF/SickProtocolHandler.xml
 Require-Bundle: com.vividsolutions.jts;bundle-version="1.0.0"

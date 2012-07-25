@@ -57,24 +57,25 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 			.getLogger(SICKDataHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		types.add("Tuple");
+		types.add("SICK");
 	}
 
 	IDataHandler<?>[] dataHandlers = null;
 	private SDFSchema schema;
 	private final Charset charset = Charset.forName("ASCII");
-	private final static String VERSION_ATTRIBUTE = "Version";
-	private final static String DEVICE_ATTRIBUTE = "Device";
-	private final static String SERIAL_ATTRIBUTE = "Serial";
-	private final static String STATUS_ATTRIBUTE = "Status";
-	private final static String MESSAGE_COUNT_ATTRIBUTE = "MessageCount";
-	private final static String SCAN_COUNT_ATTRIBUTE = "ScanCount";
-	private final static String POWERUP_DURATION_ATTRIBUTE = "PowerUpDuration";
-	private final static String TRANSMISSION_DURATION_ATTRIBUTE = "TransmissionDuration";
-	private final static String INPUT_STATUS_ATTRIBUTE = "InputStatus";
-	private final static String OUTPUT_STATUS_ATTRIBUTE = "OutputStatus";
-	private final static String SCANNING_FREQUENCY_ATTRIBUTE = "ScanningFrequency";
-	private final static String MEASUREMENT_FREQUENCY_ATTRIBUTE = "MeasurementFrequency";
+	private final static String TIMESTAMP_ATTRIBUTE = "TIMESTAMP";
+	private final static String VERSION_ATTRIBUTE = "VERSION";
+	private final static String DEVICE_ATTRIBUTE = "DEVICE";
+	private final static String SERIAL_ATTRIBUTE = "SERIAL";
+	private final static String STATUS_ATTRIBUTE = "STATUS";
+	private final static String MESSAGE_COUNT_ATTRIBUTE = "MESSAGECOUNT";
+	private final static String SCAN_COUNT_ATTRIBUTE = "SCANCOUNT";
+	private final static String POWERUP_DURATION_ATTRIBUTE = "POWERUPDURATION";
+	private final static String TRANSMISSION_DURATION_ATTRIBUTE = "TRANSMISSIONDURATION";
+	private final static String INPUT_STATUS_ATTRIBUTE = "INPUTSTATUS";
+	private final static String OUTPUT_STATUS_ATTRIBUTE = "OUTPUTSTATUS";
+	private final static String SCANNING_FREQUENCY_ATTRIBUTE = "SCANNINGFREQUENCY";
+	private final static String MEASUREMENT_FREQUENCY_ATTRIBUTE = "MEASUREMENTFREQUENCY";
 
 	public SICKDataHandler() {
 	}
@@ -144,7 +145,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 		try {
 			return process(string);
 		} catch (SickReadErrorException e) {
-			LOG.warn(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 			dumpPackage(string);
 			throw new IllegalArgumentException(e);
 		}
@@ -457,6 +458,7 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 						throw new SickReadErrorException(message);
 					}
 					final Map<String, Object> event = new HashMap<String, Object>();
+					event.put(TIMESTAMP_ATTRIBUTE, calendar.getTimeInMillis());
 					event.put(VERSION_ATTRIBUTE, measurement.getVersion());
 					event.put(DEVICE_ATTRIBUTE, measurement.getDevice());
 					event.put(SERIAL_ATTRIBUTE, measurement.getSerial());
@@ -478,22 +480,22 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 					event.put(MEASUREMENT_FREQUENCY_ATTRIBUTE,
 							measurement.getMeasurementFrequency());
 
-					final List<PolarCoordinate> dist1Coordinates = new ArrayList<PolarCoordinate>(
-							measurement.getSamples().length);
-					final List<Double> remission1 = new ArrayList<Double>(
-							measurement.getSamples().length);
-					final List<PolarCoordinate> dist2Coordinates = new ArrayList<PolarCoordinate>(
-							measurement.getSamples().length);
-					final List<Double> remission2 = new ArrayList<Double>(
-							measurement.getSamples().length);
+					final PolarCoordinate[] dist1Coordinates = new PolarCoordinate[measurement
+							.getSamples().length];
+					final Double[] remission1 = new Double[measurement
+							.getSamples().length];
+					final PolarCoordinate[] dist2Coordinates = new PolarCoordinate[measurement
+							.getSamples().length];
+					final Double[] remission2 = new Double[measurement
+							.getSamples().length];
 					for (int j = 0; j < measurement.getSamples().length; j++) {
 						final Sample sample = measurement.getSamples()[j];
-						dist1Coordinates.add(new PolarCoordinate(
-								(double) sample.getDist1(), sample.getAngle()));
-						remission1.add((double) sample.getRssi1());
-						dist2Coordinates.add(new PolarCoordinate(
-								(double) sample.getDist2(), sample.getAngle()));
-						remission2.add((double) sample.getRssi2());
+						dist1Coordinates[j] = new PolarCoordinate(
+								(double) sample.getDist1(), sample.getAngle());
+						remission1[j] = (double) sample.getRssi1();
+						dist2Coordinates[j] = new PolarCoordinate(
+								(double) sample.getDist2(), sample.getAngle());
+						remission2[j] = (double) sample.getRssi2();
 					}
 
 					event.put(SICKConstants.DIST1, dist1Coordinates);
@@ -503,7 +505,8 @@ public class SICKDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 					Object[] retObj = new Object[schema.size()];
 					for (int i = 0; i < retObj.length; i++) {
-						retObj[i] = event.get(schema.get(i));
+						retObj[i] = event.get(schema.get(i).getAttributeName()
+								.toUpperCase());
 					}
 					ret = new Tuple(retObj, false);
 				}

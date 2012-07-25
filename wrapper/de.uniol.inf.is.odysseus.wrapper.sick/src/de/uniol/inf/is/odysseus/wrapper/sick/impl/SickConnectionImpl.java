@@ -26,7 +26,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -43,8 +42,10 @@ import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 
 /**
+ * @deprecated Use SICK Protocol handler in the AccessAO
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated
 public class SickConnectionImpl implements SickConnection {
 	class SickConnectionHandler extends Thread {
 
@@ -369,7 +370,7 @@ public class SickConnectionImpl implements SickConnection {
 								int minute = Integer.parseInt(data[pos++], 16);
 								int second = Integer.parseInt(data[pos++], 16);
 								Long milliseconds = Long.parseLong(data[pos++],
-										16)/1000;
+										16) / 1000;
 								calendar.set(Calendar.YEAR, year);
 								calendar.set(Calendar.MONTH, month);
 								calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -406,7 +407,12 @@ public class SickConnectionImpl implements SickConnection {
 							this.background = Background.merge(this.background,
 									measurement);
 						} else {
-							this.timestamp = calendar.getTimeInMillis();
+
+							// TODO Fix timestamp
+							// this.timestamp = calendar.getTimeInMillis();
+							this.timestamp = Calendar.getInstance(
+									TimeZone.getTimeZone("UTC"))
+									.getTimeInMillis();
 							this.connection.onMeasurement(this.origin,
 									this.angle, measurement, this.timestamp);
 

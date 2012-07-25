@@ -24,25 +24,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.wrapper.base.AbstractPushingSourceAdapter;
 import de.uniol.inf.is.odysseus.wrapper.base.model.SourceSpec;
 import de.uniol.inf.is.odysseus.wrapper.sick.MeasurementListener;
 import de.uniol.inf.is.odysseus.wrapper.sick.SickConnection;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
-import de.uniol.inf.is.odysseus.spatial.geom.*;
 
 /**
+ * @deprecated Use SICK Protocol handler in the AccessAO
  * @author Christian Kuka <christian.kuka@offis.de>
  */
+@Deprecated
 public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 		MeasurementListener {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SickSourceAdapter.class);
-	private final GeometryFactory geometryFactory = new GeometryFactory();
+
 	private final Map<SourceSpec, SickConnection> connections = new ConcurrentHashMap<SourceSpec, SickConnection>();
 
 	@Override
@@ -110,12 +110,9 @@ public class SickSourceAdapter extends AbstractPushingSourceAdapter implements
 				coordinates.add(new PolarCoordinate((double) sample.getDist1(),
 						sample.getAngle()));
 			}
-			SickSourceAdapter.this.transfer(
-					source,
-					timestamp,
-					new Object[] { origin, angle,
-							coordinates.toArray(new PolarCoordinate[] {}),
-							timestamp });
+			SickSourceAdapter.this.transfer(source, timestamp,
+					new Object[] { coordinates
+							.toArray(new PolarCoordinate[] {}) });
 			/*
 			 * >>>>>>> Optimized the Sick-Background Extraction.
 			 * if(this.geometryFactory.createMultiPoint(coordinates.toArray(new
