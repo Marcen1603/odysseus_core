@@ -76,7 +76,7 @@ public class StorePO<T extends Tuple<? extends ITimeInterval>> extends AbstractS
 	@Override
 	protected void process_close() {	
 		super.process_close();
-		if(this.store.getWriter().equals(this)){
+		if((this.store.getWriter()!=null)&&(this.store.getWriter().equals(this))){
 			this.store.removeWriter();
 		}
 		// wirklich machen, weil eigentlich nur zum debuggen sinnvoll, wenn die zeit wieder von vorne beginnt...
