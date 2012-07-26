@@ -55,12 +55,12 @@ public class NioUdpServer extends Thread implements IConnection {
 
 	public void bind(InetSocketAddress address,
 			IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-		DatagramChannel channel = selector.provider().openDatagramChannel();
-		channel.bind(address);
-		NioUdpConnection connection = new NioUdpConnection(selector, channel,
-				readBufferSize, writeBufferSize, listener);
-		this.receiverMap.put(listener, connection);
-		selector.wakeup();
+//		DatagramChannel channel = selector.provider().openDatagramChannel();		
+//		channel.bind(address);
+//		NioUdpConnection connection = new NioUdpConnection(selector, channel,
+//				readBufferSize, writeBufferSize, listener);
+//		this.receiverMap.put(listener, connection);
+//		selector.wakeup();
 	}
 
 	public void connect(InetSocketAddress address,
