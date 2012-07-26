@@ -57,12 +57,12 @@ public class NioTcpServer extends Thread implements IConnection {
 
 	public void bind(InetSocketAddress address,
 			IAccessConnectionListener<ByteBuffer> listener) throws IOException {
-//		ServerSocketChannel channel = selector.provider()
-//				.openServerSocketChannel();
-//		channel.bind(address);
-//		channel.configureBlocking(false);
-//		channel.register(selector, SelectionKey.OP_ACCEPT);
-//		serverMap.put(channel, listener);
+		ServerSocketChannel channel = selector.provider()
+				.openServerSocketChannel();
+		channel.socket().bind(address);
+		channel.configureBlocking(false);
+		channel.register(selector, SelectionKey.OP_ACCEPT);
+		serverMap.put(channel, listener);
 	}
 
 	public void connect(InetSocketAddress address,
