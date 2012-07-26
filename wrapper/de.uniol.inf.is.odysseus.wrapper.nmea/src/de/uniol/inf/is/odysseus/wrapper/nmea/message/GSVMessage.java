@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.wrapper.nmea.nmea;
+package de.uniol.inf.is.odysseus.wrapper.nmea.message;
 
 import java.util.ArrayList;
 import java.util.Date;
