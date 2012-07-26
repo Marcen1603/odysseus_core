@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	/**
 	 * Datatype for nested tuple (ckuka) 07/27/2011
 	 */
-	public static final SDFDatatype TUPLE = new SDFDatatype("Tuple",
-			SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
+	public static final SDFDatatype TUPLE = new SDFDatatype("Tuple", SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
 
 	/**
 	 * predefined datatypes
@@ -59,40 +58,25 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype DATE = new SDFDatatype("Date");
 	public static final SDFDatatype BOOLEAN = new SDFDatatype("Boolean");
 
-	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype(
-			"StartTimestamp");
-	public static final SDFDatatype START_TIMESTAMP_STRING = new SDFDatatype(
-			"StartTimestampString");	
-	public static final SDFDatatype END_TIMESTAMP = new SDFDatatype(
-			"EndTimestamp");
-	public static final SDFDatatype END_TIMESTAMP_STRING = new SDFDatatype(
-			"EndTimestampString");
+	public static final SDFDatatype START_TIMESTAMP = new SDFDatatype("StartTimestamp");
+	public static final SDFDatatype START_TIMESTAMP_STRING = new SDFDatatype("StartTimestampString");
+	public static final SDFDatatype END_TIMESTAMP = new SDFDatatype("EndTimestamp");
+	public static final SDFDatatype END_TIMESTAMP_STRING = new SDFDatatype("EndTimestampString");
 	public static final SDFDatatype TIMESTAMP = new SDFDatatype("Timestamp");
 
-	public static final SDFDatatype POINT_IN_TIME = new SDFDatatype(
-			"PointInTime");
+	public static final SDFDatatype POINT_IN_TIME = new SDFDatatype("PointInTime");
 
 	private static final SDFDatatype MV = new SDFDatatype("MV");
 
-	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix",
-			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
-	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype(
-			"MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
-	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte",
-			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
-	public static final SDFDatatype MATRIX_BOOLEAN = new SDFDatatype(
-			"MatrixBoolean", SDFDatatype.KindOfDatatype.BASE,
-			SDFDatatype.BOOLEAN);
+	public static final SDFDatatype MATRIX_DOUBLE = new SDFDatatype("Matrix", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	public static final SDFDatatype MATRIX_FLOAT = new SDFDatatype("MatrixFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
+	public static final SDFDatatype MATRIX_BYTE = new SDFDatatype("MatrixByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype MATRIX_BOOLEAN = new SDFDatatype("MatrixBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
 
-	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector",
-			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
-	public static final SDFDatatype VECTOR_FLOAT = new SDFDatatype(
-			"VectorFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
-	public static final SDFDatatype VECTOR_BYTE = new SDFDatatype("VectorByte",
-			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
-	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype(
-			"VectorBoolean", SDFDatatype.KindOfDatatype.BASE,
-			SDFDatatype.BOOLEAN);
+	public static final SDFDatatype VECTOR_DOUBLE = new SDFDatatype("Vector", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.DOUBLE);
+	public static final SDFDatatype VECTOR_FLOAT = new SDFDatatype("VectorFloat", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.FLOAT);
+	public static final SDFDatatype VECTOR_BYTE = new SDFDatatype("VectorByte", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BYTE);
+	public static final SDFDatatype VECTOR_BOOLEAN = new SDFDatatype("VectorBoolean", SDFDatatype.KindOfDatatype.BASE, SDFDatatype.BOOLEAN);
 
 	private static final long serialVersionUID = 8585322290347489841L;
 
@@ -112,7 +96,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	 */
 	private SDFDatatype subType;
 	/**
-	 * State whether this {@link SDFDatatype} requires a deep clone during transfer
+	 * State whether this {@link SDFDatatype} requires a deep clone during
+	 * transfer
 	 */
 	private final boolean requiresDeepClone;
 
@@ -125,31 +110,26 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public SDFDatatype(String URI) {
 		this(URI, false);
 	}
-	
-	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFSchema schema, boolean requiresDeepClone) {
+
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type, SDFSchema schema, boolean requiresDeepClone) {
 		super(datatypeName);
 		if (type == SDFDatatype.KindOfDatatype.BASE) {
-			throw new IllegalArgumentException(
-					"Base types must not have a schema.");
+			throw new IllegalArgumentException("Base types must not have a schema.");
 		}
 		this.type = type;
 
 		if (schema == null) {
-			throw new IllegalArgumentException(
-					"Complex types must have a schema.");
+			throw new IllegalArgumentException("Complex types must have a schema.");
 		}
 		this.schema = schema;
 		this.requiresDeepClone = requiresDeepClone;
 	}
 
-	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFSchema schema) {
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type, SDFSchema schema) {
 		this(datatypeName, type, schema, false);
 	}
-	
-	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFDatatype subType, boolean requiresDeepClone) {
+
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type, SDFDatatype subType, boolean requiresDeepClone) {
 		super(datatypeName);
 
 		this.type = type;
@@ -163,11 +143,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		this.requiresDeepClone = requiresDeepClone;
 	}
 
-	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type,
-			SDFDatatype subType) {
+	public SDFDatatype(String datatypeName, SDFDatatype.KindOfDatatype type, SDFDatatype subType) {
 		this(datatypeName, type, subType, false);
 	}
-	
+
 	public SDFDatatype(SDFDatatype sdfDatatype) {
 		super(sdfDatatype);
 		if (sdfDatatype.schema != null) {
@@ -186,22 +165,17 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			dd.addDatatype(SDFDatatype.OBJECT.getURI(), SDFDatatype.OBJECT);
 			dd.addDatatype(SDFDatatype.DATE.getURI(), SDFDatatype.DATE);
 			dd.addDatatype(SDFDatatype.DOUBLE.getURI(), SDFDatatype.DOUBLE);
-			dd.addDatatype(SDFDatatype.END_TIMESTAMP.getURI(),
-					SDFDatatype.END_TIMESTAMP);
-			dd.addDatatype(SDFDatatype.END_TIMESTAMP_STRING.getURI(),
-					SDFDatatype.END_TIMESTAMP_STRING);
+			dd.addDatatype(SDFDatatype.END_TIMESTAMP.getURI(), SDFDatatype.END_TIMESTAMP);
+			dd.addDatatype(SDFDatatype.END_TIMESTAMP_STRING.getURI(), SDFDatatype.END_TIMESTAMP_STRING);
 			dd.addDatatype(SDFDatatype.FLOAT.getURI(), SDFDatatype.FLOAT);
 			dd.addDatatype(SDFDatatype.INTEGER.getURI(), SDFDatatype.INTEGER);
 			dd.addDatatype(SDFDatatype.LONG.getURI(), SDFDatatype.LONG);
-			dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(),
-					SDFDatatype.START_TIMESTAMP);
-			dd.addDatatype(SDFDatatype.START_TIMESTAMP_STRING.getURI(),
-					SDFDatatype.START_TIMESTAMP_STRING);
-			
+			dd.addDatatype(SDFDatatype.START_TIMESTAMP.getURI(), SDFDatatype.START_TIMESTAMP);
+			dd.addDatatype(SDFDatatype.START_TIMESTAMP_STRING.getURI(), SDFDatatype.START_TIMESTAMP_STRING);
+
 			dd.addDatatype(SDFDatatype.STRING.getURI(), SDFDatatype.STRING);
 			dd.addDatatype(SDFDatatype.MV.getURI(), SDFDatatype.MV);
-			dd.addDatatype(SDFDatatype.TIMESTAMP.getURI(),
-					SDFDatatype.TIMESTAMP);
+			dd.addDatatype(SDFDatatype.TIMESTAMP.getURI(), SDFDatatype.TIMESTAMP);
 			dd.addDatatype(SDFDatatype.BOOLEAN.getURI(), SDFDatatype.BOOLEAN);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -214,7 +188,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		if (super.getQualName() != null && super.getQualName().length() > 0) {
 			return super.getQualName();
 		}
-        return getURI();
+		return getURI();
 	}
 
 	@Override
@@ -243,12 +217,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isComplex() {
-		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE
-				|| this.type == SDFDatatype.KindOfDatatype.TUPLE
-				|| this.type == SDFDatatype.KindOfDatatype.BEAN;
+		return this.type == SDFDatatype.KindOfDatatype.MULTI_VALUE || this.type == SDFDatatype.KindOfDatatype.TUPLE || this.type == SDFDatatype.KindOfDatatype.BEAN;
 	}
-	
-	public boolean isListValue(){
+
+	public boolean isListValue() {
 		return this.type == SDFDatatype.KindOfDatatype.LIST;
 	}
 
@@ -269,10 +241,14 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isNumeric() {
-		return this.getURI().equals(LONG.getURI())
-				|| this.getURI().equals(INTEGER.getURI())
-				|| this.getURI().equals(DOUBLE.getURI())
-				|| this.getURI().equals(FLOAT.getURI());
+		return 	   this.getURI().equals(LONG.getURI()) 
+				|| this.getURI().equals(INTEGER.getURI()) 
+				|| this.getURI().equals(DOUBLE.getURI()) 
+				|| this.getURI().equals(FLOAT.getURI())
+				|| this.getURI().equals(TIMESTAMP.getURI())
+				|| this.getURI().equals(POINT_IN_TIME.getURI())
+				|| this.getURI().equals(START_TIMESTAMP.getURI()) 
+				|| this.getURI().equals(END_TIMESTAMP.getURI());
 	}
 
 	public boolean isDouble() {
@@ -312,15 +288,14 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isTimestamp() {
-		return this.getURI().equals(TIMESTAMP.getURI())
-				|| this.isStartTimestamp() || this.isEndTimestamp();
+		return this.getURI().equals(TIMESTAMP.getURI()) || this.isStartTimestamp() || this.isEndTimestamp();
 	}
 
 	public int getSubattributeCount() {
 		if (this.schema == null) {
 			return 0;
 		}
-        return this.schema.size();
+		return this.schema.size();
 	}
 
 	/**
@@ -332,7 +307,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public boolean requiresDeepClone() {
 		return this.requiresDeepClone;
 	}
-	
+
 	public static SDFDatatype min(SDFDatatype left, SDFDatatype right) {
 
 		if (left.compatibleTo(right) && !right.compatibleTo(left)) {
@@ -340,8 +315,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		}
 
 		if (!left.compatibleTo(right) && !right.compatibleTo(left)) {
-			throw new IllegalArgumentException(
-					"left and right are not compatible.");
+			throw new IllegalArgumentException("left and right are not compatible.");
 		}
 
 		return left; // left->right ok -> left ||| right->left ok -> left
@@ -362,15 +336,13 @@ public class SDFDatatype extends SDFElement implements Serializable {
 				if (this.subType != null && this.subType.equals(other.subType)) {
 					return true;
 				}
-				if (this.schema != null && other.schema != null
-						&& this.schema.equals(other.schema)) {
+				if (this.schema != null && other.schema != null && this.schema.equals(other.schema)) {
 					return true;
 				}
 			}
 		}
 
-		else if (this.getURI() != null && other.getURI() != null
-				&& this.getURI().equals(other.getURI())) {
+		else if (this.getURI() != null && other.getURI() != null && this.getURI().equals(other.getURI())) {
 			return true;
 		}
 
@@ -389,21 +361,17 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			return true;
 		} else if (this.isInteger() && other.isNumeric()) {
 			return true;
-		} else if (this.isLong()
-				&& (other.isLong() || other.isFloat() || other.isDouble())) {
+		} else if (this.isLong() && (other.isLong() || other.isFloat() || other.isDouble())) {
 			return true;
 		} else if (this.isFloat() && (other.isFloat() || other.isDouble())) {
 			return true;
 		} else if (this.isDouble() && other.isDouble()) {
 			return true;
-		} else if (this.isEndTimestamp()
-				&& (other.isEndTimestamp() || other.isLong())) {
+		} else if (this.isEndTimestamp() && (other.isEndTimestamp() || other.isLong())) {
 			return true;
-		} else if (this.isStartTimestamp()
-				&& (other.isStartTimestamp() || other.isLong())) {
+		} else if (this.isStartTimestamp() && (other.isStartTimestamp() || other.isLong())) {
 			return true;
-		} else if (this.isTimestamp()
-				&& (other.isTimestamp() || other.isLong())) {
+		} else if (this.isTimestamp() && (other.isTimestamp() || other.isLong())) {
 			return true;
 		}
 		return false;
