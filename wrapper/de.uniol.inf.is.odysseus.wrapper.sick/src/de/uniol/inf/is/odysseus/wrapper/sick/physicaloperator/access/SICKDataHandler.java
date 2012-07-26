@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.wrapper.sick.SICKConstants;
-import de.uniol.inf.is.odysseus.wrapper.sick.impl.SickReadErrorException;
+import de.uniol.inf.is.odysseus.wrapper.sick.SickReadErrorException;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.sick.model.Sample;
 
