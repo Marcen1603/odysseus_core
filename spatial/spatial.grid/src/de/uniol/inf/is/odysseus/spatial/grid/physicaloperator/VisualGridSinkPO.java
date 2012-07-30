@@ -16,14 +16,11 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.physicaloperator;
 
-import static com.googlecode.javacv.cpp.opencv_core.CV_MINMAX;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.javacv.CanvasFrame;
-import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -99,7 +96,6 @@ public class VisualGridSinkPO extends AbstractSink<Object> {
 		Grid grid = (Grid) ((Tuple<TimeInterval>) object).getAttribute(0);
 		if ((this.canvas != null) && (canvas.isVisible()) && (!pause.get())) {
 			IplImage image = OpenCVUtil.gridToImage(grid);
-			opencv_core.cvNormalize(image, image, 0, 1, CV_MINMAX, null);
 
 			this.canvas.showImage(image);
 			image.release();

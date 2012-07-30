@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvFillPoly;
-import static com.googlecode.javacv.cpp.opencv_core.cvSet2D;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
@@ -44,13 +43,12 @@ public class ToGrid extends AbstractFunction<Grid> {
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFSpatialDatatype.SPATIAL_GEOMETRY,
 					SDFSpatialDatatype.SPATIAL_POLYGON },
-			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE },
-			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE },
-			{ SDFDatatype.DOUBLE } };
+			{ SDFSpatialDatatype.SPATIAL_COORDINATE }, { SDFDatatype.DOUBLE },
+			{ SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
 
 	@Override
 	public int getArity() {
-		return 6;
+		return 5;
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class ToGrid extends AbstractFunction<Grid> {
 					this.getSymbol()
 							+ " has only "
 							+ this.getArity()
-							+ " argument(s): A geometry, the x and y coordinates, the width and height, and the cellsize.");
+							+ " argument(s): A geometry, the origin, the width and height, and the cellsize.");
 		}
 		return accTypes[argPos];
 	}
@@ -84,36 +82,36 @@ public class ToGrid extends AbstractFunction<Grid> {
 
 		final Coordinate[] coordinates = geometry.getCoordinates();
 
-		final Grid grid = new Grid(origin, width, height,
-				cellsize);
+		final Grid grid = new Grid(origin, width, height, cellsize);
 
 		grid.fill(GridUtil.UNKNOWN);
 
-		IplImage image = OpenCVUtil.gridToImage(grid);
 		CvPoint convexHullPoints = new CvPoint(coordinates.length);
 		Coordinate coordinate;
 		for (int i = 0; i < coordinates.length; i++) {
 			coordinate = coordinates[i];
 			convexHullPoints.position(i)
-					.x((int) ((coordinate.x - origin.x) / cellsize + 0.5))
-					.y((int) ((coordinate.y - origin.y) / cellsize + 0.5));
+					.x((int) ((coordinate.x - origin.x) / cellsize))
+					.y((int) ((coordinate.y - origin.y) / cellsize));
 		}
+		IplImage image = OpenCVUtil.gridToImage(grid);
 		cvFillPoly(image, convexHullPoints, new int[] { coordinates.length },
 				1, opencv_core.cvScalarAll(GridUtil.FREE), 4, 0);
-		convexHullPoints.deallocate();
-		for (int i = 0; i < coordinates.length; i++) {
-			coordinate = coordinates[i];
-			if ((coordinate.x >= origin.x)
-					&& (coordinate.x < origin.x + width * grid.cellsize)
-					&& (coordinate.y >= origin.y)
-					&& (coordinate.y < origin.y + height * grid.cellsize)) {
 
-				cvSet2D(image, (int) ((coordinate.y - origin.y) / cellsize),
-						(int) ((coordinate.x - origin.x) / cellsize),
-						opencv_core.cvScalarAll(GridUtil.OBSTACLE));
+		OpenCVUtil.imageToGrid(image, grid);
+
+		for (int i = 0; i < coordinates.length; i++) {
+			if ((convexHullPoints.position(i).x() >= 0)
+					&& (convexHullPoints.position(i).x() < grid.width)
+					&& (convexHullPoints.position(i).y() >= 0)
+					&& (convexHullPoints.position(i).y() < grid.height)) {
+				grid.set(convexHullPoints.position(i).x(), convexHullPoints
+						.position(i).y(), GridUtil.OBSTACLE);
 			}
 		}
-		return OpenCVUtil.imageToGrid(image, grid);
+		convexHullPoints.deallocate();
+
+		return grid;
 	}
 
 	@Override

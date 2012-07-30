@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -56,7 +52,7 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
 					+ this.getArity()
 					+ " argument(s): A geometry and an angle in degree.");
 		}
-        return RotateViewPoint.accTypes[argPos];
+		return RotateViewPoint.accTypes[argPos];
 	}
 
 	@Override
@@ -71,16 +67,17 @@ public class RotateViewPoint extends AbstractFunction<Geometry> {
 		angle = Math.toRadians(angle);
 		double sin = Math.sin(angle);
 		double cos = Math.cos(angle);
-		final List<Point> coordinates = new ArrayList<Point>(
-				geometry.getCoordinates().length);
-		for (final Coordinate coordinate : geometry.getCoordinates()) {
+
+		final Coordinate[] coordinates = new Coordinate[geometry
+				.getCoordinates().length];
+		for (int i = 0; i < coordinates.length; i++) {
+			Coordinate coordinate = geometry.getCoordinates()[i];
 			final double x = coordinate.x;
 			final double y = coordinate.y;
-			coordinates.add(this.geometryFactory.createPoint(new Coordinate(x
-					* cos - y * sin, x * sin + y * cos)));
+			coordinates[i] = new Coordinate(x * cos - y * sin, x * sin + y
+					* cos);
 		}
-		return this.geometryFactory.createMultiPoint(coordinates
-				.toArray(new Point[] {}));
+		return this.geometryFactory.createMultiPoint(coordinates);
 	}
 
 	@Override

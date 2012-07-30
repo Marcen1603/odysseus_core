@@ -15,18 +15,15 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.spatial.functions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.spatial.geom.PolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -68,15 +65,15 @@ public class AsCartesianCoordinates extends AbstractFunction<Geometry> {
 		PolarCoordinate[] coordinates = (PolarCoordinate[]) this
 				.getInputValue(0);
 
-		final List<Point> points = new ArrayList<Point>(coordinates.length);
-		for (PolarCoordinate coordinate : coordinates) {
+		final Coordinate[] points = new Coordinate[coordinates.length];
+		for (int i = 0; i < coordinates.length; i++) {
+			PolarCoordinate coordinate = coordinates[i];
 			final Coordinate point = new Coordinate();
-			point.x = coordinate.r * Math.cos(coordinate.a);
-			point.y = coordinate.r * Math.sin(coordinate.a);
-			points.add(this.geometryFactory.createPoint(point));
+			point.x = coordinate.r * Math.cos(Math.toRadians(coordinate.a));
+			point.y = coordinate.r * Math.sin(Math.toRadians(coordinate.a));
+			points[i] = point;
 		}
-		return this.geometryFactory.createMultiPoint(points
-				.toArray(new Point[] {}));
+		return this.geometryFactory.createMultiPoint(points);
 	}
 
 	@Override

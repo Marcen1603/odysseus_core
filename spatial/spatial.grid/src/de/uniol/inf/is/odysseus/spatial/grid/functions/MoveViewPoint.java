@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 
 package de.uniol.inf.is.odysseus.spatial.grid.functions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -58,7 +54,7 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
 					+ this.getArity()
 					+ " argument(s): A geometry and a x and y value.");
 		}
-        return MoveViewPoint.accTypes[argPos];
+		return MoveViewPoint.accTypes[argPos];
 	}
 
 	@Override
@@ -71,15 +67,14 @@ public class MoveViewPoint extends AbstractFunction<Geometry> {
 		final Geometry geometry = (Geometry) this.getInputValue(0);
 		final Double x = (Double) this.getInputValue(1);
 		final Double y = (Double) this.getInputValue(2);
-		final List<Point> coordinates = new ArrayList<Point>(
-				geometry.getCoordinates().length);
 
-		for (final Coordinate coordinate : geometry.getCoordinates()) {
-			coordinates.add(this.geometryFactory.createPoint(new Coordinate(
-					coordinate.x - x, coordinate.y - y)));
+		final Coordinate[] coordinates = new Coordinate[geometry
+				.getCoordinates().length];
+		for (int i = 0; i < coordinates.length; i++) {
+			Coordinate coordinate = geometry.getCoordinates()[i];
+			coordinates[i] = new Coordinate(coordinate.x - x, coordinate.y - y);
 		}
-		return this.geometryFactory.createMultiPoint(coordinates
-				.toArray(new Point[] {}));
+		return this.geometryFactory.createMultiPoint(coordinates);
 	}
 
 	@Override
