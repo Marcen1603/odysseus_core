@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 	public void evaluate() {
 		IplImage image = OpenCVUtil.gridToImage(this.grid);
 		opencv_core.cvConvertScale(image, image, 1.0 / this.count, 0);
-		OpenCVUtil.imageToGrid(image, grid);
+		OpenCVUtil.imageToGrid(image, this.grid);
 	}
 
 	public Grid getGrid() {
@@ -60,7 +60,9 @@ public class GridPartialAggregate<T> implements IPartialAggregate<T> {
 		this.count++;
 		IplImage image = OpenCVUtil.gridToImage(this.grid);
 		IplImage mergeImage = OpenCVUtil.gridToImage(grid);
+		
 		opencv_core.cvAdd(image, mergeImage, image, null);
+		
 		mergeImage.release();
 		OpenCVUtil.imageToGrid(image, grid);
 	}

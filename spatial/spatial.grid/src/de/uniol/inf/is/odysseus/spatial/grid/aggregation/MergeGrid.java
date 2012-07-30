@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.spatial.grid.aggregation;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.spatial.grid.model.Grid;
@@ -34,7 +35,7 @@ public class MergeGrid extends
 	private final int attribPos;
 
 	public MergeGrid(int[] pos) {
-		super("MergeBeliefeGrid");
+		super("MergeGrid");
 		this.attribPos = pos[0];
 	}
 
@@ -64,8 +65,7 @@ public class MergeGrid extends
 	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
 		final GridPartialAggregate<Tuple<?>> grid = (GridPartialAggregate<Tuple<?>>) p;
 		grid.evaluate();
-		@SuppressWarnings("rawtypes")
-		final Tuple<?> tuple = new Tuple(1, false);
+		final Tuple<?  extends IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
 		tuple.setAttribute(0, grid.getGrid());
 		return tuple;
 	}
