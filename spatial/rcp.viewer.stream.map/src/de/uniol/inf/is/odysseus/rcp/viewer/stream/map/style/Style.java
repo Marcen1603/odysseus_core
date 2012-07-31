@@ -102,7 +102,7 @@ public abstract class Style{
 		}
 	}
 	
-	//abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
+	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
 	
 	abstract public Image getImage();
 	

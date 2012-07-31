@@ -32,30 +32,27 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.MapWidget;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tool.MouseLabel;
 
 public class ScreenManager {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ScreenManager.class);
-	private static final Color WHITE = Display.getCurrent().getSystemColor(
-			SWT.COLOR_WHITE);
+	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
+	private static final Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 
 	private StreamMapEditor editor;
 	private ScreenTransformation transformation;
-	private Canvas viewer;
+	private MapWidget viewer;
 	private Rectangle mouseSelection = null;
 	private MouseLabel mouseLabel = new MouseLabel();
 
-	public ScreenManager(ScreenTransformation transformation,
-			StreamMapEditor editor) {
+	public ScreenManager(ScreenTransformation transformation, StreamMapEditor editor) {
 		this.transformation = transformation;
 		this.editor = editor;
-
 	}
 
-	protected Canvas createCanvas(Composite parent) {
-		Canvas canvasViewer = new Canvas(parent, SWT.NONE);
+	protected MapWidget createCanvas(Composite parent) {
+		MapWidget canvasViewer = new MapWidget(parent, SWT.NONE);
 		canvasViewer.setBackground(WHITE);
 		canvasViewer.addPaintListener(new GeometryPaintListener(editor));
 
@@ -63,7 +60,7 @@ public class ScreenManager {
 
 			@Override
 			public void controlResized(ControlEvent e) {
-				transformation.updateOrigin(viewer.getClientArea());
+				//transformation.updateOrigin(viewer.getClientArea());
 				LOG.debug("Resize: " + " min=" + viewer.getClientArea().x + ","
 						+ viewer.getClientArea().y + " max="
 						+ viewer.getClientArea().width + ","
@@ -123,10 +120,30 @@ public class ScreenManager {
 
 			@Override
 			public void mouseMove(MouseEvent e) {
-				mouseLabel.label = "Screen Coordinate: " + e.x + "," + e.y
-						+ "\n";
-
-				double[] map4326 = transformation.screenToEpsg4326(e.x, e.y);
+				mouseLabel.label = "";
+				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
+			    mouseLabel.label += "Zoom: " + viewer.getZoom() + "\n";	
+			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
+			    mouseLabel.label += "Position: " + viewer.getMapPosition() + "\n";	
+			    mouseLabel.label += "Center: " + viewer.getCenterPosition() + "\n";	
+			    mouseLabel.label += "Location: " + viewer.getLocation() + "\n";	
+			    
+			    mouseLabel.label += "Courser: " + viewer.getCursorPosition() + "\n";	
+			    
+			    
+			    mouseLabel.label += "Lat: " + viewer.position2lat(viewer.getCursorPosition().y, viewer.getZoom()) + "\n";	
+			    mouseLabel.label += "Lon: " + viewer.position2lon(viewer.getCursorPosition().x, viewer.getZoom()) + "\n";	
+			    
+			    
+//				 new Spec("Zoom") { public String computeValue() { return Integer.toString(mapWidget.getZoom()); }},
+//	                new Spec("Map Size") { public String computeValue() { Point size = mapWidget.getSize(); return size.x + ", " + size.y; }},
+//	                new Spec("Map Position") { public String computeValue() { Point position = mapWidget.getMapPosition(); return position.x + ", " + position.y; }},
+//	                new Spec("Center Position") { public String computeValue() { Point position = mapWidget.getCenterPosition(); return position.x + ", " + position.y; }},
+//	                new Spec("Paint time") { public String computeValue() { mapWidget.getStats(); return mapWidget.getStats().dt + " ms"; }},
+//	                new Spec("Imagefetchers Threads") { public String computeValue() { return Integer.toString(MapWidget.IMAGEFETCHER_THREADS); }},
+//	                new Spec("Number painted tiles") {
+//				
+				// double[] map4326 = transformation.screenToEpsg4326(e.x, e.y);
 
 				// int[] scCoord = transformation.epsg4326ToScreen(map4326[0],
 				// map4326[1]);
@@ -135,25 +152,24 @@ public class ScreenManager {
 				// transformation.equirectangular_position(map4326[0],
 				// map4326[1]);
 
-				int[] mer = transformation.toMercator(map4326[0], map4326[1]);
+				// int[] mer = transformation.toMercator(map4326[0], map4326[1]);
 
 				// mouseLabel.label += "Screen: " + scCoord[0] + ", " +
 				// scCoord[1] + "\n";
-				mouseLabel.label += "Coordinate: " + map4326[0] + ", "
-						+ map4326[1] + "\n";
+				// mouseLabel.label += "Coordinate: " + map4326[0] + ", "
+				//		+ map4326[1] + "\n";
 				// mouseLabel.label += "Equirectangular: " + equi[0] + ", " +
 				// equi[1] + "\n";
-				mouseLabel.label += "Mercator: " + mer[0] + ", " + mer[1]
-						+ "\n";
+				// mouseLabel.label += "Mercator: " + mer[0] + ", " + mer[1]
+				//		+ "\n";
 
-				mouseLabel.x = e.x;
-				mouseLabel.y = e.y;
+				// mouseLabel.x = e.x;
+				// mouseLabel.y = e.y;
 
-				// TODO Auto-generated method stub
-				if (mouseSelection != null) {
-					mouseSelection.width = e.x - mouseSelection.x;
-					mouseSelection.height = e.y - mouseSelection.y;
-				}
+//				if (mouseSelection != null) {
+//					mouseSelection.width = e.x - mouseSelection.x;
+//					mouseSelection.height = e.y - mouseSelection.y;
+//				}
 
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -177,19 +193,19 @@ public class ScreenManager {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (e.character == 'a')
-					transformation.zoomin(0.01);
-				if (e.character == 'q')
-					transformation.zoomin(0.1);
-				if (e.character == 'z')
-					transformation.zoomin(1);
-
-				if (e.character == 's')
-					transformation.zoomout(0.01);
-				if (e.character == 'w')
-					transformation.zoomout(0.1);
-				if (e.character == 'x')
-					transformation.zoomout(1);
+//				if (e.character == 'a')
+//					transformation.zoomin(0.01);
+//				if (e.character == 'q')
+//					transformation.zoomin(0.1);
+//				if (e.character == 'z')
+//					transformation.zoomin(1);
+//
+//				if (e.character == 's')
+//					transformation.zoomout(0.01);
+//				if (e.character == 'w')
+//					transformation.zoomout(0.1);
+//				if (e.character == 'x')
+//					transformation.zoomout(1);
 
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -206,13 +222,13 @@ public class ScreenManager {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP)
-					transformation.panNorth();
+					transformation.panNorth(10);
 				if (e.keyCode == SWT.ARROW_DOWN)
-					transformation.panSouth();
+					transformation.panSouth(10);
 				if (e.keyCode == SWT.ARROW_LEFT)
-					transformation.panWest();
+					transformation.panWest(10);
 				if (e.keyCode == SWT.ARROW_RIGHT)
-					transformation.panEast();
+					transformation.panEast(10);
 				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
 							.asyncExec(new Runnable() {
@@ -226,6 +242,7 @@ public class ScreenManager {
 			}
 
 		});
+		this.transformation.setMap(viewer);
 		return canvasViewer;
 	}
 
@@ -237,9 +254,10 @@ public class ScreenManager {
 		return getCanvasViewer() != null;
 	}
 
-	public void setCanvasViewer(Canvas viewer) {
+	public void setCanvasViewer(MapWidget viewer) {
 		if (viewer != null) {
 			this.viewer = viewer;
+			this.transformation.setMap(viewer);
 		} else {
 			LOG.error("Canvas Viewer is null.");
 		}

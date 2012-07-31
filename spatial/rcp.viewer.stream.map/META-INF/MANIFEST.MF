@@ -27,6 +27,4 @@ Require-Bundle: org.eclipse.ui,
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: lib/xercesImpl.jar,
- lib/xml-apis.jar,
- .
+Bundle-ClassPath: .

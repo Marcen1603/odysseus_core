@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +23,18 @@ import java.util.TreeMap;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +49,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.ImageStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
@@ -64,7 +70,7 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	private SDFSchema schema;
 
-	private LinkedList<Layer> layerOrder = new LinkedList<Layer>();
+	private LinkedList<ILayer> layerOrder = new LinkedList<ILayer>();
 
 	private ScreenTransformation transformation;
 	private ScreenManager screenManager;
@@ -82,7 +88,7 @@ public class StreamMapEditor implements IStreamEditorType {
 		setMaxTuplesCount(maxTuples);
 		
 		//Create Map Background 
-		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
+		//layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
 	@Override
@@ -93,18 +99,8 @@ public class StreamMapEditor implements IStreamEditorType {
 		}
 		//LOG.info("Received Element: " + element.toString());
 		
-		for (Integer key : spatialDataIndex.keySet()) {
-				
-			if( !(((Tuple<?>) element).getAttribute(key) instanceof ArrayList) ){
-				spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
-			}
-			else{
-				//spatialDataIndex.get(key).addGeometry((GeometryCollection)((Tuple<?>) element).getAttribute(key));	
-				for(Geometry g: (List<Geometry>)((Tuple<?>) element).getAttribute(key)){
-					//LOG.info(g.toString());
-					spatialDataIndex.get(key).addGeometry(g);	
-				}
-			}
+		for (Integer key : spatialDataIndex.keySet()) {	
+			spatialDataIndex.get(key).addGeometry((Geometry)((Tuple<?>) element).getAttribute(key));	
 		}
 
 
@@ -214,7 +210,7 @@ public class StreamMapEditor implements IStreamEditorType {
 				} else if (spatialDatatype.isMultiPolygon()) {
 					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
 					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-				} else if (spatialDatatype.isGeometryCollection()) {
+				} else if (spatialDatatype.isSpatial()) {
 					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
 					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
 					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
@@ -226,7 +222,7 @@ public class StreamMapEditor implements IStreamEditorType {
 					spatialDataIndex.put(i, layer);
 					layerOrder.add(layer);
 				} else {
-					throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
+					throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
 				}
 
 			}
@@ -240,16 +236,77 @@ public class StreamMapEditor implements IStreamEditorType {
 			this.maxTuplesCount = Integer.MAX_VALUE;
 	}
 
+	
+	Label toolbarLabel;
+	
 	@Override
-	public void initToolbar(ToolBar toolbar) {
-
+	public void initToolbar(final ToolBar toolbar) {
+//		ToolItem filterButton = new ToolItem(toolbar, SWT.PUSH);
+//		filterButton.setToolTipText("Filter columns");
+//		filterButton.addSelectionListener(new SelectionAdapter() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, null);
+//				window.show();
+//				
+//				if( !window.isCanceled() && !window.getSelectedAttributeIndices().isEmpty()) {
+//
+//					//createColumns(screenManager.getCanvasViewer(), window.getSelectedAttributeIndices());
+//					if( getSchema().size() != window.getSelectedAttributeIndices().size()) {
+//						toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
+//					} else {
+//						toolbarLabel.setText("");
+//					}
+//					screenManager.getCanvasViewer().getParent().layout();
+//				}
+//			}
+//		});
+//		
+//		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
+//		toolbarLabel.setText("");
+		if (screenManager.hasCanvasViewer()){
+			final Display display = screenManager.getCanvasViewer().getDisplay();
+			final Shell shell = new Shell(Display.getCurrent());
+			
+			
+			Rectangle clientArea = shell.getClientArea ();
+			toolbar.setLocation(clientArea.x, clientArea.y);
+			final Menu menu = new Menu (shell, SWT.POP_UP);
+			for (int i=0; i<8; i++) {
+				MenuItem item = new MenuItem (menu, SWT.PUSH);
+				item.setText ("Item " + i);
+			}
+			final ToolItem item = new ToolItem (toolbar, SWT.DROP_DOWN);
+			item.addListener (SWT.Selection, new Listener () {
+				public void handleEvent (Event event) {
+					if (event.detail == SWT.ARROW) {
+						Rectangle rect = item.getBounds ();
+						Point pt = new Point (rect.x, rect.y + rect.height);
+						pt = toolbar.toDisplay (pt);
+						menu.setLocation (pt.x, pt.y);
+						menu.setVisible (true);
+					}
+				}
+			});
+			toolbar.pack();
+			shell.pack ();
+			shell.open ();
+			while (!shell.isDisposed ()) {
+				if (!display.readAndDispatch ()) display.sleep ();
+			}
+			menu.dispose ();
+			display.dispose ();
+		}
+		
+		
 	}
 
-	public LinkedList<Layer> getLayerOrder() {
+	public LinkedList<ILayer> getLayerOrder() {
 		return layerOrder;
 	}
 
-	public void setLayerOrder(LinkedList<Layer> layerOrder) {
+	public void setLayerOrder(LinkedList<ILayer> layerOrder) {
 		this.layerOrder = layerOrder;
 	}
 	

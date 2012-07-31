@@ -30,7 +30,8 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
+//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
+//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
@@ -38,7 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  * @author Kai Pancratz
  * 
  */
-public class VectorLayer implements Layer{
+public class VectorLayer extends AbstractLayer{
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(VectorLayer.class);
@@ -83,8 +84,7 @@ public class VectorLayer implements Layer{
 		}
 	}
 
-	private void drawGeometryCollection(GeometryCollection geometryCollection,
-			GC gc) {
+	private void drawGeometryCollection(GeometryCollection geometryCollection, GC gc) {
 		for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
 			drawGeometry(geometryCollection.getGeometryN(i), gc);
 		}
@@ -126,8 +126,19 @@ public class VectorLayer implements Layer{
 		for (int n = 0; n < polygon.getNumInteriorRing(); n++) {
 			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n), gc);
 		}
-		if (this.style instanceof PolygonStyle)
-			((PolygonStyle) this.style).draw(gc, list);
+		this.style.draw(gc, list);
+//		if(this.style instanceof PolygonStyle){
+//			((PolygonStyle) this.style).draw(gc, list);
+//		}
+//		/*
+//		 * @ToDo
+//		 * 
+//		 * 
+//		 * 
+//		 */
+//		if(this.style instanceof CollectionStyle){
+//			((CollectionStyle) this.style).draw(gc, list);
+//		}
 	}
 	
 	public void addGeometry(Geometry geometry) {

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
 /**
  * @author Stephan Jansen
@@ -45,7 +45,7 @@ final class GeometryPaintListener implements PaintListener {
 
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
-		for (Layer layer : this.streamMapEditor.getLayerOrder()) {
+		for (ILayer layer : this.streamMapEditor.getLayerOrder()) {
 			if(layer != null){
 				layer.draw(e.gc);
 			}

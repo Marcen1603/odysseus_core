@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.Layer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 /**
@@ -85,8 +85,8 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 		} else if (element instanceof SDFAttribute) {
 			return ((SDFAttribute) element).getAttributeName();
 		}
-		if (element instanceof Layer) {
-			return ((Layer) element).getName();
+		if (element instanceof ILayer) {
+			return ((ILayer) element).getName();
 		}
 		return null;
 	}

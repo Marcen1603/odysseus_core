@@ -22,9 +22,11 @@ import org.eclipse.swt.graphics.GC;
  * @author Kai Pancratz
  * 
  */
-public interface Layer {
+public interface ILayer {
 
 	public void draw(GC gc);	
 	public String getName();
+//	public BoundingBox getBoundingBox();
+//	public void setBoundingBox(BoundingBox boundingBox);
 	
 }

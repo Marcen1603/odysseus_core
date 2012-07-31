@@ -15,14 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
-import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * @author Stephan Jansen
@@ -32,10 +27,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 public class StreamMapWindowEditor extends StreamMapEditor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StreamMapWindowEditor.class);
-	private ITimeInterval metadata = null;
+	//private ITimeInterval metadata = null;
 	
 	public StreamMapWindowEditor() {
-		super(1000000000);
+		super(100000);
+		LOG.debug("Window Set to 100.000 Tuple.");
 	}
 
 

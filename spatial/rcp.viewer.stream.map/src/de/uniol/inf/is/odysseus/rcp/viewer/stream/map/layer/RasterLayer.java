@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.GC;
  * @author Kai Pancratz
  * 
  */
-public class RasterLayer implements Layer{
+public class RasterLayer extends AbstractLayer{
 
 	@Override
 	public void draw(GC gc) {
