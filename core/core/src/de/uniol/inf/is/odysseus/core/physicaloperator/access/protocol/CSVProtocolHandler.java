@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 
+	private char textDelimiter;
 	private char delimiter;
 	private boolean readFirstLine = true;
 	private boolean firstLineSkipped = false;
@@ -43,12 +44,11 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 			StringBuffer elem = new StringBuffer();
 			boolean overreadModus1 = false;
 			boolean overreadModus2 = false;
+			
 			for (char c : line.toCharArray()) {
-				if (c == '\"') {
+				
+				if (c == textDelimiter) {
 					overreadModus1 = !overreadModus1;
-					//elem.append(c);
-				} else if (c == '\'') {
-					overreadModus2 = !overreadModus2;
 					//elem.append(c);
 				} else {
 					if (overreadModus1 || overreadModus2) {
@@ -80,6 +80,8 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
 		instance.delimiter = options.get("delimiter").toCharArray()[0];
+		instance.textDelimiter = options.get("textdelimiter").toCharArray()[0];
+		
 		if (options.get("readfirstline") != null){
 			instance.readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
 		}else{
