@@ -1,14 +1,19 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class SumPartialAggregate<T> implements IPartialAggregate<T> {
 	double sum = 0;
 
-	public SumPartialAggregate(double count) {
-		this.sum = count;
+	public SumPartialAggregate(double value, double probability) {
+		this.sum = value * probability;
+	}
+
+	public SumPartialAggregate(double sum) {
+		this.sum = sum;
 	}
 
 	public SumPartialAggregate(SumPartialAggregate<T> sumPartialAggregate) {
@@ -20,7 +25,7 @@ public class SumPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	public void add(double value, double probability) {
-		sum = sum + value * probability;
+		sum += value * probability;
 	}
 
 	@Override

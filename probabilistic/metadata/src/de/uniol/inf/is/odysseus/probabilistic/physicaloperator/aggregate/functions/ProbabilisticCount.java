@@ -6,6 +6,8 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbability;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -35,7 +37,8 @@ public class ProbabilisticCount extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
-		IPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>(1);
+		IPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>(
+				((IProbability) in.getMetadata()).getProbability(pos));
 		return pa;
 	}
 
@@ -50,10 +53,10 @@ public class ProbabilisticCount extends
 			pa = (CountPartialAggregate<Tuple<?>>) p;
 		}
 
-		// TODO Set probability from metadata
-		pa.add(1);
+		pa.add(((IProbability) toMerge.getMetadata()).getProbability(pos));
 		return pa;
 	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {

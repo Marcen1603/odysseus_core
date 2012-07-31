@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -14,35 +15,41 @@ public class Probability implements IProbability {
 	 * 
 	 */
 	private static final long serialVersionUID = -147594856639774242L;
+	private double[] probabilities;
 
 	public Probability() {
 
 	}
-	public Probability(IProbability probability) {
+
+	public Probability(Probability probability) {
+		this.probabilities = probability.probabilities.clone();
 
 	}
+
+	@Override
+	public double getProbability(int pos) {
+		// TODO Auto-generated method stub
+		return this.probabilities[pos];
+	}
+
+	@Override
+	public void setProbability(int pos, double value) {
+		this.probabilities[pos] = value;
+	}
+
 	@Override
 	public String csvToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "" + this.probabilities;
 	}
 
 	@Override
 	public String csvToString(boolean withMetada) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.csvToString();
 	}
 
 	@Override
 	public String getCSVHeader() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int compareTo(IProbability other) {
-		// TODO Auto-generated method stub
-		return 0;
+		return "probability";
 	}
 
 	@Override

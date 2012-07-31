@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -20,7 +21,7 @@ public class CountPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	public void add(double probability) {
-		count = count + (1 - probability);
+		count += probability;
 	}
 
 	@Override

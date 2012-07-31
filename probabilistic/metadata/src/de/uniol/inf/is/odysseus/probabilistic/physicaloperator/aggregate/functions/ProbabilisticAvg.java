@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbability;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -18,6 +19,9 @@ public class ProbabilisticAvg extends
 	 */
 	private static final long serialVersionUID = -2188835286391575126L;
 	private static Map<Integer, ProbabilisticCount> instances = new HashMap<Integer, ProbabilisticCount>();
+	// TODO Move to a global configuration
+	private static final double ERROR = 0.25;
+	private static final double BOUND = 0.75;
 	private int pos;
 
 	public static ProbabilisticCount getInstance(int pos) {
@@ -36,9 +40,10 @@ public class ProbabilisticAvg extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
-		// TODO estimate good values
-		IPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(
-				0.25, 0.7);
+		AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(
+				ERROR, BOUND);
+		pa.update(((Number) in.getAttribute(pos)).doubleValue(),
+				((IProbability) in.getMetadata()).getProbability(pos));
 		return pa;
 	}
 
@@ -47,13 +52,13 @@ public class ProbabilisticAvg extends
 			Tuple<?> toMerge, boolean createNew) {
 		AvgPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
-			pa = new AvgPartialAggregate<Tuple<?>>(0.25, 0.7);
+			pa = new AvgPartialAggregate<Tuple<?>>(ERROR, BOUND);
 		} else {
 			pa = (AvgPartialAggregate<Tuple<?>>) p;
 		}
 
-		// TODO Set probability from metadata
-		pa.update(((Number) toMerge.getAttribute(pos)).doubleValue(), 0.3);
+		pa.update(((Number) toMerge.getAttribute(pos)).doubleValue(),
+				((IProbability) toMerge.getMetadata()).getProbability(pos));
 		return pa;
 	}
 
