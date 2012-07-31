@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,12 @@ import org.eclipse.swt.graphics.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wms.BoundingBox;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wms.MapRequest;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wms.WMService;
 
 /**
  * @author Stephan Jansen
@@ -40,12 +44,19 @@ public class MapLayer implements Layer {
 	protected ScreenTransformation transformation = null;
 	protected Style style = null;
 	protected Image image = null;
+	protected Image scaledImage = null;
 	protected String name = null;
+	private BoundingBox mapbbox = null;
+	private WMService wmservice = null;
+	//private com.vividsolutions.wms.MapLayer map = new com.vividsolutions.wms.MapLayer("Map", "bla", srsList, subLayers, bbox)
+	private MapRequest mapRequest = null;
 	
-	//private String mapType = "bing";
+	boolean first = true;
+
+	// private String mapType = "bing";
 	private String mapType = "osm";
 	private String mapFormat = "image/png";
-	
+
 	public MapLayer(ScreenTransformation transformation, Style style) {
 		this.name = "Map";
 		this.transformation = transformation;
@@ -55,34 +66,80 @@ public class MapLayer implements Layer {
 
 	@Override
 	public void draw(GC gc) {
+
 		if (transformation.hasUpdate()) {
 			
-			double[] min = transformation.screenToEpsg4326(transformation.getCurrentScreen().x, transformation.getCurrentScreen().y);
-			double[] max = transformation.screenToEpsg4326(transformation.getCurrentScreen().width, transformation.getCurrentScreen().height);	
-
-			transformation.setMinLat(min[0]);
-			transformation.setMinLon(min[1]);
-			transformation.setMaxLat(max[0]);
-			transformation.setMaxLon(max[1]);
-
+			transformation.getMaxLat();
 			
-			LOG.debug("Calculated Map: " + " x="+ min[0] + "," + min[1] + " y=" + max[0] + "," + max[1]);
+//			double[] min = transformation.screenToEpsg4326(
+//					transformation.getCurrentScreen().x,
+//					transformation.getCurrentScreen().y);
+//			double[] max = transformation.screenToEpsg4326(
+//					transformation.getCurrentScreen().width,
+//					transformation.getCurrentScreen().height);
+//			
+//			double minLon = transformation.getMinLon();
+//			double maxLon = transformation.getMaxLon();
+//			double minLat = transformation.getMinLat();
+//			double maxLat = transformation.getMaxLat();
+
+			if (first) {
+				//transformation.getOriginScreen().width;
+				
+				//image = updateImage(gc, 1024, transformation.getOriginScreen().height, minLon, maxLat, maxLon, minLat);
+
+				//mapbbox = new BoundingBox("EPSG:3875", -180.0, 85.051128779799996, 180.0,  -85.051128779799996);
+//				wmservice = new WMService("http://wms.latlon.org/?");
+				wmservice = new WMService("http://vmap0.tiles.osgeo.org/wms/vmap0?");
+				
+//				wmservice = new WMService("http://129.206.228.72/cached/osm?");
+				LOG.debug(wmservice.getServerUrl());
+				
+// 				wmservice.getCapabilities().getService().getServerUrl();
+//				wmservice.getServerUrl()
+//				
+				try {
+					wmservice.initialize();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				mapRequest = wmservice.createMapRequest();
+		        mapRequest.setImageSize(transformation.getCurrentScreen().width, transformation.getCurrentScreen().height);
+		        
+		        it = wmservice.getCapabilities().getTopLayer().getSRSList().iterator();
+		        
+		       // mapRequest.setFormat( (String)formatCombo.getSelectedItem() );
+		       // mapRequest.setLayers( Arrays.asList( layerList.getSelectedValues() ) );
+		        mapRequest.setBoundingBox(transformation.getBbox());
+		        try {
+					LOG.debug(mapRequest.getURL().toString());
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				image = mapRequest.getImage(gc);
+				first = false;
+			}
 			
-			//Only for testing. 
-			if(		(min[1] >= -85.0 	&& min[1] <= 85.0)  &&
-					(max[1] >= -85.0 	&& max[1] <= 85.0)  &&
-					(min[0] >= -180.0 && min[0] <= 180.0) &&
-					(max[0] >= -180.0 && max[0] <= 181.0)
-			){
-				max[0] = 180;
-				image = updateImage(gc, transformation.getOriginScreen().width, transformation.getOriginScreen().height, min[0], min[1], max[0], max[1]);				
+			if(image != null){
+						int originX = image.getImageData().width;
+						int originY = image.getImageData().height;
+						double scale = transformation.getScale();
+						LOG.debug("Image: " + image.getImageData().width + ", " + image.getImageData().height);
+						LOG.debug("Image(scaled): " + image.getImageData().width * scale + ", " + image.getImageData().height * scale);	
+						scaledImage = new Image(gc.getDevice(),image.getImageData().scaledTo((int)(originX * scale), (int)(originY * scale)));
 			}
 
 			transformation.update(false);
 		}
-		if(image != null){
-			gc.drawImage(image, 0, 0);
-		}
+
+		int x = (int) transformation.getMin().x;
+		int y = (int) transformation.getMin().y;
+		
+		if (scaledImage != null)
+			gc.drawImage(scaledImage, x, y);
 	}
 
 	@Override
@@ -90,60 +147,34 @@ public class MapLayer implements Layer {
 		return name;
 	}
 
-	
 	/*
 	 * http://www.openstreetmap.org/?minlon=-16.609584883169063&minlat=-28.32078788122744&maxlon=29.410602531980885&maxlat=19.249285513021775&box=yes
 	 * 
-	 * http://www.openstreetmap.org/?lon=0&lat=0
+	 * http://www.openstreetmap.org/?minlon=0.0&minlat=40.0&maxlon=10.0&maxlat=50&box=yes
 	 * 
+	 * http://www.openstreetmap.org/?lon=0&lat=0
 	 */
-	
-	
-	private Image updateImage(GC gc, int width,int height, double minLat,double maxLon , double maxLat, double minLon) {
-		Image image = null;
-	
-		
-		
-		if((this.image == null) || ((this.image.getImageData().width != width) && (this.image.getImageData().height != height))){
-			LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
-			try {
-				String url = "http://wms.latlon.org/?"
-						+ "&format=" 
-						+ mapFormat
-						+ "&layers="
-						+ mapType
-						+ "&width="
-						+ width
-//						+ "&height="
-//						+ height
-						+ "&bbox="
-						+ minLat
-						+ ","
-						+ minLon
-						+ ","
-						+ maxLat
-						+ ","
-						+ maxLon
-						+ "&mlat="
-						+ 0.0
-						+ "&mlon="
-						+ 0.0
-						;
-						
-				LOG.debug("Image URL: " + url);
-				
-				URL imageUrl = new URL(url);
-				InputStream in = imageUrl.openStream();
-				image = new Image(gc.getDevice(), in);
-				in.close();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return image;
-	}
 
+//	private Image updateImage(GC gc, int width, int height, double minLon, double maxLat, double maxLon, double minLat) {
+//		try {
+//			String url = "http://wms.latlon.org/?" + "&format=" + mapFormat
+//					+ "&layers=" + mapType + "&width="
+//					+ width+ "&bbox=" + minLon + "," + maxLat + "," + maxLon + ","+ minLat;
+//
+//			LOG.debug("Image URL: " + url);
+//			
+//			
+//			URL imageUrl = new URL(url);
+//			InputStream in = imageUrl.openStream();
+//			image = new Image(gc.getDevice(), in);
+//			in.close();
+//		} catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//		return image;
+//	}
+//	
 }

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.osgeo.proj4j.CRSFactory;
@@ -27,6 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.wms.BoundingBox;
+
+
 /**
  * @author Stephan Jansen
  * @author Kai Pancratz
@@ -34,23 +38,43 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class ScreenTransformation {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ScreenTransformation.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ScreenTransformation.class);
 
+	
+	private Point center = new Point(0,0);
 	private Coordinate min = new Coordinate(0, 0);
-	private Integer scale = 1;
+	
+	private double scale = 1;
 	private boolean update = true;
 
 	private Rectangle currentScreen = new Rectangle(0, 0, 0, 0);
 	private Rectangle originScreen = new Rectangle(0, 0, 0, 0);
 
-	private double minLat = -180.0;
-	private double maxLat = 180.0;
+	//-180.0, -85.051128779799996, 180.0, 85.051128779799996
+	
+	//http://www.openstreetmap.org/?minlon=0.0&minlat=40.0&maxlon=10.0&maxlat=50&box=yes
+	
+	private double minLat = 40;
+	private double maxLat = 50;
+	private double minLon = 0;
+	private double maxLon = 10;
+			
+		
+//	private double minLat = 85.051128779799996;
+//	private double maxLat = -85.051128779799996;
+//	private double minLon = -180;
+//	private double maxLon =  180;
+	
+	//private BoundingBox bbox = new BoundingBox("EPSG:3875",minLon ,minLat , maxLon, maxLat);
+	private BoundingBox bbox = new BoundingBox("EPSG:4326",minLon ,minLat , maxLon, maxLat);
+	
+	public BoundingBox getBbox() {
+		return bbox;
+	}
 
-	private double minLon = 85.0;
-	private double maxLon = -85.0;
-
-	private Point center = new Point(0,0);
+	public void setBbox(BoundingBox bbox) {
+		this.bbox = bbox;
+	}
 
 	public void updateOrigin(Rectangle rectangle) {
 		LOG.debug("Update Origin");
@@ -63,8 +87,8 @@ public class ScreenTransformation {
 		LOG.debug("Update Current");
 		currentScreen = rectangle;
 
-		center.x = currentScreen.width / 2;
-		center.y = currentScreen.height / 2;
+		//center.x = currentScreen.width / 2;
+		//center.y = currentScreen.height / 2;
 
 		min.x = ((rectangle.x + rectangle.width / 2 - this.center.x) * scale)
 				+ min.x;
@@ -85,11 +109,9 @@ public class ScreenTransformation {
 	}
 
 	public int[] transformCoord(Coordinate coord, int srid) {
-
 		if (coord.z != Double.MAX_VALUE) {
 			coord.z = Double.MAX_VALUE;
-
-			int[] scCoord = convertGeoToPixel(coord.y, coord.x);
+			int[] scCoord = convertGeoToPixel(coord.x, coord.y);
 			
 		    coord.x = new Integer(scCoord[0]);
 			coord.y = new Integer(scCoord[1]);
@@ -101,33 +123,36 @@ public class ScreenTransformation {
 						new Double(center.y).intValue() };
 			return uv;
 		} else {
-			if (scale == null) {
-				scale = (int) (Math.abs(coord.x - min.x)
-						+ Math.abs(coord.y - min.y) / this.currentScreen.width + this.currentScreen.height) * 2;
-			}
+//			if (Double.MAX_VALUE == Double.MAX_VALUE) {
+//				scale = (int) (Math.abs(coord.x - min.x) + Math.abs(coord.y - min.y) / this.currentScreen.width + this.currentScreen.height) * 2;
+//			}
 			int[] uv = {
 					new Double(center.x + (coord.x - min.x) / scale).intValue(),
 					new Double(center.y + (coord.y - min.y) / scale).intValue() };
+					//new Double(center.x + (coord.x - min.x) / scale).intValue(),
+					//new Double(center.y + (coord.y - min.y) / scale).intValue() };
 			return uv;
 		}
 	}
 
-	public void zoomin() {
-		scale /= 2;
-		currentScreen.y -= scale;
-		currentScreen.height -= scale;
-		currentScreen.x -= scale;
-		currentScreen.width -= scale;
+	public void zoomin(double factor) {
+		LOG.debug("Scale: " + scale);
+		scale -= factor;
+//		currentScreen.y -= scale;
+//		currentScreen.height -= scale;
+//		currentScreen.x -= scale;
+//		currentScreen.width -= scale;
 		update = true;
 		LOG.debug("Zoom In: " + scale);
 	}
 
-	public void zoomout() {
-		scale += scale;
-		currentScreen.y += scale;
-		currentScreen.height += scale;
-		currentScreen.x += scale;
-		currentScreen.width += scale;
+	public void zoomout(double factor) {
+		LOG.debug("Scale: " + scale);
+		scale += factor;
+//		currentScreen.y += scale;
+//		currentScreen.height += scale;
+//		currentScreen.x += scale;
+//		currentScreen.width += scale;
 		update = true;
 		LOG.debug("Zoom Out: " + scale);
 	}
@@ -164,7 +189,7 @@ public class ScreenTransformation {
 		LOG.debug("Pan East: " + min.x);
 	}
 
-	public Integer getScale() {
+	public double getScale() {
 		return scale;
 	}
 
@@ -230,10 +255,8 @@ public class ScreenTransformation {
 		 * transformations
 		 */
 
-		CoordinateReferenceSystem crs1 = csFactory
-				.createFromName("EPSG:" + 4326);
-		CoordinateReferenceSystem crs2 = csFactory.createFromName("EPSG:"
-				+ epsg);
+		CoordinateReferenceSystem crs1 = csFactory.createFromName("EPSG:" + 4326);
+		CoordinateReferenceSystem crs2 = csFactory.createFromName("EPSG:"+ epsg);
 
 		LOG.debug("Transformation");
 		LOG.debug("(source) Datum: " + crs1.getDatum());
@@ -257,8 +280,8 @@ public class ScreenTransformation {
 		ProjCoordinate target = new ProjCoordinate();
 		source.x = x;
 		source.y = y;
-		// LOG.debug("---------------------------------------------------");
-		// LOG.debug("(source) Coordinate: " + source.x + ", " + source.y);
+		//LOG.debug("---------------------------------------------------");
+		//LOG.debug("(source) Coordinate: " + source.x + ", " + source.y);
 
 		/*
 		 * Transform point
@@ -324,9 +347,6 @@ public class ScreenTransformation {
 		int coordinate[] = new int[2];
 		int width = (currentScreen.width / 2);
 		int height = (currentScreen.height / 2);
-
-		// if(!((x > -181) && (x < 181) && (y > -86) && (y < 86)))
-		// throw new RuntimeException("No WGS84 Coordinates.");
 
 		// Quadrant 2: +/+
 		if ((x >= 0) && (y >= 0)) {
@@ -425,26 +445,43 @@ public class ScreenTransformation {
 		return coordinate;
 	}
 
-	public int[] convertGeoToPixel(double lat, double lon) {
-		LOG.debug("Input (lat/lon): " + lat + "/" + lon);
+	public int[] convertGeoToPixel(double lon, double lat) {
+		LOG.debug("Input (lon/lat): " + lon + "/" + lat);
 		int coordinate[] = new int[2];
 
 		double mapLonDelta = minLon - maxLon;
 
-		// double mapLatBottom = maxLat;
+		int screenWidth = currentScreen.width;
+		int screenheight = currentScreen.height;
+		
 		double mapLatBottomDegree = maxLat * Math.PI / 180;
 
-		coordinate[0] = (int) ((lon - minLon) * (currentScreen.width / mapLonDelta));
+		coordinate[0] = (int) ((lon - minLon) * (screenWidth / mapLonDelta));
 
 		lat = lat * Math.PI / 180;
-		double worldMapWidth = ((currentScreen.width / mapLonDelta) * 360)
+		double worldMapWidth = ((screenWidth / mapLonDelta) * 360)
 				/ (2 * Math.PI);
 		double mapOffsetY = (worldMapWidth / 2 * Math.log((1 + Math
 				.sin(mapLatBottomDegree)) / (1 - Math.sin(mapLatBottomDegree))));
-		coordinate[1] = (int) (currentScreen.height - ((worldMapWidth / 2 * Math
+		coordinate[1] = (int) (screenheight - ((worldMapWidth / 2 * Math
 				.log((1 + Math.sin(lat)) / (1 - Math.sin(lat)))) - mapOffsetY));
 
 		return coordinate;
 	}
+	
+	public int[] toMercator(double lon, double lat){
+		int coordinate[] = new int[2];
 
+		coordinate[0] = (int) (lon - minLon);
+		
+		coordinate[1] = (int) ((0.5 * Math.log(((1+Math.sin(lat))/(1-Math.sin(lat))))));
+		
+		return coordinate;
+	}
+
+	public Coordinate getMin() {
+		return min;
+	}
+	
+	
 }

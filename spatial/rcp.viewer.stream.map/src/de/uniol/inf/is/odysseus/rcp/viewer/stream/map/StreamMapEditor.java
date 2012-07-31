@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -54,8 +53,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
- * 
- * 
+ *  
  * @author Stephan Jansen
  * @author Kai Pancratz
  * 
@@ -106,8 +104,6 @@ public class StreamMapEditor implements IStreamEditorType {
 					//LOG.info(g.toString());
 					spatialDataIndex.get(key).addGeometry(g);	
 				}
-				
-				
 			}
 		}
 
@@ -192,8 +188,7 @@ public class StreamMapEditor implements IStreamEditorType {
 	 * 
 	 * The setSchema method
 	 * 
-	 * @param schema
-	 *            - the streaming schema
+	 * @param schema - the streaming schema
 	 */
 	private void setSchema(SDFSchema schema) {
 		this.schema = schema;

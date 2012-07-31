@@ -41,7 +41,15 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
       <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.spatial" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"/>
+      <import plugin="org.eclipse.ui.views"/>
       <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
    </requires>
 
@@ -78,5 +86,11 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="com.vividsolutions.jump"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

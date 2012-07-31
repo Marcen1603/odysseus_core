@@ -48,8 +48,7 @@ public class VectorLayer implements Layer{
 	private SDFAttribute sdfAttribute = null;
 	private Style style = null;
 
-	public VectorLayer(ScreenTransformation transformation, SDFAttribute sdfAttribute,
-			Style style) {
+	public VectorLayer(ScreenTransformation transformation, SDFAttribute sdfAttribute, Style style) {
 		this.geometries = new LinkedList<Geometry>();
 		this.transformation = transformation;
 		this.sdfAttribute = sdfAttribute;

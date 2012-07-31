@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.viewer.stream.map;singleton:=t
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Stephan Jansen
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn
-Import-Package: com.google.common.base,
- de.uniol.inf.is.odysseus.core,
+Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,
  de.uniol.inf.is.odysseus.core.sdf.schema,
@@ -14,7 +13,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
- de.uniol.inf.is.odysseus.relational.base,
  org.eclipse.ui.views.contentoutline,
  org.osgeo.proj4j,
  org.slf4j
@@ -29,3 +27,6 @@ Require-Bundle: org.eclipse.ui,
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/xercesImpl.jar,
+ lib/xml-apis.jar,
+ .
