@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+
 /**
  * @author Dennis Geesen
  *
@@ -26,6 +28,15 @@ import java.util.List;
 public class Transaction<T> {
 	
 	private List<T> elements = new ArrayList<T>();
+	private ITimeInterval timeinterval;
+	
+	public void setTimeInterval(ITimeInterval ti){
+		this.timeinterval = ti;
+	}
+	
+	public ITimeInterval getTimeInterval(){
+		return this.timeinterval;
+	}
 	
 	public void addElement(T tuple){
 		this.elements.add(tuple);
@@ -36,7 +47,7 @@ public class Transaction<T> {
 	
 	@Override
 	public String toString() {
-		String s = "";
+		String s = "Transaction ["+this.timeinterval+")";
 		for(T t : elements){
 			s=s+"\n\t"+t;
 		}

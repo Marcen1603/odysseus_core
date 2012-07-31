@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSet;
 import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSetContainer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
@@ -18,10 +19,10 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private List<Transaction<Tuple<M>>> transactions = new ArrayList<Transaction<Tuple<M>>>();
-
+	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
 	private int maxlength = 5;
-	
+
 	public FrequentItemsetPO() {
 
 	}
@@ -39,92 +40,124 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		sweepArea.clear();
-		// algo.setLowerBoundMinSupport(2.0d);
+		this.transactions.clear();
+		this.lastCut = PointInTime.getZeroTime();
 	}
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
 		System.out.println("---------------------------------------NEW ELEMENT----------------------------------------------");
-		System.out.println(object);		
+		System.out.println(object);
+		// daten werden verarbeitet, weil wir einen zeitfortschritt haben
+		processData(object.getMetadata().getStart());
+		// anschließend kann das aktuelle Element rein 
+		// das aktuelle element wird nicht berücksichtigt, weil ggf. andere elemente denselben startzeitstempel haben können 
+		// und die sind noch unbekannt.
 		sweepArea.insert(object);
-		//Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(object.getMetadata().getStart());
-		Iterator<Tuple<M>> qualifies = sweepArea.extractElementsStartingBefore(object.getMetadata().getStart());
-		Transaction<Tuple<M>> transaction = new Transaction<Tuple<M>>();		
-		while(qualifies.hasNext()){
-			transaction.addElement(qualifies.next());
-		}
-		this.transactions.add(transaction);
+	}
 
-		 List<FrequentItemSetContainer<Tuple<M>>> fisses = createFrequentItems();
-		 for(FrequentItemSetContainer<Tuple<M>> fis : fisses){
-			 System.out.println("----");
-			 System.out.println(fis);
-		 }
-		 
+	private void processData(PointInTime currentTime) {
+
+		if (currentTime.after(lastCut)) {
+			// hole alle elemente, die definitiv bearbeitet werden können, weil sie echt vor der aktuellen zeit sind
+			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);			
+			// wir betrachten den zeitraum zwischen der letzten berechnung und der aktuellen zeit
+			PointInTime start = PointInTime.getZeroTime();
+			PointInTime end = PointInTime.getInfinityTime();
+			// die betrachtete zeit ist die maximale startzeit und die minimale endzeit					
+			Transaction<Tuple<M>> transaction = new Transaction<Tuple<M>>();
+			while (qualifies.hasNext()) {
+				Tuple<M> next = qualifies.next();
+				// wir nehmen den maximalen startzeitstempel (alles davor wurde schon in der vorherigen iteration berechnet!) 
+				if(start.before(next.getMetadata().getStart())){
+					start = next.getMetadata().getStart();
+				}
+				// der endzeitstempel ist der kleinste endzeitstempel
+				if(end.after(next.getMetadata().getEnd())){
+					end = next.getMetadata().getEnd();
+				}
+				transaction.addElement(next);
+			}
+			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
+			end = PointInTime.min(end, currentTime);
+			transaction.setTimeInterval(new TimeInterval(start, end));
+			lastCut = currentTime;
+			System.out.println("adding");
+			System.out.println(transaction);
+			this.transactions.add(transaction);
+
+			List<FrequentItemSetContainer<Tuple<M>>> fisses = createFrequentItems();
+			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
+				System.out.println("----");
+				System.out.println(fis);
+			}
+			
+			// als letztes können wir noch alle Elemente rauswerfen, die in Zukunft unwichtig sind
+			sweepArea.purgeElementsBefore(currentTime);
+		}
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
+		processData(timestamp);
 	}
-	
-	
-	private List<FrequentItemSetContainer<Tuple<M>>> createFrequentItems(){	
+
+	private List<FrequentItemSetContainer<Tuple<M>>> createFrequentItems() {
 		List<FrequentItemSetContainer<Tuple<M>>> allFrequentItemSets = new ArrayList<FrequentItemSetContainer<Tuple<M>>>();
-		
+
 		FrequentItemSetContainer<Tuple<M>> oneItemSet = new FrequentItemSetContainer<Tuple<M>>();
-		for(Transaction<Tuple<M>> trans : this.transactions){
-			for(Tuple<M> t : trans.getElements()){
-				
+		for (Transaction<Tuple<M>> trans : this.transactions) {
+			for (Tuple<M> t : trans.getElements()) {
+
 				FrequentItemSet<Tuple<M>> fis = new FrequentItemSet<Tuple<M>>(t);
-				
-				if(!oneItemSet.containsFrequentItemSet(fis)){
+
+				if (!oneItemSet.containsFrequentItemSet(fis)) {
 					oneItemSet.addItemSet(fis);
-				}else{
+				} else {
 					oneItemSet.increaseCount(fis);
-				}								
+				}
 			}
 		}
-		oneItemSet.purgeFrequentItemWithoutMinimumSupport(minsupport);		
+		oneItemSet.purgeFrequentItemWithoutMinimumSupport(minsupport);
 		allFrequentItemSets.add(oneItemSet);
-		FrequentItemSetContainer<Tuple<M>> currentSet = oneItemSet;		
-		for(int i=2;i<=maxlength;i++){			
+		FrequentItemSetContainer<Tuple<M>> currentSet = oneItemSet;
+		for (int i = 2; i <= maxlength; i++) {
 			currentSet = aprioriGen(currentSet, i);
 			allFrequentItemSets.add(currentSet);
-			if(currentSet.size()==0){				
+			if (currentSet.size() == 0) {
 				break;
 			}
 		}
 		return allFrequentItemSets;
 	}
-	
-	private FrequentItemSetContainer<Tuple<M>> aprioriGen(FrequentItemSetContainer<Tuple<M>> smallerLength, int length){		
+
+	private FrequentItemSetContainer<Tuple<M>> aprioriGen(FrequentItemSetContainer<Tuple<M>> smallerLength, int length) {
 		FrequentItemSetContainer<Tuple<M>> candidates = new FrequentItemSetContainer<Tuple<M>>();
-		ArrayList<FrequentItemSet<Tuple<M>>> list =new ArrayList<FrequentItemSet<Tuple<M>>>(smallerLength.getFrequentItemSets());
-		
-		for(int i=0;i<list.size();i++){
+		ArrayList<FrequentItemSet<Tuple<M>>> list = new ArrayList<FrequentItemSet<Tuple<M>>>(smallerLength.getFrequentItemSets());
+
+		for (int i = 0; i < list.size(); i++) {
 			FrequentItemSet<Tuple<M>> current = list.get(i);
-			for(int k=i+1;k<list.size();k++){				
-				
+			for (int k = i + 1; k < list.size(); k++) {
+
 				FrequentItemSet<Tuple<M>> other = list.get(k);
 				int commonItems = other.intersectCount(current);
-				if(commonItems==(length-2)){
+				if (commonItems == (length - 2)) {
 					FrequentItemSet<Tuple<M>> newFis = new FrequentItemSet<Tuple<M>>(current);
 					newFis.addFrequentItemSet(other);
-					if(!candidates.containsFrequentItemSet(newFis)){
+					if (!candidates.containsFrequentItemSet(newFis)) {
 						// check, if each subset is a frequent item set
 						List<FrequentItemSet<Tuple<M>>> subsets = newFis.splitIntoSmallerSubset();
-						if(smallerLength.containsAll(subsets)){
+						if (smallerLength.containsAll(subsets)) {
 							candidates.addItemSet(newFis);
 						}
 					}
 				}
 			}
 		}
-				
-		candidates.calcSupportCount(this.transactions);		
-		candidates.purgeFrequentItemWithoutMinimumSupport(2);		
-		return candidates;		
+
+		candidates.calcSupportCount(this.transactions);
+		candidates.purgeFrequentItemWithoutMinimumSupport(2);
+		return candidates;
 	}
 
 	@Override
