@@ -228,6 +228,50 @@ public class Tuple<T extends IMetaAttribute> extends MetaAttributeContainer<T>
 		}
 		return true;
 	}
+	
+	/**
+	 * Like normal equals-method but has a tolerance for double
+	 * and float comparisons.
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public final boolean equalsTolerance(Object o, double tolerance) {
+		if (!(o instanceof Tuple)) {
+			return false;
+		}
+		Tuple<?> t = (Tuple<?>) o;
+		if (this.attributes.length != t.attributes.length) {
+			return false;
+		}
+		
+		for (int i = 0; i < attributes.length; i++) {
+			Object attr = this.attributes[i];
+			Object theirAttr = t.attributes[i];
+			// test if attributes are not null and equal
+			// or both null (order is imporantant!)
+			if (attr != null) {
+				if(attr instanceof Double && theirAttr instanceof Double ){
+					if(Math.abs((Double)attr - (Double)theirAttr) > tolerance){
+						return false;
+					}
+				} else if (attr instanceof Float && theirAttr instanceof Float ) {
+					if(Math.abs((Float)attr - (Float)theirAttr) > tolerance){
+						return false;
+					}
+				} else {
+					if (!attr.equals(theirAttr)) {
+						return false;
+					}
+				}
+			} else {
+				if (theirAttr != null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Liefert 0 wenn die beiden Attributlisten gleich sind ansonsten das erste

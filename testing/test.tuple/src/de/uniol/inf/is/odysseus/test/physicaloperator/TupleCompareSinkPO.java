@@ -93,8 +93,10 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 		if (!isDone()) {
 			synchronized (expectedResults) {
 				Tuple<?> expected = expectedResults.remove(0);
-
-				if (!expected.equals(tuple)) {
+				
+				double tolerance = 0.000001;
+				
+				if (!expected.equalsTolerance(tuple, tolerance)) {
 					System.err.println(expected);
 					System.err.println(tuple);
 					System.err.println("Difference at " + expected.compareTo(tuple));
