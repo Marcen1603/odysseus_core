@@ -22,6 +22,9 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
 	private int maxlength = 5;
+	private int counter = 0;
+	private long lastTime = 0L;
+	private long startTime = 0L;
 
 	public FrequentItemsetPO() {
 
@@ -38,42 +41,60 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		super.process_open();
-		sweepArea.clear();
+		super.process_open();		
 		this.transactions.clear();
 		this.lastCut = PointInTime.getZeroTime();
+		sweepArea.clear();
+		startTime = System.currentTimeMillis();
+		lastTime = startTime;
 	}
-
+	
+	
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		System.out.println("---------------------------------------NEW ELEMENT----------------------------------------------");
-		System.out.println(object);
-		// daten werden verarbeitet, weil wir einen zeitfortschritt haben
-		processData(object.getMetadata().getStart());
-		// anschließend kann das aktuelle Element rein 
-		// das aktuelle element wird nicht berücksichtigt, weil ggf. andere elemente denselben startzeitstempel haben können 
-		// und die sind noch unbekannt.
-		sweepArea.insert(object);
+//		System.out.println("---------------------------------------NEW ELEMENT----------------------------------------------");
+//		System.out.println(object);		
+		if(counter%100==0){
+			long now = System.currentTimeMillis();
+			System.out.println("current: "+counter+" needed: "+(now-lastTime)+" ms and total "+(now-startTime)+" ms");
+			System.out.println("number of transactions: "+transactions.size());
+			lastTime = now;
+		}
+		synchronized (sweepArea) {
+			// daten werden verarbeitet, weil wir einen zeitfortschritt haben
+			processData(object.getMetadata().getStart());
+			// anschließend kann das aktuelle Element rein
+			// das aktuelle element wird nicht berücksichtigt, weil ggf. andere
+			// elemente denselben startzeitstempel haben können
+			// und die sind noch unbekannt.
+
+			sweepArea.insert(object);			
+		}
+		counter++;
 	}
 
 	private void processData(PointInTime currentTime) {
 
 		if (currentTime.after(lastCut)) {
-			// hole alle elemente, die definitiv bearbeitet werden können, weil sie echt vor der aktuellen zeit sind
-			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);			
-			// wir betrachten den zeitraum zwischen der letzten berechnung und der aktuellen zeit
+			// hole alle elemente, die definitiv bearbeitet werden können, weil
+			// sie echt vor der aktuellen zeit sind
+			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
+			// wir betrachten den zeitraum zwischen der letzten berechnung und
+			// der aktuellen zeit
 			PointInTime start = PointInTime.getZeroTime();
 			PointInTime end = PointInTime.getInfinityTime();
-			// die betrachtete zeit ist die maximale startzeit und die minimale endzeit					
+			// die betrachtete zeit ist die maximale startzeit und die minimale
+			// endzeit
 			Transaction<Tuple<M>> transaction = new Transaction<Tuple<M>>();
 			while (qualifies.hasNext()) {
 				Tuple<M> next = qualifies.next();
-				// wir nehmen den maximalen startzeitstempel (alles davor wurde schon in der vorherigen iteration berechnet!) 
-				if(start.before(next.getMetadata().getStart())){
+				// wir nehmen den maximalen startzeitstempel (alles davor wurde
+				// schon in der vorherigen iteration berechnet!)
+				if (start.before(next.getMetadata().getStart())) {
 					start = next.getMetadata().getStart();
 				}
 				// der endzeitstempel ist der kleinste endzeitstempel
-				if(end.after(next.getMetadata().getEnd())){
+				if (end.after(next.getMetadata().getEnd())) {
 					end = next.getMetadata().getEnd();
 				}
 				transaction.addElement(next);
@@ -82,24 +103,29 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 			end = PointInTime.min(end, currentTime);
 			transaction.setTimeInterval(new TimeInterval(start, end));
 			lastCut = currentTime;
-			System.out.println("adding");
-			System.out.println(transaction);
+//			System.out.println("adding");
+//			System.out.println(transaction);
 			this.transactions.add(transaction);
-
+			long startStep = System.currentTimeMillis();
 			List<FrequentItemSetContainer<Tuple<M>>> fisses = createFrequentItems();
-			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
-				System.out.println("----");
-				System.out.println(fis);
-			}
-			
-			// als letztes können wir noch alle Elemente rauswerfen, die in Zukunft unwichtig sind
+			System.out.println(System.currentTimeMillis()-startStep);
+			System.out.println("SA: "+sweepArea.size());
+//			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
+//				System.out.println("----");
+//				System.out.println(fis);
+//			}
+
+			// als letztes können wir noch alle Elemente rauswerfen, die in
+			// Zukunft unwichtig sind
 			sweepArea.purgeElementsBefore(currentTime);
 		}
 	}
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		processData(timestamp);
+		synchronized (sweepArea) {
+			processData(timestamp);
+		}
 	}
 
 	private List<FrequentItemSetContainer<Tuple<M>>> createFrequentItems() {
