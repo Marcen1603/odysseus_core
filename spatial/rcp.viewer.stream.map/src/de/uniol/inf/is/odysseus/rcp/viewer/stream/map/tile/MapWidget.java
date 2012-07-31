@@ -298,9 +298,9 @@ public class MapWidget extends Canvas {
             handleDrag(e);
         }
         public void mouseScrolled(MouseEvent e) {
-            if (e.count == 1)
+            if (e.count > 0)
                 zoomIn(new Point(mouseCoords.x, mouseCoords.y));
-            else if (e.count == -1)
+            else if (e.count < 0)
                 zoomOut(new Point(mouseCoords.x, mouseCoords.y));
         }
         
