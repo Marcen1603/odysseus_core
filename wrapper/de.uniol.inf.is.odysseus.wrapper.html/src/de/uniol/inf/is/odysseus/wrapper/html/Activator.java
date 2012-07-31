@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.wrapper.html;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * @author Christian Kuka <christian@kuka.cc>
+ */
 public class Activator implements BundleActivator {
 
     private static BundleContext context;
@@ -28,7 +31,9 @@ public class Activator implements BundleActivator {
 
     /*
      * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     * @see
+     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+     * )
      */
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
@@ -37,7 +42,8 @@ public class Activator implements BundleActivator {
 
     /*
      * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     * @see
+     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     @Override
     public void stop(final BundleContext bundleContext) throws Exception {
