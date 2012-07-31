@@ -60,7 +60,7 @@ public class FragmentTestsComponent implements ITestComponent, BundleListener {
 		parser = scriptParser;
 	}
 	
-	private BlockingQueue<Bundle> bundleQueue = new LinkedBlockingQueue<>();
+	private BlockingQueue<Bundle> bundleQueue = new LinkedBlockingQueue<Bundle>();
 	
 	private List<Long> alreadyQueued = new ArrayList<Long>();	
 	
