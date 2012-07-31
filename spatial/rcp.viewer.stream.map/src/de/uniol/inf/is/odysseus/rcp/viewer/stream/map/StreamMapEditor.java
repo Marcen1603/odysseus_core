@@ -84,13 +84,13 @@ public class StreamMapEditor implements IStreamEditorType {
 		setMaxTuplesCount(maxTuples);
 		
 		//Create Map Background 
-		//layerOrder.add(new MapLayer(transformation, new ImageStyle()));
+		layerOrder.add(new MapLayer(transformation, new ImageStyle()));
 	}
 
 	@Override
 	public void streamElementRecieved(Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
-			LOG.error("Warning: StreamMap is only for relational tuple!");
+			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
 			return;
 		}
 		//LOG.info("Received Element: " + element.toString());
@@ -231,8 +231,7 @@ public class StreamMapEditor implements IStreamEditorType {
 					spatialDataIndex.put(i, layer);
 					layerOrder.add(layer);
 				} else {
-					throw new RuntimeException(
-							"Style for Spatialtype is not available or not implemented!");
+					throw new RuntimeException("Style for Spatialtype is not available or not implemented!");
 				}
 
 			}

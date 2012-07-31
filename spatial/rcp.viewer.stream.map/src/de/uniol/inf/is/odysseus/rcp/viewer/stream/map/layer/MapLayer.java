@@ -101,6 +101,8 @@ public class MapLayer implements Layer {
 	
 	private Image updateImage(GC gc, int width,int height, double minLat,double maxLon , double maxLat, double minLon) {
 		Image image = null;
+	
+		
 		
 		if((this.image == null) || ((this.image.getImageData().width != width) && (this.image.getImageData().height != height))){
 			LOG.debug("Update Image: " + width + " " + "BBox[ " + minLat + "," + maxLon + "," + maxLat + "," + minLon +"]");
@@ -112,8 +114,8 @@ public class MapLayer implements Layer {
 						+ mapType
 						+ "&width="
 						+ width
-						+ "&height="
-						+ height
+//						+ "&height="
+//						+ height
 						+ "&bbox="
 						+ minLat
 						+ ","

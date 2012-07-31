@@ -122,14 +122,18 @@ public class ScreenManager {
 				
 				double[] map4326 	= transformation.screenToEpsg4326(e.x, e.y);
 				
-				double[] map3857 	= transformation.epsg4326To(3395,map4326[0], map4326[1]);
+				int[] scCoord 		= transformation.epsg4326ToScreen(map4326[0], map4326[1]);
 				
-				int[] scCoord 		= transformation.epsg4326tToScreen(map4326[0], map4326[1]);
+				double[] equi 		= transformation.equirectangular_position(map4326[0], map4326[1]);
+				
+				//int[] mer 	= transformation.convertGeoToPixel(map4326[0], map4326[1]);
 				
 				
-				mouseLabel.label += "Computed Coordinate: " + scCoord[0] + ", " + scCoord[1] + "\n";	
-				mouseLabel.label += "4326 Coordinate: " + map4326[0] + ", " + map4326[1] + "\n";	
-				mouseLabel.label += "3857 Coordinate: " + map3857[0] + ", " + map3857[1] + "\n";	
+				mouseLabel.label += "Screen: " + scCoord[0] + ", " + scCoord[1] + "\n";	
+				mouseLabel.label += "Coordinate: " + map4326[0] + ", " + map4326[1] + "\n";	
+				mouseLabel.label += "Equirectangular: " + equi[0] + ", " + equi[1] + "\n";	
+				//mouseLabel.label += "Mercator: " + mer[0] + ", " + mer[1] + "\n";	
+				
 				
 				mouseLabel.x = e.x;
 				mouseLabel.y = e.y;
