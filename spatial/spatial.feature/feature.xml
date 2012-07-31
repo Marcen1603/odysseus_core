@@ -41,7 +41,6 @@ Unless required by applicable law or agreed to in writing, software
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
       <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.slf4j.api"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
