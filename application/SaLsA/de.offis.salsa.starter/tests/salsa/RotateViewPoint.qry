@@ -1,29 +1,16 @@
-/// OdysseusScript
-#PARSER CQL
-#TRANSCFG Standard
-#ADDQUERY
-
-///# Geometry RotateViewPoint(Geometry g, double angle);
-///# Geometry -> Liste mit Paaren aus cord.x und cord.y
-///# RotateViewPoint dreht das Koordinatensystem um "angle".
-///# Aendert also alle x,y-Paare aus Geometrie um dies zu erreichen.
-
-///# 1. fest definiertes Geometry-Objekt und angle
-GRANT READ ON test:stream TO Public;
-DROP STREAM test:stream;
-ATTACH STREAM test:stream (timestamp STARTTIMESTAMP, points SpatialMultiPoint, angle DOUBLE) FILE '${PATH}/salsa/data/RotateViewPoint_Geometry.csv'
-
-///# 2. fest definierte Werte als Parameter fuer RotateViewPoint benutzen und diese ausfuehren
-///map({expressions = ['RotateViewPoint(scan, 43.0)']}, globalLms1Punctuation)
-
-///#RUNQUERY
-///SELECT RotateViewPoint(points, angle) AS scan FROM nexmark:coordinates
-
-///# (3. Die erwartete Ausgabe ist zu finden in der Datei RotateViewPoint.csv)
- 
- 
 #PARSER PQL
 #TRANSCFG Standard
-#ADDQUERY
-RotateViewPoint = MAP({expressions = ['RotateViewPoint(points, angle)']}, test:stream)
-test = TUPLECOMPARESINK({fileName= 'salsa/RotateViewPoint.csv'}, RotateViewPoint )
+
+
+/// Geometry RotateViewPoint(Geometry g, double angle);
+/// Geometry -> Liste mit Paaren aus cord.x und cord.y
+/// RotateViewPoint dreht das Koordinatensystem um "angle".
+/// Aendert also alle x,y-Paare aus Geometrie um dies zu erreichen.
+
+///# 1. fest definiertes Geometry-Objekt und angle
+///#RUNQUERY
+csv = adapter({schema=['timestamp:STARTTIMESTAMP','points:SpatialMultiPoint','angle:Double'], options = ['port:7070'], adapter='CSV'})
+
+result = map({expressions = ['RotateViewPoint(points, angle)']}, csv)
+
+///TUPLECOMPARESINK({fileName= ''}, result )

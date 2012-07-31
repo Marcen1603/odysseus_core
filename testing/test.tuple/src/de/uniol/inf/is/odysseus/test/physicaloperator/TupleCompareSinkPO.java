@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
-import de.uniol.inf.is.odysseus.test.TupleTestActivator;
 import de.uniol.inf.is.odysseus.test.tuple.ICompareSinkListener;
 
 public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
@@ -64,7 +63,7 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 	}
 	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {		
 		SDFSchema s = getOutputSchema();
 		this.tupleDataHandler = (TupleDataHandler) new TupleDataHandler().getInstance(s);
 		
@@ -73,10 +72,8 @@ public class TupleCompareSinkPO extends AbstractSink<Tuple<?>> {
 				LOG.debug("Reading Compare File " + compareFile);
 				File expected = 
 						expectedResultsFile == null? 
-								new File(TupleTestActivator.bundlePath + File.separator + compareFile)
-								: expectedResultsFile;
+								new File(compareFile) : expectedResultsFile;
 									
-//				File expected = new File(TupleTestActivator.bundlePath + File.separator + compareFile);
 				this.qry = expected.getName();
 				BufferedReader reader = new BufferedReader(new FileReader(expected));
 				String line = null;
