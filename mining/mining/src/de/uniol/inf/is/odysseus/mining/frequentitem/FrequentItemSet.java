@@ -72,7 +72,7 @@ public class FrequentItemSet<T> {
 		}
 		if (obj instanceof FrequentItemSet) {
 			FrequentItemSet<?> other = (FrequentItemSet<?>) obj;
-			return this.items.containsAll(other.items);
+			return this.items.containsAll(other.items);			
 		} else {
 			return false;
 		}
@@ -97,7 +97,7 @@ public class FrequentItemSet<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((items == null) ? 0 : items.hashCode());
+		result = prime * result;
 		return result;
 	}
 

@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class FrequentItemSetContainer<T> {
 
-	private Map<FrequentItemSet<T>, Integer> items = new HashMap<FrequentItemSet<T>, Integer>();
+	private HashMap<FrequentItemSet<T>, Integer> items = new HashMap<FrequentItemSet<T>, Integer>();
 
 	public FrequentItemSetContainer() {
 
@@ -52,22 +52,29 @@ public class FrequentItemSetContainer<T> {
 	}
 
 	public boolean containsFrequentItemSet(FrequentItemSet<T> fis) {
-		for (FrequentItemSet<T> item : this.items.keySet()) {
-			if (item.equals(fis)) {
-				return true;
-			}
-		}
-		return false;
+//		System.out.println("-----------------------------------------");
+//		System.out.println("check "+this+" and "+fis);
+		boolean result = this.items.containsKey(fis);
+//		System.out.println("result: "+result);
+//		System.out.println("-----------------------------------------");
+		return result;
+//		for (FrequentItemSet<T> item : this.items.keySet()) {
+//			if (item.equals(fis)) {
+//				return true;
+//			}
+//		}
+//		return false;
 	}
 	
 	
 	public boolean containsAll(List<FrequentItemSet<T>> subsets){
-		for(FrequentItemSet<T> fis : subsets){
-			if(!containsFrequentItemSet(fis)){
-				return false;
-			}
-		}		
-		return true;
+		return this.items.keySet().containsAll(subsets);
+//		for(FrequentItemSet<T> fis : subsets){
+//			if(!containsFrequentItemSet(fis)){
+//				return false;
+//			}
+//		}		
+//		return true;
 	}
 
 	public void increaseCount(FrequentItemSet<T> item) {
@@ -103,7 +110,7 @@ public class FrequentItemSetContainer<T> {
 	 */
 	public void purgeFrequentItemWithoutMinimumSupport(int minsupport) {
 		synchronized (this.items) {
-			Map<FrequentItemSet<T>, Integer> newitems = new HashMap<FrequentItemSet<T>, Integer>();
+			HashMap<FrequentItemSet<T>, Integer> newitems = new HashMap<FrequentItemSet<T>, Integer>();
 			for (Entry<FrequentItemSet<T>, Integer> entry : items.entrySet()) {
 				if (entry.getValue() >= minsupport) {
 					newitems.put(entry.getKey(), entry.getValue());
