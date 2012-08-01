@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -52,29 +51,12 @@ public class FrequentItemSetContainer<T> {
 	}
 
 	public boolean containsFrequentItemSet(FrequentItemSet<T> fis) {
-//		System.out.println("-----------------------------------------");
-//		System.out.println("check "+this+" and "+fis);
-		boolean result = this.items.containsKey(fis);
-//		System.out.println("result: "+result);
-//		System.out.println("-----------------------------------------");
-		return result;
-//		for (FrequentItemSet<T> item : this.items.keySet()) {
-//			if (item.equals(fis)) {
-//				return true;
-//			}
-//		}
-//		return false;
+		return this.items.containsKey(fis);
 	}
 	
 	
 	public boolean containsAll(List<FrequentItemSet<T>> subsets){
 		return this.items.keySet().containsAll(subsets);
-//		for(FrequentItemSet<T> fis : subsets){
-//			if(!containsFrequentItemSet(fis)){
-//				return false;
-//			}
-//		}		
-//		return true;
 	}
 
 	public void increaseCount(FrequentItemSet<T> item) {

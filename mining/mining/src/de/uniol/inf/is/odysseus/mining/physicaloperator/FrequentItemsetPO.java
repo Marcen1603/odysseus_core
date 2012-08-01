@@ -109,10 +109,10 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 			
 			List<FrequentItemSetContainer<Tuple<M>>> fisses = createFrequentItems();
 						
-//			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
-//				System.out.println("----");
-//				System.out.println(fis);
-//			}
+			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
+				System.out.println("----");
+				System.out.println(fis);
+			}
 
 			// als letztes können wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
