@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//src/de/uniol/inf/is/soop/control/webservice/Response.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/control/webservice/SOOPControlWS.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/control/webservice/SOOPControlWSPortBindingStub.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/control/webservice/SOOPControlWSService.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/control/webservice/SOOPControlWSServiceLocator.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/control/webservice/StringResponse.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/Response.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/SOOPControlWSPort.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/SOOPControlWSPortBindingStub.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/SOOPControlWSService.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/SOOPControlWSServiceLocator.java=UTF-8
+encoding//src/de/uniol/inf/is/soop/webApp/controlWsClient/StringResponse.java=UTF-8
