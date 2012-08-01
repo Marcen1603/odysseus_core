@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:Odyssues_Push_Service="http://de.offis.soop.missions/StepOver/Odyssues_Push_Service"
+                  xmlns:SensorRegistry="http://de.offis.soop.missions/StepOver/SensorRegistry"
+                  xmlns:odysseus2="http://jaxb.dev.java.net/array"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:Odysseus="http://de.offis.soop.missions/StepOver/Odysseus"
+                  xmlns:odysseus="http://webservice.webserviceexecutor.executor.planmanagement.odysseus.is.inf.uniol.de/"
+                  xmlns:sensor="http://webservice.sensorregistry.soop.is.inf.uniol.de/"
+                  xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                  xmlns:diag="http://de.offis.soop.missions/StepOver"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:tns="http://www.example.org/WorkflowCallMessages"
+                  xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:WorkflowCallMessages="http://www.example.org/WorkflowCallMessages"
+                  xmlns:pnlk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                  xmlns:this="http://de.offis.soop.missions/StepOver/StepOverProcess"
+                  xmlns:Client="http://de.offis.soop.missions/StepOver/Client"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  targetNamespace="http://de.offis.soop.missions/StepOver/StepOverProcess">
+   <wsdl:types>
+      <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified"
+                 targetNamespace="http://www.example.org/WorkflowCallMessages">
+         <xs:include schemaLocation="ProcessClient.xsd"/>
+      </xs:schema>
+   </wsdl:types>
+   <wsdl:message name="ForwardByGuiRequest">
+      <wsdl:part name="body" element="tns:MoveForwardRequest"/>
+   </wsdl:message>
+   <wsdl:message name="ForwardByGuiResponse">
+      <wsdl:part name="body" element="tns:GotoNextResponse"/>
+   </wsdl:message>
+   <wsdl:message name="StartMissionRequest">
+      <wsdl:part name="body" element="tns:StartMissionRequest"/>
+   </wsdl:message>
+   <wsdl:message name="StartMissionResponse">
+      <wsdl:part name="body" element="tns:StartMissionResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="SoopMissions/StepOver/StepOverProcess/ClientPortType">
+      <wsdl:operation name="ForwardByGui">
+         <wsdl:input message="this:ForwardByGuiRequest"
+                     wsaw:Action="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/ForwardByGui"/>
+         <wsdl:output message="this:ForwardByGuiResponse"
+                      wsaw:Action="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/ForwardByGuiResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="StartMission">
+         <wsdl:input message="this:StartMissionRequest"
+                     wsaw:Action="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/StartMission"/>
+         <wsdl:output message="this:StartMissionResponse"
+                      wsaw:Action="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/StartMissionResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="CanonicBindingForClient"
+                 type="this:SoopMissions/StepOver/StepOverProcess/ClientPortType">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="ForwardByGui">
+         <soap:operation soapAction="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/ForwardByGui"
+                         style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="StartMission">
+         <soap:operation soapAction="http://de.offis.soop.missions/StepOver/StepOverProcess/ForClient/StartMission"
+                         style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="SoopMissions/StepOver/StepOverProcess/Client">
+      <wsdl:port name="canonicPort" binding="this:CanonicBindingForClient">
+         <soap:address location="http://localhost:8080/ode/processes/SoopMissions/StepOver/StepOverProcess/Client.canonicPort/"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

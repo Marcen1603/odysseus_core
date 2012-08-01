@@ -1,0 +1,46 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://www.example.org/WorkflowCallMessages"
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        targetNamespace="http://www.example.org/WorkflowCallMessages">
+   <element name="StartMissionRequest">
+      <complexType>
+         <sequence>
+            <element name="username" type="string"/>
+            <element name="password" type="string"/>
+         </sequence>
+      </complexType>
+   </element>
+   <element name="StartMissionResponse">
+      <complexType>
+         <all>
+            <element name="succsessful" type="string"/>
+            <element name="instanceId" type="string"/>
+         </all>
+      </complexType>
+   </element>
+   <element name="MoveForwardRequest"/>
+   <element name="MoveForwardResponse">
+      <complexType>
+         <sequence>
+            <element name="succsessful" type="string"/>
+         </sequence>
+      </complexType>
+   </element>
+   <element name="MoveBackwardRequest"/>
+   <element name="MoveBackwardResponse">
+      <complexType>
+         <sequence>
+            <element name="succsessful" type="string"/>
+         </sequence>
+      </complexType>
+   </element>
+   <element name="GotoNextRequest"/>
+   <element name="GotoNextResponse">
+      <complexType>
+         <sequence>
+            <element name="succsessful" type="string"/>
+         </sequence>
+      </complexType>
+   </element>
+</schema>
