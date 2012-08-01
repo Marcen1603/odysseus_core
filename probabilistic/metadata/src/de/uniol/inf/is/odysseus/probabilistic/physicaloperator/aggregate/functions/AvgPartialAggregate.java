@@ -1,6 +1,22 @@
+/********************************************************************************** 
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.math.Polynomial;
 
 /**
  * 
@@ -46,12 +62,22 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 *            Upper probability bound
 	 */
 	public AvgPartialAggregate(double epsilon, double theta) {
+		if (epsilon >= 0.5) {
+			throw new IllegalArgumentException("Invalid Argument: Epsilon ("
+					+ epsilon + ") not in [0,1/2)");
+		}
+		if ((theta > 0.5) || (theta < epsilon)) {
+			throw new IllegalArgumentException("Invalid Argument: Theta ("
+					+ theta + ") not in [" + epsilon + ",1/2]");
+		}
 		this.epsilon = epsilon;
 		this.theta = theta;
-		this.k0 = (int) (2 * Math.log(2 / this.epsilon) / Math
-				.log(1 / this.theta));
-		this.k1 = (int) (Math.log(2 / this.epsilon) / Math.log(1 / this.theta));
-		int storeSize = (int) ((3 / Math.pow(theta, 2)) * Math.log(2 / epsilon) + 0.5);
+		this.k0 = (int) (2.0 * Math.log(2.0 / this.epsilon) / Math
+				.log(1.0 / this.theta));
+		this.k1 = (int) (Math.log(2.0 / this.epsilon) / Math
+				.log(1.0 / this.theta));
+		int storeSize = (int) ((3.0 / Math.pow(this.theta, 2.0)) * Math
+				.log(2.0 / this.epsilon));
 		this.valueStore = new double[storeSize];
 		this.probabilityStore = new double[storeSize];
 
@@ -84,15 +110,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	public void update(double value, double probability) {
-		this.alpha *= (1.0 - probability);
+		this.alpha = this.alpha * (1.0 - probability);
 		for (int k = 1; k <= this.k0; k++) {
 			this.countUpperBound[k - 1] += Math.pow(probability, k);
 		}
 		for (int k = 1; k <= this.k1; k++) {
 			this.sumUpperBound[k - 1] += value * Math.pow(probability, k);
 		}
-		if (this.countUpperBound[1 - 1] < (3 / this.theta)
-				* Math.log(2 / this.epsilon)) {
+		if (this.countUpperBound[0] < ((3.0 / this.theta) * Math
+				.log(2.0 / this.epsilon))) {
 			if (probability > this.theta) {
 				this.storeIndex++;
 				this.valueStore[storeIndex - 1] = value;
@@ -111,9 +137,9 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 	public double reconstruct() {
 		double rho = 1.0 / (1.0 - this.alpha);
-		double z0 = getZ0(this.countUpperBound[1 - 1]);
-		double smallestEvenInteger = getSmallestEvenInteger(this.countUpperBound[1 - 1]);
-		if (isLongStream(this.countUpperBound[1 - 1])) {
+		double z0 = getZ0(this.countUpperBound[0]);
+		double smallestEvenInteger = getSmallestEvenInteger(this.countUpperBound[0]);
+		if (isLongStream(this.countUpperBound[0])) {
 			// Large Stream use SUM/COUNT
 			return evaluateLongStreamAvg(rho);
 		} else {
@@ -128,7 +154,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @return true if this is a long stream, false if this is a short stream
 	 */
 	private boolean isLongStream(double count) {
-		return (count >= 4.0 / this.epsilon * Math.log(2.0 / this.epsilon));
+		return (count >= ((4.0 / this.epsilon) * Math.log(2.0 / this.epsilon)));
 	}
 
 	/**
@@ -138,7 +164,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @return
 	 */
 	private double evaluateLongStreamAvg(double rho) {
-		return rho * this.sumUpperBound[1 - 1] / this.countUpperBound[1 - 1];
+		return ((rho * this.sumUpperBound[0]) / this.countUpperBound[0]);
 	}
 
 	/**
@@ -148,17 +174,20 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @return
 	 */
 	private double evaluateShortStreamAvg(double rho, double z0, double l) {
-		double Q;
-		double estimate = 0.0;
-		for (int i = 0; i <= k0 ; i++) {
-			double z = i;
-			if (countUpperBound[1 - 1] >= 3.0 / theta * Math.log(2.0 / epsilon)) {
-				Q = getQBig(z, rho, l);
-			} else {
-				Q = getQSmall(z, rho, l);
-			}
-			estimate += Q * Math.pow(z0, i + 1.0) / (i + 1.0);
+		Polynomial Q;
+		if (countUpperBound[0] >= ((3.0 / theta) * Math.log(2.0 / epsilon))) {
+			Q = getQBig(rho, l);
+		} else {
+			Q = getQSmall(rho, l);
 		}
+		double estimate = 0.0;
+		System.out.println("Degree: " + Q.degree() + " Poly: " + Q);
+		double sum=0.0;
+		for (int i = 0; i <= Q.degree(); i++) {
+			estimate += (Q.coefficient(i) * Math.pow(z0, i + 1.0) / (i + 1.0));
+			sum+=Q.coefficient(i);
+		}
+		System.out.println("SUM: "+sum);
 		return estimate;
 	}
 
@@ -169,12 +198,12 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 *         5ln(2P/epsilon)
 	 */
 	private int getSmallestEvenInteger(double count) {
-		if (count >= 1) {
+		if (count >= 1.0) {
 			return (int) (2.0 * Math.ceil((5.0 / 2.0)
-					* Math.log(2.0 * count / epsilon)));
+					* Math.log((2.0 * count) / epsilon)));
 		} else {
 			return (int) (2.0 * Math.ceil(Math.max(
-					1.0 / 2.0 * Math.log(2.0 / epsilon), 7.0 / 2.0)));
+					(1.0 / 2.0) * Math.log(2.0 / epsilon), 7.0 / 2.0)));
 		}
 	}
 
@@ -186,84 +215,104 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 */
 	private double getZ0(double count) {
 		if (count >= 1.0) {
-			return Math.min(1.0, 1.0 / count * Math.log(2.0 * count / epsilon));
+			return Math.min(1.0,
+					(1.0 / count) * Math.log((2.0 * count) / epsilon));
 		} else {
 			return 1.0;
 		}
 	}
 
-	private double getQBig(double z, double p, double l) {
-		double result;
-		double product = 1.0;
-		double sum = 0.0;
-		for (int i = 1; i <= k0; i++) {
+	private Polynomial getQBig(double rho, double l) {
+		Polynomial polynomial = new Polynomial(rho / (1.0 - epsilon), 0);
 
-			sum = 0.0;
+		Polynomial term1Product = null;
+		for (int i = 1; i <= k0; i++) {
+			Polynomial term1Sum = new Polynomial(0.0, 0);
 			for (int j = 0; j <= l; j++) {
-				sum += Math.pow((-countUpperBound[i - 1] * Math.pow(z, i)), j)
-						/ (factorial(j) * Math.pow(i, j));
+				term1Sum = term1Sum.plus(new Polynomial(Math.pow(
+						-countUpperBound[i - 1], j)
+						/ (factorial(j) * Math.pow(i, j)), i + j));
 			}
-			product *= sum;
+			if (term1Product == null) {
+				term1Product = term1Sum;
+			} else {
+				term1Product = term1Product.times(term1Sum);
+			}
 		}
-		result = product;
-		sum = 0.0;
 		// FIXME paper says sum from 0 to k1, but SUMLowerBound has only k1
 		// elements
+		Polynomial term2Sum = new Polynomial(0.0, 0);
 		for (int i = 1; i <= k1; i++) {
-			sum += sumUpperBound[i - 1] * Math.pow(z, i - 1);
+			term2Sum = term2Sum
+					.plus(new Polynomial(sumUpperBound[i - 1], i - 1));
 		}
-		result *= sum;
-
-		result *= (p / (1.0 - epsilon));
-
-		return result;
+		return polynomial.times(term1Product.times(term2Sum));
 	}
 
-	private double getQSmall(double z, double p, double l) {
-		double result;
-		double product = 1.0;
-		double sum = 0.0;
+	private Polynomial getQSmall(double rho, double l) {
+		Polynomial polynomial = new Polynomial(rho / (1.0 - epsilon), 0);
+
+		Polynomial term1Product = null;
 		for (int i = 1; i <= k0; i++) {
-
-			sum = 0.0;
+			Polynomial term1Sum = new Polynomial(0.0, 0);
 			for (int j = 0; j <= l; j++) {
-				sum += Math.pow((-countLowerBound[i - 1] * Math.pow(z, i)), j)
-						/ (factorial(j) * Math.pow(i, j));
+				term1Sum = term1Sum.plus(new Polynomial(Math.pow(
+						-countLowerBound[i - 1], j)
+						/ (factorial(j) * Math.pow(i, j)), i + j));
 			}
-			product *= sum;
+			if (term1Product == null) {
+				term1Product = term1Sum;
+			} else {
+				term1Product = term1Product.times(term1Sum);
+			}
 		}
-		result = product;
 
-		sum = 0.0;
-		for (int i = 1; i <= storeIndex; i++) {
-
-			double productQZ = 1.0;
+		Polynomial term2Sum = new Polynomial(0, 0);
+		for (int i = 1; i <= this.storeIndex; i++) {
+			Polynomial term2Product = null;
 			for (int j = 1; j <= this.storeIndex; j++) {
 				if (j != i) {
-					productQZ *= (1.0 - probabilityStore[j - 1] * z);
+					if (term2Product == null) {
+						term2Product = ((new Polynomial(1.0, 0))
+								.minus(new Polynomial(-probabilityStore[j - 1],
+										1)));
+					} else {
+						term2Product = term2Product.times((new Polynomial(1.0,
+								0)).minus(new Polynomial(
+								-probabilityStore[j - 1], 1)));
+					}
 				}
 			}
-			sum += valueStore[i - 1] * probabilityStore[i - 1] * productQZ;
+			if (term2Product != null) {
+				term2Sum = term2Sum.plus(term2Product.times(valueStore[i - 1]
+						* probabilityStore[i - 1]));
+			}
 		}
 
-		product = 1.0;
+		Polynomial term3Product = null;
 		for (int j = 1; j <= this.storeIndex; j++) {
 
-			double sumAsmall = 0;
+			Polynomial term3Sum = new Polynomial(0.0, 0);
 
 			// FIXME paper says sum from 0 to k1, but SUMLowerBound has only k1
 			// elements
 			for (int i = 1; i <= k1; i++) {
-				sumAsmall += sumLowerBound[i - 1] * Math.pow(z, i - 1);
+				term3Sum = term3Sum.plus(new Polynomial(sumLowerBound[i - 1],
+						i - 1));
 			}
-			product *= (1 - probabilityStore[j - 1] * z) * sumAsmall;
+			if (term3Product == null) {
+				term3Product = (new Polynomial(1.0, 0)).minus(
+						new Polynomial(-probabilityStore[j - 1], 1)).times(
+						term3Sum);
+			} else {
+				term3Product = term3Product.times((new Polynomial(1.0, 0))
+						.minus(new Polynomial(-probabilityStore[j - 1], 1))
+						.times(term3Sum));
+			}
 		}
 
-		result *= (sum + product);
-
-		result *= (p / (1.0 - epsilon));
-
-		return result;
+		return polynomial.times(term1Product)
+				.times(term3Product.plus(term2Sum));
 	}
 
 	// TODO look for factorial in apache commons math
@@ -289,16 +338,17 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 	/**
 	 * Only for testing purpose
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		AvgPartialAggregate aggFunc = new AvgPartialAggregate(0.001, 0.01);
+		AvgPartialAggregate aggFunc = new AvgPartialAggregate(0.04, Math.pow(
+				0.04, 0.5));
 
 		aggFunc.update(1, 1.0);
 		aggFunc.update(10, 0.1);
 
 		double result = aggFunc.reconstruct();
 		System.out.println("Result: " + result + " = 1.45");
-
 	}
 }
