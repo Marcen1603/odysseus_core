@@ -47,7 +47,7 @@ import com.vividsolutions.jts.io.gml2.GMLHandler;
  * An example of using the {@link GMLHandler} class to read geometry data out of
  * KML files.
  * 
- * @author mbdavis, Marco Grawunder
+ * @author mbdavis, Marco Grawunder, Kai Pancratz, Stephan Jansen
  * 
  */
 
