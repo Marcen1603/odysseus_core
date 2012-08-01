@@ -1,38 +1,39 @@
-/*******************************************************************************
- * Copyright 2012 The Odysseus Team
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 package de.uniol.inf.is.odysseus.fusion.metadata;
 
+import java.io.Serializable;
+
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.fusion.util.matrix.Matrix;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 
-public class FusionProbability extends TimeInterval implements IFusionProbability {
+public class FusionProbability extends TimeInterval implements IFusionProbability, Cloneable, Serializable{
 	
 	private static final long serialVersionUID = -3479265910143541469L;
 
+	private int dp = 4;
+	
 	// priori error estimate covariance matrix (P'(k)): P'(k)=A*P(k-1)*At + Q) 
 	private Matrix error_cov_pre = null;
 	 
 	// posteriori error estimate covariance matrix (P(k)): P(k)=(I-K(k)*H)*P'(k) 
 	private Matrix error_cov_post = null;
-	
-	// process noise covariance matrix (Q)
+
 	private Matrix process_noise_cov = null;
+	
+	public FusionProbability() {
+		error_cov_pre = new Matrix(dp, dp);
+		error_cov_post = Matrix.identity(dp, dp); // 1 (0 in OpenCV)
+		process_noise_cov  = Matrix.identity(dp, dp, 1e-3);
+	}
+	
+	public FusionProbability(ITimeInterval timeInterval) {
+		this.setStart(timeInterval.getStart());
+		this.setEnd(timeInterval.getEnd());
 		
-	// measurement noise covariance matrix (R) 
-	private Matrix measurement_noise_cov = null;
+		error_cov_pre = new Matrix(dp, dp);
+		error_cov_post = Matrix.identity(dp, dp); // 1 (0 in OpenCV)
+		process_noise_cov = Matrix.identity(dp, dp, 1e-3);
+	}
 	
 	@Override
 	public Matrix getError_cov_post() {
@@ -42,16 +43,6 @@ public class FusionProbability extends TimeInterval implements IFusionProbabilit
 	@Override
 	public Matrix getError_cov_pre() {
 		return this.error_cov_pre;
-	}
-
-	@Override
-	public Matrix getMeasurement_noise_cov() {
-		return this.measurement_noise_cov;
-	}
-
-	@Override
-	public Matrix getProcess_noise_cov() {
-		return this.process_noise_cov;
 	}
 
 	@Override
@@ -65,19 +56,14 @@ public class FusionProbability extends TimeInterval implements IFusionProbabilit
 	}
 
 	@Override
-	public void setMeasurement_noise_cov(Matrix measurement_noise_cov) {
-		this.measurement_noise_cov = measurement_noise_cov;
+	public TimeInterval clone() {
+		return new FusionProbability(this);
 	}
 
 	@Override
-	public void setProcess_noise_cov(Matrix process_noise_cov) {
-		this.process_noise_cov = process_noise_cov;
+	public Matrix getProcess_noise_cov() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-
-
-	
-
-	
-	
 }
