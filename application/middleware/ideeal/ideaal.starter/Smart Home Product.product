@@ -119,6 +119,8 @@ http://odysseus.offis.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier"/>
    </features>
 
 

@@ -50,8 +50,10 @@ public class Activator implements BundleActivator {
 	@Override
     public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(54321, new FrequentItemProvider());
-		server.start();
+		StreamServer serverSimple = new StreamServer(54321, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_SIMPLE));
+		serverSimple.start();
+		StreamServer serverT10I4D = new StreamServer(54322, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_T10I4D100K));
+		serverT10I4D.start();
 	}
 
 	/*

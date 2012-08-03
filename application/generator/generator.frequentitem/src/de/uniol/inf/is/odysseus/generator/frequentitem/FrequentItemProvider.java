@@ -45,15 +45,26 @@ public class FrequentItemProvider extends StreamClientHandler {
 
 	// CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER, item INTEGER) CHANNEL localhost : 54321;
 
-	//private final static String DATA_FILE = "T10I4D100K.dat";
+	public final static String DATA_FILE_T10I4D100K = "T10I4D100K.dat";
 	// T10I4D100K => 1000 items, average transaction length of 10 and 100k
 	// (=100.000) transactions
-	private final static String DATA_FILE = "retail.dat";
+	public final static String DATA_FILE_RETAIL = "retail.dat";
+	public final static String DATA_FILE_SIMPLE = "simpletest.dat";
 
 	private long time = 0;
 	private int transId = 1;
 	private BufferedReader in;
 
+	private String file;
+
+	public FrequentItemProvider(String file){
+		this.file = file;
+	}
+	
+	public FrequentItemProvider(FrequentItemProvider fip){
+		this.file = fip.file;
+	}
+	
 	@Override
 	public List<DataTuple> next() {
 		List<DataTuple> tuples = new ArrayList<DataTuple>();
@@ -70,24 +81,21 @@ public class FrequentItemProvider extends StreamClientHandler {
 			line = line.trim();
 			String parts[] = line.split(" ");
 			for (String part : parts) {
-				int itemId = Integer.parseInt(part.trim());
+				//int itemId = Integer.parseInt(part.trim());
+				String itemId = part.trim();
 				DataTuple tuple = new DataTuple();
 				tuple.addAttribute(new Long(time));
 				tuple.addAttribute(new Integer(transId));
-				tuple.addAttribute(new Integer(itemId));
-				tuple.addAttribute(38);
+				tuple.addAttribute(new String(itemId));							
 				tuples.add(tuple);
 			}
 
-			time = time + 10;
+			time = time + 100;
 			transId++;
 
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
+			//Thread.sleep(1);
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return null;
 		}
 
 		return tuples;
@@ -95,7 +103,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 
 	@Override
 	public void init() {
-		URL fileURL = Activator.getContext().getBundle().getEntry("/data/" + DATA_FILE);
+		URL fileURL = Activator.getContext().getBundle().getEntry("/data/" + this.file);
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
 			in = new BufferedReader(new InputStreamReader(inputStream));
@@ -115,7 +123,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 
 	@Override
 	public StreamClientHandler clone() {
-		return new FrequentItemProvider();
+		return new FrequentItemProvider(this);
 	}
 	
 }
