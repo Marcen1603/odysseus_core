@@ -70,7 +70,7 @@ public class IntervalLatency extends TimeInterval implements ILatency {
 	
 	@Override
 	public String toString() {
-		return "( i= " +super.toString() + " ; " + " l="+ this.latency+ ")";
+		return "( i= " +super.toString() + " | " + " l="+ this.latency+ ")";
 	}
 
 	@Override
