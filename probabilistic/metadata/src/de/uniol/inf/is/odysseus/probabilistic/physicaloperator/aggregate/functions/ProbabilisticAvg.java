@@ -67,7 +67,7 @@ public class ProbabilisticAvg extends
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		AvgPartialAggregate<Tuple<?>> pa = (AvgPartialAggregate<Tuple<?>>) p;
 		Tuple<?> r = new Tuple(1, false);
-		r.setAttribute(0, new Double(pa.reconstruct()));
+		r.setAttribute(0, new Double(pa.getAvg()));
 		return r;
 	}
 

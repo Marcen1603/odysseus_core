@@ -35,7 +35,7 @@ public class Polynomial {
 	public int degree() {
 		int degree = 0;
 		for (int i = 0; i < coefficients.length; i++) {
-			if (coefficients[i] != 0) {
+			if (coefficients[i] != 0.0) {
 				degree = i;
 			}
 		}
@@ -60,7 +60,7 @@ public class Polynomial {
 	}
 
 	public Polynomial minus(Polynomial other) {
-		Polynomial result = new Polynomial(0, Math.max(this.degree,
+		Polynomial result = new Polynomial(0.0, Math.max(this.degree,
 				other.degree));
 		for (int i = 0; i <= this.degree; i++) {
 			result.coefficients[i] += this.coefficients[i];
@@ -73,7 +73,7 @@ public class Polynomial {
 	}
 
 	public Polynomial times(Polynomial other) {
-		Polynomial result = new Polynomial(0, this.degree + other.degree);
+		Polynomial result = new Polynomial(0.0, this.degree + other.degree);
 		for (int i = 0; i <= this.degree; i++) {
 			for (int j = 0; j <= other.degree; j++) {
 				result.coefficients[i + j] += (this.coefficients[i] * other.coefficients[j]);
@@ -83,17 +83,8 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial times(double value) {
-		Polynomial result = new Polynomial(0, this.degree);
-		for (int i = 0; i <= this.degree; i++) {
-			result.coefficients[i] += (this.coefficients[i] * value);
-		}
-		result.degree = result.degree();
-		return result;
-	}
-
 	public Polynomial compose(Polynomial other) {
-		Polynomial result = new Polynomial(0, 0);
+		Polynomial result = new Polynomial(0.0, 0);
 		for (int i = this.degree; i >= 0; i--) {
 			Polynomial term = new Polynomial(this.coefficients[i], 0);
 			result = term.plus(other.times(result));
@@ -144,12 +135,22 @@ public class Polynomial {
 		if (degree == 0) {
 			return new Polynomial(0, 0);
 		}
-		Polynomial deriv = new Polynomial(0, degree - 1);
+		Polynomial deriv = new Polynomial(0.0, degree - 1);
 		deriv.degree = degree - 1;
 		for (int i = 0; i < degree; i++) {
-			deriv.coefficients[i] = (i + 1) * coefficients[i + 1];
+			deriv.coefficients[i] = (((double) i) + 1.0) * coefficients[i + 1];
 		}
 		return deriv;
+	}
+
+	public Polynomial integrate() {
+		Polynomial integral = new Polynomial(0.0, degree + 1);
+		integral.degree = degree + 1;
+		for (int i = 0; i <= degree; i++) {
+			integral.coefficients[i + 1] = coefficients[i]
+					/ (((double) i) + 1.0);
+		}
+		return integral;
 	}
 
 	public String toString() {
