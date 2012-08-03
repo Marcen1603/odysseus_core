@@ -16,39 +16,41 @@
 package de.uniol.inf.is.odysseus.mining.frequentitem;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class Transaction<T> {
+public class Transaction<M extends ITimeInterval> {
 	
-	private List<T> elements = new ArrayList<T>();
-	private ITimeInterval timeinterval;
+	private List<Tuple<M>> elements = new ArrayList<Tuple<M>>();
+	private M metadata;
 	
-	public void setTimeInterval(ITimeInterval ti){
-		this.timeinterval = ti;
+	public void setTimeInterval(PointInTime start, PointInTime end){
+		this.metadata.setStartAndEnd(start, end);
 	}
 	
-	public ITimeInterval getTimeInterval(){
-		return this.timeinterval;
+	public M getMetadata(){
+		return this.metadata;
 	}
 	
-	public void addElement(T tuple){
+	public void addElement(Tuple<M> tuple){
 		this.elements.add(tuple);
+		this.metadata = (M) tuple.getMetadata().clone();
 	}
-	public List<T> getElements(){
-		return Collections.unmodifiableList(elements);
+	public List<Tuple<M>> getElements(){
+		return elements;
 	}
 	
 	@Override
 	public String toString() {
-		String s = "Transaction ["+this.timeinterval+")";
-		for(T t : elements){
+		String s = "Transaction ("+this.metadata+")";
+		for(Tuple<M> t : elements){
 			s=s+"\n\t"+t;
 		}
 		return s;

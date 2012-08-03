@@ -10,15 +10,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeInterval;
 import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSet;
 import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSetContainer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 
-public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<ITimeInterval>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
-	private List<Transaction<Tuple<M>>> transactions = new ArrayList<Transaction<Tuple<M>>>();
+	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
 	private int maxlength = 5;
@@ -85,7 +84,7 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 			PointInTime end = PointInTime.getInfinityTime();
 			// die betrachtete zeit ist die maximale startzeit und die minimale
 			// endzeit
-			Transaction<Tuple<M>> transaction = new Transaction<Tuple<M>>();
+			Transaction<M> transaction = new Transaction<M>();			
 			while (qualifies.hasNext()) {
 				Tuple<M> next = qualifies.next();
 				// wir nehmen den maximalen startzeitstempel (alles davor wurde
@@ -101,17 +100,24 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 			}
 			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
 			end = PointInTime.min(end, currentTime);
-			transaction.setTimeInterval(new TimeInterval(start, end));
+			transaction.setTimeInterval(start, end);
 			lastCut = currentTime;
 //			System.out.println("adding");
 //			System.out.println(transaction);
 			this.transactions.add(transaction);
 			
-			List<FrequentItemSetContainer<Tuple<M>>> fisses = createFrequentItems();
+			List<FrequentItemSetContainer<Tuple<M>, M>> fisses = createFrequentItems();
 						
-			for (FrequentItemSetContainer<Tuple<M>> fis : fisses) {
+			
+			for (FrequentItemSetContainer<Tuple<M>, M> fisc : fisses) {
+				for(FrequentItemSet<Tuple<M>, M> fis : fisc.getFrequentItemSets()){
+					Tuple<ITimeInterval> newtuple = new Tuple<ITimeInterval>(1, false);
+					newtuple.setMetadata(fis.getMetadata());
+					newtuple.setAttribute(0, fis.toString());					
+					transfer(newtuple);
+				}
 				System.out.println("----");
-				System.out.println(fis);
+				System.out.println(fisc);
 			}
 
 			// als letztes können wir noch alle Elemente rauswerfen, die in
@@ -127,31 +133,32 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 		}
 	}
 
-	private List<FrequentItemSetContainer<Tuple<M>>> createFrequentItems() {
+	private List<FrequentItemSetContainer<Tuple<M>, M>> createFrequentItems() {
 		
-		List<FrequentItemSetContainer<Tuple<M>>> allFrequentItemSets = new ArrayList<FrequentItemSetContainer<Tuple<M>>>();
+		List<FrequentItemSetContainer<Tuple<M>, M>> allFrequentItemSets = new ArrayList<FrequentItemSetContainer<Tuple<M>, M>>();
 		
-		FrequentItemSetContainer<Tuple<M>> oneItemSet = new FrequentItemSetContainer<Tuple<M>>();
-		for (Transaction<Tuple<M>> trans : this.transactions) {
+		FrequentItemSetContainer<Tuple<M>, M> oneItemSet = new FrequentItemSetContainer<Tuple<M>, M>();
+		for (Transaction<M> trans : this.transactions) {
 			for (Tuple<M> t : trans.getElements()) {
 
-				FrequentItemSet<Tuple<M>> fis = new FrequentItemSet<Tuple<M>>(t);
+				FrequentItemSet<Tuple<M>, M> fis = new FrequentItemSet<Tuple<M>, M>(t);
 
 				if (!oneItemSet.containsFrequentItemSet(fis)) {
 					oneItemSet.addItemSet(fis);
 				} else {
 					oneItemSet.increaseCount(fis);
 				}
+				fis.setMetadata(trans.getMetadata());				
 			}
 		}
 		oneItemSet.purgeFrequentItemWithoutMinimumSupport(minsupport);		
 		allFrequentItemSets.add(oneItemSet);
-		FrequentItemSetContainer<Tuple<M>> currentSet = oneItemSet;
+		FrequentItemSetContainer<Tuple<M>, M> currentSet = oneItemSet;
 		for (int i = 2; i <= maxlength; i++) {
 			long startStep = System.currentTimeMillis();
-			System.out.println("Gen: "+i+"...");
+			debug("Gen: "+i+"...");
 			currentSet = aprioriGen(currentSet, i);
-			System.out.println("Gesamt: "+(System.currentTimeMillis()-startStep));
+			debug("Gesamt: "+(System.currentTimeMillis()-startStep));
 			allFrequentItemSets.add(currentSet);
 			if (currentSet.size() == 0) {
 				break;
@@ -160,24 +167,24 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 		return allFrequentItemSets;
 	}
 
-	private FrequentItemSetContainer<Tuple<M>> aprioriGen(FrequentItemSetContainer<Tuple<M>> smallerLength, int length) {
-		FrequentItemSetContainer<Tuple<M>> candidates = new FrequentItemSetContainer<Tuple<M>>();
-		ArrayList<FrequentItemSet<Tuple<M>>> list = new ArrayList<FrequentItemSet<Tuple<M>>>(smallerLength.getFrequentItemSets());
+	private FrequentItemSetContainer<Tuple<M>, M> aprioriGen(FrequentItemSetContainer<Tuple<M>, M> smallerLength, int length) {
+		FrequentItemSetContainer<Tuple<M>, M> candidates = new FrequentItemSetContainer<Tuple<M>, M>();
+		ArrayList<FrequentItemSet<Tuple<M>, M>> list = new ArrayList<FrequentItemSet<Tuple<M>, M>>(smallerLength.getFrequentItemSets());
 
 		long startStep = System.currentTimeMillis();
 		int counti = 0;
 		for (int i = 0; i < list.size(); i++) {
-			FrequentItemSet<Tuple<M>> current = list.get(i);
+			FrequentItemSet<Tuple<M>, M> current = list.get(i);
 			long startStep2 = System.currentTimeMillis();
 			for (int k = i + 1; k < list.size(); k++) {				
-				FrequentItemSet<Tuple<M>> other = list.get(k);
+				FrequentItemSet<Tuple<M>, M> other = list.get(k);
 				int commonItems = other.intersectCount(current);
 				if (commonItems == (length - 2)) {
-					FrequentItemSet<Tuple<M>> newFis = new FrequentItemSet<Tuple<M>>(current);
+					FrequentItemSet<Tuple<M>, M> newFis = new FrequentItemSet<Tuple<M>, M>(current);
 					newFis.addFrequentItemSet(other);
 					if (!candidates.containsFrequentItemSet(newFis)) {
 						// check, if each subset is a frequent item set						
-						List<FrequentItemSet<Tuple<M>>> subsets = newFis.splitIntoSmallerSubset();
+						List<FrequentItemSet<Tuple<M>, M>> subsets = newFis.splitIntoSmallerSubset();
 						if (smallerLength.containsAll(subsets)) {
 							candidates.addItemSet(newFis);
 						}
@@ -185,23 +192,28 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 					}
 				}
 			}
-			System.out.println("        check: "+(System.currentTimeMillis()-startStep2));
+			debug("        check: "+(System.currentTimeMillis()-startStep2));
 			counti++;
 		}
-		System.out.println("  count: "+counti);
-		System.out.println("  combination: "+(System.currentTimeMillis()-startStep));
+		debug("  count: "+counti);
+		debug("  combination: "+(System.currentTimeMillis()-startStep));
 		startStep = System.currentTimeMillis();
 		candidates.calcSupportCount(this.transactions);
-		System.out.println("  Calcsupport: "+(System.currentTimeMillis()-startStep));
+		debug("  Calcsupport: "+(System.currentTimeMillis()-startStep));
 		startStep = System.currentTimeMillis();
 		candidates.purgeFrequentItemWithoutMinimumSupport(2);
-		System.out.println("  purging: "+(System.currentTimeMillis()-startStep));
+		debug("  purging: "+(System.currentTimeMillis()-startStep));
 		return candidates;
 	}
 
 	@Override
 	public FrequentItemsetPO<M> clone() {
 		return new FrequentItemsetPO<M>(this);
+	}
+	
+	
+	private void debug(String str){
+	//	System.out.println(str);
 	}
 
 }

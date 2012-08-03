@@ -18,13 +18,16 @@ package de.uniol.inf.is.odysseus.mining.frequentitem;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+
 /**
  * @author Dennis Geesen
  * 
  */
-public class FrequentItemSet<T> {
+public class FrequentItemSet<T, M extends ITimeInterval> {
 
 	private ArrayList<T> items = new ArrayList<T>();
+	private M metadata;
 
 	public FrequentItemSet(T item) {
 		this.items.add(item);
@@ -33,11 +36,12 @@ public class FrequentItemSet<T> {
 	/**
 	 * @param frequentItemSet
 	 */
-	public FrequentItemSet(FrequentItemSet<T> frequentItemSet) {
+	public FrequentItemSet(FrequentItemSet<T,M> frequentItemSet) {
 		this.items = new ArrayList<T>(frequentItemSet.items);
+		this.metadata = (M) frequentItemSet.metadata.clone();
 	}
 
-	public void addFrequentItemSet(FrequentItemSet<T> set) {
+	public void addFrequentItemSet(FrequentItemSet<T, M> set) {
 		for (T item : set.items) {
 			if (!this.items.contains(item)) {
 				this.items.add(item);
@@ -71,14 +75,14 @@ public class FrequentItemSet<T> {
 			return false;
 		}
 		if (obj instanceof FrequentItemSet) {
-			FrequentItemSet<?> other = (FrequentItemSet<?>) obj;
+			FrequentItemSet<?,?> other = (FrequentItemSet<?,?>) obj;
 			return this.items.containsAll(other.items);			
 		} else {
 			return false;
 		}
 	}
 
-	public int intersectCount(FrequentItemSet<T> other) {
+	public int intersectCount(FrequentItemSet<T,M> other) {
 		int count = 0;
 		for (T item : this.items) {
 			if (other.containsFrequentItem(item)) {
@@ -108,15 +112,15 @@ public class FrequentItemSet<T> {
 	 */
 	@Override
 	public String toString() {
-		String s = "FrequentItemSet (\n";
+		String s = "FrequentItemSet (";
 		for (T fi : this.items) {
-			s = s + fi + "\n";
+			s = s + fi + " AND ";
 		}
 		s = s + ")";
 		return s;
 	}
 
-	public boolean isSubsetOf(Transaction<T> transaction) {
+	public boolean isSubsetOf(Transaction<M> transaction) {
 		if (transaction.getElements().containsAll(items)) {
 			return true;
 		} else {
@@ -130,21 +134,35 @@ public class FrequentItemSet<T> {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	protected FrequentItemSet<T> clone() {
-		return new FrequentItemSet<T>(this);
+	protected FrequentItemSet<T,M> clone() {
+		return new FrequentItemSet<T,M>(this);
 	}
 
 	/**
 	 * splits this set of length k into subsets of length k-1 
 	 */
-	public List<FrequentItemSet<T>> splitIntoSmallerSubset() {		
-		List<FrequentItemSet<T>> subsets = new ArrayList<FrequentItemSet<T>>();
+	public List<FrequentItemSet<T,M>> splitIntoSmallerSubset() {		
+		List<FrequentItemSet<T,M>> subsets = new ArrayList<FrequentItemSet<T,M>>();
 		for(T item : this.items){
-			FrequentItemSet<T> cl = this.clone();
+			FrequentItemSet<T,M> cl = this.clone();
 			cl.removeFrequentItem(item);
 			subsets.add(cl);
 		}
 		return subsets;
+	}
+
+	/**
+	 * @return the metadata
+	 */
+	public M getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * @param metadata the metadata to set
+	 */
+	public void setMetadata(M metadata) {
+		this.metadata = metadata;
 	}
 
 }

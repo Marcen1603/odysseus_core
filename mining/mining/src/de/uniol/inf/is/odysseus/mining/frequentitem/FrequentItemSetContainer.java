@@ -22,53 +22,56 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+
 /**
  * @author Dennis Geesen
  * 
  */
-public class FrequentItemSetContainer<T> {
+public class FrequentItemSetContainer<T, M extends ITimeInterval> {
 
-	private HashMap<FrequentItemSet<T>, Integer> items = new HashMap<FrequentItemSet<T>, Integer>();
+	private HashMap<FrequentItemSet<T, M>, Integer> items = new HashMap<FrequentItemSet<T, M>, Integer>();
+	private M metadata;
 
 	public FrequentItemSetContainer() {
 
 	}
 
-	public FrequentItemSetContainer(FrequentItemSetContainer<T> old) {
-		for (Entry<FrequentItemSet<T>, Integer> e : old.items.entrySet()) {
+	public FrequentItemSetContainer(FrequentItemSetContainer<T,M> old) {
+		for (Entry<FrequentItemSet<T, M>, Integer> e : old.items.entrySet()) {
 			this.items.put(e.getKey().clone(), e.getValue());
 		}
 	}
 
-	public void addItemSet(FrequentItemSet<T> item) {
+	public void addItemSet(FrequentItemSet<T, M> item) {
 		synchronized (this.items) {
 			this.items.put(item, 1);
 		}
 	}
 
-	public Set<FrequentItemSet<T>> getFrequentItemSets() {
+	public Set<FrequentItemSet<T, M>> getFrequentItemSets() {
 		return Collections.unmodifiableSet(this.items.keySet());
 	}
 
-	public boolean containsFrequentItemSet(FrequentItemSet<T> fis) {
+	public boolean containsFrequentItemSet(FrequentItemSet<T, M> fis) {
 		return this.items.containsKey(fis);
 	}
 	
 	
-	public boolean containsAll(List<FrequentItemSet<T>> subsets){
+	public boolean containsAll(List<FrequentItemSet<T, M>> subsets){
 		return this.items.keySet().containsAll(subsets);
 	}
 
-	public void increaseCount(FrequentItemSet<T> item) {
+	public void increaseCount(FrequentItemSet<T, M> item) {
 		synchronized (this.items) {
 			int newCount = this.items.get(item) + 1;
 			this.items.put(item, newCount);
 		}
 	}
 
-	public FrequentItemSet<T> extractFrequentItemSet() {
-		Iterator<FrequentItemSet<T>> iter = this.items.keySet().iterator();
-		FrequentItemSet<T> item = iter.next();
+	public FrequentItemSet<T, M> extractFrequentItemSet() {
+		Iterator<FrequentItemSet<T, M>> iter = this.items.keySet().iterator();
+		FrequentItemSet<T, M> item = iter.next();
 		iter.remove();
 		return item;
 	}
@@ -83,8 +86,8 @@ public class FrequentItemSetContainer<T> {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public FrequentItemSetContainer<T> clone() {
-		return new FrequentItemSetContainer<T>(this);
+	public FrequentItemSetContainer<T,M> clone() {
+		return new FrequentItemSetContainer<T,M>(this);
 	}
 
 	/**
@@ -92,8 +95,8 @@ public class FrequentItemSetContainer<T> {
 	 */
 	public void purgeFrequentItemWithoutMinimumSupport(int minsupport) {
 		synchronized (this.items) {
-			HashMap<FrequentItemSet<T>, Integer> newitems = new HashMap<FrequentItemSet<T>, Integer>();
-			for (Entry<FrequentItemSet<T>, Integer> entry : items.entrySet()) {
+			HashMap<FrequentItemSet<T, M>, Integer> newitems = new HashMap<FrequentItemSet<T, M>, Integer>();
+			for (Entry<FrequentItemSet<T, M>, Integer> entry : items.entrySet()) {
 				if (entry.getValue() >= minsupport) {
 					newitems.put(entry.getKey(), entry.getValue());
 				}
@@ -102,11 +105,11 @@ public class FrequentItemSetContainer<T> {
 		}
 	}
 
-	public void calcSupportCount(List<Transaction<T>> transactions) {
+	public void calcSupportCount(List<Transaction<M>> transactions) {
 		synchronized (items) {
-			for (FrequentItemSet<T> itemset : this.items.keySet()) {
+			for (FrequentItemSet<T, M> itemset : this.items.keySet()) {
 				int count = 0;
-				for (Transaction<T> transaction : transactions) {
+				for (Transaction<M> transaction : transactions) {
 					if (itemset.isSubsetOf(transaction)) {
 						count++;
 					}
@@ -125,10 +128,24 @@ public class FrequentItemSetContainer<T> {
 	@Override
 	public String toString() {
 		String s = "";
-		for (Entry<FrequentItemSet<T>, Integer> entry : items.entrySet()) {
+		for (Entry<FrequentItemSet<T, M>, Integer> entry : items.entrySet()) {
 			s = s + "(" + entry.getValue() + ")" + entry.getKey() + "\n";
 		}
 		return s;
+	}
+
+	/**
+	 * @return the metadata
+	 */
+	public M getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * @param metadata the metadata to set
+	 */
+	public void setMetadata(M metadata) {
+		this.metadata = metadata;
 	}
 
 }
