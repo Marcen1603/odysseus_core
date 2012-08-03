@@ -31,4 +31,18 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <plugin
+         id="de.uniol.inf.is.odysseus.wrapper.rs232"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.protocol.sunspot"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
