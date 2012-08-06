@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public interface IProbability extends IMetaAttribute, IClone {
+public interface IProbabilistic extends IMetaAttribute, IClone {
 
 	double getProbability(int pos);
 

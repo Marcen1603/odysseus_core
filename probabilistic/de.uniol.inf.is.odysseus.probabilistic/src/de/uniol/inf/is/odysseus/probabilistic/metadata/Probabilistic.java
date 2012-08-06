@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class Probability implements IProbability {
+public class Probabilistic implements IProbabilistic {
 	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
 
 	/**
@@ -17,11 +17,11 @@ public class Probability implements IProbability {
 	private static final long serialVersionUID = -147594856639774242L;
 	private double[] probabilities;
 
-	public Probability() {
+	public Probabilistic() {
 
 	}
 
-	public Probability(Probability probability) {
+	public Probabilistic(Probabilistic probability) {
 		this.probabilities = probability.probabilities.clone();
 
 	}
@@ -53,8 +53,8 @@ public class Probability implements IProbability {
 	}
 
 	@Override
-	public IProbability clone() {
-		return new Probability(this);
+	public IProbabilistic clone() {
+		return new Probabilistic(this);
 	}
 
 }

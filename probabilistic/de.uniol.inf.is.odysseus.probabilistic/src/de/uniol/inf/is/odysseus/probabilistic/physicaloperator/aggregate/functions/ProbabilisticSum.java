@@ -6,7 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbability;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -39,7 +39,7 @@ public class ProbabilisticSum extends
 	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
 		IPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>(
 				((Number) in.getAttribute(pos)).doubleValue(),
-				((IProbability) in.getMetadata()).getProbability(pos));
+				((IProbabilistic) in.getMetadata()).getProbability(pos));
 		return pa;
 	}
 
@@ -55,7 +55,7 @@ public class ProbabilisticSum extends
 		}
 
 		pa.add(((Number) toMerge.getAttribute(pos)).doubleValue(),
-				((IProbability) toMerge.getMetadata()).getProbability(pos));
+				((IProbabilistic) toMerge.getMetadata()).getProbability(pos));
 		return pa;
 	}
 
