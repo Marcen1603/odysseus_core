@@ -15,23 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IKeywordGroup;
 
 public class PQLKeywords implements IKeywordGroup {
 
 	@Override
 	public String[] getKeywords() {
-		return determineNames(PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder());
+		return PQLEditorTextPlugIn.getPQLKeywords();
 	}
 
-	private static String[] determineNames( List<IOperatorBuilder> builders ){
-		String[] names = new String[builders.size()];
-		for( int i = 0; i < names.length; i++ ){
-			names[i] = builders.get(i).getName().toUpperCase();
-		}
-		return names;
-	}
 }
