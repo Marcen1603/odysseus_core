@@ -56,18 +56,12 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	public static String[] getPQLKeywords() {
-		if( keywords == null ) {
-			waitForService();
-		}
-		
+		waitForService();
 		return keywords;
 	}
 	
 	public static IOperatorBuilderFactory getOperatorBuilderFactory() {
-		if( operatorBuilderFactory == null ) {
-			waitForService();
-		}
-		
+		waitForService();
 		return operatorBuilderFactory;
 	}
 
@@ -92,7 +86,9 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		ServiceTracker execTracker = new ServiceTracker(getDefault().getBundle().getBundleContext(), IOperatorBuilderFactory.class.getName(), null);
 		execTracker.open();
 		try {
-			execTracker.waitForService(WAIT_SERVICE_MILLIS);
+			operatorBuilderFactory = (IOperatorBuilderFactory)execTracker.waitForService(WAIT_SERVICE_MILLIS);
+			keywords = determineNames(operatorBuilderFactory.getOperatorBuilder());
+			
 			execTracker.close();
 		} catch (InterruptedException e) {
 			throw new RuntimeException("Could not get IOperatorBuilderFactory-Service within " + WAIT_SERVICE_MILLIS + " ms!");
