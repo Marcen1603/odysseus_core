@@ -113,6 +113,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+SHIFT+C">
       </key>
+      <key
+            commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+X">
+      </key>
    </extension>
  
 
