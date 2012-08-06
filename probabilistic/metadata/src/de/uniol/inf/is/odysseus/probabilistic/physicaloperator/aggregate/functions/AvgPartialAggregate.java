@@ -154,9 +154,11 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 		if (isLongStream(this.countUpperBound[0])) {
 			// Large Stream use SUM/COUNT
+			System.out.println("Calc long stream");
 			return evaluateLongStreamAvg(rho);
 		} else {
 			// Short Stream
+			System.out.println("Calc short stream");
 			return evaluateShortStreamAvg(rho);
 		}
 	}
@@ -188,17 +190,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 */
 	private double evaluateShortStreamAvg(double rho) {
 		Polynomial Q;
-		double z0;
-		double smallestEvenInteger;
+		double z0 = getZ0();
+		double smallestEvenInteger = getSmallestEvenInteger();
 		if (countUpperBound[0] >= ((3.0 / theta) * Math.log(2.0 / epsilon))) {
-			z0 = getZ0(this.countUpperBound[0]);
-			smallestEvenInteger = getSmallestEvenInteger(this.countUpperBound[0]);
 			assert checkClaim28(this.countUpperBound, this.sumUpperBound, z0) : z0;
+			System.out.println("z0=" + z0 + " l=" + smallestEvenInteger);
 			Q = getQBig(rho, smallestEvenInteger);
 		} else {
-			z0 = getZ0(this.countLowerBound[0]);
-			smallestEvenInteger = getSmallestEvenInteger(this.countLowerBound[0]);
 			assert checkClaim28(this.countLowerBound, this.sumLowerBound, z0) : z0;
+			System.out.println("z0=" + z0 + " l=" + smallestEvenInteger);
 			Q = getQSmall(rho, smallestEvenInteger);
 		}
 		System.out.println("Q(z) = " + Q);
@@ -210,14 +210,13 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 	/**
 	 * 
-	 * @param count
 	 * @return the smallest even integer greater than or equal to
 	 *         5ln(2P/epsilon)
 	 */
-	private double getSmallestEvenInteger(double count) {
-		if (count >= 1.0) {
+	private double getSmallestEvenInteger() {
+		if (this.countUpperBound[0] >= 1.0) {
 			return (2.0 * Math.ceil((5.0 / 2.0)
-					* Math.log((2.0 * count) / epsilon)));
+					* Math.log((2.0 * this.countUpperBound[0]) / epsilon)));
 		} else {
 			return (2.0 * Math.ceil(Math.max(
 					(1.0 / 2.0) * Math.log(2.0 / epsilon), 7.0 / 2.0)));
@@ -226,14 +225,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 	/**
 	 * 
-	 * @param rho
-	 * @param count
-	 * @return
+	 * @return z0
 	 */
-	private double getZ0(double count) {
-		if (count >= 1.0) {
-			return Math.min(1.0,
-					(1.0 / count) * Math.log((2.0 * count) / epsilon));
+	private double getZ0() {
+		if (this.countUpperBound[0] >= 1.0) {
+			return Math
+					.min(1.0,
+							(1.0 / this.countUpperBound[0])
+									* Math.log(2.0 * this.countUpperBound[0]
+											/ epsilon));
 		} else {
 			return 1.0;
 		}
@@ -274,8 +274,9 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		for (int i = 1; i <= k0; i++) {
 			Polynomial sum = new Polynomial(0.0, 0);
 			for (int j = 0; j <= l; j++) {
-				sum = sum.plus(new Polynomial(Math.pow(-countLowerBound[i - 1],
-						j) / (factorial(j) * Math.pow(i, j)), i + j));
+				sum = sum.plus(new Polynomial(Math.pow(-1, j)
+						* Math.pow(countLowerBound[i - 1], j)
+						/ (factorial(j) * Math.pow(i, j)), i + j));
 			}
 			if (gTilde == null) {
 				gTilde = sum;
@@ -284,13 +285,6 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			}
 		}
 		System.out.println("gTilde: " + gTilde);
-		// FIXME paper says sum from 0 to k1, but SUMLowerBound has only k1
-		// elements
-		Polynomial hTilde = new Polynomial(0.0, 0);
-		for (int i = 0; i < k1; i++) {
-			hTilde = hTilde.plus(new Polynomial(sumLowerBound[i], i));
-		}
-		System.out.println("hTilde: " + hTilde);
 
 		Polynomial fJ = new Polynomial(0.0, 0);
 		for (int i = 1; i <= this.storeIndex; i++) {
@@ -319,17 +313,26 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 		Polynomial gJ = null;
 		for (int j = 1; j <= this.storeIndex; j++) {
+			// FIXME paper says sum from 0 to k1, but SUMLowerBound has only k1
+			// elements
+			Polynomial hTilde = new Polynomial(0.0, 0);
+			for (int i = 0; i < k1; i++) {
+				hTilde = hTilde.plus(new Polynomial(sumLowerBound[i], i));
+			}
+
 			if (gJ == null) {
-				gJ = (new Polynomial(1.0, 0)).minus(new Polynomial(
-						probabilityStore[j - 1], 1));
+				gJ = (new Polynomial(1.0, 0)).minus(
+						new Polynomial(probabilityStore[j - 1], 1)).times(
+						hTilde);
 			} else {
-				gJ = gJ.times((new Polynomial(1.0, 0)).minus(new Polynomial(
-						probabilityStore[j - 1], 1)));
+				gJ = gJ.times(
+						(new Polynomial(1.0, 0)).minus(new Polynomial(
+								probabilityStore[j - 1], 1))).times(hTilde);
 			}
 		}
 		System.out.println("gJ: " + gJ);
 
-		return polynomial.times(gTilde.times(fJ.plus(gJ.times(hTilde))));
+		return polynomial.times(gTilde.times(fJ.plus(gJ)));
 	}
 
 	// TODO look for factorial in apache commons math
@@ -408,6 +411,19 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 					* (1 - (2 * Math.log(countUpperBound[0]) / countUpperBound[0])) <= mean)
 					&& (mean <= rho * sumUpperBound[0] / countUpperBound[0]
 							* (1 + (1 / (countUpperBound[0] - 1))));
+
+			if (!result) {
+				System.out
+						.println("Error at: "
+								+ (rho * sumUpperBound[0] / countUpperBound[0] * (1 - (2 * Math
+										.log(countUpperBound[0]) / countUpperBound[0])))
+								+ " <= "
+								+ mean
+								+ " "
+								+ mean
+								+ " <= "
+								+ (rho * sumUpperBound[0] / countUpperBound[0] * (1 + (1 / (countUpperBound[0] - 1)))));
+			}
 		} else {
 			for (double delta = 0.0001; delta < 1.0; delta += 0.0001) {
 				double lhs = rho * sumUpperBound[0] / countUpperBound[0]
@@ -450,15 +466,37 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		double result = 1.45;
 		double avg;
 
+		Polynomial poly = (new Polynomial(3, 1)).plus(new Polynomial(2, 2));
+
+		System.out.println(poly);
+		poly = poly.minus(new Polynomial(2, 2));
+		System.out.println(poly);
+		poly = (poly).times(new Polynomial(2, 2));
+		System.out.println(poly);
+
 		AvgPartialAggregate aggFunc = new AvgPartialAggregate(epsilon);
-	//	for (int i = 0; i <= 100; i++) {
-			aggFunc.update(1.0, 1.0);
-		//}
+		// for (int i = 0; i <= 10000; i++) {
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		aggFunc.update(1.0, 1.0);
+		// }
 		assert aggFunc.checkTheorem23(1.0 / (1.0 - aggFunc.alpha), 1.0);
 		avg = aggFunc.getAvg();
 		System.out.println("AVG of 1.0(1.0): " + avg);
 		assert aggFunc.checkLemma27(avg, 1.0) : avg;
 
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
+		aggFunc.update(10.0, 0.1);
 		aggFunc.update(10.0, 0.1);
 		assert aggFunc.checkTheorem23(1.0 / (1.0 - aggFunc.alpha), result);
 		avg = aggFunc.getAvg();

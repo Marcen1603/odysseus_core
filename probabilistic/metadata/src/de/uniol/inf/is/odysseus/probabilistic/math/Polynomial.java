@@ -164,11 +164,11 @@ public class Polynomial {
 		}
 		sb.append(coefficients[degree]).append("x^").append(degree);
 		for (int i = degree - 1; i >= 0; i--) {
-			if (coefficients[i] == 0) {
+			if (coefficients[i] == 0.0) {
 				continue;
-			} else if (coefficients[i] > 0) {
+			} else if (coefficients[i] > 0.0) {
 				sb.append(" + ").append(coefficients[i]);
-			} else if (coefficients[i] < 0) {
+			} else if (coefficients[i] < 0.0) {
 				sb.append(" - ").append(-coefficients[i]);
 			}
 			if (i == 1) {
