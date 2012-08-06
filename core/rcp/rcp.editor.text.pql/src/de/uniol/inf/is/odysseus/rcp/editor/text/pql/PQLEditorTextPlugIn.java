@@ -56,12 +56,12 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	public static String[] getPQLKeywords() {
-		waitForService();
+		updateService();
 		return keywords;
 	}
 	
 	public static IOperatorBuilderFactory getOperatorBuilderFactory() {
-		waitForService();
+		updateService();
 		return operatorBuilderFactory;
 	}
 
@@ -82,7 +82,7 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void waitForService() {
+	private static void updateService() {
 		ServiceTracker execTracker = new ServiceTracker(getDefault().getBundle().getBundleContext(), IOperatorBuilderFactory.class.getName(), null);
 		execTracker.open();
 		try {
