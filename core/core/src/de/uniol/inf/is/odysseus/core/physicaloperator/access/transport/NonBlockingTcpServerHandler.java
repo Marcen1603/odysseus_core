@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
+import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.connection.IConnection;
 import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NonBlockingTcpServerHandler extends AbstractTransportHandler
-		implements IConnectionListener, IAccessConnectionListener<ByteBuffer> {
+		implements IAccessConnectionHandler<ByteBuffer>, IConnectionListener, IAccessConnectionListener<ByteBuffer> {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(NonBlockingTcpServerHandler.class);
 	private NioTcpServer server;
@@ -139,5 +140,39 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 		default:
 			break;
 		}
+	}
+
+	@Override
+	public void open(IAccessConnectionListener<ByteBuffer> caller)
+			throws OpenFailedException {
+		this.process_open();		
+	}
+
+	@Override
+	public void close(IAccessConnectionListener<ByteBuffer> caller)
+			throws IOException {
+		this.process_close();
+	}
+
+	@Override
+	public void reconnect() {
+		this.process_close();
+		this.process_open();
+	}
+
+	@Override
+	public String getUser() {
+		return "";
+	}
+
+	@Override
+	public String getPassword() {
+		return "";
+	}
+
+	@Override
+	public IAccessConnectionHandler<ByteBuffer> getInstance(
+			Map<String, String> options) {
+		return new NonBlockingTcpServerHandler(options);
 	}
 }
