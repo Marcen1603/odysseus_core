@@ -62,6 +62,7 @@ public class HTTPProtocolHandler<T> extends AbstractProtocolHandler<T> implement
         instance.setDataHandler(dataHandler);
         instance.setTransportHandler(transportHandler);
         instance.setTransfer(transfer);
+        transportHandler.addListener(instance);
         return instance;
     }
 
