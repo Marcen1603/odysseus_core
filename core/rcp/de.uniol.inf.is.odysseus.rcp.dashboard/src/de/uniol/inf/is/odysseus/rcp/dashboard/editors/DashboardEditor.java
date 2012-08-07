@@ -25,8 +25,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
@@ -45,7 +47,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
-public class DashboardEditor extends EditorPart {
+public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardEditor.class);
 
@@ -54,12 +56,23 @@ public class DashboardEditor extends EditorPart {
 
 	private Dashboard dashboard;
 	private FileEditorInput input;
+	private boolean dirty;
 
 	private Map<IDashboardPart, DashboardPartController> controllers;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 
+		try {
+			FileUtil.write(DASHBOARD_HANDLER.save(dashboard), this.input.getFile());
+			setDirty(false);
+		} catch (DashboardHandlerException ex) {
+			LOG.error("Could not save Dashboard!", ex);
+			throw new RuntimeException("Could not save Dashboard!", ex);
+		} catch (CoreException ex) {
+			LOG.error("Could not save Dashboard!", ex);
+			throw new RuntimeException("Could not save Dashboard!", ex);
+		}
 	}
 
 	@Override
@@ -78,6 +91,7 @@ public class DashboardEditor extends EditorPart {
 
 		try {
 			dashboard = DASHBOARD_HANDLER.load(FileUtil.read(this.input.getFile()), DASHBOARD_PART_HANDLER);
+			dashboard.addListener(this);
 			controllers = createControllers(dashboard.getDashboardPartPlacements());
 		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
@@ -93,7 +107,7 @@ public class DashboardEditor extends EditorPart {
 
 	@Override
 	public boolean isDirty() {
-		return false;
+		return dirty;
 	}
 
 	@Override
@@ -126,6 +140,18 @@ public class DashboardEditor extends EditorPart {
 	public void setFocus() {
 
 	}
+	
+	public void setDirty(boolean dirty) {
+		if (dirty != this.dirty) {
+			this.dirty = dirty;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					firePropertyChange(IEditorPart.PROP_DIRTY);
+				}
+			});
+		}
+	}
 
 	private void startDashboard() throws Exception {
 		for (DashboardPartController controller : controllers.values()) {
@@ -149,5 +175,10 @@ public class DashboardEditor extends EditorPart {
 		}
 
 		return controllers;
+	}
+
+	@Override
+	public void dashboardChanged(Dashboard sender) {
+		setDirty(true);
 	}
 }

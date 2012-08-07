@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -44,6 +46,8 @@ import com.google.common.collect.Maps;
 
 public final class Dashboard implements PaintListener, MouseListener, KeyListener {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Dashboard.class);
+	
 	// 1 = LMB, 2 = MMB, 3 = RMB
 	private static final int SELECT_MOUSE_BUTTON_ID = 1;
 	private static final int SELECTION_BORDER_MARGIN = 3;
@@ -56,6 +60,8 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private DashboardPartPlacement selectedDashboardPart;
 	private Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
 	private Map<DashboardPartPlacement, Composite> containers = Maps.newHashMap();
+	
+	private List<IDashboardListener> listeners = Lists.newArrayList();
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -65,11 +71,23 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
-		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
-
 		dashboardParts.remove(partPlace);
 	}
-
+	
+	public void addListener( IDashboardListener listener ) {
+		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
+		
+		synchronized(listeners ) {
+			listeners.add(listener);
+		}
+	}
+	
+	public void removeListener( IDashboardListener listener ) {
+		synchronized(listeners ) {
+			listeners.remove(listener);
+		}
+	}
+	
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
 		return ImmutableList.copyOf(dashboardParts);
 	}
@@ -147,6 +165,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 					int newPos = (pos + 1) % dashboardParts.size();
 					selectedDashboardPart = dashboardParts.get(newPos);
 					dashboardComposite.redraw();
+					fireChangedEvent();
 				}
 			} else {
 				if (e.keyCode == SWT.ARROW_UP) {
@@ -178,6 +197,18 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// do nothing
+	}
+	
+	private void fireChangedEvent() {
+		synchronized( listeners ) {
+			for( IDashboardListener listener : listeners ) {
+				try {
+					listener.dashboardChanged(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception during executing DashboardListener", t);
+				}
+			}
+		}
 	}
 
 	private void addListeners(Control base) {
@@ -214,6 +245,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		updateFormData(fd, selectedDashboardPart);
 		dashboardComposite.layout();
 		dashboardComposite.redraw();
+		fireChangedEvent();
 	}
 	
 	private static void createContainerDecoration(Composite outerContainer, DashboardPartPlacement dashboardPartPlace) {

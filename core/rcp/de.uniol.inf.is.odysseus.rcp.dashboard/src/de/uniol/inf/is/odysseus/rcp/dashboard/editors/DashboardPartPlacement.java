@@ -30,9 +30,11 @@ public final class DashboardPartPlacement {
 	private int h;
 	
 	private String title;
+	private final String filename;
 	
-	public DashboardPartPlacement( IDashboardPart part, String title, int x, int y, int w, int h ) {
+	public DashboardPartPlacement( IDashboardPart part, String filename, String title, int x, int y, int w, int h ) {
 		this.part = Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
 		
 		Preconditions.checkArgument(x >= 0, "x must be positive instead of %s", x);
 		Preconditions.checkArgument(y >= 0, "y must be positive instead of %s", y);
@@ -45,6 +47,7 @@ public final class DashboardPartPlacement {
 		this.h = h;
 		
 		this.title = title;
+		this.filename = filename;
 	}
 	
 	public String getTitle() {
@@ -95,5 +98,7 @@ public final class DashboardPartPlacement {
 		this.h = h;
 	}
 	
-	
+	public String getFilename() {
+		return filename;
+	}
 }
