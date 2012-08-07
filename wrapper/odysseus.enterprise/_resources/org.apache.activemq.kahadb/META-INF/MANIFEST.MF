@@ -1,0 +1,22 @@
+Manifest-Version: 1
+Bundle-ManifestVersion: 2
+Bundle-Name: kahadb
+Bundle-SymbolicName: org.apache.activemq.kahadb
+Bundle-Version: 5.6.0
+Bundle-ClassPath: kahadb-5.6.0.jar
+Bundle-Vendor: The Apache Software Foundation
+Export-Package: org.apache.kahadb.index;version="5.6.0";uses:="org.apache.kahadb.util,org.apache.kahadb.page,org.slf4j",
+ org.apache.kahadb.journal;version="5.6.0";uses:="org.apache.kahadb.util,org.slf4j",
+ org.apache.kahadb.page;version="5.6.0";uses:="org.apache.kahadb.util,org.slf4j",
+ org.apache.kahadb.util;version="5.6.0";uses:="org.apache.kahadb.page,org.apache.kahadb.journal"
+Import-Package: org.slf4j
+Build-Jdk: 1.6.0_26
+Bnd-LastModified: 1335956688982
+Implementation-Version: 5.6.0
+Created-By: Apache Maven Bundle Plugin
+Bundle-DocURL: http://www.apache.org/
+Bundle-Description: An Embedded Lightweight Non-Relational Database
+Tool: Bnd-1.43.0
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Implementation-Title: Apache ActiveMQ
+Built-By: dejanb
