@@ -20,7 +20,15 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
+/**
+ * 
+ * @deprecated Use {@link ITransportHandler}
+ *
+ * @param <T>
+ */
+@Deprecated
 public interface IAccessConnectionHandler<T> extends IClone {
 
 	@Override

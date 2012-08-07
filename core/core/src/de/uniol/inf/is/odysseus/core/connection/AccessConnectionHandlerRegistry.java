@@ -21,6 +21,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+
+/**
+ * 
+ * @deprecated Use {@link TransportHandlerRegistry}
+ *
+ */
+@Deprecated
 public class AccessConnectionHandlerRegistry {
 static Logger logger = LoggerFactory.getLogger(AccessConnectionHandlerRegistry.class);
 	
