@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Enterprise
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.enterprise;singleton:=true
+Bundle-Name: JMS
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.jms;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.enterprise.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.jms.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.wrapper.enterprise.physicaloperator.access;
+package de.uniol.inf.is.odysseus.wrapper.jms.physicaloperator.access;
 
 import java.io.IOException;
 import java.io.InputStream;

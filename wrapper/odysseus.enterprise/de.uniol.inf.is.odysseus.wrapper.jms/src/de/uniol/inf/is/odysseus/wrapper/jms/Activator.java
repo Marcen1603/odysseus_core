@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.enterprise;
+package de.uniol.inf.is.odysseus.wrapper.jms;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
