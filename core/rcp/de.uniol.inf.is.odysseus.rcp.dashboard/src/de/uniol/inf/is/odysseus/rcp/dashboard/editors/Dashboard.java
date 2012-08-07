@@ -16,14 +16,21 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
@@ -31,10 +38,20 @@ import org.eclipse.swt.widgets.ToolBar;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-public final class Dashboard {
+public final class Dashboard implements PaintListener, MouseListener {
 
+	// 1 = LMB, 2 = MMB, 3 = RMB
+	private static final int SELECT_MOUSE_BUTTON_ID = 1;
+	
+	private static final int SELECTION_BORDER_MARGIN = 3;
+
+	private Composite dashboardComposite;
+	
 	private List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
+	private DashboardPartPlacement selectedDashboardPart;
+	private Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -54,23 +71,74 @@ public final class Dashboard {
 	}
 
 	public void createPartControl(Composite parent, ToolBar toolBar) {
-		Composite dashboardComposite = new Composite(parent, SWT.BORDER);
+		dashboardComposite = new Composite(parent, SWT.BORDER);
 		dashboardComposite.setLayout(new FormLayout());
 		dashboardComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		dashboardComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		for (DashboardPartPlacement dashboardPartPlace : dashboardParts) {
 			Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
-
 			createContainerDecoration(outerContainer, dashboardPartPlace);
-
 			Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
 
 			dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
-
 			innerContainer.setToolTipText(dashboardPartPlace.getTitle());
 
+			addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);			
 		}
+		
+		addMouseListeners(dashboardComposite);
+		dashboardComposite.addPaintListener(this);
+	}
+	
+	@Override
+	public void paintControl(PaintEvent e) {
+		renderSelectionBorder();
+	}
+
+	@Override
+	public void mouseDoubleClick(MouseEvent e) {
+		// do nothing
+	}
+
+	@Override
+	public void mouseDown(MouseEvent e) {
+		if( e.button == SELECT_MOUSE_BUTTON_ID ) {
+			selectedDashboardPart = controlsMap.get(e.widget);
+			dashboardComposite.redraw();
+		}
+	}
+
+	@Override
+	public void mouseUp(MouseEvent e) {
+		// do nothing
+	}	
+	
+	private void addMouseListeners( Control base ) {
+		base.addMouseListener(this);
+		if( base instanceof Composite ) {
+			for( Control ctrl : ((Composite)base).getChildren() ) {
+				addMouseListeners(ctrl);
+			}
+		}
+	}
+
+	private void renderSelectionBorder() {
+		if( hasSelection() ) {
+			int x = selectedDashboardPart.getX();
+			int y = selectedDashboardPart.getY();
+			int w = selectedDashboardPart.getWidth();
+			int h = selectedDashboardPart.getHeight();
+			
+			GC gc = new GC(dashboardComposite);
+			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			gc.setLineWidth(3);
+			gc.drawRectangle(x - SELECTION_BORDER_MARGIN, y - SELECTION_BORDER_MARGIN, w + SELECTION_BORDER_MARGIN * 2, h + SELECTION_BORDER_MARGIN * 2);
+		}
+	}
+
+	private boolean hasSelection() {
+		return selectedDashboardPart != null;
 	}
 
 	private static void createContainerDecoration(Composite outerContainer, DashboardPartPlacement dashboardPartPlace) {
@@ -110,4 +178,16 @@ public final class Dashboard {
 		containerDummy.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		return containerDummy;
 	}
+	
+	private static void addControlsToMap(Control innerContainer, DashboardPartPlacement placement, Map<Control, DashboardPartPlacement> controlsMap) {
+		controlsMap.put(innerContainer, placement);
+		
+		if( innerContainer instanceof Composite ) {
+			Composite comp = (Composite)innerContainer;
+			for( Control compControl : comp.getChildren()) {
+				addControlsToMap(compControl, placement, controlsMap);
+			}
+		}
+	}
+
 }
