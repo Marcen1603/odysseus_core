@@ -46,7 +46,7 @@ public class Polynomial {
 		return coefficients[degree];
 	}
 
-	public Polynomial plus(Polynomial other) {
+	public Polynomial add(Polynomial other) {
 		Polynomial result = new Polynomial(0.0, Math.max(this.degree,
 				other.degree));
 		for (int i = 0; i <= this.degree; i++) {
@@ -59,7 +59,7 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial minus(Polynomial other) {
+	public Polynomial substract(Polynomial other) {
 		Polynomial result = new Polynomial(0.0, Math.max(this.degree,
 				other.degree));
 		for (int i = 0; i <= this.degree; i++) {
@@ -72,7 +72,7 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial times(Polynomial other) {
+	public Polynomial multiply(Polynomial other) {
 		Polynomial result = new Polynomial(0.0, this.degree + other.degree);
 		for (int i = 0; i <= this.degree; i++) {
 			for (int j = 0; j <= other.degree; j++) {
@@ -87,7 +87,7 @@ public class Polynomial {
 		Polynomial result = new Polynomial(0.0, 0);
 		for (int i = this.degree; i >= 0; i--) {
 			Polynomial term = new Polynomial(this.coefficients[i], 0);
-			result = term.plus(other.times(result));
+			result = term.add(other.multiply(result));
 		}
 		return result;
 	}
