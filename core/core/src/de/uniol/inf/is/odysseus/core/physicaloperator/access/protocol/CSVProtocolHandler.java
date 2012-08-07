@@ -15,7 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,50 +27,30 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
-public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
+public class CSVProtocolHandler<T> extends LineProtocolHandler<T> implements
+		ITransportHandlerListener<ByteBuffer> {
 
 	private char textDelimiter;
 	private char delimiter;
 	private boolean readFirstLine = true;
 	private boolean firstLineSkipped = false;
 
+	public CSVProtocolHandler() {
+
+	}
+
 	@Override
 	public T getNext() throws IOException {
 		delay();
-		if (!firstLineSkipped && !readFirstLine){
+		if (!firstLineSkipped && !readFirstLine) {
 			reader.readLine();
 			firstLineSkipped = true;
 		}
-		List<String> ret = new LinkedList<String>();
 		String line = reader.readLine();
 		if (line != null) {
-			StringBuffer elem = new StringBuffer();
-			boolean overreadModus1 = false;
-			boolean overreadModus2 = false;
-			
-			for (char c : line.toCharArray()) {
-				
-				if (c == textDelimiter) {
-					overreadModus1 = !overreadModus1;
-					//elem.append(c);
-				} else {
-					if (overreadModus1 || overreadModus2) {
-						elem.append(c);
-					} else {
-						if (delimiter == c) {
-							ret.add(elem.toString());
-							elem = new StringBuffer();
-						} else {
-							elem.append(c);
-						}
-					}
-
-				}
-			}
-			ret.add(elem.toString());
-			T retValue = getDataHandler().readData(ret);
-			return retValue;
+			return read(line);
 		}
 		return null;
 	}
@@ -79,17 +63,21 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		instance.setDataHandler(dataHandler);
 		instance.setTransportHandler(transportHandler);
 		instance.setTransfer(transfer);
-		instance.delimiter = options.get("delimiter").toCharArray()[0];
-		instance.textDelimiter = options.get("textdelimiter").toCharArray()[0];
-		
-		if (options.get("readfirstline") != null){
-			instance.readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
-		}else{
+		instance.delimiter = options.containsKey("delimiter") ? options.get(
+				"delimiter").toCharArray()[0] : ",".toCharArray()[0];
+		instance.textDelimiter = options.containsKey("textdelimiter") ? options
+				.get("textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
+
+		if (options.get("readfirstline") != null) {
+			instance.readFirstLine = Boolean.parseBoolean(options
+					.get("readfirstline"));
+		} else {
 			readFirstLine = true;
 		}
 		if (options.get("delay") != null) {
 			instance.setDelay(Long.parseLong(options.get("delay")));
 		}
+		transportHandler.addListener(instance);
 		return instance;
 	}
 
@@ -98,4 +86,72 @@ public class CSVProtocolHandler<T> extends LineProtocolHandler<T> {
 		return "CSV";
 	}
 
+	@Override
+	public void onConnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void process(ByteBuffer message) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new ByteArrayInputStream(message.array())));
+		if (!firstLineSkipped && !readFirstLine) {
+			try {
+				reader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			firstLineSkipped = true;
+		}
+		String line;
+		try {
+			line = reader.readLine();
+			if (line != null) {
+				T retValue = read(line);
+				System.out.println(retValue);
+				getTransfer().transfer(retValue);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private T read(String line) {
+		List<String> ret = new LinkedList<String>();
+		StringBuffer elem = new StringBuffer();
+		boolean overreadModus1 = false;
+		boolean overreadModus2 = false;
+
+		for (char c : line.toCharArray()) {
+
+			if (c == textDelimiter) {
+				overreadModus1 = !overreadModus1;
+				// elem.append(c);
+			} else {
+				if (overreadModus1 || overreadModus2) {
+					elem.append(c);
+				} else {
+					if (delimiter == c) {
+						ret.add(elem.toString());
+						elem = new StringBuffer();
+					} else {
+						elem.append(c);
+					}
+				}
+
+			}
+		}
+		ret.add(elem.toString());
+		T retValue = getDataHandler().readData(ret);
+		return retValue;
+	}
 }
