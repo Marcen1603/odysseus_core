@@ -17,6 +17,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.NioTcpServerHandler">
    <implementation class="de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpServerHandler"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler"/>
    </service>
 </scr:component>
