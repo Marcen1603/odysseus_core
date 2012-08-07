@@ -54,6 +54,11 @@ public class Activator implements BundleActivator {
 		serverSimple.start();
 		StreamServer serverT10I4D = new StreamServer(54322, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_T10I4D100K));
 		serverT10I4D.start();
+		StreamServer serverFCMA= new StreamServer(54323, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_FCMA));
+		serverFCMA.start();
+		StreamServer serverABC = new StreamServer(54324, new FrequentItemProvider(FrequentItemProvider.DATA_FILE_ABC));
+		serverABC.start();
+		
 	}
 
 	/*

@@ -50,6 +50,8 @@ public class FrequentItemProvider extends StreamClientHandler {
 	// (=100.000) transactions
 	public final static String DATA_FILE_RETAIL = "retail.dat";
 	public final static String DATA_FILE_SIMPLE = "simpletest.dat";
+	public static final String DATA_FILE_FCMA = "fcma.txt";
+	public static final String DATA_FILE_ABC = "abc.txt";
 
 	private long time = 0;
 	private int transId = 1;
