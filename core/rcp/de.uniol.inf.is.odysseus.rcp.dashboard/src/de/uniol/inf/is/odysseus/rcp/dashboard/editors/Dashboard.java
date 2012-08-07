@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -40,18 +42,20 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public final class Dashboard implements PaintListener, MouseListener {
+public final class Dashboard implements PaintListener, MouseListener, KeyListener {
 
 	// 1 = LMB, 2 = MMB, 3 = RMB
 	private static final int SELECT_MOUSE_BUTTON_ID = 1;
-	
 	private static final int SELECTION_BORDER_MARGIN = 3;
+	private static final int MOVE_SELECTION_STEP_SIZE_PIXELS = 10;
+	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
 
 	private Composite dashboardComposite;
-	
+
 	private List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private DashboardPartPlacement selectedDashboardPart;
 	private Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
+	private Map<DashboardPartPlacement, Composite> containers = Maps.newHashMap();
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -78,19 +82,22 @@ public final class Dashboard implements PaintListener, MouseListener {
 
 		for (DashboardPartPlacement dashboardPartPlace : dashboardParts) {
 			Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
+			containers.put(dashboardPartPlace, outerContainer);
+
 			createContainerDecoration(outerContainer, dashboardPartPlace);
 			Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
 
 			dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
 			innerContainer.setToolTipText(dashboardPartPlace.getTitle());
 
-			addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);			
+			addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
 		}
-		
-		addMouseListeners(dashboardComposite);
+
+		addListeners(dashboardComposite);
+
 		dashboardComposite.addPaintListener(this);
 	}
-	
+
 	@Override
 	public void paintControl(PaintEvent e) {
 		renderSelectionBorder();
@@ -103,7 +110,7 @@ public final class Dashboard implements PaintListener, MouseListener {
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if( e.button == SELECT_MOUSE_BUTTON_ID ) {
+		if (e.button == SELECT_MOUSE_BUTTON_ID) {
 			selectedDashboardPart = controlsMap.get(e.widget);
 			dashboardComposite.redraw();
 		}
@@ -112,24 +119,84 @@ public final class Dashboard implements PaintListener, MouseListener {
 	@Override
 	public void mouseUp(MouseEvent e) {
 		// do nothing
-	}	
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
+
+			if( ( e.stateMask & SWT.SHIFT ) != 0 ) {
+				if (e.keyCode == SWT.ARROW_UP) {
+					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
 	
-	private void addMouseListeners( Control base ) {
+				} else if (e.keyCode == SWT.ARROW_DOWN) {
+					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() + RESIZE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.ARROW_LEFT) {
+					selectedDashboardPart.setWidth(selectedDashboardPart.getWidth() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.ARROW_RIGHT) {
+					selectedDashboardPart.setWidth(selectedDashboardPart.getWidth() + RESIZE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.TAB) {
+					int pos = dashboardParts.indexOf(selectedDashboardPart);
+					int newPos = (pos + 1) % dashboardParts.size();
+					selectedDashboardPart = dashboardParts.get(newPos);
+					dashboardComposite.redraw();
+				}
+			} else {
+				if (e.keyCode == SWT.ARROW_UP) {
+					selectedDashboardPart.setY(selectedDashboardPart.getY() - MOVE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.ARROW_DOWN) {
+					selectedDashboardPart.setY(selectedDashboardPart.getY() + MOVE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.ARROW_LEFT) {
+					selectedDashboardPart.setX(selectedDashboardPart.getX() - MOVE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.ARROW_RIGHT) {
+					selectedDashboardPart.setX(selectedDashboardPart.getX() + MOVE_SELECTION_STEP_SIZE_PIXELS);
+					updateSelection();
+	
+				} else if (e.keyCode == SWT.TAB) {
+					int pos = dashboardParts.indexOf(selectedDashboardPart);
+					int newPos = (pos + 1) % dashboardParts.size();
+					selectedDashboardPart = dashboardParts.get(newPos);
+					dashboardComposite.redraw();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// do nothing
+	}
+
+	private void addListeners(Control base) {
 		base.addMouseListener(this);
-		if( base instanceof Composite ) {
-			for( Control ctrl : ((Composite)base).getChildren() ) {
-				addMouseListeners(ctrl);
+		base.addKeyListener(this);
+		if (base instanceof Composite) {
+			for (Control ctrl : ((Composite) base).getChildren()) {
+				addListeners(ctrl);
 			}
 		}
 	}
 
 	private void renderSelectionBorder() {
-		if( hasSelection() ) {
+		if (hasSelection()) {
 			int x = selectedDashboardPart.getX();
 			int y = selectedDashboardPart.getY();
 			int w = selectedDashboardPart.getWidth();
 			int h = selectedDashboardPart.getHeight();
-			
+
 			GC gc = new GC(dashboardComposite);
 			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 			gc.setLineWidth(3);
@@ -141,8 +208,16 @@ public final class Dashboard implements PaintListener, MouseListener {
 		return selectedDashboardPart != null;
 	}
 
+	private void updateSelection() {
+		Composite comp = containers.get(selectedDashboardPart);
+		FormData fd = (FormData) comp.getLayoutData();
+		updateFormData(fd, selectedDashboardPart);
+		dashboardComposite.layout();
+		dashboardComposite.redraw();
+	}
+	
 	private static void createContainerDecoration(Composite outerContainer, DashboardPartPlacement dashboardPartPlace) {
-		if( dashboardPartPlace.hasTitle()) {
+		if (dashboardPartPlace.hasTitle()) {
 			Label titleLabel = new Label(outerContainer, SWT.NONE);
 			titleLabel.setText(dashboardPartPlace.getTitle());
 			titleLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -161,12 +236,7 @@ public final class Dashboard implements PaintListener, MouseListener {
 		container.setLayout(layout);
 
 		FormData fd = new FormData();
-		fd.height = dashboardPartPlace.getHeight();
-		fd.width = dashboardPartPlace.getWidth();
-		fd.top = new FormAttachment(0, dashboardPartPlace.getY());
-		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
-		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
-		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
+		updateFormData(fd, dashboardPartPlace);
 		container.setLayoutData(fd);
 		return container;
 	}
@@ -178,16 +248,24 @@ public final class Dashboard implements PaintListener, MouseListener {
 		containerDummy.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		return containerDummy;
 	}
-	
+
 	private static void addControlsToMap(Control innerContainer, DashboardPartPlacement placement, Map<Control, DashboardPartPlacement> controlsMap) {
 		controlsMap.put(innerContainer, placement);
-		
-		if( innerContainer instanceof Composite ) {
-			Composite comp = (Composite)innerContainer;
-			for( Control compControl : comp.getChildren()) {
+
+		if (innerContainer instanceof Composite) {
+			Composite comp = (Composite) innerContainer;
+			for (Control compControl : comp.getChildren()) {
 				addControlsToMap(compControl, placement, controlsMap);
 			}
 		}
 	}
 
+	private static void updateFormData(FormData fd, DashboardPartPlacement dashboardPartPlace) {
+		fd.height = dashboardPartPlace.getHeight();
+		fd.width = dashboardPartPlace.getWidth();
+		fd.top = new FormAttachment(0, dashboardPartPlace.getY());
+		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
+		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
+		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
+	}
 }
