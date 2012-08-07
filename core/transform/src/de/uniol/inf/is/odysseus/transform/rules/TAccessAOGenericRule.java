@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.connection.AccessConnectionHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -53,7 +56,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
-
+	static Logger logger = LoggerFactory.getLogger(TAccessAOGenericRule.class);
 	@Override
 	public int getPriority() {
 		return 0;
@@ -116,7 +119,7 @@ public class TAccessAOGenericRule extends AbstractTransformationRule<AccessAO> {
 			}
 
 		} else {
-
+            logger.warn("DEPRECATED: Use new generic AccessAO style");
 			// older generic accessao style
 			if ("genericpull".equals(operator.getWrapper().toLowerCase())) {
 
