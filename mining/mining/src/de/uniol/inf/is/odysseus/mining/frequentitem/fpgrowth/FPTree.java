@@ -67,7 +67,7 @@ public class FPTree<M extends IMetaAttribute> {
 		while(iter.hasNext()){
 			Entry<Tuple<M>, Integer> e = iter.next();
 			if(e.getValue()<minsupport){
-				System.out.println("REMOVE: "+e.getKey());
+				println("REMOVE: "+e.getKey());
 				FPTreeNode<M> n = this.headerTable.get(e.getKey());
 				while(n!=null){					
 					removeNode(n);					
@@ -76,7 +76,7 @@ public class FPTree<M extends IMetaAttribute> {
 					//this.headerTableCount.remove(e.getKey());
 					iter.remove();
 					this.headerTableLastNode.remove(e.getKey());
-					System.out.println();
+					println("");
 				}				
 			}
 		}
@@ -252,13 +252,9 @@ public class FPTree<M extends IMetaAttribute> {
 	
 	
 	private void println(String s){
-		System.out.println(s);
+	//	System.out.println(s);
 	}
 	
-	private void print(String s){
-		System.out.print(s);
-	}
-	
-	
+		
 	
 }

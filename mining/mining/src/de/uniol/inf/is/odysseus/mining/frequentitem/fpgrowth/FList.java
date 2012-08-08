@@ -34,7 +34,7 @@ public class FList<M extends IMetaAttribute> {
 	private ArrayList<Integer> counts = new ArrayList<Integer>(); 
 
 	public void insertTuple(Tuple<M> tuple) {
-		System.out.println("INSERT: "+tuple);
+		//System.out.println("INSERT: "+tuple);
 		int count = 1;
 		int index = this.pointers.indexOf(tuple);
 		if(index>=0){

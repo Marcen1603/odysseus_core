@@ -31,6 +31,7 @@ public class Pattern<M extends IMetaAttribute> {
 	private ArrayList<Tuple<M>> pattern = new ArrayList<Tuple<M>>();
 	private ArrayList<Integer> supports = new ArrayList<Integer>();
 	private int support = Integer.MAX_VALUE;
+	private M metadata;
 	
 	public Pattern() {
 	
@@ -41,9 +42,11 @@ public class Pattern<M extends IMetaAttribute> {
 		this.support = pattern2.support;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void add(Tuple<M> t, int supportCount){
 		this.pattern.add(t);
 		this.supports.add(supportCount);
+		this.metadata = (M) t.getMetadata().clone();
 		if(supportCount <= this.support){
 			this.support = supportCount;
 		}
@@ -100,5 +103,12 @@ public class Pattern<M extends IMetaAttribute> {
 	 */
 	public boolean isEmpty() {
 		return this.pattern.isEmpty();
+	}
+
+	/**
+	 * @return
+	 */
+	public M getMetadata() {
+		return this.metadata;
 	}
 }

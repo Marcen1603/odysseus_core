@@ -51,10 +51,11 @@ public class Transaction<M extends ITimeInterval> {
 	
 	@Override
 	public String toString() {
-		String s = "Transaction ("+this.metadata+")";
+		String s = "Transaction ("+this.metadata+") [";
 		for(Tuple<M> t : elements){
-			s=s+"\n\t"+t;
+			s=s+"; "+t;
 		}
+		s = s+"]";
 		return s;
 	}
 	

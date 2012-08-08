@@ -41,7 +41,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
-	//private int maxlength = 5;
+	// private int maxlength = 5;
 	private int counter = 0;
 	private long lastTime = 0L;
 	private long startTime = 0L;
@@ -77,8 +77,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		System.out.println("#################################################################### NEW ELEMENT ####################################################################");
-		System.out.println(object);
+		// System.out.println("#################################################################### NEW ELEMENT ####################################################################");
+		// System.out.println(object);
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
 			System.out.println("current: " + counter + " needed: " + (now - lastTime) + " ms and total " + (now - startTime) + " ms");
@@ -133,21 +133,27 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// System.out.println(transaction);
 			this.transactions.add(transaction);
 
-			System.out.println("f-List: " + this.flist);
-			List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(minsupport);
-			System.out.println("sorted f-List: " + currentfList);
+			println("f-List: " + this.flist);
+			synchronized (this.flist) {
 
-			if (!currentfList.isEmpty()) {
-				FPTree<M> tree = new FPTree<M>();
-				for (Transaction<M> trans : this.transactions) {
-					List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
-					System.out.println("insert ordered frequent items: " + sortedList);
-					tree.insertTree(sortedList, tree.getRoot());
+				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(minsupport);
+				println("sorted f-List: " + currentfList);
+
+				if (!currentfList.isEmpty()) {
+					FPTree<M> tree = new FPTree<M>();
+					for (Transaction<M> trans : this.transactions) {
+						println("actual transaction: "+trans);
+						List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
+						if(!sortedList.isEmpty()){
+							println("insert ordered frequent items: " + sortedList);
+							tree.insertTree(sortedList, tree.getRoot());
+						}
+					}
+					println("FP-TREE: ");
+					tree.printTree();
+					fpgrowth(tree);
+					// fpgrowth(tree, new Pattern<M>());
 				}
-				System.out.println("FP-TREE: ");
-				tree.printTree();
-				fpgrowth(tree);
-				// fpgrowth(tree, new Pattern<M>());
 			}
 			// als letztes können wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
@@ -159,39 +165,43 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		Pattern<M> pattern = new Pattern<M>();
 		ArrayList<Pattern<M>> allPatterns = new ArrayList<Pattern<M>>();
 		fpgrowth(tree, pattern, allPatterns);
-		System.out.println("-----------------------------------------------------------------");
-		System.out.println("-----------------------------------------------------------------");
-		System.out.println("ERGEBNIS:");
-		for(Pattern<M> p : allPatterns){
-			System.out.println(p);			
+		println("-----------------------------------------------------------------");
+		println("-----------------------------------------------------------------");
+		println("ERGEBNIS:");
+		for (Pattern<M> p : allPatterns) {
+			println(p.toString());
+			Tuple<ITimeInterval> newtuple = new Tuple<ITimeInterval>(1, false);
+			newtuple.setMetadata(p.getMetadata());
+			newtuple.setAttribute(0, p.toString());					
+			transfer(newtuple);
 		}
-		System.out.println("-----------------------------------------------------------------");
+		println("-----------------------------------------------------------------");
 	}
 
 	private void fpgrowth(FPTree<M> tree, Pattern<M> pattern, ArrayList<Pattern<M>> allPatterns) {
-		
-//		if(tree.hasSingePrefixPath()){
-//			List<FPTreeNode<M>> p = tree.getSinglePrefixPath();
-//			for(FPTreeNode<M> n : p){
-//				System.out.println("P: "+n);
-//			}
-//			tree = tree.getMultiPathTree();
-//		}
-		for(Tuple<M> tuple : tree.getDescendingHeaderList()){		
+
+		// if(tree.hasSingePrefixPath()){
+		// List<FPTreeNode<M>> p = tree.getSinglePrefixPath();
+		// for(FPTreeNode<M> n : p){
+		// System.out.println("P: "+n);
+		// }
+		// tree = tree.getMultiPathTree();
+		// }
+		for (Tuple<M> tuple : tree.getDescendingHeaderList()) {
 			Pattern<M> newPattern = new Pattern<M>(pattern);
-			System.out.println("-----------------------------------------------------------------");
-			System.out.println("NEW CALL: Added " + tuple + " to pattern...");
+			println("-----------------------------------------------------------------");
+			println("NEW CALL: Added " + tuple + " to pattern...");
 			newPattern.add(tuple, tree.getCount(tuple));
 			allPatterns.add(newPattern);
-			System.out.println("INPUT TREE: ");
+			println("INPUT TREE: ");
 			tree.printTree();
 			// get conditional prefix pathes
 			List<Pattern<M>> paths = tree.getPrefixPaths(tuple);
-			System.out.println("BUILD NEW CONDITIONAL FP-TREE FOR " + newPattern);
+			println("BUILD NEW CONDITIONAL FP-TREE FOR " + newPattern);
 			// build conditional fp tree
 			FPTree<M> condTree = new FPTree<M>();
 			for (Pattern<M> path : paths) {
-				System.out.println("INSERT PATH: " + path);
+				println("INSERT PATH: " + path);
 				condTree.insertTree(path);
 			}
 			condTree.printTree();
@@ -201,59 +211,21 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// if conditional tree is not empty, call recursively fpgrowth
 			if (!condTree.isEmpty()) {
 				Tuple<M> nextKey = condTree.getHeaderTable().lastKey();
-				if(!newPattern.contains(nextKey)){
-					
-					//newPattern.add(nextKey, condTree.getCount(nextKey));
-					System.out.println("call recursively for "+newPattern+" with tree:");
+				if (!newPattern.contains(nextKey)) {
+
+					// newPattern.add(nextKey, condTree.getCount(nextKey));
+					println("call recursively for " + newPattern + " with tree:");
 					condTree.printTree();
-					System.out.println("...");
+					println("...");
 					fpgrowth(condTree, newPattern, allPatterns);
 				}
 			}
 		}
 	}
 
-	// private void fpgrowthONE(FPTree<M> tree, Pattern<M> pattern) {
-	// List<Pattern<M>> allPatterns = new ArrayList<Pattern<M>>();
-	// FPTree<M> q = tree;
-	// if (tree.hasSingePrefixPath()) {
-	// //List<FPTreeNode<M>> p = tree.getSinglePrefixPath();
-	// q = tree.getMultiPathTree();
-	// allPatterns.addAll(generateSinglePathPatterns(tree.getRoot()));
-	// }
-	// for(Entry<Tuple<M>, FPTreeNode<M>> e : q.getHeaderTable().entrySet()){
-	// pattern = pattern.clone();
-	// pattern.add(e.getKey(), e.getValue().getCount());
-	//
-	// // construct conditional fp-tree
-	// FPTree<M> condBTree = tree.getConditionalTree(pattern);
-	// if(condBTree != null){
-	// fpgrowth(condBTree, pattern);
-	// }
-	// }
-	//
-	// // combine P-Patterns und Q-Patterns
-	// }
-
-	// private List<Pattern<M>> generateSinglePathPatterns(FPTreeNode<M>
-	// rootNode) {
-	// List<Pattern<M>> frequentPatterns = new ArrayList<Pattern<M>>();
-	// Pattern<M> frequentItem = new Pattern<M>();
-	// while (rootNode.getChilds().size() != 0) {
-	// if (rootNode.getChilds().size() > 1) {
-	// System.err.println("this should not happen");
-	// }
-	// rootNode = rootNode.getChilds().get(0);
-	// if (rootNode.getCount() >= minsupport) {
-	// frequentItem.add(rootNode.getItem(), rootNode.getCount());
-	// }
-	// }
-	// if (frequentItem.length() > 0) {
-	// frequentPatterns.add(frequentItem);
-	// }
-	//
-	// return frequentPatterns;
-	// }
+	private void println(String s) {
+		//System.out.println(s);
+	}
 
 	@Override
 	public FrequentItemsetFPGrowthPO<M> clone() {
