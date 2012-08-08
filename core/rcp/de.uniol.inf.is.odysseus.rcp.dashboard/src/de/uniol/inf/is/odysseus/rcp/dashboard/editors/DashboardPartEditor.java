@@ -88,9 +88,6 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 	private DashboardPartEditorToolBar dashboardPartToolBar; 
 	
-	public DashboardPartEditor() {
-	}
-
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
