@@ -16,5 +16,5 @@ Import-Package:  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/TransformRuleService.xml
+Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml
 

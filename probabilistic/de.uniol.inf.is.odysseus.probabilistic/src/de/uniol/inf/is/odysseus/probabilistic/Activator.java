@@ -17,6 +17,11 @@ package de.uniol.inf.is.odysseus.probabilistic;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
+
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -30,17 +35,26 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
 	 */
+	@SuppressWarnings("unchecked")
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		MetadataRegistry.addMetadataType(Probabilistic.class,
+				IProbabilistic.class);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
+		MetadataRegistry.removeMetadataType(IProbabilistic.class);
 		Activator.context = null;
 	}
 
