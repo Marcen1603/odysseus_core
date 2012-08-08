@@ -10,11 +10,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSet;
-import de.uniol.inf.is.odysseus.mining.frequentitem.FrequentItemSetContainer;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
+import de.uniol.inf.is.odysseus.mining.frequentitem.apriori.FrequentItemSet;
+import de.uniol.inf.is.odysseus.mining.frequentitem.apriori.FrequentItemSetContainer;
 
-public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<ITimeInterval>> {
+public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<ITimeInterval>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
@@ -25,12 +25,17 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 	private long lastTime = 0L;
 	private long startTime = 0L;
 
-	public FrequentItemsetPO() {
+	public FrequentItemsetAprioriPO() {
 
 	}
 
-	public FrequentItemsetPO(FrequentItemsetPO<M> old) {
+	public FrequentItemsetAprioriPO(FrequentItemsetAprioriPO<M> old) {
+		this.minsupport = old.minsupport;
+	}
 
+	
+	public FrequentItemsetAprioriPO(int minSupport) {
+		this.minsupport = minSupport;
 	}
 
 	@Override
@@ -51,8 +56,8 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 	
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-//		System.out.println("---------------------------------------NEW ELEMENT----------------------------------------------");
-//		System.out.println(object);		
+		System.out.println("---------------------------------------NEW ELEMENT----------------------------------------------");
+		System.out.println(object);		
 		if(counter%100==0){
 			long now = System.currentTimeMillis();
 			System.out.println("current: "+counter+" needed: "+(now-lastTime)+" ms and total "+(now-startTime)+" ms");
@@ -207,8 +212,8 @@ public class FrequentItemsetPO<M extends ITimeInterval> extends AbstractPipe<Tup
 	}
 
 	@Override
-	public FrequentItemsetPO<M> clone() {
-		return new FrequentItemsetPO<M>(this);
+	public FrequentItemsetAprioriPO<M> clone() {
+		return new FrequentItemsetAprioriPO<M>(this);
 	}
 	
 	

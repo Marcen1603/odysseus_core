@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mining.frequentitem;
+package de.uniol.inf.is.odysseus.mining.frequentitem.apriori;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 
 /**
  * @author Dennis Geesen
  * 
  */
-public class FrequentItemSet<T, M extends ITimeInterval> {
+public class FrequentItemSet<T, M extends ITimeInterval>{
 
 	private ArrayList<T> items = new ArrayList<T>();
 	private M metadata;
@@ -36,6 +37,7 @@ public class FrequentItemSet<T, M extends ITimeInterval> {
 	/**
 	 * @param frequentItemSet
 	 */
+	@SuppressWarnings("unchecked")
 	public FrequentItemSet(FrequentItemSet<T,M> frequentItemSet) {
 		this.items = new ArrayList<T>(frequentItemSet.items);
 		this.metadata = (M) frequentItemSet.metadata.clone();
@@ -113,8 +115,10 @@ public class FrequentItemSet<T, M extends ITimeInterval> {
 	@Override
 	public String toString() {
 		String s = "FrequentItemSet (";
+		String sep = "";
 		for (T fi : this.items) {
-			s = s + fi + " AND ";
+			s = s + sep+ fi;
+			sep = " AND ";
 		}
 		s = s + ")";
 		return s;
@@ -164,5 +168,8 @@ public class FrequentItemSet<T, M extends ITimeInterval> {
 	public void setMetadata(M metadata) {
 		this.metadata = metadata;
 	}
+
+	
+	
 
 }

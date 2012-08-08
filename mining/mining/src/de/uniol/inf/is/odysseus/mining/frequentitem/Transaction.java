@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mining.frequentitem;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
@@ -39,6 +40,7 @@ public class Transaction<M extends ITimeInterval> {
 		return this.metadata;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addElement(Tuple<M> tuple){
 		this.elements.add(tuple);
 		this.metadata = (M) tuple.getMetadata().clone();
@@ -54,6 +56,20 @@ public class Transaction<M extends ITimeInterval> {
 			s=s+"\n\t"+t;
 		}
 		return s;
+	}
+	
+	public List<Tuple<M>> getFBasedList(List<Pair<Tuple<M>, Integer>> fList){
+		List<Tuple<M>> liste = new ArrayList<Tuple<M>>();		
+		for(Pair<Tuple<M>, Integer> fItem : fList){
+			if(this.elements.contains(fItem.getE1())){
+				liste.add(fItem.getE1());				
+			}
+			// the new list is at most as long as this transaction
+			if(liste.size()==this.elements.size()){
+				break;
+			}
+		}
+		return liste;
 	}
 
 }

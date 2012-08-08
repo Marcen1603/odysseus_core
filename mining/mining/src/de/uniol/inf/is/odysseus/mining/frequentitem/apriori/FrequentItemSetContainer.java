@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mining.frequentitem;
+package de.uniol.inf.is.odysseus.mining.frequentitem.apriori;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 
 /**
  * @author Dennis Geesen
@@ -129,7 +130,7 @@ public class FrequentItemSetContainer<T, M extends ITimeInterval> {
 	public String toString() {
 		String s = "";
 		for (Entry<FrequentItemSet<T, M>, Integer> entry : items.entrySet()) {
-			s = s + "(" + entry.getValue() + ")" + entry.getKey() + "\n";
+			s = s + "(" + entry.getValue() + ") " + entry.getKey() + "\n";
 		}
 		return s;
 	}

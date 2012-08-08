@@ -30,10 +30,13 @@
 
 package de.uniol.inf.is.odysseus.mining.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentItemsetAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetPO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetAprioriPO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -52,7 +55,10 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 
 	@Override
 	public void execute(FrequentItemsetAO operator, TransformationConfiguration config) {
-		FrequentItemsetPO<ITimeInterval> po = new FrequentItemsetPO<ITimeInterval>();
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport());
+		if(operator.getAlgorithm().equalsIgnoreCase("APRIORI")){
+			po = new FrequentItemsetAprioriPO<ITimeInterval>(operator.getMinSupport());
+		}		
 		po.setOutputSchema(operator.getOutputSchema());
 		replace(operator, po, config);
 		retract(operator);
