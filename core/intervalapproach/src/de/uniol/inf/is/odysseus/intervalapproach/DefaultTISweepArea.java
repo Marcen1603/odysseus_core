@@ -76,6 +76,22 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return retval.iterator();
 	}
 	
+	public Iterator<T> queryElementsStartingBeforeFIFO(PointInTime validity) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> iter = getElements().descendingIterator();
+			while (iter.hasNext()) {
+				T elem = iter.next();
+				if (elem.getMetadata().getStart().before(validity)) {
+					retval.add(elem);					
+				}
+			}
+		}
+		return retval.iterator();
+	}
+	
+	
+	
 	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
