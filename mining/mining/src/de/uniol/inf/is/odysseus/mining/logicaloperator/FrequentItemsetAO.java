@@ -49,8 +49,10 @@ public class FrequentItemsetAO extends AbstractLogicalOperator{
 	
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		SDFAttribute attributeId = new SDFAttribute(null, "set", SDFDatatype.STRING);
+		SDFAttribute attributeId = new SDFAttribute(null, "id", SDFDatatype.INTEGER);
 		attributes.add(attributeId);		
+		SDFAttribute attributeSet = new SDFAttribute(null, "set", SDFDatatype.STRING);
+		attributes.add(attributeSet);		
 		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
 		return outSchema;
 	}

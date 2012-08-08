@@ -44,7 +44,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	// private int maxlength = 5;
 	private int counter = 0;
 	private long lastTime = 0L;
-	private long startTime = 0L;
+	private long startTime = 0L;	
 
 	private FList<M> flist = new FList<M>();
 
@@ -77,8 +77,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		// System.out.println("#################################################################### NEW ELEMENT ####################################################################");
-		// System.out.println(object);
+		println("#################################################################### NEW ELEMENT ####################################################################");
+		println(object.toString());
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
 			System.out.println("current: " + counter + " needed: " + (now - lastTime) + " ms and total " + (now - startTime) + " ms");
@@ -107,6 +107,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// der aktuellen zeit
 			PointInTime start = PointInTime.getZeroTime();
 			PointInTime end = PointInTime.getInfinityTime();
+		
 			// die betrachtete zeit ist die maximale startzeit und die minimale
 			// endzeit
 			Transaction<M> transaction = new Transaction<M>();
@@ -127,12 +128,18 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			}
 			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
 			end = PointInTime.min(end, currentTime);
-			transaction.setTimeInterval(start, end);
-			lastCut = currentTime;
+			transaction.setTimeInterval(start, end);			
+			
 			// System.out.println("adding");
 			// System.out.println(transaction);
 			this.transactions.add(transaction);
-
+			// unser gesamter zeitraum um das es hier geht, 
+			// startet bei dem letzten cut (oder der transaktion)			
+			PointInTime totalMin = start;
+			// und endet mit der letzten transaction
+			PointInTime totalMax = end;
+			
+			
 			println("f-List: " + this.flist);
 			synchronized (this.flist) {
 
@@ -141,41 +148,53 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 				if (!currentfList.isEmpty()) {
 					FPTree<M> tree = new FPTree<M>();
-					for (Transaction<M> trans : this.transactions) {
+					for (Transaction<M> trans : this.transactions) {						
 						println("actual transaction: "+trans);
 						List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
 						if(!sortedList.isEmpty()){
 							println("insert ordered frequent items: " + sortedList);
 							tree.insertTree(sortedList, tree.getRoot());
 						}
+						totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
+						totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());
 					}
 					println("FP-TREE: ");
 					tree.printTree();
-					fpgrowth(tree);
-					// fpgrowth(tree, new Pattern<M>());
+					ArrayList<Pattern<M>> results = fpgrowth(tree);
+					
+					println("-----------------------------------------------------------------");
+					println("-----------------------------------------------------------------");
+					println("ERGEBNIS:");
+					int i=0;
+					for (Pattern<M> p : results) {
+						println(p.toString());
+						Tuple<ITimeInterval> newtuple = new Tuple<ITimeInterval>(2, false);
+						newtuple.setMetadata(p.getMetadata());
+						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);	
+						newtuple.setAttribute(0, i);
+						newtuple.setAttribute(1, p.toString());
+						i++;
+						//System.out.println("new Tuple: "+newtuple);
+						transfer(newtuple);
+					}
+					println("-----------------------------------------------------------------");
+					
+					
 				}
 			}
+			
+			lastCut = currentTime;
 			// als letztes können wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
 			sweepArea.purgeElementsBefore(currentTime);
 		}
 	}
 
-	private void fpgrowth(FPTree<M> tree) {
+	private ArrayList<Pattern<M>> fpgrowth(FPTree<M> tree) {
 		Pattern<M> pattern = new Pattern<M>();
 		ArrayList<Pattern<M>> allPatterns = new ArrayList<Pattern<M>>();
 		fpgrowth(tree, pattern, allPatterns);
-		println("-----------------------------------------------------------------");
-		println("-----------------------------------------------------------------");
-		println("ERGEBNIS:");
-		for (Pattern<M> p : allPatterns) {
-			println(p.toString());
-			Tuple<ITimeInterval> newtuple = new Tuple<ITimeInterval>(1, false);
-			newtuple.setMetadata(p.getMetadata());
-			newtuple.setAttribute(0, p.toString());					
-			transfer(newtuple);
-		}
-		println("-----------------------------------------------------------------");
+		return allPatterns;
 	}
 
 	private void fpgrowth(FPTree<M> tree, Pattern<M> pattern, ArrayList<Pattern<M>> allPatterns) {
