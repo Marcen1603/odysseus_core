@@ -34,7 +34,11 @@ public class Probabilistic implements IProbabilistic {
 	private double[] probabilities;
 
 	public Probabilistic() {
+		probabilities = new double[] {};
+	}
 
+	public Probabilistic(int size) {
+		probabilities = new double[size];
 	}
 
 	public Probabilistic(Probabilistic probability) {
@@ -70,6 +74,16 @@ public class Probabilistic implements IProbabilistic {
 	@Override
 	public IProbabilistic clone() {
 		return new Probabilistic(this);
+	}
+
+	@Override
+	public double[] getProbabilities() {
+		return probabilities;
+	}
+
+	@Override
+	public void setProbabilities(double[] values) {
+		this.probabilities = values;
 	}
 
 }

@@ -18,9 +18,11 @@ package de.uniol.inf.is.odysseus.probabilistic;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 
 /**
@@ -51,6 +53,8 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		MetadataRegistry.addMetadataType(Probabilistic.class,
 				IProbabilistic.class);
+		MetadataRegistry.addMetadataType(IntervalProbabilistic.class,
+				ITimeInterval.class, IProbabilistic.class);
 	}
 
 	/*
@@ -59,7 +63,10 @@ public class Activator implements BundleActivator {
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@SuppressWarnings("unchecked")
 	public void stop(BundleContext bundleContext) throws Exception {
+		MetadataRegistry.removeCombinedMetadataType(ITimeInterval.class,
+				IProbabilistic.class);
 		MetadataRegistry.removeMetadataType(IProbabilistic.class);
 		Activator.context = null;
 	}

@@ -28,8 +28,12 @@ public class ProbabilisticMergeFunction implements
 	@Override
 	public void mergeInto(IProbabilistic result, IProbabilistic inLeft,
 			IProbabilistic inRight) {
-		// TODO Implement merge function (CKu)
-		}
+		System.arraycopy(inLeft.getProbabilities(), 0,
+				result.getProbabilities(), 0, inLeft.getProbabilities().length);
+		System.arraycopy(inRight.getProbabilities(), 0,
+				result.getProbabilities(), inLeft.getProbabilities().length,
+				inRight.getProbabilities().length);
+	}
 
 	@Override
 	public ProbabilisticMergeFunction clone() {

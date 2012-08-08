@@ -26,4 +26,11 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
 	double getProbability(int pos);
 
 	void setProbability(int pos, double value);
+
+	double[] getProbabilities();
+
+	void setProbabilities(double[] values);
+
+	@Override
+	public IProbabilistic clone();
 }
