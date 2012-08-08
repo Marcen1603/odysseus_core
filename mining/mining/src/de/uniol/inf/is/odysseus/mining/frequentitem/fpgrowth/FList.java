@@ -45,6 +45,19 @@ public class FList<M extends IMetaAttribute> {
 			this.counts.add(1);
 		}		
 	}
+	
+	public void remove(List<Tuple<M>> tuples){
+		for(Tuple<M> t : tuples){
+			int index = pointers.indexOf(t);
+			int newcount = counts.get(index)-1;
+			if(newcount==0){
+				pointers.remove(index);
+				counts.remove(index);
+			}else{
+				counts.set(index, newcount);
+			}
+		}
+	}
 
 	public List<Pair<Tuple<M>, Integer>> getSortedList(int minSupport) {
 		List<Pair<Tuple<M>, Integer>> fList = new ArrayList<Pair<Tuple<M>, Integer>>();

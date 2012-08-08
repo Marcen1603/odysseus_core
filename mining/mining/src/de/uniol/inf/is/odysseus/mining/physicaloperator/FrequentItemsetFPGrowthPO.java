@@ -42,6 +42,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
 	// private int maxlength = 5;
+	private int maxTransactions = 25;	
 	private int counter = 0;
 	private long lastTime = 0L;
 	private long startTime = 0L;	
@@ -83,6 +84,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			long now = System.currentTimeMillis();
 			System.out.println("current: " + counter + " needed: " + (now - lastTime) + " ms and total " + (now - startTime) + " ms");
 			System.out.println("number of transactions: " + transactions.size());
+			System.out.println("number in sweeparea: "+this.sweepArea.size());
 			lastTime = now;
 		}
 		synchronized (sweepArea) {
@@ -130,8 +132,11 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			end = PointInTime.min(end, currentTime);
 			transaction.setTimeInterval(start, end);			
 			
-			// System.out.println("adding");
-			// System.out.println(transaction);
+			println("adding new transaction: "+transaction);			
+			if(this.transactions.size()==this.maxTransactions){
+				Transaction<M> removed = this.transactions.remove(0);
+				this.flist.remove(removed.getElements());
+			}
 			this.transactions.add(transaction);
 			// unser gesamter zeitraum um das es hier geht, 
 			// startet bei dem letzten cut (oder der transaktion)			
@@ -156,7 +161,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 							tree.insertTree(sortedList, tree.getRoot());
 						}
 						totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
-						totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());
+						totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());						
 					}
 					println("FP-TREE: ");
 					tree.printTree();
