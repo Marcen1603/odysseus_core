@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Probabilistic implements IProbabilistic {
+	@SuppressWarnings("unused")
 	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
 
 	/**
@@ -43,7 +44,6 @@ public class Probabilistic implements IProbabilistic {
 
 	@Override
 	public double getProbability(int pos) {
-		// TODO Auto-generated method stub
 		return this.probabilities[pos];
 	}
 

@@ -19,6 +19,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 
@@ -28,9 +29,14 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
 	static BundleContext getContext() {
 		return context;
+	}
+
+	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
+		return aggregateFunctionBuilderRegistry;
 	}
 
 	/*
@@ -58,4 +64,13 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
+	public void bindAggregateFunctionBuilderRegistry(
+			IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
+	}
+
+	public void unbindAggregateFunctionBuilderRegistry(
+			IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+		Activator.aggregateFunctionBuilderRegistry = null;
+	}
 }

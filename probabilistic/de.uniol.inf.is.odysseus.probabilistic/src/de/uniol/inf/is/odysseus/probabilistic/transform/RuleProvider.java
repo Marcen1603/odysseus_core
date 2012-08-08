@@ -31,6 +31,7 @@ public class RuleProvider implements ITransformRuleProvider {
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TProbabilisticAORule());
+		rules.add(new TAggregateProbabilisticRule());
 
 		return rules;
 	}

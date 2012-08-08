@@ -8,7 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
-Import-Package:  de.uniol.inf.is.odysseus.ruleengine.rule,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.ruleengine.system,
  de.uniol.inf.is.odysseus.transform.engine,
@@ -16,5 +18,5 @@ Import-Package:  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml
+Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml
 
