@@ -61,7 +61,7 @@ public class StandardLatencyQueryBuildConfiguration extends
 	}
 	
 	public StandardLatencyQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
-		settings.addAll(settings);
+		this.settings.addAll(settings);
 	}
 
 	@Override
