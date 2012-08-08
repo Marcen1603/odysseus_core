@@ -74,10 +74,10 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		}
 		this.epsilon = epsilon;
 		this.theta = theta;
-		this.k0 = (int) (2.0 * Math.log(2.0 / this.epsilon) / Math
-				.log(1.0 / this.theta));
-		this.k1 = (int) (Math.log(2.0 / this.epsilon) / Math
-				.log(1.0 / this.theta));
+		this.k0 = (int) (2.0 * Math.log(2.0 / this.epsilon)
+				/ Math.log(1.0 / this.theta) + 0.5);
+		this.k1 = (int) (Math.log(2.0 / this.epsilon)
+				/ Math.log(1.0 / this.theta) + 0.5);
 		int storeSize = (int) ((3.0 / Math.pow(this.theta, 2.0)) * Math
 				.log(2.0 / this.epsilon));
 		this.valueStore = new double[storeSize];
@@ -189,17 +189,19 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	private double evaluateShortStreamAvg(double rho) {
 		Polynomial Q;
 		double z0 = getZ0();
-		assert checkProof27(z0);
+
 		double smallestEvenInteger = getSmallestEvenInteger();
 
 		if (pBig[0] >= ((3.0 / theta) * Math.log(2.0 / epsilon))) {
-			assert checkClaim28(this.pBig, this.aBig, z0) : z0;
+			//assert checkProof27(this.pBig, z0);
+			//assert checkClaim28(this.pBig, this.aBig, z0) : z0;
 			System.out.println("z0=" + z0 + " l=" + smallestEvenInteger);
-			assert checkLemma210(this.pBig, smallestEvenInteger, z0);
+			//assert checkLemma210(this.pBig, smallestEvenInteger, z0);
 			Q = getQBig(rho, smallestEvenInteger, z0);
 		} else {
-			assert checkClaim28(this.pSmall, this.aSmall, z0) : z0;
-			assert checkLemma210(this.pSmall, smallestEvenInteger, z0);
+			//assert checkProof27(this.pSmall, z0);
+			//assert checkClaim28(this.pSmall, this.aSmall, z0) : z0;
+			//assert checkLemma210(this.pSmall, smallestEvenInteger, z0);
 			System.out.println("z0=" + z0 + " l=" + smallestEvenInteger);
 			Q = getQSmall(rho, smallestEvenInteger, z0);
 		}
@@ -254,7 +256,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		Polynomial polynomial = new Polynomial(rho / (1.0 - epsilon), 0);
 
 		Polynomial gTilde = gTilde(pSmall, l);
-		assert checkLemma29(gTilde, z0) : gTilde;
+		//assert checkLemma29(gTilde, z0) : gTilde;
 		Polynomial fJ = new Polynomial(0.0, 0);
 		for (int i = 1; i <= this.storeIndex; i++) {
 			Polynomial product = null;
@@ -306,8 +308,8 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 			Polynomial sum = new Polynomial(0.0, 0);
 			for (int j = 0; j <= l; j++) {
-				sum = sum.add(new Polynomial(Math.pow(P[i - 1] * i, j)
-						/ factorial(j), i + j));
+				sum = sum.add(new Polynomial(Math.pow(-P[i - 1], j)
+						/ (factorial(j) * Math.pow(i, j)), i * j));
 			}
 
 			if (gTilde == null) {
@@ -317,7 +319,6 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			}
 		}
 
-		System.out.println("gTilde: " + gTilde);
 		return gTilde;
 	}
 
@@ -443,7 +444,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		boolean result = true;
 
 		Polynomial lhs = gI();
-		Polynomial rhs = gI().multiply(new Polynomial(1 + epsilon, 0));
+		Polynomial rhs = gI().multiply(new Polynomial(1.0 + epsilon, 0));
 
 		System.out.println(lhs + " <= " + gTilde);
 		System.out.println(gTilde + " <= " + rhs);
@@ -464,7 +465,21 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	private boolean checkLemma210(double P[], double l, double z0) {
 		System.out.println("Check Lemma 2.10");
 		boolean result = true;
-		assert (l >= Math.log(1 / epsilon)) : l;
+		assert (epsilon < 0.5) : epsilon;
+		if (P[0] >= 1) {
+			assert (l > (5 * Math.log((2 * P[0]) / epsilon))) : l + " > "
+					+ (5 * Math.log((2 * P[0]) / epsilon));
+		} else {
+			assert (l > Math.max(Math.log(2 / epsilon), 7)) : l + " > "
+					+ Math.max(Math.log(2 / epsilon), 7);
+		}
+		assert (k0 >= (2 * Math.log(2 / epsilon) / Math.log(1 / theta))) : "k0="
+				+ k0
+				+ " should be "
+				+ (2 * Math.log(2 / epsilon) / Math.log(1 / theta));
+		assert (k1 >= (Math.log(2 / epsilon) / Math.log(1 / theta))) : "k1="
+				+ k1 + " shoudl be "
+				+ (Math.log(2 / epsilon) / Math.log(1 / theta));
 		double z = z0;
 		double lhs = gTilde(P, l).evaluate(z);
 		double rhs = 1.0;
@@ -473,21 +488,33 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		}
 		double rhs2 = 1.0;
 		for (int i = 1; i <= k0; i++) {
-			rhs2 *= (1 + 1 / (i * Math.pow(2, i))) * epsilon;
+			rhs2 *= (1.0 + 1.0 / (i * Math.pow(2, i)) * epsilon);
 		}
 		rhs2 *= rhs;
-		result &= lhs >= rhs;
+
+		result &= rhs <= lhs;
 		if (!result) {
-			System.out.println("Error at (z=" + z + "): " + lhs + " >= " + rhs);
+			System.out.println("Error at (l=" + l + ",z=" + z
+					+ "): gTildek0(z) (" + rhs
+					+ ") <= product(sum(1/j! (-Pi z^i)^j/i^j)) (" + P[0] + "("
+					+ z0 + ")=" + lhs + ")");
 			return result;
 		}
+
+		result &= lhs <= (1 + epsilon) * rhs;
+		if (!result) {
+			System.out.println("Error at (z=" + z
+					+ "): product(sum(1/j! (-Pi z^i)^j/i^j)) (" + lhs
+					+ ") <= (1 + epsilon)gTildek0(z) (" + rhs + ")");
+			return result;
+		}
+
 		result &= lhs <= rhs2;
 		if (!result) {
 			System.out
 					.println("Error at (z=" + z + "): " + lhs + " <= " + rhs2);
 			return result;
 		}
-
 		System.out.println("Check pass " + result);
 		return result;
 	}
@@ -506,39 +533,49 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 	private Polynomial gI() {
 		Polynomial gI = new Polynomial(1, 0);
-		for (int i = 0; i < probabilityStore.length; i++) {
+		for (int i = 0; i <= storeIndex; i++) {
 			gI = gI.multiply((new Polynomial(1, 0)).substract(new Polynomial(
 					probabilityStore[i], 1)));
 		}
 		return gI;
 	}
 
-	private boolean checkProof27(double z0) {
+	private boolean checkProof27(double[] P, double z0) {
 		System.out.println("Check Proof 2.7");
 		boolean result = true;
 		double product = 1.0;
 		double lhs = 1.0;
 		double sum = 0.0;
-		if ((1 - z0) > 0) {
-			for (int i = 0; i < probabilityStore.length; i++) {
-				product *= (1 - probabilityStore[i] * z0);
-			}
+		// if ((1 - z0) > 0) {
+		for (int i = 0; i <= storeIndex; i++) {
+			product *= (1 - probabilityStore[i] * z0);
+		}
 
-			for (int i = 0; i < probabilityStore.length; i++) {
+		for (int i = 0; i <= storeIndex; i++) {
+			if ((probabilityStore[i] * z0) != 1.0) {
 				sum += (valueStore[i] * probabilityStore[i])
 						/ (1 - probabilityStore[i] * z0);
 			}
-			lhs = product * sum * (1 - z0);
 		}
+		lhs = product * sum * (1 - z0);
+		// }
 
 		sum = 0.0;
-		for (int i = 0; i < probabilityStore.length; i++) {
+		for (int i = 0; i <= storeIndex; i++) {
 			sum += valueStore[i] * probabilityStore[i];
 		}
 
-		double rhs = sum * Math.exp(-pBig[0] * z0);
-		result = rhs == aBig[0] * Math.exp(-pBig[0] * z0);
+		double rhs = sum * Math.exp(-P[0] * z0);
+
+		result = Math.abs(rhs - (P[0] * Math.exp(-P[0] * z0))) < epsilon;
+		if (!result) {
+			System.out.println("Error at: " + rhs + " == " + P[0]
+					* Math.exp(-P[0] * z0));
+		}
 		result = lhs <= rhs;
+		if (!result) {
+			System.out.println("Error at: " + lhs + " <= " + rhs);
+		}
 
 		System.out.println("Check pass " + result);
 		return result;
@@ -563,29 +600,9 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		System.out.println(poly);
 
 		AvgPartialAggregate aggFunc = new AvgPartialAggregate(epsilon);
-		// for (int i = 0; i <= 10000; i++) {
 		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		aggFunc.update(1.0, 1.0);
-		// }
-		assert aggFunc.checkTheorem23(1.0 / (1.0 - aggFunc.alpha), 1.0);
-		avg = aggFunc.getAvg();
-		System.out.println("AVG of 1.0(1.0): " + avg);
-		assert aggFunc.checkLemma27(avg, 1.0) : avg;
+		aggFunc.update(10.0, 0.1);
 
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
-		aggFunc.update(10.0, 0.1);
 		assert aggFunc.checkTheorem23(1.0 / (1.0 - aggFunc.alpha), result);
 		avg = aggFunc.getAvg();
 		System.out.println("AVG of 1.0(1.0),10(0.1): " + avg + " == " + result);

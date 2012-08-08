@@ -126,7 +126,7 @@ public class Polynomial {
 	public double evaluate(double x) {
 		double result = 0.0;
 		for (int i = this.degree; i >= 0; i--) {
-			result = this.coefficients[i] + (x * result);
+			result += this.coefficients[i] * Math.pow(x, i);
 		}
 		return result;
 	}
