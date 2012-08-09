@@ -40,8 +40,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
+//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
@@ -106,13 +107,13 @@ public class StreamMapEditor implements IStreamEditorType {
 		}
 
 		if (update == null && screenManager.hasCanvasViewer()
-				&& !screenManager.getCanvasViewer().isDisposed()) {
+				&& !screenManager.getCanvas().isDisposed()) {
 			PlatformUI.getWorkbench().getDisplay()
 					.asyncExec(update = new Runnable() {
 						@Override
 						public void run() {
-							if (!screenManager.getCanvasViewer().isDisposed())
-								screenManager.getCanvasViewer().redraw();
+							if (!screenManager.getCanvas().isDisposed())
+								screenManager.getCanvas().redraw();
 							update = null;
 						}
 					});
@@ -138,15 +139,19 @@ public class StreamMapEditor implements IStreamEditorType {
 		}
 		
 		//Create Map Background
-		MapLayer map = new MapLayer(screenManager, 0);
-		layerOrder.addFirst(map);
+
+//		MapLayer map = new MapLayer(screenManager, 0);
+//		layerOrder.addFirst(map);
+		
+		BasicLayer basic = new BasicLayer(screenManager);
+		layerOrder.addFirst(basic);
 		
 	}
 
 	@Override
 	public void setFocus() {
 		if (screenManager.hasCanvasViewer())
-			screenManager.getCanvasViewer().setFocus();
+			screenManager.getCanvas().setFocus();
 	}
 
 	@Override

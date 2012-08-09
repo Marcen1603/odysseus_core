@@ -56,7 +56,7 @@ public final class AsyncImage implements Runnable {
         this.y = y;
         this.z = z;
         this.manager = manager;
-        display = manager.getCanvasViewer().getDisplay();
+        display = manager.getCanvas().getDisplay();
         this.stamp = manager.getTransformation().getZoomStamp().longValue();
         task = new FutureTask<Boolean>(this, Boolean.TRUE);
         executor.execute(task);
@@ -91,7 +91,7 @@ public final class AsyncImage implements Runnable {
                 if (!display.isDisposed()) {
                 	display.asyncExec(new Runnable() {
                         public void run() {
-                        	manager.getCanvasViewer().redraw();
+                        	manager.getCanvas().redraw();
                         }
                     });
                 }

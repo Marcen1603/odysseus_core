@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tool.MouseLabel;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 public class ScreenManager {
 
@@ -88,13 +89,13 @@ public class ScreenManager {
 				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
 				// transformation.getLon(e.y)) ;
 
-				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
+				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
 							.asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									if (!getCanvasViewer().isDisposed())
-										getCanvasViewer().redraw();
+									if (!getCanvas().isDisposed())
+										getCanvas().redraw();
 								}
 							});
 				}
@@ -119,20 +120,23 @@ public class ScreenManager {
 
 			@Override
 			public void mouseMove(MouseEvent e) {
-//				mouseLabel.label = "";
-//				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
-//			    mouseLabel.label += "Zoom: " + viewer.getZoom() + "\n";	
-//			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
-//			    mouseLabel.label += "Position: " + viewer.getMapPosition() + "\n";	
-//			    mouseLabel.label += "Center: " + viewer.getCenterPosition() + "\n";	
-//			    mouseLabel.label += "Location: " + viewer.getLocation() + "\n";	
-//			    
-//			    mouseLabel.label += "Courser: " + viewer.getCursorPosition() + "\n";	
-//			    
-//			    
-//			    mouseLabel.label += "Lat: " + viewer.position2lat(viewer.getCursorPosition().y, viewer.getZoom()) + "\n";	
-//			    mouseLabel.label += "Lon: " + viewer.position2lon(viewer.getCursorPosition().x, viewer.getZoom()) + "\n";	
+				mouseLabel.label = "";
+				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
+			    mouseLabel.label += "Zoom: " + transformation.getZoom() + "\n";	
+			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
+			    mouseLabel.label += "Position: " + transformation.getMapPosition() + "\n";	
+			    mouseLabel.label += "Center: " + transformation.getBasicLayer().getCenterPosition() + "\n";	
 			    
+			    mouseLabel.label += "Courser: " + transformation.getBasicLayer().getCursorPosition() + "\n";	
+			    
+			    
+			    mouseLabel.label += "Lat: " + ProjectionUtil.position2lat(transformation.getBasicLayer().getCursorPosition().y, transformation.getZoom()) + "\n";	
+			    mouseLabel.label += "Lon: " + ProjectionUtil.position2lon(transformation.getBasicLayer().getCursorPosition().x, transformation.getZoom()) + "\n";	
+				
+			    
+			
+			    //e.gc.drawText(this.streamMapEditor.getScreenManager().getMouseLabel().label, this.streamMapEditor.getScreenManager().getMouseLabel().x + 15 , this.streamMapEditor.getScreenManager().getMouseLabel().y,true); 
+
 			    
 //				 new Spec("Zoom") { public String computeValue() { return Integer.toString(mapWidget.getZoom()); }},
 //	                new Spec("Map Size") { public String computeValue() { Point size = mapWidget.getSize(); return size.x + ", " + size.y; }},
@@ -170,13 +174,13 @@ public class ScreenManager {
 //					mouseSelection.height = e.y - mouseSelection.y;
 //				}
 
-				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
+				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
 							.asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									if (!getCanvasViewer().isDisposed())
-										getCanvasViewer().redraw();
+									if (!getCanvas().isDisposed())
+										getCanvas().redraw();
 								}
 							});
 				}
@@ -206,13 +210,13 @@ public class ScreenManager {
 //				if (e.character == 'x')
 //					transformation.zoomout(1);
 
-				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
+				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
 							.asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									if (!getCanvasViewer().isDisposed())
-										getCanvasViewer().redraw();
+									if (!getCanvas().isDisposed())
+										getCanvas().redraw();
 								}
 							});
 				}
@@ -228,13 +232,13 @@ public class ScreenManager {
 					transformation.panWest(10);
 				if (e.keyCode == SWT.ARROW_RIGHT)
 					transformation.panEast(10);
-				if (hasCanvasViewer() && !getCanvasViewer().isDisposed()) {
+				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
 							.asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									if (!getCanvasViewer().isDisposed())
-										getCanvasViewer().redraw();
+									if (!getCanvas().isDisposed())
+										getCanvas().redraw();
 								}
 							});
 				}
@@ -245,12 +249,12 @@ public class ScreenManager {
 		return canvasViewer;
 	}
 
-	public final Canvas getCanvasViewer() {
+	public final Canvas getCanvas() {
 		return viewer;
 	}
 
 	public final boolean hasCanvasViewer() {
-		return getCanvasViewer() != null;
+		return getCanvas() != null;
 	}
 
 	public void setCanvasViewer(Canvas viewer) {
@@ -262,6 +266,10 @@ public class ScreenManager {
 		}
 	}
 
+	public final Display getDisplay() {
+		return viewer.getDisplay();
+	}
+	
 	public ScreenTransformation getTransformation() {
 		return transformation;
 	}

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 
@@ -33,14 +34,13 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.Projection
  */
 public class ScreenTransformation {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ScreenTransformation.class);
-
+	private static final Logger LOG = LoggerFactory.getLogger(ScreenTransformation.class);
 	
     private AtomicLong zoomStamp = new AtomicLong();
 	private int zoom;
-	private Point mapPosition = new Point(0, 0);
 	
+	private Point mapPosition = new Point(0, 0);
+	private BasicLayer basicLayer;
 	
 	private boolean update = false;
 	private Point min = new Point(0, 0);
@@ -60,17 +60,21 @@ public class ScreenTransformation {
 	}
 
 	public int[] transformCoord(Coordinate coordinate, int srid) {
+		
 		int[] transformedCoordinate = new int[2];
-		LOG.debug("SRID: " + srid);
 		
-		int x = ProjectionUtil.lon2position(coordinate.x, getZoom());
-		int y = ProjectionUtil.lat2position(coordinate.y, getZoom());
-			
-			
-			Point offset = getMapPosition();
-			transformedCoordinate[0] = x - offset.x;
-			transformedCoordinate[1] = y - offset.y;		
+		int x = 0;
+		int y = 0;
 		
+		if(srid != 0){
+			x = ProjectionUtil.lon2position(coordinate.x, getZoom());
+			y = ProjectionUtil.lat2position(coordinate.y, getZoom());
+							
+		}
+		
+		Point offset = getMapPosition();
+		transformedCoordinate[0] = x - offset.x;
+		transformedCoordinate[1] = y - offset.y;
 		
 		return transformedCoordinate;
 	}
@@ -122,6 +126,16 @@ public class ScreenTransformation {
 	public void setMapPosition(Point mapPosition) {
 		this.mapPosition = mapPosition;
 	}
+
+	public BasicLayer getBasicLayer() {
+		return basicLayer;
+	}
+
+	public void setBasicLayer(BasicLayer basicLayer) {
+		this.basicLayer = basicLayer;
+	}
+	
+	
 
 }
 

@@ -33,7 +33,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 /**
@@ -138,7 +138,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	private void fillContextMenu(IMenuManager mgr) {
 		mgr.add(new Action("Add Layer"){
 			public void run() {
-				editor.getLayerOrder().addFirst(new MapLayer(editor.getScreenManager(), 0));
+				editor.getLayerOrder().addFirst(new RasterLayer(editor.getScreenManager(), 0));
 			}
 		});
 		
@@ -146,8 +146,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Change Server") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof MapLayer) {
-					MapLayer mapLayer = (MapLayer) i.getFirstElement();
+				if (i.getFirstElement() instanceof RasterLayer) {
+					RasterLayer mapLayer = (RasterLayer) i.getFirstElement();
 					if(TILESERVERS.length == counter){
 						counter=0;
 					}

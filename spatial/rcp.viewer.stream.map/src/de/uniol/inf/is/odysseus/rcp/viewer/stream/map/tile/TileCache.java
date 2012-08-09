@@ -18,7 +18,7 @@ public class TileCache {
 		protected boolean removeEldestEntry(Map.Entry<Tile, AsyncImage> eldest) {
 			boolean remove = size() > CACHE_SIZE;
 			if (remove)
-				eldest.getValue().dispose(manager.getCanvasViewer().getDisplay());
+				eldest.getValue().dispose(manager.getCanvas().getDisplay());
 			return remove;
 		}
 	};
