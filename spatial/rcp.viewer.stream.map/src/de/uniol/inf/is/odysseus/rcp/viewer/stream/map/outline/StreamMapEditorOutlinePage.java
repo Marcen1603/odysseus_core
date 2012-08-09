@@ -33,6 +33,8 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
@@ -135,10 +137,37 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	new String("http://oatile1.mqcdn.com/naip/") };
 
 	
-	private void fillContextMenu(IMenuManager mgr) {
-		mgr.add(new Action("Add Layer"){
+	private void fillContextMenu(final IMenuManager mgr) {
+		mgr.add(new Action("Layer to Top"){ 
 			public void run() {
-				editor.getLayerOrder().addFirst(new RasterLayer(editor.getScreenManager(), 0));
+				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+				if (i.getFirstElement() instanceof AbstractLayer) {
+					int position = editor.getLayerOrder().lastIndexOf(i.getFirstElement());
+					editor.getLayerOrder().remove(position);
+					editor.getLayerOrder().addLast((ILayer) i.getFirstElement());
+					
+				}
+				getTreeViewer().refresh(true);
+			}
+		});
+		
+		mgr.add(new Action("Remove Layer"){ 
+			public void run() {
+				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+				if (i.getFirstElement() instanceof AbstractLayer) {
+					int position = editor.getLayerOrder().lastIndexOf(i.getFirstElement());
+					editor.getLayerOrder().remove(position);
+					//editor.getLayerOrder().addLast((ILayer) i.getFirstElement());
+					
+				}
+				getTreeViewer().refresh(true);
+			}
+		});
+		
+		mgr.add(new Action("Add Layer"){ 
+			public void run() {
+				editor.getLayerOrder().add(new RasterLayer(editor.getScreenManager(), 0));
+				getTreeViewer().refresh(true);
 			}
 		});
 		
@@ -152,8 +181,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 						counter=0;
 					}
 					mapLayer.setTileServer(TILESERVERS[counter++]);
-					
 				}
+				getTreeViewer().refresh(true);
 			}
 		});
 		
