@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
+
 
 /**
  * @author Stephan Jansen
@@ -36,6 +38,9 @@ public class ScreenTransformation {
 
 	
     private AtomicLong zoomStamp = new AtomicLong();
+	private int zoom;
+	private Point mapPosition = new Point(0, 0);
+	
 	
 	private boolean update = false;
 	private Point min = new Point(0, 0);
@@ -56,14 +61,15 @@ public class ScreenTransformation {
 
 	public int[] transformCoord(Coordinate coordinate, int srid) {
 		int[] transformedCoordinate = new int[2];
-		//LOG.debug("SRID: " + srid);
+		LOG.debug("SRID: " + srid);
 		
-//		if(map != null){
-//			Point point = map.computePosition(new PointD(coordinate.x, coordinate.y));
-//			Point offset = map.getMapPosition();
-//			transformedCoordinate[0] = point.x - offset.x;
-//			transformedCoordinate[1] = point.y - offset.y;		
-//		}
+		int x = ProjectionUtil.lon2position(coordinate.x, getZoom());
+		int y = ProjectionUtil.lat2position(coordinate.y, getZoom());
+			
+			
+			Point offset = getMapPosition();
+			transformedCoordinate[0] = x - offset.x;
+			transformedCoordinate[1] = y - offset.y;		
 		
 		
 		return transformedCoordinate;
@@ -99,6 +105,22 @@ public class ScreenTransformation {
 
 	public void setZoomStamp(AtomicLong zoomStamp) {
 		this.zoomStamp = zoomStamp;
+	}
+
+	public int getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(int zoom) {
+		this.zoom = zoom;
+	}
+
+	public Point getMapPosition() {
+		return mapPosition;
+	}
+
+	public void setMapPosition(Point mapPosition) {
+		this.mapPosition = mapPosition;
 	}
 
 }

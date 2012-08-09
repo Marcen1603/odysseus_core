@@ -44,8 +44,7 @@ public class MapLayer extends AbstractLayer {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private Point mapSize = new Point(0, 0);
-	private Point mapPosition = new Point(0, 0);
-	private int zoom;
+
 	private TileServer tileServer;
 
 	private Stats stats = new Stats();
@@ -81,8 +80,7 @@ public class MapLayer extends AbstractLayer {
 			}
 		});
 		setMapPosition(mapPosition);
-		
-		
+
 		
 		mouseListener = new MapMouseListener(this);
 		
@@ -153,18 +151,18 @@ public class MapLayer extends AbstractLayer {
 		long t0 = System.currentTimeMillis();
 		Point size = canvas.getSize();
 		int width = size.x, height = size.y;
-		int x0 = (int) Math.floor(((double) mapPosition.x)
+		int x0 = (int) Math.floor(((double) transformation.getMapPosition().x)
 				/ ProjectionUtil.TILE_SIZE);
-		int y0 = (int) Math.floor(((double) mapPosition.y)
+		int y0 = (int) Math.floor(((double) transformation.getMapPosition().y)
 				/ ProjectionUtil.TILE_SIZE);
-		int x1 = (int) Math.ceil(((double) mapPosition.x + width)
+		int x1 = (int) Math.ceil(((double) transformation.getMapPosition().x + width)
 				/ ProjectionUtil.TILE_SIZE);
-		int y1 = (int) Math.ceil(((double) mapPosition.y + height)
+		int y1 = (int) Math.ceil(((double) transformation.getMapPosition().y + height)
 				/ ProjectionUtil.TILE_SIZE);
 
-		int dy = y0 * ProjectionUtil.TILE_SIZE - mapPosition.y;
+		int dy = y0 * ProjectionUtil.TILE_SIZE - transformation.getMapPosition().y;
 		for (int y = y0; y < y1; ++y) {
-			int dx = x0 * ProjectionUtil.TILE_SIZE - mapPosition.x;
+			int dx = x0 * ProjectionUtil.TILE_SIZE - transformation.getMapPosition().x;
 			for (int x = x0; x < x1; ++x) {
 				paintTile(gc, dx, dy, x, y);
 				dx += ProjectionUtil.TILE_SIZE;
@@ -184,18 +182,18 @@ public class MapLayer extends AbstractLayer {
 		boolean DRAW_OUT_OF_BOUNDS = !false;
 
 		boolean imageDrawn = false;
-		int xTileCount = 1 << zoom;
-		int yTileCount = 1 << zoom;
+		int xTileCount = 1 << transformation.getZoom();
+		int yTileCount = 1 << transformation.getZoom();
 		boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0
 				&& y < yTileCount;
 		boolean drawImage = DRAW_IMAGES && tileInBounds;
 		if (drawImage) {
 			//TileCache cache = getCache();
 			TileServer tileServer = getTileServer();
-			AsyncImage image = tileServer.getCache().get(tileServer, x, y, zoom);
+			AsyncImage image = tileServer.getCache().get(tileServer, x, y, transformation.getZoom());
 			if (image == null) {
-				image = new AsyncImage(manager, tileServer, x, y, zoom);
-				tileServer.getCache().put(tileServer, x, y, zoom, image);
+				image = new AsyncImage(manager, tileServer, x, y, transformation.getZoom());
+				tileServer.getCache().put(tileServer, x, y, transformation.getZoom(), image);
 			}
 			if (image.getImage(display) != null) {
 				gc.drawImage(image.getImage(display), dx, dy);
@@ -262,7 +260,7 @@ public class MapLayer extends AbstractLayer {
 	}
 
 	public Point getMapPosition() {
-		return new Point(mapPosition.x, mapPosition.y);
+		return new Point(transformation.getMapPosition().x, transformation.getMapPosition().y);
 	}
 
 	public void setMapPosition(Point mapPosition) {
@@ -270,61 +268,58 @@ public class MapLayer extends AbstractLayer {
 	}
 
 	public void setMapPosition(int x, int y) {
-		if (mapPosition.x == x && mapPosition.y == y)
+		if (transformation.getMapPosition().x == x && transformation.getMapPosition().y == y)
 			return;
 		Point oldMapPosition = getMapPosition();
-		mapPosition.x = x;
-		mapPosition.y = y;
+		transformation.getMapPosition().x = x;
+		transformation.getMapPosition().y = y;
 		pcs.firePropertyChange("mapPosition", oldMapPosition, getMapPosition());
 	}
 
 	public void translateMapPosition(int tx, int ty) {
-		setMapPosition(mapPosition.x + tx, mapPosition.y + ty);
+		setMapPosition(transformation.getMapPosition().x + tx, transformation.getMapPosition().y + ty);
 	}
 
-	public int getZoom() {
-		return zoom;
-	}
 
 	public void setZoom(int zoom) {
-		if (zoom == this.zoom)
+		if (zoom == transformation.getZoom())
 			return;
 		transformation.getZoomStamp().incrementAndGet();
-		int oldZoom = this.zoom;
-		this.zoom = Math.min(getTileServer().getMaxZoom(), zoom);
+		int oldZoom = transformation.getZoom();
+		transformation.setZoom(Math.min(getTileServer().getMaxZoom(), zoom));
 		mapSize.x = getXMax();
 		mapSize.y = getYMax();
 		pcs.firePropertyChange("zoom", oldZoom, zoom);
 	}
 
 	public void zoomIn(Point pivot) {
-		if (getZoom() >= getTileServer().getMaxZoom())
+		if (transformation.getZoom() >= getTileServer().getMaxZoom())
 			return;
 		Point mapPosition = getMapPosition();
 		int dx = pivot.x;
 		int dy = pivot.y;
-		setZoom(getZoom() + 1);
+		setZoom(transformation.getZoom() + 1);
 		setMapPosition(mapPosition.x * 2 + dx, mapPosition.y * 2 + dy);
 		canvas.redraw();
 	}
 
 	public void zoomOut(Point pivot) {
-		if (getZoom() <= 1)
+		if (transformation.getZoom() <= 1)
 			return;
 		Point mapPosition = getMapPosition();
 		int dx = pivot.x;
 		int dy = pivot.y;
-		setZoom(getZoom() - 1);
+		setZoom(transformation.getZoom() - 1);
 		setMapPosition((mapPosition.x - dx) / 2, (mapPosition.y - dy) / 2);
 		canvas.redraw();
 	}
 
 	public int getXTileCount() {
-		return (1 << zoom);
+		return (1 << transformation.getZoom());
 	}
 
 	public int getYTileCount() {
-		return (1 << zoom);
+		return (1 << transformation.getZoom());
 	}
 
 	public int getXMax() {
@@ -336,8 +331,8 @@ public class MapLayer extends AbstractLayer {
 	}
 
 	public Point getCursorPosition() {
-		return new Point(mapPosition.x + mouseListener.mouseCoords.x,
-				mapPosition.y + mouseListener.mouseCoords.y);
+		return new Point(transformation.getMapPosition().x + mouseListener.mouseCoords.x,
+				transformation.getMapPosition().y + mouseListener.mouseCoords.y);
 	}
 
 	public Point getTile(Point position) {
@@ -349,7 +344,7 @@ public class MapLayer extends AbstractLayer {
 
 	public Point getCenterPosition() {
 		org.eclipse.swt.graphics.Point size = canvas.getSize();
-		return new Point(mapPosition.x + size.x / 2, mapPosition.y + size.y / 2);
+		return new Point(transformation.getMapPosition().x + size.x / 2, transformation.getMapPosition().y + size.y / 2);
 	}
 
 	public void setCenterPosition(Point p) {
@@ -358,13 +353,13 @@ public class MapLayer extends AbstractLayer {
 	}
 
 	public PointD getLongitudeLatitude(Point position) {
-		return new PointD(ProjectionUtil.position2lon(position.x, getZoom()),
-				ProjectionUtil.position2lat(position.y, getZoom()));
+		return new PointD(ProjectionUtil.position2lon(position.x, transformation.getZoom()),
+				ProjectionUtil.position2lat(position.y, transformation.getZoom()));
 	}
 
 	public Point computePosition(PointD coords) {
-		int x = ProjectionUtil.lon2position(coords.x, getZoom());
-		int y = ProjectionUtil.lat2position(coords.y, getZoom());
+		int x = ProjectionUtil.lon2position(coords.x, transformation.getZoom());
+		int y = ProjectionUtil.lat2position(coords.y, transformation.getZoom());
 		return new Point(x, y);
 	}
 
