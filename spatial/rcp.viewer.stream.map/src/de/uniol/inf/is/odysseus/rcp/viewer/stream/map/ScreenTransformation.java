@@ -15,14 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.eclipse.swt.graphics.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.MapWidget;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.PointD;
 
 
 /**
@@ -35,14 +34,13 @@ public class ScreenTransformation {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ScreenTransformation.class);
 
+	
+    private AtomicLong zoomStamp = new AtomicLong();
+	
 	private boolean update = false;
 	private Point min = new Point(0, 0);
-	private MapWidget map = null;
 	
 	
-	public void setMap(MapWidget map){
-		this.map = map;
-	}
 	
 	public Point getMin() {
 		return min;
@@ -60,12 +58,12 @@ public class ScreenTransformation {
 		int[] transformedCoordinate = new int[2];
 		//LOG.debug("SRID: " + srid);
 		
-		if(map != null){
-			Point point = map.computePosition(new PointD(coordinate.x, coordinate.y));
-			Point offset = map.getMapPosition();
-			transformedCoordinate[0] = point.x - offset.x;
-			transformedCoordinate[1] = point.y - offset.y;		
-		}
+//		if(map != null){
+//			Point point = map.computePosition(new PointD(coordinate.x, coordinate.y));
+//			Point offset = map.getMapPosition();
+//			transformedCoordinate[0] = point.x - offset.x;
+//			transformedCoordinate[1] = point.y - offset.y;		
+//		}
 		
 		
 		return transformedCoordinate;
@@ -93,6 +91,14 @@ public class ScreenTransformation {
 		min.x -= steps;
 		update = true;
 		LOG.debug("Pan East: " + min.x);
+	}
+
+	public AtomicLong getZoomStamp() {
+		return zoomStamp;
+	}
+
+	public void setZoomStamp(AtomicLong zoomStamp) {
+		this.zoomStamp = zoomStamp;
 	}
 
 }

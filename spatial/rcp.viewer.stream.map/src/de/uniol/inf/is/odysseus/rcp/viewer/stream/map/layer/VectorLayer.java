@@ -41,8 +41,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
  */
 public class VectorLayer extends AbstractLayer{
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(VectorLayer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(VectorLayer.class);
 	
 	private LinkedList<Geometry> geometries = null;
 	private ScreenTransformation transformation = null;

@@ -118,6 +118,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	}
 
 	private void fillContextMenu(IMenuManager mgr) {
+		
+		
 		mgr.add(new Action("Linecolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
@@ -135,6 +137,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 				
 			}
 		});
+		
 		mgr.add(new Action("Fillcolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();

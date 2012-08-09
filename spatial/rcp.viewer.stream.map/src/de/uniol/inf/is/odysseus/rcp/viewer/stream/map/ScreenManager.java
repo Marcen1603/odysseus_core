@@ -32,7 +32,6 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tile.MapWidget;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tool.MouseLabel;
 
 public class ScreenManager {
@@ -42,7 +41,7 @@ public class ScreenManager {
 
 	private StreamMapEditor editor;
 	private ScreenTransformation transformation;
-	private MapWidget viewer;
+	private Canvas viewer;
 	private Rectangle mouseSelection = null;
 	private MouseLabel mouseLabel = new MouseLabel();
 
@@ -51,8 +50,8 @@ public class ScreenManager {
 		this.editor = editor;
 	}
 
-	protected MapWidget createCanvas(Composite parent) {
-		MapWidget canvasViewer = new MapWidget(parent, SWT.NONE);
+	protected Canvas createCanvas(Composite parent) {
+		Canvas canvasViewer = new Canvas(parent, SWT.NONE);
 		canvasViewer.setBackground(WHITE);
 		canvasViewer.addPaintListener(new GeometryPaintListener(editor));
 
@@ -120,19 +119,19 @@ public class ScreenManager {
 
 			@Override
 			public void mouseMove(MouseEvent e) {
-				mouseLabel.label = "";
-				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
-			    mouseLabel.label += "Zoom: " + viewer.getZoom() + "\n";	
-			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
-			    mouseLabel.label += "Position: " + viewer.getMapPosition() + "\n";	
-			    mouseLabel.label += "Center: " + viewer.getCenterPosition() + "\n";	
-			    mouseLabel.label += "Location: " + viewer.getLocation() + "\n";	
-			    
-			    mouseLabel.label += "Courser: " + viewer.getCursorPosition() + "\n";	
-			    
-			    
-			    mouseLabel.label += "Lat: " + viewer.position2lat(viewer.getCursorPosition().y, viewer.getZoom()) + "\n";	
-			    mouseLabel.label += "Lon: " + viewer.position2lon(viewer.getCursorPosition().x, viewer.getZoom()) + "\n";	
+//				mouseLabel.label = "";
+//				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
+//			    mouseLabel.label += "Zoom: " + viewer.getZoom() + "\n";	
+//			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
+//			    mouseLabel.label += "Position: " + viewer.getMapPosition() + "\n";	
+//			    mouseLabel.label += "Center: " + viewer.getCenterPosition() + "\n";	
+//			    mouseLabel.label += "Location: " + viewer.getLocation() + "\n";	
+//			    
+//			    mouseLabel.label += "Courser: " + viewer.getCursorPosition() + "\n";	
+//			    
+//			    
+//			    mouseLabel.label += "Lat: " + viewer.position2lat(viewer.getCursorPosition().y, viewer.getZoom()) + "\n";	
+//			    mouseLabel.label += "Lon: " + viewer.position2lon(viewer.getCursorPosition().x, viewer.getZoom()) + "\n";	
 			    
 			    
 //				 new Spec("Zoom") { public String computeValue() { return Integer.toString(mapWidget.getZoom()); }},
@@ -242,22 +241,22 @@ public class ScreenManager {
 			}
 
 		});
-		this.transformation.setMap(viewer);
+		//this.transformation.setMap(viewer);
 		return canvasViewer;
 	}
 
-	protected final Canvas getCanvasViewer() {
+	public final Canvas getCanvasViewer() {
 		return viewer;
 	}
 
-	protected final boolean hasCanvasViewer() {
+	public final boolean hasCanvasViewer() {
 		return getCanvasViewer() != null;
 	}
 
-	public void setCanvasViewer(MapWidget viewer) {
+	public void setCanvasViewer(Canvas viewer) {
 		if (viewer != null) {
 			this.viewer = viewer;
-			this.transformation.setMap(viewer);
+			//this.transformation.setMap(viewer);
 		} else {
 			LOG.error("Canvas Viewer is null.");
 		}

@@ -25,4 +25,12 @@
             label="Map Window">
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <Generic></Generic>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <Generic></Generic>
+   </extension>
 </plugin>
