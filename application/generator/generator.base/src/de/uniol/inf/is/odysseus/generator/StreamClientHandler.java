@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,10 @@ public abstract class StreamClientHandler extends Thread {
 	private Socket connection;
 	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
 	private Map<IValueGenerator, DataType> datatypes = new HashMap<IValueGenerator, DataType>();
+	private boolean paused = false;
 	/**
-	 * Gibt an, ob der StreamClientHandler Security Aware ist, also Security Punctuation verarbeitet.
+	 * Gibt an, ob der StreamClientHandler Security Aware ist, also Security
+	 * Punctuation verarbeitet.
 	 */
 	private Boolean isSA = false;
 
@@ -59,6 +61,23 @@ public abstract class StreamClientHandler extends Thread {
 	public abstract void close();
 
 	public abstract List<DataTuple> next();
+
+	public void pause() {
+		synchronized (this) {
+			this.paused = true;
+		}		
+	}
+
+	public void stopClient() {
+		this.interrupt();
+	}
+
+	public void proceed() {
+		synchronized (this) {
+			this.paused = false;
+			notify();
+		}
+	}
 
 	private void internalInit() {
 		for (IValueGenerator gen : this.generators) {
@@ -85,6 +104,15 @@ public abstract class StreamClientHandler extends Thread {
 			} catch (IOException e) {
 				System.out.println("Connection closed.");
 				break;
+			} 
+			synchronized (this) {
+				while (paused) {
+					try {
+						wait();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		close();
@@ -110,17 +138,17 @@ public abstract class StreamClientHandler extends Thread {
 	private ByteBuffer getByteBuffer(DataTuple tuple) {
 		bytebuffer = ByteBuffer.allocate(tuple.memSize(false));
 		bytebuffer.clear();
-		
-		if(tuple instanceof SADataTuple) {
-			if(isSA) {
-				if(((SADataTuple)tuple).isSP()) {
+
+		if (tuple instanceof SADataTuple) {
+			if (isSA) {
+				if (((SADataTuple) tuple).isSP()) {
 					bytebuffer.putInt(1);
 				} else {
 					bytebuffer.putInt(0);
 				}
 			}
 		}
-		
+
 		for (Object data : tuple.getAttributes()) {
 			if (data instanceof Integer) {
 				bytebuffer.putInt((Integer) data);
@@ -208,11 +236,11 @@ public abstract class StreamClientHandler extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setIsSA(Boolean isSA) {
 		this.isSA = isSA;
 	}
-	
+
 	public Boolean isSA() {
 		return this.isSA;
 	}
