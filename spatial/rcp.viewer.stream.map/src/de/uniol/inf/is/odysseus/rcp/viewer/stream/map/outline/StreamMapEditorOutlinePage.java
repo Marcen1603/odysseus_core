@@ -136,6 +136,13 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 
 	
 	private void fillContextMenu(IMenuManager mgr) {
+		mgr.add(new Action("Add Layer"){
+			public void run() {
+				editor.getLayerOrder().addFirst(new MapLayer(editor.getScreenManager(), 0));
+			}
+		});
+		
+		
 		mgr.add(new Action("Change Server") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
