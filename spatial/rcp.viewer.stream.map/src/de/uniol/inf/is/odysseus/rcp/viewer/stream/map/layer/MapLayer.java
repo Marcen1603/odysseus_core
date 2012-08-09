@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.net.URL;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
@@ -67,7 +66,10 @@ public class MapLayer extends AbstractLayer {
 		this.canvas = manager.getCanvasViewer();
 		this.display = canvas.getDisplay();
 		
-		waitBackground = new Color(display, 0x88, 0x88, 0x88);
+		//waitBackground = new Color(display, 0x88, 0x88, 0x88);
+		
+		waitBackground = new Color(display, 0, 0, 100);
+		
 		waitForeground = new Color(display, 0x77, 0x77, 0x77);
 		
 		
@@ -96,57 +98,6 @@ public class MapLayer extends AbstractLayer {
 	public ScreenManager getManager(){
 		return manager;
 	}
-	
-	
-//	public final TileServer[] TILESERVERS = {
-//			new TileServer("http://tile.openstreetmap.org/", 18, 0, manager),
-//			new TileServer("http://tah.openstreetmap.org/Tiles/tile/", 17, 0, manager),
-//			new TileServer("http://oatile2.mqcdn.com/tiles/1.0.0/sat/", 17, 0, manager),
-//			new TileServer("http://otile2.mqcdn.com/tiles/1.0.0/osm/", 18, 0, manager),
-//			new TileServer("http://tile.opencyclemap.org/cycle/", 18, 0, manager),
-//			new TileServer("http://tile2.opencyclemap.org/transport/", 18, 0, manager),
-//			new TileServer(
-//					"http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/1/256/",
-//					18, 0, manager),
-//			new TileServer(
-//					"http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/2/256/",
-//					18, 0, manager),
-//			new TileServer(
-//					"http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/3/256/",
-//					18, 0, manager),
-//			new TileServer("http://otile1.mqcdn.com/tiles/1.0.0/osm/", 18, 0, manager),
-//			new TileServer("http://oatile1.mqcdn.com/naip/", 12, 0, manager),
-//			new TileServer("http://oatile1.mqcdn.com/naip/", 18, 0, manager), };
-//	
-	
-	
-	public MapLayer(Canvas canvas, int style, Point mapPosition, int zoom) {
-		// super(parent, SWT.DOUBLE_BUFFERED | style);
-		
-
-		setZoom(zoom);
-		canvas.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				MapLayer.this.widgetDisposed(e);
-			}
-		});
-		// canvas.addPaintListener(new PaintListener() {
-		// public void paintControl(PaintEvent e) {
-		// MapLayer.this.paintControl(e);
-		// }
-		// });
-		setMapPosition(mapPosition);
-		canvas.addMouseListener(mouseListener);
-		canvas.addMouseMoveListener(mouseListener);
-		canvas.addMouseWheelListener(mouseListener);
-		canvas.addMouseTrackListener(mouseListener);
-		// / TODO: check tileservers
-	}
-
-	// protected void paintControl(PaintEvent e) {
-
-	// gc.drawString("dis ya draw", 20, 50);
-	// }
 
 	@Override
 	public void draw(GC gc) {
