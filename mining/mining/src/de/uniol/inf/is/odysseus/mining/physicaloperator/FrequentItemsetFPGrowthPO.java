@@ -88,9 +88,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			long now = System.currentTimeMillis();
 			long needed = (now - lastTime);
 			long total = (now - startTime);
-			System.out.println("current: " + counter + " needed: " + needed + " ms and total " + total + " ms");
-			System.out.println("number of transactions: " + transactions.size());
-			System.out.println("number in sweeparea: " + this.sweepArea.size());
+			println("current: " + counter + " needed: " + needed + " ms and total " + total + " ms");
+			println("number of transactions: " + transactions.size());
+			println("number in sweeparea: " + this.sweepArea.size());
 			lastTime = now;
 			Tuple<M> countTuple = new Tuple<M>(3, false);
 			countTuple.setAttribute(0, counter);
