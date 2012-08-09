@@ -10,7 +10,8 @@ public class WMService {
         // by default use a known osm server
         setLayer("ors-osm");
         //setBaseUrl("http://wms.jpl.nasa.gov/wms.cgi?");
-        setBaseUrl("http://129.206.228.72/cached/osm?");
+       // setBaseUrl("http://129.206.228.72/cached/osm?");
+        setBaseUrl("http://vmap0.tiles.osgeo.org/wms/vmap0?");
     }
     public WMService(String baseUrl, String layer) {
         this.baseUrl = baseUrl;
@@ -66,5 +67,11 @@ public class WMService {
         this.baseUrl = baseUrl;
     }
    
+    public static void main(String args[]){
+    	WMService service = new WMService();
+    	System.out.println(service.toWMSURL(0, 0, 0, 256));
+    	
+    }
+    
 }
 

@@ -43,17 +43,6 @@ public class ScreenTransformation {
 	private BasicLayer basicLayer;
 	
 	private boolean update = false;
-	private Point min = new Point(0, 0);
-	
-	
-	
-	public Point getMin() {
-		return min;
-	}
-
-	public void setMin(Point min) {
-		this.min = min;
-	}
 
 	public boolean isUpdate() {
 		return update;
@@ -80,27 +69,28 @@ public class ScreenTransformation {
 	}
 
 	public void panNorth(int steps) {
-		min.y += steps;
+		basicLayer.getCenterPosition().y = basicLayer.getCenterPosition().y + steps;
+		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
 		update = true;
-		LOG.debug("Pan North: " + min.y);
 	}
 
 	public void panSouth(int steps) {
-		min.y -= steps;
+		basicLayer.getCenterPosition().y = basicLayer.getCenterPosition().y - steps;
+		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
 		update = true;
-		LOG.debug("Pan South: " + min.y);
+
 	}
 
 	public void panWest(int steps) {
-		min.x += steps;
+		basicLayer.getCenterPosition().x = basicLayer.getCenterPosition().x + steps;
+		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
 		update = true;
-		LOG.debug("Pan West: " + min.x);
 	}
 
 	public void panEast(int steps) {
-		min.x -= steps;
+		basicLayer.getCenterPosition().x = basicLayer.getCenterPosition().x - steps;
+		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
 		update = true;
-		LOG.debug("Pan East: " + min.x);
 	}
 
 	public AtomicLong getZoomStamp() {
@@ -133,6 +123,14 @@ public class ScreenTransformation {
 
 	public void setBasicLayer(BasicLayer basicLayer) {
 		this.basicLayer = basicLayer;
+	}
+
+	public void zoomin(int i) {
+		basicLayer.zoomIn(basicLayer.getCenterPosition());
+	}
+
+	public void zoomout(int i) {
+		basicLayer.zoomOut(basicLayer.getCenterPosition());
 	}
 	
 	

@@ -110,6 +110,13 @@ public final class AsyncImage implements Runnable {
     public Image getImage(Display display) {
         checkThread(display);
         if (image == null && imageData.get() != null) {
+        	
+        	for(int x = 0; x <  imageData.get().width; x++){
+        		for(int y = 0; y <  imageData.get().height; y++){
+        			imageData.get().setAlpha(x,y,100);
+        		}
+        	}
+        	
             image = new Image(display, imageData.get());
         }
         return image;

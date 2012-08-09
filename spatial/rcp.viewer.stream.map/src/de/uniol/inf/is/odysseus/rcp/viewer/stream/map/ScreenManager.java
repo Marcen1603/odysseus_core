@@ -84,7 +84,7 @@ public class ScreenManager {
 				// setRect(null);
 				mouseSelection = null;
 
-				LOG.debug("OnMouseUp: " + e.x + "," + e.y);
+				//LOG.debug("OnMouseUp: " + e.x + "," + e.y);
 				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
 				// transformation.getLon(e.y)) ;
 
@@ -104,14 +104,14 @@ public class ScreenManager {
 			public void mouseDown(MouseEvent e) {
 
 				mouseSelection = new Rectangle(e.x, e.y, 0, 0);
-				LOG.debug("OnMouseDown: " + e.x + "," + e.y);
+				//LOG.debug("OnMouseDown: " + e.x + "," + e.y);
 				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
 				// transformation.getLon(e.y)) ;
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				LOG.error("Mouse Double Click is not implemented");
+				//LOG.error("Mouse Double Click is not implemented");
 			}
 		});
 
@@ -128,50 +128,9 @@ public class ScreenManager {
 			    
 			    infoText += "Courser: " + transformation.getBasicLayer().getCursorPosition() + "\n";	
 			    
-			    
 			    infoText += "Lat: " + ProjectionUtil.position2lat(transformation.getBasicLayer().getCursorPosition().y, transformation.getZoom()) + "\n";	
 			    infoText += "Lon: " + ProjectionUtil.position2lon(transformation.getBasicLayer().getCursorPosition().x, transformation.getZoom()) + "\n";	
-				
-			    
-			
-			    //e.gc.drawText(this.streamMapEditor.getScreenManager().getMouseLabel().label, this.streamMapEditor.getScreenManager().getMouseLabel().x + 15 , this.streamMapEditor.getScreenManager().getMouseLabel().y,true); 
 
-			    
-//				 new Spec("Zoom") { public String computeValue() { return Integer.toString(mapWidget.getZoom()); }},
-//	                new Spec("Map Size") { public String computeValue() { Point size = mapWidget.getSize(); return size.x + ", " + size.y; }},
-//	                new Spec("Map Position") { public String computeValue() { Point position = mapWidget.getMapPosition(); return position.x + ", " + position.y; }},
-//	                new Spec("Center Position") { public String computeValue() { Point position = mapWidget.getCenterPosition(); return position.x + ", " + position.y; }},
-//	                new Spec("Paint time") { public String computeValue() { mapWidget.getStats(); return mapWidget.getStats().dt + " ms"; }},
-//	                new Spec("Imagefetchers Threads") { public String computeValue() { return Integer.toString(MapWidget.IMAGEFETCHER_THREADS); }},
-//	                new Spec("Number painted tiles") {
-//				
-				// double[] map4326 = transformation.screenToEpsg4326(e.x, e.y);
-
-				// int[] scCoord = transformation.epsg4326ToScreen(map4326[0],
-				// map4326[1]);
-
-				// double[] equi =
-				// transformation.equirectangular_position(map4326[0],
-				// map4326[1]);
-
-				// int[] mer = transformation.toMercator(map4326[0], map4326[1]);
-
-				// mouseLabel.label += "Screen: " + scCoord[0] + ", " +
-				// scCoord[1] + "\n";
-				// mouseLabel.label += "Coordinate: " + map4326[0] + ", "
-				//		+ map4326[1] + "\n";
-				// mouseLabel.label += "Equirectangular: " + equi[0] + ", " +
-				// equi[1] + "\n";
-				// mouseLabel.label += "Mercator: " + mer[0] + ", " + mer[1]
-				//		+ "\n";
-
-				// mouseLabel.x = e.x;
-				// mouseLabel.y = e.y;
-
-//				if (mouseSelection != null) {
-//					mouseSelection.width = e.x - mouseSelection.x;
-//					mouseSelection.height = e.y - mouseSelection.y;
-//				}
 
 				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -184,10 +143,6 @@ public class ScreenManager {
 							});
 				}
 
-				// LOG.debug("Mouse: x=" + e.x + " y=" + e.y);
-				// LOG.debug("Map: x=" + transformation.getLat(e.x) + " y=" +
-				// transformation.getLon(e.y)) ;
-
 			}
 		});
 
@@ -195,19 +150,12 @@ public class ScreenManager {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-//				if (e.character == 'a')
-//					transformation.zoomin(0.01);
-//				if (e.character == 'q')
-//					transformation.zoomin(0.1);
-//				if (e.character == 'z')
-//					transformation.zoomin(1);
-//
-//				if (e.character == 's')
-//					transformation.zoomout(0.01);
-//				if (e.character == 'w')
-//					transformation.zoomout(0.1);
-//				if (e.character == 'x')
-//					transformation.zoomout(1);
+
+				if (e.character == 'z')
+					transformation.zoomin(1);
+
+				if (e.character == 'x')
+					transformation.zoomout(1);
 
 				if (hasCanvasViewer() && !getCanvas().isDisposed()) {
 					PlatformUI.getWorkbench().getDisplay()
@@ -244,7 +192,6 @@ public class ScreenManager {
 			}
 
 		});
-		//this.transformation.setMap(viewer);
 		return canvasViewer;
 	}
 
@@ -259,7 +206,6 @@ public class ScreenManager {
 	public void setCanvasViewer(Canvas viewer) {
 		if (viewer != null) {
 			this.viewer = viewer;
-			//this.transformation.setMap(viewer);
 		} else {
 			LOG.error("Canvas Viewer is null.");
 		}
