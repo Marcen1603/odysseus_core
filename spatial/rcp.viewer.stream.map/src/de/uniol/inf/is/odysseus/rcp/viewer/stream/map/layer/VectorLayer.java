@@ -165,4 +165,8 @@ public class VectorLayer extends AbstractLayer{
 	public String getName() {
 		return this.sdfAttribute.getAttributeName();
 	}
+	
+	public SDFAttribute getNativeAttribute() {
+		return this.sdfAttribute;
+	}
 }

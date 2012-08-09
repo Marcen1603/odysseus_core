@@ -32,7 +32,6 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.tool.MouseLabel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 public class ScreenManager {
@@ -44,7 +43,7 @@ public class ScreenManager {
 	private ScreenTransformation transformation;
 	private Canvas viewer;
 	private Rectangle mouseSelection = null;
-	private MouseLabel mouseLabel = new MouseLabel();
+	private String infoText = "";
 
 	public ScreenManager(ScreenTransformation transformation, StreamMapEditor editor) {
 		this.transformation = transformation;
@@ -120,18 +119,18 @@ public class ScreenManager {
 
 			@Override
 			public void mouseMove(MouseEvent e) {
-				mouseLabel.label = "";
-				mouseLabel.label += "Screen Coordinate: " + e.x + "," + e.y + "\n";
-			    mouseLabel.label += "Zoom: " + transformation.getZoom() + "\n";	
-			    mouseLabel.label += "Size: " + viewer.getSize() + "\n";
-			    mouseLabel.label += "Position: " + transformation.getMapPosition() + "\n";	
-			    mouseLabel.label += "Center: " + transformation.getBasicLayer().getCenterPosition() + "\n";	
+				infoText = "";
+				infoText += "Screen Coordinate: " + e.x + "," + e.y + "\n";
+			    infoText += "Zoom: " + transformation.getZoom() + "\n";	
+			    infoText += "Size: " + viewer.getSize() + "\n";
+			    infoText += "Position: " + transformation.getMapPosition() + "\n";	
+			    infoText += "Center: " + transformation.getBasicLayer().getCenterPosition() + "\n";	
 			    
-			    mouseLabel.label += "Courser: " + transformation.getBasicLayer().getCursorPosition() + "\n";	
+			    infoText += "Courser: " + transformation.getBasicLayer().getCursorPosition() + "\n";	
 			    
 			    
-			    mouseLabel.label += "Lat: " + ProjectionUtil.position2lat(transformation.getBasicLayer().getCursorPosition().y, transformation.getZoom()) + "\n";	
-			    mouseLabel.label += "Lon: " + ProjectionUtil.position2lon(transformation.getBasicLayer().getCursorPosition().x, transformation.getZoom()) + "\n";	
+			    infoText += "Lat: " + ProjectionUtil.position2lat(transformation.getBasicLayer().getCursorPosition().y, transformation.getZoom()) + "\n";	
+			    infoText += "Lon: " + ProjectionUtil.position2lon(transformation.getBasicLayer().getCursorPosition().x, transformation.getZoom()) + "\n";	
 				
 			    
 			
@@ -277,9 +276,9 @@ public class ScreenManager {
 	public Rectangle getMouseSelection() {
 		return mouseSelection;
 	}
-
-	public MouseLabel getMouseLabel() {
-		return mouseLabel;
+	
+	public String getInfoText() {
+		return infoText;
 	}
 
 }

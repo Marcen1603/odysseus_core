@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
@@ -189,39 +190,15 @@ public class StreamMapEditor implements IStreamEditorType {
 	 */
 	private void setSchema(SDFSchema schema) {
 		this.schema = schema;
+		
 		for (int i = 0; i < schema.size(); i++) {
 			if (schema.getAttribute(i).getDatatype() instanceof SDFSpatialDatatype) {
 				SDFSpatialDatatype spatialDatatype = (SDFSpatialDatatype) schema.getAttribute(i).getDatatype();
 
-				Style style = null;
-				
-				if (spatialDatatype.isPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
-				} else if (spatialDatatype.isLineString()) {
-					style = new LineStyle(1, ColorManager.getInstance()
-							.randomColor());
-				} else if (spatialDatatype.isPolygon()) {
-					style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
-				} else if (spatialDatatype.isMultiPoint()) {
-					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-				} else if (spatialDatatype.isMultiLineString()) {
-					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-				} else if (spatialDatatype.isMultiPolygon()) {
-					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-				} else if (spatialDatatype.isSpatial()) {
-					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-				}
+				Style style = getStyle(spatialDatatype);
 				
 				if (style != null) {
-					VectorLayer layer = new VectorLayer(transformation, schema.getAttribute(i), style);
-					spatialDataIndex.put(i, layer);
-					layerOrder.add(layer);
+					addVectorLayer( schema.getAttribute(i),i,style);
 				} else {
 					throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
 				}
@@ -230,6 +207,47 @@ public class StreamMapEditor implements IStreamEditorType {
 		}
 	}
 
+	public void addVectorLayer(SDFAttribute attribute, int position, Style style){
+		VectorLayer layer = new VectorLayer(transformation, attribute, style);
+		spatialDataIndex.put(position, layer);
+		layerOrder.add(layer);
+	}
+	
+	public void removeVectorLayer(int position){
+		spatialDataIndex.remove(position);
+	}
+	
+	public Style getStyle(SDFSpatialDatatype spatialDatatype){
+		Style style = null;
+		
+		if (spatialDatatype.isPoint()) {
+			style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
+		} else if (spatialDatatype.isLineString()) {
+			style = new LineStyle(1, ColorManager.getInstance()
+					.randomColor());
+		} else if (spatialDatatype.isPolygon()) {
+			style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
+		} else if (spatialDatatype.isMultiPoint()) {
+			style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+			style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
+		} else if (spatialDatatype.isMultiLineString()) {
+			style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+			style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
+		} else if (spatialDatatype.isMultiPolygon()) {
+			style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
+		} else if (spatialDatatype.isSpatial()) {
+			style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
+			style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
+			style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
+			style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
+		}
+		
+		return style;
+	}
+	
+	
+	
 	private void setMaxTuplesCount(int maxTuples) {
 		if (maxTuples > 0)
 			this.maxTuplesCount = maxTuples;

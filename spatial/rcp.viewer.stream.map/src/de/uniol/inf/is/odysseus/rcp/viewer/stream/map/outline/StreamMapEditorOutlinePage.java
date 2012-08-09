@@ -30,7 +30,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
@@ -38,6 +41,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * 
@@ -51,6 +56,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 	private StreamMapEditor editor;
 	private TreeViewer treeViewer;
 
+	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditorOutlinePage.class);
+	
 	public StreamMapEditorOutlinePage(StreamMapEditor editor) {
 		super();
 		this.editor = editor;
@@ -140,6 +147,26 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 
 	
 	private void fillContextMenu(final IMenuManager mgr) {
+		mgr.add(new Action("To VectorLayer"){ 
+			public void run() {
+				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+				if (i.getFirstElement() instanceof SDFAttribute) {
+				
+					SDFAttribute attribute  = (SDFAttribute) i.getFirstElement();
+					
+					editor.getSchema().contains(attribute);
+					int position = editor.getSchema().indexOf(attribute);
+					
+					Style style = editor.getStyle((SDFSpatialDatatype)attribute.getDatatype());
+					editor.addVectorLayer(attribute, position, style);
+					LOG.info("Add Vector Layer for: " + attribute.getAttributeName());
+				}
+				getTreeViewer().refresh(true);
+				editor.getScreenManager().getCanvas().redraw();
+			}
+		});
+		
+		
 		mgr.add(new Action("Layer to Top"){ 
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
@@ -150,6 +177,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 					
 				}
 				getTreeViewer().refresh(true);
+				editor.getScreenManager().getCanvas().redraw();
 			}
 		});
 		
@@ -157,12 +185,23 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
 				if (!(i.getFirstElement() instanceof BasicLayer)) {
+					
+					//If the Element is a Vector - remove the related stream element
+					if (i.getFirstElement() instanceof VectorLayer) {
+						VectorLayer vectorLayer = (VectorLayer)i.getFirstElement();
+						SDFAttribute attribute  = vectorLayer.getNativeAttribute();
+						int position = editor.getSchema().indexOf(attribute);
+						editor.removeVectorLayer(position);
+					}
+					
+					//Remove the Layer 
 					if (i.getFirstElement() instanceof AbstractLayer) {
 						int position = editor.getLayerOrder().lastIndexOf(i.getFirstElement());
 						editor.getLayerOrder().remove(position);	
 					}
 				}
 				getTreeViewer().refresh(true);
+				editor.getScreenManager().getCanvas().redraw();
 			}
 		});
 		
@@ -170,6 +209,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 			public void run() {
 				editor.getLayerOrder().add(new RasterLayer(editor.getScreenManager(), 0));
 				getTreeViewer().refresh(true);
+				editor.getScreenManager().getCanvas().redraw();
 			}
 		});
 		
@@ -185,6 +225,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 					mapLayer.setTileServer(TILESERVERS[counter++]);
 				}
 				getTreeViewer().refresh(true);
+				editor.getScreenManager().getCanvas().redraw();
 			}
 		});
 		

@@ -87,7 +87,7 @@ public class BasicLayer extends AbstractLayer{
 			dy += ProjectionUtil.TILE_SIZE;
 		}
 		gc.setForeground(new Color(gc.getDevice(),255,0,0));
-		gc.drawText(screenmanager.getMouseLabel().label, 0 , 0,true); 
+		gc.drawText(screenmanager.getInfoText(), 0 , 0,true); 
 
 	}
 	
