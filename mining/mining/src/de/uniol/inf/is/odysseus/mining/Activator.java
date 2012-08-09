@@ -18,13 +18,16 @@ package de.uniol.inf.is.odysseus.mining;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 
+public class Activator implements BundleActivator {
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
 		return context;
 	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -40,6 +43,14 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+	
+	public void bindDataDictionary(IDataDictionary dd){				
+		dd.addDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI(), MiningDatatypes.FREQUENT_ITEM_SET);				
+	}
+	
+	public void unbindDataDictionary(IDataDictionary dd){
+		dd.removeDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI());
 	}
 
 }

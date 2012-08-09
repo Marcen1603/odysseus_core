@@ -21,13 +21,17 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class Pattern<M extends IMetaAttribute> {
+public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContainer<M>{
 
+	
+	private static final long serialVersionUID = -2474068801651074450L;
+	
 	private ArrayList<Tuple<M>> pattern = new ArrayList<Tuple<M>>();
 	private ArrayList<Integer> supports = new ArrayList<Integer>();
 	private int support = Integer.MAX_VALUE;
@@ -110,5 +114,14 @@ public class Pattern<M extends IMetaAttribute> {
 	 */
 	public M getMetadata() {
 		return this.metadata;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer#setMetadata(de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute)
+	 */
+	@Override
+	public void setMetadata(M metadata) {
+		this.metadata =metadata;
+		
 	}
 }

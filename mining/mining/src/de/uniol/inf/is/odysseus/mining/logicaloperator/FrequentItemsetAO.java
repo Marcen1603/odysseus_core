@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
 
 @LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1)
 public class FrequentItemsetAO extends AbstractLogicalOperator {
@@ -40,7 +41,7 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 			SDFAttribute attributeId = new SDFAttribute(null, "id", SDFDatatype.INTEGER);
 			attributes.add(attributeId);
-			SDFAttribute attributeSet = new SDFAttribute(null, "set", SDFDatatype.STRING);
+			SDFAttribute attributeSet = new SDFAttribute(null, "set", MiningDatatypes.FREQUENT_ITEM_SET);
 			attributes.add(attributeSet);
 			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
 			return outSchema;

@@ -4,7 +4,6 @@ Bundle-Name: Mining
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.Activator
-Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
@@ -21,4 +20,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version=
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
  org.apache.commons.math3;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.weka;bundle-version="1.0.0"
-Service-Component: OSGI-INF/RuleService.xml, OSGI-INF/OperatorBuilder.xml
+Service-Component: OSGI-INF/RuleService.xml, OSGI-INF/OperatorBuilder.xml, OSGI-INF/DataDictionaryService.xml
