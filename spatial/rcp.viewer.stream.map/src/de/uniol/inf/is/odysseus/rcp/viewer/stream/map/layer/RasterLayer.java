@@ -145,7 +145,7 @@ public class RasterLayer extends AbstractLayer {
 	}
 
 	public void setTileServer(String tileServerURL) {
-		this.name = "RasterLayer(" + tileServerURL + ")";
+		this.name = "Raster Layer( " + tileServerURL + " )";
 		setTileServer(new TileServer(tileServerURL, 17, 0, manager));
 		canvas.redraw();
 	}

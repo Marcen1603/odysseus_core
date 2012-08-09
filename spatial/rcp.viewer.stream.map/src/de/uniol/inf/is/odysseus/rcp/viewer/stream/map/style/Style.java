@@ -102,6 +102,15 @@ public abstract class Style{
 		}
 	}
 	
+	public boolean hasSubStyle() {
+		if(substyle != null){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
 	
 	abstract public Image getImage();
@@ -133,7 +142,7 @@ public abstract class Style{
 	    gc = new GC(mask);
 	    gc.setBackground(black);
 	    gc.fillRectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	   // draw(gc, list, white, white);
+//	    draw(gc, list, white, white);
 	    draw(gc, list);
 	    gc.dispose();
 	    maskData = mask.getImageData();

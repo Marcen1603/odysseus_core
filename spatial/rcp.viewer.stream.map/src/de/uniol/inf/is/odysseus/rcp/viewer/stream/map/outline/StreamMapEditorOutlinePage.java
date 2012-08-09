@@ -34,6 +34,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.AbstractLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
@@ -155,11 +156,11 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Remove Layer"){ 
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof AbstractLayer) {
-					int position = editor.getLayerOrder().lastIndexOf(i.getFirstElement());
-					editor.getLayerOrder().remove(position);
-					//editor.getLayerOrder().addLast((ILayer) i.getFirstElement());
-					
+				if (!(i.getFirstElement() instanceof BasicLayer)) {
+					if (i.getFirstElement() instanceof AbstractLayer) {
+						int position = editor.getLayerOrder().lastIndexOf(i.getFirstElement());
+						editor.getLayerOrder().remove(position);	
+					}
 				}
 				getTreeViewer().refresh(true);
 			}
