@@ -47,9 +47,9 @@ public class WekaClusteringPO<M extends ITimeInterval> extends
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private TITransferArea<Tuple<M>, Tuple<M>> transferFunction = new TITransferArea<Tuple<M>, Tuple<M>>(
 			1);
-	private int run = 0;
+//	private int run = 0;
 	private int[] attributePositions;
-	private PointInTime lastWritten;
+//	private PointInTime lastWritten;
 	private ArrayList<Attribute> wekaAttributes = new ArrayList<Attribute>();
 	private Map<String, List<String>> options;
 	private Map<String, String> wekaOptions;
@@ -139,7 +139,7 @@ public class WekaClusteringPO<M extends ITimeInterval> extends
 		// run++;
 		// transferFunction.newElement(object, port);
 		sweepArea.purgeElementsBefore(object.getMetadata().getStart());
-		lastWritten = object.getMetadata().getStart();
+//		lastWritten = object.getMetadata().getStart();
 	}
 
 	@Override
@@ -149,9 +149,9 @@ public class WekaClusteringPO<M extends ITimeInterval> extends
 		sweepArea.clear();
 		calcWekaAttributes();
 		Map<String, String> optionMap = new HashMap<String, String>();
-		for (Entry<String, List<String>> option : this.options.entrySet()) {
-	//		optionMap.put(option.getKey(),option.getValue().get(0));
-		}
+//		for (Entry<String, List<String>> option : this.options.entrySet()) {
+//	//		optionMap.put(option.getKey(),option.getValue().get(0));
+//		}
 		this.wekaOptions = optionMap;
 	}
 

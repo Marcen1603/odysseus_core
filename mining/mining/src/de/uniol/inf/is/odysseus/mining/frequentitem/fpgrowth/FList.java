@@ -16,10 +16,8 @@
 package de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
