@@ -12,67 +12,75 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-
 @LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1)
-public class FrequentItemsetAO extends AbstractLogicalOperator{
+public class FrequentItemsetAO extends AbstractLogicalOperator {
 
-	
 	private static final long serialVersionUID = 7771591123865284928L;
-	private int numberOftransactions = 100;
+	private int transactions = Integer.MAX_VALUE;
 	private String algorithm = "";
 	private int minsupport = 3;
-	
 
 	public FrequentItemsetAO() {
-		
+
 	}
-	
+
 	public FrequentItemsetAO(FrequentItemsetAO frequentItemsetAO) {
 		this.algorithm = frequentItemsetAO.algorithm;
 		this.minsupport = frequentItemsetAO.minsupport;
+		this.transactions = frequentItemsetAO.transactions;
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new FrequentItemsetAO(this);
 	}
-	
-	
-	@Parameter(name="transactions", optional=true, type=IntegerParameter.class)
-	public void setNumberOfTransactions(int i){
-		this.numberOftransactions = i;
-	}
-	
-	public int getNumberOfTransactions(){
-		return this.numberOftransactions;
-	}
-	
+
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		SDFAttribute attributeId = new SDFAttribute(null, "id", SDFDatatype.INTEGER);
-		attributes.add(attributeId);		
-		SDFAttribute attributeSet = new SDFAttribute(null, "set", SDFDatatype.STRING);
-		attributes.add(attributeSet);		
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
-		return outSchema;
+		if (pos == 0) {
+			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			SDFAttribute attributeId = new SDFAttribute(null, "id", SDFDatatype.INTEGER);
+			attributes.add(attributeId);
+			SDFAttribute attributeSet = new SDFAttribute(null, "set", SDFDatatype.STRING);
+			attributes.add(attributeSet);
+			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+			return outSchema;
+		} else {
+			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+			SDFAttribute attributeCount = new SDFAttribute(null, "count", SDFDatatype.INTEGER);
+			attributes.add(attributeCount);
+			SDFAttribute attributeNeeded = new SDFAttribute(null, "needed", SDFDatatype.INTEGER);
+			attributes.add(attributeNeeded);
+			SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER);
+			attributes.add(attributeTotal);
+			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+			return outSchema;
+		}
 	}
-	
-	@Parameter(name="algorithm", type=StringParameter.class)
-	public void setAlgorithm(String algo){
+
+	@Parameter(name = "algorithm", type = StringParameter.class)
+	public void setAlgorithm(String algo) {
 		this.algorithm = algo;
 	}
-	
-	public String getAlgorithm(){
+
+	public String getAlgorithm() {
 		return this.algorithm;
 	}
 
-	@Parameter(name="support", optional=true, type=IntegerParameter.class)
-	public void setMinSupport(int support){
+	@Parameter(name = "support", optional = true, type = IntegerParameter.class)
+	public void setMinSupport(int support) {
 		this.minsupport = support;
 	}
+
 	public int getMinSupport() {
 		return minsupport;
 	}
-		
 
+	@Parameter(name = "transactions", optional = true, type = IntegerParameter.class)
+	public void setMaxTransactions(int transactions) {
+		this.transactions = transactions;
+	}
+
+	public int getMaxTransactions() {
+		return transactions;
+	}
 }

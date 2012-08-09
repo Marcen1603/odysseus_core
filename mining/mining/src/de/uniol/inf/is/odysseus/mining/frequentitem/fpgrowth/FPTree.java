@@ -63,7 +63,7 @@ public class FPTree<M extends IMetaAttribute> {
 	}
 	
 	public synchronized void removeWithoutMinSupport(int minsupport){
-		Iterator<Entry<Tuple<M>, Integer>> iter = headerTableCount.entrySet().iterator();
+		Iterator<Entry<Tuple<M>, Integer>> iter = this.headerTableCount.entrySet().iterator();
 		while(iter.hasNext()){
 			Entry<Tuple<M>, Integer> e = iter.next();
 			if(e.getValue()<minsupport){
@@ -71,13 +71,12 @@ public class FPTree<M extends IMetaAttribute> {
 				FPTreeNode<M> n = this.headerTable.get(e.getKey());
 				while(n!=null){					
 					removeNode(n);					
-					n = n.getLink();
-					this.headerTable.remove(e.getKey());
-					//this.headerTableCount.remove(e.getKey());
-					iter.remove();
-					this.headerTableLastNode.remove(e.getKey());
-					println("");
+					n = n.getLink();						
 				}				
+				this.headerTable.remove(e.getKey());
+				//this.headerTableCount.remove(e.getKey());
+				iter.remove();
+				this.headerTableLastNode.remove(e.getKey());			
 			}
 		}
 		
@@ -174,6 +173,7 @@ public class FPTree<M extends IMetaAttribute> {
 			if (child.getItem().equals(item)) {
 				child.addCount(supportCount);				
 				thechild = child;
+				break;
 			}
 		}
 
@@ -190,7 +190,7 @@ public class FPTree<M extends IMetaAttribute> {
 		}
 	}
 	
-	private void increaseHeaderCount(Tuple<M> item, int count){
+	private synchronized void increaseHeaderCount(Tuple<M> item, int count){
 		if(this.headerTableCount.containsKey(item)){
 			int newcount = this.headerTableCount.get(item)+count;
 			this.headerTableCount.put(item, newcount);
@@ -252,7 +252,7 @@ public class FPTree<M extends IMetaAttribute> {
 	
 	
 	private void println(String s){
-	//	System.out.println(s);
+		//System.out.println(s);
 	}
 	
 		

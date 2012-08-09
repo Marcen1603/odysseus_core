@@ -35,17 +35,19 @@ import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
  * @author Dennis Geesen
  * 
  */
-public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<ITimeInterval>> {
+public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private List<Transaction<M>> transactions = new ArrayList<Transaction<M>>();
 	private PointInTime lastCut = PointInTime.getZeroTime();
 	private int minsupport = 2;
 	// private int maxlength = 5;
-	private int maxTransactions = 25;	
+	private int maxTransactions = 25;
 	private int counter = 0;
 	private long lastTime = 0L;
-	private long startTime = 0L;	
+	private long startTime = 0L;
+	FPTree<M> globalfptree = new FPTree<M>();
+	private boolean useGlobaleTree = false;
 
 	private FList<M> flist = new FList<M>();
 
@@ -55,10 +57,12 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	public FrequentItemsetFPGrowthPO(FrequentItemsetFPGrowthPO<M> old) {
 		this.minsupport = old.minsupport;
+		this.maxTransactions = old.maxTransactions;
 	}
 
-	public FrequentItemsetFPGrowthPO(int minSupport) {
+	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions) {
 		this.minsupport = minSupport;
+		this.maxTransactions = maxTransactions;
 	}
 
 	@Override
@@ -82,10 +86,20 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		println(object.toString());
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
-			System.out.println("current: " + counter + " needed: " + (now - lastTime) + " ms and total " + (now - startTime) + " ms");
+			long needed = (now - lastTime);
+			long total = (now - startTime);
+			System.out.println("current: " + counter + " needed: " + needed + " ms and total " + total + " ms");
 			System.out.println("number of transactions: " + transactions.size());
-			System.out.println("number in sweeparea: "+this.sweepArea.size());
+			System.out.println("number in sweeparea: " + this.sweepArea.size());
 			lastTime = now;
+			Tuple<M> countTuple = new Tuple<M>(3, false);
+			countTuple.setAttribute(0, counter);
+			countTuple.setAttribute(1, needed);
+			countTuple.setAttribute(2, total);
+			@SuppressWarnings("unchecked")
+			M clonedMD = (M) object.getMetadata().clone();
+			countTuple.setMetadata(clonedMD);
+			transfer(countTuple, 1);
 		}
 		synchronized (sweepArea) {
 			// daten werden verarbeitet, weil wir einen zeitfortschritt haben
@@ -109,7 +123,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// der aktuellen zeit
 			PointInTime start = PointInTime.getZeroTime();
 			PointInTime end = PointInTime.getInfinityTime();
-		
+
 			// die betrachtete zeit ist die maximale startzeit und die minimale
 			// endzeit
 			Transaction<M> transaction = new Transaction<M>();
@@ -130,64 +144,78 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			}
 			// korrigiere TI, wenn die aktuelle zeit innerhalb des TI ist
 			end = PointInTime.min(end, currentTime);
-			transaction.setTimeInterval(start, end);			
-			
-			println("adding new transaction: "+transaction);			
-			if(this.transactions.size()==this.maxTransactions){
+			transaction.setTimeInterval(start, end);
+
+			println("adding new transaction: " + transaction);
+			if (this.transactions.size() == this.maxTransactions) {
 				Transaction<M> removed = this.transactions.remove(0);
 				this.flist.remove(removed.getElements());
 			}
 			this.transactions.add(transaction);
-			// unser gesamter zeitraum um das es hier geht, 
-			// startet bei dem letzten cut (oder der transaktion)			
+			// unser gesamter zeitraum um das es hier geht,
+			// startet bei dem letzten cut (oder der transaktion)
 			PointInTime totalMin = start;
 			// und endet mit der letzten transaction
 			PointInTime totalMax = end;
-			
-			
-			println("f-List: " + this.flist);
-			synchronized (this.flist) {
 
-				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(minsupport);
+			trace("unsorted f-List: " + this.flist);
+			synchronized (this.flist) {
+				int internalminsupport = minsupport;
+				FPTree<M> thetree = new FPTree<M>();
+				if (useGlobaleTree) {
+					thetree = globalfptree;
+					internalminsupport = 1;
+				}
+				List<Pair<Tuple<M>, Integer>> currentfList = this.flist.getSortedList(internalminsupport);
 				println("sorted f-List: " + currentfList);
 
 				if (!currentfList.isEmpty()) {
-					FPTree<M> tree = new FPTree<M>();
-					for (Transaction<M> trans : this.transactions) {						
-						println("actual transaction: "+trans);
-						List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
-						if(!sortedList.isEmpty()){
+
+					if (useGlobaleTree) {
+						println("actual transaction: " + transaction);
+						List<Tuple<M>> sortedList = transaction.getFBasedList(currentfList);
+						if (!sortedList.isEmpty()) {
 							println("insert ordered frequent items: " + sortedList);
-							tree.insertTree(sortedList, tree.getRoot());
+							thetree.insertTree(sortedList, thetree.getRoot());
 						}
-						totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
-						totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());						
+						totalMin = PointInTime.min(totalMin, transaction.getMetadata().getStart());
+						totalMax = PointInTime.max(totalMax, transaction.getMetadata().getEnd());
+					} else {
+						for (Transaction<M> trans : this.transactions) {
+							println("actual transaction: " + trans);
+							List<Tuple<M>> sortedList = trans.getFBasedList(currentfList);
+							if (!sortedList.isEmpty()) {
+								println("insert ordered frequent items: " + sortedList);
+								thetree.insertTree(sortedList, thetree.getRoot());
+							}
+							totalMin = PointInTime.min(totalMin, trans.getMetadata().getStart());
+							totalMax = PointInTime.max(totalMax, trans.getMetadata().getEnd());
+						}
 					}
 					println("FP-TREE: ");
-					tree.printTree();
-					ArrayList<Pattern<M>> results = fpgrowth(tree);
-					
+					println(thetree.toString());
+					ArrayList<Pattern<M>> results = fpgrowth(thetree);
+
 					println("-----------------------------------------------------------------");
 					println("-----------------------------------------------------------------");
 					println("ERGEBNIS:");
-					int i=0;
+					int i = 0;
 					for (Pattern<M> p : results) {
 						println(p.toString());
-						Tuple<ITimeInterval> newtuple = new Tuple<ITimeInterval>(2, false);
+						Tuple<M> newtuple = new Tuple<M>(2, false);
 						newtuple.setMetadata(p.getMetadata());
-						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);	
+						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p.toString());
 						i++;
-						//System.out.println("new Tuple: "+newtuple);
+						// System.out.println("new Tuple: "+newtuple);
 						transfer(newtuple);
 					}
 					println("-----------------------------------------------------------------");
-					
-					
+
 				}
 			}
-			
+
 			lastCut = currentTime;
 			// als letztes können wir noch alle Elemente rauswerfen, die in
 			// Zukunft unwichtig sind
@@ -213,19 +241,19 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		// }
 		for (Tuple<M> tuple : tree.getDescendingHeaderList()) {
 			Pattern<M> newPattern = new Pattern<M>(pattern);
-			println("-----------------------------------------------------------------");
-			println("NEW CALL: Added " + tuple + " to pattern...");
+			trace("-----------------------------------------------------------------");
+			trace("NEW CALL: Added " + tuple + " to pattern...");
 			newPattern.add(tuple, tree.getCount(tuple));
 			allPatterns.add(newPattern);
-			println("INPUT TREE: ");
+			trace("INPUT TREE: ");
 			tree.printTree();
 			// get conditional prefix pathes
 			List<Pattern<M>> paths = tree.getPrefixPaths(tuple);
-			println("BUILD NEW CONDITIONAL FP-TREE FOR " + newPattern);
+			trace("BUILD NEW CONDITIONAL FP-TREE FOR " + newPattern);
 			// build conditional fp tree
 			FPTree<M> condTree = new FPTree<M>();
 			for (Pattern<M> path : paths) {
-				println("INSERT PATH: " + path);
+				trace("INSERT PATH: " + path);
 				condTree.insertTree(path);
 			}
 			condTree.printTree();
@@ -238,9 +266,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 				if (!newPattern.contains(nextKey)) {
 
 					// newPattern.add(nextKey, condTree.getCount(nextKey));
-					println("call recursively for " + newPattern + " with tree:");
+					trace("call recursively for " + newPattern + " with tree:");
 					condTree.printTree();
-					println("...");
+					trace("...");
 					fpgrowth(condTree, newPattern, allPatterns);
 				}
 			}
@@ -248,7 +276,11 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	}
 
 	private void println(String s) {
-		//System.out.println(s);
+		// System.out.println(s);
+	}
+
+	private void trace(String s) {
+		// System.out.println(s);
 	}
 
 	@Override

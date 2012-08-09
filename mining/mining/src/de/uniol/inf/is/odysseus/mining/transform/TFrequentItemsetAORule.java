@@ -55,11 +55,12 @@ public class TFrequentItemsetAORule extends AbstractTransformationRule<FrequentI
 
 	@Override
 	public void execute(FrequentItemsetAO operator, TransformationConfiguration config) {
-		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport());
+		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new FrequentItemsetFPGrowthPO<ITimeInterval>(operator.getMinSupport(), operator.getMaxTransactions());
 		if(operator.getAlgorithm().equalsIgnoreCase("APRIORI")){
 			po = new FrequentItemsetAprioriPO<ITimeInterval>(operator.getMinSupport());
 		}		
-		po.setOutputSchema(operator.getOutputSchema());
+		po.setOutputSchema(operator.getOutputSchema(0), 0);
+		po.setOutputSchema(operator.getOutputSchema(1), 1);
 		replace(operator, po, config);
 		retract(operator);
 	}
