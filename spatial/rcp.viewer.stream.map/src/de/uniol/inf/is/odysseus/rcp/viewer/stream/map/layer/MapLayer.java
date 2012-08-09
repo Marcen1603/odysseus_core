@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.net.URL;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.Projection
 
 public class MapLayer extends AbstractLayer {
 
-	private static final Logger log = Logger
+	private static final Logger LOG = Logger
 			.getLogger(MapLayer.class.getName());
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -61,7 +62,6 @@ public class MapLayer extends AbstractLayer {
 		//this(manager.getCanvasViewer(), style, new Point(275091, 180145), 11);
 		int zoom = 11;
 		Point mapPosition = new Point(275091, 180145);
-		
 		this.manager = manager;
 		this.transformation = manager.getTransformation();
 		this.canvas = manager.getCanvasViewer();
@@ -72,6 +72,8 @@ public class MapLayer extends AbstractLayer {
 		
 		
 		tileServer = new TileServer("http://tile.openstreetmap.org/", 18, 0, manager);
+		
+		this.name = "RasterLayer(" + tileServer.getURL() + ")";
 		
 		setZoom(zoom);
 		canvas.addDisposeListener(new DisposeListener() {
@@ -88,6 +90,7 @@ public class MapLayer extends AbstractLayer {
 		canvas.addMouseMoveListener(mouseListener);
 		canvas.addMouseWheelListener(mouseListener);
 		canvas.addMouseTrackListener(mouseListener);
+		LOG.info("Add new RasterLayer: " + getName());
 	}
 
 	public ScreenManager getManager(){
@@ -255,6 +258,13 @@ public class MapLayer extends AbstractLayer {
 		canvas.redraw();
 	}
 
+	public void setTileServer(String tileServerURL) {
+		this.name = "RasterLayer(" + tileServerURL + ")";
+		setTileServer(new TileServer(tileServerURL, 17, 0, manager));
+		canvas.redraw();
+	}
+	
+	
 	public Stats getStats() {
 		return stats;
 	}

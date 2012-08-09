@@ -33,6 +33,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 
 /**
@@ -117,8 +118,37 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		});
 	}
 
+	int counter = 0;
+	
+	public String[] TILESERVERS = {
+	new String("http://tile.openstreetmap.org/"),
+	new String("http://tah.openstreetmap.org/Tiles/tile/"),
+	new String("http://oatile2.mqcdn.com/tiles/1.0.0/sat/"),
+	new String("http://otile2.mqcdn.com/tiles/1.0.0/osm/"),
+	new String("http://tile.opencyclemap.org/cycle/"),
+	new String("http://tile2.opencyclemap.org/transport/"),
+	new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/1/256/"),
+	new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/2/256/"),
+	new String("http://tile.cloudmade.com/0636cabea78640328462d9d26e2a97e2/3/256/"),
+	new String("http://otile1.mqcdn.com/tiles/1.0.0/osm/"),
+	new String("http://oatile1.mqcdn.com/naip/"),
+	new String("http://oatile1.mqcdn.com/naip/") };
+
+	
 	private void fillContextMenu(IMenuManager mgr) {
-		
+		mgr.add(new Action("Change Server") {
+			public void run() {
+				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
+				if (i.getFirstElement() instanceof MapLayer) {
+					MapLayer mapLayer = (MapLayer) i.getFirstElement();
+					if(TILESERVERS.length == counter){
+						counter=0;
+					}
+					mapLayer.setTileServer(TILESERVERS[counter++]);
+					
+				}
+			}
+		});
 		
 		mgr.add(new Action("Linecolor") {
 			public void run() {

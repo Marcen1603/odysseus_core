@@ -84,10 +84,11 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 			return ((SDFSchema) element).toString();
 		} else if (element instanceof SDFAttribute) {
 			return ((SDFAttribute) element).getAttributeName();
-		}
-		if (element instanceof ILayer) {
+		} else if (element instanceof ILayer) {
 			return ((ILayer) element).getName();
 		}
-		return null;
+		else {
+			return "Layers";	
+		}
 	}
 }

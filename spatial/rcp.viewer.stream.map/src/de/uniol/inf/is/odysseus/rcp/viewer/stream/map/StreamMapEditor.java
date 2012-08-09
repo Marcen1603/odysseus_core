@@ -137,8 +137,9 @@ public class StreamMapEditor implements IStreamEditorType {
 			label.setText("Operator provides no schema");
 		}
 		
-		//Create Map Background 
-		layerOrder.addFirst(new MapLayer(screenManager, 0));
+		//Create Map Background
+		MapLayer map = new MapLayer(screenManager, 0);
+		layerOrder.addFirst(map);
 		
 	}
 
