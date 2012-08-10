@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.MapLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
@@ -51,7 +50,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PointStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.PolygonStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
-import de.uniol.inf.is.odysseus.spatiotemporal.sourcedescription.sdf.schema.SDFSpatiotemporalDatatype;
 
 /**
  *  
@@ -199,44 +197,6 @@ public class StreamMapEditor implements IStreamEditorType {
 				
 				if (style != null) {
 					addVectorLayer( schema.getAttribute(i),i,style);
-				} else {
-					throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
-				}
-
-			}
-			else if (schema.getAttribute(i).getDatatype() instanceof SDFSpatiotemporalDatatype) {
-				SDFSpatiotemporalDatatype spatialDatatype = (SDFSpatiotemporalDatatype) schema.getAttribute(i).getDatatype();
-
-				Style style = null;
-				
-				if (spatialDatatype.isMovingPoint()) {
-					style = new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1,ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor());
-					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-//				} else if (spatialDatatype.isMLineString()) {
-//					style = new LineStyle(1, ColorManager.getInstance()
-//							.randomColor());
-//				} else if (spatialDatatype.isPolygon()) {
-//					style = new PolygonStyle(1, ColorManager.getInstance().randomColor(), null);
-//				} else if (spatialDatatype.isMultiPoint()) {
-//					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-//					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-//				} else if (spatialDatatype.isMultiLineString()) {
-//					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-//					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-//				} else if (spatialDatatype.isMultiPolygon()) {
-//					style = new CollectionStyle(1, ColorManager.getInstance().randomColor(), null);
-//					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-				} else if (spatialDatatype.isMovingObject()) {
-					style = new CollectionStyle();
-					style.addStyle(new PointStyle(PointStyle.SHAPE.CIRCLE, 5, 1, ColorManager.getInstance().randomColor(), ColorManager.getInstance().randomColor()));
-					style.addStyle(new LineStyle(1, ColorManager.getInstance().randomColor()));
-					style.addStyle(new PolygonStyle(1, ColorManager.getInstance().randomColor(), null));
-				}
-				
-				if (style != null) {
-					VectorLayer layer = new VectorLayer(transformation, schema.getAttribute(i), style);
-					spatialDataIndex.put(i, layer);
-					layerOrder.add(layer);
 				} else {
 					throw new RuntimeException("Style for Spatialtype is not available or not implemented: " + spatialDatatype.getQualName().toString());
 				}

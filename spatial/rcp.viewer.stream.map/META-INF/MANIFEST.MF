@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.vividsolutions.jts;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.spatiotemporal;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.spatiotemporal;bundle-version="1.0.0";resolution:=optional
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.map,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer,
