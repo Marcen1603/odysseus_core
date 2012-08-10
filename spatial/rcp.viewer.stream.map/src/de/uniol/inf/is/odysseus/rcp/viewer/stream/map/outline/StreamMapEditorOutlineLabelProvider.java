@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
  * @author Stephan Jansen
@@ -75,6 +76,9 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 				return ((VectorLayer) element).getStyle().getImage();
 			}
 		}
+		if (element instanceof Style) {
+				return ((Style) element).getImage();
+		}
 		return null;
 	}
 
@@ -86,8 +90,9 @@ public class StreamMapEditorOutlineLabelProvider implements ILabelProvider {
 			return ((SDFAttribute) element).getAttributeName();
 		} else if (element instanceof ILayer) {
 			return ((ILayer) element).getName();
-		}
-		else {
+		} else if (element instanceof Style) {
+			return element.getClass().getSimpleName();
+		} else {
 			return "Layers";	
 		}
 	}

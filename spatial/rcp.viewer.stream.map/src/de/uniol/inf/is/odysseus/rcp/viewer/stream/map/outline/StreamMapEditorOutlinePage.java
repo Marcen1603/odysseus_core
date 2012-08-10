@@ -41,8 +41,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+
 
 /**
  * 
@@ -232,15 +234,16 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Linecolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof VectorLayer) {
-					VectorLayer element = (VectorLayer) i.getFirstElement();
+				if (i.getFirstElement() instanceof CollectionStyle) return;
+				if (i.getFirstElement() instanceof Style) {
+					Style element = (Style) i.getFirstElement();
 					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-					RGB color = element.getStyle().getLineColor().getRGB();
+					RGB color = element.getLineColor().getRGB();
 					colorDialog.setRGB(color);
 					colorDialog.setText("ColorDialog");
 					RGB selectedColor = colorDialog.open();
 					if (!selectedColor.equals(color))
-						element.getStyle().setLineColor(ColorManager.getInstance().getColor(selectedColor));
+						element.setLineColor(ColorManager.getInstance().getColor(selectedColor));
 					getTreeViewer().refresh(element, true);
 				}
 				
@@ -250,15 +253,15 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 		mgr.add(new Action("Fillcolor") {
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();
-				if (i.getFirstElement() instanceof VectorLayer) {
-					VectorLayer element = (VectorLayer) i.getFirstElement();
+				if (i.getFirstElement() instanceof Style) {
+					Style element = (Style) i.getFirstElement();
 					ColorDialog colorDialog = new ColorDialog(Display.getCurrent().getActiveShell());
-					RGB color = element.getStyle().getFillColor().getRGB();
+					RGB color = element.getFillColor().getRGB();
 					colorDialog.setRGB(color);
 					colorDialog.setText("ColorDialog");
 					RGB selectedColor = colorDialog.open();
 					if (!selectedColor.equals(color))
-						element.getStyle().setFillColor(ColorManager.getInstance().getColor(selectedColor));
+						element.setFillColor(ColorManager.getInstance().getColor(selectedColor));
 					getTreeViewer().refresh(element, true);
 				}
 

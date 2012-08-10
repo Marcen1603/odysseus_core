@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
 import org.eclipse.swt.SWT;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -26,6 +29,11 @@ import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+
 /**
  * @author Stephan Jansen
  * @author Kai Pancratz
@@ -33,12 +41,59 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
  */
 public class CollectionStyle extends Style{
 
-	public CollectionStyle(int lineWidth, Color lineColor, Color fillColor) {
-		super(); 
-		this.setLineWidth(lineWidth);
-		this.setLineColor(lineColor);
-		this.setFillColor(fillColor);
+	private LinkedList<Style> pointStyle = new LinkedList<Style>();
+	private LinkedList<Style> lineStyle = new LinkedList<Style>();
+	private LinkedList<Style> polygonStyle = new LinkedList<Style>();
+	
+	@Override
+	public void setActiveStyle(Geometry g){
+		if (g instanceof Point){
+			setActiveStyle((Point) g);
+		}
+		else if (g instanceof LineString){
+				setActiveStyle((LineString) g);
+		}
+		else if (g instanceof Polygon){
+			setActiveStyle((Polygon) g);
+		}	
 	}
+	
+	public void setActiveStyle(Point g){
+		substyle = pointStyle;
+	}
+
+	public void setActiveStyle(LineString g){
+		substyle = lineStyle;
+	}
+
+	public void setActiveStyle(Polygon g){
+		substyle = polygonStyle;
+	}
+	
+	public CollectionStyle() {
+		super(); 
+	}
+	
+	@Override
+	public void addStyle(Style style) {
+		if (style instanceof PointStyle)
+			pointStyle.add(style);
+		else if (style instanceof LineStyle)
+			lineStyle.add(style);
+		else if (style instanceof PolygonStyle)
+			polygonStyle.add(style);
+	}
+	
+	@Override
+	public void removeStyle(Style style) {
+		if (style instanceof PointStyle)
+			pointStyle.remove(style);
+		else if (style instanceof LineStyle)
+			lineStyle.remove(style);
+		else if (style instanceof PolygonStyle)
+			polygonStyle.remove(style);
+	}
+	
 	
 	@Override
 	public Image getImage() {
@@ -64,8 +119,7 @@ public class CollectionStyle extends Style{
 	
 	@Override
 	protected void draw(GC gc, int[] list, Color fcolor, Color bcolor) {
-		super.draw(gc, list);
-		
+			super.draw(gc, list);
 	}
 
 	public Image getImage(int[][] list){
@@ -99,4 +153,34 @@ public class CollectionStyle extends Style{
 		return icon;
 	}
 	
+	@Override
+	public boolean hasSubstyles() {
+		if (!pointStyle.isEmpty())
+			return true;
+		if (!lineStyle.isEmpty())
+			return true;
+		if (!polygonStyle.isEmpty())
+			return true;
+		return false;
+	}
+	
+	@Override
+	public boolean contains(Style style) {
+		if (style instanceof PointStyle)
+			return pointStyle.contains(style);
+		else if (style instanceof LineStyle)
+			return lineStyle.contains(style);
+		else if (style instanceof PolygonStyle)
+			return polygonStyle.contains(style);
+		return super.contains(style);
+	}
+	
+	public Style[] getSubstyles() {
+		if (!hasSubstyles())
+			return null;
+		LinkedList<Style> tmp = (LinkedList<Style>) pointStyle.clone();
+		tmp.addAll(lineStyle);
+		tmp.addAll(polygonStyle);
+		return tmp.toArray(new Style[tmp.size()]);
+	}  
 }

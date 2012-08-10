@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 
 /**
@@ -34,6 +36,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
  * 
  */
 public abstract class Style{
+	
 	private boolean changed = true;
 	private int lineWidth = 1;
 	private Color lineColor = null;
@@ -110,6 +113,7 @@ public abstract class Style{
 			return false;
 		}
 	}
+	public void setActiveStyle(Geometry g){}
 	
 	abstract protected void draw(GC gc, int[] list, Color fcolor, Color bcolor);
 	
@@ -153,5 +157,23 @@ public abstract class Style{
 		
 		return icon;
 	}
-    
+
+	public boolean hasSubstyles() {
+		if (this.substyle == null) return false;
+		// TODO Auto-generated method stub
+		return !this.substyle.isEmpty();
+	}
+	
+	public boolean contains(Style style){
+		if (hasSubstyles()){
+			return this.substyle.contains(style);
+		}
+		return false;
+	}
+
+	public Style[] getSubstyles() {
+		if (!hasSubstyles())
+			return null;
+		return this.substyle.toArray(new Style[this.substyle.size()]);
+	}    
 }
