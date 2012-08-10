@@ -61,16 +61,16 @@ import de.uniol.inf.is.odysseus.spatiotemporal.sourcedescription.sdf.schema.SDFS
  */
 public class StreamMapEditor implements IStreamEditorType {
 
-	private static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(StreamMapEditor.class);
 
-	private SDFSchema schema;
+	protected SDFSchema schema;
 
-	private LinkedList<ILayer> layerOrder = new LinkedList<ILayer>();
+	protected LinkedList<ILayer> layerOrder = new LinkedList<ILayer>();
 
-	private ScreenTransformation transformation;
-	private ScreenManager screenManager;
+	protected ScreenTransformation transformation;
+	protected ScreenManager screenManager;
 
-	private int maxTuplesCount = Integer.MAX_VALUE;
+	protected int maxTuplesCount = Integer.MAX_VALUE;
 
 	protected Map<Integer, VectorLayer> spatialDataIndex = new TreeMap<Integer, VectorLayer>();
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
