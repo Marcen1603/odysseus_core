@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer;
 
 import org.eclipse.swt.graphics.GC;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
+
 /**
  * @author Stephan Jansen
  * @author Kai Pancratz
@@ -24,6 +26,7 @@ import org.eclipse.swt.graphics.GC;
  */
 public interface ILayer {
 
+	public Style getStyle();
 	public void draw(GC gc);	
 	public String getName();
 //	public BoundingBox getBoundingBox();

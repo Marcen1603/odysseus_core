@@ -16,13 +16,17 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.outline;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.Style;
 
 /**
  * @author Stephan Jansen
@@ -62,7 +66,12 @@ public class StreamMapEditorOutlineTreeContentProvider implements
 		} else if (parentElement instanceof Collection<?>) {
 			return ((Collection<?>) parentElement).toArray();
 		} else if (parentElement instanceof VectorLayer) {
-			return null;
+			Style style = ((VectorLayer)parentElement).getStyle();
+			if (style instanceof CollectionStyle)
+				return style.getSubstyles();
+			return new Style[]{((VectorLayer)parentElement).getStyle()};
+		} else if (parentElement instanceof Style) {
+			return ((Style)parentElement).getSubstyles();
 		}
 		// TODO Auto-generated method stub
 		return null;
@@ -78,6 +87,18 @@ public class StreamMapEditorOutlineTreeContentProvider implements
 			return null;
 		} else if (element instanceof VectorLayer) {
 			return this.input[1];
+		} else if (element instanceof Style) {
+			List<ILayer> layer = (List<ILayer>) this.input[1];
+			for (ILayer iLayer : layer) {
+				Style style = iLayer.getStyle();
+				if (style != null){
+					if (element == style)
+						return iLayer;
+					if (style.contains(style))
+						return style;
+				}
+			}
+			return  this.input[1];
 		}
 
 		// TODO Auto-generated method stub
@@ -90,7 +111,12 @@ public class StreamMapEditorOutlineTreeContentProvider implements
 			return true;
 		} else if (element instanceof Collection<?>) {
 			return true;
+		} else if (element instanceof VectorLayer) {
+			return true;
+		} else if (element instanceof Style) {
+			return ((Style)element).hasSubstyles();
 		}
+
 		return false;
 	}
 

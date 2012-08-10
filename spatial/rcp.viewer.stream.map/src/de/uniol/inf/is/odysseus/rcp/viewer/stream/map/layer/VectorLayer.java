@@ -92,6 +92,7 @@ public class VectorLayer extends AbstractLayer{
 
 	private void drawPoint(Point point, GC gc) {
 		int[] uv = transformation.transformCoord(point.getCoordinate(),point.getSRID());
+		this.style.setActiveStyle(point);
 		this.style.draw(gc, uv);
 	}
 
@@ -104,7 +105,8 @@ public class VectorLayer extends AbstractLayer{
 			path[i++] = uv[0];
 			path[i++] = uv[1];
 		}
-			this.style.draw(gc, path);	
+		this.style.setActiveStyle(lineString);
+		this.style.draw(gc, path);	
 	}
 
 	private int[] drawLinearRing(LineString lineString, GC gc) {
@@ -125,6 +127,7 @@ public class VectorLayer extends AbstractLayer{
 		for (int n = 0; n < polygon.getNumInteriorRing(); n++) {
 			list[n + 1] = drawLinearRing(polygon.getInteriorRingN(n), gc);
 		}
+		this.style.setActiveStyle(polygon);
 		this.style.draw(gc, list);
 //		if(this.style instanceof PolygonStyle){
 //			((PolygonStyle) this.style).draw(gc, list);
