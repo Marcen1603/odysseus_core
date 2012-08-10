@@ -51,7 +51,7 @@ public class ScreenManager {
 	}
 
 	protected Canvas createCanvas(Composite parent) {
-		Canvas canvasViewer = new Canvas(parent, SWT.NONE);
+		Canvas canvasViewer = new Canvas(parent, SWT.DOUBLE_BUFFERED);
 		canvasViewer.setBackground(WHITE);
 		canvasViewer.addPaintListener(new GeometryPaintListener(editor));
 
