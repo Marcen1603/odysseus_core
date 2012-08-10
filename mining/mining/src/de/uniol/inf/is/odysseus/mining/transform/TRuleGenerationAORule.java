@@ -52,14 +52,14 @@ public class TRuleGenerationAORule extends AbstractTransformationRule<RuleGenera
 
 	@Override
 	public void execute(RuleGenerationAO operator, TransformationConfiguration config) {		
-		RuleGenerationPO<ITimeInterval> po = new RuleGenerationPO<ITimeInterval>(operator.getItemsetPosition());
+		RuleGenerationPO<ITimeInterval> po = new RuleGenerationPO<ITimeInterval>(operator.getItemsetPosition(), operator.getConfidence());
 		po.setOutputSchema(operator.getOutputSchema(0), 0);		
 		replace(operator, po, config);
 		retract(operator);
 	}
 
 	@Override
-	public boolean isExecutable(RuleGenerationAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(RuleGenerationAO operator, TransformationConfiguration config) {		
 		return operator.isAllPhysicalInputSet();
 	}
 

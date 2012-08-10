@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
 
@@ -36,6 +37,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;
 	private int itemsetposition;
+	private double confidence;
 	
 	public RuleGenerationAO() {
 		
@@ -86,6 +88,21 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	 */
 	public int getItemsetPosition() {
 		return itemsetposition;
+	}
+
+	/**
+	 * @return the confidence
+	 */
+	public double getConfidence() {
+		return confidence;
+	}
+
+	/**
+	 * @param confidence the confidence to set
+	 */
+	@Parameter(type=DoubleParameter.class, name="confidence")
+	public void setConfidence(double confidence) {
+		this.confidence = confidence;
 	}
 	
 

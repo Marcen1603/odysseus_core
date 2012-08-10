@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,51 +25,125 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer;
 
 /**
  * @author Dennis Geesen
- *
+ * 
  */
-public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContainer<M>{
+public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContainer<M> {
 
-	
 	private static final long serialVersionUID = -2474068801651074450L;
-	
+
 	private ArrayList<Tuple<M>> pattern = new ArrayList<Tuple<M>>();
 	private ArrayList<Integer> supports = new ArrayList<Integer>();
 	private int support = Integer.MAX_VALUE;
 	private M metadata;
-	
+
 	public Pattern() {
-	
-	}
-	
-	public Pattern(Pattern<M> pattern2) {
-		this.pattern.addAll(pattern2.pattern);
-		this.support = pattern2.support;
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public void add(Tuple<M> t, int supportCount){
-		this.pattern.add(t);
-		this.supports.add(supportCount);
-		this.metadata = (M) t.getMetadata().clone();
-		if(supportCount <= this.support){
-			this.support = supportCount;
+	public Pattern(Pattern<M> old) {
+		for(int i=0;i<old.pattern.size();i++){
+			this.pattern.add(old.pattern.get(i));
+			this.supports.add(old.supports.get(i));
+		}
+		this.support = old.support;
+		if(old.metadata!=null){
+			this.metadata = (M) old.metadata.clone();
 		}
 	}
 	
-	public boolean contains(Tuple<M> t){
+
+	/**
+	 * @param t
+	 * @param support2
+	 */
+	public Pattern(Tuple<M> t, int support) {
+		this.add(t, support);
+	}
+
+	public void add(Tuple<M> t, int supportCount) {
+		this.pattern.add(t);
+		this.supports.add(supportCount);
+		@SuppressWarnings("unchecked")
+		M clonedMD = (M) t.getMetadata().clone();
+		this.metadata = clonedMD;
+		if (supportCount <= this.support) {
+			this.support = supportCount;
+		}
+	}
+
+	public boolean contains(Tuple<M> t) {
 		return this.pattern.contains(t);
 	}
-	
-	public void reverse(){
+
+	public void reverse() {
 		Collections.reverse(pattern);
 	}
-	
-	public List<Tuple<M>> getPattern(){
-		return this.pattern;
+
+	public Pattern<M> substract(Pattern<M> p) {
+		Pattern<M> newOne = new Pattern<M>();
+		for (Tuple<M> item : this.pattern) {
+			if (!p.contains(item)) {
+				newOne.add(item, 1);
+			}
+		}
+		return newOne;
+	}
+
+	public Pattern<M> combine(Pattern<M> p) {
+		for (Tuple<M> t : p.getPattern()) {
+			this.add(t, p.getSupport(t));
+		}
+		return this;
 	}
 	
-	public int  getSupport(){
+	public boolean overlaps(Pattern<M> p) {
+		for (Tuple<M> t : p.getPattern()) {
+			if (this.contains(t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean overlapsExceptForOne(Pattern<M> p) {
+		int count = 0;
+		if(p.length()!=this.length()){
+			return false;
+		}
+		for (Tuple<M> t : p.getPattern()) {
+			if (this.contains(t)) {
+				count++;
+			}
+		}
+		if(count==(this.length()-1)){
+			return true;
+		}
+		return false;
+	}
+	
+
+	
+
+	public List<Pattern<M>> splitIntoSinglePatterns(){
+		List<Pattern<M>> liste = new ArrayList<Pattern<M>>();
+		for(int i=0;i<this.pattern.size();i++){
+			Pattern<M> p = new Pattern<M>(this.pattern.get(i), this.supports.get(i));
+			liste.add(p);
+		}
+		return liste;
+	}
+	
+	public List<Tuple<M>> getPattern() {
+		return this.pattern;
+	}
+
+	public int getSupport() {
 		return this.support;
+	}
+	
+	public int getSupport(Tuple<M> t){
+		return this.supports.get(this.pattern.indexOf(t));
 	}
 
 	/**
@@ -78,28 +152,32 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 	public int length() {
 		return this.pattern.size();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public Pattern<M> clone() {
 		return new Pattern<M>(this);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {	
-		return this.support+": "+this.pattern;
+	public String toString() {
+		return this.support + ": " + this.pattern;
 	}
 
 	/**
 	 * 
 	 */
 	public void removeFirst() {
-		this.pattern.remove(0);		
+		this.pattern.remove(0);
 	}
 
 	/**
@@ -116,12 +194,20 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 		return this.metadata;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer#setMetadata(de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.metadata.IMetaAttributeContainer#setMetadata
+	 * (de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute)
 	 */
 	@Override
 	public void setMetadata(M metadata) {
-		this.metadata =metadata;
-		
+		this.metadata = metadata;
+
 	}
+
+	
+	
+
 }
