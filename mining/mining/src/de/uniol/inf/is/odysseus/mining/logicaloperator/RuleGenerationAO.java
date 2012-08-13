@@ -57,7 +57,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 	}
 	
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ITEMSET")
-	public void setOutputSchemaWithList(SDFAttribute itemset) {
+	public void setItemsetAttribute(SDFAttribute itemset) {
 		this.itemsetposition = this.getInputSchema(0).indexOf(itemset);
 	}
 	

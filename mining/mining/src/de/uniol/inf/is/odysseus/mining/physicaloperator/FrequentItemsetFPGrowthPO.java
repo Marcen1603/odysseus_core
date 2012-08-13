@@ -127,8 +127,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// endzeit
 			Transaction<M> transaction = new Transaction<M>();
 			while (qualifies.hasNext()) {
-				Tuple<M> next = qualifies.next();
-				System.out.println(next);
+				Tuple<M> next = qualifies.next();				
 				// wir nehmen den maximalen startzeitstempel (alles davor wurde
 				// schon in der vorherigen iteration berechnet!)
 				if (start.before(next.getMetadata().getStart())) {

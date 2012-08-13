@@ -24,14 +24,71 @@ import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
  */
 public class AssociationRule<M extends IMetaAttribute> {
 
+	private Pattern<M> premise;
+	private Pattern<M> consequence;	
+	private double confidence;
+
 	/**
 	 * @param premise
 	 * @param consequence
 	 * @param support
 	 * @param confidence
 	 */
-	public AssociationRule(Pattern<M> premise, Pattern<M> consequence, int support, double confidence) {
-		// TODO Auto-generated constructor stub
+	public AssociationRule(Pattern<M> premise, Pattern<M> consequence, double confidence) {
+		this.setPremise(premise);
+		this.setConsequence(consequence);		
+		this.setConfidence(confidence);
 	}
+
+	/**
+	 * @return the premise
+	 */
+	public Pattern<M> getPremise() {
+		return premise;
+	}
+
+	/**
+	 * @param premise the premise to set
+	 */
+	public void setPremise(Pattern<M> premise) {
+		this.premise = premise;
+	}
+
+	/**
+	 * @return the consequence
+	 */
+	public Pattern<M> getConsequence() {
+		return consequence;
+	}
+
+	/**
+	 * @param consequence the consequence to set
+	 */
+	public void setConsequence(Pattern<M> consequence) {
+		this.consequence = consequence;
+	}	
+
+	/**
+	 * @return the confidence
+	 */
+	public double getConfidence() {
+		return confidence;
+	}
+
+	/**
+	 * @param confidence the confidence to set
+	 */
+	public void setConfidence(double confidence) {
+		this.confidence = confidence;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.premise+" => "+this.consequence+" ("+this.confidence+")";		
+	}
+	
 
 }
