@@ -75,7 +75,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		return retval.iterator();
 	}
 
-	public Iterator<T> queryElementsStartingBeforeFIFO(PointInTime validity) {
+	public Iterator<T> queryElementsStartingBeforeReverse(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> iter = getElements().descendingIterator();
@@ -269,7 +269,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	public String getSweepAreaAsString() {
 		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
 		for (T element : getElements()) {
-			buf.append(element).append(" ");
+			buf.append(element).append(" ").append("}\n");			
 		}
 		return buf.toString();
 	}
