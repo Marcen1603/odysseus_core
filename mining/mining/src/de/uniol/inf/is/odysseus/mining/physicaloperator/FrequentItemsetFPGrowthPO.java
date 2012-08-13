@@ -22,6 +22,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -291,6 +292,21 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		synchronized (sweepArea) {
 			processData(timestamp);
 		}
+	}
+	
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof FrequentItemsetFPGrowthPO)) {
+			return false;
+		}
+		if (this.hasSameSources(ipo)) {
+			FrequentItemsetFPGrowthPO<?> po = (FrequentItemsetFPGrowthPO<?>) ipo;
+			if (this.maxTransactions == po.maxTransactions && this.minsupport == po.minsupport) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -25,9 +25,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
+import de.uniol.inf.is.odysseus.mining.logicaloperator.RuleGenerationAO;
 
 /**
  * @author Dennis Geesen
@@ -74,25 +76,23 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	protected void process_next(Tuple<M> element, int port) {
 		System.out.println("--------------------------------------------------------------");
 		System.out.println("New element: " + element);
-//		System.out.println("SA:");
-//		System.out.println(this.sweepArea.getSweepAreaAsString());
-//		System.out.println("--------------------------------------------------------------");
-		
-		
+		// System.out.println("SA:");
+		// System.out.println(this.sweepArea.getSweepAreaAsString());
+		// System.out.println("--------------------------------------------------------------");
+
 		processData(element.getMetadata().getStart());
-		
 
 		// if we have already this set, we use the newer one
 		Iterator<Tuple<M>> qualified = this.sweepArea.queryOverlaps(element.getMetadata());
-		while(qualified.hasNext()){
+		while (qualified.hasNext()) {
 			Tuple<M> nextOne = qualified.next();
 			Pattern<M> p = nextOne.getAttribute(itemposition);
-			if(p.equals(element.getAttribute(itemposition))){
+			if (p.equals(element.getAttribute(itemposition))) {
 				this.sweepArea.remove(nextOne);
 			}
 		}
-		
-		this.sweepArea.insert(element);		
+
+		this.sweepArea.insert(element);
 	}
 
 	/**
@@ -100,16 +100,16 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	 */
 	private void processData(PointInTime start) {
 		counter = 0;
-		if (this.sweepArea.getMaxTs()!=null && start.after(this.sweepArea.getMaxTs())) {
-			
+		if (this.sweepArea.getMaxTs() != null && start.after(this.sweepArea.getMaxTs())) {
+
 			Iterator<Tuple<M>> qualified = this.sweepArea.queryElementsStartingBefore(start);
 
 			FPTree<M> tree = new FPTree<M>();
 			synchronized (sweepArea) {
 				while (qualified.hasNext()) {
-					Pattern<M> pattern = qualified.next().getAttribute(itemposition);					
-					tree.insertTree(pattern.clone());					
-				}				
+					Pattern<M> pattern = qualified.next().getAttribute(itemposition);
+					tree.insertTree(pattern.clone());
+				}
 				qualified = this.sweepArea.extractElementsStartingBefore(start);
 				while (qualified.hasNext()) {
 					Pattern<M> o = qualified.next().getAttribute(itemposition);
@@ -132,7 +132,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		if (consequences.size() == 0) {
 			return;
 		}
-		
+
 		if (frequentitemset.length() > consequences.get(0).length()) {
 
 			Iterator<Pattern<M>> iterHigherCons = consequences.iterator();
@@ -142,18 +142,20 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 				premise.setSupport(tree.getSupport(premise));
 				consequence.setSupport(tree.getSupport(consequence));
 				frequentitemset.setSupport(tree.getSupport(frequentitemset));
-				double conf = frequentitemset.getSupport() / (double)premise.getSupport();
-//				System.out.println("FOUND: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
+				double conf = frequentitemset.getSupport() / (double) premise.getSupport();
+				// System.out.println("FOUND: \t" + premise + " => " +
+				// consequence + "(conf=" + conf + ")");
 				if (conf >= minconfidence) {
-					//System.out.println("OUT: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
+					// System.out.println("OUT: \t" + premise + " => " +
+					// consequence + "(conf=" + conf + ")");
 					Tuple<M> newtuple = new Tuple<M>(2, false);
 					newtuple.setMetadata(frequentitemset.getMetadata());
 					newtuple.getMetadata().setEnd(start);
 					newtuple.setAttribute(0, counter);
 					AssociationRule<M> rule = new AssociationRule<M>(premise, consequence, conf);
 					newtuple.setAttribute(1, rule);
-					counter++;		
-					System.out.println("new tuple"+newtuple);
+					counter++;
+					System.out.println("new tuple" + newtuple);
 					transfer(newtuple);
 				} else {
 					iterHigherCons.remove();
@@ -209,12 +211,24 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		return new RuleGenerationPO<M>(this);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+	 * isSemanticallyEqual
+	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
-	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {	
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof RuleGenerationPO)) {
+			return false;
+		}
+		if (this.hasSameSources(ipo)) {
+			RuleGenerationPO<?> po = (RuleGenerationPO<?>) ipo;
+			if (this.itemposition == po.itemposition && this.minconfidence == po.minconfidence) {
+				return true;
+			}
+		}
 		return false;
 	}
 }
