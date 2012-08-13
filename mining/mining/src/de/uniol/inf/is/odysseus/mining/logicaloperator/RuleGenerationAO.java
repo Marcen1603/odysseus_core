@@ -45,6 +45,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	public RuleGenerationAO(RuleGenerationAO old) {
 		this.itemsetposition = old.itemsetposition;
+		this.confidence = old.confidence;
 	}
 
 	/* (non-Javadoc)

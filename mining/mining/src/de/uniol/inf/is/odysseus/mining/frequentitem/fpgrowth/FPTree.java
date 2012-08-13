@@ -93,6 +93,29 @@ public class FPTree<M extends IMetaAttribute> {
 		}
 	}
 	
+	
+	public int getSupport(Pattern<M> pattern){
+		int support = Integer.MAX_VALUE;
+		FPTreeNode<M> current = getRoot();				
+		for(Tuple<M> t : pattern.getPattern()){
+			boolean found = false;
+			for(FPTreeNode<M> child : current.getChilds()){
+				if(child.getItem().equals(t)){
+					current = child;
+					if(support>current.getCount()){
+						support = current.getCount();
+					}
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				System.err.println("Something went wrong during support calculation with fp tree!");
+			}
+		}
+		return support;
+	}
+	
 	public List<FPTreeNode<M>> getSinglePrefixPath(){
 		List<FPTreeNode<M>> spp = new ArrayList<FPTreeNode<M>>();
 		FPTreeNode<M> branchNode = root;
@@ -159,10 +182,15 @@ public class FPTree<M extends IMetaAttribute> {
 	}
 	
 	public void insertTree(Pattern<M> p){
+		try{
 		insertIntoTree(p.getPattern(), this.root, p.getSupport());
+		}catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Hallo: "+p);
+		}
 	}
 	
-	public void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root){
+	public void insertTree(List<Tuple<M>> transactionFList, FPTreeNode<M> root){		
 		insertIntoTree(transactionFList, root, 1);
 	}
 	

@@ -83,7 +83,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
 		println("#################################################################### NEW ELEMENT ####################################################################");
-		println(object.toString());
+		println("NEW ELEMENT: "+object.toString());
 		if (counter % 100 == 0) {
 			long now = System.currentTimeMillis();
 			long needed = (now - lastTime);
@@ -107,9 +107,8 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			// anschließend kann das aktuelle Element rein
 			// das aktuelle element wird nicht berücksichtigt, weil ggf. andere
 			// elemente denselben startzeitstempel haben können
-			// und die sind noch unbekannt.
-
-			sweepArea.insert(object);
+			// und die sind noch unbekannt.			
+			sweepArea.insert(object);			
 		}
 		counter++;
 	}
@@ -118,7 +117,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		if (currentTime.after(lastCut)) {
 			// hole alle elemente, die definitiv bearbeitet werden können, weil
 			// sie echt vor der aktuellen zeit sind
-			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBeforeFIFO(currentTime);
+			Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);
 			// wir betrachten den zeitraum zwischen der letzten berechnung und
 			// der aktuellen zeit
 			PointInTime start = PointInTime.getZeroTime();
@@ -129,6 +128,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 			Transaction<M> transaction = new Transaction<M>();
 			while (qualifies.hasNext()) {
 				Tuple<M> next = qualifies.next();
+				System.out.println(next);
 				// wir nehmen den maximalen startzeitstempel (alles davor wurde
 				// schon in der vorherigen iteration berechnet!)
 				if (start.before(next.getMetadata().getStart())) {
@@ -200,15 +200,14 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					println("-----------------------------------------------------------------");
 					println("ERGEBNIS:");
 					int i = 0;
-					for (Pattern<M> p : results) {
-						println(p.toString());
+					for (Pattern<M> p : results) {						
 						Tuple<M> newtuple = new Tuple<M>(2, false);
 						newtuple.setMetadata(p.getMetadata());
 						newtuple.getMetadata().setStartAndEnd(totalMin, totalMax);
 						newtuple.setAttribute(0, i);
 						newtuple.setAttribute(1, p);
 						i++;
-						// System.out.println("new Tuple: "+newtuple);
+						println("new Tuple: "+newtuple);
 						transfer(newtuple);
 					}
 					println("-----------------------------------------------------------------");
@@ -276,7 +275,7 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	}
 
 	private void println(String s) {
-		// System.out.println(s);
+		//System.out.println(s);
 	}
 
 	private void trace(String s) {

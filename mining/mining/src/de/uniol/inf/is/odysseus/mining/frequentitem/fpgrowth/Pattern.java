@@ -120,10 +120,7 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 			return true;
 		}
 		return false;
-	}
-	
-
-	
+	}	
 
 	public List<Pattern<M>> splitIntoSinglePatterns(){
 		List<Pattern<M>> liste = new ArrayList<Pattern<M>>();
@@ -206,8 +203,35 @@ public class Pattern<M extends IMetaAttribute> implements IMetaAttributeContaine
 		this.metadata = metadata;
 
 	}
+	
+	public void setSupport(int sup) {
+		this.support = sup;
+		
+	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {		
+		return this.pattern.hashCode();
+	}
 	
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Pattern){
+			Pattern<?> other = (Pattern<?>) obj;
+			if(this.pattern.containsAll(other.getPattern())){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}		
+	}
 
 }

@@ -21,8 +21,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FPTree;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Pattern;
 
 /**
@@ -33,6 +36,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	private int itemposition = -1;
 	private double minconfidence = 0.9d;
+	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 
 	public RuleGenerationPO(int itemposition, double confidence) {
 		this.itemposition = itemposition;
@@ -66,62 +70,114 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	 */
 	@Override
 	protected void process_next(Tuple<M> element, int port) {
-		Pattern<M> o = element.getAttribute(itemposition);
 		System.out.println("--------------------------------------------------------------");
-		System.out.println(o);
+//		System.out.println("New element: " + element);
+//		System.out.println("SA:");
+//		System.out.println(this.sweepArea.getSweepAreaAsString());
+//		System.out.println("--------------------------------------------------------------");
+		if(this.sweepArea.getMaxTs()!=null){
+			processData(element.getMetadata().getStart());
+		}
+
+		// if we have already this set, we use the newer one
+		Iterator<Tuple<M>> qualified = this.sweepArea.queryOverlaps(element.getMetadata());
+		while(qualified.hasNext()){
+			Tuple<M> nextOne = qualified.next();
+			Pattern<M> p = nextOne.getAttribute(itemposition);
+			if(p.equals(element.getAttribute(itemposition))){
+				this.sweepArea.remove(nextOne);
+			}
+		}
+		
+		this.sweepArea.insert(element);
+		
+		// Pattern<M> o = element.getAttribute(itemposition);
+		// generateRuleForItemSet(o, new FPTree<M>());
+
+	}
+
+	/**
+	 * @param start
+	 */
+	private void processData(PointInTime start) {
+
+		if (start.after(this.sweepArea.getMaxTs())) {
+
+			Iterator<Tuple<M>> qualified = this.sweepArea.queryElementsStartingBefore(start);
+
+			FPTree<M> tree = new FPTree<M>();
+			synchronized (sweepArea) {
+				while (qualified.hasNext()) {
+					Pattern<M> pattern = qualified.next().getAttribute(itemposition);
+					System.out.println("using: " + pattern);
+					tree.insertTree(pattern.clone());
+					System.out.println(tree);
+				}				
+				qualified = this.sweepArea.extractElementsStartingBefore(start);
+				while (qualified.hasNext()) {
+					Pattern<M> o = qualified.next().getAttribute(itemposition);
+					generateRuleForItemSet(o.clone(), tree);
+				}
+			}
+		}
+
+	}
+
+	private void generateRuleForItemSet(Pattern<M> o, FPTree<M> tree) {
 		if (o.length() >= 2) {
 			List<Pattern<M>> oneConsequences = o.splitIntoSinglePatterns();
-			generateRules(o, oneConsequences);
+			generateRules(o, oneConsequences, tree);
 		}
 	}
 
-	private void generateRules(Pattern<M> frequentitemset, List<Pattern<M>> consequences) {
-		
-		if(consequences.size() == 0){
+	private void generateRules(Pattern<M> frequentitemset, List<Pattern<M>> consequences, FPTree<M> tree) {
+
+		if (consequences.size() == 0) {
 			return;
 		}
-		
-		if(frequentitemset.length()> consequences.get(0).length()){
-			
+
+		if (frequentitemset.length() > consequences.get(0).length()) {
+
 			Iterator<Pattern<M>> iterHigherCons = consequences.iterator();
-			while(iterHigherCons.hasNext()){
+			while (iterHigherCons.hasNext()) {
 				Pattern<M> consequence = iterHigherCons.next();
 				Pattern<M> premise = frequentitemset.substract(consequence);
-				double conf = frequentitemset.getSupport() / premise.getSupport();
-				if(conf>=minconfidence){
-					System.out.println("FOUND: "+premise+" => "+consequence);
-				}else{
+				premise.setSupport(tree.getSupport(premise));
+				consequence.setSupport(tree.getSupport(consequence));
+				frequentitemset.setSupport(tree.getSupport(frequentitemset));
+				double conf = frequentitemset.getSupport() / (double)premise.getSupport();
+				System.out.println("FOUND: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
+				if (conf >= minconfidence) {
+					System.out.println("OUT: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
+				} else {
 					iterHigherCons.remove();
-				}			
+				}
 			}
 			List<Pattern<M>> higherConsequences = generateSuperset(consequences);
-			generateRules(frequentitemset, higherConsequences);			
-		}					
-	}
-	
-	
-	
-	private List<Pattern<M>> generateSuperset(List<Pattern<M>> itemsets) {
-		if(itemsets.isEmpty()){
-			return new ArrayList<Pattern<M>>();
+			generateRules(frequentitemset, higherConsequences, tree);
 		}
-		List<Pattern<M>> result = new ArrayList<Pattern<M>>();		
-		for (int i = 0; i < itemsets.size() - 1; i++) {
-			for (int j = i + 1; j < itemsets.size(); j++) {				
-				Pattern<M> combined = new Pattern<M>(itemsets.get(i));
-				Pattern<M> other = itemsets.get(j).clone();
-				if(!combined.overlapsExceptForOne(other)){
-					break;
-				}else{
-					combined.combine(other);
-					result.add(combined);
-				}				
-			}
-		}
-		return result;		
 	}
 
-	
+	private List<Pattern<M>> generateSuperset(List<Pattern<M>> itemsets) {
+		if (itemsets.isEmpty()) {
+			return new ArrayList<Pattern<M>>();
+		}
+		List<Pattern<M>> result = new ArrayList<Pattern<M>>();
+		for (int i = 0; i < itemsets.size() - 1; i++) {
+			for (int j = i + 1; j < itemsets.size(); j++) {
+				Pattern<M> combined = new Pattern<M>(itemsets.get(i));
+				Pattern<M> other = itemsets.get(j).clone();
+				if (!combined.overlapsExceptForOne(other)) {
+					break;
+				} else {
+					combined.combine(other);
+					result.add(combined);
+				}
+			}
+		}
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -132,8 +188,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
-		// TODO Auto-generated method stub
-
+		processData(timestamp);
 	}
 
 	/*
@@ -148,4 +203,12 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		return new RuleGenerationPO<M>(this);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 */
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {	
+		return false;
+	}
 }
