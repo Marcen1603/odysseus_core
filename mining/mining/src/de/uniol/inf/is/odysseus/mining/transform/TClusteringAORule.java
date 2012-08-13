@@ -33,7 +33,7 @@ package de.uniol.inf.is.odysseus.mining.transform;
 import de.uniol.inf.is.odysseus.core.server.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.ClusteringAO;
-import de.uniol.inf.is.odysseus.mining.physicaloperator.weka.WekaClusteringPO;
+import de.uniol.inf.is.odysseus.mining.physicaloperator.ClusteringPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -52,8 +52,7 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO>{
 
 	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) {
-		//ClusteringPO<ITimeInterval> po = new ClusteringPO<ITimeInterval>(operator.getClusterer(), operator.getAttributePositions());
-		WekaClusteringPO<ITimeInterval> po = new WekaClusteringPO<ITimeInterval>(operator.getClusterer(), operator.getAttributePositions(), operator.getOptions());
+		ClusteringPO<ITimeInterval> po = new ClusteringPO<ITimeInterval>(operator.getClusterer(), operator.getAttributePositions());		
 		po.setOutputSchema(operator.getOutputSchema());
 		replace(operator, po, config);
 		retract(operator);
