@@ -15,18 +15,24 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-public class DuplicateEleminationAO extends UnaryLogicalOp {
+@LogicalOperator(name="DUPLICATEELIMINATION", maxInputPorts=1, minInputPorts=1)
+public class DuplicateEliminationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4456846799512963785L;
 
-	public DuplicateEleminationAO(DuplicateEleminationAO eleminationAO) {
+	public DuplicateEliminationAO(){
+		
+	}
+	
+	public DuplicateEliminationAO(DuplicateEliminationAO eleminationAO) {
 		super(eleminationAO);
 	}
 
 	@Override
-	public DuplicateEleminationAO clone() {
-		return new DuplicateEleminationAO(this);
+	public DuplicateEliminationAO clone() {
+		return new DuplicateEliminationAO(this);
 	}
 
 	

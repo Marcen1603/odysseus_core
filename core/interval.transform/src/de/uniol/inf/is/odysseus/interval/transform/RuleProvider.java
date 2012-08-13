@@ -62,6 +62,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		
 		rules.add(new TChangeCorrelateAORule());
 		rules.add(new TChangeCorrelateAddMetadataMergeRule());
+		
+		rules.add(new TDuplicateEliminationAORule());
 			
 		return rules;
 	}
