@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.VectorLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.CollectionStyle;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.LineStyle;
@@ -139,8 +140,8 @@ public class StreamMapEditor implements IStreamEditorType {
 		
 		//Create Map Background
 
-//		MapLayer map = new MapLayer(screenManager, 0);
-//		layerOrder.addFirst(map);
+		RasterLayer map = new RasterLayer(screenManager, 0);
+		layerOrder.addFirst(map);
 		
 		BasicLayer basic = new BasicLayer(screenManager);
 		layerOrder.addFirst(basic);

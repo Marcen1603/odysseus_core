@@ -92,36 +92,37 @@ public class BasicLayer extends AbstractLayer{
 	}
 	
 	private void paintTile(GC gc, int dx, int dy, int x, int y) {
-		boolean DEBUG = false;
-		boolean DRAW_OUT_OF_BOUNDS = !false;
-
-		boolean imageDrawn = false;
-		int xTileCount = 1 << transformation.getZoom();
-		int yTileCount = 1 << transformation.getZoom();
-		boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0
-				&& y < yTileCount;
-		
-		if (DEBUG && (!imageDrawn && (tileInBounds || DRAW_OUT_OF_BOUNDS))) {
-			gc.setBackground(display
-					.getSystemColor(tileInBounds ? SWT.COLOR_GREEN
-							: SWT.COLOR_RED));
-			gc.fillRectangle(dx + 4, dy + 4, ProjectionUtil.TILE_SIZE - 8,
-					ProjectionUtil.TILE_SIZE - 8);
-			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-			String s = "T " + x + ", " + y + (!tileInBounds ? " #" : "");
-			gc.drawString(s, dx + 4 + 8, dy + 4 + 12);
-		} else if (!DEBUG && !imageDrawn && tileInBounds) {
-			gc.setBackground(waitBackground);
-			gc.fillRectangle(dx, dy, ProjectionUtil.TILE_SIZE,
-					ProjectionUtil.TILE_SIZE);
-			gc.setForeground(waitForeground);
-			for (int yl = 0; yl < ProjectionUtil.TILE_SIZE; yl += 32) {
-				gc.drawLine(dx, dy + yl, dx + ProjectionUtil.TILE_SIZE, dy + yl);
-			}
-			for (int xl = 0; xl < ProjectionUtil.TILE_SIZE; xl += 32) {
-				gc.drawLine(dx + xl, dy, dx + xl, dy + ProjectionUtil.TILE_SIZE);
-			}
-		}
+// Do not draw the background.
+//		boolean DEBUG = false;
+//		boolean DRAW_OUT_OF_BOUNDS = !false;
+//
+//		boolean imageDrawn = false;
+//		int xTileCount = 1 << transformation.getZoom();
+//		int yTileCount = 1 << transformation.getZoom();
+//		boolean tileInBounds = x >= 0 && x < xTileCount && y >= 0
+//				&& y < yTileCount;
+//		
+//		if (DEBUG && (!imageDrawn && (tileInBounds || DRAW_OUT_OF_BOUNDS))) {
+//			gc.setBackground(display
+//					.getSystemColor(tileInBounds ? SWT.COLOR_GREEN
+//							: SWT.COLOR_RED));
+//			gc.fillRectangle(dx + 4, dy + 4, ProjectionUtil.TILE_SIZE - 8,
+//					ProjectionUtil.TILE_SIZE - 8);
+//			gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+//			String s = "T " + x + ", " + y + (!tileInBounds ? " #" : "");
+//			gc.drawString(s, dx + 4 + 8, dy + 4 + 12);
+//		} else if (!DEBUG && !imageDrawn && tileInBounds) {
+//			gc.setBackground(waitBackground);
+//			gc.fillRectangle(dx, dy, ProjectionUtil.TILE_SIZE,
+//					ProjectionUtil.TILE_SIZE);
+//			gc.setForeground(waitForeground);
+//			for (int yl = 0; yl < ProjectionUtil.TILE_SIZE; yl += 32) {
+//				gc.drawLine(dx, dy + yl, dx + ProjectionUtil.TILE_SIZE, dy + yl);
+//			}
+//			for (int xl = 0; xl < ProjectionUtil.TILE_SIZE; xl += 32) {
+//				gc.drawLine(dx + xl, dy, dx + xl, dy + ProjectionUtil.TILE_SIZE);
+//			}
+//		}
 	}
 	
 	public Point getMapPosition() {
