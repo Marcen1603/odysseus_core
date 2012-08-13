@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,8 @@ import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicat
  * elements, until the remove predicate first returns false. The remove
  * predicate is fixed to the TotallyBeforePredicate
  */
-public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>>
-		extends AbstractSweepArea<T> implements
-		Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
+public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractSweepArea<T> implements Comparable<DefaultTISweepArea<T>>,
+		ITimeIntervalSweepArea<T> {
 	// private static final Logger logger =
 	// LoggerFactory.getLogger(ITemporalSweepArea.class);
 
@@ -75,7 +74,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 		}
 		return retval.iterator();
 	}
-	
+
 	public Iterator<T> queryElementsStartingBeforeFIFO(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -83,15 +82,13 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 			while (iter.hasNext()) {
 				T elem = iter.next();
 				if (elem.getMetadata().getStart().before(validity)) {
-					retval.add(elem);					
+					retval.add(elem);
 				}
 			}
 		}
 		return retval.iterator();
 	}
-	
-	
-	
+
 	public Iterator<T> queryElementsStartingBefore(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -99,7 +96,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 			while (iter.hasNext()) {
 				T elem = iter.next();
 				if (elem.getMetadata().getStart().before(validity)) {
-					retval.add(elem);					
+					retval.add(elem);
 				}
 			}
 		}
@@ -117,17 +114,16 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	public void purgeElements(T element, Order order) {
 		synchronized (getElements()) {
 			Iterator<T> it = this.getElements().iterator();
-			//int i = 0;
+			// int i = 0;
 
 			while (it.hasNext()) {
 				T cur = it.next();
 				if (getRemovePredicate().evaluate(cur, element)) {
-				//	++i;
+					// ++i;
 					it.remove();
 				}
 
-				if (cur.getMetadata().getStart()
-						.afterOrEquals(element.getMetadata().getStart())) {
+				if (cur.getMetadata().getStart().afterOrEquals(element.getMetadata().getStart())) {
 					return;
 				}
 
@@ -220,7 +216,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         linked list.
 	 */
 	@Override
-    public PointInTime getMinTs() {
+	public PointInTime getMinTs() {
 		synchronized (getElements()) {
 			if (!this.getElements().isEmpty()) {
 				return this.getElements().peek().getMetadata().getStart();
@@ -236,7 +232,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         linked list.
 	 */
 	@Override
-    public PointInTime getMaxTs() {
+	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
 			return this.getElements().getLast().getMetadata().getStart();
 		}
@@ -262,13 +258,18 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 *         all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
-		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size()
-				+ " Elems \n");
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
 		for (T element : getElements()) {
 			buf.append(element).append(" ");
-			buf.append("{META ")
-					.append(element.getMetadata().toString(baseTime))
-					.append("}\n");
+			buf.append("{META ").append(element.getMetadata().toString(baseTime)).append("}\n");
+		}
+		return buf.toString();
+	}
+
+	public String getSweepAreaAsString() {
+		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
+		for (T element : getElements()) {
+			buf.append(element).append(" ");
 		}
 		return buf.toString();
 	}
@@ -304,8 +305,7 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 	 * @param timestamp
 	 * @return
 	 */
-	public Iterator<T> peekElementsContaing(PointInTime timestamp,
-			boolean includingEndtime) {
+	public Iterator<T> peekElementsContaing(PointInTime timestamp, boolean includingEndtime) {
 		List<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
@@ -314,17 +314,15 @@ public class DefaultTISweepArea<T extends IMetaAttributeContainer<? extends ITim
 				if (TimeInterval.inside(s_hat.getMetadata(), timestamp)) {
 					retval.add(s_hat);
 				}
-				if (includingEndtime
-						&& s_hat.getMetadata().getEnd().equals(timestamp)) {
+				if (includingEndtime && s_hat.getMetadata().getEnd().equals(timestamp)) {
 					retval.add(s_hat);
 				}
 			}
 		}
 		return retval.iterator();
 	}
-	
-	
-	public T peekLast(){
+
+	public T peekLast() {
 		return getElements().peekLast();
 	}
 }

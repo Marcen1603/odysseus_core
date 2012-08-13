@@ -137,8 +137,10 @@ public abstract class AbstractSweepArea<T extends IMetaAttributeContainer<?>> im
 			return;
 		}
 		ListIterator<T> li = this.getElements().listIterator(this.getElements().size());
+		// starts from end and inserts the element s if li.previous is at least equal (<=0) to s
+		// 0 instead of -1 ensures that the area is insertion safe
 		while (li.hasPrevious()) {
-			if (this.comparator.compare(li.previous(), s) == -1) {
+			if (this.comparator.compare(li.previous(), s) <= 0) {
 				li.next();
 				li.add(s);
 				return;
