@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.stream.IStreamElementListener;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 
 public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection<In> {
 
@@ -184,6 +185,10 @@ public class DefaultStreamConnection<In> implements ISink<In>, IStreamConnection
 	@Override
 	public void processPunctuation(PointInTime timestamp, int port) {
 		notifyListenersPunctuation(timestamp, port);
+	}
+
+	@Override
+	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
 	}
 
 	public void notifyListenersPunctuation(PointInTime point, int port) {

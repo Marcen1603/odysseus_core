@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 public class SecurityPunctuationProvider extends StreamClientHandler {
 	
 	Integer i = 0;
+	Long counterTS = Long.valueOf(0);
 	
 	@Override
 	public void init() {
@@ -55,6 +56,8 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 
 	private SADataTuple generateDataTuple() {
 		SADataTuple tuple = new SADataTuple(false);
+		//Hier schon TS einbauen!!!
+		tuple.addAttribute(new Long(counterTS++));
 		tuple.addAttribute(new Integer(55));
 		tuple.addAttribute("beispiel text");
 		tuple.addAttribute(new Integer(76));
@@ -64,21 +67,21 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	private SADataTuple generateSecurityPunctuation() {
 		SADataTuple tuple = new SADataTuple(true);
 		// Security Punctuation Flag
-		tuple.addAttribute("SecurityPunctuation");
-		// DDP - Stream
-		tuple.addAttribute("Stream");
-		// DDP - Starttupel
+//		tuple.addAttribute("SecurityPunctuation");
+		// DDP - Stream (mehrere Werte mit Komma getrennt)
+		tuple.addAttribute("Stream, Test");
+		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Integer(76));
-		// DDP - Endtupel
+		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
 		tuple.addAttribute(new Integer(79));
-		// DDP - Attribute
-		tuple.addAttribute("Name");
-		// SRP - Rollen
-		tuple.addAttribute("Rolle1");
+		// DDP - Attribute (mehrere Werte mit Komma getrennt)
+		tuple.addAttribute("Attribut1, Attibut2");
+		// SRP - Rollen (mehrere Werte mit Komma getrennt)
+		tuple.addAttribute("sys_admin, PUBLIC");
 		// Sign
 		tuple.addAttribute(new Integer(1));
 		// ts
-		tuple.addAttribute(new Integer(1));
+		tuple.addAttribute(new Long(counterTS++));
 		return tuple;
 	}
 	

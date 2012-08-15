@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
@@ -58,6 +59,15 @@ public interface ISink<T> extends IPhysicalOperator, ISubscriber<ISource<? exten
 	public void done(int port);
 
 	public void processPunctuation(PointInTime timestamp, int port);
+
+	/**
+	 * Process an security punctuation.
+	 * 
+	 * @param object
+	 *            the security punctuation to process
+	 * @param port
+	 */
+	public void processSecurityPunctuation(SecurityPunctuation sp, int port);
 	
 	/**
 	 * Call open on a Sink. 	

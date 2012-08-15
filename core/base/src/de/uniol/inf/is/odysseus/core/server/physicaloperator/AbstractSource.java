@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -303,6 +304,28 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void transfer(Collection<T> object) {
 		transfer(object, 0);
+	}
+	
+	@Override
+	public void transferSecurityPunctuation(SecurityPunctuation sp) {
+		transferSecurityPunctuation(sp, 0);
+	}
+
+	@Override
+	public void transferSecurityPunctuation(SecurityPunctuation sp, int sourceOutPort) {
+		fire(this.pushInitEvent);
+		for (PhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				try {
+					sink.getTarget().processSecurityPunctuation(sp, sink.getSinkInPort());
+				} catch (Exception e) {
+					// Send object that could not be processed to the error port
+					e.printStackTrace();
+					transferSecurityPunctuation(sp, ERRORPORT);
+				}
+			}
+		}
+		fire(this.pushDoneEvent);
 	}
 	
 	/**

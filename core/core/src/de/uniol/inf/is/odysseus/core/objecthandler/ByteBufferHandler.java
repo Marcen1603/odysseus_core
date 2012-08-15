@@ -72,16 +72,11 @@ public class ByteBufferHandler<T> implements
 	}
 	
 	@SuppressWarnings("unchecked")
-	public synchronized T create(boolean isSP) throws IOException, ClassNotFoundException, BufferUnderflowException {
+	public synchronized T createSecurityAware() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
 		synchronized(byteBuffer){
 			byteBuffer.flip();
-			if(!isSP) {
-				retval = (T)this.dataHandler.readData(byteBuffer);
-			} else {
-				retval = (T)this.securityPunctuationHandler.readData(byteBuffer);
-				System.out.println("retval: " + retval);
-			}
+			retval = (T)this.securityPunctuationHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
 		return retval;

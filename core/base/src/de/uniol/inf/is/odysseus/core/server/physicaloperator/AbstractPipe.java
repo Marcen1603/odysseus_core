@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -54,6 +55,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		public void processPunctuation(PointInTime timestamp, int port) {
 			AbstractPipe.this.delegatedProcessPunctuation(timestamp, port);
 		}
+
+		@Override
+		public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+			AbstractPipe.this.delegatedProcessSecurityPunctuation(sp, port);
+		}		
 
 		@Override
 		protected void process_open() throws OpenFailedException {
@@ -189,6 +195,10 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		processPunctuation(timestamp, port);
 	}
 
+	private void delegatedProcessSecurityPunctuation(SecurityPunctuation sp, int port) {
+		processSecurityPunctuation(sp, port);
+	}
+
 	@Override
 	public void process(Collection<? extends R> object, int port) {
 		delegateSink.process(object, port);
@@ -199,6 +209,11 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 	@Override
 	abstract public void processPunctuation(PointInTime timestamp, int port);
 
+	@Override
+	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+		this.transferSecurityPunctuation(sp);
+	}
+	
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
@@ -409,6 +424,4 @@ public abstract class AbstractPipe<R, W> extends AbstractSource<W> implements
 		}
 		return process_isSemanticallyEqual(ipo);
 	}
-
-
 }

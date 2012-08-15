@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -251,6 +252,10 @@ public abstract class AbstractSink<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	public abstract void processPunctuation(PointInTime timestamp, int port);
+	
+	@Override
+	public void processSecurityPunctuation(SecurityPunctuation sp, int port) {
+	}
 
 	// ------------------------------------------------------------------------
 	// CLOSE and DONE

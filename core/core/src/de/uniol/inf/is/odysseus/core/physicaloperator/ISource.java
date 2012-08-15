@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -65,6 +66,16 @@ public interface ISource<T> extends IPhysicalOperator,
 	public void transfer(Collection<T> object, int sourceOutPort);
 
 	public void transfer(Collection<T> object);
+	
+	/**
+	 * Calls {@link ISink#processSecurityPunctuation(T)} on all subscribed {@link ISink sinks}.
+	 * 
+	 * @param object
+	 *            the parameter for processNext.
+	 */
+	public void transferSecurityPunctuation(SecurityPunctuation sp, int sourceOutPort);
+
+	public void transferSecurityPunctuation(SecurityPunctuation sp);
 
 	/**
 	 * Close down the connection/do not read any more data

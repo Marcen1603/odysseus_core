@@ -6,6 +6,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -131,7 +132,7 @@ public class SASizeByteBufferHandler<T> extends SizeByteBufferHandler<T> {
 							getTransfer().transfer(objectHandler.create());
 						} else {
 //							System.out.println("SizeByteBuffer - isSP - Buffer: " + buffer);
-							getTransfer().transfer(objectHandler.create(true));
+							getTransfer().transferSecurityPunctuation((SecurityPunctuation) objectHandler.createSecurityAware());
 						}
 						size = -1;
 						sizeBuffer.clear();

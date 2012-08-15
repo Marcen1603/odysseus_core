@@ -7,35 +7,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Jan Sören Schwarz
+ * @param <SecurityPunctuation>
  *
  */
-public class SecurityPunctuationHandler extends AbstractDataHandler<Tuple<?>> {
+public class SecurityPunctuationHandler extends AbstractDataHandler<SecurityPunctuation> {
 
-	protected Boolean securityPunctuationEnabled = true;
 	protected IDataHandler<?>[] securityPunctuationHandlers = null;
-
-	Logger LOG = LoggerFactory.getLogger(SecurityPunctuationHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		types.add("SecurityPunctuation");
 	}
 
-	private SDFSchema schema;
-	
+//	private SDFSchema schema;
+
+	/**
+	 * Create a new Security Punctuation Data Handler
+	 * 
+	 */
 	public SecurityPunctuationHandler() {
-//		if(securityPunctuationEnabled) {
-			createSecurityPunctuationHandlers();
-//		}
+		createSecurityPunctuationHandlers();
 	}
 
 	/**
@@ -44,51 +41,42 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<Tuple<?>> {
 	 * @param schema
 	 */
 	private SecurityPunctuationHandler(SDFSchema schema) {
-		LOG.debug("SecurityPunctuationHandler");
-		this.schema = schema;
+		createSecurityPunctuationHandlers();
+//		this.schema = schema;
 	}
 	
 	
-	@Override
-	public Tuple<?> readData(ByteBuffer buffer) {
-		LOG.debug("readData(ByteBuffer buffer) in SPHandler");
-
+	public SecurityPunctuation readData(ByteBuffer buffer) {
 		Object[] objects = new Object[securityPunctuationHandlers.length];
 		for(int i=0; i < securityPunctuationHandlers.length; i++) {
 			objects[i] = securityPunctuationHandlers[i].readData(buffer);
 		}
 		
-		boolean requiresDeepClone = false;
-		@SuppressWarnings("rawtypes")
-		Tuple tuple = new Tuple(objects, requiresDeepClone);
-		return tuple;
+		SecurityPunctuation sp = new SecurityPunctuation(objects);
+		return sp;
 	}
 
 	@Override
-	public Tuple<?> readData(ObjectInputStream inputStream) throws IOException {
-		LOG.debug("readData");
+	public SecurityPunctuation readData(ObjectInputStream inputStream) throws IOException {
 		return null;
 	}
 
 	@Override
-	public Tuple<?> readData(String string) {
-		LOG.debug("readData");
+	public SecurityPunctuation readData(String string) {
 		return null;
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		LOG.debug("writeData");		
 	}
 
 	@Override
 	public int memSize(Object attribute) {
-		LOG.debug("memSize");
 		return 0;
 	}
 
 	@Override
-	protected IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+	protected IDataHandler<SecurityPunctuation> getInstance(SDFSchema schema) {
 		return new SecurityPunctuationHandler(schema);
 	}
 
@@ -99,18 +87,16 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<Tuple<?>> {
 	
 	private void createSecurityPunctuationHandlers() {
 		SDFSchema securityPunctuationSchema = new SDFSchema("securityPunctuation", 
-				new SDFAttribute("SP", "isSP", new SDFDatatype("String")),
 				new SDFAttribute("SP", "stream", new SDFDatatype("String")),
 				new SDFAttribute("SP", "int1", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "int2", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "name", new SDFDatatype("String")),
 				new SDFAttribute("SP", "role", new SDFDatatype("String")),
 				new SDFAttribute("SP", "int3", new SDFDatatype("Integer")),
-				new SDFAttribute("SP", "in4", new SDFDatatype("Integer")));
+				new SDFAttribute("SP", "int4", new SDFDatatype("Long")));
 		this.securityPunctuationHandlers = new IDataHandler<?>[securityPunctuationSchema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : securityPunctuationSchema) {
-			SDFDatatype type = attribute.getDatatype();
 			String uri = attribute.getDatatype().getURI(false);
 			securityPunctuationHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
 		}

@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.SecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -342,6 +343,25 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void transfer(W object) {
 		transfer(object, 0);
+	}
+	
+	@Override
+	public void transferSecurityPunctuation(SecurityPunctuation sp) {
+		transferSecurityPunctuation(sp, 0);
+	}
+
+	public void transferSecurityPunctuation(SecurityPunctuation sp, int sourceOutPort) {
+		for (PhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
+			if (sink.getSourceOutPort() == sourceOutPort) {
+				try {
+					sink.getTarget().processSecurityPunctuation(sp, sink.getSinkInPort());
+				} catch (Exception e) {
+					// Send object that could not be processed to the error port
+					e.printStackTrace();
+					transferSecurityPunctuation(sp, ERRORPORT);
+				}
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------------

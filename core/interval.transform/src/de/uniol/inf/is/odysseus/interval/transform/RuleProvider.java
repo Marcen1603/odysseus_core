@@ -42,6 +42,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TSystemTimestampRule());
 		rules.add(new TUnionTIPORule());
 		rules.add(new TSelectAORule());
+		rules.add(new TSecurityShieldAORule());
 		
 		rules.add(new TJoinAORule());
 		rules.add(new TJoinTIPOAddMetadataMergeRule());		
