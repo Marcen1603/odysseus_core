@@ -82,7 +82,11 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
 
 	@Override
 	public void process_close() throws CloseFailedException {
-
+		try {
+			nioConnection.disconnectFromServer(this);
+		} catch (IOException e) {
+			throw new CloseFailedException(e);
+		}
 	}
 
 	@Override
