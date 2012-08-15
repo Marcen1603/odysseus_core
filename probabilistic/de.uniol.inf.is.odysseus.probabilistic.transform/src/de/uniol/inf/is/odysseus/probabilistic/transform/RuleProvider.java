@@ -34,6 +34,12 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TAggregateProbabilisticRule());
 		rules.add(new TJoinProbabilisticRule());
 
+		// Select AO -> PO Rule
+		rules.add(new TSelectAORule());
+		// Project AO -> PO Rule
+		rules.add(new TProjectAORule());
+		// Map AO -> PO Rule
+		rules.add(new TMapAORule());
 		return rules;
 	}
 

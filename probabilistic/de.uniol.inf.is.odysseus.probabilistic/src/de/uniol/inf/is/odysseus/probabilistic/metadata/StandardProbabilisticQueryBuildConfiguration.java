@@ -40,7 +40,7 @@ public class StandardProbabilisticQueryBuildConfiguration extends
 	@SuppressWarnings("unchecked")
 	public StandardProbabilisticQueryBuildConfiguration() {
 		this.settings.add(new ParameterTransformationConfiguration(
-				new TransformationConfiguration("relational",
+				new TransformationConfiguration("probabilistic",
 						ITimeInterval.class, IProbabilistic.class)));
 		this.settings.add(ParameterDoRewrite.TRUE);
 		this.settings.add(ParameterPerformQuerySharing.TRUE);

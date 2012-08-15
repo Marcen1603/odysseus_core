@@ -16,7 +16,14 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
+ org.apache.commons.math3,
+ org.apache.commons.math3.distribution,
+ org.apache.commons.math3.linear,
  org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml
+Export-Package: de.uniol.inf.is.odysseus.probabilistic,
+ de.uniol.inf.is.odysseus.probabilistic.logicaloperator,
+ de.uniol.inf.is.odysseus.probabilistic.metadata,
+ de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions
 
