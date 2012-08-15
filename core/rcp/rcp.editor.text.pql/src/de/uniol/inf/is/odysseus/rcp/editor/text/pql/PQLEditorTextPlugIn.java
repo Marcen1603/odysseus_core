@@ -87,7 +87,11 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 		execTracker.open();
 		try {
 			operatorBuilderFactory = (IOperatorBuilderFactory)execTracker.waitForService(WAIT_SERVICE_MILLIS);
-			keywords = determineNames(operatorBuilderFactory.getOperatorBuilder());
+			if( operatorBuilderFactory != null ) {
+				keywords = determineNames(operatorBuilderFactory.getOperatorBuilder());
+			} else {
+				keywords = new String[0];
+			}
 			
 			execTracker.close();
 		} catch (InterruptedException e) {

@@ -12,23 +12,24 @@ import org.eclipse.ui.part.ViewPart;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 
 public class PQLOperatorView extends ViewPart {
 
 	private TreeViewer treeViewer;
 	private boolean showOptionalParameters = true;
 	private boolean alphaSort = false;
-	
+
 	private PQLOperatorsContentProvider contentProvider;
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		contentProvider = new PQLOperatorsContentProvider();
-		
+
 		treeViewer = new TreeViewer(parent);
 		treeViewer.setContentProvider(contentProvider);
 		treeViewer.setLabelProvider(new PQLOperatorsLabelProvider());
-		
+
 		treeViewer.setInput(determineInput());
 	}
 
@@ -36,7 +37,7 @@ public class PQLOperatorView extends ViewPart {
 	public void setFocus() {
 		treeViewer.getTree().setFocus();
 	}
-	
+
 	public void refresh() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -45,7 +46,7 @@ public class PQLOperatorView extends ViewPart {
 			}
 		});
 	}
-	
+
 	public void expandAll() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -53,25 +54,25 @@ public class PQLOperatorView extends ViewPart {
 				treeViewer.expandAll();
 			}
 		});
-		
+
 	}
-	
+
 	public void collapseAll() {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				treeViewer.collapseAll();
 			}
-			
+
 		});
 	}
-	
+
 	public void toggleShowOptionalParameters() {
 		showOptionalParameters = !showOptionalParameters;
 		contentProvider.showOptionalParameters(showOptionalParameters);
 		refresh();
 	}
-	
+
 	public void toogleAlphaOrder() {
 		alphaSort = !alphaSort;
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -85,9 +86,10 @@ public class PQLOperatorView extends ViewPart {
 	}
 
 	private List<IOperatorBuilder> determineInput() {
-		return Lists.newArrayList(PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder());
+		IOperatorBuilderFactory factory = PQLEditorTextPlugIn.getOperatorBuilderFactory();
+		return factory != null ? Lists.newArrayList(factory.getOperatorBuilder()) : Lists.<IOperatorBuilder>newArrayList();
 	}
-	
+
 	private static List<IOperatorBuilder> sortInput(List<IOperatorBuilder> unsortedList) {
 		Collections.sort(unsortedList, new Comparator<IOperatorBuilder>() {
 			@Override
