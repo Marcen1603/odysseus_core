@@ -21,10 +21,19 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class KeywordRegistry {
+import com.google.common.collect.Maps;
 
+public class KeywordRegistry implements IRegistryEventListener {
+
+	private static final Logger LOG = LoggerFactory.getLogger(KeywordRegistry.class);
+	
 	private static class RGBColor {
 		public int r;
 		public int g;
@@ -37,7 +46,7 @@ public class KeywordRegistry {
 	private Map<String, RGBColor> colors = new HashMap<String, RGBColor>();
 	
 	private KeywordRegistry() {
-		
+		Platform.getExtensionRegistry().addListener(this, OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
 	}
 	
 	public static synchronized KeywordRegistry getInstance() {
@@ -46,65 +55,26 @@ public class KeywordRegistry {
 		return instance;
 	}
 	
-	public void loadExtensions() {
+	public void refresh() {
+		keywords = Maps.newHashMap();
+		colors = Maps.newHashMap();
+		
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(OdysseusRCPEditorTextPlugIn.KEYWORD_EXTENSION_ID);
+		
 		for (IConfigurationElement e : config) {
-
-			String groupName = e.getAttribute("name");
-			String className = e.getAttribute("class");
-			String colorR = e.getAttribute("colorR");
-			String colorG = e.getAttribute("colorG");
-			String colorB = e.getAttribute("colorB");
-			
-			int r = 0;
-			int g = 0; 
-			int b = 0;
-			if( colorR != null && colorG != null && colorB != null ) {
-				if( colorR.length() != 0 && colorG.length() != 0 && colorB.length() != 0 ) {
-					try {
-						r = Integer.valueOf(colorR);
-						g = Integer.valueOf(colorG);
-						b = Integer.valueOf(colorB);
-					} catch( Exception ex ) {
-						r = 0;
-						g = 0;
-						b = 0;
-					}
-				}
-			}
-			RGBColor color = new RGBColor();
-			color.r = r;
-			color.g = g;
-			color.b = b;
-			if( className == null || className.length() == 0 ) {
-				 IConfigurationElement[] children = e.getChildren();
-				 ArrayList<String> words = new ArrayList<String>();
-				 for( IConfigurationElement child : children ) {
-					 words.add(child.getAttribute("name"));
-				 }
-				 this.keywords.put(groupName, words.toArray(new String[words.size()]));
-				 this.colors.put(groupName, color);
-			} else {
-				try {
-					IKeywordGroup grp = (IKeywordGroup)e.createExecutableExtension("class");
-					String[] keywords = grp.getKeywords();
-					if (keywords != null){
-						this.keywords.put(groupName, keywords);
-						this.colors.put(groupName, color);
-					}
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
-			}
+			loadExtension(e);
 		}
-
 	}
-	
+
 	public String[] getKeywordGroups() {
+		refresh();
+		
 		return keywords.keySet().toArray(new String[0]);
 	}
 	
 	public String[] getKeywords( String group ) {
+		refresh();
+		
 		if( !keywords.containsKey(group))
 			throw new IllegalArgumentException("groupname " + group + "not found");
 
@@ -144,5 +114,78 @@ public class KeywordRegistry {
 
 		return colors.get(group).b;
 	}
-	
+
+	@Override
+	public void added(IExtension[] extensions) {
+		for( IExtension extension : extensions ) {
+			for( IConfigurationElement conf : extension.getConfigurationElements()) {
+				try {
+					loadExtension(conf);
+				} catch( Throwable t ) {
+					LOG.error("Could not load extension {}", conf, t);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void removed(IExtension[] extensions) {
+	}
+
+	@Override
+	public void added(IExtensionPoint[] extensionPoints) {
+	}
+
+	@Override
+	public void removed(IExtensionPoint[] extensionPoints) {
+	}
+
+	private void loadExtension(IConfigurationElement e) {
+		String groupName = e.getAttribute("name");
+		String className = e.getAttribute("class");
+		String colorR = e.getAttribute("colorR");
+		String colorG = e.getAttribute("colorG");
+		String colorB = e.getAttribute("colorB");
+		
+		int r = 0;
+		int g = 0; 
+		int b = 0;
+		if( colorR != null && colorG != null && colorB != null ) {
+			if( colorR.length() != 0 && colorG.length() != 0 && colorB.length() != 0 ) {
+				try {
+					r = Integer.valueOf(colorR);
+					g = Integer.valueOf(colorG);
+					b = Integer.valueOf(colorB);
+				} catch( Exception ex ) {
+					r = 0;
+					g = 0;
+					b = 0;
+				}
+			}
+		}
+		RGBColor color = new RGBColor();
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		if( className == null || className.length() == 0 ) {
+			 IConfigurationElement[] children = e.getChildren();
+			 ArrayList<String> words = new ArrayList<String>();
+			 for( IConfigurationElement child : children ) {
+				 words.add(child.getAttribute("name"));
+			 }
+			 this.keywords.put(groupName, words.toArray(new String[words.size()]));
+			 this.colors.put(groupName, color);
+		} else {
+			try {
+				IKeywordGroup grp = (IKeywordGroup)e.createExecutableExtension("class");
+				String[] keywords = grp.getKeywords();
+				if (keywords != null){
+					this.keywords.put(groupName, keywords);
+					this.colors.put(groupName, color);
+				}
+			} catch (CoreException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }

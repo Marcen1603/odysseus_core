@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,7 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	public static final String PQL_OPERATOR_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLOperatorView";
 
 	public static final String REFRESH_PQL_OPERATOR_VIEW_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.editor.text.pql.RefreshPQLOperatorView";
-	private static final long WAIT_SERVICE_MILLIS = 10 * 1000;
 
-	private static String[] keywords;
 	private static PQLEditorTextPlugIn instance;
 	private static IOperatorBuilderFactory operatorBuilderFactory;
 
@@ -41,14 +38,12 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 
 	public void bindOperatorBuilderFactory(IOperatorBuilderFactory builder) {
 		operatorBuilderFactory = builder;
-		keywords = determineNames(builder.getOperatorBuilder());
 		
 		LOG.debug("Bound OperatorBuilderFactory {}.", builder);
 	}
 
 	public void unbindOperatorBuilderFactory(IOperatorBuilderFactory builder) {
 		if( operatorBuilderFactory == builder ) {
-			keywords = null;
 			operatorBuilderFactory = null;
 			
 			LOG.debug("Unbound OperatorBuilderFactory {}.", builder);
@@ -56,12 +51,10 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	public static String[] getPQLKeywords() {
-		updateService();
-		return keywords;
+		return operatorBuilderFactory != null ? determineNames(operatorBuilderFactory.getOperatorBuilder()) : new String[0];
 	}
 	
 	public static IOperatorBuilderFactory getOperatorBuilderFactory() {
-		updateService();
 		return operatorBuilderFactory;
 	}
 
@@ -79,23 +72,5 @@ public class PQLEditorTextPlugIn extends AbstractUIPlugin {
 			names[i] = builders.get(i).getName().toUpperCase();
 		}
 		return names;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void updateService() {
-		ServiceTracker execTracker = new ServiceTracker(getDefault().getBundle().getBundleContext(), IOperatorBuilderFactory.class.getName(), null);
-		execTracker.open();
-		try {
-			operatorBuilderFactory = (IOperatorBuilderFactory)execTracker.waitForService(WAIT_SERVICE_MILLIS);
-			if( operatorBuilderFactory != null ) {
-				keywords = determineNames(operatorBuilderFactory.getOperatorBuilder());
-			} else {
-				keywords = new String[0];
-			}
-			
-			execTracker.close();
-		} catch (InterruptedException e) {
-			throw new RuntimeException("Could not get IOperatorBuilderFactory-Service within " + WAIT_SERVICE_MILLIS + " ms!");
-		}
 	}
 }

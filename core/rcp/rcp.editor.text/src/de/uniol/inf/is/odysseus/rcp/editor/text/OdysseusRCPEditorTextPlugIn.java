@@ -43,7 +43,6 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		KeywordRegistry.getInstance().loadExtensions();
 	}
 
 	@Override
