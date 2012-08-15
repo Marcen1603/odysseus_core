@@ -576,12 +576,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void setUser(ISession user) {
+	public void setSession(ISession user) {
 		this.user = user;
 	}
 
 	@Override
-	public ISession getUser() {
+	public ISession getSession() {
 		return user;
 	}
 

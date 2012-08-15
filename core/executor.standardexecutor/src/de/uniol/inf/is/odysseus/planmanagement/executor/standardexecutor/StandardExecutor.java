@@ -298,7 +298,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
                     // TODO: Bisher k�nnen nur Namen von Configuration
                     // gespeichert werden
                     // es sollten aber echte Configs speicherbar sein!
-                    getDataDictionary().addQuery(optimizedQuery.getLogicalQuery(), optimizedQuery.getUser(), conf.getName());
+                    getDataDictionary().addQuery(optimizedQuery.getLogicalQuery(), optimizedQuery.getSession(), conf.getName());
                 }
             }
 
@@ -454,7 +454,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             ArrayList<IPhysicalQuery> newQueries = new ArrayList<IPhysicalQuery>();
 
             IPhysicalQuery query = new PhysicalQuery(physicalPlan, queryBuildConfiguration.getDefaultRoot(), queryBuildConfiguration.getDefaultRootStrategy());
-            query.setUser(user);
+            query.setSession(user);
             query.addReoptimizeListener(this);
             newQueries.add(query);
             List<IPhysicalQuery> added = addQueries(newQueries, new OptimizationConfiguration(queryBuildConfiguration));
@@ -601,7 +601,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
         // User has right
         usrMgmt.hasPermission(caller, executorAction, "Query " + query.getID()) ||
         // User is owner
-                query.getUser().getUser().getName().equals(caller.getUser().getName()) ||
+                query.getSession().getUser().getName().equals(caller.getUser().getName()) ||
         // User has higher right
         usrMgmt.hasPermission(caller, ExecutorPermission.hasSuperAction(executorAction), null))) {
             throw new PermissionException("No Right to execute " + executorAction + " on Query " + query.getID() + " for " + caller.getUser().getName());
@@ -872,7 +872,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
             // Anfragen stoppen
             for (IPhysicalQuery query : execution.getStoppingQueries()) {
                 // System.err.println("Stopping query : " + query);
-                stopQuery(query.getID(), query.getUser());
+                stopQuery(query.getID(), query.getSession());
             }
         }
     }

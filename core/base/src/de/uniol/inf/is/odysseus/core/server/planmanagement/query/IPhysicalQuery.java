@@ -118,8 +118,8 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	@SuppressWarnings("rawtypes")
 	public Collection<IPlanMonitor> getPlanMonitors();
 
-	ISession getUser();
-	void setUser(ISession user);
+	ISession getSession();
+	void setSession(ISession user);
 
 	//public QueryBuildConfiguration getBuildParameter();
 

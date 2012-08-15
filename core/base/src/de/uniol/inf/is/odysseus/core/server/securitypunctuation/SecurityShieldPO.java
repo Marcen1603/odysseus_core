@@ -87,7 +87,7 @@ public class SecurityShieldPO<T> extends AbstractPipe<T, T> {
 			List<IOperatorOwner> ownerList = this.getOwner();
 			List<String> userRoles = new ArrayList<String>();
 			for(IOperatorOwner owner:ownerList) {
-				for(IRole role:((IPhysicalQuery)owner).getUser().getUser().getRoles()) {
+				for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
 					userRoles.add(role.getName());
 				}
 			}
