@@ -27,57 +27,51 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  */
-public class TProbabilisticAORule extends
-		AbstractTransformationRule<ProbabilisticAO> {
+public class TProbabilisticAORule extends AbstractTransformationRule<ProbabilisticAO> {
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-	@Override
-	public void execute(ProbabilisticAO operator,
-			TransformationConfiguration config) {
-		SDFSchema schema = operator.getInputSchema();
-		int[] pos = new int[operator.getAttributes().size()];
-		for (int i = 0; i < pos.length; i++) {
-			pos[i] = schema.indexOf(operator.getAttributes().get(i));
-		}
-		ProbabilisticFactory mUpdater = new ProbabilisticFactory(pos);
-		MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IProbabilistic, Tuple<? extends IProbabilistic>>(
-				mUpdater);
-		defaultExecute(operator, po, config, true, true);
+    @Override
+    public void execute(final ProbabilisticAO operator, final TransformationConfiguration config) {
+        final SDFSchema schema = operator.getInputSchema();
+        final int[] pos = new int[operator.getAttributes().size()];
+        for (int i = 0; i < pos.length; i++) {
+            pos[i] = schema.indexOf(operator.getAttributes().get(i));
+        }
+        final ProbabilisticFactory mUpdater = new ProbabilisticFactory(pos);
+        final MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IProbabilistic, Tuple<? extends IProbabilistic>>(
+                mUpdater);
+        this.defaultExecute(operator, po, config, true, true);
 
-	}
+    }
 
-	@Override
-	public boolean isExecutable(ProbabilisticAO operator,
-			TransformationConfiguration config) {
-		if (config.getMetaTypes().contains(
-				IProbabilistic.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
+        if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+            if (operator.isAllPhysicalInputSet()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "ProbabilisticAO -> MetadataUpdatePO(probabilistic)";
-	}
+    @Override
+    public String getName() {
+        return "ProbabilisticAO -> MetadataUpdatePO(probabilistic)";
+    }
 
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
 
-	@Override
-	public Class<? super ProbabilisticAO> getConditionClass() {
-		return ProbabilisticAO.class;
-	}
+    @Override
+    public Class<? super ProbabilisticAO> getConditionClass() {
+        return ProbabilisticAO.class;
+    }
 }

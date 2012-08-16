@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
  * 
@@ -51,7 +52,12 @@ public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
 	@Override
 	protected void process_next(Tuple<T> object, int port) {
 		// TODO Integrate over projected attributes
+		IProbabilistic probabilistic = (IProbabilistic) object.getMetadata();
 
+		// TODO integrate/approximate over projected out attributes to calc TEP
+		Tuple<T> out = object.restrict(this.restrictList, false);
+
+		transfer(out);
 	}
 
 	@Override

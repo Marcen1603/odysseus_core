@@ -17,30 +17,29 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  */
 public class RuleProvider implements ITransformRuleProvider {
 
-	@Override
-	public List<IRule<?, ?>> getRules() {
-		List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-		rules.add(new TProbabilisticAORule());
-		rules.add(new TAggregateProbabilisticRule());
-		rules.add(new TJoinProbabilisticRule());
+    @Override
+    public List<IRule<?, ?>> getRules() {
+        final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
+        rules.add(new TProbabilisticAORule());
+        rules.add(new TAggregateProbabilisticRule());
+        rules.add(new TJoinProbabilisticRule());
 
-		// Select AO -> PO Rule
-		rules.add(new TSelectAORule());
-		// Project AO -> PO Rule
-		rules.add(new TProjectAORule());
-		// Map AO -> PO Rule
-		rules.add(new TMapAORule());
-		return rules;
-	}
+        // Select AO -> PO Rule
+        rules.add(new TSelectAORule());
+        // Project AO -> PO Rule
+        rules.add(new TProjectAORule());
+        // Map AO -> PO Rule
+        rules.add(new TMapAORule());
+        return rules;
+    }
 
 }

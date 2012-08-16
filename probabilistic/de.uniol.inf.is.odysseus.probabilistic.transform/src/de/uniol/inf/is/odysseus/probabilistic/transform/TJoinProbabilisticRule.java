@@ -27,45 +27,40 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TJoinProbabilisticRule extends
-		AbstractTransformationRule<JoinTIPO<?, ?>> {
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+public class TJoinProbabilisticRule extends AbstractTransformationRule<JoinTIPO<?, ?>> {
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void execute(JoinTIPO<?, ?> joinPO,
-			TransformationConfiguration config) {
-		((CombinedMergeFunction) joinPO.getMetadataMerge())
-				.add(new ProbabilisticMergeFunction());
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void execute(final JoinTIPO<?, ?> joinPO, final TransformationConfiguration config) {
+        ((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMergeFunction());
+    }
 
-	@Override
-	public boolean isExecutable(JoinTIPO<?, ?> joinPO,
-			TransformationConfiguration config) {
-		if (joinPO.getMetadataMerge() instanceof CombinedMergeFunction) {
-			if (config.getMetaTypes().contains(
-					IProbabilistic.class.getCanonicalName())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean isExecutable(final JoinTIPO<?, ?> joinPO, final TransformationConfiguration config) {
+        if (joinPO.getMetadataMerge() instanceof CombinedMergeFunction) {
+            if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "JoinTIPO add MetadataMerge (IProbabilistic)";
-	}
+    @Override
+    public String getName() {
+        return "JoinTIPO add MetadataMerge (IProbabilistic)";
+    }
 
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.METAOBJECTS;
-	}
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.METAOBJECTS;
+    }
 
-	@Override
-	public Class<? super JoinTIPO<?, ?>> getConditionClass() {
-		return JoinTIPO.class;
-	}
+    @Override
+    public Class<? super JoinTIPO<?, ?>> getConditionClass() {
+        return JoinTIPO.class;
+    }
 }
