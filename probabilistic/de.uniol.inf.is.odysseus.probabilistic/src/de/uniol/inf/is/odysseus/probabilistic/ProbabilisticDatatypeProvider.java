@@ -4,33 +4,35 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class ProbabilisticDatatypeProvider {
-	public static IDataDictionary datadictionary = null;
+    public static IDataDictionary datadictionary = null;
 
-	protected void bindDataDictionary(IDataDictionary dd) {
-		datadictionary = dd;
-		try {
-			datadictionary.addDatatype(
-					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI(),
-					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
-			datadictionary.addDatatype(
-					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE
-							.getURI(),
-					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-		} catch (DataDictionaryException e) {
-			e.printStackTrace();
-		}
-	}
+    protected void bindDataDictionary(final IDataDictionary dd) {
+        ProbabilisticDatatypeProvider.datadictionary = dd;
+        try {
+            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
+                    SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI(),
+                    SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+            ProbabilisticDatatypeProvider.datadictionary.addDatatype(
+                    SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI(),
+                    SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+        }
+        catch (final DataDictionaryException e) {
+            e.printStackTrace();
+        }
+    }
 
-	protected void unbindDataDictionary(IDataDictionary dd) {
-		try {
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE
-					.getURI());
-			dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE
-					.getURI());
-		} catch (DataDictionaryException e) {
-			e.printStackTrace();
-		}
-		datadictionary = null;
-	}
+    protected void unbindDataDictionary(final IDataDictionary dd) {
+        try {
+            dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
+            dd.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
+        }
+        catch (final DataDictionaryException e) {
+            e.printStackTrace();
+        }
+        ProbabilisticDatatypeProvider.datadictionary = null;
+    }
 }

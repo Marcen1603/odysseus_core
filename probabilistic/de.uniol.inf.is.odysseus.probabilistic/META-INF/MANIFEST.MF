@@ -21,7 +21,8 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  org.apache.commons.math3.linear,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml
+Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/QueryBuildConfiguration.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml,OSGI-INF/DatatypeProvider.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,
+ OSGI-INF/ProbabilisticContinuousDoubleDataHandler.xml
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.datatype,
  de.uniol.inf.is.odysseus.probabilistic.logicaloperator,

@@ -22,21 +22,17 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunctio
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticMergeFunction implements
-		IInlineMetadataMergeFunction<IProbabilistic> {
+public class ProbabilisticMergeFunction implements IInlineMetadataMergeFunction<IProbabilistic> {
 
-	@Override
-	public void mergeInto(IProbabilistic result, IProbabilistic inLeft,
-			IProbabilistic inRight) {
-		System.arraycopy(inLeft.getProbabilities(), 0,
-				result.getProbabilities(), 0, inLeft.getProbabilities().length);
-		System.arraycopy(inRight.getProbabilities(), 0,
-				result.getProbabilities(), inLeft.getProbabilities().length,
-				inRight.getProbabilities().length);
-	}
+    @Override
+    public void mergeInto(final IProbabilistic result, final IProbabilistic inLeft, final IProbabilistic inRight) {
+        System.arraycopy(inLeft.getProbabilities(), 0, result.getProbabilities(), 0, inLeft.getProbabilities().length);
+        System.arraycopy(inRight.getProbabilities(), 0, result.getProbabilities(), inLeft.getProbabilities().length,
+                inRight.getProbabilities().length);
+    }
 
-	@Override
-	public ProbabilisticMergeFunction clone() {
-		return new ProbabilisticMergeFunction();
-	}
+    @Override
+    public ProbabilisticMergeFunction clone() {
+        return new ProbabilisticMergeFunction();
+    }
 }

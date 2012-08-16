@@ -18,165 +18,164 @@ package de.uniol.inf.is.odysseus.probabilistic.math;
 import java.util.Arrays;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  */
 public class Polynomial {
-	private double[] coefficients;
-	private int degree;
+    private final double[] coefficients;
+    private int            degree;
 
-	public Polynomial(double coefficient, int degree) {
-		this.coefficients = new double[degree + 1];
-		this.coefficients[degree] = coefficient;
-		this.degree = degree();
-	}
+    public Polynomial(final double coefficient, final int degree) {
+        this.coefficients = new double[degree + 1];
+        this.coefficients[degree] = coefficient;
+        this.degree = this.degree();
+    }
 
-	public int degree() {
-		int degree = 0;
-		for (int i = 0; i < coefficients.length; i++) {
-			if (coefficients[i] != 0.0) {
-				degree = i;
-			}
-		}
-		return degree;
-	}
+    public int degree() {
+        int degree = 0;
+        for (int i = 0; i < this.coefficients.length; i++) {
+            if (this.coefficients[i] != 0.0) {
+                degree = i;
+            }
+        }
+        return degree;
+    }
 
-	public double coefficient(int degree) {
-		return coefficients[degree];
-	}
+    public double coefficient(final int degree) {
+        return this.coefficients[degree];
+    }
 
-	public Polynomial add(Polynomial other) {
-		Polynomial result = new Polynomial(0.0, Math.max(this.degree,
-				other.degree));
-		for (int i = 0; i <= this.degree; i++) {
-			result.coefficients[i] += this.coefficients[i];
-		}
-		for (int i = 0; i <= other.degree; i++) {
-			result.coefficients[i] += other.coefficients[i];
-		}
-		result.degree = result.degree();
-		return result;
-	}
+    public Polynomial add(final Polynomial other) {
+        final Polynomial result = new Polynomial(0.0, Math.max(this.degree, other.degree));
+        for (int i = 0; i <= this.degree; i++) {
+            result.coefficients[i] += this.coefficients[i];
+        }
+        for (int i = 0; i <= other.degree; i++) {
+            result.coefficients[i] += other.coefficients[i];
+        }
+        result.degree = result.degree();
+        return result;
+    }
 
-	public Polynomial substract(Polynomial other) {
-		Polynomial result = new Polynomial(0.0, Math.max(this.degree,
-				other.degree));
-		for (int i = 0; i <= this.degree; i++) {
-			result.coefficients[i] += this.coefficients[i];
-		}
-		for (int i = 0; i <= other.degree; i++) {
-			result.coefficients[i] -= other.coefficients[i];
-		}
-		result.degree = result.degree();
-		return result;
-	}
+    public Polynomial substract(final Polynomial other) {
+        final Polynomial result = new Polynomial(0.0, Math.max(this.degree, other.degree));
+        for (int i = 0; i <= this.degree; i++) {
+            result.coefficients[i] += this.coefficients[i];
+        }
+        for (int i = 0; i <= other.degree; i++) {
+            result.coefficients[i] -= other.coefficients[i];
+        }
+        result.degree = result.degree();
+        return result;
+    }
 
-	public Polynomial multiply(Polynomial other) {
-		Polynomial result = new Polynomial(0.0, this.degree + other.degree);
-		for (int i = 0; i <= this.degree; i++) {
-			for (int j = 0; j <= other.degree; j++) {
-				result.coefficients[i + j] += (this.coefficients[i] * other.coefficients[j]);
-			}
-		}
-		result.degree = result.degree();
-		return result;
-	}
+    public Polynomial multiply(final Polynomial other) {
+        final Polynomial result = new Polynomial(0.0, this.degree + other.degree);
+        for (int i = 0; i <= this.degree; i++) {
+            for (int j = 0; j <= other.degree; j++) {
+                result.coefficients[i + j] += (this.coefficients[i] * other.coefficients[j]);
+            }
+        }
+        result.degree = result.degree();
+        return result;
+    }
 
-	public Polynomial compose(Polynomial other) {
-		Polynomial result = new Polynomial(0.0, 0);
-		for (int i = this.degree; i >= 0; i--) {
-			Polynomial term = new Polynomial(this.coefficients[i], 0);
-			result = term.add(other.multiply(result));
-		}
-		return result;
-	}
+    public Polynomial compose(final Polynomial other) {
+        Polynomial result = new Polynomial(0.0, 0);
+        for (int i = this.degree; i >= 0; i--) {
+            final Polynomial term = new Polynomial(this.coefficients[i], 0);
+            result = term.add(other.multiply(result));
+        }
+        return result;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(coefficients);
-		result = prime * result + degree;
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + Arrays.hashCode(this.coefficients);
+        result = (prime * result) + this.degree;
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Polynomial other = (Polynomial) obj;
-		if (this.degree != other.degree) {
-			return false;
-		}
-		for (int i = this.degree; i >= 0; i--) {
-			if (this.coefficients[i] != other.coefficients[i])
-				return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        final Polynomial other = (Polynomial) obj;
+        if (this.degree != other.degree) {
+            return false;
+        }
+        for (int i = this.degree; i >= 0; i--) {
+            if (this.coefficients[i] != other.coefficients[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	public double evaluate(double x) {
-		double result = 0.0;
-		for (int i = this.degree; i >= 0; i--) {
-			result += this.coefficients[i] * Math.pow(x, i);
-		}
-		return result;
-	}
+    public double evaluate(final double x) {
+        double result = 0.0;
+        for (int i = this.degree; i >= 0; i--) {
+            result += this.coefficients[i] * Math.pow(x, i);
+        }
+        return result;
+    }
 
-	public Polynomial differentiate() {
-		if (degree == 0) {
-			return new Polynomial(0, 0);
-		}
-		Polynomial deriv = new Polynomial(0.0, degree - 1);
-		deriv.degree = degree - 1;
-		for (int i = 0; i < degree; i++) {
-			deriv.coefficients[i] = (((double) i) + 1.0) * coefficients[i + 1];
-		}
-		return deriv;
-	}
+    public Polynomial differentiate() {
+        if (this.degree == 0) {
+            return new Polynomial(0, 0);
+        }
+        final Polynomial deriv = new Polynomial(0.0, this.degree - 1);
+        deriv.degree = this.degree - 1;
+        for (int i = 0; i < this.degree; i++) {
+            deriv.coefficients[i] = ((i) + 1.0) * this.coefficients[i + 1];
+        }
+        return deriv;
+    }
 
-	public Polynomial integrate() {
-		Polynomial integral = new Polynomial(0.0, degree + 1);
-		integral.degree = degree + 1;
-		for (int i = 0; i <= degree; i++) {
-			integral.coefficients[i + 1] = coefficients[i]
-					/ (((double) i) + 1.0);
-		}
-		return integral;
-	}
+    public Polynomial integrate() {
+        final Polynomial integral = new Polynomial(0.0, this.degree + 1);
+        integral.degree = this.degree + 1;
+        for (int i = 0; i <= this.degree; i++) {
+            integral.coefficients[i + 1] = this.coefficients[i] / ((i) + 1.0);
+        }
+        return integral;
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		if (degree == 0) {
-			return sb.append(coefficients[0]).toString();
-		}
-		if (degree == 1) {
-			return sb.append(coefficients[1]).append("x + ")
-					.append(coefficients[0]).toString();
-		}
-		sb.append(coefficients[degree]).append("x^").append(degree);
-		for (int i = degree - 1; i >= 0; i--) {
-			if (coefficients[i] == 0.0) {
-				continue;
-			} else if (coefficients[i] > 0.0) {
-				sb.append(" + ").append(coefficients[i]);
-			} else if (coefficients[i] < 0.0) {
-				sb.append(" - ").append(-coefficients[i]);
-			}
-			if (i == 1) {
-				sb.append("x");
-			} else if (i > 1) {
-				sb.append("x^").append(i);
-			}
-		}
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        if (this.degree == 0) {
+            return sb.append(this.coefficients[0]).toString();
+        }
+        if (this.degree == 1) {
+            return sb.append(this.coefficients[1]).append("x + ").append(this.coefficients[0]).toString();
+        }
+        sb.append(this.coefficients[this.degree]).append("x^").append(this.degree);
+        for (int i = this.degree - 1; i >= 0; i--) {
+            if (this.coefficients[i] == 0.0) {
+                continue;
+            }
+            else if (this.coefficients[i] > 0.0) {
+                sb.append(" + ").append(this.coefficients[i]);
+            }
+            else if (this.coefficients[i] < 0.0) {
+                sb.append(" - ").append(-this.coefficients[i]);
+            }
+            if (i == 1) {
+                sb.append("x");
+            }
+            else if (i > 1) {
+                sb.append("x^").append(i);
+            }
+        }
+        return sb.toString();
+    }
 }

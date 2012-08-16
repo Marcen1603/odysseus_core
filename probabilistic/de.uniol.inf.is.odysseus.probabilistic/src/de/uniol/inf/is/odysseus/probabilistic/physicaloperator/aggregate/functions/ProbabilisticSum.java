@@ -26,61 +26,60 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticSum extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 6272207178324419258L;
-	private static Map<Integer, ProbabilisticSum> instances = new HashMap<Integer, ProbabilisticSum>();
-	private int pos;
+    private static final long                     serialVersionUID = 6272207178324419258L;
+    private static Map<Integer, ProbabilisticSum> instances        = new HashMap<Integer, ProbabilisticSum>();
+    private final int                             pos;
 
-	public static ProbabilisticSum getInstance(int pos) {
-		ProbabilisticSum ret = instances.get(pos);
-		if (ret == null) {
-			ret = new ProbabilisticSum(pos);
-			instances.put(pos, ret);
-		}
-		return ret;
-	}
+    public static ProbabilisticSum getInstance(final int pos) {
+        ProbabilisticSum ret = ProbabilisticSum.instances.get(pos);
+        if (ret == null) {
+            ret = new ProbabilisticSum(pos);
+            ProbabilisticSum.instances.put(pos, ret);
+        }
+        return ret;
+    }
 
-	protected ProbabilisticSum(int pos) {
-		super("SUM");
-		this.pos = pos;
-	}
+    protected ProbabilisticSum(final int pos) {
+        super("SUM");
+        this.pos = pos;
+    }
 
-	@Override
-	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
-		IPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>(
-				((Number) in.getAttribute(pos)).doubleValue(),
-				((IProbabilistic) in.getMetadata()).getProbability(pos));
-		return pa;
-	}
+    @Override
+    public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
+        final IPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>(
+                ((Number) in.getAttribute(this.pos)).doubleValue(),
+                ((IProbabilistic) in.getMetadata()).getProbability(this.pos));
+        return pa;
+    }
 
-	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			Tuple<?> toMerge, boolean createNew) {
-		SumPartialAggregate<Tuple<?>> pa = null;
-		if (createNew) {
-			pa = new SumPartialAggregate<Tuple<?>>(
-					((SumPartialAggregate<Tuple<?>>) p).getSum());
-		} else {
-			pa = (SumPartialAggregate<Tuple<?>>) p;
-		}
+    @Override
+    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+            final boolean createNew) {
+        SumPartialAggregate<Tuple<?>> pa = null;
+        if (createNew) {
+            pa = new SumPartialAggregate<Tuple<?>>(((SumPartialAggregate<Tuple<?>>) p).getSum());
+        }
+        else {
+            pa = (SumPartialAggregate<Tuple<?>>) p;
+        }
 
-		pa.add(((Number) toMerge.getAttribute(pos)).doubleValue(),
-				((IProbabilistic) toMerge.getMetadata()).getProbability(pos));
-		return pa;
-	}
+        pa.add(((Number) toMerge.getAttribute(this.pos)).doubleValue(),
+                ((IProbabilistic) toMerge.getMetadata()).getProbability(this.pos));
+        return pa;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
-		SumPartialAggregate<Tuple<?>> pa = (SumPartialAggregate<Tuple<?>>) p;
-		Tuple<?> r = new Tuple(1, false);
-		r.setAttribute(0, new Double(pa.getSum()));
-		return r;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+        final SumPartialAggregate<Tuple<?>> pa = (SumPartialAggregate<Tuple<?>>) p;
+        final Tuple<?> r = new Tuple(1, false);
+        r.setAttribute(0, new Double(pa.getSum()));
+        return r;
+    }
 
 }

@@ -30,54 +30,51 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
  */
 public class Activator implements BundleActivator {
 
-	private static BundleContext context;
-	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
+    private static BundleContext                     context;
+    private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
-	static BundleContext getContext() {
-		return context;
-	}
+    static BundleContext getContext() {
+        return Activator.context;
+    }
 
-	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
-		return aggregateFunctionBuilderRegistry;
-	}
+    public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
+        return Activator.aggregateFunctionBuilderRegistry;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
-	 */
-	@SuppressWarnings("unchecked")
-	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		MetadataRegistry.addMetadataType(Probabilistic.class,
-				IProbabilistic.class);
-		MetadataRegistry.addMetadataType(IntervalProbabilistic.class,
-				ITimeInterval.class, IProbabilistic.class);
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+     * )
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void start(final BundleContext bundleContext) throws Exception {
+        Activator.context = bundleContext;
+        MetadataRegistry.addMetadataType(Probabilistic.class, IProbabilistic.class);
+        MetadataRegistry.addMetadataType(IntervalProbabilistic.class, ITimeInterval.class, IProbabilistic.class);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@SuppressWarnings("unchecked")
-	public void stop(BundleContext bundleContext) throws Exception {
-		MetadataRegistry.removeCombinedMetadataType(ITimeInterval.class,
-				IProbabilistic.class);
-		MetadataRegistry.removeMetadataType(IProbabilistic.class);
-		Activator.context = null;
-	}
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void stop(final BundleContext bundleContext) throws Exception {
+        MetadataRegistry.removeCombinedMetadataType(ITimeInterval.class, IProbabilistic.class);
+        MetadataRegistry.removeMetadataType(IProbabilistic.class);
+        Activator.context = null;
+    }
 
-	public void bindAggregateFunctionBuilderRegistry(
-			IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
-		Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
-	}
+    public void bindAggregateFunctionBuilderRegistry(
+            final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+        Activator.aggregateFunctionBuilderRegistry = aggregateFunctionBuilderRegistry;
+    }
 
-	public void unbindAggregateFunctionBuilderRegistry(
-			IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
-		Activator.aggregateFunctionBuilderRegistry = null;
-	}
+    public void unbindAggregateFunctionBuilderRegistry(
+            final IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry) {
+        Activator.aggregateFunctionBuilderRegistry = null;
+    }
 }

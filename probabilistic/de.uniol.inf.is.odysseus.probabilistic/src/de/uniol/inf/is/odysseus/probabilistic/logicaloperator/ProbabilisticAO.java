@@ -25,40 +25,38 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Probabilistic")
 public class ProbabilisticAO extends UnaryLogicalOp {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 5230887041196691992L;
-	private List<SDFAttribute> attributes;
+    private static final long  serialVersionUID = 5230887041196691992L;
+    private List<SDFAttribute> attributes;
 
-	public ProbabilisticAO() {
-		super();
-	}
+    public ProbabilisticAO() {
+        super();
+    }
 
-	public ProbabilisticAO(ProbabilisticAO updateProbabilisticMetadataAO) {
-		super(updateProbabilisticMetadataAO);
-		this.attributes = updateProbabilisticMetadataAO.attributes;
-	}
+    public ProbabilisticAO(final ProbabilisticAO updateProbabilisticMetadataAO) {
+        super(updateProbabilisticMetadataAO);
+        this.attributes = updateProbabilisticMetadataAO.attributes;
+    }
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
-	public void setProbabilities(List<SDFAttribute> attributes) {
-		this.attributes = attributes;
-	}
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
+    public void setProbabilities(final List<SDFAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
-	public List<SDFAttribute> getAttributes() {
-		return this.attributes;
-	}
+    public List<SDFAttribute> getAttributes() {
+        return this.attributes;
+    }
 
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new ProbabilisticAO(this);
-	}
+    @Override
+    public AbstractLogicalOperator clone() {
+        return new ProbabilisticAO(this);
+    }
 
 }

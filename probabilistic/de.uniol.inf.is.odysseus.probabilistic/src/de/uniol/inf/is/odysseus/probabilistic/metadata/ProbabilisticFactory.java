@@ -19,48 +19,45 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  */
-public class ProbabilisticFactory
-		extends
-		AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
+public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
 
-	int[] pos;
+    int[] pos;
 
-	public ProbabilisticFactory(int pos) {
-		this.pos = new int[] { pos };
-	}
+    public ProbabilisticFactory(final int pos) {
+        this.pos = new int[] { pos };
+    }
 
-	public ProbabilisticFactory(int[] pos) {
-		this.pos = pos;
-	}
+    public ProbabilisticFactory(final int[] pos) {
+        this.pos = pos;
+    }
 
-	@Override
-	public void updateMetadata(Tuple<? extends IProbabilistic> inElem) {
-		IProbabilistic metadata = inElem.getMetadata();
-		if (pos.length == 1) {
-			for (int i = 0; i < inElem.size(); i++) {
-				if (i != pos[0]) {
-					metadata.setProbability(i,
-							(Double) inElem.getAttribute(pos[0]));
-				} else {
-					metadata.setProbability(i, (Double) 1.0);
-				}
-			}
-		} else {
-			int index = 0;
-			for (int i = 0; i < inElem.size(); i++) {
-				if (i == pos[index]) {
-					metadata.setProbability(i, (Double) 1.0);
-					index++;
-				} else {
-					metadata.setProbability(i,
-							(Double) inElem.getAttribute(pos[index]));
-				}
-			}
-		}
-	}
+    @Override
+    public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
+        final IProbabilistic metadata = inElem.getMetadata();
+        if (this.pos.length == 1) {
+            for (int i = 0; i < inElem.size(); i++) {
+                if (i != this.pos[0]) {
+                    metadata.setProbability(i, (Double) inElem.getAttribute(this.pos[0]));
+                }
+                else {
+                    metadata.setProbability(i, 1.0);
+                }
+            }
+        }
+        else {
+            int index = 0;
+            for (int i = 0; i < inElem.size(); i++) {
+                if (i == this.pos[index]) {
+                    metadata.setProbability(i, 1.0);
+                    index++;
+                }
+                else {
+                    metadata.setProbability(i, (Double) inElem.getAttribute(this.pos[index]));
+                }
+            }
+        }
+    }
 
 }

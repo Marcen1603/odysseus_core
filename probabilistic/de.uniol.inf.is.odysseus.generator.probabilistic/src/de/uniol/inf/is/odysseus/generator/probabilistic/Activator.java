@@ -5,11 +5,14 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.generator.StreamServer;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class Activator implements BundleActivator {
     private static BundleContext context;
 
     static BundleContext getContext() {
-        return context;
+        return Activator.context;
     }
 
     /*
@@ -18,9 +21,10 @@ public class Activator implements BundleActivator {
      * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
      * )
      */
-    public void start(BundleContext bundleContext) throws Exception {
+    @Override
+    public void start(final BundleContext bundleContext) throws Exception {
         Activator.context = bundleContext;
-        StreamServer server = new StreamServer(54321, new ProbabilisticDataProvider());
+        final StreamServer server = new StreamServer(54321, new ProbabilisticDataProvider());
         server.start();
     }
 
@@ -29,7 +33,8 @@ public class Activator implements BundleActivator {
      * @see
      * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext bundleContext) throws Exception {
+    @Override
+    public void stop(final BundleContext bundleContext) throws Exception {
         Activator.context = null;
     }
 

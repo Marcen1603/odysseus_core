@@ -19,9 +19,9 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functi
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public final class ProbabilisticConstants {
-	public static final String NAMESPACE = "P:";
+    public static final String NAMESPACE = "P:";
 
-	private ProbabilisticConstants() {
+    private ProbabilisticConstants() {
 
-	}
+    }
 }

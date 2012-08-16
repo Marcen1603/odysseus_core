@@ -26,64 +26,64 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticAvg extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticAvg extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -2188835286391575126L;
-	private static Map<Integer, ProbabilisticCount> instances = new HashMap<Integer, ProbabilisticCount>();
-	// TODO Move to a global configuration
-	private static final double ERROR = 0.25;
-	private static final double BOUND = 0.75;
-	private int pos;
+    private static final long                       serialVersionUID = -2188835286391575126L;
+    private static Map<Integer, ProbabilisticCount> instances        = new HashMap<Integer, ProbabilisticCount>();
+    // TODO Move to a global configuration
+    private static final double                     ERROR            = 0.25;
+    private static final double                     BOUND            = 0.75;
+    private final int                               pos;
 
-	public static ProbabilisticCount getInstance(int pos) {
-		ProbabilisticCount ret = instances.get(pos);
-		if (ret == null) {
-			ret = new ProbabilisticCount(pos);
-			instances.put(pos, ret);
-		}
-		return ret;
-	}
+    public static ProbabilisticCount getInstance(final int pos) {
+        ProbabilisticCount ret = ProbabilisticAvg.instances.get(pos);
+        if (ret == null) {
+            ret = new ProbabilisticCount(pos);
+            ProbabilisticAvg.instances.put(pos, ret);
+        }
+        return ret;
+    }
 
-	protected ProbabilisticAvg(int pos) {
-		super("AVG");
-		this.pos = pos;
-	}
+    protected ProbabilisticAvg(final int pos) {
+        super("AVG");
+        this.pos = pos;
+    }
 
-	@Override
-	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
-		AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(
-				ERROR, BOUND);
-		pa.update(((Number) in.getAttribute(pos)).doubleValue(),
-				((IProbabilistic) in.getMetadata()).getProbability(pos));
-		return pa;
-	}
+    @Override
+    public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
+        final AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR,
+                ProbabilisticAvg.BOUND);
+        pa.update(((Number) in.getAttribute(this.pos)).doubleValue(),
+                ((IProbabilistic) in.getMetadata()).getProbability(this.pos));
+        return pa;
+    }
 
-	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			Tuple<?> toMerge, boolean createNew) {
-		AvgPartialAggregate<Tuple<?>> pa = null;
-		if (createNew) {
-			pa = new AvgPartialAggregate<Tuple<?>>(ERROR, BOUND);
-		} else {
-			pa = (AvgPartialAggregate<Tuple<?>>) p;
-		}
+    @Override
+    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
+            final boolean createNew) {
+        AvgPartialAggregate<Tuple<?>> pa = null;
+        if (createNew) {
+            pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR, ProbabilisticAvg.BOUND);
+        }
+        else {
+            pa = (AvgPartialAggregate<Tuple<?>>) p;
+        }
 
-		pa.update(((Number) toMerge.getAttribute(pos)).doubleValue(),
-				((IProbabilistic) toMerge.getMetadata()).getProbability(pos));
-		return pa;
-	}
+        pa.update(((Number) toMerge.getAttribute(this.pos)).doubleValue(),
+                ((IProbabilistic) toMerge.getMetadata()).getProbability(this.pos));
+        return pa;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
-		AvgPartialAggregate<Tuple<?>> pa = (AvgPartialAggregate<Tuple<?>>) p;
-		Tuple<?> r = new Tuple(1, false);
-		r.setAttribute(0, new Double(pa.getAvg()));
-		return r;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
+        final AvgPartialAggregate<Tuple<?>> pa = (AvgPartialAggregate<Tuple<?>>) p;
+        final Tuple<?> r = new Tuple(1, false);
+        r.setAttribute(0, new Double(pa.getAvg()));
+        return r;
+    }
 
 }

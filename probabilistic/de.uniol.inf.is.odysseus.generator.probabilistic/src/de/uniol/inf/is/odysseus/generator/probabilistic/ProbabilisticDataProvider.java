@@ -8,12 +8,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.datatype.ProbabilisticDouble;
 
+/**
+ * @author Christian Kuka <christian.kuka@offis.de>
+ */
 public class ProbabilisticDataProvider extends StreamClientHandler {
     private BufferedReader reader;
 
@@ -23,19 +23,21 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 
     @Override
     public synchronized List<DataTuple> next() {
-        List<DataTuple> tuples = new ArrayList<DataTuple>();
-
+        final List<DataTuple> tuples = new ArrayList<DataTuple>();
+        DataTuple tuple = null;
         try {
-            tuples.add(generateDataTuple());
+            tuple = this.generateDataTuple();
         }
-        catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        catch (final IOException e) {
+            e.printStackTrace();
+        }
+        if (tuple != null) {
+            tuples.add(tuple);
         }
         try {
             Thread.sleep(500);
         }
-        catch (InterruptedException e) {
+        catch (final InterruptedException e) {
             e.printStackTrace();
         }
         return tuples;
@@ -43,12 +45,12 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 
     @Override
     public void init() {
-        URL fileURL = Activator.getContext().getBundle().getEntry("/data/data");
+        final URL fileURL = Activator.getContext().getBundle().getEntry("/data/data");
         try {
-            InputStream inputStream = fileURL.openConnection().getInputStream();
-            reader = new BufferedReader(new InputStreamReader(inputStream));
+            final InputStream inputStream = fileURL.openConnection().getInputStream();
+            this.reader = new BufferedReader(new InputStreamReader(inputStream));
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             e.printStackTrace();
         }
     }
@@ -59,8 +61,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
             try {
                 this.reader.close();
             }
-            catch (IOException e) {
-                // TODO Auto-generated catch block
+            catch (final IOException e) {
                 e.printStackTrace();
             }
             finally {
@@ -74,35 +75,34 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
         return new ProbabilisticDataProvider();
     }
 
-    @SuppressWarnings("unchecked")
     private DataTuple generateDataTuple() throws IOException {
-        DataTuple tuple = new DataTuple();
-        tuple.addAttribute(new Double(1.0));
-
-        String line = this.reader.readLine();
+        final DataTuple tuple = new DataTuple();
+        final String line = this.reader.readLine();
         if (line != null) {
-            String[] values = line.split(",");
-            for (String value : values) {
+            tuple.addLong(System.currentTimeMillis());
+            final String[] values = line.split(",");
+            for (final String value : values) {
                 if (value.startsWith("(")) {
-                    String[] discreteValues = value.substring(1, value.length() - 2).split(";");
-                    Pair<Double, Double>[] discreteProbabilisticValue = new Pair[discreteValues.length];
-                    for (int i = 0; i < discreteValues.length; i++) {
-
-                        String[] discreteValue = discreteValues[i].split(":");
-                        discreteProbabilisticValue[i] = new Pair<Double, Double>(Double.parseDouble(discreteValue[0]),
-                                Double.parseDouble(discreteValue[1]));
+                    final String[] discreteValues = value.substring(1, value.length() - 1).split(";");
+                    tuple.addInteger(discreteValues.length);
+                    for (final String discreteValue2 : discreteValues) {
+                        final String[] discreteValue = discreteValue2.split(":");
+                        tuple.addDouble(discreteValue[0]);
+                        tuple.addDouble(discreteValue[1]);
                     }
-                    tuple.addAttribute(new ProbabilisticDouble(discreteProbabilisticValue));
                 }
                 else {
-                    String[] continuousValue = value.split(":");
-                    tuple.addAttribute(new ProbabilisticContinuousDouble(Double.parseDouble(continuousValue[0]), Double
-                            .parseDouble(continuousValue[1])));
-
+                    final String[] continuousValue = value.split(":");
+                    tuple.addDouble(continuousValue[0]);
+                    tuple.addDouble(continuousValue[1]);
                 }
             }
-            System.out.println(line);
+            return tuple;
         }
-        return tuple;
+        else {
+            this.close();
+            this.init();
+        }
+        return null;
     }
 }

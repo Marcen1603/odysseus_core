@@ -28,85 +28,82 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- *
  * @param <T>
  */
-public class ProbabilisticMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
-	private int[][] variables;
-	private SDFExpression[] expressions;
-	private SDFSchema inputSchema;
+public class ProbabilisticMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+    private int[][]         variables;
+    private SDFExpression[] expressions;
+    private SDFSchema       inputSchema;
 
-	public ProbabilisticMapPO(SDFSchema inputSchema, SDFExpression[] expressions) {
-		this.inputSchema = inputSchema;
-		init(inputSchema, expressions);
-	}
+    public ProbabilisticMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
+        this.inputSchema = inputSchema;
+        this.init(inputSchema, expressions);
+    }
 
-	public ProbabilisticMapPO(ProbabilisticMapPO<T> probabilisticMapPO) {
-		init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
-	}
+    public ProbabilisticMapPO(final ProbabilisticMapPO<T> probabilisticMapPO) {
+        this.init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
+    }
 
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
-	}
+    @Override
+    public OutputMode getOutputMode() {
+        return OutputMode.NEW_ELEMENT;
+    }
 
-	@Override
-	protected void process_next(Tuple<T> object, int port) {
-		// TODO Auto-generated method stub
+    @Override
+    protected void process_next(final Tuple<T> object, final int port) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
-	}
+    @Override
+    public void processPunctuation(final PointInTime timestamp, final int port) {
+        this.sendPunctuation(timestamp);
+    }
 
-	@Override
-	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
-		return new ProbabilisticMapPO<T>(this);
-	}
+    @Override
+    public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
+        return new ProbabilisticMapPO<T>(this);
+    }
 
-	@Override
-	@SuppressWarnings({ "rawtypes" })
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof RelationalMapPO)) {
-			return false;
-		}
-		ProbabilisticMapPO pmpo = (ProbabilisticMapPO) ipo;
-		if (this.hasSameSources(pmpo)
-				&& this.inputSchema.compareTo(pmpo.inputSchema) == 0) {
-			if (this.expressions.length == pmpo.expressions.length) {
-				for (int i = 0; i < this.expressions.length; i++) {
-					if (!this.expressions[i].equals(pmpo.expressions[i])) {
-						return false;
-					}
-				}
-			} else {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    @SuppressWarnings({ "rawtypes" })
+    public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
+        if (!(ipo instanceof RelationalMapPO)) {
+            return false;
+        }
+        final ProbabilisticMapPO pmpo = (ProbabilisticMapPO) ipo;
+        if (this.hasSameSources(pmpo) && (this.inputSchema.compareTo(pmpo.inputSchema) == 0)) {
+            if (this.expressions.length == pmpo.expressions.length) {
+                for (int i = 0; i < this.expressions.length; i++) {
+                    if (!this.expressions[i].equals(pmpo.expressions[i])) {
+                        return false;
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 
-	private void init(SDFSchema schema, SDFExpression[] expressions) {
-		this.expressions = new SDFExpression[expressions.length];
-		for (int i = 0; i < expressions.length; ++i) {
-			this.expressions[i] = expressions[i].clone();
-		}
-		this.variables = new int[expressions.length][];
-		int i = 0;
-		for (SDFExpression expression : expressions) {
-			List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-			int[] newArray = new int[neededAttributes.size()];
-			this.variables[i++] = newArray;
-			int j = 0;
-			for (SDFAttribute curAttribute : neededAttributes) {
-				newArray[j++] = schema.indexOf(curAttribute);
-			}
-		}
-	}
+    private void init(final SDFSchema schema, final SDFExpression[] expressions) {
+        this.expressions = new SDFExpression[expressions.length];
+        for (int i = 0; i < expressions.length; ++i) {
+            this.expressions[i] = expressions[i].clone();
+        }
+        this.variables = new int[expressions.length][];
+        int i = 0;
+        for (final SDFExpression expression : expressions) {
+            final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+            final int[] newArray = new int[neededAttributes.size()];
+            this.variables[i++] = newArray;
+            int j = 0;
+            for (final SDFAttribute curAttribute : neededAttributes) {
+                newArray[j++] = schema.indexOf(curAttribute);
+            }
+        }
+    }
 }

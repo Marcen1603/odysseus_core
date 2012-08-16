@@ -24,66 +24,66 @@ import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Probabilistic implements IProbabilistic {
-	@SuppressWarnings("unused")
-	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
+    @SuppressWarnings("unused")
+    private final Map<Integer, PBox> pBoxes           = new HashMap<Integer, PBox>();
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -147594856639774242L;
-	private double[] probabilities;
+    private static final long        serialVersionUID = -147594856639774242L;
+    private double[]                 probabilities;
 
-	public Probabilistic() {
-		probabilities = new double[] {};
-	}
+    public Probabilistic() {
+        this.probabilities = new double[] {};
+    }
 
-	public Probabilistic(int size) {
-		probabilities = new double[size];
-	}
+    public Probabilistic(final int size) {
+        this.probabilities = new double[size];
+    }
 
-	public Probabilistic(Probabilistic probability) {
-		this.probabilities = probability.probabilities.clone();
+    public Probabilistic(final Probabilistic probability) {
+        this.probabilities = probability.probabilities.clone();
 
-	}
+    }
 
-	@Override
-	public double getProbability(int pos) {
-		return this.probabilities[pos];
-	}
+    @Override
+    public double getProbability(final int pos) {
+        return this.probabilities[pos];
+    }
 
-	@Override
-	public void setProbability(int pos, double value) {
-		this.probabilities[pos] = value;
-	}
+    @Override
+    public void setProbability(final int pos, final double value) {
+        this.probabilities[pos] = value;
+    }
 
-	@Override
-	public String csvToString() {
-		return "" + this.probabilities;
-	}
+    @Override
+    public String csvToString() {
+        return "" + this.probabilities;
+    }
 
-	@Override
-	public String csvToString(boolean withMetada) {
-		return this.csvToString();
-	}
+    @Override
+    public String csvToString(final boolean withMetada) {
+        return this.csvToString();
+    }
 
-	@Override
-	public String getCSVHeader() {
-		return "probability";
-	}
+    @Override
+    public String getCSVHeader() {
+        return "probability";
+    }
 
-	@Override
-	public IProbabilistic clone() {
-		return new Probabilistic(this);
-	}
+    @Override
+    public IProbabilistic clone() {
+        return new Probabilistic(this);
+    }
 
-	@Override
-	public double[] getProbabilities() {
-		return probabilities;
-	}
+    @Override
+    public double[] getProbabilities() {
+        return this.probabilities;
+    }
 
-	@Override
-	public void setProbabilities(double[] values) {
-		this.probabilities = values;
-	}
+    @Override
+    public void setProbabilities(final double[] values) {
+        this.probabilities = values;
+    }
 
 }

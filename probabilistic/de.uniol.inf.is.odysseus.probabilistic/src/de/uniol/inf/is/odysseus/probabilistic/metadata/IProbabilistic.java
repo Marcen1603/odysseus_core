@@ -23,14 +23,14 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
  */
 public interface IProbabilistic extends IMetaAttribute, IClone {
 
-	double getProbability(int pos);
+    double getProbability(int pos);
 
-	void setProbability(int pos, double value);
+    void setProbability(int pos, double value);
 
-	double[] getProbabilities();
+    double[] getProbabilities();
 
-	void setProbabilities(double[] values);
+    void setProbabilities(double[] values);
 
-	@Override
-	public IProbabilistic clone();
+    @Override
+    public IProbabilistic clone();
 }

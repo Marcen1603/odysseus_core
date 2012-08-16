@@ -22,53 +22,48 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
- * 
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
  * @param <T>
  */
-public class ProbabilisticProjectPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
-	private int[] restrictList;
+public class ProbabilisticProjectPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+    private final int[] restrictList;
 
-	public ProbabilisticProjectPO(int[] restrictList) {
-		this.restrictList = restrictList;
-	}
+    public ProbabilisticProjectPO(final int[] restrictList) {
+        this.restrictList = restrictList;
+    }
 
-	public ProbabilisticProjectPO(
-			ProbabilisticProjectPO<T> probabilisticProjectPO) {
-		super();
-		int length = probabilisticProjectPO.restrictList.length;
-		restrictList = new int[length];
-		System.arraycopy(probabilisticProjectPO.restrictList, 0, restrictList,
-				0, length);
-	}
+    public ProbabilisticProjectPO(final ProbabilisticProjectPO<T> probabilisticProjectPO) {
+        super();
+        final int length = probabilisticProjectPO.restrictList.length;
+        this.restrictList = new int[length];
+        System.arraycopy(probabilisticProjectPO.restrictList, 0, this.restrictList, 0, length);
+    }
 
-	@Override
-	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+    @Override
+    public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+        return OutputMode.MODIFIED_INPUT;
+    }
 
-	@Override
-	protected void process_next(Tuple<T> object, int port) {
-		// TODO Integrate over projected attributes
-		IProbabilistic probabilistic = (IProbabilistic) object.getMetadata();
+    @Override
+    protected void process_next(final Tuple<T> object, final int port) {
+        // TODO Integrate over projected attributes
+        final IProbabilistic probabilistic = (IProbabilistic) object.getMetadata();
 
-		// TODO integrate/approximate over projected out attributes to calc TEP
-		Tuple<T> out = object.restrict(this.restrictList, false);
+        // TODO integrate/approximate over projected out attributes to calc TEP
+        final Tuple<T> out = object.restrict(this.restrictList, false);
 
-		transfer(out);
-	}
+        this.transfer(out);
+    }
 
-	@Override
-	public void processPunctuation(PointInTime timestamp, int port) {
-		sendPunctuation(timestamp);
+    @Override
+    public void processPunctuation(final PointInTime timestamp, final int port) {
+        this.sendPunctuation(timestamp);
 
-	}
+    }
 
-	@Override
-	public ProbabilisticProjectPO<T> clone() {
-		return new ProbabilisticProjectPO<T>(this);
-	}
+    @Override
+    public ProbabilisticProjectPO<T> clone() {
+        return new ProbabilisticProjectPO<T>(this);
+    }
 
 }
