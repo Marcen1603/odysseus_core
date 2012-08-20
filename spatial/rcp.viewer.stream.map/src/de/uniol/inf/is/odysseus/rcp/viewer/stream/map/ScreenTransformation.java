@@ -18,12 +18,9 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.swt.graphics.Point;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.ProjectionUtil;
 
 
@@ -34,13 +31,13 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.util.projection.Projection
  */
 public class ScreenTransformation {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ScreenTransformation.class);
-	
+	//private static final Logger LOG = LoggerFactory.getLogger(ScreenTransformation.class);
+
+	private ScreenManager screenManager;
     private AtomicLong zoomStamp = new AtomicLong();
 	private int zoom;
 	
 	private Point mapPosition = new Point(0, 0);
-	private BasicLayer basicLayer;
 	
 	private boolean update = false;
 
@@ -69,27 +66,27 @@ public class ScreenTransformation {
 	}
 
 	public void panNorth(int steps) {
-		basicLayer.getCenterPosition().y = basicLayer.getCenterPosition().y + steps;
-		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
+		screenManager.getCenterPosition().y = screenManager.getCenterPosition().y + steps;
+		screenManager.setCenterPosition(screenManager.getCenterPosition());
 		update = true;
 	}
 
 	public void panSouth(int steps) {
-		basicLayer.getCenterPosition().y = basicLayer.getCenterPosition().y - steps;
-		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
+		screenManager.getCenterPosition().y = screenManager.getCenterPosition().y - steps;
+		screenManager.setCenterPosition(screenManager.getCenterPosition());
 		update = true;
 
 	}
 
 	public void panWest(int steps) {
-		basicLayer.getCenterPosition().x = basicLayer.getCenterPosition().x + steps;
-		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
+		screenManager.getCenterPosition().x = screenManager.getCenterPosition().x + steps;
+		screenManager.setCenterPosition(screenManager.getCenterPosition());
 		update = true;
 	}
 
 	public void panEast(int steps) {
-		basicLayer.getCenterPosition().x = basicLayer.getCenterPosition().x - steps;
-		basicLayer.setCenterPosition(basicLayer.getCenterPosition());
+		screenManager.getCenterPosition().x = screenManager.getCenterPosition().x - steps;
+		screenManager.setCenterPosition(screenManager.getCenterPosition());
 		update = true;
 	}
 
@@ -117,20 +114,16 @@ public class ScreenTransformation {
 		this.mapPosition = mapPosition;
 	}
 
-	public BasicLayer getBasicLayer() {
-		return basicLayer;
-	}
-
-	public void setBasicLayer(BasicLayer basicLayer) {
-		this.basicLayer = basicLayer;
-	}
-
 	public void zoomin(int i) {
-		basicLayer.zoomIn(basicLayer.getCenterPosition());
+		screenManager.zoomIn(screenManager.getCenterPosition());
 	}
 
 	public void zoomout(int i) {
-		basicLayer.zoomOut(basicLayer.getCenterPosition());
+		screenManager.zoomOut(screenManager.getCenterPosition());
+	}
+
+	public void setScreenManager(ScreenManager screenManager) {
+		this.screenManager = screenManager;
 	}
 	
 	

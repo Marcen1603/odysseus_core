@@ -23,9 +23,12 @@ import java.util.TreeMap;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.activator.ViewerStreamMapPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
@@ -75,6 +79,10 @@ public class StreamMapEditor implements IStreamEditorType {
 	protected LinkedList<Tuple<?>> tuples = new LinkedList<Tuple<?>>();
 	protected Runnable update;
 
+	protected Composite parent;
+	
+	protected boolean reactangleZoom = false;
+	
 	public StreamMapEditor(int maxTuples) {
 		LOG.debug("Create Stream Map Editor");
 		transformation = new ScreenTransformation();
@@ -130,6 +138,8 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		setParent(parent);
+		
 		if (hasSchema() && getSchema().size() > 0) {
 			screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		} else {
@@ -150,8 +160,8 @@ public class StreamMapEditor implements IStreamEditorType {
 
 	@Override
 	public void setFocus() {
-		if (screenManager.hasCanvasViewer())
-			screenManager.getCanvas().setFocus();
+//		if (screenManager.hasCanvasViewer())
+//			screenManager.getCanvas().setFocus();
 	}
 
 	@Override
@@ -256,8 +266,108 @@ public class StreamMapEditor implements IStreamEditorType {
 	
 	@Override
 	public void initToolbar(final ToolBar toolbar) {
-
+		//final Label toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
+		
+		/* break */
+		//ToolItem toolbarBreak = new ToolItem(toolbar, SWT.BREAK);
+		
+		/* blank button  16 */
+//		ToolItem buttom_16 = new ToolItem(toolbar, SWT.PUSH);	
+//		buttom_16.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("blank_16"));
+		
+		/* Filter button */
+		ToolItem filter = new ToolItem(toolbar, SWT.PUSH);
+		filter.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("filter_16"));
+		filter.setToolTipText("Filer");
+		
+		filter.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");				
+				window.show();
+				
+				if( !window.isCanceled()) {
+					getParent().layout();
+				}
+			}
+		});
+		
+		/* Change between rectangle and click zoom button */
+		final ToolItem magnifier_rectangle = new ToolItem(toolbar, SWT.PUSH);
+		magnifier_rectangle.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_rectangle_16"));
+		magnifier_rectangle.setDisabledImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_rectangle_de_16"));
+		magnifier_rectangle.setToolTipText("Magnifier");
+		
+		final ToolItem magnifier_zoom = new ToolItem(toolbar, SWT.PUSH);
+		magnifier_zoom.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_zoom_16"));
+		magnifier_zoom.setDisabledImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("magnifier_zoom_de_16"));
+		magnifier_zoom.setToolTipText("Magnifier");
+		
+		magnifier_rectangle.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {				
+					magnifier_rectangle.setEnabled(false);
+					reactangleZoom = true;
+					magnifier_zoom.setEnabled(true);
+			}
+		}); 
+		
+		magnifier_zoom.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					magnifier_rectangle.setEnabled(true);
+					reactangleZoom = false;
+					magnifier_zoom.setEnabled(false);
+			}
+		});
+		
+		
+		/* Add Layer */
+		ToolItem addLayer = new ToolItem(toolbar, SWT.PUSH);
+		addLayer.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("layers_plus_16"));
+		addLayer.setToolTipText("Add a new Layer.");
+		
+		addLayer.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Add a new Layer");				
+				window.show();
+				
+				if( !window.isCanceled()) {
+					getParent().layout();
+				}
+			}
+		});
+		
+		/* Dummy Buttom */
+//		ToolItem dummyButton2 = new ToolItem(toolbar, SWT.PUSH);
+//		dummyButton2.setImage(ViewerStreamMapPlugIn.getDefault().getImageRegistry().get("dummy_16") );
+//		dummyButton2.setToolTipText("Dummy Button");
+//		
+//		dummyButton2.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Dummy_Two");				
+//				window.show();
+//				
+//				if( !window.isCanceled()) {
+//					getParent().layout();
+//				}
+//			}
+//		});
+		
+		
+		
 	}
+
+	public final Composite getParent() {
+		return parent;
+	}
+	
+	private void setParent(Composite parent) {
+		this.parent = parent;
+	}
+
 
 	public LinkedList<ILayer> getLayerOrder() {
 		return layerOrder;
@@ -272,4 +382,8 @@ public class StreamMapEditor implements IStreamEditorType {
 		
 	}
 
+	public boolean isRectangleZoom() {
+		return reactangleZoom;
+	}
+	
 }

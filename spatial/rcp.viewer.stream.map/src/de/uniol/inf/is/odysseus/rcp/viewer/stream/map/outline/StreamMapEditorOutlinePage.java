@@ -124,8 +124,7 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 
 			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				// TODO Auto-generated method stub
-
+				LOG.debug("Select: " + listener.toString());
 			}
 		});
 	}
@@ -149,6 +148,8 @@ public class StreamMapEditorOutlinePage extends ContentOutlinePage {
 
 	
 	private void fillContextMenu(final IMenuManager mgr) {
+		LOG.debug("Fill: ");
+		
 		mgr.add(new Action("To VectorLayer"){ 
 			public void run() {
 				ITreeSelection i = (ITreeSelection) treeViewer.getSelection();

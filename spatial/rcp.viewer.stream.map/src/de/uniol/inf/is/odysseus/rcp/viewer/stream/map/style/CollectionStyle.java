@@ -15,10 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style;
 
-import org.eclipse.swt.SWT;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -27,12 +26,12 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ColorManager;
 
 /**
  * @author Stephan Jansen
@@ -175,10 +174,11 @@ public class CollectionStyle extends Style{
 		return super.contains(style);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Style[] getSubstyles() {
 		if (!hasSubstyles())
 			return null;
-		LinkedList<Style> tmp = (LinkedList<Style>) pointStyle.clone();
+		LinkedList<Style> tmp =  (LinkedList<Style>) pointStyle.clone();
 		tmp.addAll(lineStyle);
 		tmp.addAll(polygonStyle);
 		return tmp.toArray(new Style[tmp.size()]);
