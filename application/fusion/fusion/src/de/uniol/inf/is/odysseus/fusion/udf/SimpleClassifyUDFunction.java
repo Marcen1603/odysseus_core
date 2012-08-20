@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.fusion.udf;
 
 import com.vividsolutions.jts.geom.Polygon;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.UserDefinedFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
-import de.uniol.inf.is.odysseus.relational.base.Tuple;
 
 @UserDefinedFunction(name="Classify")
 public class SimpleClassifyUDFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
@@ -22,7 +22,8 @@ public class SimpleClassifyUDFunction implements IUserDefinedFunction<Tuple<? ex
 	public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
 		Polygon polygon = (Polygon)in.getAttribute(0); 
 		
-		Tuple<? extends IMetaAttribute> tuple = new Tuple<IMetaAttribute>(in.size()+1);
+		Tuple<? extends IMetaAttribute> tuple = in;
+		
 		
 		
 		tuple.setAttribute(0,polygon);
@@ -31,11 +32,11 @@ public class SimpleClassifyUDFunction implements IUserDefinedFunction<Tuple<? ex
 		double area = polygon.getArea();
 		
 		if(area > 260 && area < 2000){
-			tuple.setAttribute(1, "Human");
+			in.addAttributeValue(1, "Human");
 		}
 		
 		if(area > 3000){
-			tuple.setAttribute(1, "Scooter");
+			in.addAttributeValue(1, "Scooter");
 		}
 		
 		return tuple;

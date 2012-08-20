@@ -54,7 +54,7 @@ static public double mahalanobis_2( double[] x, double[] y, double[][] covx, dou
     cacheCov( cov );
     
 
-    Matrix covMat = cachedCovMat;
+   // Matrix covMat = cachedCovMat;
     Matrix iCov   = cachedInverse;
 
     double retval = (((xMat.transpose()).times(iCov)).times(xMat)).get(0,0);
@@ -91,7 +91,7 @@ static public double euclidean( double[] x, double[] y)
 	
 	
 	public static void main(String[] args) {
-		Mahalanobis mahalanobis = new Mahalanobis();
+		//Mahalanobis mahalanobis = new Mahalanobis();
 		
 		double[] x = {1,1}; 
 		double[][] covx = {{0.5,0},{0,0.5}}; 
@@ -99,22 +99,22 @@ static public double euclidean( double[] x, double[] y)
 		double[] y = {2,2};  
 		double[][] covy = {{0.5,0},{0,0.5}}; 
 		
-		System.out.println("Euclidian: " + mahalanobis.euclidean(x, y));
+		System.out.println("Euclidian: " + Mahalanobis.euclidean(x, y));
 		System.out.println("Varianz = 1");
-		System.out.println("Mahalanobis: " + mahalanobis.mahalanobis(x, y, covx, covy));
+		System.out.println("Mahalanobis: " + Mahalanobis.mahalanobis(x, y, covx, covy));
 		
 		double[][] covx2 = {{0.78,0},{0,0.98}}; 
 		double[][] covy2 = {{1.12,0},{0,0.96}}; 
 		System.out.println("Varianz > 1");
-		System.out.println("Euclidian: " + mahalanobis.euclidean(x, y));
-		System.out.println("Mahalanobis: " + mahalanobis.mahalanobis(x, y, covx2, covy2));
+		System.out.println("Euclidian: " + Mahalanobis.euclidean(x, y));
+		System.out.println("Mahalanobis: " + Mahalanobis.mahalanobis(x, y, covx2, covy2));
 		
 		
 		double[][] covx3 = {{0.0078,0},{0,0.0098}}; 
 		double[][] covy3 = {{0.00012,0},{0,0.00096}}; 
 		System.out.println("Varianz < 1");
-		System.out.println("Euclidian: " + mahalanobis.euclidean(x, y));
-		System.out.println("Mahalanobis: " + mahalanobis.mahalanobis(x, y, covx3, covy3));
+		System.out.println("Euclidian: " + Mahalanobis.euclidean(x, y));
+		System.out.println("Mahalanobis: " + Mahalanobis.mahalanobis(x, y, covx3, covy3));
 	}
 
 }

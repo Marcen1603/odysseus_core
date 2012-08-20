@@ -19,7 +19,8 @@ import de.uniol.inf.is.odysseus.fusion.metadata.IFusionProbability;
  */
 public class FusionQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
     
-    public FusionQueryBuildConfiguration() {
+    @SuppressWarnings("unchecked")
+	public FusionQueryBuildConfiguration() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
 						"relational", 

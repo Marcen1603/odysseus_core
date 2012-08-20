@@ -18,12 +18,12 @@ public class FusionProbability extends TimeInterval implements IFusionProbabilit
 	// posteriori error estimate covariance matrix (P(k)): P(k)=(I-K(k)*H)*P'(k) 
 	private Matrix error_cov_post = null;
 
-	private Matrix process_noise_cov = null;
+	//private Matrix process_noise_cov = null;
 	
 	public FusionProbability() {
 		error_cov_pre = new Matrix(dp, dp);
 		error_cov_post = Matrix.identity(dp, dp); // 1 (0 in OpenCV)
-		process_noise_cov  = Matrix.identity(dp, dp, 1e-3);
+		//process_noise_cov  = Matrix.identity(dp, dp, 1e-3);
 	}
 	
 	public FusionProbability(ITimeInterval timeInterval) {
@@ -32,7 +32,7 @@ public class FusionProbability extends TimeInterval implements IFusionProbabilit
 		
 		error_cov_pre = new Matrix(dp, dp);
 		error_cov_post = Matrix.identity(dp, dp); // 1 (0 in OpenCV)
-		process_noise_cov = Matrix.identity(dp, dp, 1e-3);
+		//process_noise_cov = Matrix.identity(dp, dp, 1e-3);
 	}
 	
 	@Override
