@@ -286,9 +286,9 @@ public class StreamMapEditor implements IStreamEditorType {
 				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Filter");				
 				window.show();
 				
-				if( !window.isCanceled()) {
-					getParent().layout();
-				}
+//				if( !window.isCanceled()) {
+//					getParent().layout();
+//				}
 			}
 		});
 		
@@ -330,10 +330,10 @@ public class StreamMapEditor implements IStreamEditorType {
 		addLayer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PropertyWindow window = new PropertyWindow(PlatformUI.getWorkbench().getDisplay(), "Add a new Layer");				
-				window.show();
+				DialogPropertyWindow window = new DialogPropertyWindow(PlatformUI.getWorkbench().getDisplay().getActiveShell());				
+				window.open();
 				
-				if( !window.isCanceled()) {
+				if( !window.close()) {
 					getParent().layout();
 				}
 			}

@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,20 +42,25 @@ public class PropertyWindow {
 
 	public void show() {
 		window = createWindow(display, name );
-		window.setVisible(true);
 		window.open();
 		
+		window.getParent().setEnabled(false);
+//		window.forceActive();
+//		window.forceFocus();
 		processWindow();
 	}
 
 	public boolean isCanceled() {
+		window.getParent().setEnabled(true);
 		return canceled;
 	}
 
 	private void processWindow() {
-		while (!window.isDisposed())
-			if (!display.readAndDispatch())
+		while (!window.isDisposed()){
+			if (!display.readAndDispatch()){
 				display.sleep();
+			}
+		}
 	}
 
 	private Shell createWindow(Display display, String name) {
@@ -64,7 +71,6 @@ public class PropertyWindow {
 		wnd.setLayout(new GridLayout());
 
 		createButtons(wnd);
-
 		wnd.pack();
 		return wnd;
 	}
