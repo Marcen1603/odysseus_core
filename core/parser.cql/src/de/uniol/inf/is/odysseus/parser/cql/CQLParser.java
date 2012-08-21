@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,16 +105,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(String query, ISession user,
-			IDataDictionary dd) throws QueryParseException {
+	public synchronized List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user,
-			IDataDictionary dd) throws QueryParseException {
+	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		try {
@@ -143,25 +141,21 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTStatement node, Object data) throws QueryParseException {
 		return node.childrenAccept(this, null);
 	}
 
 	@Override
-	public Object visit(ASTPriorizedStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTPriorizedStatement node, Object data) throws QueryParseException {
 		AbstractLogicalOperator op;
 		Integer priority = 0;
-		op = (AbstractLogicalOperator) node.jjtGetChild(0)
-				.jjtAccept(this, data);
+		op = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
 		if (node.jjtGetNumChildren() == 2) {
 			if (node.jjtGetChild(1) instanceof ASTPriority) {
 				priority = (Integer) node.jjtGetChild(1).jjtAccept(this, data);
 			} else {
 				if (node.jjtGetChild(1) instanceof ASTMetric) {
-					op = (AbstractLogicalOperator) node.jjtGetChild(1)
-							.jjtAccept(this, op);
+					op = (AbstractLogicalOperator) node.jjtGetChild(1).jjtAccept(this, op);
 				}
 			}
 		}
@@ -175,15 +169,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTComplexSelectStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTComplexSelectStatement node, Object data) throws QueryParseException {
 		if (node.jjtGetNumChildren() == 1) {
 			return node.jjtGetChild(0).jjtAccept(this, data);
 		}
-		AbstractLogicalOperator left = (AbstractLogicalOperator) node
-				.jjtGetChild(0).jjtAccept(this, data);
-		AbstractLogicalOperator right = (AbstractLogicalOperator) node
-				.jjtGetChild(2).jjtAccept(this, data);
+		AbstractLogicalOperator left = (AbstractLogicalOperator) node.jjtGetChild(0).jjtAccept(this, data);
+		AbstractLogicalOperator right = (AbstractLogicalOperator) node.jjtGetChild(2).jjtAccept(this, data);
 		ILogicalOperator setOperator = null;
 		switch (((ASTSetOperator) node.jjtGetChild(1)).getOperation()) {
 		case INTERSECT:
@@ -197,8 +188,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			break;
 		}
 		if (left.getOutputSchema().size() != right.getOutputSchema().size()) {
-			throw new QueryParseException(
-					"inputs of set operator have different schemas");
+			throw new QueryParseException("inputs of set operator have different schemas");
 		}
 		Iterator<SDFAttribute> iLeft = left.getOutputSchema().iterator();
 		Iterator<SDFAttribute> iRight = right.getOutputSchema().iterator();
@@ -208,8 +198,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			// TODO problem: man kann keine zwei numerischen typen verknuepfen
 			// dazu muesste etwas wie typkompatibilitaet definiert werden
 			if (curLeft.getDatatype() != curRight.getDatatype()) {
-				throw new QueryParseException(
-						"inputs of set operator have different schemas");
+				throw new QueryParseException("inputs of set operator have different schemas");
 			}
 		}
 		setOperator.subscribeToSource(left, 0, 0, left.getOutputSchema());
@@ -218,11 +207,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTSelectStatement statement, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSelectStatement statement, Object data) throws QueryParseException {
 		try {
-			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller,
-					dataDictionary);
+			CreateAccessAOVisitor access = new CreateAccessAOVisitor(caller, dataDictionary);
 			access.visit(statement, null);
 			AttributeResolver attributeResolver = access.getAttributeResolver();
 
@@ -232,19 +219,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			checkGroupBy.init(attributeResolver);
 			checkGroupBy.visit(statement, null);
 			if (!checkGroupBy.checkOkay()) {
-				throw new QueryParseException(
-						"missing attributes in GROUP BY clause");
+				throw new QueryParseException("missing attributes in GROUP BY clause");
 			}
 
 			CheckHaving checkHaving = new CheckHaving();
 			checkHaving.init(attributeResolver);
 			checkHaving.visit(statement, null);
 
-			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller,
-					dataDictionary);
+			CreateJoinAOVisitor joinVisitor = new CreateJoinAOVisitor(caller, dataDictionary);
 			joinVisitor.init(attributeResolver);
-			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(
-					statement, null);
+			ILogicalOperator top = (AbstractLogicalOperator) joinVisitor.visit(statement, null);
 
 			CreateAggregationVisitor aggregationVisitor = new CreateAggregationVisitor();
 			aggregationVisitor.init(top, attributeResolver);
@@ -254,35 +238,28 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			// top = new CreateProjectionVisitor().createProjection(statement,
 			// top, attributeResolver);
 
-			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(
-					top, attributeResolver);
+			CreateProjectionVisitor projectionVisitor = new CreateProjectionVisitor(top, attributeResolver);
 			projectionVisitor.visit(statement, null);
 			top = projectionVisitor.getTop();
 
 			try {
-				Class<?> prioVisitor = Class
-						.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
+				Class<?> prioVisitor = Class.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
 				Object pv = prioVisitor.newInstance();
 				// prioVisitor.setTopOperator(top);
 
-				Method m = prioVisitor.getDeclaredMethod("setTopOperator",
-						ILogicalOperator.class);
+				Method m = prioVisitor.getDeclaredMethod("setTopOperator", ILogicalOperator.class);
 				m.invoke(pv, top);
 
 				// prioVisitor.setAttributeResolver(attributeResolver);
-				m = prioVisitor.getDeclaredMethod("setAttributeResolver",
-						AttributeResolver.class);
+				m = prioVisitor.getDeclaredMethod("setAttributeResolver", AttributeResolver.class);
 				m.invoke(pv, attributeResolver);
 
 				// prioVisitor.visit(statement, null);
-				m = prioVisitor.getDeclaredMethod("visit",
-						AttributeResolver.class);
+				m = prioVisitor.getDeclaredMethod("visit", AttributeResolver.class);
 				m.invoke(pv, caller);
 
 				// top = prioVisitor.getTopOperator();
-				top = (ILogicalOperator) prioVisitor.getDeclaredMethod(
-						"getTopOperator", (Class[]) null).invoke(pv,
-						(Object[]) (null));
+				top = (ILogicalOperator) prioVisitor.getDeclaredMethod("getTopOperator", (Class[]) null).invoke(pv, (Object[]) (null));
 
 			} catch (ClassNotFoundException e) {
 				// Ignore --> Prio not loaded
@@ -296,29 +273,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTCreateStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateStatement node, Object data) throws QueryParseException {
 		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary);
 		return v.visit(node, data);
 	}
 
 	@Override
-	public Object visit(ASTFileSource node, Object data)
-			throws QueryParseException {
-		// TODO Auto-generated method stub
+	public Object visit(ASTFileSource node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateViewStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateViewStatement node, Object data) throws QueryParseException {
 		CreateViewVisitor v = new CreateViewVisitor(caller, dataDictionary);
 		return v.visit(node, data);
 	}
 
 	@Override
-	public Object visit(ASTPriority node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTPriority node, Object data) throws QueryParseException {
 		return node.getPriority();
 	}
 
@@ -328,16 +300,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			if (curInputAO.getSubscribedToSource().size() > 1) {
 				rightInputSchema = curInputAO.getInputSchema(1);
 			}
-			initPredicate(curInputAO.getPredicate(),
-					curInputAO.getInputSchema(0), rightInputSchema);
+			initPredicate(curInputAO.getPredicate(), curInputAO.getInputSchema(0), rightInputSchema);
 		}
 		for (int i = 0; i < curInputAO.getSubscribedToSource().size(); ++i) {
 			initPredicates(curInputAO.getSubscribedToSource(i).getTarget());
 		}
 	}
 
-	public static void initPredicate(IPredicate<?> predicate, SDFSchema left,
-			SDFSchema right) {
+	public static void initPredicate(IPredicate<?> predicate, SDFSchema left, SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {
 			ComplexPredicate<?> compPred = (ComplexPredicate<?>) predicate;
 			initPredicate(compPred.getLeft(), left, right);
@@ -345,8 +315,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			return;
 		}
 		if (ComplexPredicateHelper.isNotPredicate(predicate)) {
-			initPredicate(ComplexPredicateHelper.getChild(predicate), left,
-					right);
+			initPredicate(ComplexPredicateHelper.getChild(predicate), left, right);
 			return;
 		}
 		if (predicate instanceof IRelationalPredicate) {
@@ -357,92 +326,77 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(SimpleNode node, Object data)
-			throws QueryParseException {
+	public Object visit(SimpleNode node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinitions node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttributeDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAttributeDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTTimedTuples node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTTimedTuple node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTTimedTuple node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTTimeInterval node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTTimeInterval node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSimpleTuple node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSimpleTuple node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttributeType node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAttributeType node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSetOperator node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSetOperator node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSelectClause node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSelectClause node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTFromClause node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTFromClause node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTWhereClause node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTGroupByClause node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTHavingClause node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTRenamedExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTRenamedExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -452,50 +406,42 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSimplePredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSimplePredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTOrPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTOrPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAndPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAndPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTNotPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTNotPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAnyPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAllPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTInPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTInPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -510,68 +456,57 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTTupleSet node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTTupleSet node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTQuantificationOperator node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTQuantificationOperator node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSimpleToken node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTFunctionExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTFunctionExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAggregateExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAggregateExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAggregateFunction node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAggregateFunction node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDistinctExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDistinctExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTStreamSQLWindow node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTStreamSQLWindow node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTPartition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTPartition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAdvance node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAdvance node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -581,14 +516,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTIdentifier node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTInteger node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTInteger node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -603,26 +536,22 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTCompareOperator node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCompareOperator node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTElementPriorities node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTElementPriorities node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTElementPriority node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTElementPriority node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDefaultPriority node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDefaultPriority node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -637,123 +566,100 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTChannel node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTChannel node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSpatialCompareOperator node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSpatialCompareOperator node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCovarianceRow node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCovarianceRow node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTMatrixExpression node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTMatrixExpression node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTProbabilityPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTProbabilityPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDateFormat node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDateFormat node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSimpleSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSimpleSource node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSubselect node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSubselect node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBasicPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTQuantificationPredicate node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTQuantificationPredicate node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTProjectionMatrix node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTProjectionMatrix node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTProjectionVector node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTProjectionVector node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSelectAll node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTFunctionName node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTFunctionName node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTSilab node, Object data) throws QueryParseException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateBroker node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
 
-			Method m2 = brokerSourceVisitor.getDeclaredMethod(
-					"setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
 
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTCreateBroker.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTCreateBroker.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 
 			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new QueryParseException(
-					"Error while parsing CREATE BROKER statement", e.getCause());
+			throw new QueryParseException("Error while parsing CREATE BROKER statement", e.getCause());
 		}
 	}
 
@@ -765,170 +671,131 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTBrokerSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
 
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
-			Method m2 = brokerSourceVisitor.getDeclaredMethod(
-					"setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
 
-			m = brokerSourceVisitor.getDeclaredMethod("visit",
-					ASTBrokerSelectInto.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSelectInto.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 
 			addQuery(sourceOp);
 			return plans;
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new QueryParseException(
-					"Error while parsing the SELECT INTO statement",
-					e.getCause());
+			throw new QueryParseException("Error while parsing the SELECT INTO statement", e.getCause());
 		}
 	}
 
 	@Override
-	public Object visit(ASTBrokerAsSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBrokerSimpleSource node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerSimpleSource node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTBrokerQueue node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTBrokerQueue node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTMetric node, Object data) throws QueryParseException {
 		try {
-			Class<?> brokerSourceVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
 			Object bsv = brokerSourceVisitor.newInstance();
-			Method m2 = brokerSourceVisitor.getDeclaredMethod(
-					"setDataDictionary", IDataDictionary.class);
+			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m2.invoke(bsv, dataDictionary);
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser",
-					ISession.class);
+			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTMetric.class,
-					Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m
-					.invoke(bsv, node, data);
+			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTMetric.class, Object.class);
+			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
 			return sourceOp;
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException(
-					"Brokerplugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new QueryParseException(
-					"Error while parsing the METRIC clause", e.getCause());
+			throw new QueryParseException("Error while parsing the METRIC clause", e.getCause());
 		}
 	}
 
 	@Override
-	public Object visit(ASTCreateSensor node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateSensor node, Object data) throws QueryParseException {
 		try {
-			Class<?> sensorVisitor = Class
-					.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
+			Class<?> sensorVisitor = Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateSensorVisitor");
 			Object sv = sensorVisitor.newInstance();
-			Method m = sensorVisitor.getDeclaredMethod("setUser",
-					ISession.class);
+			Method m = sensorVisitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(sv, caller);
-			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary",
-					IDataDictionary.class);
+			Method m2 = sensorVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m2.invoke(sv, dataDictionary);
 
-			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class,
-					Object.class);
+			m = sensorVisitor.getDeclaredMethod("visit", ASTCreateSensor.class, Object.class);
 			return m.invoke(sv, node, data);
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException(
-					"Objecttracking plugin is missing in CQL parser.",
-					e.getCause());
+			throw new QueryParseException("Objecttracking plugin is missing in CQL parser.", e.getCause());
 		} catch (Exception e) {
-			throw new QueryParseException(
-					"Error while parsing the SENSOR clause", e.getCause());
+			throw new QueryParseException("Error while parsing the SENSOR clause", e.getCause());
 		}
 	}
 
 	@Override
-	public Object visit(ASTORSchemaDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTORSchemaDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTRecordDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTRecordDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTRecordEntryDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTRecordEntryDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTListDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTListDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAttrDefinition node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAttrDefinition node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateUserStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateUserStatement node, Object data) throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
-		IUser user = UserManagement.getUsermanagement().createUser(username,
-				caller);
+		IUser user = UserManagement.getUsermanagement().createUser(username, caller);
 		if (user == null)
 			throw new QueryParseException("User cannot be created.");
-		UserManagement.getUsermanagement().changePassword(user,
-				password.getBytes(), caller);
+		UserManagement.getUsermanagement().changePassword(user, password.getBytes(), caller);
 		UserManagement.getUsermanagement().activateUser(user, caller);
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAlterUserStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAlterUserStatement node, Object data) throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
 		try {
-			IUser user = UserManagement.getUsermanagement().findUser(username,
-					caller);
+			IUser user = UserManagement.getUsermanagement().findUser(username, caller);
 			if (user != null) {
-				UserManagement.getUsermanagement().changePassword(user,
-						password.getBytes(), caller);
+				UserManagement.getUsermanagement().changePassword(user, password.getBytes(), caller);
 			}
 		} catch (Exception e) {
 			throw new QueryParseException(e);
@@ -937,8 +804,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTDropStreamStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDropStreamStatement node, Object data) throws QueryParseException {
 		String streamname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		boolean ifExists = false;
 		if (node.jjtGetNumChildren() >= 2) {
@@ -957,32 +823,27 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTDropViewStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDropViewStatement node, Object data) throws QueryParseException {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		dataDictionary.removeViewOrStream(viewname, caller);
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateFromDatabase node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDatabaseTimeSensitiv node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDatabaseTimeSensitiv node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDropUserStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDropUserStatement node, Object data) throws QueryParseException {
 		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			IUser user = UserManagement.getUsermanagement().findUser(userName,
-					caller);
+			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
 			UserManagement.getUsermanagement().deleteUser(user, caller);
 		} catch (Exception e) {
 			throw new QueryParseException(e);
@@ -991,8 +852,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTCreateRoleStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateRoleStatement node, Object data) throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
 			UserManagement.getUsermanagement().createRole(rolename, caller);
@@ -1003,12 +863,10 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTDropRoleStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDropRoleStatement node, Object data) throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		try {
-			IRole role = UserManagement.getUsermanagement().findRole(rolename,
-					caller);
+			IRole role = UserManagement.getUsermanagement().findRole(rolename, caller);
 			if (role != null) {
 				UserManagement.getUsermanagement().deleteRole(role, caller);
 			}
@@ -1020,10 +878,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object visit(ASTGrantStatement node, Object data)
-			throws QueryParseException {
-		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(
-				this, data);
+	public Object visit(ASTGrantStatement node, Object data) throws QueryParseException {
+		List<String> rights = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 		// Validate if rights are User Actions
 		List<IPermission> operations = new ArrayList<IPermission>();
 		for (String r : rights) {
@@ -1043,35 +899,29 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		} else {
 			userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
-		IUser user = UserManagement.getUsermanagement().findUser(userName,
-				caller);
+		IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
 		if (user != null) {
 			for (IPermission action : operations) {
 
 				if (PermissionFactory.needsNoObject(action)) {
-					UserManagement.getUsermanagement().grantPermission(user,
-							action, null, caller);
+					UserManagement.getUsermanagement().grantPermission(user, action, null, caller);
 				} else {
 					for (String entityname : objects) {
-						UserManagement.getUsermanagement().grantPermission(
-								user, action, entityname, caller);
+						UserManagement.getUsermanagement().grantPermission(user, action, entityname, caller);
 					}
 				}
 
 			}
 		}
-		IRole role = UserManagement.getUsermanagement().findRole(userName,
-				caller);
+		IRole role = UserManagement.getUsermanagement().findRole(userName, caller);
 		if (role != null) {
 			for (IPermission action : operations) {
 
 				if (PermissionFactory.needsNoObject(action)) {
-					UserManagement.getUsermanagement().grantPermission(role,
-							action, null, caller);
+					UserManagement.getUsermanagement().grantPermission(role, action, null, caller);
 				} else {
 					for (String entityname : objects) {
-						UserManagement.getUsermanagement().grantPermission(
-								role, action, entityname, caller);
+						UserManagement.getUsermanagement().grantPermission(role, action, entityname, caller);
 					}
 				}
 
@@ -1082,54 +932,42 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTRevokeStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTRevokeStatement node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTGrantRoleStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTGrantRoleStatement node, Object data) throws QueryParseException {
 		if (node.jjtGetNumChildren() == 2) {
 			@SuppressWarnings("unchecked")
-			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
-					this, data);
+			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-			IUser user = UserManagement.getUsermanagement().findUser(userName,
-					caller);
+			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
 			for (String rolename : roles) {
-				IRole role = UserManagement.getUsermanagement().getRole(
-						rolename, caller);
-				UserManagement.getUsermanagement()
-						.grantRole(user, role, caller);
+				IRole role = UserManagement.getUsermanagement().getRole(rolename, caller);
+				UserManagement.getUsermanagement().grantRole(user, role, caller);
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTRevokeRoleStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTRevokeRoleStatement node, Object data) throws QueryParseException {
 		if (node.jjtGetNumChildren() == 2) {
 			@SuppressWarnings("unchecked")
-			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(
-					this, data);
+			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-			IUser user = UserManagement.getUsermanagement().findUser(userName,
-					caller);
+			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
 			for (String rolename : roles) {
-				IRole role = UserManagement.getUsermanagement().getRole(
-						rolename, caller);
-				UserManagement.getUsermanagement().revokeRole(user, role,
-						caller);
+				IRole role = UserManagement.getUsermanagement().getRole(rolename, caller);
+				UserManagement.getUsermanagement().revokeRole(user, role, caller);
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTIdentifierList node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTIdentifierList node, Object data) throws QueryParseException {
 		List<String> identifier = new ArrayList<String>();
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
 			identifier.add(((ASTIdentifier) node.jjtGetChild(i)).getName());
@@ -1138,8 +976,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTMVCovarianceRow node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTMVCovarianceRow node, Object data) throws QueryParseException {
 		return null;
 	}
 
@@ -1152,16 +989,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	 * java.lang.Object)
 	 */
 	@Override
-	public Object visit(ASTCreateType node, Object data)
-			throws QueryParseException {
-		CreateTypeVisitor v = new CreateTypeVisitor(this.caller,
-				this.dataDictionary);
+	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
+		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary);
 		return v.visit(node, data);
 	}
 
 	@Override
-	public Object visit(ASTCreateSLAStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateSLAStatement node, Object data) throws QueryParseException {
 		// String slaName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		// PercentileContraint pc = null;
 		// IServiceLevelAgreement sla = null;
@@ -1186,8 +1020,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sla.setName(slaName);
 
 		// get metric
-		Metric<?> metric = (Metric<?>) node.jjtGetChild(1)
-				.jjtAccept(this, null);
+		Metric<?> metric = (Metric<?>) node.jjtGetChild(1).jjtAccept(this, null);
 		sla.setMetric(metric);
 
 		// get scope
@@ -1201,8 +1034,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		// get service level(s)
 		List<ServiceLevel> serviceLevels = new ArrayList<ServiceLevel>();
 		for (int i = 4; i < node.jjtGetNumChildren(); i++) {
-			ServiceLevel sl = (ServiceLevel) node.jjtGetChild(i).jjtAccept(
-					this, null);
+			ServiceLevel sl = (ServiceLevel) node.jjtGetChild(i).jjtAccept(this, null);
 			sl.setSla(sla);
 			serviceLevels.add(sl);
 		}
@@ -1213,43 +1045,36 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			SLADictionary.getInstance().addSLA(slaName, sla);
 			System.out.println("Added new Service Level Agreement: " + sla);
 		} else {
-			throw new QueryParseException("A Serivce Level Agreement with the "
-					+ "given name already exists: " + slaName);
+			throw new QueryParseException("A Serivce Level Agreement with the " + "given name already exists: " + slaName);
 		}
 
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTSlaMetricDef node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSlaMetricDef node, Object data) throws QueryParseException {
 		String metricID = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		double value = Double.parseDouble(((ASTNumber) node.jjtGetChild(1))
-				.getValue());
+		double value = Double.parseDouble(((ASTNumber) node.jjtGetChild(1)).getValue());
 		String unitID = ((ASTIdentifier) node.jjtGetChild(2)).getName();
 
 		// create metric by factory and return it
 		MetricFactory metricFactory = new MetricFactory();
 		UnitFactory unitFactory = new UnitFactory();
-		Metric<?> metric = metricFactory.buildMetric(metricID, value,
-				unitFactory.buildUnit(unitID));
+		Metric<?> metric = metricFactory.buildMetric(metricID, value, unitFactory.buildUnit(unitID));
 
 		return metric;
 	}
 
 	@Override
-	public Object visit(ASTSlaScopeDef node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSlaScopeDef node, Object data) throws QueryParseException {
 		String scopeID = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ScopeFactory factory = new ScopeFactory();
 		return factory.buildScope(scopeID);
 	}
 
 	@Override
-	public Object visit(ASTSlaWindowDef node, Object data)
-			throws QueryParseException {
-		int windowSize = Integer.parseInt(((ASTNumber) node.jjtGetChild(0))
-				.getValue());
+	public Object visit(ASTSlaWindowDef node, Object data) throws QueryParseException {
+		int windowSize = Integer.parseInt(((ASTNumber) node.jjtGetChild(0)).getValue());
 		String unitID = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 
 		UnitFactory unitFactory = new UnitFactory();
@@ -1260,10 +1085,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTSlaServiceLevelDef node, Object data)
-			throws QueryParseException {
-		double threshold = Double.parseDouble(((ASTNumber) node.jjtGetChild(0))
-				.getValue());
+	public Object visit(ASTSlaServiceLevelDef node, Object data) throws QueryParseException {
+		double threshold = Double.parseDouble(((ASTNumber) node.jjtGetChild(0)).getValue());
 
 		Penalty penalty = (Penalty) node.jjtGetChild(1).jjtAccept(this, null);
 		// TODO set service level in penalty
@@ -1276,27 +1099,23 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTSlaPenaltyDef node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSlaPenaltyDef node, Object data) throws QueryParseException {
 		String penaltyID = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		double value = Double.parseDouble(((ASTNumber) node.jjtGetChild(1))
-				.getValue());
+		double value = Double.parseDouble(((ASTNumber) node.jjtGetChild(1)).getValue());
 
 		PenaltyFactory factory = new PenaltyFactory();
 		return factory.buildPenalty(penaltyID, value);
 	}
 
 	@Override
-	public Object visit(ASTCreateSinkStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTCreateSinkStatement node, Object data) throws QueryParseException {
 		String sinkName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		node.jjtGetChild(1).jjtAccept(this, sinkName);
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTStreamToStatement node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTStreamToStatement node, Object data) throws QueryParseException {
 		String sinkName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTSelectStatement statement = (ASTSelectStatement) node.jjtGetChild(1);
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
@@ -1313,9 +1132,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sinkInput.subscribeToSource(top, -1, 0, top.getOutputSchema());
 		updateSchemaInfos(sink);
 		// if database -> be sure, that the schemas are equal
-		if (sink.getClass()
-				.getCanonicalName()
-				.equals("de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO")) {
+		if (sink.getClass().getCanonicalName().equals("de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSinkAO")) {
 			invokeDatabaseVisitor(ASTStreamToStatement.class, node, sink);
 		}
 
@@ -1338,8 +1155,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 					// Set Schema for both directions (sink to source and source
 					// to sink)!
 					sub.setSchema(source.getOutputSchema());
-					for (LogicalSubscription sourceSub : source
-							.getSubscriptions()) {
+					for (LogicalSubscription sourceSub : source.getSubscriptions()) {
 						if (sourceSub.getTarget() == sink) {
 							sourceSub.setSchema(source.getOutputSchema());
 						}
@@ -1350,70 +1166,54 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTLoginPassword node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTLoginPassword node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTAutoReconnect node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTAutoReconnect node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSink node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDatabaseSink node, Object data) throws QueryParseException {
 		return invokeDatabaseVisitor(ASTDatabaseSink.class, node, data);
 	}
 
 	@Override
-	public Object visit(ASTDatabaseSinkOptions node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTDatabaseSinkOptions node, Object data) throws QueryParseException {
 		return invokeDatabaseVisitor(ASTDatabaseSinkOptions.class, node, data);
 	}
 
 	@Override
-	public Object visit(ASTCreateDatabaseConnection node, Object data)
-			throws QueryParseException {
-		return invokeDatabaseVisitor(ASTCreateDatabaseConnection.class, node,
-				data);
+	public Object visit(ASTCreateDatabaseConnection node, Object data) throws QueryParseException {
+		return invokeDatabaseVisitor(ASTCreateDatabaseConnection.class, node, data);
 	}
 
-	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node,
-			Object data) throws QueryParseException {
+	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
 		try {
-			Class<?> visitor = Class
-					.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
+			Class<?> visitor = Class.forName("de.uniol.inf.is.odysseus.database.cql.DatabaseVisitor");
 			Object v = visitor.newInstance();
 			Method m = visitor.getDeclaredMethod("setUser", ISession.class);
 			m.invoke(v, caller);
-			m = visitor.getDeclaredMethod("setDataDictionary",
-					IDataDictionary.class);
+			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dataDictionary);
 			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
 			return (AbstractLogicalOperator) m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
-			throw new QueryParseException(
-					"Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (NoSuchMethodException e) {
-			throw new QueryParseException(
-					"Method in database plugin is missing.", e.getCause());
+			throw new QueryParseException("Method in database plugin is missing.", e.getCause());
 		} catch (SecurityException e) {
-			throw new QueryParseException(
-					"Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (IllegalAccessException e) {
-			throw new QueryParseException(
-					"Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (IllegalArgumentException e) {
-			throw new QueryParseException(
-					"Database plugin is missing in CQL parser.", e.getCause());
+			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (InvocationTargetException e) {
-			throw new QueryParseException(e.getTargetException()
-					.getLocalizedMessage());
+			throw new QueryParseException(e.getTargetException().getLocalizedMessage());
 		} catch (InstantiationException e) {
-			throw new QueryParseException(
-					"Cannot create instance of database plugin.", e.getCause());
+			throw new QueryParseException("Cannot create instance of database plugin.", e.getCause());
 		}
 	}
 
@@ -1423,8 +1223,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTFileSink node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTFileSink node, Object data) throws QueryParseException {
 		String sinkName = (String) data;
 		String filename = node.getFilename();
 		String type = "STRING";
@@ -1435,20 +1234,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 			for (int i = 1; i < node.jjtGetNumChildren(); i++) {
 				if (node.jjtGetChild(i) instanceof ASTIdentifier) {
-					String val = ((ASTIdentifier) node.jjtGetChild(i))
-							.getName();
+					String val = ((ASTIdentifier) node.jjtGetChild(i)).getName();
 					if ("withmeta".equalsIgnoreCase(val)) {
 						printMetadata = true;
 					}
 				} else if (node.jjtGetChild(i) instanceof ASTInteger)
-					writeAfterElements = ((ASTInteger) node.jjtGetChild(i))
-							.getValue();
+					writeAfterElements = ((ASTInteger) node.jjtGetChild(i)).getValue();
 			}
 
 		}
 
-		ILogicalOperator sink = new FileSinkAO(filename, type,
-				writeAfterElements, printMetadata);
+		ILogicalOperator sink = new FileSinkAO(filename, type, writeAfterElements, printMetadata);
 		try {
 			dataDictionary.addSink(sinkName, sink, caller);
 		} catch (DataDictionaryException e) {
@@ -1458,8 +1254,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTSocketSink node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTSocketSink node, Object data) throws QueryParseException {
 		String sinkName = (String) data;
 		int port = ((ASTInteger) node.jjtGetChild(0)).getValue().intValue();
 		String sinkType = ((ASTIdentifier) node.jjtGetChild(1)).getName();
@@ -1467,8 +1262,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (node.jjtGetNumChildren() == 3) {
 			loginNeeded = true;
 		}
-		ILogicalOperator sink = new SocketSinkAO(port, sinkType, loginNeeded,
-				sinkName);
+		ILogicalOperator sink = new SocketSinkAO(port, sinkType, loginNeeded, sinkName);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sink.subscribeToSource(transformMeta, 0, 0, null);
 		try {
@@ -1480,16 +1274,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTIfExists node, Object data)
-			throws QueryParseException {
+	public Object visit(ASTIfExists node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
-	public Object visit(ASTCreateContextStore node, Object data)
-			throws QueryParseException {
-		IVisitor visitor = VisitorFactory.getInstance().getVisitor(
-				"de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
+	public Object visit(ASTCreateContextStore node, Object data) throws QueryParseException {
+		IVisitor visitor = VisitorFactory.getInstance().getVisitor("de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.visit(node, data, this);
@@ -1497,15 +1288,13 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTContextStoreType node, Object data)
-			throws QueryParseException {		
+	public Object visit(ASTContextStoreType node, Object data) throws QueryParseException {
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropContextStore node, Object data) throws QueryParseException {
-		IVisitor visitor = VisitorFactory.getInstance().getVisitor(
-				"de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
+		IVisitor visitor = VisitorFactory.getInstance().getVisitor("de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
 		visitor.visit(node, data, this);
@@ -1515,6 +1304,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return null;
-	}	
+	}
 
 }
