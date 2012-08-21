@@ -117,7 +117,7 @@
             commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+X">
+            sequence="CTRL+R">
       </key>
    </extension>
  
