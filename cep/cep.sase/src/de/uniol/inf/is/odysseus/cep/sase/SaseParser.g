@@ -133,7 +133,7 @@ attributeName
 	;  
 	
 kAttributeName
-	:	NAME  BBRACKETLEFT BBRACKETRIGHT   
+	:	NAME  BBRACKETLEFT BBRACKETRIGHT
 	;
 
 sAttributeName

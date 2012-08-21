@@ -1,4 +1,4 @@
-// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2012-08-15 08:34:06
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2012-08-21 13:48:18
  
 /********************************************************************************** 
   * Copyright 2011 The Odysseus Team
@@ -447,7 +447,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_returnPart.add(returnPart10.getTree());
 
             // AST REWRITE
-            // elements: withinPart, patternPart, returnPart, wherePart
+            // elements: returnPart, withinPart, wherePart, patternPart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -581,7 +581,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: WITHIN, timeunit, NUMBER
+            // elements: WITHIN, NUMBER, timeunit
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -810,7 +810,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: WHERE, whereExpressions, skipPart
+                    // elements: skipPart, whereExpressions, WHERE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1327,7 +1327,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: attributeTerm, RETURN, NAME
+            // elements: NAME, attributeTerm, RETURN
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1546,7 +1546,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: stateDef, SEQ
+            // elements: SEQ, stateDef
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1887,7 +1887,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_typeDefinition.add(typeDefinition45.getTree());
 
                     // AST REWRITE
-                    // elements: NOTSIGN, typeDefinition
+                    // elements: typeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1970,7 +1970,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -2672,7 +2672,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            NAME67=(Token)match(input,NAME,FOLLOW_NAME_in_sAttributeName718); if (state.failed) return retval;
+            NAME67=(Token)match(input,NAME,FOLLOW_NAME_in_sAttributeName715); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             NAME67_tree = 
             (CommonTree)adaptor.create(NAME67)
@@ -2812,11 +2812,11 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:144:4: NAME current
                     {
-                    NAME68=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage731); if (state.failed) return retval; 
+                    NAME68=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage728); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME68);
 
 
-                    pushFollow(FOLLOW_current_in_kAttributeUsage734);
+                    pushFollow(FOLLOW_current_in_kAttributeUsage731);
                     current69=current();
 
                     state._fsp--;
@@ -2863,11 +2863,11 @@ public TreeAdaptor getTreeAdaptor() {
                 case 2 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:145:4: NAME first
                     {
-                    NAME70=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage748); if (state.failed) return retval; 
+                    NAME70=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage745); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME70);
 
 
-                    pushFollow(FOLLOW_first_in_kAttributeUsage750);
+                    pushFollow(FOLLOW_first_in_kAttributeUsage747);
                     first71=first();
 
                     state._fsp--;
@@ -2914,11 +2914,11 @@ public TreeAdaptor getTreeAdaptor() {
                 case 3 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:146:4: NAME last
                     {
-                    NAME72=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage763); if (state.failed) return retval; 
+                    NAME72=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage760); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME72);
 
 
-                    pushFollow(FOLLOW_last_in_kAttributeUsage765);
+                    pushFollow(FOLLOW_last_in_kAttributeUsage762);
                     last73=last();
 
                     state._fsp--;
@@ -2965,11 +2965,11 @@ public TreeAdaptor getTreeAdaptor() {
                 case 4 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:147:4: NAME len
                     {
-                    NAME74=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage778); if (state.failed) return retval; 
+                    NAME74=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage775); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME74);
 
 
-                    pushFollow(FOLLOW_len_in_kAttributeUsage780);
+                    pushFollow(FOLLOW_len_in_kAttributeUsage777);
                     len75=len();
 
                     state._fsp--;
@@ -3067,7 +3067,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            BBRACKETLEFT76=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_current801); if (state.failed) return retval;
+            BBRACKETLEFT76=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_current798); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETLEFT76_tree = 
             (CommonTree)adaptor.create(BBRACKETLEFT76)
@@ -3075,7 +3075,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, BBRACKETLEFT76_tree);
             }
 
-            name=(Token)match(input,NAME,FOLLOW_NAME_in_current805); if (state.failed) return retval;
+            name=(Token)match(input,NAME,FOLLOW_NAME_in_current802); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             name_tree = 
             (CommonTree)adaptor.create(name)
@@ -3083,7 +3083,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, name_tree);
             }
 
-            BBRACKETRIGHT77=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_current807); if (state.failed) return retval;
+            BBRACKETRIGHT77=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_current804); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETRIGHT77_tree = 
             (CommonTree)adaptor.create(BBRACKETRIGHT77)
@@ -3150,7 +3150,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            BBRACKETLEFT78=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_first822); if (state.failed) return retval;
+            BBRACKETLEFT78=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_first819); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETLEFT78_tree = 
             (CommonTree)adaptor.create(BBRACKETLEFT78)
@@ -3158,7 +3158,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, BBRACKETLEFT78_tree);
             }
 
-            number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_first826); if (state.failed) return retval;
+            number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_first823); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             number_tree = 
             (CommonTree)adaptor.create(number)
@@ -3166,7 +3166,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, number_tree);
             }
 
-            BBRACKETRIGHT79=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_first828); if (state.failed) return retval;
+            BBRACKETRIGHT79=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_first825); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETRIGHT79_tree = 
             (CommonTree)adaptor.create(BBRACKETRIGHT79)
@@ -3237,7 +3237,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            BBRACKETLEFT80=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_last841); if (state.failed) return retval;
+            BBRACKETLEFT80=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_last838); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETLEFT80_tree = 
             (CommonTree)adaptor.create(BBRACKETLEFT80)
@@ -3245,7 +3245,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, BBRACKETLEFT80_tree);
             }
 
-            name=(Token)match(input,NAME,FOLLOW_NAME_in_last845); if (state.failed) return retval;
+            name=(Token)match(input,NAME,FOLLOW_NAME_in_last842); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             name_tree = 
             (CommonTree)adaptor.create(name)
@@ -3253,7 +3253,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, name_tree);
             }
 
-            MINUS81=(Token)match(input,MINUS,FOLLOW_MINUS_in_last847); if (state.failed) return retval;
+            MINUS81=(Token)match(input,MINUS,FOLLOW_MINUS_in_last844); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             MINUS81_tree = 
             (CommonTree)adaptor.create(MINUS81)
@@ -3261,7 +3261,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, MINUS81_tree);
             }
 
-            number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_last851); if (state.failed) return retval;
+            number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_last848); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             number_tree = 
             (CommonTree)adaptor.create(number)
@@ -3269,7 +3269,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, number_tree);
             }
 
-            BBRACKETRIGHT82=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_last853); if (state.failed) return retval;
+            BBRACKETRIGHT82=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_last850); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETRIGHT82_tree = 
             (CommonTree)adaptor.create(BBRACKETRIGHT82)
@@ -3340,7 +3340,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            BBRACKETLEFT83=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_len869); if (state.failed) return retval;
+            BBRACKETLEFT83=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_len866); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETLEFT83_tree = 
             (CommonTree)adaptor.create(BBRACKETLEFT83)
@@ -3348,7 +3348,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, BBRACKETLEFT83_tree);
             }
 
-            NAME84=(Token)match(input,NAME,FOLLOW_NAME_in_len871); if (state.failed) return retval;
+            NAME84=(Token)match(input,NAME,FOLLOW_NAME_in_len868); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             NAME84_tree = 
             (CommonTree)adaptor.create(NAME84)
@@ -3356,7 +3356,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, NAME84_tree);
             }
 
-            POINT85=(Token)match(input,POINT,FOLLOW_POINT_in_len873); if (state.failed) return retval;
+            POINT85=(Token)match(input,POINT,FOLLOW_POINT_in_len870); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             POINT85_tree = 
             (CommonTree)adaptor.create(POINT85)
@@ -3364,7 +3364,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, POINT85_tree);
             }
 
-            LEN86=(Token)match(input,LEN,FOLLOW_LEN_in_len875); if (state.failed) return retval;
+            LEN86=(Token)match(input,LEN,FOLLOW_LEN_in_len872); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             LEN86_tree = 
             (CommonTree)adaptor.create(LEN86)
@@ -3372,7 +3372,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, LEN86_tree);
             }
 
-            BBRACKETRIGHT87=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_len877); if (state.failed) return retval;
+            BBRACKETRIGHT87=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_len874); if (state.failed) return retval;
             if ( state.backtracking==0 ) {
             BBRACKETRIGHT87_tree = 
             (CommonTree)adaptor.create(BBRACKETRIGHT87)
@@ -3435,7 +3435,7 @@ public TreeAdaptor getTreeAdaptor() {
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:2: ( expression ( ( AND | COMMA ) expression )* -> ^( WHEREEXPRESSION ( expression )* ) )
             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:4: expression ( ( AND | COMMA ) expression )*
             {
-            pushFollow(FOLLOW_expression_in_whereExpressions890);
+            pushFollow(FOLLOW_expression_in_whereExpressions887);
             expression88=expression();
 
             state._fsp--;
@@ -3479,7 +3479,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 1 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:17: AND
             	            {
-            	            AND89=(Token)match(input,AND,FOLLOW_AND_in_whereExpressions894); if (state.failed) return retval; 
+            	            AND89=(Token)match(input,AND,FOLLOW_AND_in_whereExpressions891); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_AND.add(AND89);
 
 
@@ -3488,7 +3488,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 2 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:21: COMMA
             	            {
-            	            COMMA90=(Token)match(input,COMMA,FOLLOW_COMMA_in_whereExpressions896); if (state.failed) return retval; 
+            	            COMMA90=(Token)match(input,COMMA,FOLLOW_COMMA_in_whereExpressions893); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_COMMA.add(COMMA90);
 
 
@@ -3498,7 +3498,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    pushFollow(FOLLOW_expression_in_whereExpressions899);
+            	    pushFollow(FOLLOW_expression_in_whereExpressions896);
             	    expression91=expression();
 
             	    state._fsp--;
@@ -3673,15 +3673,15 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:4: BBRACKETLEFT NAME BBRACKETRIGHT
                     {
-                    BBRACKETLEFT92=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_expression922); if (state.failed) return retval; 
+                    BBRACKETLEFT92=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_expression919); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT92);
 
 
-                    NAME93=(Token)match(input,NAME,FOLLOW_NAME_in_expression924); if (state.failed) return retval; 
+                    NAME93=(Token)match(input,NAME,FOLLOW_NAME_in_expression921); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME93);
 
 
-                    BBRACKETRIGHT94=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_expression926); if (state.failed) return retval; 
+                    BBRACKETRIGHT94=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_expression923); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT94);
 
 
@@ -3725,7 +3725,7 @@ public TreeAdaptor getTreeAdaptor() {
                 case 2 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:3: f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression
                     {
-                    pushFollow(FOLLOW_mathExpression_in_expression942);
+                    pushFollow(FOLLOW_mathExpression_in_expression939);
                     f1=mathExpression();
 
                     state._fsp--;
@@ -3754,7 +3754,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 1 :
                             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:22: op= SINGLEEQUALS
                             {
-                            op=(Token)match(input,SINGLEEQUALS,FOLLOW_SINGLEEQUALS_in_expression947); if (state.failed) return retval; 
+                            op=(Token)match(input,SINGLEEQUALS,FOLLOW_SINGLEEQUALS_in_expression944); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_SINGLEEQUALS.add(op);
 
 
@@ -3763,7 +3763,7 @@ public TreeAdaptor getTreeAdaptor() {
                         case 2 :
                             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:38: op= COMPAREOP
                             {
-                            op=(Token)match(input,COMPAREOP,FOLLOW_COMPAREOP_in_expression951); if (state.failed) return retval; 
+                            op=(Token)match(input,COMPAREOP,FOLLOW_COMPAREOP_in_expression948); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_COMPAREOP.add(op);
 
 
@@ -3773,7 +3773,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_mathExpression_in_expression956);
+                    pushFollow(FOLLOW_mathExpression_in_expression953);
                     f2=mathExpression();
 
                     state._fsp--;
@@ -3825,18 +3825,18 @@ public TreeAdaptor getTreeAdaptor() {
                 case 3 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:173:3: sAttributeName ASSIGN mathExpression
                     {
-                    pushFollow(FOLLOW_sAttributeName_in_expression978);
+                    pushFollow(FOLLOW_sAttributeName_in_expression975);
                     sAttributeName95=sAttributeName();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_sAttributeName.add(sAttributeName95.getTree());
 
-                    ASSIGN96=(Token)match(input,ASSIGN,FOLLOW_ASSIGN_in_expression980); if (state.failed) return retval; 
+                    ASSIGN96=(Token)match(input,ASSIGN,FOLLOW_ASSIGN_in_expression977); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_ASSIGN.add(ASSIGN96);
 
 
-                    pushFollow(FOLLOW_mathExpression_in_expression982);
+                    pushFollow(FOLLOW_mathExpression_in_expression979);
                     mathExpression97=mathExpression();
 
                     state._fsp--;
@@ -3844,7 +3844,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_mathExpression.add(mathExpression97.getTree());
 
                     // AST REWRITE
-                    // elements: mathExpression, sAttributeName
+                    // elements: sAttributeName, mathExpression
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3936,7 +3936,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            pushFollow(FOLLOW_mult_in_mathExpression1002);
+            pushFollow(FOLLOW_mult_in_mathExpression999);
             mult98=mult();
 
             state._fsp--;
@@ -3980,7 +3980,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 1 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:24: PLUS ^
             	            {
-            	            PLUS99=(Token)match(input,PLUS,FOLLOW_PLUS_in_mathExpression1006); if (state.failed) return retval;
+            	            PLUS99=(Token)match(input,PLUS,FOLLOW_PLUS_in_mathExpression1003); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
             	            PLUS99_tree = 
             	            (CommonTree)adaptor.create(PLUS99)
@@ -3993,7 +3993,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 2 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:30: MINUS ^
             	            {
-            	            MINUS100=(Token)match(input,MINUS,FOLLOW_MINUS_in_mathExpression1009); if (state.failed) return retval;
+            	            MINUS100=(Token)match(input,MINUS,FOLLOW_MINUS_in_mathExpression1006); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
             	            MINUS100_tree = 
             	            (CommonTree)adaptor.create(MINUS100)
@@ -4007,7 +4007,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    pushFollow(FOLLOW_mult_in_mathExpression1013);
+            	    pushFollow(FOLLOW_mult_in_mathExpression1010);
             	    mult101=mult();
 
             	    state._fsp--;
@@ -4079,7 +4079,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            pushFollow(FOLLOW_term_in_mult1027);
+            pushFollow(FOLLOW_term_in_mult1024);
             term102=term();
 
             state._fsp--;
@@ -4123,7 +4123,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 1 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:179:16: MULT ^
             	            {
-            	            MULT103=(Token)match(input,MULT,FOLLOW_MULT_in_mult1031); if (state.failed) return retval;
+            	            MULT103=(Token)match(input,MULT,FOLLOW_MULT_in_mult1028); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
             	            MULT103_tree = 
             	            (CommonTree)adaptor.create(MULT103)
@@ -4136,7 +4136,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 2 :
             	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:179:22: DIVISION ^
             	            {
-            	            DIVISION104=(Token)match(input,DIVISION,FOLLOW_DIVISION_in_mult1034); if (state.failed) return retval;
+            	            DIVISION104=(Token)match(input,DIVISION,FOLLOW_DIVISION_in_mult1031); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
             	            DIVISION104_tree = 
             	            (CommonTree)adaptor.create(DIVISION104)
@@ -4150,7 +4150,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
 
 
-            	    pushFollow(FOLLOW_term_in_mult1038);
+            	    pushFollow(FOLLOW_term_in_mult1035);
             	    term105=term();
 
             	    state._fsp--;
@@ -4259,7 +4259,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_attributeTerm_in_term1051);
+                    pushFollow(FOLLOW_attributeTerm_in_term1048);
                     attributeTerm106=attributeTerm();
 
                     state._fsp--;
@@ -4274,7 +4274,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_value_in_term1057);
+                    pushFollow(FOLLOW_value_in_term1054);
                     value107=value();
 
                     state._fsp--;
@@ -4289,16 +4289,16 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    LBRACKET108=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_term1062); if (state.failed) return retval;
+                    LBRACKET108=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_term1059); if (state.failed) return retval;
 
-                    pushFollow(FOLLOW_mathExpression_in_term1065);
+                    pushFollow(FOLLOW_mathExpression_in_term1062);
                     mathExpression109=mathExpression();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, mathExpression109.getTree());
 
-                    RBRACKET110=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_term1067); if (state.failed) return retval;
+                    RBRACKET110=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_term1064); if (state.failed) return retval;
 
                     }
                     break;
@@ -4400,7 +4400,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_aggregation_in_attributeTerm1079);
+                    pushFollow(FOLLOW_aggregation_in_attributeTerm1076);
                     aggregation111=aggregation();
 
                     state._fsp--;
@@ -4412,18 +4412,18 @@ public TreeAdaptor getTreeAdaptor() {
                 case 2 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:189:5: kAttributeUsage POINT NAME
                     {
-                    pushFollow(FOLLOW_kAttributeUsage_in_attributeTerm1087);
+                    pushFollow(FOLLOW_kAttributeUsage_in_attributeTerm1084);
                     kAttributeUsage112=kAttributeUsage();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_kAttributeUsage.add(kAttributeUsage112.getTree());
 
-                    POINT113=(Token)match(input,POINT,FOLLOW_POINT_in_attributeTerm1089); if (state.failed) return retval; 
+                    POINT113=(Token)match(input,POINT,FOLLOW_POINT_in_attributeTerm1086); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_POINT.add(POINT113);
 
 
-                    NAME114=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1091); if (state.failed) return retval; 
+                    NAME114=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1088); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME114);
 
 
@@ -4469,15 +4469,15 @@ public TreeAdaptor getTreeAdaptor() {
                 case 3 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:190:5: aName= NAME POINT member= NAME
                     {
-                    aName=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1110); if (state.failed) return retval; 
+                    aName=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1107); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(aName);
 
 
-                    POINT115=(Token)match(input,POINT,FOLLOW_POINT_in_attributeTerm1112); if (state.failed) return retval; 
+                    POINT115=(Token)match(input,POINT,FOLLOW_POINT_in_attributeTerm1109); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_POINT.add(POINT115);
 
 
-                    member=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1116); if (state.failed) return retval; 
+                    member=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1113); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(member);
 
 
@@ -4678,58 +4678,58 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:194:5: aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
                     {
-                    pushFollow(FOLLOW_aggop_in_aggregation1141);
+                    pushFollow(FOLLOW_aggop_in_aggregation1138);
                     aggop116=aggop();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_aggop.add(aggop116.getTree());
 
-                    LBRACKET117=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1143); if (state.failed) return retval; 
+                    LBRACKET117=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1140); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET117);
 
 
-                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1147); if (state.failed) return retval; 
+                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1144); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(var);
 
 
-                    BBRACKETLEFT118=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1149); if (state.failed) return retval; 
+                    BBRACKETLEFT118=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1146); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT118);
 
 
-                    POINT119=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1151); if (state.failed) return retval; 
+                    POINT119=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1148); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_POINT.add(POINT119);
 
 
-                    POINT120=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1153); if (state.failed) return retval; 
+                    POINT120=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1150); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_POINT.add(POINT120);
 
 
-                    name=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1157); if (state.failed) return retval; 
+                    name=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1154); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(name);
 
 
-                    MINUS121=(Token)match(input,MINUS,FOLLOW_MINUS_in_aggregation1159); if (state.failed) return retval; 
+                    MINUS121=(Token)match(input,MINUS,FOLLOW_MINUS_in_aggregation1156); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_MINUS.add(MINUS121);
 
 
-                    number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_aggregation1163); if (state.failed) return retval; 
+                    number=(Token)match(input,NUMBER,FOLLOW_NUMBER_in_aggregation1160); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NUMBER.add(number);
 
 
-                    BBRACKETRIGHT122=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1165); if (state.failed) return retval; 
+                    BBRACKETRIGHT122=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1162); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT122);
 
 
-                    POINT123=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1167); if (state.failed) return retval; 
+                    POINT123=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1164); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_POINT.add(POINT123);
 
 
-                    member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1171); if (state.failed) return retval; 
+                    member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1168); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(member);
 
 
-                    RBRACKET124=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1173); if (state.failed) return retval; 
+                    RBRACKET124=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1170); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET124);
 
 
@@ -4739,7 +4739,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
                     // AST REWRITE
-                    // elements: member, aggop, var
+                    // elements: var, aggop, member
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4782,26 +4782,26 @@ public TreeAdaptor getTreeAdaptor() {
                 case 2 :
                     // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:196:5: aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
                     {
-                    pushFollow(FOLLOW_aggop_in_aggregation1199);
+                    pushFollow(FOLLOW_aggop_in_aggregation1196);
                     aggop125=aggop();
 
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_aggop.add(aggop125.getTree());
 
-                    LBRACKET126=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1201); if (state.failed) return retval; 
+                    LBRACKET126=(Token)match(input,LBRACKET,FOLLOW_LBRACKET_in_aggregation1198); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_LBRACKET.add(LBRACKET126);
 
 
-                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1205); if (state.failed) return retval; 
+                    var=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1202); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(var);
 
 
-                    BBRACKETLEFT127=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1207); if (state.failed) return retval; 
+                    BBRACKETLEFT127=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_aggregation1204); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT127);
 
 
-                    BBRACKETRIGHT128=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1209); if (state.failed) return retval; 
+                    BBRACKETRIGHT128=(Token)match(input,BBRACKETRIGHT,FOLLOW_BBRACKETRIGHT_in_aggregation1206); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT128);
 
 
@@ -4816,11 +4816,11 @@ public TreeAdaptor getTreeAdaptor() {
                         case 1 :
                             // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:196:57: POINT member= NAME
                             {
-                            POINT129=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1212); if (state.failed) return retval; 
+                            POINT129=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1209); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_POINT.add(POINT129);
 
 
-                            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1216); if (state.failed) return retval; 
+                            member=(Token)match(input,NAME,FOLLOW_NAME_in_aggregation1213); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NAME.add(member);
 
 
@@ -4830,12 +4830,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    RBRACKET130=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1220); if (state.failed) return retval; 
+                    RBRACKET130=(Token)match(input,RBRACKET,FOLLOW_RBRACKET_in_aggregation1217); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_RBRACKET.add(RBRACKET130);
 
 
                     // AST REWRITE
-                    // elements: aggop, member, var
+                    // elements: member, aggop, var
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -5106,85 +5106,85 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_NAME_in_kAttributeName699 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_BBRACKETLEFT_in_kAttributeName702 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_BBRACKETRIGHT_in_kAttributeName704 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_sAttributeName718 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage731 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_current_in_kAttributeUsage734 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage748 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_first_in_kAttributeUsage750 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage763 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_last_in_kAttributeUsage765 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_kAttributeUsage778 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_len_in_kAttributeUsage780 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_current801 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_current805 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_current807 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_first822 = new BitSet(new long[]{0x0000008000000000L});
-    public static final BitSet FOLLOW_NUMBER_in_first826 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_first828 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_last841 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_last845 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_MINUS_in_last847 = new BitSet(new long[]{0x0000008000000000L});
-    public static final BitSet FOLLOW_NUMBER_in_last851 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_last853 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_len869 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_len871 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_len873 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_LEN_in_len875 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_len877 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions890 = new BitSet(new long[]{0x0000000000001022L});
-    public static final BitSet FOLLOW_AND_in_whereExpressions894 = new BitSet(new long[]{0x01800088A1004B00L});
-    public static final BitSet FOLLOW_COMMA_in_whereExpressions896 = new BitSet(new long[]{0x01800088A1004B00L});
-    public static final BitSet FOLLOW_expression_in_whereExpressions899 = new BitSet(new long[]{0x0000000000001022L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression922 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_expression924 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_expression926 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_mathExpression_in_expression942 = new BitSet(new long[]{0x0002000000002000L});
-    public static final BitSet FOLLOW_SINGLEEQUALS_in_expression947 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_COMPAREOP_in_expression951 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_mathExpression_in_expression956 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_sAttributeName_in_expression978 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_ASSIGN_in_expression980 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_mathExpression_in_expression982 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_mult_in_mathExpression1002 = new BitSet(new long[]{0x0000040100000002L});
-    public static final BitSet FOLLOW_PLUS_in_mathExpression1006 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_MINUS_in_mathExpression1009 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_mult_in_mathExpression1013 = new BitSet(new long[]{0x0000040100000002L});
-    public static final BitSet FOLLOW_term_in_mult1027 = new BitSet(new long[]{0x0000000400040002L});
-    public static final BitSet FOLLOW_MULT_in_mult1031 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_DIVISION_in_mult1034 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_term_in_mult1038 = new BitSet(new long[]{0x0000000400040002L});
-    public static final BitSet FOLLOW_attributeTerm_in_term1051 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_value_in_term1057 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LBRACKET_in_term1062 = new BitSet(new long[]{0x01800088A1004900L});
-    public static final BitSet FOLLOW_mathExpression_in_term1065 = new BitSet(new long[]{0x0000100000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_term1067 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggregation_in_attributeTerm1079 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_kAttributeUsage_in_attributeTerm1087 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_attributeTerm1089 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_attributeTerm1091 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_attributeTerm1110 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_attributeTerm1112 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_attributeTerm1116 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggop_in_aggregation1141 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1143 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1147 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1149 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1151 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1153 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1157 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_MINUS_in_aggregation1159 = new BitSet(new long[]{0x0000008000000000L});
-    public static final BitSet FOLLOW_NUMBER_in_aggregation1163 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1165 = new BitSet(new long[]{0x0000080000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1167 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1171 = new BitSet(new long[]{0x0000100000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation1173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_aggop_in_aggregation1199 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_LBRACKET_in_aggregation1201 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1205 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1207 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1209 = new BitSet(new long[]{0x0000180000000000L});
-    public static final BitSet FOLLOW_POINT_in_aggregation1212 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_NAME_in_aggregation1216 = new BitSet(new long[]{0x0000100000000000L});
-    public static final BitSet FOLLOW_RBRACKET_in_aggregation1220 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_sAttributeName715 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage728 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_current_in_kAttributeUsage731 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage745 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_first_in_kAttributeUsage747 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage760 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_last_in_kAttributeUsage762 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_kAttributeUsage775 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_len_in_kAttributeUsage777 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_current798 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_current802 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_current804 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_first819 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_NUMBER_in_first823 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_first825 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_last838 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_last842 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_MINUS_in_last844 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_NUMBER_in_last848 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_last850 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_len866 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_len868 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_len870 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_LEN_in_len872 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_len874 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions887 = new BitSet(new long[]{0x0000000000001022L});
+    public static final BitSet FOLLOW_AND_in_whereExpressions891 = new BitSet(new long[]{0x01800088A1004B00L});
+    public static final BitSet FOLLOW_COMMA_in_whereExpressions893 = new BitSet(new long[]{0x01800088A1004B00L});
+    public static final BitSet FOLLOW_expression_in_whereExpressions896 = new BitSet(new long[]{0x0000000000001022L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_expression919 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_expression921 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_expression923 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_mathExpression_in_expression939 = new BitSet(new long[]{0x0002000000002000L});
+    public static final BitSet FOLLOW_SINGLEEQUALS_in_expression944 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_COMPAREOP_in_expression948 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mathExpression_in_expression953 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_sAttributeName_in_expression975 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_ASSIGN_in_expression977 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mathExpression_in_expression979 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_mult_in_mathExpression999 = new BitSet(new long[]{0x0000040100000002L});
+    public static final BitSet FOLLOW_PLUS_in_mathExpression1003 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_MINUS_in_mathExpression1006 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mult_in_mathExpression1010 = new BitSet(new long[]{0x0000040100000002L});
+    public static final BitSet FOLLOW_term_in_mult1024 = new BitSet(new long[]{0x0000000400040002L});
+    public static final BitSet FOLLOW_MULT_in_mult1028 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_DIVISION_in_mult1031 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_term_in_mult1035 = new BitSet(new long[]{0x0000000400040002L});
+    public static final BitSet FOLLOW_attributeTerm_in_term1048 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_value_in_term1054 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LBRACKET_in_term1059 = new BitSet(new long[]{0x01800088A1004900L});
+    public static final BitSet FOLLOW_mathExpression_in_term1062 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_term1064 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_aggregation_in_attributeTerm1076 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_kAttributeUsage_in_attributeTerm1084 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_attributeTerm1086 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_attributeTerm1088 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_attributeTerm1107 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_attributeTerm1109 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_attributeTerm1113 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1138 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation1140 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1144 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1146 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1148 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1150 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1154 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_MINUS_in_aggregation1156 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_NUMBER_in_aggregation1160 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1162 = new BitSet(new long[]{0x0000080000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1164 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1168 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_aggregation1170 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_aggop_in_aggregation1196 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_LBRACKET_in_aggregation1198 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1202 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_BBRACKETLEFT_in_aggregation1204 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_BBRACKETRIGHT_in_aggregation1206 = new BitSet(new long[]{0x0000180000000000L});
+    public static final BitSet FOLLOW_POINT_in_aggregation1209 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_NAME_in_aggregation1213 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_RBRACKET_in_aggregation1217 = new BitSet(new long[]{0x0000000000000002L});
 
 }

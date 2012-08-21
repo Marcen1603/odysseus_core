@@ -321,8 +321,8 @@ state[List<State> states, List<String> sourceNames]
     	throw new RuntimeException("Double attribute definition " + _attributeName);
     }
    }
-  |
-  ^(KSTATE statename=NAME attrName=NAME not=NOTSIGN?)
+  | 
+  ^(KSTATE statename=NAME plusSign=PLUS attrName=NAME bl=BBRACKETLEFT br=BBRACKETRIGHT not=NOTSIGN?)
   
    {
     String _statename = statename.getText();
