@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTProjectionVector;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTRenamedExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectAll;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSelectStatement;
+import de.uniol.inf.is.odysseus.parser.cql.parser.ASTString;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 
@@ -180,7 +181,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		// Identifier and AggregateExpressions can be used in a simple
 		// projection that just returns a subset of its inputs. Everything
 		// else needs to be calculated in a Map operator.
-		if (node == null || node instanceof ASTFunctionExpression || node instanceof ASTNumber) {
+		if (node == null || node instanceof ASTFunctionExpression || node instanceof ASTNumber || node instanceof ASTString) {
 			if (!aliasExpression.hasAlias()) {
 				throw new IllegalArgumentException("Missing alias identifier in SELECT-clause for expression " + expression.toString());
 			}
@@ -194,7 +195,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.LONG);
 				}
 			} else {
-				attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.DOUBLE);
+				attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.STRING);
 			}
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
