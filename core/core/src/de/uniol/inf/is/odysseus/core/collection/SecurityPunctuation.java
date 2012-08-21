@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 
 //public class SecurityPunctuation<T extends IMetaAttribute> extends MetaAttributeContainer<T> implements Serializable, Comparable<Tuple<?>> {
 public class SecurityPunctuation implements Serializable {
@@ -18,21 +20,23 @@ public class SecurityPunctuation implements Serializable {
 	private Integer sign;
 	private Long ts;
 	
+	private ArrayList<Integer> evaluateAttributesCache = new ArrayList<Integer>();
+	
 	public SecurityPunctuation(Object[] objects) {
 		//Strings mit möglicher Mehrfach-Angabe zerschneiden:
 		ddpStream = ((String) objects[0]).split(",");
-		for(String ddp:ddpStream) {
-			ddp.trim();
+		for(int i = 0; i < ddpStream.length; i++) {
+			ddpStream[i] = ddpStream[i].trim();
 		}
 		ddpStarttuple = (Integer) objects[1];
 		ddpEndtuple = (Integer) objects[2];
 		ddpName = ((String) objects[3]).split(",");
-		for(String ddp:ddpName) {
-			ddp.trim();
+		for(int i = 0; i < ddpName.length; i++) {
+			ddpName[i] = ddpName[i].trim();
 		}
 		srpRole = ((String) objects[4]).split(",");
-		for(String srp:srpRole) {
-			srp.trim();
+		for(int i = 0; i < srpRole.length; i++) {
+			srpRole[i] = srpRole[i].trim();
 		}
 		sign = (Integer) objects[5];
 		ts = (Long) objects[6];
@@ -116,7 +120,7 @@ public class SecurityPunctuation implements Serializable {
 	
 	public Boolean evaluateTS(Long ts) {
 		if((this.getDDPStarttuple() == -1 && this.getDDPEndtuple() == -1) ||
-				(ts > this.getDDPStarttuple() && (ts < this.getDDPEndtuple() && this.getDDPEndtuple() == -1))) {
+				(ts > this.getDDPStarttuple() && (ts <= this.getDDPEndtuple() || this.getDDPEndtuple() == -1))) {
 			return true;
 		}
 		return false;
@@ -135,29 +139,55 @@ public class SecurityPunctuation implements Serializable {
 	}
 	
 	/**
-	 * Ist das überhaupt möglich? Haben Attribute überhaupt Namen???
+	 * Setzt alle Attribute, auf die der Zugriff nicht erlaubt ist, auf null
 	 * Namen werden bei ACCESS bestimmt --> nicht sicher...???
 	 * 
 	 * @param oldTuple
+	 * @param sdfSchema 
 	 * @return
 	 */
-	public Tuple<?> evaluateAttributes(Object oldTuple) {
-		if(this.getDDPName() == null) {
-			return null;
-		}
-		if(this.getDDPName().length <= 1 && this.getDDPName()[0].equals("")) {
-			return null;
-		}
-		
-		ArrayList<Object> attributes = new ArrayList<Object>();
-		for(Object object:((Tuple<?>) oldTuple).getAttributes()) {
-			for(String attribute:this.getDDPName()) {
-				if(attribute.equals(object)) {
-					attributes.add(attribute);
+	public Boolean evaluateAttributes(Tuple<?> tuple, SDFSchema schema) {
+		if(evaluateAttributesCache.isEmpty()) {
+			if(this.getDDPName() == null) {
+				return false;
+			}
+			if(this.getDDPName().length <= 1 && this.getDDPName()[0].equals("")) {
+				return true;
+			}
+			
+			for(int i = 0; i < schema.size(); i++) {
+				Boolean setToNull = true;
+				String schemaAttribute = schema.getAttribute(i).getAttributeName();
+				for(String ddpName:getDDPName()) {
+					if(schemaAttribute.equals(ddpName)) {
+						setToNull = false;
+						break;
+					}
+				}
+				if(setToNull) {
+					//Timestamp wird evtl. nochmal benötigt, wenn SecShield variabel in die Anfrage eingebaut wird.
+					if(!schemaAttribute.equals("ts")) {
+						tuple.setAttribute(i, (Object) null);
+						evaluateAttributesCache.add(i);
+					}
 				}
 			}
+		} else {
+			for(Integer i:evaluateAttributesCache) {
+				tuple.setAttribute(i, (Object) null);
+			}
 		}
-		Tuple<?> newTuple = new Tuple();
-		return newTuple;
+		return true;
 	}	
+	
+	public Boolean evaluateAll(Long ts, List<String> userRoles, Tuple<?> tuple, SDFSchema schema) {
+		if(	getSign() == 1 
+			&& evaluateRoles(userRoles)
+			&& evaluateTS(ts)
+			&& evaluateAttributes(tuple, schema)
+			) {
+			return true;
+		}
+		return false;
+	}
 }

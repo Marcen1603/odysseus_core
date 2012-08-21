@@ -23,7 +23,6 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 
 	@Override
 	public List<DataTuple> next() {
-		System.out.println("next");
 		List<DataTuple> list = new ArrayList<DataTuple>();
 		if(Math.random() > 0.2) {
 			list.add(generateDataTuple());
@@ -46,6 +45,7 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("next " + list.get(0).getAttributes());
 		return list;
 	}
 
@@ -71,11 +71,11 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 		// DDP - Stream (mehrere Werte mit Komma getrennt)
 		tuple.addAttribute("Stream, Test");
 		// DDP - Starttupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Integer(76));
+		tuple.addAttribute(new Integer(counterTS.intValue()));
 		// DDP - Endtupel (-1 bedeutet keine Beschränkung)
-		tuple.addAttribute(new Integer(79));
+		tuple.addAttribute(new Integer((int) Math.round((Math.random() * 25) + counterTS)));
 		// DDP - Attribute (mehrere Werte mit Komma getrennt)
-		tuple.addAttribute("Attribut1, Attibut2");
+		tuple.addAttribute("Attribut1, Attribut2");
 		// SRP - Rollen (mehrere Werte mit Komma getrennt)
 		tuple.addAttribute("sys_admin, PUBLIC");
 		// Sign
