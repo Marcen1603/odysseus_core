@@ -827,5 +827,5 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	@Override
 	public Object visit(ASTIfNotExists node, Object data) throws QueryParseException {
 		return null;
-	}
+	}	
 }

@@ -15,12 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTExpression;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTGroupByClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTHavingClause;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
@@ -64,7 +61,7 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 	}
 
 	private boolean isAttributeValid(Node node) {
-		ASTIdentifier identifier = (ASTIdentifier) node;
+		ASTIdentifier identifier = (ASTIdentifier) node;		
 		return this.attributeResolver.isAttributeValid(identifier.getName());
 	}
 
@@ -76,8 +73,14 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		Node childNode = node.jjtGetChild(0);
-		if (childNode instanceof ASTIdentifier && !isAttributeValid(childNode)) {
-			throw new QueryParseException("invalid Attribute: " + childNode);
+		if (childNode instanceof ASTIdentifier ) {
+			String name = ((ASTIdentifier)childNode).getName();
+			// otherwise it could be something like person.* 
+			if(!name.endsWith(".*")){
+				if(!isAttributeValid(childNode)){
+					throw new QueryParseException("invalid Attribute: " + childNode);
+				}
+			}
 		}
 		if (childNode instanceof ASTAggregateExpression && !isAttributeValid(childNode.jjtGetChild(1))) {
 			throw new QueryParseException("invalid Attribute: " + childNode);
@@ -94,43 +97,13 @@ public class CheckAttributes extends AbstractDefaultVisitor {
 					continue;
 				}
 				// selectClause -> renamedExpression -> expression -> simpleToken ?
+				if(node.jjtGetChild(i).jjtGetChild(0) instanceof ASTSelectAll){
+					continue;
+				}
+				
 				Node simpleToken = node.jjtGetChild(i).jjtGetChild(0).jjtGetChild(0);
 				if(!(simpleToken instanceof ASTSimpleToken)){
 					continue;
-				}
-				Node childNode = simpleToken.jjtGetChild(0);
-				if (childNode instanceof ASTIdentifier) {
-					String identifier = ((ASTIdentifier) childNode).getName();
-					String[] part = identifier.split("\\.");
-					if (part.length == 2 && part[1].equals("*")) {
-						ILogicalOperator source = this.attributeResolver.getSource(part[0]);
-						if (source == null) {
-							throw new QueryParseException("invalid Attribute: " + childNode);
-						} else {
-
-							for (int id = 0; id < source.getOutputSchema().size(); id++) {
-								SDFAttribute attribute = source.getOutputSchema().getAttribute(id);
-								ASTIdentifier ident = new ASTIdentifier(0);
-								ident.setName(attribute.getSourceName() + "." + attribute.getAttributeName());
-								ASTSimpleToken token = new ASTSimpleToken(0);
-								ident.jjtSetParent(token);
-								token.jjtAddChild(ident, 0);
-
-								ASTExpression expression = new ASTExpression(0);
-								expression.jjtAddChild(token, 0);
-								token.jjtSetParent(expression);
-
-								ASTRenamedExpression renExp = new ASTRenamedExpression(id);
-								renExp.jjtAddChild(expression, 0);
-								expression.jjtSetParent(renExp);
-
-								node.jjtAddChild(renExp, id);
-								renExp.jjtSetParent(node);
-							}
-							return data;
-						}
-					}
-
 				}
 			}
 		}

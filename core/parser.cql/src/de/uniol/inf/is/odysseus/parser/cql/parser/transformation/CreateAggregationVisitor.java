@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -50,15 +50,14 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	private ILogicalOperator top;
 
 	private boolean hasGrouping;
-	
 
-	public CreateAggregationVisitor(){
+	public CreateAggregationVisitor() {
 	}
-	
+
 	public void init(ILogicalOperator top, AttributeResolver attributeResolver) {
 		ao = new AggregateAO();
 		this.top = top;
-		ao.subscribeToSource(top,0,0,top.getOutputSchema());
+		ao.subscribeToSource(top, 0, 0, top.getOutputSchema());
 		select = null;
 		this.attributeResolver = attributeResolver;
 		this.hasGrouping = false;
@@ -83,11 +82,9 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTAggregateExpression aggrNode, Object data) throws QueryParseException {
 		AggregateFunction function = aggrNode.getFunction();
 		String attributeName = aggrNode.getAttributeName();
-		SDFAttribute attribute = this.attributeResolver
-				.getAttribute(attributeName);
+		SDFAttribute attribute = this.attributeResolver.getAttribute(attributeName);
 
-		SDFAttribute outAttribute = outAttribute(attribute.getURI(),
-				function, aggrNode);
+		SDFAttribute outAttribute = outAttribute(attribute.getURI(), function, aggrNode);
 		if (!ao.getOutputSchema().contains(outAttribute)) {
 			ao.addAggregation(attribute, function, outAttribute);
 		}
@@ -96,13 +93,13 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
-		SDFAttribute attribute = this.attributeResolver.getAttribute(node
-				.getName());
-		if (attribute == null) {
-			throw new IllegalArgumentException("no such attribute: "
-					+ node.getName());
+		if (!node.getName().endsWith(".*")) {
+			SDFAttribute attribute = this.attributeResolver.getAttribute(node.getName());
+			if (attribute == null) {
+				throw new IllegalArgumentException("no such attribute: " + node.getName());
+			}
+			ao.addGroupingAttribute(attribute);
 		}
-		ao.addGroupingAttribute(attribute);
 		return null;
 	}
 
@@ -117,20 +114,17 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 		return ao;
 	}
 
-	private SDFAttribute outAttribute(String attributeName,
-			AggregateFunction function, ASTAggregateExpression node) {
-		// TODO: Anpassen ... Warum haben die AggregateFunctions nicht den Typen?
+	private SDFAttribute outAttribute(String attributeName, AggregateFunction function, ASTAggregateExpression node) {
+		// TODO: Anpassen ... Warum haben die AggregateFunctions nicht den
+		// Typen?
 		String funcName = function.toString() + "(" + attributeName + ")";
 		SDFAttribute attribute = this.attributeResolver.getAttribute(funcName);
 		if (attribute == null) {
-			SDFDatatype datatype = this.attributeResolver.getAttribute(
-					attributeName).getDatatype();
+			SDFDatatype datatype = this.attributeResolver.getAttribute(attributeName).getDatatype();
 			if (!datatype.isNumeric() && !function.getName().equalsIgnoreCase("COUNT")) {
-				throw new IllegalArgumentException("function '"
-						+ function.toString()
-						+ "' can't be used on non scalar types");
+				throw new IllegalArgumentException("function '" + function.toString() + "' can't be used on non scalar types");
 			}
-			
+
 			if (function.getName().equalsIgnoreCase("AVG")) {
 				attribute = new SDFAttribute(null, funcName, SDFDatatype.DOUBLE);
 			} else if (function.getName().equalsIgnoreCase("COUNT")) {
@@ -138,14 +132,13 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 			} else {
 				// datatype equals datatype of input attribute
 				// for other functions
-				attribute = new SDFAttribute(null, funcName,datatype);
+				attribute = new SDFAttribute(null, funcName, datatype);
 			}
 
 			this.attributeResolver.addAttribute(attribute);
 		}
 		return attribute;
 	}
-
 
 	@Override
 	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
@@ -166,10 +159,9 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTHavingClause node, Object data) throws QueryParseException {
 		select = new SelectAO();
-		select.subscribeToSource(ao,0,0,ao.getOutputSchema());
+		select.subscribeToSource(ao, 0, 0, ao.getOutputSchema());
 		IPredicate<Tuple<?>> predicate;
-		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node
-				.jjtGetChild(0), this.attributeResolver);
+		predicate = CreatePredicateVisitor.toPredicate((ASTPredicate) node.jjtGetChild(0), this.attributeResolver);
 		select.setPredicate(predicate);
 		return select;
 	}
@@ -177,22 +169,22 @@ public class CreateAggregationVisitor extends AbstractDefaultVisitor {
 	public ILogicalOperator getResult() {
 		// remove possible subscriptions!!
 		if (this.select != null) {
-			for (LogicalSubscription l: select.getSubscriptions()){				
+			for (LogicalSubscription l : select.getSubscriptions()) {
 				select.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return this.select;
 		}
-		if (this.ao.hasAggregations() || hasGrouping ){
-			for (LogicalSubscription l: ao.getSubscriptions()){				
+		if (this.ao.hasAggregations() || hasGrouping) {
+			for (LogicalSubscription l : ao.getSubscriptions()) {
 				ao.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return this.ao;
-		}else{
-			for (LogicalSubscription l: top.getSubscriptions()){				
+		} else {
+			for (LogicalSubscription l : top.getSubscriptions()) {
 				top.unsubscribeSink(l.getTarget(), l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
 			return top;
 		}
-			
+
 	}
 }

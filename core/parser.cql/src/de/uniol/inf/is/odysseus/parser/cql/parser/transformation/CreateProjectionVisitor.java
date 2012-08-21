@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,13 +66,13 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	double[] projectionVector = null;
 
-
 	public CreateProjectionVisitor(ILogicalOperator top, AttributeResolver attributeResolver) {
 		this._top = top;
 		this.attributeResolver = attributeResolver;
 	}
 
-	// TODO: This is the only valid Entry point ... how can the other elements be set to private?? 
+	// TODO: This is the only valid Entry point ... how can the other elements
+	// be set to private??
 	@Override
 	public Object visit(ASTSelectStatement statement, Object data) throws QueryParseException {
 
@@ -80,7 +80,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 		// create output schema (with different visit-Methods)
 		node.childrenAccept(this, null);
-		
+
 		// validate output schema
 		checkAttributes(aliasAttributes);
 
@@ -102,11 +102,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 					_top = project;
 				} else {
 
-					// TODO: Behandlung, wenn kein Visitor gefunden wird
 					try {
 						Class.forName("de.uniol.inf.is.odysseus.objecttracking.parser.CreateMVProjectionVisitor");
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						throw new QueryParseException("Invalid use of multivariate projection -- Missing plug-in!!!.");
 					}
 					IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
@@ -116,26 +114,25 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				MapAO map = new MapAO();
 				map.subscribeTo(_top, inputSchema);
-				
-				
+
 				List<SDFExpression> outputExpressions = new ArrayList<SDFExpression>(expressions);
 				map.setExpressions(outputExpressions);
-				
+
 				//
-//				Iterator<SDFExpression> exprIt = this.expressions.iterator();
-//				
-//				for (SDFAttribute attr : outputSchema) {
-//					if (inputSchema.contains(attr)) {
-//						outputExpressions.add(new SDFExpression(attr));
-//					} else {
-//						// mathematical expressions were added in the order of
-//						// their occurence, so whenever an outputattribute is
-//						// not found in the inputschema we add the next
-//						// expression to the output
-//						outputExpressions.add(exprIt.next());
-//					}
-//				}
-//				map.setExpressions(outputExpressions);
+				// Iterator<SDFExpression> exprIt = this.expressions.iterator();
+				//
+				// for (SDFAttribute attr : outputSchema) {
+				// if (inputSchema.contains(attr)) {
+				// outputExpressions.add(new SDFExpression(attr));
+				// } else {
+				// // mathematical expressions were added in the order of
+				// // their occurence, so whenever an outputattribute is
+				// // not found in the inputschema we add the next
+				// // expression to the output
+				// outputExpressions.add(exprIt.next());
+				// }
+				// }
+				// map.setExpressions(outputExpressions);
 				_top = map;
 			}
 
@@ -150,8 +147,8 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTSelectAll node, Object data) throws QueryParseException {
-		outputAttributes = _top.getOutputSchema().getAttributes();
-		aliasAttributes = new ArrayList<SDFAttribute>();
+		outputAttributes.addAll(_top.getOutputSchema().getAttributes());
+		// aliasAttributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : outputAttributes) {
 			SDFAttribute attr = (SDFAttribute) attribute;
 			if (attr.getSourceName() != null) {
@@ -161,15 +158,29 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				aliasAttributes.add(attr);
 			}
+			expressions.add(new SDFExpression(null, attr.getAttributeName(), this.attributeResolver, MEP.getInstance()));
 		}
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTRenamedExpression aliasExpression, Object data) throws QueryParseException {
-		ASTExpression curNode = (ASTExpression) aliasExpression.jjtGetChild(0);
-		return curNode.jjtAccept(this, null);
+		Node child = aliasExpression.jjtGetChild(0);
+		return child.jjtAccept(this, null);
 	}
+
+//	private void addSourceDotStar(String sourceName) {
+//		for (SDFAttribute attribute : _top.getOutputSchema().getAttributes()) {
+//			SDFAttribute attr = (SDFAttribute) attribute;
+//			if (attr.getSourceName().equals(sourceName)) {
+//				outputAttributes.add(attr);
+//				// Create new Attribute without sourcepart
+//				SDFAttribute newAttribute = attr.clone(null, attr.getAttributeName());
+//				aliasAttributes.add(newAttribute);
+//				expressions.add(new SDFExpression(null, attr.getAttributeName(), this.attributeResolver, MEP.getInstance()));
+//			}
+//		}
+//	}
 
 	@Override
 	public Object visit(ASTExpression expression, Object data) throws QueryParseException {
@@ -190,37 +201,51 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			if (node instanceof ASTNumber) {
 				ASTNumber number = (ASTNumber) node;
 				if (number.getValue().contains(".")) {
-					attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.DOUBLE);
+					attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.DOUBLE);
 				} else {
-					attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.LONG);
+					attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.LONG);
 				}
 			} else {
-				attribute = new SDFAttribute(null, aliasExpression.getAlias(),SDFDatatype.STRING);
+				attribute = new SDFAttribute(null, aliasExpression.getAlias(), SDFDatatype.STRING);
 			}
 			outputAttributes.add(attribute);
 			aliasAttributes.add(attribute);
 		} else {
-			SDFAttribute attribute = (SDFAttribute) node.jjtAccept(this, null);
-			outputAttributes.add(attribute);
-			// Add Attribute in MEP Expression in the right order
-			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
-			SDFAttribute aliasAttribute;
-			if (aliasExpression.hasAlias()) {
-				// copy other attributes like datatypes
-				aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
-//				aliasAttribute.setSourceName("");
-//				aliasAttribute.setAttributeName(aliasExpression.getAlias());
-			} else {
-				aliasAttribute = attribute;
+			List<?> attributes = (List<?>) node.jjtAccept(this, null);
+			
+			for (Object o : attributes) {
+				SDFAttribute attribute = (SDFAttribute) o;
+				outputAttributes.add(attribute);
+				// Add Attribute in MEP Expression in the right order
+				expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+				SDFAttribute aliasAttribute;
+				if (aliasExpression.hasAlias()) {
+					// copy other attributes like datatypes
+					aliasAttribute = attribute.clone(null, aliasExpression.getAlias());
+					// aliasAttribute.setSourceName("");
+					// aliasAttribute.setAttributeName(aliasExpression.getAlias());
+				} else {
+					aliasAttribute = attribute;
+				}
+				aliasAttributes.add(aliasAttribute);
 			}
-			aliasAttributes.add(aliasAttribute);
 		}
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTIdentifier node, Object data) throws QueryParseException {
-		return this.attributeResolver.getAttribute(node.getName());
+		String name = node.getName();
+		if (name.endsWith(".*")) {
+			String[] splits = name.split("\\.");
+			String sourceName = splits[0];
+			return this.attributeResolver.getSource(sourceName).getOutputSchema().getAttributes();
+			//addSourceDotStar(sourceName);			
+		} else {
+			List<SDFAttribute> list = new ArrayList<SDFAttribute>();
+			list.add(this.attributeResolver.getAttribute(node.getName()));
+			return list;
+		}
 	}
 
 	@Override

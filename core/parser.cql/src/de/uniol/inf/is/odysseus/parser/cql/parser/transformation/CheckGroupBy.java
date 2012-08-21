@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.HashSet;
@@ -61,8 +61,9 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	public Object visit(ASTSimpleToken node, Object data) throws QueryParseException {
 		Node child = node.jjtGetChild(0);
 		if (child instanceof ASTIdentifier) {
-			checkGroupingAttributes.add(this.attributeResolver
-					.getAttribute(child.toString()));
+			if (!((ASTIdentifier) child).getName().endsWith(".*")) {
+				checkGroupingAttributes.add(this.attributeResolver.getAttribute(child.toString()));
+			}
 		} else {
 			child.jjtAccept(this, data);
 		}
@@ -73,10 +74,8 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	public Object visit(ASTGroupByClause node, Object data) throws QueryParseException {
 		this.hasGrouping = true;
 		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
-			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i))
-					.getName();
-			SDFAttribute attribute = this.attributeResolver
-					.getAttribute(curIdentifier);
+			String curIdentifier = ((ASTIdentifier) node.jjtGetChild(i)).getName();
+			SDFAttribute attribute = this.attributeResolver.getAttribute(curIdentifier);
 
 			checkGroupingAttributes.remove(attribute);
 		}
@@ -94,8 +93,7 @@ public class CheckGroupBy extends AbstractDefaultVisitor {
 	}
 
 	public boolean checkOkay() {
-		return checkGroupingAttributes.isEmpty()
-				|| (!hasAggregates && !hasGrouping);
+		return checkGroupingAttributes.isEmpty() || (!hasAggregates && !hasGrouping);
 	}
 
 	public void init(AttributeResolver attributeResolver) {
