@@ -14,16 +14,22 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGeneratio
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.securitypunctuation.SecurityPunctuationCache;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 
 /**
  * @author Jan Sören Schwarz
  */
-public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeInterval>> extends AbstractPipe<T, T> implements IUserManagementListener {
 
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
 	
 	private SecurityPunctuationCache spCache = new SecurityPunctuationCache();
+	
+	private Boolean usersChanged = true;
+	private Boolean rolesChanged = true;
+	private List<String> userRoles = new ArrayList<String>();
 	
 	@Override
 	public OutputMode getOutputMode() {
@@ -62,25 +68,24 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 
 	private Boolean evaluate(T object) {
 		if(!spCache.isEmpty() && object instanceof Tuple<?>) {
+			UserManagement.getUsermanagement().addUserManagementListener(this);
+			
 			//schöner möglich???
 			Tuple<?> tuple = (Tuple<?>) object;
 			
-			//Besitzer des Operators - Muss das hier rüber gemacht werden oder reicht der Weg oben?
-			//SEHR ineffizient!!!
-			List<IOperatorOwner> ownerList = this.getOwner();
-			List<String> userRoles = new ArrayList<String>();
-			for(IOperatorOwner owner:ownerList) {
-				for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
-					userRoles.add(role.getName());
+			if(rolesChanged) {
+				List<IOperatorOwner> ownerList = this.getOwner();
+				userRoles.clear();
+				for(IOperatorOwner owner:ownerList) {
+					for(IRole role:((IPhysicalQuery)owner).getSession().getUser().getRoles()) {
+						userRoles.add(role.getName());
+					}
 				}
+				rolesChanged = false;
 			}
 				
-			//checken, ob getMetadata wirklich ITimeInterval???
-			ITimeInterval metadata = object.getMetadata();
-			Long startPoint = metadata.getStart().getMainPoint();
-			
-			SecurityPunctuation sp = spCache.getMatchingSP(startPoint);
-			
+			Long startPoint = object.getMetadata().getStart().getMainPoint();			
+			SecurityPunctuation sp = spCache.getMatchingSP(startPoint);			
 			if(sp != null && sp.evaluateAll(startPoint, userRoles, tuple, this.getOutputSchema())) {
 				return true;
 			}
@@ -97,5 +102,28 @@ public class SecurityShieldPO<T extends IMetaAttributeContainer<? extends ITimeI
 			spCache.remove(0);
 		}
 //		System.out.println("aktuelle Size: " + spCache.size());
+	}
+
+	@Override
+	public void usersChangedEvent() {
+		usersChanged = true;
+	}
+
+	@Override
+	public void roleChangedEvent() {
+		rolesChanged = true;
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("MIEPMIEPMIEPMIEP");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
+		System.out.println("");
 	}
 }

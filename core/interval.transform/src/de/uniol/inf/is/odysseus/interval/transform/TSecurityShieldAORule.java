@@ -21,26 +21,25 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 		return 10;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(TopAO topAO,
 			TransformationConfiguration transformConfig) {
 		if(transformConfig.getOption("isSecurityAware") != null) {		
 			if(transformConfig.getOption("isSecurityAware")) {
-				IPipe securityShieldPO = new SecurityShieldPO();
 				Collection<IPhysicalOperator> physInputPOs = topAO.getPhysInputPOs();
 				ISource oldFather = null;
+
+				Collection<ILogicalOperator> topAOCollection = new ArrayList<ILogicalOperator>();
+				topAOCollection.add(topAO);
 				
-				//Kann TopAO auch mehrere InputPOs haben????
 				for(IPhysicalOperator e:physInputPOs) {
 					oldFather = (ISource<?>) e;
+					IPipe securityShieldPO = new SecurityShieldPO();
+					securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); 					
+					transformConfig.getTransformationHelper().insertNewFather(oldFather, topAOCollection, securityShieldPO);
 				}
-				
-				Collection<ILogicalOperator> temp2 = new ArrayList<ILogicalOperator>();
-				temp2.add(topAO);
-				
-				securityShieldPO.setOutputSchema(oldFather.getOutputSchema()); 
-				
-				transformConfig.getTransformationHelper().insertNewFather(oldFather, temp2, securityShieldPO);		
+						
 			}	
 		}
 	}
